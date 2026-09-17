@@ -1,0 +1,29 @@
+---
+title: "Feature selection"
+---
+
+# Pseudo-bulk markers {#sec-deseq2}
+
+Per time point, aggregate unnormalised counts by sample and cell type,
+filter with `edgeR::filterByExpr()`, and fit `DESeq2` as in
+[06_02_deseq2_*.R](https://github.com/bastienchassagnol/GastroDeconv2FateMap/blob/main/scripts/06_02_deseq2_biological_exploration_transcriptomic_differential_analyses.R).
+
+Template: `scripts/04_01_feature_selection_pseudobulk_deseq2.R`.
+
+# Genetic / Pareto panels {#sec-ga}
+
+Refine the shortlist with the all-versus-all criteria in DeCovarT
+`vignettes/supp-S6-feature-selection.qmd`: minimise
+$\kappa_2(\boldsymbol{\mu}_{\mathcal{G}})$ and mean overlap with
+`mco::nsga2()` (NSGA-II); optional scalar `GA` / `GenSA`.
+
+Template: `scripts/04_02_feature_selection_genetic_algorithm.R`.
+
+```{r}
+#| label: nsga2-placeholder
+#| eval: false
+# mco::nsga2(fn = bi_objective_func, idim = n_candidates, odim = 2, ...)
+```
+
+Keep several non-dominated panels; do not report a single arbitrary knee
+as *the* signature until nested, leakage-free validation exists.

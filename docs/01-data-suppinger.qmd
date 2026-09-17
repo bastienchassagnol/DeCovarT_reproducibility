@@ -1,0 +1,38 @@
+---
+title: "Suppinger gastruloids"
+---
+
+# Data access {#sec-geo}
+
+Single-cell object and bulk HTSeq counts from the murine gastruloid
+resource of Suppinger and colleagues (*Cell Stem Cell*, 2023; GEO
+[GSE229513](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE229513)
+and
+[GSE229386](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE229386)).
+Cite the paper from Zotero once the key exists in
+`bibliography/REFERENCES.bib` — do not invent a citekey.
+
+Download commands belong in `data/raw/README.md`. Never overwrite
+`data/raw/`.
+
+# Exploration template {#sec-explore}
+
+Port the GastroDeconv2FateMap scripts:
+
+- [01_01_single_cell_exploration_suppinger.R](https://github.com/bastienchassagnol/GastroDeconv2FateMap/blob/main/scripts/01_01_single_cell_exploration_suppinger.R)
+- [02_01_deconvolution_preprocessing.R](https://github.com/bastienchassagnol/GastroDeconv2FateMap/blob/main/scripts/02_01_deconvolution_preprocessing.R)
+
+Local templates: `scripts/01_01_*.R` and `scripts/02_01_*.R`.
+
+```{r}
+#| label: load-placeholder
+#| eval: false
+source(here::here("R", "paths.R"))
+# seurat_obj <- readRDS(path_raw("GSE229513_gastruloidsobject.rds"))
+```
+
+# Outputs {#sec-outputs}
+
+- Intermediate `SummarizedExperiment` and `SingleCellExperiment` under
+  `data/intermediate/`
+- Codebook: `data/dictionaries/suppinger_features.csv`

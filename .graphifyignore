@@ -1,0 +1,9 @@
+renv/
+graphify-out/
+.quarto/
+docs/_book/
+_book/
+data/
+output/
+logs/
+.github/

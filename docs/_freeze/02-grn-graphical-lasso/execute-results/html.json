@@ -1,0 +1,15 @@
+{
+  "hash": "14d8be80a200450ec86cacc3508680e0",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Gene regulatory networks\"\n---\n\n# Graphical lasso per cell type {#sec-glasso}\n\nEstimate a sparse precision matrix $\\boldsymbol{\\Omega}_j$ for each cell\ntype $j$ with graphical lasso (`huge`), after gene-panel restriction.\n\nTemplate: `scripts/03_01_grn_graphical_lasso.R`.\n\n\n::: {.cell}\n\n```{.r .cell-code}\n# huge_fit <- huge::huge(x, method = \"glasso\")\n# huge_sel <- huge::huge.select(huge_fit)\n```\n:::\n\n\nStore $\\boldsymbol{\\Omega}_j$ and $\\boldsymbol{\\Sigma}_j = \\boldsymbol{\\Omega}_j^{-1}$\nunder `data/processed/grn/` together with $\\lambda$ and sparsity.\nThese matrices are the inputs to the contamination sweep\n(@sec-sensitivity in the next chapters).\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

@@ -1,0 +1,53 @@
+---
+title: "Overview"
+---
+
+This Quarto **book** is the narrative companion to the analysis scripts
+under `scripts/`. R chunks stay `eval: false` until artefacts exist.
+Mermaid and static Markdown still execute; [`freeze: auto`](https://quarto.org/docs/projects/code-execution.html#freeze)
+caches those results in `docs/_freeze`.
+
+The layout follows analysis reproducibility repos such as
+[cellrank2_reproducibility](https://github.com/theislab/cellrank2_reproducibility)
+(Python + Jupyter Book there). Here the stack is **R**, **`renv`**, and
+**Quarto**, published with the GitHub Pages `gh-pages` workflow
+([Quarto: GitHub Pages, Knitr with renv](https://quarto.org/docs/publishing/github-pages.html#example-knitr-with-renv)).
+
+```{mermaid}
+%%| label: fig-pipeline
+%%| fig-cap: "Planned pipeline: GEO gastruloids, GRN per cell type, feature panels, DeCovarT, then precision-matrix contamination."
+%%{init: {"theme": "sandstone"}}%%
+flowchart TD
+  A["GEO GSE229513 / GSE229386"] --> B["02 preprocess SE / SCE"]
+  B --> C["03 glasso GRN per type"]
+  B --> D["04a pseudo-bulk DESeq2"]
+  D --> E["04b NSGA-II / GA panel"]
+  C --> F["DeCovarT deconvolution"]
+  E --> F
+  F --> G["05 contaminate Omega_j"]
+```
+
+## How to render
+
+From the repository root, after `renv::restore()`:
+
+```bash
+quarto render docs
+# first time only, once gh-pages is allowed:
+# quarto publish gh-pages docs
+```
+
+HTML and PDF are both declared in `_quarto.yml`. CI publishes HTML to
+the `gh-pages` branch; download the PDF from the book toolbar when the
+PDF format builds successfully.
+
+## Scripts (source of truth for computation)
+
+| Script | Role |
+|--------|------|
+| `scripts/01_01_single_cell_exploration_suppinger.R` | Explore GSE229513 |
+| `scripts/02_01_deconvolution_preprocessing.R` | Harmonise genes; SE / SCE |
+| `scripts/03_01_grn_graphical_lasso.R` | Graphical lasso per cell type |
+| `scripts/04_01_feature_selection_pseudobulk_deseq2.R` | Pseudo-bulk markers |
+| `scripts/04_02_feature_selection_genetic_algorithm.R` | Pareto gene panel |
+| `scripts/05_01_sensitivity_precision_contamination.R` | Misspecify $\boldsymbol{\Omega}_j$ |

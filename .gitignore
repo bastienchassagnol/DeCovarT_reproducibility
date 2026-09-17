@@ -1,49 +1,49 @@
-# History files
+# History / session
 .Rhistory
 .Rapp.history
-
-# Session Data files
 .RData
 .RDataTmp
-
-# User-specific files
 .Ruserdata
-
-# Example code in package build process
-*-Ex.R
-
-# Output files from R CMD build
-/*.tar.gz
-
-# Output files from R CMD check
-/*.Rcheck/
-
-# RStudio files
+.Renviron
 .Rproj.user/
 
-# produced vignettes
-vignettes/*.html
-vignettes/*.pdf
+# renv
+renv/library/
+renv/staging/
+renv/local/
+renv/cellar/
+renv/lock/
+renv/python/
+renv/sandbox/
 
-# OAuth2 token, see https://github.com/hadley/httr/releases/tag/v0.3
+# Quarto intermediates (keep docs/ source and docs/_freeze)
+.quarto/
+docs/.quarto/
+**/_book/
+docs/_book/
+docs/index_files/
+
+# Graphify (local)
+graphify-out/
+
+# Data: keep pointers and dictionaries; ignore bulky objects
+data/raw/*
+!data/raw/.gitkeep
+!data/raw/README.md
+data/intermediate/*
+!data/intermediate/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+
+# Run artefacts
+output/*
+!output/.gitkeep
+logs/*
+!logs/.gitkeep
+
+# OS
+.DS_Store
+Thumbs.db
+*.tar.gz
 .httr-oauth
-
-# knitr and R markdown default cache directories
-*_cache/
-/cache/
-
-# Temporary files created by R markdown
-*.utf8.md
-*.knit.md
-
-# R Environment Variables
-.Renviron
-
-# pkgdown site
-docs/
-
-# translation temp files
-po/*~
-
-# RStudio Connect folder
 rsconnect/

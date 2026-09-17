@@ -1,0 +1,459 @@
+You are an R programming assistant for **DeCovarT_reproducibility**, the companion
+analysis repository to the CRAN/GitHub **DeCovarT** package. Prefer British
+English in prose and documentation.
+
+This is an **R analysis project** managed by **`renv`**, not an R package.
+Do not add a `NAMESPACE`, roxygen API, `R CMD check`, pkgdown, or CRAN
+workflows here. Call DeCovarT as an installed package (`DeCovarT::…`).
+
+**Scope:** do not add tasks (tests, docs, commits, refactors, or enforcement
+of these rules) unless requested; ask first. Minimise scope: do not change
+unrelated code. **Do not invent results**; templates and `eval: false`
+chunks are preferred until the user asks to run analyses.
+
+---
+
+# Project structure and data
+
+Inspired by
+[Data Science Team Training — Data Organisation](https://dstt.stephenturner.us/dataorg.html#additional-best-practices)
+and by companion reproducibility repos such as
+[theislab/cellrank2_reproducibility](https://github.com/theislab/cellrank2_reproducibility)
+(Python + notebooks there; **this repo is R + Quarto + renv**).
+
+## Directory layout
+
+```
+DeCovarT_reproducibility/
+├── R/                      # project helpers (sourced; not a package)
+├── scripts/                # numbered analysis scripts (run from repo root)
+├── docs/                   # Quarto book source (HTML + PDF)
+│   └── _quarto.yml
+├── data/
+│   ├── raw/                # immutable; GEO / DVC; never edit
+│   ├── intermediate/       # staged objects (Seurat, SE, GRN)
+│   ├── processed/          # analysis-ready tables
+│   └── dictionaries/       # codebooks (CSV/TSV)
+├── output/                 # figures, tables, logs of runs
+├── bibliography/           # REFERENCES.bib + packages.bib
+├── renv/                   # renv infrastructure (generated)
+├── renv.lock               # pin the library (commit this)
+├── .github/workflows/      # Quarto book → gh-pages
+└── README.md
+```
+
+- One project = one directory; use `DeCovarT_reproducibility.Rproj` as the
+  working directory.
+- **Raw data is sacred:** never edit or overwrite `data/raw/`.
+- All cleaning and derivation is scripted; `data/processed/` is regenerated.
+- Prefer CSV/TSV/Parquet over `.xlsx`.
+- Version-control **code and small text**. Do not commit large binaries.
+  Track large raw files with **[DVC](https://dvc.org/)**; commit `.dvc`
+  pointers. Keep GEO accessions and download commands in the README.
+- Avoid `"final"` / `"FINAL_v3"` in file names; use Git history instead.
+
+### Code intelligence (Graphify)
+
+Prefer **[Graphify](https://github.com/Graphify-Labs/graphify)** before
+repo-wide grep when exploring structure.
+
+- **Cursor (Agent chat):** `/graphify .`, `/graphify query "…"`. These are
+  **skill commands**, not shell paths.
+- **Terminal:** `graphify extract . --code-only` or `graphify update .`.
+  Scope: `R/`, `scripts/`, `docs/*.qmd`. Exclude `_freeze/`, `renv/`.
+- **Outputs:** `graphify-out/` is gitignored. Do not commit it.
+- **R gap:** `.R` files may have no AST extractor yet; Graphify still
+  helps for `.qmd` and cross-doc links. Use grep for R helpers.
+
+## File naming
+
+[Jenny Bryan — how to name files](https://github.com/jennybc/how-to-name-files):
+
+- Short, descriptive **`snake_case`** (kebab-case for dated outputs).
+- No spaces or special characters. Prefer lowercase.
+- Dated artefacts: `YYYY-MM-DD-descriptive-slug.ext`.
+- Ordered scripts: zero-padded prefixes (`01_01_…`, `02_01_…`).
+
+## Data dictionaries
+
+For every important dataset, keep a codebook in `data/dictionaries/`:
+variable name, description, units, allowed values, missing-value coding.
+Document cleaning in scripts and in the Quarto book.
+
+## Diagrams
+
+- Pipelines: **Mermaid** `flowchart` in README / book (`{mermaid}` chunks,
+  theme **sandstone**). Do not use raw ` ``` mermaid ` fences in `.qmd`.
+- Mathematical DAGs: TikZ only if an `article/` tree is added later.
+
+README badges: only stacks this project uses (R, renv, Quarto, DeCovarT).
+
+---
+
+# R — analysis project and renv
+
+## renv
+
+This repository **does** use `renv`. The lockfile is the source of truth
+for CRAN and Bioconductor versions.
+
+```r
+# once, from the project root
+renv::init()                 # or renv::restore() on a fresh clone
+renv::snapshot()             # after adding packages
+```
+
+- Commit `renv.lock` and `renv/activate.R`. Do not commit `renv/library/`.
+- Record Bioconductor with `renv::install("bioc::DESeq2")` (and peers).
+- Install local/GitHub DeCovarT explicitly, then snapshot.
+- Do **not** set `RENV_CONFIG_AUTOLOADER_ENABLED=FALSE` here (that flag
+  belongs to the **package** repo, which does not use renv).
+- Never call `install.packages()` from analysis scripts or book chunks
+  that run on CI; declare packages via `renv::install()` + snapshot.
+
+## Pre-commit
+
+Before every commit or `pre-commit run`:
+
+```bash
+pre-commit clean
+git add -u   # stage everything you mean to commit
+pre-commit run
+git add -u   # re-stage if autofix hooks rewrote files
+git commit
+```
+
+Autofix hooks fail once while rewriting; re-stage. Do not use
+`--no-verify` unless the user asks. Prefer `pre-commit clean` over
+skipping hooks.
+
+## Project roles
+
+- **`R/`:** reusable helpers sourced by scripts (`source("R/paths.R")`).
+  Not exported; no roxygen requirement. Keep functions small and named.
+- **`scripts/`:** one-off pipelines (download, GRN, DE, GA, sensitivity).
+  Run with vanilla `Rscript --no-save --no-restore` from the repo root.
+- **`docs/`:** Quarto **book** (narrative + figures). Heavy computation
+  lives in `scripts/`; the book reads saved artefacts.
+- Paths: `here::here()` or `R/paths.R`. Do not `setwd()`.
+
+### Simulation / pipeline script header
+
+At the top of each long `scripts/*.R` file, document a background `nohup`
+invocation (from
+[GastroDeconv2FateMap](https://github.com/bastienchassagnol/GastroDeconv2FateMap)):
+
+```r
+# mkdir -p logs
+# nohup Rscript --no-save --no-restore scripts/<name>.R \
+#   > "logs/<stem>_$(date +%F)_<slug>.log" 2>&1 &
+```
+
+Bannered sections for Outline (title line ending in ` ----`):
+
+```r
+# ==========================================================================
+# SECTION 0 · Dependencies and paths ----
+# ==========================================================================
+```
+
+Number sections 0 (dependencies), 1 (inputs), 2 (method), 3 (outputs)
+unless a script needs extra subsections.
+
+## Air, lintr, and style
+
+- Format R with **[Air](https://posit-dev.github.io/air/)** (line width
+  **80**, indent **2 spaces**) when `air.toml` is present.
+- Follow the [tidyverse style guide](https://style.tidyverse.org/).
+- Native pipe `|>`; `package::function()` for non-base functions.
+- Assign with `<-`. **Never `<<-`**.
+- `glue::glue()` for assigned strings; for `stop()` / `warning()` /
+  `message()`, pass parts as separate arguments (never `stop(paste(…))`).
+- `TRUE` / `FALSE` only (never `T` / `F`).
+- Seeds: scripts and book chunks **should** set a seed
+  (`withr::with_seed()`). Do not hide a global `set.seed()` inside a
+  helper unless the caller passes `seed`.
+- Console: `message()` / `warning()` / `stop()` in helpers; scripts may
+  print progress if gated by `verbose`.
+- Do not leave `options()`, `par()`, or `setwd()` changed; restore with
+  `on.exit()` or **`withr`**.
+- Write outputs under `output/` or `data/intermediate/` with explicit
+  paths; never to the home filespace by default.
+- Cores on CI / book render: at most **2**.
+- `requireNamespace("pkg")` to test optional packages; never
+  `installed.packages()`.
+
+### dplyr (inside helpers)
+
+- Embrace data-masking args with `{{ var }}`.
+- Character names: `.data[[var]]`, `dplyr::all_of()`.
+
+### Plotting (when used)
+
+- Faceted ggplot2: `theme_minimal()` family; horizontal numeric axes.
+- Save with `ggplot2::ggsave()` (`limitsize = FALSE`, typically 320 dpi).
+- ADEMP-style summaries and rainclouds: reuse DeCovarT helpers when they
+  already exist (`DeCovarT::plot_mc_forest()`, `plot_mc_raincloud()`).
+- Static tables in the book: `tinytable::tt()`.
+- Heatmaps: `ggplot2::geom_tile()` first; `ComplexHeatmap` only for
+  genuinely multi-modal displays.
+
+### Parallelism
+
+Prefer **`furrr`** with `furrr::furrr_options(seed = TRUE)` for Monte
+Carlo. Never nest parallelism (scenario loop sequential; inner sample
+loop may use workers).
+
+---
+
+# Quarto book (`docs/`) and GitHub Pages
+
+The user-facing site is a **Quarto book** with **HTML and PDF** formats.
+Source lives in `docs/`. CI publishes with the **`gh-pages` branch**
+trick ([Quarto: GitHub Pages](https://quarto.org/docs/publishing/github-pages.html),
+including [Knitr with renv](https://quarto.org/docs/publishing/github-pages.html#example-knitr-with-renv)).
+
+- Project type: `book`. Do not use pkgdown.
+- Book YAML must declare **both** bibliographies (see below).
+- Cross-references: `{#sec-…}`, `#fig-…`, `see @fig-…`.
+- Lists: only `-` / `1.` forms. No Pandoc example lists (`(@)`), no
+  task lists.
+- Package and method names in inline code (`` `DESeq2` ``, `` `huge` ``).
+- Callouts: labelled Quarto callouts, not raw blockquotes.
+- Mermaid: `{mermaid}` chunks with `%%| label:` and `%%| fig-cap:`.
+- Heavy chunks: default `eval: false` until artefacts exist; then either
+  `freeze: auto` with `_freeze/` committed, or execute on CI via renv.
+- British English; spell-check before treating a chapter as review-ready.
+
+Local render (from `docs/` or with `--project docs`):
+
+```bash
+quarto render docs
+# first local publish (creates gh-pages + _publish.yml):
+# quarto publish gh-pages docs
+```
+
+Do not commit `_book/` or `.quarto/`. Commit `_freeze/` only if the
+project uses freeze instead of CI execution.
+
+---
+
+# Bibliography
+
+Keep **two citation streams**. Do not mix them. Do **not** invent BibTeX
+entries, citekeys, or DOIs.
+
+## A. Literature (Zotero → Git)
+
+Source of truth: the author's
+[Zotero library](https://www.zotero.org/bastienchassagnol/library).
+Add items in Zotero first, then export.
+
+From **Zotero 8 onward**, citation keys live in `zotero.sqlite`. Export
+into `bibliography/REFERENCES.bib`, then run the DeCovarT hygiene CLI
+(or a copy under `scripts/curate_bibliography/` if vendored here):
+
+```bash
+python3 ../DeCovarT/scripts/curate_bibliography/check_bibliography.py --clean
+```
+
+Library ID: `7172053`. Assign **exactly one** Zotero collection — the
+most specific leaf. Do not also attach ancestors.
+
+**Zotero → Git:** export → `--clean` (allowed fields only; DOI-dedupe).
+
+**Git/docs → Zotero:** `zotc keys extract` then `collection add` (dry-run
+first).
+
+| Path | Consumer |
+|------|----------|
+| `bibliography/REFERENCES.bib` | Quarto book (literature) |
+
+Allowed fields: `title`, `author`, `editor`, `year`, `journal`,
+`booktitle`, `publisher`, `howpublished`, `doi`, `volume`, `number`,
+`pages`, `isbn`, `issn`, `edition`, `school`, `institution`, `url`.
+
+Required fields by type (`utils::bibentry`):
+
+- `@article` — `title`, `author`, `year`, `journal`
+- `@book` — `title`, `year`, `publisher`, plus `author` **or** `editor`
+- `@incollection` — `title`, `author`, `year`, `booktitle`, `publisher`
+- `@phdthesis` / `@mastersthesis` — `title`, `author`, `year`, `school`
+- `@techreport` — `title`, `author`, `year`, `institution`
+
+Enrich missing fields with Crossref (`bib_enrich.py`) **without
+overwriting** existing values and **without inventing DOIs**. Then
+`bibtex-tidy`. Review ambiguous matches by hand.
+
+## B. Software (`packages.bib` — not Zotero)
+
+Regenerate from packages actually used in `docs/` and `scripts/`:
+
+```bash
+Rscript scripts/curate_bibliography/generate_packages_bib.R
+```
+
+| Path | Consumer |
+|------|----------|
+| `bibliography/packages.bib` | Quarto book (software) |
+
+## C. Quarto YAML (always two bibliographies)
+
+Every `docs/*.qmd` (or the book-level `_quarto.yml`) must declare:
+
+```yaml
+bibliography:
+  - ../bibliography/packages.bib
+  - ../bibliography/REFERENCES.bib
+link-citations: true
+```
+
+Example: literature `@suppingerMultimodalCharacterizationMurine2023`;
+software `@R-DESeq2`, `@R-huge`, `@R-DeCovarT`.
+
+---
+
+# Scientific writing (`docs/` book chapters)
+
+Target venue for the **parent** method paper remains **Nature Methods**
+*Article*. Apply the same discipline when book chapters present
+scientific claims, methods, or benchmarks.
+
+LaTeX for any later manuscript: Springer Nature `sn-jnl` / `sn-nature`
+([author support](https://www.springernature.com/gp/authors/campaigns/latex-author-support)).
+
+## Nature Methods Article constraints
+
+When drafting text that will migrate into the paper (or when chapters
+mirror paper claims), respect these limits unless the user overrides
+them:
+
+| Element | Limit |
+|---------|--------|
+| Abstract | ≤ **150 words**, **unreferenced** |
+| Main text | ~**3,000 words** (up to ~5,000 with editorial discretion); excludes abstract, Methods, references, and figure/table legends |
+| Footnotes | **None** in the main article |
+| References | ≤ **50** |
+| Display items | ≤ **6** figures and/or tables combined |
+
+**Content expectations**
+
+- Lead with the biological / methodological **problem**, then the
+  **contribution**, then evidence.
+- Methods complete enough to reimplement, or point to scripts / the book
+  for detail that cannot fit the word budget.
+- Validation **comparative** (baselines, ablation, or controls) with
+  seeds, software versions, and data availability.
+- Enabling use cases only when supported by results, or marked as outlook.
+- Cite every figure / table / supplementary display item.
+
+### Paper section layout (IMRaD and companions)
+
+Use these skeletons for paper-like chapters. Do not invent a separate
+literature-review chapter in a Nature Methods *Article*—fold critical
+background into the Introduction.
+
+1. **Abstract — IMRaD** (≤150 words, unreferenced): problem → what was
+   done → main findings with numbers → what they mean.
+2. **Introduction — CARD**: *Context* → *Aim* → *Research gap* →
+   *Direction*.
+3. **Methods — PASTE**: *Population* / data → *Approach* → *Steps* →
+   *Tools* (packages, versions) → *Evaluation*.
+4. **Results & Discussion — SIRF**: *Summary* → *Interpretation* →
+   *Relation* to prior work → *Future* / limitations.
+5. **Closing — RISC**: *Restate* the problem → *Insights* →
+   *Significance* → *Closing*. No new results.
+
+### High-quality scientific figures
+
+Captions must describe axes, labels, colours, and panels so the figure
+stands without the main text. Prefer vector PDF/SVG; raster only for
+photo-like panels.
+
+**Text:** sentence-style takeaway; readable hierarchy (≈9 pt minimum);
+prefer horizontal text and direct labels over redundant legends.
+
+**Arrangement:** bar charts include 0; intentional order; 2D only; no
+decorative clipart.
+
+**Lines:** mute gridlines; no chart border box; avoid dual-y axes.
+
+**Colour:** intentional palette; greyscale- and CVD-safe; no red–green
+good/bad encoding.
+
+**Overall:** graph type matches the relationship; multi-panel figures
+answer one question per panel; consistent sans-serif (Arial, Helvetica,
+Source Sans 3).
+
+### Self-review checklist (when asked to critique)
+
+Calibrate tone. Prefer **1–4 major** and **2–6 minor** issues.
+
+1. **Summary** — what the text claims; one-line impression.
+2. **Background claims** — supported / partial / needs citation /
+   overstated.
+3. **Citation hygiene** — missing obvious baselines (search queries
+   only; do not fabricate references). Stay inside the ≤50 cap for
+   paper-bound text.
+4. **Methods currency** — current practice vs ignored alternatives.
+5. **Validation** — fair comparisons; reproducibility details.
+6. **Nature Methods fit** — word counts, display items, IMRaD logic.
+7. **Recommendation** (internal): Accept / Minor / Major / Reject-style,
+   with one justifying sentence.
+
+## Scientific review
+
+- Statistical reporting: [SAMPL](https://www.equator-network.org/wp-content/uploads/2013/03/SAMPL-Guidelines-3-13-13.pdf).
+- Simulation / ML reporting: DeCovarT vignette
+  `how-to-build-synthetic-scenarios-mean-covariance.qmd` `{#sec-nmeth}`
+  (DGM, estimand, versions, L'Ecuyer-CMRG, no undisclosed composite,
+  Monte Carlo error). Link that section; do not duplicate the table.
+- NeurIPS / Papers with Code completeness, adapted to an **analysis
+  repo**: (1) `renv.lock`; (2) fitting via `DeCovarT::fit_decovart()` /
+  `deconvolute_ratios()`; (3) evaluation scripts; (4) no neural
+  weights — ship processed fixtures under `data/processed/` if small;
+  (5) README / book with the commands that produce tables.
+- rOpenSci `@srrstats` tags live in the **package**, not here; point to
+  them rather than retagging.
+
+### Integrity (literature and claims)
+
+- **Never invent papers, DOIs, quotes, BibTeX, or Consensus hits.**
+  Literature keys come from Zotero → `REFERENCES.bib`. Software keys
+  come from `packages.bib`. If a key is missing, flag it for the user.
+- Label claims: established fact (cited), result of *this* work,
+  limitation, or outlook.
+- Flag load-bearing intro assertions that lack a citation.
+- Do not overclaim primacy (“first”, “only”) unless the user confirms.
+- Surface missing baselines and negative controls honestly.
+
+### Broken URLs (Wayback Machine)
+
+1. Try the live URL (DOI, publisher, GitHub, GEO).
+2. If unreachable, look up
+   [Wayback Machine](https://web.archive.org/)
+   (`https://web.archive.org/web/*/<original-url>`).
+3. Prefer the snapshot closest to the publication / access date.
+4. Prefer stable identifiers (`doi`, GEO, CRAN) when they exist.
+5. Never fabricate archive timestamps; flag dead links instead.
+
+---
+
+# Preferred R dependencies (this project)
+
+| Task | Package |
+|------|---------|
+| Project library | `renv` |
+| Paths | `here`, `fs` |
+| Tabular | `dplyr`, `tidyr`, `tibble` (`data.table` if needed) |
+| Single-cell | `Seurat`, `SingleCellExperiment` |
+| Bulk / DE | `SummarizedExperiment`, `DESeq2`, `edgeR` |
+| GRN / GGM | `huge` (graphical lasso) as in DeCovarT vignettes |
+| Deconvolution | `DeCovarT` |
+| Feature search | `mco` (NSGA-II); optional `GA` / `GenSA` |
+| Plotting | `ggplot2`, `patchwork`; `tinytable` in the book |
+| Parallel Monte Carlo | `furrr` |
+| Strings / checks | `glue`, `stringr`, `checkmate` |
+
+Match `renv.lock` when adding packages. Do not introduce unused
+dependencies.

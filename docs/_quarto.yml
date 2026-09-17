@@ -1,0 +1,42 @@
+project:
+  type: book
+  output-dir: _book
+
+book:
+  title: "DeCovarT reproducibility"
+  subtitle: "Simulations, gastruloid GRNs, and sensitivity analyses"
+  author: "Bastien Chassagnol"
+  date: today
+  chapters:
+    - index.qmd
+    - 01-data-suppinger.qmd
+    - 02-grn-graphical-lasso.qmd
+    - 03-feature-selection.qmd
+    - 04-sensitivity-misspecification.qmd
+  downloads: [pdf]
+  search: true
+
+bibliography:
+  - ../bibliography/packages.bib
+  - ../bibliography/REFERENCES.bib
+link-citations: true
+
+# freeze: auto stores executed output in docs/_freeze (commit that folder).
+# https://quarto.org/docs/projects/code-execution.html#freeze
+# Project-level eval is true so Mermaid runs; R chunks stay eval: false.
+execute:
+  echo: true
+  eval: true
+  warning: false
+  freeze: auto
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 3
+    number-sections: true
+  pdf:
+    documentclass: scrreprt
+    toc: true
+    number-sections: true

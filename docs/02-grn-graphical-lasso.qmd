@@ -1,0 +1,22 @@
+---
+title: "Gene regulatory networks"
+---
+
+# Graphical lasso per cell type {#sec-glasso}
+
+Estimate a sparse precision matrix $\boldsymbol{\Omega}_j$ for each cell
+type $j$ with graphical lasso (`huge`), after gene-panel restriction.
+
+Template: `scripts/03_01_grn_graphical_lasso.R`.
+
+```{r}
+#| label: huge-placeholder
+#| eval: false
+# huge_fit <- huge::huge(x, method = "glasso")
+# huge_sel <- huge::huge.select(huge_fit)
+```
+
+Store $\boldsymbol{\Omega}_j$ and $\boldsymbol{\Sigma}_j = \boldsymbol{\Omega}_j^{-1}$
+under `data/processed/grn/` together with $\lambda$ and sparsity.
+These matrices are the inputs to the contamination sweep
+(@sec-sensitivity in the next chapters).

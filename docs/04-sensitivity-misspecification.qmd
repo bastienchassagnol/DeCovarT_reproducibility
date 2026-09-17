@@ -1,0 +1,22 @@
+---
+title: "Sensitivity analyses"
+---
+
+# Contaminating $\boldsymbol{\Omega}_j$ {#sec-sensitivity}
+
+Starting from the fitted sparse precisions (@sec-glasso), apply the
+misspecification factors described in DeCovarT
+`vignettes/supp-S5-misspecification.qmd`:
+
+1. Observation noise (Gaussian, $t_\nu$, PLN, contaminated Gaussian)
+2. Missing reference component (0%, 2%, 10%)
+3. Copula / PLN dependence across genes
+4. Spillover between types
+5. Outlier genes
+6. Wrong covariance reference (perturb or subsample the glasso fit)
+
+Template: `scripts/05_01_sensitivity_precision_contamination.R`.
+
+Compare `DeCovarT::deconvolute_ratios()` to mean-only baselines on the
+**same** genes and mixtures. Pre-declare estimands and Monte Carlo error
+as in the package synthetic-scenarios vignette `{#sec-nmeth}`.

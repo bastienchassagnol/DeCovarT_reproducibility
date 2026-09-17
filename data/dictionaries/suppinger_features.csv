@@ -1,0 +1,7 @@
+variable,description,units,allowed_values,missing
+gene_name,Gene symbol used as row id after 1:1 Ensembl map,NA,character,empty string not allowed
+ensembl_id,Ensembl gene id without version suffix,NA,ENSG/ENSMUSG,NA
+gene_biotype,biomaRt / local annotation biotype,NA,protein_coding and others,NA
+celltypeannotation,Author cell-type label on GSE229513,NA,see Seurat meta.data,NA
+timepoints,Gastruloid harvest time,hours,0h–120h as in object,NA
+batch,Protocol batch,NA,B-S or SBR after recode,NA
