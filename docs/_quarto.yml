@@ -13,7 +13,6 @@ book:
     - 02-grn-graphical-lasso.qmd
     - 03-feature-selection.qmd
     - 04-sensitivity-misspecification.qmd
-  downloads: [pdf]
   search: true
 
 bibliography:
@@ -36,7 +35,7 @@ format:
     toc: true
     toc-depth: 3
     number-sections: true
-  pdf:
-    documentclass: scrreprt
-    toc: true
-    number-sections: true
+  # pdf:
+  #   documentclass: scrreprt
+  #   toc: true
+  #   number-sections: true

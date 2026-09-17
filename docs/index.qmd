@@ -19,7 +19,7 @@ The layout follows analysis reproducibility repos such as
 %%{init: {"theme": "sandstone"}}%%
 flowchart TD
   A["GEO GSE229513 / GSE229386"] --> B["02 preprocess SE / SCE"]
-  B --> C["03 glasso GRN per type"]
+  B --> C["03 SILGGM / BLGGM GRN"]
   B --> D["04a pseudo-bulk DESeq2"]
   D --> E["04b NSGA-II / GA panel"]
   C --> F["DeCovarT deconvolution"]
@@ -37,9 +37,8 @@ quarto render docs
 # quarto publish gh-pages docs
 ```
 
-HTML and PDF are both declared in `_quarto.yml`. CI publishes HTML to
-the `gh-pages` branch; download the PDF from the book toolbar when the
-PDF format builds successfully.
+The book format is **HTML only** for now (`pdf` is commented in
+`docs/_quarto.yml`). CI publishes HTML to the `gh-pages` branch.
 
 ## Scripts (source of truth for computation)
 
@@ -47,7 +46,8 @@ PDF format builds successfully.
 |--------|------|
 | `scripts/01_01_single_cell_exploration_suppinger.R` | Explore GSE229513 |
 | `scripts/02_01_deconvolution_preprocessing.R` | Harmonise genes; SE / SCE |
-| `scripts/03_01_grn_graphical_lasso.R` | Graphical lasso per cell type |
+| `scripts/03_01_grn_silggm.R` | SILGGM GGM (+ `huge.npn`) |
+| `scripts/03_02_grn_blggm.R` | BLGGM mixture GGM |
 | `scripts/04_01_feature_selection_pseudobulk_deseq2.R` | Pseudo-bulk markers |
 | `scripts/04_02_feature_selection_genetic_algorithm.R` | Pareto gene panel |
 | `scripts/05_01_sensitivity_precision_contamination.R` | Misspecify $\boldsymbol{\Omega}_j$ |

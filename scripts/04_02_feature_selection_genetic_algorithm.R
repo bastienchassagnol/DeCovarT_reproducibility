@@ -13,7 +13,7 @@
 # SECTION 0 · Dependencies and paths ----
 # ==========================================================================
 
-source(here::here("R", "paths.R"))
+# Run from the repository root. Paths are relative to that root.
 
 study <- "suppinger"
 today <- format(Sys.Date(), "%Y-%m-%d")

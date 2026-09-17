@@ -26,6 +26,10 @@ docs/index_files/
 # Graphify (local)
 graphify-out/
 
+# Scratch / RAG dumps
+temp_*/
+temp_*
+
 # Data: keep pointers and dictionaries; ignore bulky objects
 data/raw/*
 !data/raw/.gitkeep
@@ -41,7 +45,16 @@ output/*
 logs/*
 !logs/.gitkeep
 
-# OS
+# LaTeX intermediates (keep article/main.pdf)
+article/*.aux
+article/*.bbl
+article/*.blg
+article/*.fls
+article/*.fdb_latexmk
+article/*.log
+article/*.out
+article/*.synctex.gz
+article/*.toc
 .DS_Store
 Thumbs.db
 *.tar.gz

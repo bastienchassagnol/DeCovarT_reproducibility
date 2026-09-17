@@ -12,17 +12,17 @@
 # SECTION 0 · Dependencies and paths ----
 # ==========================================================================
 
-source(here::here("R", "paths.R"))
+# Run from the repository root. Paths are relative to that root.
 
 study <- "suppinger"
 today <- format(Sys.Date(), "%Y-%m-%d")
-output_dir <- path_output("single-cell")
+output_dir <- file.path("output", "single-cell")
 # dir.create(output_dir, recursive = TRUE, showWarnings = FALSE)
 
 # ==========================================================================
 # SECTION 1 · Load Seurat object (GSE229513) ----
 # ==========================================================================
-# TODO: readRDS(path_raw("GSE229513_gastruloidsobject.rds"))
+# TODO: readRDS(file.path("data", "raw", "GSE229513_gastruloidsobject.rds"))
 # TODO: inspect dim(), Idents(), meta.data (batch, timepoints,
 #       celltypeannotation)
 # TODO: recode batch labels (B-S / SBR); attach cell-type colour map

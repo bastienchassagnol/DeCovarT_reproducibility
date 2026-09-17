@@ -9,8 +9,7 @@ resource of Suppinger and colleagues (*Cell Stem Cell*, 2023; GEO
 [GSE229513](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE229513)
 and
 [GSE229386](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE229386)).
-Cite the paper from Zotero once the key exists in
-`bibliography/REFERENCES.bib` — do not invent a citekey.
+Cite [@suppingerMultimodalCharacterizationMurine2023].
 
 Download commands belong in `data/raw/README.md`. Never overwrite
 `data/raw/`.
@@ -27,8 +26,10 @@ Local templates: `scripts/01_01_*.R` and `scripts/02_01_*.R`.
 ```{r}
 #| label: load-placeholder
 #| eval: false
-source(here::here("R", "paths.R"))
-# seurat_obj <- readRDS(path_raw("GSE229513_gastruloidsobject.rds"))
+# Run from the repository root.
+# seurat_obj <- readRDS(file.path(
+#   "data", "raw", "GSE229513_gastruloidsobject.rds"
+# ))
 ```
 
 # Outputs {#sec-outputs}

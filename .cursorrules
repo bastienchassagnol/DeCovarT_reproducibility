@@ -25,7 +25,6 @@ and by companion reproducibility repos such as
 
 ```
 DeCovarT_reproducibility/
-├── R/                      # project helpers (sourced; not a package)
 ├── scripts/                # numbered analysis scripts (run from repo root)
 ├── docs/                   # Quarto book source (HTML + PDF)
 │   └── _quarto.yml
@@ -60,7 +59,7 @@ repo-wide grep when exploring structure.
 - **Cursor (Agent chat):** `/graphify .`, `/graphify query "…"`. These are
   **skill commands**, not shell paths.
 - **Terminal:** `graphify extract . --code-only` or `graphify update .`.
-  Scope: `R/`, `scripts/`, `docs/*.qmd`. Exclude `_freeze/`, `renv/`.
+  Scope: `scripts/`, `docs/*.qmd`. Exclude `_freeze/`, `renv/`.
 - **Outputs:** `graphify-out/` is gitignored. Do not commit it.
 - **R gap:** `.R` files may have no AST extractor yet; Graphify still
   helps for `.qmd` and cross-doc links. Use grep for R helpers.
@@ -129,13 +128,13 @@ skipping hooks.
 
 ## Project roles
 
-- **`R/`:** reusable helpers sourced by scripts (`source("R/paths.R")`).
-  Not exported; no roxygen requirement. Keep functions small and named.
 - **`scripts/`:** one-off pipelines (download, GRN, DE, GA, sensitivity).
-  Run with vanilla `Rscript --no-save --no-restore` from the repo root.
+  Run with vanilla `Rscript --no-save --no-restore` from the **repository
+  root**. Use `file.path(...)` from that root (`data/raw/`, `output/`,
+  …). Do not `setwd()`. Optional CLI flags are `key=value` on
+  `commandArgs(trailingOnly = TRUE)` inside the script that needs them.
 - **`docs/`:** Quarto **book** (narrative + figures). Heavy computation
   lives in `scripts/`; the book reads saved artefacts.
-- Paths: `here::here()` or `R/paths.R`. Do not `setwd()`.
 
 ### Simulation / pipeline script header
 
