@@ -1,0 +1,72 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "DeCovarT reproducibility",
+    "section": "",
+    "text": "0.1 How to render\nThis Quarto book is the narrative companion to the analysis scripts under scripts/. R chunks stay eval: false until artefacts exist. Mermaid and static Markdown still execute; freeze: auto caches those results in docs/_freeze.\nThe layout follows analysis reproducibility repos such as cellrank2_reproducibility (Python + Jupyter Book there). Here the stack is R, renv, and Quarto, published with the GitHub Pages gh-pages workflow (Quarto: GitHub Pages, Knitr with renv).\nFrom the repository root, after renv::restore():\nHTML and PDF are both declared in _quarto.yml. CI publishes HTML to the gh-pages branch; download the PDF from the book toolbar when the PDF format builds successfully.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Overview</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#how-to-render",
+    "href": "index.html#how-to-render",
+    "title": "DeCovarT reproducibility",
+    "section": "",
+    "text": "quarto render docs\n# first time only, once gh-pages is allowed:\n# quarto publish gh-pages docs",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Overview</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#scripts-source-of-truth-for-computation",
+    "href": "index.html#scripts-source-of-truth-for-computation",
+    "title": "DeCovarT reproducibility",
+    "section": "0.2 Scripts (source of truth for computation)",
+    "text": "0.2 Scripts (source of truth for computation)\n\n\n\n\n\n\n\nScript\nRole\n\n\n\n\nscripts/01_01_single_cell_exploration_suppinger.R\nExplore GSE229513\n\n\nscripts/02_01_deconvolution_preprocessing.R\nHarmonise genes; SE / SCE\n\n\nscripts/03_01_grn_graphical_lasso.R\nGraphical lasso per cell type\n\n\nscripts/04_01_feature_selection_pseudobulk_deseq2.R\nPseudo-bulk markers\n\n\nscripts/04_02_feature_selection_genetic_algorithm.R\nPareto gene panel\n\n\nscripts/05_01_sensitivity_precision_contamination.R\nMisspecify \\(\\boldsymbol{\\Omega}_j\\)",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Overview</span>"
+    ]
+  },
+  {
+    "objectID": "01-data-suppinger.html",
+    "href": "01-data-suppinger.html",
+    "title": "2  Suppinger gastruloids",
+    "section": "",
+    "text": "3 Data access\nSingle-cell object and bulk HTSeq counts from the murine gastruloid resource of Suppinger and colleagues (Cell Stem Cell, 2023; GEO GSE229513 and GSE229386). Cite the paper from Zotero once the key exists in bibliography/REFERENCES.bib — do not invent a citekey.\nDownload commands belong in data/raw/README.md. Never overwrite data/raw/.\n\n\n4 Exploration template\nPort the GastroDeconv2FateMap scripts:\n\n01_01_single_cell_exploration_suppinger.R\n02_01_deconvolution_preprocessing.R\n\nLocal templates: scripts/01_01_*.R and scripts/02_01_*.R.\n\nsource(here::here(\"R\", \"paths.R\"))\n# seurat_obj &lt;- readRDS(path_raw(\"GSE229513_gastruloidsobject.rds\"))\n\n\n\n5 Outputs\n\nIntermediate SummarizedExperiment and SingleCellExperiment under data/intermediate/\nCodebook: data/dictionaries/suppinger_features.csv",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Suppinger gastruloids</span>"
+    ]
+  },
+  {
+    "objectID": "02-grn-graphical-lasso.html",
+    "href": "02-grn-graphical-lasso.html",
+    "title": "3  Gene regulatory networks",
+    "section": "",
+    "text": "4 Graphical lasso per cell type\nEstimate a sparse precision matrix \\(\\boldsymbol{\\Omega}_j\\) for each cell type \\(j\\) with graphical lasso (huge), after gene-panel restriction.\nTemplate: scripts/03_01_grn_graphical_lasso.R.\n\n# huge_fit &lt;- huge::huge(x, method = \"glasso\")\n# huge_sel &lt;- huge::huge.select(huge_fit)\n\nStore \\(\\boldsymbol{\\Omega}_j\\) and \\(\\boldsymbol{\\Sigma}_j = \\boldsymbol{\\Omega}_j^{-1}\\) under data/processed/grn/ together with \\(\\lambda\\) and sparsity. These matrices are the inputs to the contamination sweep (Chapter 6 in the next chapters).",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Gene regulatory networks</span>"
+    ]
+  },
+  {
+    "objectID": "03-feature-selection.html",
+    "href": "03-feature-selection.html",
+    "title": "4  Feature selection",
+    "section": "",
+    "text": "5 Pseudo-bulk markers\nPer time point, aggregate unnormalised counts by sample and cell type, filter with edgeR::filterByExpr(), and fit DESeq2 as in 06_02_deseq2_*.R.\nTemplate: scripts/04_01_feature_selection_pseudobulk_deseq2.R.\n\n\n6 Genetic / Pareto panels\nRefine the shortlist with the all-versus-all criteria in DeCovarT vignettes/supp-S6-feature-selection.qmd: minimise \\(\\kappa_2(\\boldsymbol{\\mu}_{\\mathcal{G}})\\) and mean overlap with mco::nsga2() (NSGA-II); optional scalar GA / GenSA.\nTemplate: scripts/04_02_feature_selection_genetic_algorithm.R.\n\n# mco::nsga2(fn = bi_objective_func, idim = n_candidates, odim = 2, ...)\n\nKeep several non-dominated panels; do not report a single arbitrary knee as the signature until nested, leakage-free validation exists.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Feature selection</span>"
+    ]
+  },
+  {
+    "objectID": "04-sensitivity-misspecification.html",
+    "href": "04-sensitivity-misspecification.html",
+    "title": "5  Sensitivity analyses",
+    "section": "",
+    "text": "6 Contaminating \\(\\boldsymbol{\\Omega}_j\\)\nStarting from the fitted sparse precisions (Chapter 4), apply the misspecification factors described in DeCovarT vignettes/supp-S5-misspecification.qmd:\n\nObservation noise (Gaussian, \\(t_\\nu\\), PLN, contaminated Gaussian)\nMissing reference component (0%, 2%, 10%)\nCopula / PLN dependence across genes\nSpillover between types\nOutlier genes\nWrong covariance reference (perturb or subsample the glasso fit)\n\nTemplate: scripts/05_01_sensitivity_precision_contamination.R.\nCompare DeCovarT::deconvolute_ratios() to mean-only baselines on the same genes and mixtures. Pre-declare estimands and Monte Carlo error as in the package synthetic-scenarios vignette {#sec-nmeth}.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Sensitivity analyses</span>"
+    ]
+  }
+]
