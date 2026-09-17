@@ -14,8 +14,14 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
+      # TinyTeX is required on the runner for the book PDF format.
+      # https://github.com/quarto-dev/quarto-actions/tree/main/setup#inputs-available
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tinytex: true
 
       - name: Install R
         uses: r-lib/actions/setup-r@v2

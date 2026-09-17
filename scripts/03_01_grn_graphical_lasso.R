@@ -10,9 +10,6 @@
 # ==========================================================================
 # SECTION 0 · Dependencies and paths ----
 # ==========================================================================
-
-source(here::here("R", "paths.R"))
-
 study <- "suppinger"
 today <- format(Sys.Date(), "%Y-%m-%d")
 # seed <- 1L  # set explicitly when implementing
