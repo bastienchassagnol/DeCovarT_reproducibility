@@ -9,7 +9,12 @@ resource of Suppinger and colleagues (*Cell Stem Cell*, 2023; GEO
 [GSE229513](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE229513)
 and
 [GSE229386](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE229386)).
-Cite [@suppingerMultimodalCharacterizationMurine2023].
+Cite [@suppingerMultimodalCharacterizationMurine2023]. This is a 10x
+Chromium 3′ v3 **UMI** resource. It is **one** technical scRNA-seq
+experiment, not a panel of independent biological replicates for GRNs
+or for `DESeq2` (@nte-pseudoreplication). Zeros are molecule-sampling
+counts until proven otherwise (@nte-drop-zico); GSE250136 is a later
+stem-embryo dataset and must not be conflated with Suppinger.
 
 Download commands belong in `data/raw/README.md`. Never overwrite
 `data/raw/`.

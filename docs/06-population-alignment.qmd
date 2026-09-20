@@ -1,0 +1,414 @@
+---
+title: "From single cells to type-level Gaussians"
+---
+
+DeCovarT does not ingest single-cell profiles. It needs, for each labelled
+type $j$, a population-level Gaussian
+$(\boldsymbol{\mu}_{\cdot j},\boldsymbol{\Sigma}_{j})$ whose precision is sparse.
+This chapter is about **lifting** cell-level observations to that object,
+and about **checking** that the lift still represents the cells.
+
+# Alignment of type-level Gaussians {#sec-align}
+
+Three strategies, in increasing ambition:
+
+1.  **Affine invariance / convolution** — closed-form means and
+    covariances when cells of **one type** are independent Gaussians.
+2.  **Optimal transport** — maps and distances when we do not want to
+    assume that the empirical cloud is already that Gaussian, including
+    discrete (count) OT and Bures / Wasserstein-robust covariance.
+3.  **Resampling** — technical bootstrap of cells, and Monte Carlo from
+    mechanistic or copula simulators (`scDesign2`, `scMultiSim`).
+
+```{mermaid}
+%%| label: fig-align-layout
+%%| fig-cap: "Three alignment strategies from labelled single cells to type-level Gaussians. Total bulk y is a later convolution across types; it is not the aggregation used here."
+%%{init: {"theme": "sandstone"}}%%
+flowchart TD
+  A["Cells of type j"] --> B["1. Affine lift"]
+  A --> C["2. Optimal transport"]
+  A --> D["3. Bootstrap / Monte Carlo"]
+  B --> E["mu_j, Sigma_j"]
+  C --> E
+  D --> E
+  E --> F["DeCovarT convolution of types"]
+```
+
+# Two aggregations that must not be confused {#sec-align-two-sums}
+
+Write $\boldsymbol{x}_{c\cdot j}$ for the expression vector of cell $c$ in
+type $j$, and $n_{j}$ for the number of such cells.
+
+**Type-level (population) pseudo-bulk** — the object of this chapter —
+
+$$
+\widetilde{\boldsymbol{x}}_{\cdot j}
+=
+\sum_{c\in C_{j}} w_{c}\,\boldsymbol{x}_{c\cdot j},
+\qquad
+\sum_{c}w_{c}=1
+\ \text{or}\
+w_{c}\equiv 1,
+$$ {#eq-type-sum}
+
+is a weighted sum **within one type**. If the cells are independent,
+means add and covariances add (with $w_{c}^{2}$). This is the
+aggregation that estimates $\boldsymbol{\mu}_{\cdot j}$ and
+$\boldsymbol{\Sigma}_{j}$.
+
+**Total bulk** — the DeCovarT observation —
+
+$$
+\boldsymbol{y}
+=
+\sum_{j=1}^{J} p_{j}\,\boldsymbol{x}_{\cdot j}^{\mathrm{pop}}
+$$ {#eq-total-bulk}
+
+is a convolution **across types**, with simplex weights $\boldsymbol{p}$.
+Independence across types gives
+$\mathrm{Cov}(\boldsymbol{y})=\sum_{j}p_{j}^{2}\boldsymbol{\Sigma}_{j}$, which
+is the article's likelihood. That $p_{j}^{2}$ is **not** the same
+calculation as @eq-type-sum.
+
+The first pipeline described “sum the cells, $\Sigma$ scales by $n$,
+zeros of $\Theta$ are preserved” as if it applied to whatever one
+calls a pseudo-bulk. The improved pipeline corrected the algebra but
+still risked being read as a statement about **total** bulk $\boldsymbol{y}$.
+Here we only aggregate **within** type. Convolution across types is
+DeCovarT's problem, not the GRN's.
+
+::: {#nte-not-y .callout-important}
+## :information_source: We align cells to type-level laws, not to $\boldsymbol{y}$
+
+Alignment, Wasserstein distances, and bootstrap in this chapter compare
+
+$$
+\{\boldsymbol{x}_{c\cdot j}\}_{c\in C_{j}}
+\quad\text{with}\quad
+\mathcal{N}(\boldsymbol{\mu}_{\cdot j},\boldsymbol{\Sigma}_{j}).
+$$
+
+They do **not** transport single cells onto a mixed bulk, and they do
+not estimate $\boldsymbol{p}$. DecOT (@sec-align-decot) is a bulk
+**deconvolution** method that uses Wasserstein loss against a reference;
+that is a sibling of DeCovarT, not a way to build $\boldsymbol{\Theta}_{j}$.
+:::
+
+# Affine lift and the precision-sparsity caveat {#sec-align-invariance}
+
+## Independent Gaussian cells
+
+Assume, for a fixed type $j$ (subscript dropped),
+
+$$
+\boldsymbol{x}_{c}
+\sim
+\mathcal{N}_{G}(\boldsymbol{\mu}_{c},\boldsymbol{\Sigma}_{c})
+\quad\text{independent in }c.
+$$ {#eq-cell-gauss}
+
+Affine closure of multivariate Gaussians
+([linear transformation theorem](https://statproofbook.github.io/P/mvn-ltt.html))
+gives
+
+$$
+\widetilde{\boldsymbol{x}}
+=
+\sum_{c} w_{c}\boldsymbol{x}_{c}
+\sim
+\mathcal{N}_{G}\!\left(
+\sum_{c}w_{c}\boldsymbol{\mu}_{c},\;
+\sum_{c}w_{c}^{2}\boldsymbol{\Sigma}_{c}
+\right).
+$$ {#eq-affine}
+
+Special cases used in practice:
+
+| Weights | Mean | Covariance | Precision |
+|---------|------|------------|-----------|
+| $w_{c}=1$ (sum of $n$ i.i.d. cells) | $n\boldsymbol{\mu}$ | $n\boldsymbol{\Sigma}$ | $n^{-1}\boldsymbol{\Theta}$ |
+| $w_{c}=1/n$ (average) | $\boldsymbol{\mu}$ | $n^{-1}\boldsymbol{\Sigma}$ | $n\boldsymbol{\Theta}$ |
+| $w_{c}=S_{c}/\sum S_{c'}$ (library-size weights) | $\sum w_{c}\boldsymbol{\mu}_{c}$ | $\sum w_{c}^{2}\boldsymbol{\Sigma}_{c}$ | inverse of that sum |
+
+The first pipeline stated that summing or averaging **preserves the
+zero pattern of $\boldsymbol{\Theta}$**. That is true **only in the
+proportional-covariance case**.
+
+If $\boldsymbol{\Sigma}_{c}=\boldsymbol{\Sigma}$ for all $c$, then
+$\boldsymbol{\Sigma}_{\widetilde{\boldsymbol{x}}}=(\sum_{c}w_{c}^{2})\boldsymbol{\Sigma}$
+and
+
+$$
+\boldsymbol{\Theta}_{\widetilde{\boldsymbol{x}}}
+=
+\frac{1}{\sum_{c}w_{c}^{2}}\,\boldsymbol{\Theta},
+$$ {#eq-theta-scale}
+
+so zeros are exactly preserved. If the cells have genuinely different
+$\boldsymbol{\Sigma}_{c}$,
+
+$$
+\boldsymbol{\Theta}_{\widetilde{\boldsymbol{x}}}
+=
+\Bigl(\sum_{c}w_{c}^{2}\boldsymbol{\Sigma}_{c}\Bigr)^{-1},
+$$ {#eq-theta-sum}
+
+and **inversion does not commute with summation**. There is no general
+reason for the zero pattern of $\boldsymbol{\Theta}_{\widetilde{\boldsymbol{x}}}$
+to equal any individual cell's precision, or the precision of the
+“typical” cell. Heterogeneous cells within a labelled type — a
+gastruloid “type” is already a continuum — therefore **break** naïve
+sparsity transfer.
+
+**What we do in the core.** Treat labelled cells of type $j$ as
+**exchangeable draws from one**
+$\mathcal{N}(\boldsymbol{\mu}_{\cdot j},\boldsymbol{\Sigma}_{j})$, estimate that
+law (GGM or PLN), and export it. The affine formulae then describe how
+a **pseudo-bulk of i.i.d. draws** from the same law would behave. They
+are **not** a licence to average heterogeneous $\boldsymbol{\Sigma}_{c}$
+and keep the glasso zeros. If `GmGM` (@sec-gmgm) finds a non-trivial
+cell-axis precision, the i.i.d. hypothesis is already false and
+@eq-theta-scale is an approximation.
+
+## Mean and covariance that DeCovarT actually wants
+
+DeCovarT's $\boldsymbol{\mu}_{\cdot j}$ is a **cross-cell mean** of the
+purified profile, analogous to MuSiC's cross-sample mean
+[@wangBulkTissueCell2019], not a single latent draw. Empirically,
+
+$$
+\widehat{\boldsymbol{\mu}}_{\cdot j}
+=
+\frac{1}{n_{j}}\sum_{c\in C_{j}}\boldsymbol{x}_{c\cdot j}
+\quad\text{(linear scale)},
+$$ {#eq-mu-hat}
+
+and $\widehat{\boldsymbol{\Sigma}}_{j}$ comes from the GGM / PLN fit on
+the gene panel, **not** from the unstructured sample covariance of
+thousands of genes (that matrix is singular for $G>n_{j}$ and dense).
+The glasso / PLN precision is inverted (or solved) to an SPD covariance
+for the likelihood. Scale conventions ($n_{j}$ versus $1$) must be
+fixed once: the convolution uses $\boldsymbol{\Sigma}_{j}$ of the
+**population profile**, the same object whose mean is
+$\boldsymbol{\mu}_{\cdot j}$, not the covariance of the cell-average
+estimator.
+
+# Optimal transport {#sec-align-ot}
+
+OT enters in three mathematically distinct roles. Only the second is
+central for exporting $\boldsymbol{\Theta}_{j}$.
+
+## Discrete OT between count histograms (DecOT) {#sec-align-decot}
+
+Kantorovich OT between discrete measures $\mu,\nu$ with ground cost
+$M$ minimises $\langle M,T\rangle$ over couplings with those
+marginals. Entropic regularisation $W_{\gamma}$ makes the problem
+strongly convex and solvable by Sinkhorn
+(`cours_spatial_omics.qmd`; Cuturi 2013).
+
+**DecOT** [@liuDecotBulkDeconvolutionOptimal2022] uses that loss for
+**bulk deconvolution**: cell-type reference histograms $C$ (averaged
+scRNA-seq) mix as $CP\approx Y$, and $P$ is estimated by minimising
+$\sum_{m}W_{\gamma}(Y_{m},CP_{\cdot m})_{M}$ with an entropic
+non-negativity regulariser. The ground cost $M$ encodes **gene–gene**
+geometry (co-expression distances), so the loss is not elementwise
+$\ell_{2}$ / KL. An ensemble over donor-specific references follows
+SCDC.
+
+**What survives under our constraints.** DecOT is a competitor to
+DeCovarT's **proportion** step, not a way to estimate
+$\boldsymbol{\Theta}_{j}$. Useful ideas to steal:
+
+-   a ground cost on genes can be the same metric that a GGM already
+    implies (e.g. $M_{gg'}=1-|\hat\rho_{gg'}|$ on partial
+    correlations) — but then OT and the GGM are no longer independent
+    evidence;
+-   entropic discrete OT is the right language if we align **two count
+    histograms** (empirical mean cell versus type-level expected counts
+    under PLN);
+-   ensemble over donors does not apply (one resource).
+
+Discrete OT on **cells** (transporting $n_{j}$ cells onto $n_{\ell}$
+cells of another type) is a **type-matching** problem, not population
+GGM estimation. Semi-discrete OT (continuous source, discrete
+Laguerre / power cells; `cours_spatial_omics.qmd`) is the natural model
+when one side is a fitted Gaussian and the other is a finite cell cloud:
+the dual weights $\boldsymbol{\varphi}$ inflate Voronoi cells until masses
+match. That is a diagnostic of **which cells** are surprising under
+$\mathcal{N}(\boldsymbol{\mu}_{\cdot j},\boldsymbol{\Sigma}_{j})$, not an
+estimator of $\boldsymbol{\Theta}_{j}$.
+
+## Gaussian (Bures) Wasserstein — the right metric on DeCovarT objects
+
+For two non-degenerate Gaussians
+$P_{0}=\mathcal{N}(\boldsymbol{m}_{0},\boldsymbol{\Sigma}_{0})$ and
+$P_{1}=\mathcal{N}(\boldsymbol{m}_{1},\boldsymbol{\Sigma}_{1})$, the
+squared 2-Wasserstein distance with quadratic cost splits as
+
+$$
+W_{2}^{2}(P_{0},P_{1})
+=
+\|\boldsymbol{m}_{0}-\boldsymbol{m}_{1}\|_{2}^{2}
++
+\operatorname{tr}\Bigl(
+\boldsymbol{\Sigma}_{0}+\boldsymbol{\Sigma}_{1}
+-2
+\bigl(
+\boldsymbol{\Sigma}_{0}^{1/2}
+\boldsymbol{\Sigma}_{1}
+\boldsymbol{\Sigma}_{0}^{1/2}
+\bigr)^{1/2}
+\Bigr).
+$$ {#eq-bures}
+
+The second term is the **Bures–Wasserstein** metric on SPD covariances.
+The Monge map is affine (Brenier):
+
+$$
+T(\boldsymbol{x})
+=
+\boldsymbol{m}_{1}
++
+A(\boldsymbol{x}-\boldsymbol{m}_{0}),
+\qquad
+A
+=
+\boldsymbol{\Sigma}_{1}^{1/2}
+\bigl(
+\boldsymbol{\Sigma}_{1}^{1/2}
+\boldsymbol{\Sigma}_{0}
+\boldsymbol{\Sigma}_{1}^{1/2}
+\bigr)^{-1/2}
+\boldsymbol{\Sigma}_{1}^{1/2},
+$$ {#eq-monge-gauss}
+
+when the covariances are invertible. **No discrete cell-to-cell OT is
+required** merely to transport one fitted type-level Gaussian into
+another, or to transport a Gaussian approximation of the cell cloud
+onto the exported $\mathcal{N}(\boldsymbol{\mu}_{\cdot j},\boldsymbol{\Sigma}_{j})$.
+
+Entropic OT between Gaussians remains closed form
+[@janatiEntropicOptimalTransport2020] and stays well behaved for
+degenerate covariances — relevant when $G>n_{j}$ before a GGM
+projection.
+
+**Core use.** $W_{2}$ between (i) the empirical Gaussian of cells of
+type $j$ (or a shrinkage covariance) and (ii) the exported GGM /
+PLN Gaussian is the **alignment score** of @sec-metrics-stat. Large
+Bures discrepancy with small mean discrepancy means the graph changed
+the covariance geometry; the opposite means we only moved the centroid.
+
+## Wasserstein-robust inverse covariance
+
+Nguyen, Kuhn and Mohajerin Esfahani
+[@nguyenDistributionallyRobustInverse2018] estimate a precision by
+minimising a **worst-case Stein loss** over normal laws within a
+Wasserstein ball of the empirical normal $\mathcal{N}(\hat{\boldsymbol{\mu}},\widehat{\boldsymbol{\Sigma}})$.
+Without structural constraints the estimator is an analytical
+**nonlinear shrinkage** of the sample eigenvalues: invertible for
+$G>n$, rotation-equivariant, order-preserving. With
+conditional-independence constraints it becomes a sequential quadratic
+programme for a GGM.
+
+That is more directly relevant to DeCovarT than OT-as-alignment
+theatre: it regularises $\boldsymbol{\Sigma}_{j}$ **on the SPD manifold
+that the likelihood uses**. A composition (improved pipeline;
+**proposal**) is
+
+$$
+\text{technical type-level covariances}
+\;\longrightarrow\;
+\text{Bures / Wasserstein shrinkage or barycentre}
+\;\longrightarrow\;
+\text{sparse precision projection}.
+$$ {#eq-w2-pipeline}
+
+The barycentre of several bootstrap covariances in Bures geometry is a
+principled “average graph-aware covariance” when we do not want to
+average precisions (which does not commute with inversion either).
+
+Adversarial alignment notes and `scConfluence` are **not** default
+aligners: they target multi-omics / embedding matching, which we
+excluded from the core. CARDAMOM-style OT is useful only insofar as the
+cost remains quadratic in the same gene space.
+
+# Bootstrap and Monte Carlo {#sec-align-bootstrap}
+
+## Technical bootstrap (available)
+
+Resample cells **with replacement within type**, labels fixed. Each
+replicate yields $(\hat{\boldsymbol{\mu}}^{\ast},\widehat{\boldsymbol{\Theta}}^{\ast})$
+and therefore:
+
+-   edge-inclusion frequencies (@sec-metrics-stat);
+-   a cloud of SPD covariances whose Bures barycentre is a candidate
+    export;
+-   Monte Carlo error for MixSim overlap and for DeCovarT $\hat{\boldsymbol{p}}$
+    in downstream simulations.
+
+This is uncertainty **conditional on this gastruloid experiment**. It
+does not stand in for organoid-to-organoid variability
+[@squairConfrontingFalseDiscoveries2021]. Calling technical
+pseudo-bulks “biological replicates” is the error already flagged in
+@nte-pseudoreplication.
+
+## Biological bootstrap (unavailable)
+
+Multiple donors or organoids would allow resampling **experimental
+units**. Suppinger does not. External cohorts (e.g. GSE250136) are for
+**validation**, not for pooling into one $\boldsymbol{\Theta}_{j}$ without
+a batch model.
+
+## Monte Carlo from generative models {#sec-align-mc}
+
+When we need more type-level profiles than $n_{j}$ cells, or a known
+skeleton for BEELINE-style AUPRC, we simulate.
+
+**`scDesign2`** [@sunScDesign2TransparentSimulator2021] fits, per cell
+type, a copula: a count marginal (Poisson, NB, ZIP, or ZINB, chosen
+per gene) plus a Gaussian copula for dependence. It preserves genes,
+captures correlations, and can vary cell number and depth. It is
+transparent (parameters are means, dispersions, copula correlations).
+For our purpose: fit the copula **on the GGM / PLN skeleton** (constrain
+or initialise the copula correlation from $\widehat{\boldsymbol{\Sigma}}_{j}$),
+draw synthetic cells, re-aggregate, and measure how well
+$\boldsymbol{\Theta}_{j}$ is recovered. Using ZINB marginals should be a
+sensitivity, not the default, for the same reason as @nte-drop-zico.
+
+**`scMultiSim`** [@liScMultiSimSimulationSinglecell2025a] is a mechanistic
+multi-omics simulator: GRN, chromatin, RNA velocity, spatial location,
+cell–cell interaction, technical noise. It can **take a GRN as input**
+and emit counts — the right tool for a known-skeleton benchmark in the
+spirit of BEELINE / SERGIO / dyngen. Most of its modalities (ATAC,
+space, velocity) are **out of the core**. The transcriptomic channel
+with a user GRN **is** in scope for metrics (@sec-metrics-topo). Do not
+fit scMultiSim's full spatial/CCI stack merely to pad Suppinger.
+
+**What we reject as a default generator.** Black-box GANs; simulators
+that do not preserve gene identity; using SERGIO's random GRN as if it
+were gastruloid biology. The improved pipeline's suggestion to feed the
+sparse GGM into scDesign2 / scMultiSim as a prior is the right
+**benchmark** design, not a way to invent biological replicates.
+
+# What we would actually run {#sec-align-recommend}
+
+1.  **Default lift.** Independent-type GGM or PLN $\to$ export
+    $(\boldsymbol{\mu}_{\cdot j},\boldsymbol{\Sigma}_{j})$ on the linear scale,
+    with sparsity transfer trusted only as
+    “one $\boldsymbol{\Sigma}_{j}$ per type”.
+2.  **Alignment diagnostic.** Bures–Wasserstein and KL between that
+    Gaussian and a shrinkage covariance of the cells; semi-discrete OT
+    only if we need to flag outlier cells.
+3.  **Uncertainty.** Technical bootstrap; Bures barycentre as an
+    optional export; never labelled as biological replication.
+4.  **Simulation arm.** `scDesign2` copula constrained by
+    $\widehat{\boldsymbol{\Sigma}}_{j}$; `scMultiSim` RNA channel when a
+    known skeleton is required for AUPRC.
+5.  **Not in the core.** DecOT as a DeCovarT replacement; scConfluence;
+    unbalanced / spatial OT; averaging heterogeneous cell-level
+    precisions and keeping the zeros.
+
+The first pipeline's affine story is kept as the **i.i.d. special
+case**. The improved pipeline's sparsity caveat and Wasserstein-robust
+covariance are the parts that were missing. Both are now stated on
+**type-level** sums, not on total bulk $\boldsymbol{y}$.

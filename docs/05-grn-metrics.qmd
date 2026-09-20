@@ -1,0 +1,374 @@
+---
+title: "Evaluating networks without a true DAG"
+---
+
+There is **no** complete ground-truth GRN for murine gastruloids. Mouse
+TF catalogues are incomplete; ChIP-seq and ATAC-seq are **not**
+measured in the core Suppinger scRNA-seq table we use for
+$\boldsymbol{\Theta}_{j}$; and undirected GGM edges are not the same
+objects as directed TF–target arrows. Evaluation must therefore be
+**relative** (methods against each other, against perturbed data, and
+against partial priors), not a claim of causal recovery.
+
+This chapter groups metrics into three families, following GRETA's
+split of mechanistic / predictive / literature tasks and BEELINE's
+emphasis on precision–recall against synthetic or curated graphs:
+
+1.  **Statistical robustness and distributional alignment** — does the
+    fitted Gaussian (or its graph) stay put under resampling, and does
+    it match the type-level law that DeCovarT needs?
+2.  **Topological comparison** — undirected skeleton similarity, without
+    pretending we have orientations.
+3.  **Knowledge-driven scoring** — TFs connected to plausible targets,
+    pathway overlap, integer programmes over prior networks.
+
+Directed causal metrics, multimodal ATAC/ChIP recovery, and
+perturbation forecasting are **perspectives**: they judge a different
+estimand than @eq-grn-estimand.
+
+```{mermaid}
+%%| label: fig-metrics-families
+%%| fig-cap: "Three evaluation families for undirected cell-type GGMs, plus two perspective tracks that require extra assays or a mechanistic simulator."
+%%{init: {"theme": "sandstone"}}%%
+flowchart TD
+  A["Estimated Theta_j"] --> B["Statistical robustness"]
+  A --> C["Topology"]
+  A --> D["Knowledge-driven"]
+  B --> B1["Bootstrap / noise injection"]
+  B --> B2["KL, Hellinger, W2, eBIC"]
+  C --> C1["Precision, recall, F, SHD"]
+  C --> C2["Degree, hubs, modules"]
+  D --> D3["TF–target priors"]
+  D --> D4["GRETA literature scores"]
+  A -.-> E["Perspective: Boolean / CORNETO"]
+  A -.-> F["Perspective: ChIP / ATAC"]
+```
+
+# What we are *not* claiming {#sec-metrics-scope}
+
+BEELINE evaluated **directed** GRN algorithms, often on
+pseudotime-ordered cells, against synthetic Boolean networks and
+curated TF–gene graphs. GRETA evaluated **multimodal** (RNA+ATAC)
+pipelines on mechanistic perturbation tasks, predictive reconstruction
+of omics, and literature databases. Our core graphs are **undirected**,
+**stationary**, and **transcriptomics-only**. We therefore:
+
+-   reduce BEELINE-style scores to **skeletons** (forget orientation and
+    sign unless a method supplies them);
+-   drop GRETA mechanistic forecasting as a **core** criterion (no
+    perturbation assay on these gastruloids in the core pipeline);
+-   keep GRETA-style **literature** and **predictive** ideas only where
+    they survive without ATAC.
+
+# Statistical robustness and alignment {#sec-metrics-stat}
+
+These scores do not need a true graph. They ask whether
+$(\widehat{\boldsymbol{\mu}}_{\cdot j},\widehat{\boldsymbol{\Sigma}}_{j})$ is a
+stable, distinguishable plug-in for @eq-grn-convolution.
+
+## Resampling and noise
+
+With one experiment, the honest uncertainty is **conditional on this
+atlas**:
+
+-   **Technical cell bootstrap** within type, labels fixed
+    (@sec-align-bootstrap). Re-estimate $\boldsymbol{\Theta}_{j}$; record
+    edge inclusion frequencies (stability selection in the sense of
+    Meinshausen and Bühlmann [@meinshausenStabilitySelection2010]) and
+    the Frobenius / Bures spread of $\widehat{\boldsymbol{\Sigma}}_{j}$.
+-   **Gene or cell downsampling**, as GRETA does to test sensitivity to
+    coverage. GRETA found that TF and gene *sets* can look stable while
+    **edges** collapse under downsampling — a warning we should expect
+    for glasso supports as well.
+-   **Random seeds** for stochastic estimators (`GmGM`, Bayesian graphs,
+    boosting). GRETA reported that some multimodal methods reverse
+    high-weight edges across seeds; a GGM that needs a seed should
+    publish edge-overlap across seeds.
+-   **Observation-model contamination** (Gaussian, $t_{\nu}$, PLN,
+    extra zeros) belongs with @sec-sensitivity, not as a graph-recovery
+    score.
+
+Biological (multi-organoid) bootstrap is **unavailable**. Reporting a
+bootstrap interval as if it were between-experiment uncertainty would
+repeat the pseudoreplication error of @nte-pseudoreplication.
+
+## Likelihood and information criteria
+
+On the Gaussian scale actually used by the estimator,
+
+-   **eBIC** (extended BIC) is the usual glasso selection criterion when
+    FDR methods are not used;
+-   held-out log-likelihood on cells left out within type (still
+    technical, not biological);
+-   SILGGM's own global FDR and, when a simulator supplies a true
+    skeleton, power and Matthews correlation (the package's simulation
+    diagnostics).
+
+These scores compare **nested Gaussian models**. They do not validate a
+PLN latent graph against a glasso graph on NPN data: the observation
+models differ. Cross-family comparison must move to a common object —
+the exported $(\boldsymbol{\mu}_{\cdot j},\boldsymbol{\Sigma}_{j})$ on the
+**linear** DeCovarT scale — and use distributional distances.
+
+## Distances between type-level Gaussians
+
+Closed forms, for non-degenerate
+$P_{j}=\mathcal{N}(\boldsymbol{\mu}_{\cdot j},\boldsymbol{\Sigma}_{j})$:
+
+**Kullback–Leibler**
+
+$$
+\begin{aligned}
+D_{\mathrm{KL}}(P_{j}\parallel P_{\ell})
+&=
+\tfrac12\Bigl[
+\operatorname{tr}(\boldsymbol{\Sigma}_{\ell}^{-1}\boldsymbol{\Sigma}_{j})
++(\boldsymbol{\mu}_{\cdot\ell}-\boldsymbol{\mu}_{\cdot j})^{\top}
+\boldsymbol{\Sigma}_{\ell}^{-1}
+(\boldsymbol{\mu}_{\cdot\ell}-\boldsymbol{\mu}_{\cdot j})
+-G
++\ln\frac{\det\boldsymbol{\Sigma}_{\ell}}{\det\boldsymbol{\Sigma}_{j}}
+\Bigr].
+\end{aligned}
+$$ {#eq-kl-gauss}
+
+**Jeffreys** $J(P_{j},P_{\ell})=D_{\mathrm{KL}}(P_{j}\parallel P_{\ell})+D_{\mathrm{KL}}(P_{\ell}\parallel P_{j})$
+is the symmetric version used as a separation monitor in the feature
+chapter.
+
+**Hellinger** via Gaussian affinity, and **MixSim overlap**
+$\omega_{j\ell}=\Omega_{j\ell}+\Omega_{\ell j}$ as the sum of
+misclassification probabilities [@melnykovMixSimPackageSimulating2012;
+@R-MixSim],
+are the right “can DeCovarT tell these types apart?” scores. They are
+**not** graph metrics; they are metrics on the generative object.
+
+**Bures–Wasserstein** (@sec-align-ot) splits mean displacement from
+covariance geometry. Use it both as a type-separation diagnostic and as
+an **alignment** loss between single-cell clouds and type-level
+Gaussians.
+
+::: {#nte-metrics-scale .callout-note}
+## :information_source: Compare laws on the DeCovarT scale
+
+KL between NPN-space Gaussians is not KL between count-scale
+pseudo-bulks. After each estimator has exported @eq-grn-export, compute
+KL / Hellinger / $W_{2}$ / MixSim on **that** Gaussian, the one that
+enters the convolution. Otherwise a “better” SILGGM graph can win on
+NPN likelihood and lose as a deconvolution prior.
+:::
+
+# Topological comparison {#sec-metrics-topo}
+
+## Skeleton scores (BEELINE, reduced to undirected)
+
+BEELINE [@pratapaBenchmarkingAlgorithmsGene2020] is the standard
+scRNA-seq GRN benchmark. Its
+headline findings that survive our constraints:
+
+-   AUPRC and **early precision** are moderate even with known
+    synthetic graphs;
+-   methods that **do not** require pseudotime were generally more
+    accurate — convenient, because we assume stationarity;
+-   recovery is easier on simple synthetic networks than on curated
+    Boolean models.
+
+Scores we keep, always on **undirected** adjacency
+$A_{gg'}=\mathbf{1}\{\hat\theta_{gg'}\neq 0\}$ (or a thresholded
+posterior inclusion probability):
+
+| Score | Definition on skeletons | Caveat |
+|-------|-------------------------|--------|
+| Precision / recall / $F_{1}$ or $F_{0.1}$ | TP, FP, FN against a reference skeleton | Needs a reference; GRETA weights precision $10\times$ recall because inferred GRNs are sparse |
+| Early precision | Precision among the top-$k$ edges | Robust when $k$ is the expected degree $\times G/2$ |
+| AUPRC / AUROC | Ranking of edges | AUROC is too optimistic on sparse graphs; prefer AUPRC |
+| Structural Hamming distance | $|A-\tilde A|$ on undirected edges | Scale with $G$; report also normalised SHD |
+| MCC | Balanced correlation of binary edges | SILGGM simulations use it; still needs a reference |
+
+Without a true DAG, the “reference” is one of: (i) a simulator whose
+GRN we supplied (@sec-align-mc); (ii) another estimator (stability /
+concordance, not accuracy); (iii) a literature skeleton
+(@sec-metrics-knowledge). Concordance between SILGGM and `PLNnetwork`
+is a **robustness** number, not a validation.
+
+CPDAG / orientation metrics from the causal-metrics notes apply only if
+we leave the core and score a DAG. We do not.
+
+## Graph summaries that do not need a reference
+
+These describe **shape**, not correctness:
+
+-   degree distribution and a power-law diagnostic (SILGGM used
+    $\log$–$\log$ degree plots as a biological sanity check; many
+    biological networks are not strictly scale-free);
+-   hub overlap across types (rewiring of hubs is a DeCovarT-relevant
+    summary);
+-   clustering coefficient, number of connected components, modularity;
+-   overlap coefficients of edge **sets** between methods, as in GRETA
+    (intersection over the smaller set), which avoids punishing a
+    method for returning a larger graph.
+
+GRETA's most uncomfortable topological result should be treated as a
+prior: **edge-level overlap across methods is tiny** even when TF and
+gene sets overlap moderately. If our four core estimators disagree on
+edges, that is the expected state of GRN inference, not a bug unique to
+gastruloids. Downstream DeCovarT should therefore **not** depend on a
+single edge being true; it should depend on the SPD covariance being a
+stable discriminator.
+
+## Visualisations {#sec-metrics-viz}
+
+The aim is to **compare structure and inference**, not to decorate a
+methods section. Each display should answer one question.
+
+**Supports and concordance**
+
+-   Binary adjacency heatmaps, genes ordered by a **common**
+    hierarchical clustering (from a consensus distance
+    $d_{ab}=1-\bar r_{ab}$ of methods, or from a biological
+    ordering). Side-by-side heatmaps of $\widehat{\boldsymbol{\Theta}}_{j}$
+    for two types make rewiring visible; a third panel of
+    $|\hat\theta^{(j)}_{gg'}-\hat\theta^{(\ell)}_{gg'}|$ is the
+    differential-network view.
+-   Upset plots or Jaccard heatmaps of edge sets across the four core
+    methods.
+-   On-diagonal degree bars or a simple graph drawing **only** for a
+    tiny TF subgraph; whole-transcriptome hairballs are not figures.
+
+**Signed partial correlations**
+
+-   Diverging tiles of partial correlations
+    $-\theta_{gg'}/\sqrt{\theta_{gg}\theta_{g'g'}}$ with a midpoint
+    scale, not viridis (the latter encodes magnitude, not sign). Keep
+    gene order shared across types.
+
+**Stability**
+
+-   Edge-inclusion frequencies from the technical bootstrap as a
+    heatmap or as a reliability curve (precision among edges with
+    inclusion $>t$, as $t$ varies).
+-   Sankey or alluvial **only** when nodes have a natural order (time,
+    lineage). For unordered type-to-type edge flow, a chord diagram is
+    the usual display; we do not need one in the core stationary
+    analysis.
+
+**Distributional alignment (ties into @sec-align)**
+
+-   PCA / UMAP of cells with the type-level Gaussian as an ellipse is
+    a cartoon (UMAP is not a Gaussian space). Prefer plots of $W_{2}$
+    or KL against bootstrap replicates, or rainclouds of
+    $\hat p$ from DeCovarT under each GRN method (package helpers
+    `plot_mc_raincloud()`, `plot_mc_forest()`), once simulations exist.
+
+**GRETA-style genome tracks** (TF–CRE–gene) require ATAC and are
+perspective-only (@sec-metrics-omics).
+
+# Knowledge-driven scoring {#sec-metrics-knowledge}
+
+## GRETA's three buckets, restricted to undirected transcriptomics
+
+GRETA [@badia-i-mompelComparisonEvaluationMethods2025] modularises
+multimodal GRN pipelines and scores them as **mechanistic**,
+**predictive**, and **literature-based**. Core carry-over:
+
+**Literature / knowledge**
+
+-   **Marker TFs**: is a known type marker present as a hub, or as a
+    high-degree node in $\widehat{\boldsymbol{\Theta}}_{j}$ for that type?
+-   **TF–target edges**: if $g$ is a TF and $g'$ a curated target,
+    does the undirected edge $\{g,g'\}$ appear? This is GRETA's
+    “known interaction” idea with orientation dropped. Resources:
+    CollecTRI, DoRothEA, and mouse TF catalogues — all incomplete.
+-   **TF–TF via shared targets**: two TFs that share many neighbours
+    may reflect a complex or an artefact of co-expression; report
+    overlap with PPI / IntAct only as a soft score.
+-   **TF-binding / CRE / eQTL recovery**: GRETA's ChIP-Atlas, ReMap,
+    ENCODE, eQTL tasks need sequence assays we do not use in the core.
+
+**Predictive (observational)**
+
+-   How well does the graph **topology** predict held-out expression
+    (gene $\sim$ neighbours), as in GRETA's “Omics” scores? For a GGM
+    this is almost circular (the model *is* a prediction of each node
+    given the rest), but a **held-out cell** nodewise $R^{2}$ is still
+    a useful calibration: a graph that does not predict expression of
+    its own nodes is a bad Gaussian.
+-   Gene-set enrichment of modules (Hallmark, KEGG, Reactome) is a
+    sanity check, not a causal test.
+
+**Mechanistic (perturbation)** — **perspective**. GRETA found that
+multimodal GRNs **struggle to capture causal relationships from
+perturbation assays**, even when predictive and literature scores look
+decent. That result should humble any claim that our undirected
+$\boldsymbol{\Theta}_{j}$ is a regulatory mechanism. We do not have a
+gastruloid TF knockout atlas in the core pipeline; we therefore **do
+not** use TF-activity enrichment after perturbation as a gate for
+DeCovarT.
+
+GRETA's other operational warnings that apply unchanged: methods are
+sensitive to random seeds and to replacing a single pipeline step;
+paired versus unpaired multiome changes edges even when cell-type
+abundances look similar; de novo GRN inference from observational data
+is close to ill-posed. Our four-estimator design is a response to that
+ill-posedness, not a claim that one method is true.
+
+## Integer programmes and Boolean models {#sec-metrics-integer}
+
+**CORNETO** [@rodriguez-mierUnifyingMultisampleNetwork2025] reformulates
+knowledge-driven network inference as a joint constrained optimisation
+problem (LP / MILP) over prior knowledge networks: undirected PPI,
+signed directed signalling, or metabolic hypergraphs. It is **not** a
+GGM. As a **perspective scorer**, it can take our data-driven support
+(or a TF–target list derived from it) and ask whether a sparse
+subnetwork of a PKN explains the omics under flow / Steiner / CARNIVAL
+constraints. That tests **mechanistic plausibility**, not Gaussian
+fit. Joint multi-sample inference is CORNETO's selling point; with one
+gastruloid experiment we would be back to a single-sample PKN extract.
+
+**Boolean / logical models** (the BEELINE curated networks; BoolODE)
+are simpler mechanistic simulators: truth tables $\to$ ODEs $\to$
+synthetic counts. They supply a **known skeleton** for AUPRC when we
+simulate (@sec-align-mc). They are not fitted to Suppinger as the
+DeCovarT graph. Using a Boolean model *as the prior* and a GGM *as the
+data-driven proposal* is a legitimate consistency check; using the
+Boolean model *as* $\boldsymbol{\Theta}_{j}$ would abandon the Gaussian
+convolution.
+
+# Perspectives: regulatory omics {#sec-metrics-omics}
+
+ChIP-seq, CUT&RUN, and ATAC-seq (or multiome) networks are closer to
+**physical interaction** than a partial correlation. GRETA exists
+because those assays still do not uniquely determine TF–gene edges:
+CRE-to-gene linking, motif scanning, and the modelling step each change
+the graph. If a later gastruloid multiome appears, GRETA is the
+evaluation harness; SCENIC+ / CellOracle / Dictys remain out of the
+DeCovarT **input**, because they return directed regulons, not SPD
+precisions. The honest use is: project our undirected skeleton onto
+TF–CRE–gene triples and score GRETA literature metrics; do not replace
+$\boldsymbol{\Theta}_{j}$ with a regulon adjacency.
+
+# Practical scorecard for this repository {#sec-metrics-scorecard}
+
+For each core estimator and each cell type $j$:
+
+1.  **Robustness:** bootstrap edge-inclusion; $W_{2}$ / KL of
+    $\widehat{\boldsymbol{\Sigma}}_{j}$ across bootstraps; seed overlap if
+    stochastic.
+2.  **Alignment:** KL / Hellinger / $W_{2}$ / MixSim **between types**
+    (discrimination) and between the type-level Gaussian and the
+    empirical cell cloud (@sec-align).
+3.  **Topology:** pairwise skeleton overlap among the four estimators;
+    degree / hub concordance; no hairball as a main figure.
+4.  **Knowledge:** fraction of curated TF–target pairs recovered as
+    undirected edges; marker-TF degree; stated as **overlap with an
+    incomplete prior**, not as accuracy.
+5.  **Downstream (the score that actually matters for this project):**
+    DeCovarT deconvolution error under a fixed mixture design when
+    $\boldsymbol{\zeta}$ comes from each GRN method, with the misspecification
+    sweep of @sec-sensitivity.
+
+Item 5 is the only metric that is **identified** with the paper's
+estimand. Items 1–4 are supporting diagnostics. Perspectives
+(CORNETO, Boolean, ChIP/ATAC, GRETA mechanistic) stay out of the
+scorecard until the corresponding data or simulator is in
+`data/processed/`.

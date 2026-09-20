@@ -15,6 +15,8 @@
 
 # Run from the repository root. Paths are relative to that root.
 
+stopifnot(requireNamespace("MixSim", quietly = TRUE))
+
 study <- "suppinger"
 today <- format(Sys.Date(), "%Y-%m-%d")
 # seed <- 1L

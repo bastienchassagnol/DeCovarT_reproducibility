@@ -1,29 +1,461 @@
 ---
-title: "Feature selection"
+title: "Feature selection for cell-type Gaussians"
 ---
 
-# Pseudo-bulk markers {#sec-deseq2}
+This chapter selects a gene panel $\mathcal{G}$ on which DeCovarT can
+discriminate gastruloid cell types through **both** mean shifts
+$\boldsymbol{\mu}_{\cdot j}$ and precision rewiring
+$\boldsymbol{\Theta}_{j}\equiv\boldsymbol{\Sigma}_{j}^{-1}$. Notation follows
+the article: gene $g=1,\ldots,G$; cell type $j=1,\ldots,J$; bulk
+$\boldsymbol{y}_{\cdot i}$ is a Gaussian convolution of purified profiles
+[@wangBulkTissueCell2019]. Feature selection is a pre-modelling filter
+[@guyonIntroductionVariableFeature2003], not a marker-enrichment score.
 
-Per time point, aggregate unnormalised counts by sample and cell type
-and fit `DESeq2` [@R-DESeq2] as in
-[06_02_deseq2_*.R](https://github.com/bastienchassagnol/GastroDeconv2FateMap/blob/main/scripts/06_02_deseq2_biological_exploration_transcriptomic_differential_analyses.R).
+The first pipeline treated `sctransform` highly variable genes (HVGs),
+optional `DESeq2` on technical pseudo-bulks, and an NSGA-II Pareto
+refinement as a single stack. That mix is too optimistic on
+**Suppinger**, where there is only **one** scRNA-seq resource (GEO
+[GSE229513](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE229513);
+[@suppingerMultimodalCharacterizationMurine2023]), and it puts variance
+stabilisation on the same design axis as the graphical model (see
+@sec-grn-observation and @nte-jensen-transform). Here we split the
+problem into a **naive screen** (cheap, marginally motivated) and an
+**all-versus-all refinement** (geometry of $\boldsymbol{\mu}_{\mathcal{G}}$
+and rewiring of $\boldsymbol{\Theta}_{j}$). `INDEED` and D-trace enter only
+as a **perspective** (@sec-fs-perspective).
 
-Template: `scripts/04_01_feature_selection_pseudobulk_deseq2.R`.
-
-# Genetic / Pareto panels {#sec-ga}
-
-Refine the shortlist with the all-versus-all criteria in DeCovarT
-`vignettes/supp-S6-feature-selection.qmd`: minimise
-$\kappa_2(\boldsymbol{\mu}_{\mathcal{G}})$ and mean overlap with
-`mco::nsga2()` (NSGA-II) [@R-mco].
-
-Template: `scripts/04_02_feature_selection_genetic_algorithm.R`.
-
-```{r}
-#| label: nsga2-placeholder
-#| eval: false
-# mco::nsga2(fn = bi_objective_func, idim = n_candidates, odim = 2, ...)
+```{mermaid}
+%%| label: fig-fs-layout
+%%| fig-cap: "Two-stage feature selection: a naive one-versus-rest screen, then an all-versus-all refinement that uses mean geometry, Gaussian overlap, and (optionally) differential-network candidates. D-trace and INDEED remain perspectives."
+%%{init: {"theme": "sandstone"}}%%
+flowchart TD
+  A["UMI counts, labels j"] --> B["Naive screen"]
+  B --> B1["HVG ranking"]
+  B --> B2["Marker specificity"]
+  B --> B3["DEG only if biological replicates"]
+  B1 --> C["Working universe G0"]
+  B2 --> C
+  B3 --> C
+  C --> D["All-versus-all"]
+  D --> D1["kappa2 of mu_G"]
+  D --> D2["MixSim / Chernoff overlap"]
+  D --> D3["NSGA-II / AutoGeneS"]
+  D --> D4["DiffNet candidates"]
+  D1 --> E["Non-dominated panels G"]
+  D2 --> E
+  D3 --> E
+  D4 --> E
+  E --> F["DeCovarT mu, Theta_j"]
+  C -.-> G["Perspective: INDEED, D-trace"]
+  G -.-> E
 ```
 
-Keep several non-dominated panels; do not report a single arbitrary knee
-as *the* signature until nested, leakage-free validation exists.
+# Notation {#sec-fs-notation}
+
+Let $\boldsymbol{\mu}=(\boldsymbol{\mu}_{\cdot j})_{j=1}^{J}\in\mathbb{R}^{G\times J}$
+be the mean signature and $\{\boldsymbol{\Sigma}_{j}\}_{j=1}^{J}$ the
+cell-type covariances. Conditionally on proportions
+$\boldsymbol{p}\in\Delta^{J-1}$,
+
+$$
+\boldsymbol{y}\mid(\boldsymbol{\zeta},\boldsymbol{p})
+\sim
+\mathcal{N}_{G}\!\left(
+\boldsymbol{\mu}\boldsymbol{p},\,
+\sum_{j=1}^{J}p_{j}^{2}\boldsymbol{\Sigma}_{j}
+\right),
+\quad
+\boldsymbol{\zeta}=(\boldsymbol{\mu},\{\boldsymbol{\Sigma}_{j}\}),
+$$ {#eq-fs-mixture}
+
+which is the DeCovarT convolution (article Methods; the same
+$p_{j}^{2}$ scaling appears in the first pipeline's aggregation algebra,
+corrected in @sec-align-invariance). For a subset
+$\mathcal{G}\subseteq\{1,\ldots,G\}$ write $\boldsymbol{\mu}_{\mathcal{G}}$
+for the corresponding rows. The 2-norm condition number is
+
+$$
+\kappa_{2}(\boldsymbol{X})
+=
+\frac{\sigma_{\max}(\boldsymbol{X})}{\sigma_{\min}(\boldsymbol{X})}.
+$$ {#eq-fs-kappa}
+
+Large $\kappa_{2}(\boldsymbol{\mu}_{\mathcal{G}})$ is multicollinearity of
+the **mean** design [@gongDeconRNASeqStatisticalFramework2013;
+@newmanRobustEnumerationCell2015]. It does **not** see precision
+rewiring. For a gastruloid continuum, neighbouring states are close in
+mean by construction; aggressive $\kappa$-minimisation then keeps a few
+lineage representatives and drops genes whose signal lives in
+$\boldsymbol{\Theta}_{j}$ [@wangBulkTissueCell2019].
+
+::: {#nte-linear-scale .callout-important}
+## :warning: Keep the mixture on a linear scale
+
+@eq-fs-mixture is linear in $\boldsymbol{p}$ only if $\boldsymbol{\mu}$ and
+$\boldsymbol{y}$ live on the **same additive scale** (counts, CPM, or TPM).
+Logarithms, `SCTransform` Pearson residuals, and nonparanormal scores
+break that map [@sturmComprehensiveEvaluationTranscriptomebased2019;
+@jinBenchmarkRNAseqDeconvolution2021;
+@hoffmannRobustComputationalReconstitution2006]. Use residualisation
+only to **rank** HVGs (@sec-fs-hvg); export DeCovarT moments on the
+linear scale. The probabilistic reason is Jensen's inequality: see
+@nte-jensen-transform.
+:::
+
+# Naive screen {#sec-fs-naive}
+
+The naive stage builds a working universe $\mathcal{G}_{0}$ of a few
+thousand genes. It is **one-versus-rest in spirit**: each gene is scored
+marginally. That is cheap and biologically readable, and it is the right
+place to stop if the all-versus-all optimiser has nothing to search
+over. It is the **wrong** place to stop for DeCovarT, because
+concatenating per-type shortlists typically yields a multicollinear
+$\boldsymbol{\mu}_{\mathcal{G}}$ [@newmanRobustEnumerationCell2015].
+
+## Highly variable genes {#sec-fs-hvg}
+
+Single-cell UMI tables mix depth noise with biological heterogeneity.
+Regularised negative-binomial regression in `sctransform` [@R-sctransform]
+/ `Seurat::SCTransform` separates the two via Pearson residuals
+[@hafemeisterNormalizationVarianceStabilization2019]
+
+$$
+r_{cg}
+=
+\frac{y_{cg}-\hat{\mu}_{cg}}
+{\sqrt{\hat{\mu}_{cg}+\hat{\mu}_{cg}^{2}/\hat{\theta}_{g}}},
+$$ {#eq-fs-pearson}
+
+with library size as an offset and empirical-Bayes shrinkage of
+dispersions $\hat{\theta}_{g}$. Residual variance is a ranking score
+for HVGs, **not** a Gaussian observation model for graphical lasso.
+
+Practical rules for Suppinger:
+
+1.  Do **not** regress out cell type when ranking HVGs: that removes
+    the inter-type signal the panel is meant to keep.
+2.  A design $\sim\texttt{CellType}$ without intercept contrasts each
+    labelled type against the global mean across types, which is closer
+    to an all-versus-all HVG ranking than a global intercept.
+3.  Keep on the order of $2{,}000$ residual-variable genes as
+    $\mathcal{G}_{0}$ before any GGM; estimating
+    $\boldsymbol{\Theta}_{j}$ on the full transcriptome is unstable when
+    $G\gg n_{j}$ even with glasso
+    [@friedmanSparseInverseCovariance2008].
+4.  `SCTransform` is **tied to HVG ranking**, not a factorial
+    “normalisation arm” of the GRN design (@sec-grn-observation).
+
+::: {#nte-hvg-not-gaussian .callout-note}
+## :information_source: HVGs are not a GGM input
+
+Pearson residuals are closer to homoscedastic than raw UMI counts, which
+is why they are popular before PCA. They are still a **nonlinear
+residualisation**. Feeding them indiscriminately into `SILGGM` silently
+changes the estimand of $\boldsymbol{\Theta}_{j}$ away from the latent
+Gaussian that DeCovarT wants at the **population** level. If a Gaussian
+GGM is used, prefer a copula / nonparanormal map on the same gene set
+(@sec-silggm), or better a Poisson-lognormal latent Gaussian
+(@sec-pln).
+:::
+
+## Marker genes {#sec-fs-markers}
+
+Classical signatures score gene $g$ for type $j$ against the remaining
+types, then concatenate lists [@newmanRobustEnumerationCell2015]. Two
+specificity scores on the simplex of relative means
+
+$$
+\pi_{gj}
+=
+\frac{\mu_{gj}}{\sum_{\ell=1}^{J}\mu_{g\ell}},
+\qquad
+\sum_{j}\pi_{gj}=1,
+$$ {#eq-fs-shares}
+
+are useful **compaction** tools, not all-versus-all selectors.
+
+**Shannon entropy** $H(g)=-\sum_{j}\pi_{gj}\log\pi_{gj}$ is small when
+mass concentrates on few types. **Gini** of the same shares is large
+when one type dominates. High Gini / low entropy flags one-versus-rest
+markers. They do not guarantee that the corresponding rows of
+$\boldsymbol{\mu}$ are linearly independent: two markers that separate
+*different* types can still be collinear as rows if those types co-express
+a shared programme. Concatenating the top-$k$ genes per type therefore
+often inflates $|\mathcal{G}|$ without improving $\kappa_{2}$ (see
+@nte-ovr-concat).
+
+Known gastruloid lineage markers (from the Suppinger atlas and
+companion literature) belong in $\mathcal{G}_{0}$ as **seeds**, not as
+the whole panel. They are the natural starting points for Markov-boundary
+expansion once a GGM exists (@sec-fs-perspective).
+
+## Differential expression — only with biological replication {#sec-fs-deg}
+
+`DESeq2`, `edgeR` and `limma`–voom remain the workhorses of one-versus-rest
+ranking [@loveModeratedEstimationFold2014]. CIBERSORT-style pipelines
+keep genes with a loose adjusted $p$ ordered by fold-change, then prune
+by $\kappa$ [@newmanRobustEnumerationCell2015]. That logic **does not
+transfer** to Suppinger as a DE experiment.
+
+::: {#nte-pseudoreplication .callout-warning}
+## :warning: Technical pseudo-bulks are not biological replicates
+
+Cells from a common experimental unit are not independent biological
+replicates. Splitting or bootstrapping cells characterises
+**technical / sampling** variability; it does not manufacture
+between-organoid uncertainty. Treating cells, or random partitions of
+cells, as `DESeq2` replicates inflates apparent degrees of freedom and
+produces false discoveries [@squairConfrontingFalseDiscoveries2021;
+@crowellMuscatDetectsSubpopulationspecific2020]. The improved pipeline
+is explicit: Suppinger is **one** technical scRNA-seq resource.
+
+Use `DESeq2` in this book only if **independent biological replicates**
+exist (distinct organoids / donors / experiments with the same labelled
+types). For GSE229513, skip calibrated DE $p$-values. Rank genes by
+residual variance, Gini / entropy, or a nested-model $F$ statistic
+treated as a **score**, not as a $p$-value.
+:::
+
+If a later gastruloid cohort with genuine replication becomes
+available (GSE250136 is a *different* stem-embryo resource, useful as
+external validation, not as extra Suppinger replicates), then
+donor-level pseudo-bulks are the correct DE unit
+[@crowellMuscatDetectsSubpopulationspecific2020;
+@squairConfrontingFalseDiscoveries2021]. Until then, the naive screen
+is HVG + markers, not HVG + `DESeq2`.
+
+::: {#nte-ovr-concat .callout-warning}
+## :warning: Limitation of one-versus-rest concatenation
+
+The union of per-type markers is usually a multicollinear
+$\boldsymbol{\mu}_{\mathcal{G}}$ that is still too large for stable
+NNLS / GLS / DeCovarT Fisher information
+[@newmanRobustEnumerationCell2015]. A global all-versus-all stage is
+required (@sec-fs-advanced).
+:::
+
+# All-versus-all refinement {#sec-fs-advanced}
+
+The advanced stage treats $\mathcal{G}$ as a **subset selection**
+problem on the full $J$-column signature. The loss is defined on all
+types jointly. That is the right geometry for DeCovarT: the likelihood
+depends on $\boldsymbol{\mu}\boldsymbol{p}$ **and** on
+$\sum_{j}p_{j}^{2}\boldsymbol{\Sigma}_{j}$, so genes that only separate one
+type from “the rest” can still leave two gastruloid neighbours
+unidentifiable.
+
+## Why mean-only $\kappa$ is not enough {#sec-fs-kappa}
+
+$\kappa_{2}(\boldsymbol{\mu}_{\mathcal{G}})$ diagnoses mean collinearity.
+In a gastruloid continuum it is intrinsically large. Two closely related
+types can share nearly collinear means and still differ in
+$\boldsymbol{\Theta}_{j}$. Mean-only pruning then under-represents
+adjacent or low-abundance states — exactly the types whose **rewiring**
+DeCovarT is meant to exploit. Use $\kappa$ as a **diagnostic**, not as
+the sole selector.
+
+A variance-weighted variant standardises rows by gene-wise
+uncertainties $\tau_{g}^{2}$ and evaluates conditioning in the
+$(J-1)$-dimensional contrast space induced by $\sum_{j}p_{j}=1$
+(package vignette `supp-S6-feature-selection.qmd`). Unweighted $\kappa$
+can favour quiet but biased genes
+[@gongDeconRNASeqStatisticalFramework2013].
+
+## Genetic algorithms {#sec-fs-ga}
+
+`AutoGeneS` searches subsets with a multi-objective genetic algorithm
+that minimises inter-population correlation while maximising centroid
+distance [@alieeAutoGeneSAutomaticGene2021]. The loss is already
+all-versus-all. Related multi-objective genetic searches appear in
+network module discovery; they are not DeCovarT-specific.
+
+For this repository the planned optimiser is NSGA-II via `mco::nsga2()`
+[@R-mco], as in the package vignette. Encode genes as a mask in
+$[0,1]^{|\mathcal{G}_{0}|}$ (thresholded to a target size) or as a
+lower-dimensional embedding of gene blocks. Minimise at least
+
+1.  $\kappa_{2}(\boldsymbol{\mu}_{\mathcal{G}})$ (mean geometry);
+2.  average pairwise overlap $\overline{\omega}$ of the $J$ Gaussians
+    $\mathcal{N}(\boldsymbol{\mu}_{\cdot j},\boldsymbol{\Sigma}_{j})$
+    [@melnykovMixSimPackageSimulating2012; @R-MixSim].
+
+`MixSim` defines pairwise overlap as the **sum of the two
+misclassification probabilities** under a Bayes / MAP rule, not as
+$1$ minus a distance. That is a sharper estimand than “one minus
+Hellinger”. Optional analytic surrogates — Jeffreys (symmetric KL),
+Chernoff / Bhattacharyya, and the Bures–Wasserstein metric on
+$(\boldsymbol{\mu}_{j},\boldsymbol{\Sigma}_{j})$ — belong on the same
+Pareto front (package vignette). They use **both** means and
+covariances, which `AutoGeneS` correlation / centroid objectives do not.
+
+::: {#nte-pareto-proposal .callout-note}
+## :information_source: A DeCovarT-specific third objective (proposal)
+
+The improved pipeline proposed adding Fisher identifiability of
+$\boldsymbol{p}$ under @eq-fs-mixture: maximise the smallest eigenvalue of
+the mixture information $I_{\mathcal{G}}(\boldsymbol{p})$, or minimise its
+condition number. That objective is **not** in the literature corpus; it
+is a composition. It is the right scientific target — DeCovarT's score
+depends on $\boldsymbol{\mu}\boldsymbol{p}$ and
+$\sum_{j}p_{j}^{2}\boldsymbol{\Sigma}_{j}$ jointly — but it is
+proportion-dependent and more expensive than MixSim overlap. Keep it as
+a **sensitivity objective** on a shortlist of non-dominated panels, not
+as the only fitness. Do not collapse the front to a single “knee”
+without nested, leakage-free validation.
+:::
+
+Keep several non-dominated panels. Report the whole front. Nested
+cross-validation, when biological replicates exist, must build HVGs,
+DEGs and the Pareto panel **inside** each outer fold; otherwise the
+panel leaks [@squairConfrontingFalseDiscoveries2021]. With one
+Suppinger resource, the honest statement is: the panel is fitted on this
+atlas and must be challenged on an external gastruloid cohort.
+
+## Differential networks as candidate generators {#sec-fs-diffnet}
+
+DeCovarT benefits specifically from **rewiring** between populations.
+A gene that changes neighbourhood in $\boldsymbol{\Theta}_{j}$ is a better
+candidate than a gene that is merely highly variable. Two strategies
+exist.
+
+**Fit every $\boldsymbol{\Theta}_{j}$, then compare supports.** Independent
+glasso / `SILGGM` fits (@sec-silggm) yield per-type edges; the symmetric
+difference of supports, or the difference of partial correlations, ranks
+genes by differential connectivity. This is simple and matches the
+objects DeCovarT eventually needs, but each glasso is shrunk and the
+difference of two biased estimators is not a debiased estimator of
+$\Delta_{j\ell}=\boldsymbol{\Theta}_{j}-\boldsymbol{\Theta}_{\ell}$.
+
+**Estimate $\Delta_{j\ell}$ directly.** D-trace methods target the
+difference of precisions without necessarily reconstructing both graphs
+first (see @sec-fs-perspective). They cannot replace
+$\boldsymbol{\Theta}_{j}$ in the generative model — DeCovarT still needs
+each covariance individually — but they are attractive **feature
+objectives** when individual networks are fairly dense and the
+*difference* is sparse.
+
+Either way, treat differential-network hits as **candidates** for the
+all-versus-all stage, not as the final panel. Concatenating one-versus-rest
+network genes repeats @nte-ovr-concat.
+
+# Perspectives: `INDEED` and D-trace {#sec-fs-perspective}
+
+These methods are **not** in the core Suppinger pipeline. They are the
+statistically natural next step when (i) two (or $J$) groups are to be
+compared as networks, and (ii) genes that both shift in mean **and**
+rewire are the desired biomarkers. Full detail lives in DeCovarT
+`vignettes/supp-S6-feature-selection.qmd`; we only import the estimands.
+
+## `INDEED`: an ad-hoc fusion of DE and differential partial correlation
+
+`INDEED` fits a sparse precision per group, converts to partial
+correlations
+
+$$
+\mathrm{pc}_{gg'}^{(j)}
+=
+-\frac{\theta_{gg'}^{(j)}}
+{\sqrt{\theta_{gg}^{(j)}\,\theta_{g'g'}^{(j)}}},
+\qquad
+\Delta\mathrm{pc}_{gg'}
+=
+\mathrm{pc}_{gg'}^{(j)}-\mathrm{pc}_{gg'}^{(\ell)},
+$$ {#eq-indeed-dpc}
+
+filters $\Delta\mathrm{pc}$ with a permutation (or bootstrap) null, and
+forms an activity score that multiplies mean evidence by differential
+connectivity [@zuoINDEEDIntegratedDifferential2016]
+
+$$
+\mathrm{AS}_{g}
+=
+\bigl(-\log p_{g}^{\mathrm{DE}}\bigr)
+\sum_{g'\neq g}
+\bigl\lvert\Delta\mathrm{pc}_{gg'}\bigr\rvert
+\,
+\mathbf{1}\{\Delta\mathrm{pc}_{gg'}\ \text{significant}\}.
+$$ {#eq-indeed-as}
+
+Relative to pure DGE, this favours genes whose **undirected**
+neighbourhood (Markov boundary in the GGM) differs between groups.
+Related ideas appear in weighted glasso pipelines with PPI priors.
+
+**Criticism for Suppinger.** The DE $p$-value in @eq-indeed-as assumes
+biological replication (@nte-pseudoreplication). The permutation null on
+$\Delta\mathrm{pc}$ among cells of one gastruloid is again a technical
+null. `INDEED` is also **ad hoc**: it tests edges after two separate
+glasso fits rather than estimating $\Delta$ under a joint loss. Use it,
+if at all, as a ranking heuristic on $\mathcal{G}_{0}$, with
+$p_{g}^{\mathrm{DE}}$ replaced by a fold-change or $F$ score.
+
+## D-trace: a loss that targets $\Delta=\Theta_{j}-\Theta_{\ell}$
+
+Zhang and Zou [@zhangSparsePrecisionMatrix2014] introduced the
+lasso-penalised D-trace loss for a **single** sparse precision, with an
+alternating-direction algorithm and sparse-recovery guarantees under an
+irrepresentability condition that can hold when the analogous condition
+for lasso-penalised Gaussian likelihood fails. In the same paper they
+note that the graphical lasso estimator of a sparse precision is usually
+still consistent for the **support** of the true direct interactions
+even when the data are not multivariate Gaussian. That is useful
+background for our glasso / `SILGGM` branch: off-Gaussian UMI tables
+need not destroy edge recovery, even though they do destroy the
+interpretation of $\widehat{\boldsymbol{\Theta}}_{j}$ as a Gaussian
+generative precision.
+
+The differential-network extension
+[@yuanDifferentialNetworkAnalysis2017] estimates a sparse difference
+$\Delta_{j\ell}=\boldsymbol{\Theta}_{j}-\boldsymbol{\Theta}_{\ell}$. Empirically,
+D-trace is competitive for differential-network recovery when the
+**difference** is sparser than either graph, although hubs and dense
+networks remain difficult [@plaksienkoMethodsDifferentialNetwork2025].
+
+For DeCovarT this is the cleaner **perspective** than `INDEED`:
+
+-   the estimand $\Delta_{j\ell}$ is exactly “which partial
+    correlations rewire”;
+-   it does not require a calibrated DE $p$-value;
+-   it still does **not** produce a pair of SPD
+    $\boldsymbol{\Theta}_{j},\boldsymbol{\Theta}_{\ell}$ suitable as generative
+    covariances.
+
+A workable composition — labelled as a **proposal**, not as a result —
+is: use D-trace (or debiased fused graphical lasso) to **nominate**
+rewiring genes; retain those genes in $\mathcal{G}$; then estimate each
+$\boldsymbol{\Theta}_{j}$ on $\mathcal{G}$ with a method from
+@sec-grn-top4 that returns an SPD precision.
+
+## Markov boundaries as panel expansion
+
+Once a GGM exists, a small set of seeds (markers, HVG hubs, `INDEED` /
+D-trace hits) can be grown by undirected neighbours
+$\{g':\theta_{gg'}\neq 0\}$. In a Gaussian Markov random field those
+neighbours are the Markov boundary: they carry residual information
+about $g$ given the rest of the genes. This is **undirected**
+conditioning, not DAG $d$-separation. Directed path-blocking rules are
+the wrong language for glasso supports.
+
+# What we would actually run on Suppinger {#sec-fs-recommend}
+
+1.  **Naive screen.** `SCTransform` (or residual variance from a
+    depth-aware NB) to rank HVGs; add curated gastruloid markers;
+    **no** `DESeq2` $p$-values on technical pseudo-bulks.
+2.  **Cap $|\mathcal{G}_{0}|$.** A few thousand genes before any GGM.
+3.  **All-versus-all.** NSGA-II on $\kappa_{2}(\boldsymbol{\mu}_{\mathcal{G}})$
+    and MixSim $\overline{\omega}$, optionally with Jeffreys / Chernoff
+    as diagnostics. Keep the Pareto set.
+4.  **Optional DiffNet candidates.** Symmetric difference of per-type
+    `SILGGM` supports, or D-trace on a pair of abundant types, as extra
+    genes in $\mathcal{G}_{0}$ — not as the panel.
+5.  **Export linear-scale** $\boldsymbol{\mu}_{\mathcal{G}}$ and
+    $\boldsymbol{\Theta}_{j}$ into DeCovarT.
+
+The first pipeline's “HVG then DESeq2 then NSGA-II on $\kappa$ and
+overlap” is directionally right but overstates what one gastruloid
+scRNA-seq experiment can support, and it treats variance stabilisation
+as if it were a harmless preprocessing for the mixture. The improved
+pipeline's Fisher-information objective is scientifically tighter and
+should be treated as a **proposal** until it is computed.
+
+Scripts (when implemented): `scripts/04_01_*.R` (screen) and
+`scripts/04_02_*.R` (Pareto). No code is given here.

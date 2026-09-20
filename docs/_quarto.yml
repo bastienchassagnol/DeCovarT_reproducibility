@@ -10,8 +10,10 @@ book:
   chapters:
     - index.qmd
     - 01-data-suppinger.qmd
-    - 02-grn-graphical-lasso.qmd
     - 03-feature-selection.qmd
+    - 02-grn-graphical-lasso.qmd
+    - 06-population-alignment.qmd
+    - 05-grn-metrics.qmd
     - 04-sensitivity-misspecification.qmd
   search: true
 

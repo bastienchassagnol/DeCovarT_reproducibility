@@ -2,9 +2,9 @@
 title: "Sensitivity analyses"
 ---
 
-# Contaminating $\boldsymbol{\Omega}_j$ {#sec-sensitivity}
+# Contaminating $\boldsymbol{\Theta}_{j}$ {#sec-sensitivity}
 
-Starting from the fitted sparse precisions (@sec-glasso), apply the
+Starting from the fitted sparse precisions (@eq-grn-export), apply the
 misspecification factors described in DeCovarT
 `vignettes/supp-S5-misspecification.qmd`:
 
@@ -13,7 +13,11 @@ misspecification factors described in DeCovarT
 3. Copula / PLN dependence across genes
 4. Spillover between types
 5. Outlier genes
-6. Wrong covariance reference (perturb or subsample the glasso fit)
+6. Wrong covariance reference (perturb or subsample the glasso / PLN fit)
+
+Zero-inflated or hurdle observation models belong **here**, as a
+contamination of the sampling layer, not as the default GRN
+(@nte-drop-zico).
 
 Template: `scripts/05_01_sensitivity_precision_contamination.R`.
 

@@ -13,18 +13,30 @@ The layout follows analysis reproducibility repos such as
 **Quarto**, published with the GitHub Pages `gh-pages` workflow
 ([Quarto: GitHub Pages, Knitr with renv](https://quarto.org/docs/publishing/github-pages.html#example-knitr-with-renv)).
 
+The scientific target is DeCovarT's cell-type Gaussians: sparse
+precisions $\boldsymbol{\Theta}_{j}\equiv\boldsymbol{\Sigma}_{j}^{-1}$ and means
+$\boldsymbol{\mu}_{\cdot j}$ estimated from labelled single-cell
+transcriptomes, then plugged into the bulk convolution. Notation follows
+the article Methods. Computation stays in `scripts/`; this book is
+theory, criticism, and design.
+
 ```{mermaid}
 %%| label: fig-pipeline
-%%| fig-cap: "Planned pipeline: GEO gastruloids, GRN per cell type, feature panels, DeCovarT, then precision-matrix contamination."
+%%| fig-cap: "Planned pipeline: GEO gastruloids, method-conditional observation model, core GGMs, type-level alignment, feature panels, DeCovarT, then precision-matrix contamination. Fused and copula-joint graphs stay in the GRN appendix."
 %%{init: {"theme": "sandstone"}}%%
 flowchart TD
-  A["GEO GSE229513 / GSE229386"] --> B["02 preprocess SE / SCE"]
-  B --> C["03 SILGGM / BLGGM GRN"]
-  B --> D["04a pseudo-bulk DESeq2"]
-  D --> E["04b NSGA-II / GA panel"]
-  C --> F["DeCovarT deconvolution"]
-  E --> F
-  F --> G["05 contaminate Omega_j"]
+  A["GEO GSE229513 UMI"] --> B["Preprocess SE / SCE"]
+  B --> C["Naive then all-vs-all gene panel"]
+  C --> D{"GGM assumes Gaussian observations?"}
+  D -->|yes| E["NPN inside SILGGM / low-rank / GmGM"]
+  D -->|no| F["Raw counts PLN"]
+  E --> G["Sparse SPD Theta_j"]
+  F --> G
+  G --> H["Type-level lift: affine / W2 / bootstrap"]
+  H --> I["DeCovarT deconvolution"]
+  C --> I
+  I --> J["Contaminate Theta_j"]
+  G -.-> K["Appendix: FGL, JGCGM"]
 ```
 
 ## How to render
@@ -46,8 +58,8 @@ The book format is **HTML only** for now (`pdf` is commented in
 |--------|------|
 | `scripts/01_01_single_cell_exploration_suppinger.R` | Explore GSE229513 |
 | `scripts/02_01_deconvolution_preprocessing.R` | Harmonise genes; SE / SCE |
-| `scripts/03_01_grn_silggm.R` | SILGGM GGM (+ `huge.npn`) |
-| `scripts/03_02_grn_blggm.R` | BLGGM mixture GGM |
-| `scripts/04_01_feature_selection_pseudobulk_deseq2.R` | Pseudo-bulk markers |
+| `scripts/03_01_grn_silggm.R` | SILGGM GGM (NPN **inside this branch**) |
+| `scripts/03_02_grn_blggm.R` | BLGGM mixture GGM (optional given labels) |
+| `scripts/04_01_feature_selection_pseudobulk_deseq2.R` | Naive screen (no DE $p$-values without biological replicates) |
 | `scripts/04_02_feature_selection_genetic_algorithm.R` | Pareto gene panel |
-| `scripts/05_01_sensitivity_precision_contamination.R` | Misspecify $\boldsymbol{\Omega}_j$ |
+| `scripts/05_01_sensitivity_precision_contamination.R` | Misspecify $\boldsymbol{\Theta}_{j}$ |

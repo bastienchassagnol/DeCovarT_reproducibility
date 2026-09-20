@@ -14,6 +14,8 @@
 
 # Run from the repository root. Paths are relative to that root.
 
+stopifnot(requireNamespace("sctransform", quietly = TRUE))
+
 study <- "suppinger"
 technique <- "pseudobulk_deseq2"
 today <- format(Sys.Date(), "%Y-%m-%d")
