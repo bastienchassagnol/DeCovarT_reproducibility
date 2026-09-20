@@ -28,21 +28,32 @@ jobs:
           r-version: release
           use-public-rspm: true
 
-      # setup-renv does not install Linux system libraries (e.g. libglpk-dev for
-      # igraph). Resolve requirements from renv.lock with pak before restore.
-      # https://pak.r-lib.org/reference/sysreqs_check_installed.html
-      - name: Install system requirements (pak)
-        shell: bash
-        run: Rscript --no-save --no-restore scripts/ci_sysreqs.R install
-
-      - name: Install R dependencies
-        uses: r-lib/actions/setup-renv@v2
+      # No DESCRIPTION in this analysis repo: override `packages` so pak
+      # still installs Ubuntu libraries (libglpk-dev for igraph, etc.).
+      # https://github.com/r-lib/actions/tree/v2/setup-r-dependencies
+      - name: Install system and R dependencies
+        uses: r-lib/actions/setup-r-dependencies@v2
         with:
           cache-version: 2
+          install-quarto: "false"
+          packages: |
+            any::fs
+            any::igraph
+            any::knitr
+            any::rmarkdown
+            any::sass
+            any::stringi
+            any::RcppArmadillo
+            any::huge
+            any::SILGGM
+            any::sctransform
+            any::MixSim
+            github::WgitU/BLGGM
 
-      - name: Verify system requirements (pak)
-        shell: bash
-        run: Rscript --no-save --no-restore scripts/ci_sysreqs.R check
+      - name: Restore renv lockfile
+        uses: r-lib/actions/setup-renv@v2
+        with:
+          cache-version: 3
 
       # Book source is docs/ with execute.freeze: auto (commit docs/_freeze).
       # First local setup: empty commit on gh-pages, then
