@@ -4,46 +4,11 @@
     "Repositories": [
       {
         "Name": "CRAN",
-        "URL": "https://cloud.r-project.org"
+        "URL": "https://packagemanager.posit.co/cran/latest"
       }
     ]
   },
   "Packages": {
-    "BLGGM": {
-      "Package": "BLGGM",
-      "Version": "0.99.7",
-      "Source": "GitHub",
-      "Type": "Package",
-      "Title": "Estimating Heterogeneous Gene Regulatory Networks from Zero-Inflated Single-Cell Expression Data",
-      "Date": "2021-8-10",
-      "Author": "Qiuyu Wu, Xiangyu Luo",
-      "Maintainer": "Qiuyu Wu <w.qy@ruc.edu.cn>",
-      "Description": "Single-cell sequencing technologies can elucidate the gene-gene relationship at an unprecedented resolution. However, the expression data from single cells are often zero-inflated and heterogeneous, making commonly used Gaussian graphical models infeasible to correctly estimate gene regulatory networks. We proposed a Bayesian latent mixture Gaussian graphical model to explicitly account for the data heterogeneity and zero-inflation. The R package BLGGM (Bayesian latent mixture Gaussian graphical model), designed for operating systems Windows and Linux, implements the proposed method to cluster cells and obtain cellular gene regulatory networks simultaneously. Package BLGGM employs a hybrid Markov chain Monte Carlo algorithm to perform posterior inference in the Bayesian framework.",
-      "Depends": [
-        "R (>= 3.6)",
-        "stats",
-        "MASS"
-      ],
-      "License": "GPL (>= 2)",
-      "Imports": [
-        "Rcpp (>= 1.0.3)",
-        "RcppArmadillo (>= 0.9.850.1.0)"
-      ],
-      "LinkingTo": [
-        "Rcpp",
-        "RcppArmadillo"
-      ],
-      "RoxygenNote": "7.1.1",
-      "Encoding": "UTF-8",
-      "LazyData": "true",
-      "NeedsCompilation": "yes",
-      "RemoteType": "github",
-      "RemoteHost": "api.github.com",
-      "RemoteUsername": "WgitU",
-      "RemoteRepo": "BLGGM",
-      "RemoteRef": "main",
-      "RemoteSha": "2acabd4c583b49801460865ef7ccb8b944edc7fa"
-    },
     "MASS": {
       "Package": "MASS",
       "Version": "7.3-66",

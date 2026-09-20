@@ -5,6 +5,14 @@ on:
 
 name: Quarto Publish
 
+# Prefer Posit Package Manager Linux binaries when they exist for this
+# runner (ubuntu-latest is currently Noble). renv rewrites
+# packagemanager.posit.co/cran/latest → __linux__/<codename>/latest.
+# Local jammy hosts should keep a user ~/.Rprofile with the jammy URL
+# (noble binaries need a newer libstdc++).
+env:
+  RENV_CONFIG_PPM_ENABLED: true
+
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
@@ -30,11 +38,12 @@ jobs:
 
       # No DESCRIPTION in this analysis repo: override `packages` so pak
       # still installs Ubuntu libraries (libglpk-dev for igraph, etc.).
+      # BLGGM is not in the lockfile (does not compile on R 4.6).
       # https://github.com/r-lib/actions/tree/v2/setup-r-dependencies
       - name: Install system and R dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          cache-version: 2
+          cache-version: 3
           install-quarto: "false"
           packages: |
             any::fs
@@ -48,12 +57,11 @@ jobs:
             any::SILGGM
             any::sctransform
             any::MixSim
-            github::WgitU/BLGGM
 
       - name: Restore renv lockfile
         uses: r-lib/actions/setup-renv@v2
         with:
-          cache-version: 3
+          cache-version: 4
 
       # Book source is docs/ with execute.freeze: auto (commit docs/_freeze).
       # First local setup: empty commit on gh-pages, then

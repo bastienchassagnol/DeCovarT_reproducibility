@@ -12,7 +12,8 @@
 #   input            genes x cells TSV
 #   npn              shrinkage | truncation | none
 #
-# https://github.com/WgitU/BLGGM
+# Optional template. BLGGM is not in renv.lock and is not used for the
+# core DeCovarT GRN; it fails to compile on current R. Do not restore it.
 
 # ==========================================================================
 # SECTION 0 · CLI and paths ----
