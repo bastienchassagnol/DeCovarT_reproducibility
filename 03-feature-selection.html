@@ -2,20 +2,23 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.37">
+<meta name="generator" content="quarto-1.10.18">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>4&nbsp; Feature selection – DeCovarT reproducibility</title>
+<title>3&nbsp; Feature selection for cell-type Gaussians – DeCovarT reproducibility</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
 */
-code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -58,7 +61,26 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -68,18 +90,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./04-sensitivity-misspecification.html" rel="next">
-<link href="./02-grn-graphical-lasso.html" rel="prev">
+<link href="./02-grn-graphical-lasso.html" rel="next">
+<link href="./01-data-suppinger.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-f7c5ddf7ad4088526f39b899231c5453.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-ed7344add5f1663e434276306a2aa159.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -107,9 +129,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<script src="site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -149,7 +174,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./03-feature-selection.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Feature selection</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./03-feature-selection.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Feature selection for cell-type Gaussians</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -165,9 +190,6 @@ window.Quarto = {
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="./">DeCovarT reproducibility</a> 
-        <div class="sidebar-tools-main">
-    <a href="./DeCovarT-reproducibility.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
-</div>
     </div>
       </div>
         <div class="mt-2 flex-shrink-0 align-items-center">
@@ -191,20 +213,32 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./02-grn-graphical-lasso.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Gene regulatory networks</span></span></a>
+  <a href="./03-feature-selection.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Feature selection for cell-type Gaussians</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./03-feature-selection.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Feature selection</span></span></a>
+  <a href="./02-grn-graphical-lasso.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Undirected GGMs from single-cell transcriptomics</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-population-alignment.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">From single cells to type-level Gaussians</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-grn-metrics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Evaluating networks without a true DAG</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./04-sensitivity-misspecification.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></span></a>
   </div>
 </li>
     </ul>
@@ -217,8 +251,26 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#sec-deseq2" id="toc-sec-deseq2" class="nav-link active" data-scroll-target="#sec-deseq2"><span class="header-section-number">5</span> Pseudo-bulk markers</a></li>
-  <li><a href="#sec-ga" id="toc-sec-ga" class="nav-link" data-scroll-target="#sec-ga"><span class="header-section-number">6</span> Genetic / Pareto panels</a></li>
+  <li><a href="#sec-fs-notation" id="toc-sec-fs-notation" class="nav-link active" data-scroll-target="#sec-fs-notation"><span class="header-section-number">4</span> Notation</a></li>
+  <li><a href="#sec-fs-naive" id="toc-sec-fs-naive" class="nav-link" data-scroll-target="#sec-fs-naive"><span class="header-section-number">5</span> Naive screen</a>
+  <ul class="collapse">
+  <li><a href="#sec-fs-hvg" id="toc-sec-fs-hvg" class="nav-link" data-scroll-target="#sec-fs-hvg"><span class="header-section-number">5.1</span> Highly variable genes</a></li>
+  <li><a href="#sec-fs-markers" id="toc-sec-fs-markers" class="nav-link" data-scroll-target="#sec-fs-markers"><span class="header-section-number">5.2</span> Marker genes</a></li>
+  <li><a href="#sec-fs-deg" id="toc-sec-fs-deg" class="nav-link" data-scroll-target="#sec-fs-deg"><span class="header-section-number">5.3</span> Differential expression — only with biological replication</a></li>
+  </ul></li>
+  <li><a href="#sec-fs-advanced" id="toc-sec-fs-advanced" class="nav-link" data-scroll-target="#sec-fs-advanced"><span class="header-section-number">6</span> All-versus-all refinement</a>
+  <ul class="collapse">
+  <li><a href="#sec-fs-kappa" id="toc-sec-fs-kappa" class="nav-link" data-scroll-target="#sec-fs-kappa"><span class="header-section-number">6.1</span> Why mean-only <span class="math inline">\(\kappa\)</span> is not enough</a></li>
+  <li><a href="#sec-fs-ga" id="toc-sec-fs-ga" class="nav-link" data-scroll-target="#sec-fs-ga"><span class="header-section-number">6.2</span> Genetic algorithms</a></li>
+  <li><a href="#sec-fs-diffnet" id="toc-sec-fs-diffnet" class="nav-link" data-scroll-target="#sec-fs-diffnet"><span class="header-section-number">6.3</span> Differential networks as candidate generators</a></li>
+  </ul></li>
+  <li><a href="#sec-fs-perspective" id="toc-sec-fs-perspective" class="nav-link" data-scroll-target="#sec-fs-perspective"><span class="header-section-number">7</span> Perspectives: <code>INDEED</code> and D-trace</a>
+  <ul class="collapse">
+  <li><a href="#indeed-an-ad-hoc-fusion-of-de-and-differential-partial-correlation" id="toc-indeed-an-ad-hoc-fusion-of-de-and-differential-partial-correlation" class="nav-link" data-scroll-target="#indeed-an-ad-hoc-fusion-of-de-and-differential-partial-correlation"><span class="header-section-number">7.1</span> <code>INDEED</code>: an ad-hoc fusion of DE and differential partial correlation</a></li>
+  <li><a href="#d-trace-a-loss-that-targets-deltatheta_j-theta_ell" id="toc-d-trace-a-loss-that-targets-deltatheta_j-theta_ell" class="nav-link" data-scroll-target="#d-trace-a-loss-that-targets-deltatheta_j-theta_ell"><span class="header-section-number">7.2</span> D-trace: a loss that targets <span class="math inline">\(\Delta=\Theta_{j}-\Theta_{\ell}\)</span></a></li>
+  <li><a href="#markov-boundaries-as-panel-expansion" id="toc-markov-boundaries-as-panel-expansion" class="nav-link" data-scroll-target="#markov-boundaries-as-panel-expansion"><span class="header-section-number">7.3</span> Markov boundaries as panel expansion</a></li>
+  </ul></li>
+  <li><a href="#sec-fs-recommend" id="toc-sec-fs-recommend" class="nav-link" data-scroll-target="#sec-fs-recommend"><span class="header-section-number">8</span> What we would actually run on Suppinger</a></li>
   </ul>
 </nav>
     </div>
@@ -227,7 +279,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Feature selection</span></h1>
+<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Feature selection for cell-type Gaussians</span></h1>
 </div>
 
 
@@ -244,21 +296,348 @@ window.Quarto = {
 </header>
 
 
-<section id="sec-deseq2" class="level1" data-number="5">
-<h1 data-number="5"><span class="header-section-number">5</span> Pseudo-bulk markers</h1>
-<p>Per time point, aggregate unnormalised counts by sample and cell type, filter with <code>edgeR::filterByExpr()</code>, and fit <code>DESeq2</code> as in <a href="https://github.com/bastienchassagnol/GastroDeconv2FateMap/blob/main/scripts/06_02_deseq2_biological_exploration_transcriptomic_differential_analyses.R">06_02_deseq2_*.R</a>.</p>
-<p>Template: <code>scripts/04_01_feature_selection_pseudobulk_deseq2.R</code>.</p>
-</section>
-<section id="sec-ga" class="level1" data-number="6">
-<h1 data-number="6"><span class="header-section-number">6</span> Genetic / Pareto panels</h1>
-<p>Refine the shortlist with the all-versus-all criteria in DeCovarT <code>vignettes/supp-S6-feature-selection.qmd</code>: minimise <span class="math inline">\(\kappa_2(\boldsymbol{\mu}_{\mathcal{G}})\)</span> and mean overlap with <code>mco::nsga2()</code> (NSGA-II); optional scalar <code>GA</code> / <code>GenSA</code>.</p>
-<p>Template: <code>scripts/04_02_feature_selection_genetic_algorithm.R</code>.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># mco::nsga2(fn = bi_objective_func, idim = n_candidates, odim = 2, ...)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>This chapter selects a gene panel <span class="math inline">\(\mathcal{G}\)</span> on which DeCovarT can discriminate gastruloid cell types through <strong>both</strong> mean shifts <span class="math inline">\(\boldsymbol{\mu}_{\cdot j}\)</span> and precision rewiring <span class="math inline">\(\boldsymbol{\Theta}_{j}\equiv\boldsymbol{\Sigma}_{j}^{-1}\)</span>. Notation follows the article: gene <span class="math inline">\(g=1,\ldots,G\)</span>; cell type <span class="math inline">\(j=1,\ldots,J\)</span>; bulk <span class="math inline">\(\boldsymbol{y}_{\cdot i}\)</span> is a Gaussian convolution of purified profiles <span class="citation" data-cites="wangBulkTissueCell2019">(<a href="#ref-wangBulkTissueCell2019" role="doc-biblioref">Wang et al. 2019</a>)</span>. Feature selection is a pre-modelling filter <span class="citation" data-cites="guyonIntroductionVariableFeature2003">(<a href="#ref-guyonIntroductionVariableFeature2003" role="doc-biblioref">Guyon and Elisseeff 2003</a>)</span>, not a marker-enrichment score.</p>
+<p>The first pipeline treated <code>sctransform</code> highly variable genes (HVGs), optional <code>DESeq2</code> on technical pseudo-bulks, and an NSGA-II Pareto refinement as a single stack. That mix is too optimistic on <strong>Suppinger</strong>, where there is only <strong>one</strong> scRNA-seq resource (GEO <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE229513">GSE229513</a>; <span class="citation" data-cites="suppingerMultimodalCharacterizationMurine2023">(<a href="#ref-suppingerMultimodalCharacterizationMurine2023" role="doc-biblioref">Suppinger et al. 2023</a>)</span>), and it puts variance stabilisation on the same design axis as the graphical model (see <a href="02-grn-graphical-lasso.html" class="quarto-xref"><span>Chapter 6</span></a> and <a href="02-grn-graphical-lasso.html#nte-jensen-transform" class="quarto-xref">Note&nbsp;<span>6.1</span></a>). Here we split the problem into a <strong>naive screen</strong> (cheap, marginally motivated) and an <strong>all-versus-all refinement</strong> (geometry of <span class="math inline">\(\boldsymbol{\mu}_{\mathcal{G}}\)</span> and rewiring of <span class="math inline">\(\boldsymbol{\Theta}_{j}\)</span>). <code>INDEED</code> and D-trace enter only as a <strong>perspective</strong> (<a href="#sec-fs-perspective" class="quarto-xref"><span>Chapter 7</span></a>).</p>
+<div class="cell" data-layout-align="default">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>%%{init: {"theme": "sandstone"}}%%</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>flowchart TD</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  A["UMI counts, labels j"] --&gt; B["Naive screen"]</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  B --&gt; B1["HVG ranking"]</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  B --&gt; B2["Marker specificity"]</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  B --&gt; B3["DEG only if biological replicates"]</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  B1 --&gt; C["Working universe G0"]</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  B2 --&gt; C</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  B3 --&gt; C</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  C --&gt; D["All-versus-all"]</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  D --&gt; D1["kappa2 of mu_G"]</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  D --&gt; D2["MixSim / Chernoff overlap"]</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  D --&gt; D3["NSGA-II / AutoGeneS"]</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  D --&gt; D4["DiffNet candidates"]</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  D1 --&gt; E["Non-dominated panels G"]</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  D2 --&gt; E</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  D3 --&gt; E</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  D4 --&gt; E</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  E --&gt; F["DeCovarT mu, Theta_j"]</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  C -.-&gt; G["Perspective: INDEED, D-trace"]</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  G -.-&gt; E</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="fig-fs-layout" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-fs-layout-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>
+<pre class="mermaid mermaid-js" data-label="fig-fs-layout">%%{init: {"theme": "sandstone"}}%%
+flowchart TD
+  A["UMI counts, labels j"] --&gt; B["Naive screen"]
+  B --&gt; B1["HVG ranking"]
+  B --&gt; B2["Marker specificity"]
+  B --&gt; B3["DEG only if biological replicates"]
+  B1 --&gt; C["Working universe G0"]
+  B2 --&gt; C
+  B3 --&gt; C
+  C --&gt; D["All-versus-all"]
+  D --&gt; D1["kappa2 of mu_G"]
+  D --&gt; D2["MixSim / Chernoff overlap"]
+  D --&gt; D3["NSGA-II / AutoGeneS"]
+  D --&gt; D4["DiffNet candidates"]
+  D1 --&gt; E["Non-dominated panels G"]
+  D2 --&gt; E
+  D3 --&gt; E
+  D4 --&gt; E
+  E --&gt; F["DeCovarT mu, Theta_j"]
+  C -.-&gt; G["Perspective: INDEED, D-trace"]
+  G -.-&gt; E
+</pre>
 </div>
-<p>Keep several non-dominated panels; do not report a single arbitrary knee as <em>the</em> signature until nested, leakage-free validation exists.</p>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-fs-layout-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.1: Two-stage feature selection: a naive one-versus-rest screen, then an all-versus-all refinement that uses mean geometry, Gaussian overlap, and (optionally) differential-network candidates. D-trace and INDEED remain perspectives.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<section id="sec-fs-notation" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Notation</h1>
+<p>Let <span class="math inline">\(\boldsymbol{\mu}=(\boldsymbol{\mu}_{\cdot j})_{j=1}^{J}\in\mathbb{R}^{G\times J}\)</span> be the mean signature and <span class="math inline">\(\{\boldsymbol{\Sigma}_{j}\}_{j=1}^{J}\)</span> the cell-type covariances. Conditionally on proportions <span class="math inline">\(\boldsymbol{p}\in\Delta^{J-1}\)</span>,</p>
+<p><span id="eq-fs-mixture"><span class="math display">\[
+\boldsymbol{y}\mid(\boldsymbol{\zeta},\boldsymbol{p})
+\sim
+\mathcal{N}_{G}\!\left(
+\boldsymbol{\mu}\boldsymbol{p},\,
+\sum_{j=1}^{J}p_{j}^{2}\boldsymbol{\Sigma}_{j}
+\right),
+\quad
+\boldsymbol{\zeta}=(\boldsymbol{\mu},\{\boldsymbol{\Sigma}_{j}\}),
+\tag{4.1}\]</span></span></p>
+<p>which is the DeCovarT convolution (article Methods; the same <span class="math inline">\(p_{j}^{2}\)</span> scaling appears in the first pipeline’s aggregation algebra, corrected in <a href="06-population-alignment.html" class="quarto-xref"><span>Chapter 8</span></a>). For a subset <span class="math inline">\(\mathcal{G}\subseteq\{1,\ldots,G\}\)</span> write <span class="math inline">\(\boldsymbol{\mu}_{\mathcal{G}}\)</span> for the corresponding rows. The 2-norm condition number is</p>
+<p><span id="eq-fs-kappa"><span class="math display">\[
+\kappa_{2}(\boldsymbol{X})
+=
+\frac{\sigma_{\max}(\boldsymbol{X})}{\sigma_{\min}(\boldsymbol{X})}.
+\tag{4.2}\]</span></span></p>
+<p>Large <span class="math inline">\(\kappa_{2}(\boldsymbol{\mu}_{\mathcal{G}})\)</span> is multicollinearity of the <strong>mean</strong> design <span class="citation" data-cites="gongDeconRNASeqStatisticalFramework2013 newmanRobustEnumerationCell2015">(<a href="#ref-gongDeconRNASeqStatisticalFramework2013" role="doc-biblioref">Gong and Szustakowski 2013</a>; <a href="#ref-newmanRobustEnumerationCell2015" role="doc-biblioref">Newman et al. 2015</a>)</span>. It does <strong>not</strong> see precision rewiring. For a gastruloid continuum, neighbouring states are close in mean by construction; aggressive <span class="math inline">\(\kappa\)</span>-minimisation then keeps a few lineage representatives and drops genes whose signal lives in <span class="math inline">\(\boldsymbol{\Theta}_{j}\)</span> <span class="citation" data-cites="wangBulkTissueCell2019">(<a href="#ref-wangBulkTissueCell2019" role="doc-biblioref">Wang et al. 2019</a>)</span>.</p>
+<div id="nte-linear-scale" class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important&nbsp;4.1: :warning: Keep the mixture on a linear scale
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><a href="#eq-fs-mixture" class="quarto-xref">Equation&nbsp;<span>4.1</span></a> is linear in <span class="math inline">\(\boldsymbol{p}\)</span> only if <span class="math inline">\(\boldsymbol{\mu}\)</span> and <span class="math inline">\(\boldsymbol{y}\)</span> live on the <strong>same additive scale</strong> (counts, CPM, or TPM). Logarithms, <code>SCTransform</code> Pearson residuals, and nonparanormal scores break that map <span class="citation" data-cites="sturmComprehensiveEvaluationTranscriptomebased2019 jinBenchmarkRNAseqDeconvolution2021 hoffmannRobustComputationalReconstitution2006">(<a href="#ref-sturmComprehensiveEvaluationTranscriptomebased2019" role="doc-biblioref">Sturm et al. 2019</a>; <a href="#ref-jinBenchmarkRNAseqDeconvolution2021" role="doc-biblioref">Jin and Liu 2021</a>; <a href="#ref-hoffmannRobustComputationalReconstitution2006" role="doc-biblioref">Hoffmann et al. 2006</a>)</span>. Use residualisation only to <strong>rank</strong> HVGs (<a href="#sec-fs-hvg" class="quarto-xref"><span>Section 5.1</span></a>); export DeCovarT moments on the linear scale. The probabilistic reason is Jensen’s inequality: see <a href="02-grn-graphical-lasso.html#nte-jensen-transform" class="quarto-xref">Note&nbsp;<span>6.1</span></a>.</p>
+</div>
+</div>
+</section>
+<section id="sec-fs-naive" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Naive screen</h1>
+<p>The naive stage builds a working universe <span class="math inline">\(\mathcal{G}_{0}\)</span> of a few thousand genes. It is <strong>one-versus-rest in spirit</strong>: each gene is scored marginally. That is cheap and biologically readable, and it is the right place to stop if the all-versus-all optimiser has nothing to search over. It is the <strong>wrong</strong> place to stop for DeCovarT, because concatenating per-type shortlists typically yields a multicollinear <span class="math inline">\(\boldsymbol{\mu}_{\mathcal{G}}\)</span> <span class="citation" data-cites="newmanRobustEnumerationCell2015">(<a href="#ref-newmanRobustEnumerationCell2015" role="doc-biblioref">Newman et al. 2015</a>)</span>.</p>
+<section id="sec-fs-hvg" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="sec-fs-hvg"><span class="header-section-number">5.1</span> Highly variable genes</h2>
+<p>Single-cell UMI tables mix depth noise with biological heterogeneity. Regularised negative-binomial regression in <code>sctransform</code> <span class="citation" data-cites="R-sctransform">(<a href="#ref-R-sctransform" role="doc-biblioref">Hafemeister et al. 2025</a>)</span> / <code>Seurat::SCTransform</code> separates the two via Pearson residuals <span class="citation" data-cites="hafemeisterNormalizationVarianceStabilization2019">(<a href="#ref-hafemeisterNormalizationVarianceStabilization2019" role="doc-biblioref">Hafemeister and Satija 2019</a>)</span></p>
+<p><span id="eq-fs-pearson"><span class="math display">\[
+r_{cg}
+=
+\frac{y_{cg}-\hat{\mu}_{cg}}
+{\sqrt{\hat{\mu}_{cg}+\hat{\mu}_{cg}^{2}/\hat{\theta}_{g}}},
+\tag{5.1}\]</span></span></p>
+<p>with library size as an offset and empirical-Bayes shrinkage of dispersions <span class="math inline">\(\hat{\theta}_{g}\)</span>. Residual variance is a ranking score for HVGs, <strong>not</strong> a Gaussian observation model for graphical lasso.</p>
+<p>Practical rules for Suppinger:</p>
+<ol type="1">
+<li>Do <strong>not</strong> regress out cell type when ranking HVGs: that removes the inter-type signal the panel is meant to keep.</li>
+<li>A design <span class="math inline">\(\sim\texttt{CellType}\)</span> without intercept contrasts each labelled type against the global mean across types, which is closer to an all-versus-all HVG ranking than a global intercept.</li>
+<li>Keep on the order of <span class="math inline">\(2{,}000\)</span> residual-variable genes as <span class="math inline">\(\mathcal{G}_{0}\)</span> before any GGM; estimating <span class="math inline">\(\boldsymbol{\Theta}_{j}\)</span> on the full transcriptome is unstable when <span class="math inline">\(G\gg n_{j}\)</span> even with glasso <span class="citation" data-cites="friedmanSparseInverseCovariance2008">(<a href="#ref-friedmanSparseInverseCovariance2008" role="doc-biblioref">Friedman et al. 2008</a>)</span>.</li>
+<li><code>SCTransform</code> is <strong>tied to HVG ranking</strong>, not a factorial “normalisation arm” of the GRN design (<a href="02-grn-graphical-lasso.html" class="quarto-xref"><span>Chapter 6</span></a>).</li>
+</ol>
+<div id="nte-hvg-not-gaussian" class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note&nbsp;5.1: :information_source: HVGs are not a GGM input
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Pearson residuals are closer to homoscedastic than raw UMI counts, which is why they are popular before PCA. They are still a <strong>nonlinear residualisation</strong>. Feeding them indiscriminately into <code>SILGGM</code> silently changes the estimand of <span class="math inline">\(\boldsymbol{\Theta}_{j}\)</span> away from the latent Gaussian that DeCovarT wants at the <strong>population</strong> level. If a Gaussian GGM is used, prefer a copula / nonparanormal map on the same gene set (<a href="02-grn-graphical-lasso.html#sec-silggm" class="quarto-xref"><span>Section 7.1</span></a>), or better a Poisson-lognormal latent Gaussian (<a href="02-grn-graphical-lasso.html#sec-pln" class="quarto-xref"><span>Section 7.2</span></a>).</p>
+</div>
+</div>
+</section>
+<section id="sec-fs-markers" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="sec-fs-markers"><span class="header-section-number">5.2</span> Marker genes</h2>
+<p>Classical signatures score gene <span class="math inline">\(g\)</span> for type <span class="math inline">\(j\)</span> against the remaining types, then concatenate lists <span class="citation" data-cites="newmanRobustEnumerationCell2015">(<a href="#ref-newmanRobustEnumerationCell2015" role="doc-biblioref">Newman et al. 2015</a>)</span>. Two specificity scores on the simplex of relative means</p>
+<p><span id="eq-fs-shares"><span class="math display">\[
+\pi_{gj}
+=
+\frac{\mu_{gj}}{\sum_{\ell=1}^{J}\mu_{g\ell}},
+\qquad
+\sum_{j}\pi_{gj}=1,
+\tag{5.2}\]</span></span></p>
+<p>are useful <strong>compaction</strong> tools, not all-versus-all selectors.</p>
+<p><strong>Shannon entropy</strong> <span class="math inline">\(H(g)=-\sum_{j}\pi_{gj}\log\pi_{gj}\)</span> is small when mass concentrates on few types. <strong>Gini</strong> of the same shares is large when one type dominates. High Gini / low entropy flags one-versus-rest markers. They do not guarantee that the corresponding rows of <span class="math inline">\(\boldsymbol{\mu}\)</span> are linearly independent: two markers that separate <em>different</em> types can still be collinear as rows if those types co-express a shared programme. Concatenating the top-<span class="math inline">\(k\)</span> genes per type therefore often inflates <span class="math inline">\(|\mathcal{G}|\)</span> without improving <span class="math inline">\(\kappa_{2}\)</span> (see <a href="#nte-ovr-concat" class="quarto-xref">Note&nbsp;<span>5.3</span></a>).</p>
+<p>Known gastruloid lineage markers (from the Suppinger atlas and companion literature) belong in <span class="math inline">\(\mathcal{G}_{0}\)</span> as <strong>seeds</strong>, not as the whole panel. They are the natural starting points for Markov-boundary expansion once a GGM exists (<a href="#sec-fs-perspective" class="quarto-xref"><span>Chapter 7</span></a>).</p>
+</section>
+<section id="sec-fs-deg" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="sec-fs-deg"><span class="header-section-number">5.3</span> Differential expression — only with biological replication</h2>
+<p><code>DESeq2</code>, <code>edgeR</code> and <code>limma</code>–voom remain the workhorses of one-versus-rest ranking <span class="citation" data-cites="loveModeratedEstimationFold2014">(<a href="#ref-loveModeratedEstimationFold2014" role="doc-biblioref">Love et al. 2014</a>)</span>. CIBERSORT-style pipelines keep genes with a loose adjusted <span class="math inline">\(p\)</span> ordered by fold-change, then prune by <span class="math inline">\(\kappa\)</span> <span class="citation" data-cites="newmanRobustEnumerationCell2015">(<a href="#ref-newmanRobustEnumerationCell2015" role="doc-biblioref">Newman et al. 2015</a>)</span>. That logic <strong>does not transfer</strong> to Suppinger as a DE experiment.</p>
+<div id="nte-pseudoreplication" class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning&nbsp;5.2: :warning: Technical pseudo-bulks are not biological replicates
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Cells from a common experimental unit are not independent biological replicates. Splitting or bootstrapping cells characterises <strong>technical / sampling</strong> variability; it does not manufacture between-organoid uncertainty. Treating cells, or random partitions of cells, as <code>DESeq2</code> replicates inflates apparent degrees of freedom and produces false discoveries <span class="citation" data-cites="squairConfrontingFalseDiscoveries2021 crowellMuscatDetectsSubpopulationspecific2020">(<a href="#ref-squairConfrontingFalseDiscoveries2021" role="doc-biblioref">Squair et al. 2021</a>; <a href="#ref-crowellMuscatDetectsSubpopulationspecific2020" role="doc-biblioref">Crowell et al. 2020</a>)</span>. The improved pipeline is explicit: Suppinger is <strong>one</strong> technical scRNA-seq resource.</p>
+<p>Use <code>DESeq2</code> in this book only if <strong>independent biological replicates</strong> exist (distinct organoids / donors / experiments with the same labelled types). For GSE229513, skip calibrated DE <span class="math inline">\(p\)</span>-values. Rank genes by residual variance, Gini / entropy, or a nested-model <span class="math inline">\(F\)</span> statistic treated as a <strong>score</strong>, not as a <span class="math inline">\(p\)</span>-value.</p>
+</div>
+</div>
+<p>If a later gastruloid cohort with genuine replication becomes available (GSE250136 is a <em>different</em> stem-embryo resource, useful as external validation, not as extra Suppinger replicates), then donor-level pseudo-bulks are the correct DE unit <span class="citation" data-cites="crowellMuscatDetectsSubpopulationspecific2020 squairConfrontingFalseDiscoveries2021">(<a href="#ref-crowellMuscatDetectsSubpopulationspecific2020" role="doc-biblioref">Crowell et al. 2020</a>; <a href="#ref-squairConfrontingFalseDiscoveries2021" role="doc-biblioref">Squair et al. 2021</a>)</span>. Until then, the naive screen is HVG + markers, not HVG + <code>DESeq2</code>.</p>
+<div id="nte-ovr-concat" class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning&nbsp;5.3: :warning: Limitation of one-versus-rest concatenation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The union of per-type markers is usually a multicollinear <span class="math inline">\(\boldsymbol{\mu}_{\mathcal{G}}\)</span> that is still too large for stable NNLS / GLS / DeCovarT Fisher information <span class="citation" data-cites="newmanRobustEnumerationCell2015">(<a href="#ref-newmanRobustEnumerationCell2015" role="doc-biblioref">Newman et al. 2015</a>)</span>. A global all-versus-all stage is required (<a href="#sec-fs-advanced" class="quarto-xref"><span>Chapter 6</span></a>).</p>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-fs-advanced" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> All-versus-all refinement</h1>
+<p>The advanced stage treats <span class="math inline">\(\mathcal{G}\)</span> as a <strong>subset selection</strong> problem on the full <span class="math inline">\(J\)</span>-column signature. The loss is defined on all types jointly. That is the right geometry for DeCovarT: the likelihood depends on <span class="math inline">\(\boldsymbol{\mu}\boldsymbol{p}\)</span> <strong>and</strong> on <span class="math inline">\(\sum_{j}p_{j}^{2}\boldsymbol{\Sigma}_{j}\)</span>, so genes that only separate one type from “the rest” can still leave two gastruloid neighbours unidentifiable.</p>
+<section id="sec-fs-kappa" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="sec-fs-kappa"><span class="header-section-number">6.1</span> Why mean-only <span class="math inline">\(\kappa\)</span> is not enough</h2>
+<p><span class="math inline">\(\kappa_{2}(\boldsymbol{\mu}_{\mathcal{G}})\)</span> diagnoses mean collinearity. In a gastruloid continuum it is intrinsically large. Two closely related types can share nearly collinear means and still differ in <span class="math inline">\(\boldsymbol{\Theta}_{j}\)</span>. Mean-only pruning then under-represents adjacent or low-abundance states — exactly the types whose <strong>rewiring</strong> DeCovarT is meant to exploit. Use <span class="math inline">\(\kappa\)</span> as a <strong>diagnostic</strong>, not as the sole selector.</p>
+<p>A variance-weighted variant standardises rows by gene-wise uncertainties <span class="math inline">\(\tau_{g}^{2}\)</span> and evaluates conditioning in the <span class="math inline">\((J-1)\)</span>-dimensional contrast space induced by <span class="math inline">\(\sum_{j}p_{j}=1\)</span> (package vignette <code>supp-S6-feature-selection.qmd</code>). Unweighted <span class="math inline">\(\kappa\)</span> can favour quiet but biased genes <span class="citation" data-cites="gongDeconRNASeqStatisticalFramework2013">(<a href="#ref-gongDeconRNASeqStatisticalFramework2013" role="doc-biblioref">Gong and Szustakowski 2013</a>)</span>.</p>
+</section>
+<section id="sec-fs-ga" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="sec-fs-ga"><span class="header-section-number">6.2</span> Genetic algorithms</h2>
+<p><code>AutoGeneS</code> searches subsets with a multi-objective genetic algorithm that minimises inter-population correlation while maximising centroid distance <span class="citation" data-cites="alieeAutoGeneSAutomaticGene2021">(<a href="#ref-alieeAutoGeneSAutomaticGene2021" role="doc-biblioref">Aliee and Theis 2021</a>)</span>. The loss is already all-versus-all. Related multi-objective genetic searches appear in network module discovery; they are not DeCovarT-specific.</p>
+<p>For this repository the planned optimiser is NSGA-II via <code>mco::nsga2()</code> <span class="citation" data-cites="R-mco">(<a href="#ref-R-mco" role="doc-biblioref">Mersmann et al. 2020</a>)</span>, as in the package vignette. Encode genes as a mask in <span class="math inline">\([0,1]^{|\mathcal{G}_{0}|}\)</span> (thresholded to a target size) or as a lower-dimensional embedding of gene blocks. Minimise at least</p>
+<ol type="1">
+<li><span class="math inline">\(\kappa_{2}(\boldsymbol{\mu}_{\mathcal{G}})\)</span> (mean geometry);</li>
+<li>average pairwise overlap <span class="math inline">\(\overline{\omega}\)</span> of the <span class="math inline">\(J\)</span> Gaussians <span class="math inline">\(\mathcal{N}(\boldsymbol{\mu}_{\cdot j},\boldsymbol{\Sigma}_{j})\)</span> <span class="citation" data-cites="melnykovMixSimPackageSimulating2012 R-MixSim">(<a href="#ref-melnykovMixSimPackageSimulating2012" role="doc-biblioref">Melnykov et al. 2012</a>, <a href="#ref-R-MixSim" role="doc-biblioref">2021</a>)</span>.</li>
+</ol>
+<p><code>MixSim</code> defines pairwise overlap as the <strong>sum of the two misclassification probabilities</strong> under a Bayes / MAP rule, not as <span class="math inline">\(1\)</span> minus a distance. That is a sharper estimand than “one minus Hellinger”. Optional analytic surrogates — Jeffreys (symmetric KL), Chernoff / Bhattacharyya, and the Bures–Wasserstein metric on <span class="math inline">\((\boldsymbol{\mu}_{j},\boldsymbol{\Sigma}_{j})\)</span> — belong on the same Pareto front (package vignette). They use <strong>both</strong> means and covariances, which <code>AutoGeneS</code> correlation / centroid objectives do not.</p>
+<div id="nte-pareto-proposal" class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note&nbsp;6.1: :information_source: A DeCovarT-specific third objective (proposal)
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The improved pipeline proposed adding Fisher identifiability of <span class="math inline">\(\boldsymbol{p}\)</span> under <a href="#eq-fs-mixture" class="quarto-xref">Equation&nbsp;<span>4.1</span></a>: maximise the smallest eigenvalue of the mixture information <span class="math inline">\(I_{\mathcal{G}}(\boldsymbol{p})\)</span>, or minimise its condition number. That objective is <strong>not</strong> in the literature corpus; it is a composition. It is the right scientific target — DeCovarT’s score depends on <span class="math inline">\(\boldsymbol{\mu}\boldsymbol{p}\)</span> and <span class="math inline">\(\sum_{j}p_{j}^{2}\boldsymbol{\Sigma}_{j}\)</span> jointly — but it is proportion-dependent and more expensive than MixSim overlap. Keep it as a <strong>sensitivity objective</strong> on a shortlist of non-dominated panels, not as the only fitness. Do not collapse the front to a single “knee” without nested, leakage-free validation.</p>
+</div>
+</div>
+<p>Keep several non-dominated panels. Report the whole front. Nested cross-validation, when biological replicates exist, must build HVGs, DEGs and the Pareto panel <strong>inside</strong> each outer fold; otherwise the panel leaks <span class="citation" data-cites="squairConfrontingFalseDiscoveries2021">(<a href="#ref-squairConfrontingFalseDiscoveries2021" role="doc-biblioref">Squair et al. 2021</a>)</span>. With one Suppinger resource, the honest statement is: the panel is fitted on this atlas and must be challenged on an external gastruloid cohort.</p>
+</section>
+<section id="sec-fs-diffnet" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="sec-fs-diffnet"><span class="header-section-number">6.3</span> Differential networks as candidate generators</h2>
+<p>DeCovarT benefits specifically from <strong>rewiring</strong> between populations. A gene that changes neighbourhood in <span class="math inline">\(\boldsymbol{\Theta}_{j}\)</span> is a better candidate than a gene that is merely highly variable. Two strategies exist.</p>
+<p><strong>Fit every <span class="math inline">\(\boldsymbol{\Theta}_{j}\)</span>, then compare supports.</strong> Independent glasso / <code>SILGGM</code> fits (<a href="02-grn-graphical-lasso.html#sec-silggm" class="quarto-xref"><span>Section 7.1</span></a>) yield per-type edges; the symmetric difference of supports, or the difference of partial correlations, ranks genes by differential connectivity. This is simple and matches the objects DeCovarT eventually needs, but each glasso is shrunk and the difference of two biased estimators is not a debiased estimator of <span class="math inline">\(\Delta_{j\ell}=\boldsymbol{\Theta}_{j}-\boldsymbol{\Theta}_{\ell}\)</span>.</p>
+<p><strong>Estimate <span class="math inline">\(\Delta_{j\ell}\)</span> directly.</strong> D-trace methods target the difference of precisions without necessarily reconstructing both graphs first (see <a href="#sec-fs-perspective" class="quarto-xref"><span>Chapter 7</span></a>). They cannot replace <span class="math inline">\(\boldsymbol{\Theta}_{j}\)</span> in the generative model — DeCovarT still needs each covariance individually — but they are attractive <strong>feature objectives</strong> when individual networks are fairly dense and the <em>difference</em> is sparse.</p>
+<p>Either way, treat differential-network hits as <strong>candidates</strong> for the all-versus-all stage, not as the final panel. Concatenating one-versus-rest network genes repeats <a href="#nte-ovr-concat" class="quarto-xref">Note&nbsp;<span>5.3</span></a>.</p>
+</section>
+</section>
+<section id="sec-fs-perspective" class="level1" data-number="7">
+<h1 data-number="7"><span class="header-section-number">7</span> Perspectives: <code>INDEED</code> and D-trace</h1>
+<p>These methods are <strong>not</strong> in the core Suppinger pipeline. They are the statistically natural next step when (i) two (or <span class="math inline">\(J\)</span>) groups are to be compared as networks, and (ii) genes that both shift in mean <strong>and</strong> rewire are the desired biomarkers. Full detail lives in DeCovarT <code>vignettes/supp-S6-feature-selection.qmd</code>; we only import the estimands.</p>
+<section id="indeed-an-ad-hoc-fusion-of-de-and-differential-partial-correlation" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="indeed-an-ad-hoc-fusion-of-de-and-differential-partial-correlation"><span class="header-section-number">7.1</span> <code>INDEED</code>: an ad-hoc fusion of DE and differential partial correlation</h2>
+<p><code>INDEED</code> fits a sparse precision per group, converts to partial correlations</p>
+<p><span id="eq-indeed-dpc"><span class="math display">\[
+\mathrm{pc}_{gg'}^{(j)}
+=
+-\frac{\theta_{gg'}^{(j)}}
+{\sqrt{\theta_{gg}^{(j)}\,\theta_{g'g'}^{(j)}}},
+\qquad
+\Delta\mathrm{pc}_{gg'}
+=
+\mathrm{pc}_{gg'}^{(j)}-\mathrm{pc}_{gg'}^{(\ell)},
+\tag{7.1}\]</span></span></p>
+<p>filters <span class="math inline">\(\Delta\mathrm{pc}\)</span> with a permutation (or bootstrap) null, and forms an activity score that multiplies mean evidence by differential connectivity <span class="citation" data-cites="zuoINDEEDIntegratedDifferential2016">(<a href="#ref-zuoINDEEDIntegratedDifferential2016" role="doc-biblioref">Zuo et al. 2016</a>)</span></p>
+<p><span id="eq-indeed-as"><span class="math display">\[
+\mathrm{AS}_{g}
+=
+\bigl(-\log p_{g}^{\mathrm{DE}}\bigr)
+\sum_{g'\neq g}
+\bigl\lvert\Delta\mathrm{pc}_{gg'}\bigr\rvert
+\,
+\mathbf{1}\{\Delta\mathrm{pc}_{gg'}\ \text{significant}\}.
+\tag{7.2}\]</span></span></p>
+<p>Relative to pure DGE, this favours genes whose <strong>undirected</strong> neighbourhood (Markov boundary in the GGM) differs between groups. Related ideas appear in weighted glasso pipelines with PPI priors.</p>
+<p><strong>Criticism for Suppinger.</strong> The DE <span class="math inline">\(p\)</span>-value in <a href="#eq-indeed-as" class="quarto-xref">Equation&nbsp;<span>7.2</span></a> assumes biological replication (<a href="#nte-pseudoreplication" class="quarto-xref">Note&nbsp;<span>5.2</span></a>). The permutation null on <span class="math inline">\(\Delta\mathrm{pc}\)</span> among cells of one gastruloid is again a technical null. <code>INDEED</code> is also <strong>ad hoc</strong>: it tests edges after two separate glasso fits rather than estimating <span class="math inline">\(\Delta\)</span> under a joint loss. Use it, if at all, as a ranking heuristic on <span class="math inline">\(\mathcal{G}_{0}\)</span>, with <span class="math inline">\(p_{g}^{\mathrm{DE}}\)</span> replaced by a fold-change or <span class="math inline">\(F\)</span> score.</p>
+</section>
+<section id="d-trace-a-loss-that-targets-deltatheta_j-theta_ell" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="d-trace-a-loss-that-targets-deltatheta_j-theta_ell"><span class="header-section-number">7.2</span> D-trace: a loss that targets <span class="math inline">\(\Delta=\Theta_{j}-\Theta_{\ell}\)</span></h2>
+<p>Zhang and Zou <span class="citation" data-cites="zhangSparsePrecisionMatrix2014">(<a href="#ref-zhangSparsePrecisionMatrix2014" role="doc-biblioref">Zhang and Zou 2014</a>)</span> introduced the lasso-penalised D-trace loss for a <strong>single</strong> sparse precision, with an alternating-direction algorithm and sparse-recovery guarantees under an irrepresentability condition that can hold when the analogous condition for lasso-penalised Gaussian likelihood fails. In the same paper they note that the graphical lasso estimator of a sparse precision is usually still consistent for the <strong>support</strong> of the true direct interactions even when the data are not multivariate Gaussian. That is useful background for our glasso / <code>SILGGM</code> branch: off-Gaussian UMI tables need not destroy edge recovery, even though they do destroy the interpretation of <span class="math inline">\(\widehat{\boldsymbol{\Theta}}_{j}\)</span> as a Gaussian generative precision.</p>
+<p>The differential-network extension <span class="citation" data-cites="yuanDifferentialNetworkAnalysis2017">(<a href="#ref-yuanDifferentialNetworkAnalysis2017" role="doc-biblioref">Yuan et al. 2017</a>)</span> estimates a sparse difference <span class="math inline">\(\Delta_{j\ell}=\boldsymbol{\Theta}_{j}-\boldsymbol{\Theta}_{\ell}\)</span>. Empirically, D-trace is competitive for differential-network recovery when the <strong>difference</strong> is sparser than either graph, although hubs and dense networks remain difficult <span class="citation" data-cites="plaksienkoMethodsDifferentialNetwork2025">(<a href="#ref-plaksienkoMethodsDifferentialNetwork2025" role="doc-biblioref">Plaksienko et al. 2025</a>)</span>.</p>
+<p>For DeCovarT this is the cleaner <strong>perspective</strong> than <code>INDEED</code>:</p>
+<ul>
+<li>the estimand <span class="math inline">\(\Delta_{j\ell}\)</span> is exactly “which partial correlations rewire”;</li>
+<li>it does not require a calibrated DE <span class="math inline">\(p\)</span>-value;</li>
+<li>it still does <strong>not</strong> produce a pair of SPD <span class="math inline">\(\boldsymbol{\Theta}_{j},\boldsymbol{\Theta}_{\ell}\)</span> suitable as generative covariances.</li>
+</ul>
+<p>A workable composition — labelled as a <strong>proposal</strong>, not as a result — is: use D-trace (or debiased fused graphical lasso) to <strong>nominate</strong> rewiring genes; retain those genes in <span class="math inline">\(\mathcal{G}\)</span>; then estimate each <span class="math inline">\(\boldsymbol{\Theta}_{j}\)</span> on <span class="math inline">\(\mathcal{G}\)</span> with a method from <a href="02-grn-graphical-lasso.html" class="quarto-xref"><span>Chapter 8</span></a> that returns an SPD precision.</p>
+</section>
+<section id="markov-boundaries-as-panel-expansion" class="level2" data-number="7.3">
+<h2 data-number="7.3" class="anchored" data-anchor-id="markov-boundaries-as-panel-expansion"><span class="header-section-number">7.3</span> Markov boundaries as panel expansion</h2>
+<p>Once a GGM exists, a small set of seeds (markers, HVG hubs, <code>INDEED</code> / D-trace hits) can be grown by undirected neighbours <span class="math inline">\(\{g':\theta_{gg'}\neq 0\}\)</span>. In a Gaussian Markov random field those neighbours are the Markov boundary: they carry residual information about <span class="math inline">\(g\)</span> given the rest of the genes. This is <strong>undirected</strong> conditioning, not DAG <span class="math inline">\(d\)</span>-separation. Directed path-blocking rules are the wrong language for glasso supports.</p>
+</section>
+</section>
+<section id="sec-fs-recommend" class="level1" data-number="8">
+<h1 data-number="8"><span class="header-section-number">8</span> What we would actually run on Suppinger</h1>
+<ol type="1">
+<li><strong>Naive screen.</strong> <code>SCTransform</code> (or residual variance from a depth-aware NB) to rank HVGs; add curated gastruloid markers; <strong>no</strong> <code>DESeq2</code> <span class="math inline">\(p\)</span>-values on technical pseudo-bulks.</li>
+<li><strong>Cap <span class="math inline">\(|\mathcal{G}_{0}|\)</span>.</strong> A few thousand genes before any GGM.</li>
+<li><strong>All-versus-all.</strong> NSGA-II on <span class="math inline">\(\kappa_{2}(\boldsymbol{\mu}_{\mathcal{G}})\)</span> and MixSim <span class="math inline">\(\overline{\omega}\)</span>, optionally with Jeffreys / Chernoff as diagnostics. Keep the Pareto set.</li>
+<li><strong>Optional DiffNet candidates.</strong> Symmetric difference of per-type <code>SILGGM</code> supports, or D-trace on a pair of abundant types, as extra genes in <span class="math inline">\(\mathcal{G}_{0}\)</span> — not as the panel.</li>
+<li><strong>Export linear-scale</strong> <span class="math inline">\(\boldsymbol{\mu}_{\mathcal{G}}\)</span> and <span class="math inline">\(\boldsymbol{\Theta}_{j}\)</span> into DeCovarT.</li>
+</ol>
+<p>The first pipeline’s “HVG then DESeq2 then NSGA-II on <span class="math inline">\(\kappa\)</span> and overlap” is directionally right but overstates what one gastruloid scRNA-seq experiment can support, and it treats variance stabilisation as if it were a harmless preprocessing for the mixture. The improved pipeline’s Fisher-information objective is scientifically tighter and should be treated as a <strong>proposal</strong> until it is computed.</p>
+<p>Scripts (when implemented): <code>scripts/04_01_*.R</code> (screen) and <code>scripts/04_02_*.R</code> (Pareto). No code is given here.</p>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-alieeAutoGeneSAutomaticGene2021" class="csl-entry" role="listitem">
+Aliee, Hananeh, and Fabian J. Theis. 2021. <span>“<span>AutoGeneS</span>: <span>Automatic</span> Gene Selection Using Multi-Objective Optimization for <span class="nocase">RNA-seq</span> Deconvolution.”</span> <em>Cell Systems</em> 12 (7): 706–715.e4. <a href="https://doi.org/10.1016/j.cels.2021.05.006">https://doi.org/10.1016/j.cels.2021.05.006</a>.
+</div>
+<div id="ref-crowellMuscatDetectsSubpopulationspecific2020" class="csl-entry" role="listitem">
+Crowell, Helena L., Charlotte Soneson, Pierre-Luc Germain, et al. 2020. <span>“Muscat Detects Subpopulation-Specific State Transitions from Multi-Sample Multi-Condition Single-Cell Transcriptomics Data.”</span> <em>Nature Communications</em> 11: 6077. <a href="https://doi.org/10.1038/s41467-020-19894-4">https://doi.org/10.1038/s41467-020-19894-4</a>.
+</div>
+<div id="ref-friedmanSparseInverseCovariance2008" class="csl-entry" role="listitem">
+Friedman, Jerome, Trevor Hastie, and Robert Tibshirani. 2008. <span>“Sparse Inverse Covariance Estimation with the Graphical Lasso.”</span> <em>Biostatistics (Oxford, England)</em> 9 (3): 432–41. <a href="https://doi.org/10.1093/biostatistics/kxm045">https://doi.org/10.1093/biostatistics/kxm045</a>.
+</div>
+<div id="ref-gongDeconRNASeqStatisticalFramework2013" class="csl-entry" role="listitem">
+Gong, Ting, and Joseph D. Szustakowski. 2013. <span>“<span>DeconRNASeq</span>: A Statistical Framework for Deconvolution of Heterogeneous Tissue Samples Based on <span class="nocase">mRNA-Seq</span> Data.”</span> <em>Bioinformatics (Oxford, England)</em> 29. <a href="https://doi.org/10.1093/bioinformatics/btt090">https://doi.org/10.1093/bioinformatics/btt090</a>.
+</div>
+<div id="ref-guyonIntroductionVariableFeature2003" class="csl-entry" role="listitem">
+Guyon, Isabelle, and André Elisseeff. 2003. <span>“An <span>Introduction</span> to <span>Variable</span> and <span>Feature Selection</span>.”</span> <em>Journal of Machine Learning Research</em> 3: 1157–82.
+</div>
+<div id="ref-hafemeisterNormalizationVarianceStabilization2019" class="csl-entry" role="listitem">
+Hafemeister, Christoph, and Rahul Satija. 2019. <span>“Normalization and Variance Stabilization of Single-Cell <span class="nocase">RNA-seq</span> Data Using Regularized Negative Binomial Regression.”</span> <em>Genome Biology</em> 20 (1). <a href="https://doi.org/10.1186/s13059-019-1874-1">https://doi.org/10.1186/s13059-019-1874-1</a>.
+</div>
+<div id="ref-R-sctransform" class="csl-entry" role="listitem">
+Hafemeister, Christoph, Rahul Satija, and Saket Choudhary. 2025. <em>Sctransform: Variance Stabilizing Transformations for Single Cell UMI Data</em>. <a href="https://CRAN.R-project.org/package=sctransform">https://CRAN.R-project.org/package=sctransform</a>.
+</div>
+<div id="ref-hoffmannRobustComputationalReconstitution2006" class="csl-entry" role="listitem">
+Hoffmann, Martin, Dirk Pohlers, Dirk Koczan, Hans-Jürgen Thiesen, Stefan Wölfl, and Raimund W. Kinne. 2006. <span>“Robust Computational Reconstitution – a New Method for the Comparative Analysis of Gene Expression in Tissues and Isolated Cell Fractions.”</span> <em>BMC Bioinformatics</em> 7. <a href="https://doi.org/10.1186/1471-2105-7-369">https://doi.org/10.1186/1471-2105-7-369</a>.
+</div>
+<div id="ref-jinBenchmarkRNAseqDeconvolution2021" class="csl-entry" role="listitem">
+Jin, Haijing, and Zhandong Liu. 2021. <span>“A Benchmark for <span class="nocase">RNA-seq</span> Deconvolution Analysis Under Dynamic Testing Environments.”</span> <em>Genome Biology</em> 22. <a href="https://doi.org/10.1186/s13059-021-02290-6">https://doi.org/10.1186/s13059-021-02290-6</a>.
+</div>
+<div id="ref-loveModeratedEstimationFold2014" class="csl-entry" role="listitem">
+Love, Michael I., Wolfgang Huber, and Simon Anders. 2014. <span>“Moderated Estimation of Fold Change and Dispersion for <span class="nocase">RNA-seq</span> Data with <span>DESeq2</span>.”</span> <em>Genome Biology</em> 15 (12): 550. <a href="https://doi.org/10.1186/s13059-014-0550-8">https://doi.org/10.1186/s13059-014-0550-8</a>.
+</div>
+<div id="ref-melnykovMixSimPackageSimulating2012" class="csl-entry" role="listitem">
+Melnykov, Volodymyr, Wei-Chen Chen, and Ranjan Maitra. 2012. <span>“<span>MixSim</span>: <span>An R Package</span> for <span>Simulating Data</span> to <span>Study Performance</span> of <span>Clustering Algorithms</span>.”</span> <em>Journal of Statistical Software</em> 51. <a href="https://doi.org/10.18637/jss.v051.i12">https://doi.org/10.18637/jss.v051.i12</a>.
+</div>
+<div id="ref-R-MixSim" class="csl-entry" role="listitem">
+Melnykov, Volodymyr, Wei-Chen Chen, and Ranjan Maitra. 2021. <em>MixSim: Simulating Data to Study Performance of Clustering Algorithms</em>. <a href="https://CRAN.R-project.org/package=MixSim">https://CRAN.R-project.org/package=MixSim</a>.
+</div>
+<div id="ref-R-mco" class="csl-entry" role="listitem">
+Mersmann, Olaf, Heike Trautmann, Detlef Steuer, and Bernd Bischl. 2020. <em>Mco: Multiple Criteria Optimization Algorithms and Related Functions</em>. <a href="https://CRAN.R-project.org/package=mco">https://CRAN.R-project.org/package=mco</a>.
+</div>
+<div id="ref-newmanRobustEnumerationCell2015" class="csl-entry" role="listitem">
+Newman, Aaron, Chih Liu, Michael Green, et al. 2015. <span>“Robust Enumeration of Cell Subsets from Tissue Expression Profiles.”</span> <em>Nature Methods</em> 12. <a href="https://doi.org/10.1038/nmeth.3337">https://doi.org/10.1038/nmeth.3337</a>.
+</div>
+<div id="ref-plaksienkoMethodsDifferentialNetwork2025" class="csl-entry" role="listitem">
+Plaksienko, Anna, Magne Thoresen, and Vera Djordjilović. 2025. <em>Methods for Differential Network Estimation: An Empirical Comparison</em>. arXiv:2412.17922. arXiv. <a href="https://doi.org/10.48550/arXiv.2412.17922">https://doi.org/10.48550/arXiv.2412.17922</a>.
+</div>
+<div id="ref-squairConfrontingFalseDiscoveries2021" class="csl-entry" role="listitem">
+Squair, Jordan W., Matthieu Gautier, Claudia Kathe, et al. 2021. <span>“Confronting False Discoveries in Single-Cell Differential Expression.”</span> <em>Nature Communications</em> 12 (1). <a href="https://doi.org/10.1038/s41467-021-25960-2">https://doi.org/10.1038/s41467-021-25960-2</a>.
+</div>
+<div id="ref-sturmComprehensiveEvaluationTranscriptomebased2019" class="csl-entry" role="listitem">
+Sturm, Gregor, Francesca Finotello, Florent Petitprez, et al. 2019. <span>“Comprehensive Evaluation of Transcriptome-Based Cell-Type Quantification Methods for Immuno-Oncology.”</span> <em>Bioinformatics (Oxford, England)</em> 35. <a href="https://doi.org/10.1093/bioinformatics/btz363">https://doi.org/10.1093/bioinformatics/btz363</a>.
+</div>
+<div id="ref-suppingerMultimodalCharacterizationMurine2023" class="csl-entry" role="listitem">
+Suppinger, Simon, Marietta Zinner, Nadim Aizarani, et al. 2023. <span>“Multimodal Characterization of Murine Gastruloid Development.”</span> <em>Cell Stem Cell</em> 30 (6): 867–84. <a href="https://doi.org/10.1016/j.stem.2023.04.018">https://doi.org/10.1016/j.stem.2023.04.018</a>.
+</div>
+<div id="ref-wangBulkTissueCell2019" class="csl-entry" role="listitem">
+Wang, Xuran, Jihwan Park, Katalin Susztak, Nancy R. Zhang, and Mingyao Li. 2019. <span>“Bulk Tissue Cell Type Deconvolution with Multi-Subject Single-Cell Expression Reference.”</span> <em>Nature Communications</em> 10. <a href="https://doi.org/10.1038/s41467-018-08023-x">https://doi.org/10.1038/s41467-018-08023-x</a>.
+</div>
+<div id="ref-yuanDifferentialNetworkAnalysis2017" class="csl-entry" role="listitem">
+Yuan, Huili, Ruibin Xi, Chong Chen, and Minghua Deng. 2017. <em>Differential <span>Network Analysis</span> via the <span>Lasso Penalized D-Trace Loss</span></em>. arXiv:1511.09188. arXiv. <a href="https://doi.org/10.48550/arXiv.1511.09188">https://doi.org/10.48550/arXiv.1511.09188</a>.
+</div>
+<div id="ref-zhangSparsePrecisionMatrix2014" class="csl-entry" role="listitem">
+Zhang, Teng, and Hui Zou. 2014. <span>“Sparse Precision Matrix Estimation via Lasso Penalized <span class="nocase">D-trace</span> Loss.”</span> <em>Biometrika</em> 101 (1): 103–20.
+</div>
+<div id="ref-zuoINDEEDIntegratedDifferential2016" class="csl-entry" role="listitem">
+Zuo, Yiming, Yi Cui, Cristina Di Poto, et al. 2016. <span>“<span>INDEED</span>: <span>Integrated</span> Differential Expression and Differential Network Analysis of Omic Data for Biomarker Discovery.”</span> <em>Methods (San Diego, Calif.)</em> 111: 12–20. <a href="https://doi.org/10.1016/j.ymeth.2016.08.015">https://doi.org/10.1016/j.ymeth.2016.08.015</a>.
+</div>
+</div>
 </section>
 
 </main> <!-- /main -->
@@ -664,13 +1043,13 @@ window.Quarto = {
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./02-grn-graphical-lasso.html" class="pagination-link" aria-label="Gene regulatory networks">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Gene regulatory networks</span></span>
+      <a href="./01-data-suppinger.html" class="pagination-link" aria-label="Suppinger gastruloids">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Suppinger gastruloids</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./04-sensitivity-misspecification.html" class="pagination-link" aria-label="Sensitivity analyses">
-        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./02-grn-graphical-lasso.html" class="pagination-link" aria-label="Undirected GGMs from single-cell transcriptomics">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Undirected GGMs from single-cell transcriptomics</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

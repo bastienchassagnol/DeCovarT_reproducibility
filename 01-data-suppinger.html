@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.37">
+<meta name="generator" content="quarto-1.10.18">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -12,10 +12,13 @@
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
 */
-code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -58,7 +61,26 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -68,7 +90,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./02-grn-graphical-lasso.html" rel="next">
+<link href="./03-feature-selection.html" rel="next">
 <link href="./index.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -76,10 +98,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-f7c5ddf7ad4088526f39b899231c5453.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-ed7344add5f1663e434276306a2aa159.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -136,9 +158,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="./">DeCovarT reproducibility</a> 
-        <div class="sidebar-tools-main">
-    <a href="./DeCovarT-reproducibility.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
-</div>
     </div>
       </div>
         <div class="mt-2 flex-shrink-0 align-items-center">
@@ -162,20 +181,32 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./02-grn-graphical-lasso.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Gene regulatory networks</span></span></a>
+  <a href="./03-feature-selection.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Feature selection for cell-type Gaussians</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./03-feature-selection.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Feature selection</span></span></a>
+  <a href="./02-grn-graphical-lasso.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Undirected GGMs from single-cell transcriptomics</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-population-alignment.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">From single cells to type-level Gaussians</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-grn-metrics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Evaluating networks without a true DAG</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./04-sensitivity-misspecification.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></span></a>
   </div>
 </li>
     </ul>
@@ -218,7 +249,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="sec-geo" class="level1" data-number="3">
 <h1 data-number="3"><span class="header-section-number">3</span> Data access</h1>
-<p>Single-cell object and bulk HTSeq counts from the murine gastruloid resource of Suppinger and colleagues (<em>Cell Stem Cell</em>, 2023; GEO <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE229513">GSE229513</a> and <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE229386">GSE229386</a>). Cite the paper from Zotero once the key exists in <code>bibliography/REFERENCES.bib</code> — do not invent a citekey.</p>
+<p>Single-cell object and bulk HTSeq counts from the murine gastruloid resource of Suppinger and colleagues (<em>Cell Stem Cell</em>, 2023; GEO <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE229513">GSE229513</a> and <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE229386">GSE229386</a>). Cite <span class="citation" data-cites="suppingerMultimodalCharacterizationMurine2023">(<a href="#ref-suppingerMultimodalCharacterizationMurine2023" role="doc-biblioref">Suppinger et al. 2023</a>)</span>. This is a 10x Chromium 3′ v3 <strong>UMI</strong> resource. It is <strong>one</strong> technical scRNA-seq experiment, not a panel of independent biological replicates for GRNs or for <code>DESeq2</code> (<a href="03-feature-selection.html#nte-pseudoreplication" class="quarto-xref">Note&nbsp;<span>5.2</span></a>). Zeros are molecule-sampling counts until proven otherwise (<a href="02-grn-graphical-lasso.html#nte-drop-zico" class="quarto-xref">Note&nbsp;<span>8.1</span></a>); GSE250136 is a later stem-embryo dataset and must not be conflated with Suppinger.</p>
 <p>Download commands belong in <code>data/raw/README.md</code>. Never overwrite <code>data/raw/</code>.</p>
 </section>
 <section id="sec-explore" class="level1" data-number="4">
@@ -230,8 +261,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
 <p>Local templates: <code>scripts/01_01_*.R</code> and <code>scripts/02_01_*.R</code>.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"R"</span>, <span class="st">"paths.R"</span>))</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># seurat_obj &lt;- readRDS(path_raw("GSE229513_gastruloidsobject.rds"))</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run from the repository root.</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># seurat_obj &lt;- readRDS(file.path(</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   "data", "raw", "GSE229513_gastruloidsobject.rds"</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ))</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="sec-outputs" class="level1" data-number="5">
@@ -242,6 +275,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-suppingerMultimodalCharacterizationMurine2023" class="csl-entry" role="listitem">
+Suppinger, Simon, Marietta Zinner, Nadim Aizarani, et al. 2023. <span>“Multimodal Characterization of Murine Gastruloid Development.”</span> <em>Cell Stem Cell</em> 30 (6): 867–84. <a href="https://doi.org/10.1016/j.stem.2023.04.018">https://doi.org/10.1016/j.stem.2023.04.018</a>.
+</div>
+</div>
 </section>
 
 </main> <!-- /main -->
@@ -652,8 +690,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./02-grn-graphical-lasso.html" class="pagination-link" aria-label="Gene regulatory networks">
-        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Gene regulatory networks</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./03-feature-selection.html" class="pagination-link" aria-label="Feature selection for cell-type Gaussians">
+        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Feature selection for cell-type Gaussians</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

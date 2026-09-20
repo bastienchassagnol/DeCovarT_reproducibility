@@ -2,22 +2,25 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.37">
+<meta name="generator" content="quarto-1.10.18">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Bastien Chassagnol">
-<meta name="dcterms.date" content="2026-09-17">
+<meta name="dcterms.date" content="2026-09-20">
 
 <title>DeCovarT reproducibility</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
 */
-code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -77,10 +80,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-f7c5ddf7ad4088526f39b899231c5453.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-ed7344add5f1663e434276306a2aa159.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -113,7 +116,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -169,9 +172,6 @@ window.Quarto = {
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="./">DeCovarT reproducibility</a> 
-        <div class="sidebar-tools-main">
-    <a href="./DeCovarT-reproducibility.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
-</div>
     </div>
       </div>
         <div class="mt-2 flex-shrink-0 align-items-center">
@@ -195,20 +195,32 @@ window.Quarto = {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./02-grn-graphical-lasso.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Gene regulatory networks</span></span></a>
+  <a href="./03-feature-selection.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Feature selection for cell-type Gaussians</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./03-feature-selection.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Feature selection</span></span></a>
+  <a href="./02-grn-graphical-lasso.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Undirected GGMs from single-cell transcriptomics</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-population-alignment.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">From single cells to type-level Gaussians</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-grn-metrics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Evaluating networks without a true DAG</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./04-sensitivity-misspecification.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></span></a>
   </div>
 </li>
     </ul>
@@ -249,7 +261,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">September 17, 2026</p>
+      <p class="date">September 20, 2026</p>
     </div>
   </div>
   
@@ -263,16 +275,22 @@ window.Quarto = {
 
 <p>This Quarto <strong>book</strong> is the narrative companion to the analysis scripts under <code>scripts/</code>. R chunks stay <code>eval: false</code> until artefacts exist. Mermaid and static Markdown still execute; <a href="https://quarto.org/docs/projects/code-execution.html#freeze"><code>freeze: auto</code></a> caches those results in <code>docs/_freeze</code>.</p>
 <p>The layout follows analysis reproducibility repos such as <a href="https://github.com/theislab/cellrank2_reproducibility">cellrank2_reproducibility</a> (Python + Jupyter Book there). Here the stack is <strong>R</strong>, <strong><code>renv</code></strong>, and <strong>Quarto</strong>, published with the GitHub Pages <code>gh-pages</code> workflow (<a href="https://quarto.org/docs/publishing/github-pages.html#example-knitr-with-renv">Quarto: GitHub Pages, Knitr with renv</a>).</p>
+<p>The scientific target is DeCovarT’s cell-type Gaussians: sparse precisions <span class="math inline">\(\boldsymbol{\Theta}_{j}\equiv\boldsymbol{\Sigma}_{j}^{-1}\)</span> and means <span class="math inline">\(\boldsymbol{\mu}_{\cdot j}\)</span> estimated from labelled single-cell transcriptomes, then plugged into the bulk convolution. Notation follows the article Methods. Computation stays in <code>scripts/</code>; this book is theory, criticism, and design.</p>
 <div class="cell" data-layout-align="default">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>%%{init: {"theme": "sandstone"}}%%</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>flowchart TD</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  A["GEO GSE229513 / GSE229386"] --&gt; B["02 preprocess SE / SCE"]</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  B --&gt; C["03 glasso GRN per type"]</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  B --&gt; D["04a pseudo-bulk DESeq2"]</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  D --&gt; E["04b NSGA-II / GA panel"]</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  C --&gt; F["DeCovarT deconvolution"]</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  E --&gt; F</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  F --&gt; G["05 contaminate Omega_j"]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  A["GEO GSE229513 UMI"] --&gt; B["Preprocess SE / SCE"]</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  B --&gt; C["Naive then all-vs-all gene panel"]</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  C --&gt; D{"GGM assumes Gaussian observations?"}</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  D --&gt;|yes| E["NPN inside SILGGM / low-rank / GmGM"]</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  D --&gt;|no| F["Raw counts PLN"]</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  E --&gt; G["Sparse SPD Theta_j"]</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  F --&gt; G</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  G --&gt; H["Type-level lift: affine / W2 / bootstrap"]</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  H --&gt; I["DeCovarT deconvolution"]</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  C --&gt; I</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  I --&gt; J["Contaminate Theta_j"]</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  G -.-&gt; K["Appendix: FGL, JGCGM"]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div id="fig-pipeline" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -280,18 +298,23 @@ window.Quarto = {
 <div>
 <pre class="mermaid mermaid-js" data-label="fig-pipeline">%%{init: {"theme": "sandstone"}}%%
 flowchart TD
-  A["GEO GSE229513 / GSE229386"] --&gt; B["02 preprocess SE / SCE"]
-  B --&gt; C["03 glasso GRN per type"]
-  B --&gt; D["04a pseudo-bulk DESeq2"]
-  D --&gt; E["04b NSGA-II / GA panel"]
-  C --&gt; F["DeCovarT deconvolution"]
-  E --&gt; F
-  F --&gt; G["05 contaminate Omega_j"]
+  A["GEO GSE229513 UMI"] --&gt; B["Preprocess SE / SCE"]
+  B --&gt; C["Naive then all-vs-all gene panel"]
+  C --&gt; D{"GGM assumes Gaussian observations?"}
+  D --&gt;|yes| E["NPN inside SILGGM / low-rank / GmGM"]
+  D --&gt;|no| F["Raw counts PLN"]
+  E --&gt; G["Sparse SPD Theta_j"]
+  F --&gt; G
+  G --&gt; H["Type-level lift: affine / W2 / bootstrap"]
+  H --&gt; I["DeCovarT deconvolution"]
+  C --&gt; I
+  I --&gt; J["Contaminate Theta_j"]
+  G -.-&gt; K["Appendix: FGL, JGCGM"]
 </pre>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pipeline-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1: Planned pipeline: GEO gastruloids, GRN per cell type, feature panels, DeCovarT, then precision-matrix contamination.
+Figure&nbsp;1: Planned pipeline: GEO gastruloids, method-conditional observation model, core GGMs, type-level alignment, feature panels, DeCovarT, then precision-matrix contamination. Fused and copula-joint graphs stay in the GRN appendix.
 </figcaption>
 </figure>
 </div>
@@ -303,7 +326,7 @@ Figure&nbsp;1: Planned pipeline: GEO gastruloids, GRN per cell type, feature pan
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> render docs</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># first time only, once gh-pages is allowed:</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># quarto publish gh-pages docs</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>HTML and PDF are both declared in <code>_quarto.yml</code>. CI publishes HTML to the <code>gh-pages</code> branch; download the PDF from the book toolbar when the PDF format builds successfully.</p>
+<p>The book format is <strong>HTML only</strong> for now (<code>pdf</code> is commented in <code>docs/_quarto.yml</code>). CI publishes HTML to the <code>gh-pages</code> branch.</p>
 </section>
 <section id="scripts-source-of-truth-for-computation" class="level2" data-number="0.2">
 <h2 data-number="0.2" class="anchored" data-anchor-id="scripts-source-of-truth-for-computation"><span class="header-section-number">0.2</span> Scripts (source of truth for computation)</h2>
@@ -328,20 +351,24 @@ Figure&nbsp;1: Planned pipeline: GEO gastruloids, GRN per cell type, feature pan
 <td>Harmonise genes; SE / SCE</td>
 </tr>
 <tr class="odd">
-<td><code>scripts/03_01_grn_graphical_lasso.R</code></td>
-<td>Graphical lasso per cell type</td>
+<td><code>scripts/03_01_grn_silggm.R</code></td>
+<td>SILGGM GGM (NPN <strong>inside this branch</strong>)</td>
 </tr>
 <tr class="even">
-<td><code>scripts/04_01_feature_selection_pseudobulk_deseq2.R</code></td>
-<td>Pseudo-bulk markers</td>
+<td><code>scripts/03_02_grn_blggm.R</code></td>
+<td>BLGGM mixture GGM (optional given labels)</td>
 </tr>
 <tr class="odd">
+<td><code>scripts/04_01_feature_selection_pseudobulk_deseq2.R</code></td>
+<td>Naive screen (no DE <span class="math inline">\(p\)</span>-values without biological replicates)</td>
+</tr>
+<tr class="even">
 <td><code>scripts/04_02_feature_selection_genetic_algorithm.R</code></td>
 <td>Pareto gene panel</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>scripts/05_01_sensitivity_precision_contamination.R</code></td>
-<td>Misspecify <span class="math inline">\(\boldsymbol{\Omega}_j\)</span></td>
+<td>Misspecify <span class="math inline">\(\boldsymbol{\Theta}_{j}\)</span></td>
 </tr>
 </tbody>
 </table>
