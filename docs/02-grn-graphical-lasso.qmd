@@ -41,7 +41,7 @@ $$ {#eq-grn-convolution}
 Some DeCovarT vignettes write $\boldsymbol{\Omega}_{j}$ for the same
 precision; we keep $\boldsymbol{\Theta}_{j}$ as in the article Methods.
 
-# Scope of the core pipeline {#sec-grn-scope}
+## Scope of the core pipeline {#sec-grn-scope}
 
 **In scope:** undirected GGMs; single-cell **transcriptomics only**;
 **stationarity** (no RNA velocity, no time-varying graphs); labelled
@@ -60,6 +60,7 @@ external validation, not extra Suppinger replicates. Technical bootstrap
 of cells is allowed (@sec-align-bootstrap); biological bootstrap is not.
 
 ```{mermaid}
+%%| echo: false
 %%| label: fig-grn-core
 %%| fig-cap: "Core route from labelled UMI counts to DeCovarT population Gaussians. Observation processing is method-conditional, not a free factorial arm. Joint and copula estimators sit in the appendix."
 %%{init: {"theme": "sandstone"}}%%
@@ -75,7 +76,7 @@ flowchart TD
   B -.-> I["Appendix: FGL, JGCGM"]
 ```
 
-# Observation processing is method-conditional {#sec-grn-observation}
+## Observation processing is method-conditional {#sec-grn-observation}
 
 The first pipeline put `SCTransform` and `huge::huge.npn()` on the
 **same Cartesian axis** as the graph estimator. That is the wrong
@@ -110,6 +111,21 @@ branch [@liuNonparanormalSemiparametricEstimation2009; @R-huge]:
 `SCTransform` Pearson residuals [@hafemeisterNormalizationVarianceStabilization2019]
 stay in the **HVG ranking** of @sec-fs-hvg. Using them as the GGM table
 is a sensitivity arm, not a factorial factor.
+
+::: {#nte-npn-moments .callout-warning}
+## :warning: Nonparanormal maps are not affine, so they break moments
+
+`huge::huge.npn()` replaces each margin by a (truncated or shrunk)
+inverse-normal score
+[@liuNonparanormalSemiparametricEstimation2009]. That map $\varphi$ is
+**monotone but not affine**. Jensen's inequality then says
+$\varphi(\mathbb{E}[y_{g}])\neq\mathbb{E}[\varphi(y_{g})]$ unless the
+margin is degenerate (@nte-jensen-transform). A glasso fitted after NPN
+therefore targets the precision of a **different random vector** than
+the population Gaussian DeCovarT convolves. Use NPN only **inside** the
+SILGGM / Gaussian branch, never as a global preprocessing of counts,
+and never export NPN-scale means as $\boldsymbol{\mu}_{\cdot j}$.
+:::
 
 ::: {#nte-jensen-transform .callout-important}
 ## :warning: Transforming the response is usually the wrong GLM
@@ -189,7 +205,7 @@ estimator is a Gaussian GGM; raw counts if the estimator is PLN**.
 Cross-type sharing is appendix (@sec-grn-appendix).
 :::
 
-# Core comparators {#sec-grn-core}
+## Core comparators {#sec-grn-core}
 
 Four families respect the core constraints (undirected, stationary,
 transcriptomics-only, exportable as a sparse SPD
@@ -197,7 +213,7 @@ $\boldsymbol{\Theta}_{j}$ or as a latent Gaussian precision). We compare
 them on assumptions versus @eq-grn-estimand, not on unpublished
 accuracy numbers.
 
-## `SILGGM`: five inferential modes, one generative precision {#sec-silggm}
+### `SILGGM`: five inferential modes, one generative precision {#sec-silggm}
 
 `SILGGM` is a frequentist toolkit for high-dimensional GGMs
 [@zhangSILGGMExtensivePackage2018; @R-SILGGM]. After optional NPN, it
@@ -267,12 +283,11 @@ prefer `GFC_L` / glasso **support** plus an SPD refit over exporting
 `D-S_GL` point estimates.
 
 It does **not** model unknown mixtures: subset cells by annotation
-first. `BLGGM` [@wuEstimatingHeterogeneousGene2022; @R-BLGGM] is a
-Bayesian latent-Gaussian mixture with dropout and spike-and-slab graphs.
-Given known labels it is largely redundant; MCMC cost and a gene cap of
-a few hundred make it a perspective, not a core competitor.
+first. A Bayesian latent mixture with dropout (`BLGGM`) is **not** in
+the $4\times 3\times 2$ product: labels are already known, and MCMC
+plus a gene cap of a few hundred make it a perspective only.
 
-## Poisson-lognormal: Chiquet's `PLNmodels` versus PLNFGL {#sec-pln}
+### Poisson-lognormal: Chiquet's `PLNmodels` versus PLNFGL {#sec-pln}
 
 Two PLN estimators share Aitchison and Ho's hierarchical construction
 and **differ** in how they estimate $\boldsymbol{\Theta}$.
@@ -343,7 +358,7 @@ variational sparse precision**, and Zhai for **moments + fusion**. On
 Suppinger, the core PLN arm is **Chiquet `PLNnetwork` per labelled
 type**. PLNFGL is the fused extension.
 
-## Multi-axis GGMs (`GmGM`): cells are not independent rows {#sec-gmgm}
+### Multi-axis GGMs (`GmGM`): cells are not independent rows {#sec-gmgm}
 
 Almost every GGM above makes the **independence assumption**: to learn
 the gene precision, cells are i.i.d. rows. That is false in a gastruloid
@@ -375,7 +390,7 @@ in the paper (RNA+ATAC) are out of our core scope.
 the gene-axis precision on a type subset disagrees violently with
 per-type SILGGM / PLN, the i.i.d. assumption is a suspect.
 
-## Sparse plus low-rank latent-variable GGMs {#sec-lowrank}
+### Sparse plus low-rank latent-variable GGMs {#sec-lowrank}
 
 A sparse GGM assumes that, after conditioning on the observed genes,
 the remaining dependence is sparse. Unmeasured programmes — cell cycle,
@@ -410,7 +425,7 @@ have been global programmes.
 sparse edges are stable, ordinary glasso was not merely fitting cell
 cycle; if they collapse, do not export the dense glasso to DeCovarT.
 
-# Four methods to carry forward {#sec-grn-top4}
+## Four methods to carry forward {#sec-grn-top4}
 
 Given stationarity, a multivariate Gaussian **population** object,
 sparsity, and single-cell transcriptomics only, the four most
@@ -432,7 +447,6 @@ defensible **core** routes are:
 PLNFGL, joint graphical lasso, and JGCGM are **sharing** strategies
 (@sec-grn-appendix). They may well beat independent fits on variance,
 but they risk shrinking away the rewiring that is the scientific target.
-`BLGGM` is a Bayesian mixture we do not need given labels.
 `SCENIC` / `GRNBoost2` [@aibarScenicSinglecellRegulatory2017;
 @moermanGRNBoost2ArboretoEfficient2019] are directed, TF-centred
 boosting methods: valuable as **knowledge-driven baselines** in
@@ -474,27 +488,31 @@ Keep hurdle / ZINB graphs in the sensitivity chapter
 as a GRN estimator.
 :::
 
-# Revised design product {#sec-grn-design}
+## Revised design product {#sec-grn-design}
 
 The improved pipeline's three-way factorial is right in spirit and wrong
 in its first factor. The product we will actually interpret is
+(@fig-pipeline)
 
 $$
-\underbrace{\{\text{SILGGM+NPN},\ \text{PLN counts},\ \text{sparse+low-rank},\ \text{GmGM}\}}_{\text{core estimators}}
+\underbrace{\{\text{SILGGM+NPN},\ \text{PLN counts},\ \text{sparse+low-rank},\ \text{GmGM}\}}_{\text{four GGM families}}
 \times
-\underbrace{\{\text{independent types}\}}_{\text{core sharing}}
-$$
+\underbrace{\{\text{affine},\ \text{Bures--Wasserstein},\ \text{scDesign2}\}}_{\text{three population lifts}}
+\times
+\underbrace{\{\mathcal{G}_{0},\ \text{optional NSGA-II}\}}_{\text{two panels}}.
+$$ {#eq-grn-product}
 
-with **fused / copula-joint** sharing in @sec-grn-appendix.
-`SCTransform` and `huge.npn` are **not** crossed with PLN.
+That is up to 24 routes. Independent type-level fits are the **core**
+sharing strategy; fused / copula-joint sharing stays in
+@sec-grn-appendix. `SCTransform` and `huge.npn` are **not** crossed with
+PLN. `BLGGM` is not in the product.
 
 Scripts (when implemented): `scripts/03_01_grn_silggm.R` and a PLN
-script still to be added. `scripts/03_02_grn_blggm.R` is optional given
-labels. No code is given here.
+script still to be added. No code is given here.
 
-# Appendix: sharing and copulas {#sec-grn-appendix}
+## Appendix: sharing and copulas {#sec-grn-appendix}
 
-## Fused and joint graphical lasso
+### Fused and joint graphical lasso
 
 Related gastruloid types should share part of their graph and differ on
 a sparse rewiring set. The joint graphical lasso
@@ -510,7 +528,7 @@ $\lambda_{2}$ small and compare supports to the independent SILGGM /
 PLN fits. Full joint estimation is **not** the core default until we
 can show that rewiring of developmental neighbours is preserved.
 
-## Gaussian copulas beyond NPN: JGCGM
+### Gaussian copulas beyond NPN: JGCGM
 
 JGCGM learns several subgroup networks from scRNA-seq with a Gaussian
 copula and an explicit split between shared and subgroup-specific

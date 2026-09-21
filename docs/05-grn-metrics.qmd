@@ -27,6 +27,7 @@ perturbation forecasting are **perspectives**: they judge a different
 estimand than @eq-grn-estimand.
 
 ```{mermaid}
+%%| echo: false
 %%| label: fig-metrics-families
 %%| fig-cap: "Three evaluation families for undirected cell-type GGMs, plus two perspective tracks that require extra assays or a mechanistic simulator."
 %%{init: {"theme": "sandstone"}}%%
@@ -44,7 +45,7 @@ flowchart TD
   A -.-> F["Perspective: ChIP / ATAC"]
 ```
 
-# What we are *not* claiming {#sec-metrics-scope}
+## What we are *not* claiming {#sec-metrics-scope}
 
 BEELINE evaluated **directed** GRN algorithms, often on
 pseudotime-ordered cells, against synthetic Boolean networks and
@@ -60,13 +61,13 @@ of omics, and literature databases. Our core graphs are **undirected**,
 -   keep GRETA-style **literature** and **predictive** ideas only where
     they survive without ATAC.
 
-# Statistical robustness and alignment {#sec-metrics-stat}
+## Statistical robustness and alignment {#sec-metrics-stat}
 
 These scores do not need a true graph. They ask whether
 $(\widehat{\boldsymbol{\mu}}_{\cdot j},\widehat{\boldsymbol{\Sigma}}_{j})$ is a
 stable, distinguishable plug-in for @eq-grn-convolution.
 
-## Resampling and noise
+### Resampling and noise
 
 With one experiment, the honest uncertainty is **conditional on this
 atlas**:
@@ -92,7 +93,7 @@ Biological (multi-organoid) bootstrap is **unavailable**. Reporting a
 bootstrap interval as if it were between-experiment uncertainty would
 repeat the pseudoreplication error of @nte-pseudoreplication.
 
-## Likelihood and information criteria
+### Likelihood and information criteria
 
 On the Gaussian scale actually used by the estimator,
 
@@ -110,7 +111,7 @@ models differ. Cross-family comparison must move to a common object —
 the exported $(\boldsymbol{\mu}_{\cdot j},\boldsymbol{\Sigma}_{j})$ on the
 **linear** DeCovarT scale — and use distributional distances.
 
-## Distances between type-level Gaussians
+### Distances between type-level Gaussians
 
 Closed forms, for non-degenerate
 $P_{j}=\mathcal{N}(\boldsymbol{\mu}_{\cdot j},\boldsymbol{\Sigma}_{j})$:
@@ -158,9 +159,9 @@ enters the convolution. Otherwise a “better” SILGGM graph can win on
 NPN likelihood and lose as a deconvolution prior.
 :::
 
-# Topological comparison {#sec-metrics-topo}
+## Topological comparison {#sec-metrics-topo}
 
-## Skeleton scores (BEELINE, reduced to undirected)
+### Skeleton scores (BEELINE, reduced to undirected)
 
 BEELINE [@pratapaBenchmarkingAlgorithmsGene2020] is the standard
 scRNA-seq GRN benchmark. Its
@@ -194,7 +195,7 @@ is a **robustness** number, not a validation.
 CPDAG / orientation metrics from the causal-metrics notes apply only if
 we leave the core and score a DAG. We do not.
 
-## Graph summaries that do not need a reference
+### Graph summaries that do not need a reference
 
 These describe **shape**, not correctness:
 
@@ -216,7 +217,7 @@ gastruloids. Downstream DeCovarT should therefore **not** depend on a
 single edge being true; it should depend on the SPD covariance being a
 stable discriminator.
 
-## Visualisations {#sec-metrics-viz}
+### Visualisations {#sec-metrics-viz}
 
 The aim is to **compare structure and inference**, not to decorate a
 methods section. Each display should answer one question.
@@ -263,9 +264,9 @@ methods section. Each display should answer one question.
 **GRETA-style genome tracks** (TF–CRE–gene) require ATAC and are
 perspective-only (@sec-metrics-omics).
 
-# Knowledge-driven scoring {#sec-metrics-knowledge}
+## Knowledge-driven scoring {#sec-metrics-knowledge}
 
-## GRETA's three buckets, restricted to undirected transcriptomics
+### GRETA's three buckets, restricted to undirected transcriptomics
 
 GRETA [@badia-i-mompelComparisonEvaluationMethods2025] modularises
 multimodal GRN pipelines and scores them as **mechanistic**,
@@ -312,7 +313,7 @@ abundances look similar; de novo GRN inference from observational data
 is close to ill-posed. Our four-estimator design is a response to that
 ill-posedness, not a claim that one method is true.
 
-## Integer programmes and Boolean models {#sec-metrics-integer}
+### Integer programmes and Boolean models {#sec-metrics-integer}
 
 **CORNETO** [@rodriguez-mierUnifyingMultisampleNetwork2025] reformulates
 knowledge-driven network inference as a joint constrained optimisation
@@ -334,7 +335,7 @@ data-driven proposal* is a legitimate consistency check; using the
 Boolean model *as* $\boldsymbol{\Theta}_{j}$ would abandon the Gaussian
 convolution.
 
-# Perspectives: regulatory omics {#sec-metrics-omics}
+## Perspectives: regulatory omics {#sec-metrics-omics}
 
 ChIP-seq, CUT&RUN, and ATAC-seq (or multiome) networks are closer to
 **physical interaction** than a partial correlation. GRETA exists
@@ -347,7 +348,7 @@ precisions. The honest use is: project our undirected skeleton onto
 TF–CRE–gene triples and score GRETA literature metrics; do not replace
 $\boldsymbol{\Theta}_{j}$ with a regulon adjacency.
 
-# Practical scorecard for this repository {#sec-metrics-scorecard}
+## Practical scorecard for this repository {#sec-metrics-scorecard}
 
 For each core estimator and each cell type $j$:
 

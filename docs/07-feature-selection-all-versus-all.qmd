@@ -1,0 +1,116 @@
+---
+title: "All-versus-all gene panels"
+---
+
+## All-versus-all refinement {#sec-fs-advanced}
+
+The advanced stage treats $\mathcal{G}$ as a **subset selection**
+problem on the full $J$-column signature. It comes **after** GRN
+inference (@sec-grn-top4), because the second objective uses
+$\boldsymbol{\Sigma}_{j}$. The loss is defined on all types jointly. That
+is the right geometry for DeCovarT: the likelihood depends on
+$\boldsymbol{\mu}\boldsymbol{p}$ **and** on
+$\sum_{j}p_{j}^{2}\boldsymbol{\Sigma}_{j}$.
+
+This stage is **optional**. The naive screen (@sec-fs-hvg) already
+supplies $\mathcal{G}_{0}$. The stricter panel is the second factor in
+the $4\times 3\times 2$ design (@fig-pipeline): four GGM families,
+three population lifts, and with/without this Pareto refinement.
+
+Let $\boldsymbol{\mu}=(\boldsymbol{\mu}_{\cdot j})_{j=1}^{J}\in\mathbb{R}^{G\times J}$
+be the mean signature. The 2-norm condition number is
+
+$$
+\kappa_{2}(\boldsymbol{X})
+=
+\frac{\sigma_{\max}(\boldsymbol{X})}{\sigma_{\min}(\boldsymbol{X})}.
+$$ {#eq-fs-kappa}
+
+Large $\kappa_{2}(\boldsymbol{\mu}_{\mathcal{G}})$ is multicollinearity of
+the **mean** design [@gongDeconRNASeqStatisticalFramework2013;
+@newmanRobustEnumerationCell2015]. It does **not** see precision
+rewiring.
+
+## Why mean-only $\kappa$ is not enough {#sec-fs-kappa}
+
+In a gastruloid continuum $\kappa_{2}$ is intrinsically large. Two
+closely related types can share nearly collinear means and still differ
+in $\boldsymbol{\Theta}_{j}$. Mean-only pruning then under-represents
+adjacent or low-abundance states — exactly the types whose **rewiring**
+DeCovarT is meant to exploit. Use $\kappa$ as a **diagnostic**, not as
+the sole selector.
+
+A variance-weighted variant standardises rows by gene-wise
+uncertainties $\tau_{g}^{2}$ and evaluates conditioning in the
+$(J-1)$-dimensional contrast space induced by $\sum_{j}p_{j}=1$
+(package vignette `supp-S6-feature-selection.qmd`).
+
+## Genetic algorithms {#sec-fs-ga}
+
+`AutoGeneS` searches subsets with a multi-objective genetic algorithm
+that minimises inter-population correlation while maximising centroid
+distance [@alieeAutoGeneSAutomaticGene2021]. The loss is already
+all-versus-all.
+
+For this repository the planned optimiser is NSGA-II via `mco::nsga2()`
+[@R-mco]. Encode genes as a mask in $[0,1]^{|\mathcal{G}_{0}|}$
+(thresholded to a target size). Minimise at least
+
+1.  $\kappa_{2}(\boldsymbol{\mu}_{\mathcal{G}})$ (mean geometry);
+2.  average pairwise overlap $\overline{\omega}$ of the $J$ Gaussians
+    $\mathcal{N}(\boldsymbol{\mu}_{\cdot j},\boldsymbol{\Sigma}_{j})$
+    [@melnykovMixSimPackageSimulating2012; @R-MixSim].
+
+`MixSim` defines pairwise overlap as the **sum of the two
+misclassification probabilities** under a Bayes / MAP rule, not as
+$1$ minus a distance. Optional analytic surrogates — Jeffreys
+(symmetric KL), Chernoff / Bhattacharyya, and the Bures–Wasserstein
+metric on $(\boldsymbol{\mu}_{j},\boldsymbol{\Sigma}_{j})$ — belong on the same
+Pareto front. They use **both** means and covariances, which
+`AutoGeneS` correlation / centroid objectives do not.
+
+Differential-network genes (@sec-fs-diffnet) may be injected into
+$\mathcal{G}_{0}$ before NSGA-II; they are candidates, not the panel.
+
+::: {#nte-pareto-proposal .callout-note}
+## :information_source: A DeCovarT-specific third objective (proposal)
+
+The improved pipeline proposed adding Fisher identifiability of
+$\boldsymbol{p}$: maximise the smallest eigenvalue of the mixture
+information $I_{\mathcal{G}}(\boldsymbol{p})$, or minimise its condition
+number. That objective is **not** in the literature corpus; it is a
+composition. Keep it as a **sensitivity objective** on a shortlist of
+non-dominated panels, not as the only fitness.
+:::
+
+Keep several non-dominated panels. Report the whole front. With one
+Suppinger scRNA-seq resource, the honest statement is: the panel is
+fitted on this atlas and must be challenged on an external gastruloid
+cohort.
+
+```{r}
+#| label: nsga2-sketch
+#| eval: false
+# Sketch: two-objective NSGA-II after Theta_j has been fit.
+# fitness <- function(mask) {
+#   g <- which(mask > 0.5)
+#   kappa <- kappa(mu[g, ], exact = TRUE)
+#   ov <- MixSim::overlap(
+#     Pi = rep(1 / J, J),
+#     Mu = t(mu[g, ]),
+#     S = lapply(Sigma, \(A) A[g, g, drop = FALSE])
+#   )
+#   c(kappa, mean(ov$OmegaMap[upper.tri(ov$OmegaMap)]))
+# }
+```
+
+## What we would actually run (optional stage)
+
+1.  Start from $\mathcal{G}_{0}$ (@sec-fs-hvg).
+2.  Fit $\boldsymbol{\Theta}_{j}$ with a core method (@sec-grn-top4).
+3.  NSGA-II on $\kappa_{2}(\boldsymbol{\mu}_{\mathcal{G}})$ and MixSim
+    $\overline{\omega}$. Keep the Pareto set.
+4.  Export linear-scale $\boldsymbol{\mu}_{\mathcal{G}}$ and
+    $\boldsymbol{\Theta}_{j}$ into DeCovarT.
+
+Script template: `scripts/04_02_*.R`.

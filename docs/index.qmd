@@ -2,55 +2,53 @@
 title: "Overview"
 ---
 
-This Quarto **book** is the narrative companion to the analysis scripts
-under `scripts/`. R chunks stay `eval: false` until artefacts exist.
-Mermaid and static Markdown still execute; [`freeze: auto`](https://quarto.org/docs/projects/code-execution.html#freeze)
-caches those results in `docs/_freeze`.
-
-The layout follows analysis reproducibility repos such as
-[cellrank2_reproducibility](https://github.com/theislab/cellrank2_reproducibility)
-(Python + Jupyter Book there). Here the stack is **R**, **`renv`**, and
-**Quarto**, published with the GitHub Pages `gh-pages` workflow
-([Quarto: GitHub Pages, Knitr with renv](https://quarto.org/docs/publishing/github-pages.html#example-knitr-with-renv)).
+This book is the narrative companion to `scripts/`. Computation stays
+in the scripts; the chapters are theory, design, and criticism of how
+those scripts should be run.
 
 The scientific target is DeCovarT's cell-type Gaussians: sparse
 precisions $\boldsymbol{\Theta}_{j}\equiv\boldsymbol{\Sigma}_{j}^{-1}$ and means
-$\boldsymbol{\mu}_{\cdot j}$ estimated from labelled single-cell
-transcriptomes, then plugged into the bulk convolution. Notation follows
-the article Methods. Computation stays in `scripts/`; this book is
-theory, criticism, and design.
+$\boldsymbol{\mu}_{\cdot j}$, estimated from labelled single-cell
+transcriptomes and plugged into the bulk convolution. Indices follow
+the article Methods: gene $g=1,\ldots,G$, cell type $j=1,\ldots,J$,
+sample $i=1,\ldots,N$.
+
+The planned Suppinger benchmark is a **$4\times 3\times 2$** product,
+not a single pipeline. Four undirected GGM families, three lifts from
+cells to a population Gaussian, and two gene-panel strategies (a naive
+screen, plus an optional stricter Pareto refinement after the networks
+exist). That is up to 24 routes. The aim is to see **which steps move
+deconvolution**, not to retain every cell of the product in the paper.
 
 ```{mermaid}
+%%| echo: false
 %%| label: fig-pipeline
-%%| fig-cap: "Planned pipeline: GEO gastruloids, method-conditional observation model, core GGMs, type-level alignment, feature panels, DeCovarT, then precision-matrix contamination. Fused and copula-joint graphs stay in the GRN appendix."
-%%{init: {"theme": "sandstone"}}%%
+%%| fig-cap: "Design product for Suppinger: a naive gene screen, four GGM families, three population lifts, and an optional all-versus-all panel that uses the fitted precisions. BLGGM is not in the product."
+%%{init: {"theme": "sandstone", "flowchart": {"htmlLabels": true}}}%%
 flowchart TD
-  A["GEO GSE229513 UMI"] --> B["Preprocess SE / SCE"]
-  B --> C["Naive then all-vs-all gene panel"]
-  C --> D{"GGM assumes Gaussian observations?"}
-  D -->|yes| E["NPN inside SILGGM / low-rank / GmGM"]
-  D -->|no| F["Raw counts PLN"]
-  E --> G["Sparse SPD Theta_j"]
-  F --> G
-  G --> H["Type-level lift: affine / W2 / bootstrap"]
-  H --> I["DeCovarT deconvolution"]
-  C --> I
-  I --> J["Contaminate Theta_j"]
-  G -.-> K["Appendix: FGL, JGCGM"]
+  A["GSE229513 UMI, labels $$j$$"] --> B["Naive screen $$\\mathcal{G}_0$$"]
+  B --> C1["SILGGM / glasso"]
+  B --> C2["PLNnetwork"]
+  B --> C3["GmGM copula"]
+  B --> C4["Sparse + low-rank GGM"]
+  C1 --> T["Independent $$\\widehat{\\boldsymbol{\\Theta}}_{j,t}$$ at 48 h, 72 h, 96 h"]
+  C2 --> T
+  C3 --> T
+  C4 --> T
+  T --> L1["Affine Gaussian aggregation"]
+  T --> L2["Bures--Wasserstein / OT"]
+  T --> L3["scDesign2 copula pseudo-replicates"]
+  L1 --> D["DeCovarT $$(\\boldsymbol{\\mu}_{\\cdot j},\\boldsymbol{\\Sigma}_j)$$"]
+  L2 --> D
+  L3 --> D
+  T --> P["Optional NSGA-II: $$\\kappa_2(\\boldsymbol{\\mu}_{\\mathcal{G}})$$ and MixSim overlap"]
+  P --> D
 ```
 
-## How to render
-
-From the repository root, after `renv::restore()`:
-
-```bash
-quarto render docs
-# first time only, once gh-pages is allowed:
-# quarto publish gh-pages docs
-```
-
-The book format is **HTML only** for now (`pdf` is commented in
-`docs/_quarto.yml`). CI publishes HTML to the `gh-pages` branch.
+Reading order in this book puts the **naive** screen before GRN
+inference, and the **optional** genetic algorithm after the graphs,
+because the second objective needs $\boldsymbol{\Sigma}_{j}$. Network
+metrics and sensitivity analyses close the GRN part.
 
 ## Scripts (source of truth for computation)
 
@@ -59,7 +57,6 @@ The book format is **HTML only** for now (`pdf` is commented in
 | `scripts/01_01_single_cell_exploration_suppinger.R` | Explore GSE229513 |
 | `scripts/02_01_deconvolution_preprocessing.R` | Harmonise genes; SE / SCE |
 | `scripts/03_01_grn_silggm.R` | SILGGM GGM (NPN **inside this branch**) |
-| `scripts/03_02_grn_blggm.R` | BLGGM mixture GGM (optional given labels) |
-| `scripts/04_01_feature_selection_pseudobulk_deseq2.R` | Naive screen (no DE $p$-values without biological replicates) |
-| `scripts/04_02_feature_selection_genetic_algorithm.R` | Pareto gene panel |
+| `scripts/04_01_feature_selection_pseudobulk_deseq2.R` | Naive screen (no DE $p$-values on this atlas) |
+| `scripts/04_02_feature_selection_genetic_algorithm.R` | Optional Pareto gene panel |
 | `scripts/05_01_sensitivity_precision_contamination.R` | Misspecify $\boldsymbol{\Theta}_{j}$ |

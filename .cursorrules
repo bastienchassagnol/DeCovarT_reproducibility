@@ -237,6 +237,69 @@ project uses freeze instead of CI execution.
 
 ---
 
+# Literature intake: converting documents and slides
+
+Do not invent content when a conversion is available. Use a
+**structural converter**, then a **cleanup pass** (YAML, headings,
+tables, captions, image paths, alt-text). Do not ask an LLM to read a
+whole office file or PDF when a converter can parse its structure.
+
+**Default converter: [anydoc](https://github.com/firecrawl/anydoc)**
+(Firecrawl). It turns Word, PowerPoint, Excel, OpenDocument, RTF,
+EPUB, CSV, and PDF into GitHub-Flavored Markdown with one CLI. The
+Cursor skill is `convert-documents-to-markdown` (user-level:
+`npx skills add firecrawl/anydoc -g -y -a cursor`). Needs Node 20+.
+
+```bash
+npx -y @firecrawl/anydoc document.docx -o document.md
+npx -y @firecrawl/anydoc notes.pdf -o notes.md
+npx -y @firecrawl/anydoc talk.pptx -o talk.md
+```
+
+Text-based PDFs convert **locally** (no network). Scanned or
+image-only pages exit with code 3 (`NeedsOcr`). Rerun with hosted OCR
+via [Firecrawl Parse](https://firecrawl.dev/parse):
+
+```bash
+npx -y @firecrawl/anydoc scan.pdf --ocr hosted -o scan.md
+# optional: --api-key, or export FIRECRAWL_API_KEY (higher limits)
+```
+
+Store `FIRECRAWL_API_KEY` in the **user** environment (shell rc or
+Cursor/Remote machine settings), never in the repository. Keyless
+Parse works at low volume; create a key at
+<https://docs.firecrawl.dev/introduction> when rate-limited.
+
+Then run the same cleanup pass: Quarto YAML, heading hierarchy,
+tables, captions, notes, cross-references, image paths, and alt-text.
+Do **not** rewrite scientific content. `pdftoppm` remains a fallback
+only for figures the Markdown conversion missed.
+
+**Pandoc** is optional when you need `--extract-media` into a folder
+the cleanup pass can rewrite, or when anydoc is unavailable:
+
+```bash
+pandoc document.docx --extract-media=images -t markdown -o document.qmd
+```
+
+That yields `document.qmd` plus `images/media/…`, referenced as
+`![…](images/media/image1.png)`.
+
+**Slides (PDF / PPTX → Quarto reveal.js).** Prefer sources in this
+order: Markdown (structure and wording), then PPTX, then PDF. Convert
+with anydoc first:
+
+```bash
+npx -y @firecrawl/anydoc talk.pptx -o talk.md
+```
+
+Keep extracted media; restore equations as `$...$` / `$$...$$` when
+the converter emitted LaTeX, otherwise transcribe from the slide;
+preserve links as `[text](url)`. Then restyle per **Slide design** —
+never ship raw PDF/PPTX as the live deck.
+
+---
+
 # Bibliography
 
 Keep **two citation streams**. Do not mix them. Do **not** invent BibTeX

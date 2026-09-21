@@ -8,7 +8,7 @@ $(\boldsymbol{\mu}_{\cdot j},\boldsymbol{\Sigma}_{j})$ whose precision is sparse
 This chapter is about **lifting** cell-level observations to that object,
 and about **checking** that the lift still represents the cells.
 
-# Alignment of type-level Gaussians {#sec-align}
+## Alignment of type-level Gaussians {#sec-align}
 
 Three strategies, in increasing ambition:
 
@@ -21,6 +21,7 @@ Three strategies, in increasing ambition:
     mechanistic or copula simulators (`scDesign2`, `scMultiSim`).
 
 ```{mermaid}
+%%| echo: false
 %%| label: fig-align-layout
 %%| fig-cap: "Three alignment strategies from labelled single cells to type-level Gaussians. Total bulk y is a later convolution across types; it is not the aggregation used here."
 %%{init: {"theme": "sandstone"}}%%
@@ -34,7 +35,7 @@ flowchart TD
   E --> F["DeCovarT convolution of types"]
 ```
 
-# Two aggregations that must not be confused {#sec-align-two-sums}
+## Two aggregations that must not be confused {#sec-align-two-sums}
 
 Write $\boldsymbol{x}_{c\cdot j}$ for the expression vector of cell $c$ in
 type $j$, and $n_{j}$ for the number of such cells.
@@ -94,9 +95,9 @@ not estimate $\boldsymbol{p}$. DecOT (@sec-align-decot) is a bulk
 that is a sibling of DeCovarT, not a way to build $\boldsymbol{\Theta}_{j}$.
 :::
 
-# Affine lift and the precision-sparsity caveat {#sec-align-invariance}
+## Affine lift and the precision-sparsity caveat {#sec-align-invariance}
 
-## Independent Gaussian cells
+### Independent Gaussian cells
 
 Assume, for a fixed type $j$ (subscript dropped),
 
@@ -170,7 +171,7 @@ and keep the glasso zeros. If `GmGM` (@sec-gmgm) finds a non-trivial
 cell-axis precision, the i.i.d. hypothesis is already false and
 @eq-theta-scale is an approximation.
 
-## Mean and covariance that DeCovarT actually wants
+### Mean and covariance that DeCovarT actually wants
 
 DeCovarT's $\boldsymbol{\mu}_{\cdot j}$ is a **cross-cell mean** of the
 purified profile, analogous to MuSiC's cross-sample mean
@@ -193,12 +194,12 @@ fixed once: the convolution uses $\boldsymbol{\Sigma}_{j}$ of the
 $\boldsymbol{\mu}_{\cdot j}$, not the covariance of the cell-average
 estimator.
 
-# Optimal transport {#sec-align-ot}
+## Optimal transport {#sec-align-ot}
 
 OT enters in three mathematically distinct roles. Only the second is
 central for exporting $\boldsymbol{\Theta}_{j}$.
 
-## Discrete OT between count histograms (DecOT) {#sec-align-decot}
+### Discrete OT between count histograms (DecOT) {#sec-align-decot}
 
 Kantorovich OT between discrete measures $\mu,\nu$ with ground cost
 $M$ minimises $\langle M,T\rangle$ over couplings with those
@@ -238,7 +239,7 @@ match. That is a diagnostic of **which cells** are surprising under
 $\mathcal{N}(\boldsymbol{\mu}_{\cdot j},\boldsymbol{\Sigma}_{j})$, not an
 estimator of $\boldsymbol{\Theta}_{j}$.
 
-## Gaussian (Bures) Wasserstein — the right metric on DeCovarT objects
+### Gaussian (Bures) Wasserstein — the right metric on DeCovarT objects
 
 For two non-degenerate Gaussians
 $P_{0}=\mathcal{N}(\boldsymbol{m}_{0},\boldsymbol{\Sigma}_{0})$ and
@@ -298,7 +299,7 @@ PLN Gaussian is the **alignment score** of @sec-metrics-stat. Large
 Bures discrepancy with small mean discrepancy means the graph changed
 the covariance geometry; the opposite means we only moved the centroid.
 
-## Wasserstein-robust inverse covariance
+### Wasserstein-robust inverse covariance
 
 Nguyen, Kuhn and Mohajerin Esfahani
 [@nguyenDistributionallyRobustInverse2018] estimate a precision by
@@ -332,9 +333,9 @@ aligners: they target multi-omics / embedding matching, which we
 excluded from the core. CARDAMOM-style OT is useful only insofar as the
 cost remains quadratic in the same gene space.
 
-# Bootstrap and Monte Carlo {#sec-align-bootstrap}
+## Bootstrap and Monte Carlo {#sec-align-bootstrap}
 
-## Technical bootstrap (available)
+### Technical bootstrap (available)
 
 Resample cells **with replacement within type**, labels fixed. Each
 replicate yields $(\hat{\boldsymbol{\mu}}^{\ast},\widehat{\boldsymbol{\Theta}}^{\ast})$
@@ -352,28 +353,82 @@ does not stand in for organoid-to-organoid variability
 pseudo-bulks “biological replicates” is the error already flagged in
 @nte-pseudoreplication.
 
-## Biological bootstrap (unavailable)
+### Biological bootstrap (unavailable)
 
 Multiple donors or organoids would allow resampling **experimental
 units**. Suppinger does not. External cohorts (e.g. GSE250136) are for
 **validation**, not for pooling into one $\boldsymbol{\Theta}_{j}$ without
 a batch model.
 
-## Monte Carlo from generative models {#sec-align-mc}
+### Monte Carlo from generative models {#sec-align-mc}
 
 When we need more type-level profiles than $n_{j}$ cells, or a known
 skeleton for BEELINE-style AUPRC, we simulate.
 
 **`scDesign2`** [@sunScDesign2TransparentSimulator2021] fits, per cell
 type, a copula: a count marginal (Poisson, NB, ZIP, or ZINB, chosen
-per gene) plus a Gaussian copula for dependence. It preserves genes,
-captures correlations, and can vary cell number and depth. It is
-transparent (parameters are means, dispersions, copula correlations).
-For our purpose: fit the copula **on the GGM / PLN skeleton** (constrain
-or initialise the copula correlation from $\widehat{\boldsymbol{\Sigma}}_{j}$),
-draw synthetic cells, re-aggregate, and measure how well
-$\boldsymbol{\Theta}_{j}$ is recovered. Using ZINB marginals should be a
-sensitivity, not the default, for the same reason as @nte-drop-zico.
+per gene) plus a Gaussian copula for dependence (@thm-sklar). It
+preserves genes, captures correlations, and can vary cell number and
+depth. It is transparent (parameters are means, dispersions, copula
+correlations). For our purpose: fit the copula **on the GGM / PLN
+skeleton** (constrain or initialise the copula correlation from
+$\widehat{\boldsymbol{\Sigma}}_{j}$), draw synthetic cells, re-aggregate, and
+measure how well $\boldsymbol{\Theta}_{j}$ is recovered. Using ZINB
+marginals should be a sensitivity, not the default, for the same reason
+as @nte-drop-zico.
+
+::: {#thm-sklar}
+## Sklar's theorem
+
+Let $F$ be a $G$-dimensional cdf with margins $F_{1},\ldots,F_{G}$.
+There exists a copula $C:[0,1]^{G}\to[0,1]$ such that
+
+$$
+F(x_{1},\ldots,x_{G})
+=
+C\bigl(F_{1}(x_{1}),\ldots,F_{G}(x_{G})\bigr).
+$$ {#eq-sklar}
+
+If every $F_{g}$ is continuous, $C$ is unique. If some margins are
+discrete, $C$ is uniquely determined only on
+$\operatorname{ran}(F_{1})\times\cdots\times\operatorname{ran}(F_{G})$,
+the Cartesian product of the ranges of the marginal cdfs
+([Wikipedia: Sklar's theorem](https://en.wikipedia.org/wiki/Copula_(statistics)#Sklar's_theorem)).
+:::
+
+::: {#nte-discrete-copula .callout-note}
+## :information_source: Discrete margins: uniqueness fails, so we jitter
+
+The **Gaussian copula** takes $C_{\Theta}$ to be the cdf of a
+$G$-dimensional standard normal with correlation (or precision)
+$\boldsymbol{\Theta}$ after applying $\Phi^{-1}$ to each uniform margin.
+That is the copula behind both `huge.npn` and scDesign2's default
+dependence layer; the empirical copula is the rank analogue
+([Wikipedia: empirical copulas](https://en.wikipedia.org/wiki/Copula_(statistics)#Empirical_copulas)).
+Other parametric families (Clayton, Gumbel, $t$) change tail
+dependence; they are not required for the core simulator.
+
+UMI counts $y_{ig}\in\mathbb{N}_{0}$ are discrete, so @thm-sklar does
+**not** give a unique copula density. Two practical patches (Genest and
+Nešlehová, 2007, *ASTIN Bulletin*; **not yet in**
+`bibliography/REFERENCES.bib`, to add from Zotero before a review pass):
+
+1.  **Jittering / randomised quantile.** Draw
+    $U_{ig}\sim\mathrm{Unif}(0,1)$ independent of the data and set
+    $y_{ig}^{\ast}=y_{ig}+U_{ig}-1$ or $y_{ig}^{\ast}=y_{ig}-U_{ig}$,
+    then apply the probability-integral transform to obtain
+    approximately $\mathrm{Unif}(0,1)$ margins on which a Gaussian
+    copula is well defined
+    ([lecture notes](https://www.karlin.mff.cuni.cz/~antoch/robust16/prednasky/Nedele/genestNeslehova2.pdf)).
+2.  **Mass-spreading copulas** (bilinear / checkered extensions,
+    Bernstein polynomial approximations) that spread the probability of
+    each integer cell uniformly over a rectangle, without adding
+    explicit jitter.
+
+scDesign2 implements the copula on estimated count margins; treat
+jittering as the justification that a Gaussian copula on UMI tables is
+an approximation, not a uniqueness theorem.
+:::
 
 **`scMultiSim`** [@liScMultiSimSimulationSinglecell2025a] is a mechanistic
 multi-omics simulator: GRN, chromatin, RNA velocity, spatial location,
@@ -390,7 +445,7 @@ were gastruloid biology. The improved pipeline's suggestion to feed the
 sparse GGM into scDesign2 / scMultiSim as a prior is the right
 **benchmark** design, not a way to invent biological replicates.
 
-# What we would actually run {#sec-align-recommend}
+## What we would actually run {#sec-align-recommend}
 
 1.  **Default lift.** Independent-type GGM or PLN $\to$ export
     $(\boldsymbol{\mu}_{\cdot j},\boldsymbol{\Sigma}_{j})$ on the linear scale,

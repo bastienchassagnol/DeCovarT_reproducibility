@@ -2,7 +2,7 @@
 title: "Sensitivity analyses"
 ---
 
-# Contaminating $\boldsymbol{\Theta}_{j}$ {#sec-sensitivity}
+## Contaminating $\boldsymbol{\Theta}_{j}$ {#sec-sensitivity}
 
 Starting from the fitted sparse precisions (@eq-grn-export), apply the
 misspecification factors described in DeCovarT

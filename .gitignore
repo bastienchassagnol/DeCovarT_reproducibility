@@ -30,6 +30,9 @@ graphify-out/
 temp_*/
 temp_*
 
+# Excel working copies (tidy CSV lives in data/dictionaries/)
+data/cell markers/*.xlsx
+
 # Data: keep pointers and dictionaries; ignore bulky objects
 data/raw/*
 !data/raw/.gitkeep

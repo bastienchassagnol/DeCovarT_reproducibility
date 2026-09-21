@@ -4,17 +4,25 @@ project:
 
 book:
   title: "DeCovarT reproducibility"
-  subtitle: "Simulations, gastruloid GRNs, and sensitivity analyses"
+  subtitle: "Gastruloid GRNs, feature panels, and sensitivity analyses"
   author: "Bastien Chassagnol"
   date: today
+  page-navigation: true
   chapters:
     - index.qmd
-    - 01-data-suppinger.qmd
-    - 03-feature-selection.qmd
-    - 02-grn-graphical-lasso.qmd
-    - 06-population-alignment.qmd
-    - 05-grn-metrics.qmd
-    - 04-sensitivity-misspecification.qmd
+    - part: "Biological use case"
+      chapters:
+        - 01-data-suppinger.qmd
+    - part: "Feature selection"
+      chapters:
+        - 03-feature-selection-naive.qmd
+    - part: "GRN inference"
+      chapters:
+        - 02-grn-graphical-lasso.qmd
+        - 06-population-alignment.qmd
+        - 05-grn-metrics.qmd
+        - 07-feature-selection-all-versus-all.qmd
+        - 04-sensitivity-misspecification.qmd
   search: true
 
 bibliography:
@@ -24,7 +32,6 @@ link-citations: true
 
 # freeze: auto stores executed output in docs/_freeze (commit that folder).
 # https://quarto.org/docs/projects/code-execution.html#freeze
-# Project-level eval is true so Mermaid runs; R chunks stay eval: false.
 execute:
   echo: true
   eval: true
@@ -37,6 +44,8 @@ format:
     toc: true
     toc-depth: 3
     number-sections: true
+    number-depth: 3
+    html-math-method: katex
   # pdf:
   #   documentclass: scrreprt
   #   toc: true

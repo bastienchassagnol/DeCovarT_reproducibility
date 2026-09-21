@@ -1,0 +1,33 @@
+cell_type_excel,cell_type_suppinger,gene_marker
+Anterior mesoderm,Anterior primitive streak / anterior mesoderm,EOMES
+Anterior mesoderm,Anterior primitive streak / anterior mesoderm,GATA6
+Anterior mesoderm,Anterior primitive streak / anterior mesoderm,MESP1
+Cardiac Mesoderm,NA,NKX2-5
+Definitive endoderm,Endoderm / gut,EOMES
+Definitive endoderm,Endoderm / gut,GATA6
+Definitive endoderm,Endoderm / gut,SOX17
+Extraembryonic,NA,CDX2
+Extraembryonic,NA,EOMES
+Extraembryonic,NA,GATA6
+Extraembryonic,NA,SOX17
+Haemato-endothelium,NA,ETV2
+Haemato-endothelium,NA,KDR
+Myogenic progenitor,Somite / myogenic progenitors,MYF5
+Myogenic progenitor,Somite / myogenic progenitors,MYOD
+Nascent/Posterior mesoderm,Caudal mesoderm,ALDH1A2
+Nascent/Posterior mesoderm,Caudal mesoderm,CDX2
+Nascent/Posterior mesoderm,Caudal mesoderm,T
+Nascent/Posterior mesoderm,Caudal mesoderm,TBX6
+Neural Tube progenitors,Neural progenitors,PAX6
+Neural Tube progenitors,Neural progenitors,SOX1
+Neural Tube progenitors,Neural progenitors,SOX2
+Neuromesodermal progenitors NMP,NMP,CDX2
+Neuromesodermal progenitors NMP,NMP,SOX2
+Neuromesodermal progenitors NMP,NMP,T
+Non-neural ectoderm,NA,TFAP2A
+Presomitic mesoderm PSM,Pre-somitic mesoderm,ALDH1A2
+Presomitic mesoderm PSM,Pre-somitic mesoderm,HES7
+Presomitic mesoderm PSM,Pre-somitic mesoderm,TBX6
+Primitive streak,Primitive streak,EOMES
+Primitive streak,Primitive streak,T
+Somite endoderm,Somites,PAX3
