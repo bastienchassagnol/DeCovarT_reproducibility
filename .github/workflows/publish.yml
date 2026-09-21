@@ -33,35 +33,33 @@ jobs:
       - name: Install R
         uses: r-lib/actions/setup-r@v2
         with:
-          r-version: release
+          r-version: "release"
           use-public-rspm: true
 
-      # No DESCRIPTION in this analysis repo: override `packages` so pak
-      # still installs Ubuntu libraries (libglpk-dev for igraph, etc.).
-      # BLGGM is not in the lockfile (does not compile on R 4.6).
-      # https://github.com/r-lib/actions/tree/v2/setup-r-dependencies
-      - name: Install system and R dependencies
-        uses: r-lib/actions/setup-r-dependencies@v2
-        with:
-          cache-version: 3
-          install-quarto: "false"
-          packages: |
-            any::fs
-            any::igraph
-            any::knitr
-            any::rmarkdown
-            any::sass
-            any::stringi
-            any::RcppArmadillo
-            any::huge
-            any::SILGGM
-            any::sctransform
-            any::MixSim
+      # Do not use r-lib/actions/setup-r-dependencies here: pak then
+      # installs into renv/library and fails with
+      # "Unable to move package .../_cache/.../fs" (run 35621930863).
+      # System libraries only; R packages come from renv.lock.
+      - name: Install system libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libglpk-dev \
+            libxml2-dev \
+            libcurl4-openssl-dev \
+            libssl-dev \
+            libfontconfig1-dev \
+            libharfbuzz-dev \
+            libfribidi-dev \
+            libfreetype6-dev \
+            libpng-dev \
+            libtiff-dev \
+            libjpeg-dev
 
       - name: Restore renv lockfile
         uses: r-lib/actions/setup-renv@v2
         with:
-          cache-version: 4
+          cache-version: 5
 
       # Book source is docs/ with execute.freeze: auto (commit docs/_freeze).
       # First local setup: empty commit on gh-pages, then
