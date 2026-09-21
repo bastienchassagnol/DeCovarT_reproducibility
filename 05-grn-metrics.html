@@ -26,41 +26,6 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
 /* CSS for citations */
 div.csl-bib-body { }
 div.csl-entry {
@@ -90,7 +55,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./04-sensitivity-misspecification.html" rel="next">
+<link href="./07-feature-selection-all-versus-all.html" rel="next">
 <link href="./06-population-alignment.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -133,8 +98,22 @@ div.csl-indent {
 <script src="site_libs/quarto-diagram/mermaid-init.js"></script>
 <link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -174,7 +153,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./05-grn-metrics.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Evaluating networks without a true DAG</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./02-grn-graphical-lasso.html">GRN inference</a></li><li class="breadcrumb-item"><a href="./05-grn-metrics.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Evaluating networks without a true DAG</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -205,42 +184,81 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Overview</span></span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Biological use case</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./01-data-suppinger.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Suppinger gastruloids</span></span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Feature selection</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./03-feature-selection.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Feature selection for cell-type Gaussians</span></span></a>
+  <a href="./03-feature-selection-naive.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">One-versus-rest gene screen</span></span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">GRN inference</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./02-grn-graphical-lasso.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Undirected GGMs from single-cell transcriptomics</span></span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./06-population-alignment.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">From single cells to type-level Gaussians</span></span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./05-grn-metrics.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Evaluating networks without a true DAG</span></span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./04-sensitivity-misspecification.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></span></a>
+  <a href="./07-feature-selection-all-versus-all.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">All-versus-all gene panels</span></span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-sensitivity-misspecification.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
     </ul>
     </div>
 </nav>
@@ -251,33 +269,33 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#sec-metrics-scope" id="toc-sec-metrics-scope" class="nav-link active" data-scroll-target="#sec-metrics-scope"><span class="header-section-number">7</span> What we are <em>not</em> claiming</a></li>
-  <li><a href="#sec-metrics-stat" id="toc-sec-metrics-stat" class="nav-link" data-scroll-target="#sec-metrics-stat"><span class="header-section-number">8</span> Statistical robustness and alignment</a>
+  <li><a href="#sec-metrics-scope" id="toc-sec-metrics-scope" class="nav-link active" data-scroll-target="#sec-metrics-scope"><span class="header-section-number">6.1</span> What we are <em>not</em> claiming</a></li>
+  <li><a href="#sec-metrics-stat" id="toc-sec-metrics-stat" class="nav-link" data-scroll-target="#sec-metrics-stat"><span class="header-section-number">6.2</span> Statistical robustness and alignment</a>
   <ul class="collapse">
-  <li><a href="#resampling-and-noise" id="toc-resampling-and-noise" class="nav-link" data-scroll-target="#resampling-and-noise"><span class="header-section-number">8.1</span> Resampling and noise</a></li>
-  <li><a href="#likelihood-and-information-criteria" id="toc-likelihood-and-information-criteria" class="nav-link" data-scroll-target="#likelihood-and-information-criteria"><span class="header-section-number">8.2</span> Likelihood and information criteria</a></li>
-  <li><a href="#distances-between-type-level-gaussians" id="toc-distances-between-type-level-gaussians" class="nav-link" data-scroll-target="#distances-between-type-level-gaussians"><span class="header-section-number">8.3</span> Distances between type-level Gaussians</a></li>
+  <li><a href="#resampling-and-noise" id="toc-resampling-and-noise" class="nav-link" data-scroll-target="#resampling-and-noise"><span class="header-section-number">6.2.1</span> Resampling and noise</a></li>
+  <li><a href="#likelihood-and-information-criteria" id="toc-likelihood-and-information-criteria" class="nav-link" data-scroll-target="#likelihood-and-information-criteria"><span class="header-section-number">6.2.2</span> Likelihood and information criteria</a></li>
+  <li><a href="#distances-between-type-level-gaussians" id="toc-distances-between-type-level-gaussians" class="nav-link" data-scroll-target="#distances-between-type-level-gaussians"><span class="header-section-number">6.2.3</span> Distances between type-level Gaussians</a></li>
   </ul></li>
-  <li><a href="#sec-metrics-topo" id="toc-sec-metrics-topo" class="nav-link" data-scroll-target="#sec-metrics-topo"><span class="header-section-number">9</span> Topological comparison</a>
+  <li><a href="#sec-metrics-topo" id="toc-sec-metrics-topo" class="nav-link" data-scroll-target="#sec-metrics-topo"><span class="header-section-number">6.3</span> Topological comparison</a>
   <ul class="collapse">
-  <li><a href="#skeleton-scores-beeline-reduced-to-undirected" id="toc-skeleton-scores-beeline-reduced-to-undirected" class="nav-link" data-scroll-target="#skeleton-scores-beeline-reduced-to-undirected"><span class="header-section-number">9.1</span> Skeleton scores (BEELINE, reduced to undirected)</a></li>
-  <li><a href="#graph-summaries-that-do-not-need-a-reference" id="toc-graph-summaries-that-do-not-need-a-reference" class="nav-link" data-scroll-target="#graph-summaries-that-do-not-need-a-reference"><span class="header-section-number">9.2</span> Graph summaries that do not need a reference</a></li>
-  <li><a href="#sec-metrics-viz" id="toc-sec-metrics-viz" class="nav-link" data-scroll-target="#sec-metrics-viz"><span class="header-section-number">9.3</span> Visualisations</a></li>
+  <li><a href="#skeleton-scores-beeline-reduced-to-undirected" id="toc-skeleton-scores-beeline-reduced-to-undirected" class="nav-link" data-scroll-target="#skeleton-scores-beeline-reduced-to-undirected"><span class="header-section-number">6.3.1</span> Skeleton scores (BEELINE, reduced to undirected)</a></li>
+  <li><a href="#graph-summaries-that-do-not-need-a-reference" id="toc-graph-summaries-that-do-not-need-a-reference" class="nav-link" data-scroll-target="#graph-summaries-that-do-not-need-a-reference"><span class="header-section-number">6.3.2</span> Graph summaries that do not need a reference</a></li>
+  <li><a href="#sec-metrics-viz" id="toc-sec-metrics-viz" class="nav-link" data-scroll-target="#sec-metrics-viz"><span class="header-section-number">6.3.3</span> Visualisations</a></li>
   </ul></li>
-  <li><a href="#sec-metrics-knowledge" id="toc-sec-metrics-knowledge" class="nav-link" data-scroll-target="#sec-metrics-knowledge"><span class="header-section-number">10</span> Knowledge-driven scoring</a>
+  <li><a href="#sec-metrics-knowledge" id="toc-sec-metrics-knowledge" class="nav-link" data-scroll-target="#sec-metrics-knowledge"><span class="header-section-number">6.4</span> Knowledge-driven scoring</a>
   <ul class="collapse">
-  <li><a href="#gretas-three-buckets-restricted-to-undirected-transcriptomics" id="toc-gretas-three-buckets-restricted-to-undirected-transcriptomics" class="nav-link" data-scroll-target="#gretas-three-buckets-restricted-to-undirected-transcriptomics"><span class="header-section-number">10.1</span> GRETA’s three buckets, restricted to undirected transcriptomics</a></li>
-  <li><a href="#sec-metrics-integer" id="toc-sec-metrics-integer" class="nav-link" data-scroll-target="#sec-metrics-integer"><span class="header-section-number">10.2</span> Integer programmes and Boolean models</a></li>
+  <li><a href="#gretas-three-buckets-restricted-to-undirected-transcriptomics" id="toc-gretas-three-buckets-restricted-to-undirected-transcriptomics" class="nav-link" data-scroll-target="#gretas-three-buckets-restricted-to-undirected-transcriptomics"><span class="header-section-number">6.4.1</span> GRETA’s three buckets, restricted to undirected transcriptomics</a></li>
+  <li><a href="#sec-metrics-integer" id="toc-sec-metrics-integer" class="nav-link" data-scroll-target="#sec-metrics-integer"><span class="header-section-number">6.4.2</span> Integer programmes and Boolean models</a></li>
   </ul></li>
-  <li><a href="#sec-metrics-omics" id="toc-sec-metrics-omics" class="nav-link" data-scroll-target="#sec-metrics-omics"><span class="header-section-number">11</span> Perspectives: regulatory omics</a></li>
-  <li><a href="#sec-metrics-scorecard" id="toc-sec-metrics-scorecard" class="nav-link" data-scroll-target="#sec-metrics-scorecard"><span class="header-section-number">12</span> Practical scorecard for this repository</a></li>
+  <li><a href="#sec-metrics-omics" id="toc-sec-metrics-omics" class="nav-link" data-scroll-target="#sec-metrics-omics"><span class="header-section-number">6.5</span> Perspectives: regulatory omics</a></li>
+  <li><a href="#sec-metrics-scorecard" id="toc-sec-metrics-scorecard" class="nav-link" data-scroll-target="#sec-metrics-scorecard"><span class="header-section-number">6.6</span> Practical scorecard for this repository</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./02-grn-graphical-lasso.html">GRN inference</a></li><li class="breadcrumb-item"><a href="./05-grn-metrics.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Evaluating networks without a true DAG</span></a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Evaluating networks without a true DAG</span></h1>
 </div>
@@ -296,7 +314,7 @@ window.Quarto = {
 </header>
 
 
-<p>There is <strong>no</strong> complete ground-truth GRN for murine gastruloids. Mouse TF catalogues are incomplete; ChIP-seq and ATAC-seq are <strong>not</strong> measured in the core Suppinger scRNA-seq table we use for <span class="math inline">\(\boldsymbol{\Theta}_{j}\)</span>; and undirected GGM edges are not the same objects as directed TF–target arrows. Evaluation must therefore be <strong>relative</strong> (methods against each other, against perturbed data, and against partial priors), not a claim of causal recovery.</p>
+<p>There is <strong>no</strong> complete ground-truth GRN for murine gastruloids. Mouse TF catalogues are incomplete; ChIP-seq and ATAC-seq are <strong>not</strong> measured in the core Suppinger scRNA-seq table we use for <span class="math inline">\boldsymbol{\Theta}_{j}</span>; and undirected GGM edges are not the same objects as directed TF–target arrows. Evaluation must therefore be <strong>relative</strong> (methods against each other, against perturbed data, and against partial priors), not a claim of causal recovery.</p>
 <p>This chapter groups metrics into three families, following GRETA’s split of mechanistic / predictive / literature tasks and BEELINE’s emphasis on precision–recall against synthetic or curated graphs:</p>
 <ol type="1">
 <li><strong>Statistical robustness and distributional alignment</strong> — does the fitted Gaussian (or its graph) stay put under resampling, and does it match the type-level law that DeCovarT needs?</li>
@@ -305,19 +323,6 @@ window.Quarto = {
 </ol>
 <p>Directed causal metrics, multimodal ATAC/ChIP recovery, and perturbation forecasting are <strong>perspectives</strong>: they judge a different estimand than <a href="02-grn-graphical-lasso.html#eq-grn-estimand" class="quarto-xref">Equation&nbsp;<span>4.1</span></a>.</p>
 <div class="cell" data-layout-align="default">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>%%{init: {"theme": "sandstone"}}%%</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>flowchart TD</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  A["Estimated Theta_j"] --&gt; B["Statistical robustness"]</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  A --&gt; C["Topology"]</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  A --&gt; D["Knowledge-driven"]</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  B --&gt; B1["Bootstrap / noise injection"]</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  B --&gt; B2["KL, Hellinger, W2, eBIC"]</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  C --&gt; C1["Precision, recall, F, SHD"]</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  C --&gt; C2["Degree, hubs, modules"]</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  D --&gt; D3["TF–target priors"]</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  D --&gt; D4["GRETA literature scores"]</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  A -.-&gt; E["Perspective: Boolean / CORNETO"]</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  A -.-&gt; F["Perspective: ChIP / ATAC"]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div id="fig-metrics-families" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -346,8 +351,8 @@ Figure&nbsp;6.1: Three evaluation families for undirected cell-type GGMs, plus t
 </div>
 </div>
 </div>
-<section id="sec-metrics-scope" class="level1" data-number="7">
-<h1 data-number="7"><span class="header-section-number">7</span> What we are <em>not</em> claiming</h1>
+<section id="sec-metrics-scope" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="sec-metrics-scope"><span class="header-section-number">6.1</span> What we are <em>not</em> claiming</h2>
 <p>BEELINE evaluated <strong>directed</strong> GRN algorithms, often on pseudotime-ordered cells, against synthetic Boolean networks and curated TF–gene graphs. GRETA evaluated <strong>multimodal</strong> (RNA+ATAC) pipelines on mechanistic perturbation tasks, predictive reconstruction of omics, and literature databases. Our core graphs are <strong>undirected</strong>, <strong>stationary</strong>, and <strong>transcriptomics-only</strong>. We therefore:</p>
 <ul>
 <li>reduce BEELINE-style scores to <strong>skeletons</strong> (forget orientation and sign unless a method supplies them);</li>
@@ -355,35 +360,35 @@ Figure&nbsp;6.1: Three evaluation families for undirected cell-type GGMs, plus t
 <li>keep GRETA-style <strong>literature</strong> and <strong>predictive</strong> ideas only where they survive without ATAC.</li>
 </ul>
 </section>
-<section id="sec-metrics-stat" class="level1" data-number="8">
-<h1 data-number="8"><span class="header-section-number">8</span> Statistical robustness and alignment</h1>
-<p>These scores do not need a true graph. They ask whether <span class="math inline">\((\widehat{\boldsymbol{\mu}}_{\cdot j},\widehat{\boldsymbol{\Sigma}}_{j})\)</span> is a stable, distinguishable plug-in for <a href="02-grn-graphical-lasso.html#eq-grn-convolution" class="quarto-xref">Equation&nbsp;<span>4.2</span></a>.</p>
-<section id="resampling-and-noise" class="level2" data-number="8.1">
-<h2 data-number="8.1" class="anchored" data-anchor-id="resampling-and-noise"><span class="header-section-number">8.1</span> Resampling and noise</h2>
+<section id="sec-metrics-stat" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="sec-metrics-stat"><span class="header-section-number">6.2</span> Statistical robustness and alignment</h2>
+<p>These scores do not need a true graph. They ask whether <span class="math inline">(\widehat{\boldsymbol{\mu}}_{\cdot j},\widehat{\boldsymbol{\Sigma}}_{j})</span> is a stable, distinguishable plug-in for <a href="02-grn-graphical-lasso.html#eq-grn-convolution" class="quarto-xref">Equation&nbsp;<span>4.2</span></a>.</p>
+<section id="resampling-and-noise" class="level3" data-number="6.2.1">
+<h3 data-number="6.2.1" class="anchored" data-anchor-id="resampling-and-noise"><span class="header-section-number">6.2.1</span> Resampling and noise</h3>
 <p>With one experiment, the honest uncertainty is <strong>conditional on this atlas</strong>:</p>
 <ul>
-<li><strong>Technical cell bootstrap</strong> within type, labels fixed (<a href="06-population-alignment.html" class="quarto-xref"><span>Chapter 10</span></a>). Re-estimate <span class="math inline">\(\boldsymbol{\Theta}_{j}\)</span>; record edge inclusion frequencies (stability selection in the sense of Meinshausen and Bühlmann <span class="citation" data-cites="meinshausenStabilitySelection2010">(<a href="#ref-meinshausenStabilitySelection2010" role="doc-biblioref">Meinshausen and Bühlmann 2010</a>)</span>) and the Frobenius / Bures spread of <span class="math inline">\(\widehat{\boldsymbol{\Sigma}}_{j}\)</span>.</li>
+<li><strong>Technical cell bootstrap</strong> within type, labels fixed (<a href="06-population-alignment.html#sec-align-bootstrap" class="quarto-xref"><span>Section 5.5</span></a>). Re-estimate <span class="math inline">\boldsymbol{\Theta}_{j}</span>; record edge inclusion frequencies (stability selection in the sense of Meinshausen and Bühlmann <span class="citation" data-cites="meinshausenStabilitySelection2010">(<a href="#ref-meinshausenStabilitySelection2010" role="doc-biblioref">Meinshausen and Bühlmann 2010</a>)</span>) and the Frobenius / Bures spread of <span class="math inline">\widehat{\boldsymbol{\Sigma}}_{j}</span>.</li>
 <li><strong>Gene or cell downsampling</strong>, as GRETA does to test sensitivity to coverage. GRETA found that TF and gene <em>sets</em> can look stable while <strong>edges</strong> collapse under downsampling — a warning we should expect for glasso supports as well.</li>
 <li><strong>Random seeds</strong> for stochastic estimators (<code>GmGM</code>, Bayesian graphs, boosting). GRETA reported that some multimodal methods reverse high-weight edges across seeds; a GGM that needs a seed should publish edge-overlap across seeds.</li>
-<li><strong>Observation-model contamination</strong> (Gaussian, <span class="math inline">\(t_{\nu}\)</span>, PLN, extra zeros) belongs with <a href="04-sensitivity-misspecification.html" class="quarto-xref"><span>Chapter 8</span></a>, not as a graph-recovery score.</li>
+<li><strong>Observation-model contamination</strong> (Gaussian, <span class="math inline">t_{\nu}</span>, PLN, extra zeros) belongs with <a href="04-sensitivity-misspecification.html#sec-sensitivity" class="quarto-xref"><span>Section 8.1</span></a>, not as a graph-recovery score.</li>
 </ul>
-<p>Biological (multi-organoid) bootstrap is <strong>unavailable</strong>. Reporting a bootstrap interval as if it were between-experiment uncertainty would repeat the pseudoreplication error of <a href="03-feature-selection.html#nte-pseudoreplication" class="quarto-xref">Note&nbsp;<span>5.2</span></a>.</p>
+<p>Biological (multi-organoid) bootstrap is <strong>unavailable</strong>. Reporting a bootstrap interval as if it were between-experiment uncertainty would repeat the pseudoreplication error of <a href="03-feature-selection-naive.html#nte-pseudoreplication" class="quarto-xref">Note&nbsp;<span>3.3</span></a>.</p>
 </section>
-<section id="likelihood-and-information-criteria" class="level2" data-number="8.2">
-<h2 data-number="8.2" class="anchored" data-anchor-id="likelihood-and-information-criteria"><span class="header-section-number">8.2</span> Likelihood and information criteria</h2>
+<section id="likelihood-and-information-criteria" class="level3" data-number="6.2.2">
+<h3 data-number="6.2.2" class="anchored" data-anchor-id="likelihood-and-information-criteria"><span class="header-section-number">6.2.2</span> Likelihood and information criteria</h3>
 <p>On the Gaussian scale actually used by the estimator,</p>
 <ul>
 <li><strong>eBIC</strong> (extended BIC) is the usual glasso selection criterion when FDR methods are not used;</li>
 <li>held-out log-likelihood on cells left out within type (still technical, not biological);</li>
 <li>SILGGM’s own global FDR and, when a simulator supplies a true skeleton, power and Matthews correlation (the package’s simulation diagnostics).</li>
 </ul>
-<p>These scores compare <strong>nested Gaussian models</strong>. They do not validate a PLN latent graph against a glasso graph on NPN data: the observation models differ. Cross-family comparison must move to a common object — the exported <span class="math inline">\((\boldsymbol{\mu}_{\cdot j},\boldsymbol{\Sigma}_{j})\)</span> on the <strong>linear</strong> DeCovarT scale — and use distributional distances.</p>
+<p>These scores compare <strong>nested Gaussian models</strong>. They do not validate a PLN latent graph against a glasso graph on NPN data: the observation models differ. Cross-family comparison must move to a common object — the exported <span class="math inline">(\boldsymbol{\mu}_{\cdot j},\boldsymbol{\Sigma}_{j})</span> on the <strong>linear</strong> DeCovarT scale — and use distributional distances.</p>
 </section>
-<section id="distances-between-type-level-gaussians" class="level2" data-number="8.3">
-<h2 data-number="8.3" class="anchored" data-anchor-id="distances-between-type-level-gaussians"><span class="header-section-number">8.3</span> Distances between type-level Gaussians</h2>
-<p>Closed forms, for non-degenerate <span class="math inline">\(P_{j}=\mathcal{N}(\boldsymbol{\mu}_{\cdot j},\boldsymbol{\Sigma}_{j})\)</span>:</p>
+<section id="distances-between-type-level-gaussians" class="level3" data-number="6.2.3">
+<h3 data-number="6.2.3" class="anchored" data-anchor-id="distances-between-type-level-gaussians"><span class="header-section-number">6.2.3</span> Distances between type-level Gaussians</h3>
+<p>Closed forms, for non-degenerate <span class="math inline">P_{j}=\mathcal{N}(\boldsymbol{\mu}_{\cdot j},\boldsymbol{\Sigma}_{j})</span>:</p>
 <p><strong>Kullback–Leibler</strong></p>
-<p><span id="eq-kl-gauss"><span class="math display">\[
+<p><span id="eq-kl-gauss"><span class="math display">
 \begin{aligned}
 D_{\mathrm{KL}}(P_{j}\parallel P_{\ell})
 &amp;=
@@ -396,36 +401,36 @@ D_{\mathrm{KL}}(P_{j}\parallel P_{\ell})
 +\ln\frac{\det\boldsymbol{\Sigma}_{\ell}}{\det\boldsymbol{\Sigma}_{j}}
 \Bigr].
 \end{aligned}
-\tag{8.1}\]</span></span></p>
-<p><strong>Jeffreys</strong> <span class="math inline">\(J(P_{j},P_{\ell})=D_{\mathrm{KL}}(P_{j}\parallel P_{\ell})+D_{\mathrm{KL}}(P_{\ell}\parallel P_{j})\)</span> is the symmetric version used as a separation monitor in the feature chapter.</p>
-<p><strong>Hellinger</strong> via Gaussian affinity, and <strong>MixSim overlap</strong> <span class="math inline">\(\omega_{j\ell}=\Omega_{j\ell}+\Omega_{\ell j}\)</span> as the sum of misclassification probabilities <span class="citation" data-cites="melnykovMixSimPackageSimulating2012 R-MixSim">(<a href="#ref-melnykovMixSimPackageSimulating2012" role="doc-biblioref">Melnykov et al. 2012</a>, <a href="#ref-R-MixSim" role="doc-biblioref">2021</a>)</span>, are the right “can DeCovarT tell these types apart?” scores. They are <strong>not</strong> graph metrics; they are metrics on the generative object.</p>
-<p><strong>Bures–Wasserstein</strong> (<a href="06-population-alignment.html" class="quarto-xref"><span>Chapter 9</span></a>) splits mean displacement from covariance geometry. Use it both as a type-separation diagnostic and as an <strong>alignment</strong> loss between single-cell clouds and type-level Gaussians.</p>
+\tag{6.1}</span></span></p>
+<p><strong>Jeffreys</strong> <span class="math inline">J(P_{j},P_{\ell})=D_{\mathrm{KL}}(P_{j}\parallel P_{\ell})+D_{\mathrm{KL}}(P_{\ell}\parallel P_{j})</span> is the symmetric version used as a separation monitor in the feature chapter.</p>
+<p><strong>Hellinger</strong> via Gaussian affinity, and <strong>MixSim overlap</strong> <span class="math inline">\omega_{j\ell}=\Omega_{j\ell}+\Omega_{\ell j}</span> as the sum of misclassification probabilities <span class="citation" data-cites="melnykovMixSimPackageSimulating2012 R-MixSim">(<a href="#ref-melnykovMixSimPackageSimulating2012" role="doc-biblioref">Melnykov et al. 2012</a>, <a href="#ref-R-MixSim" role="doc-biblioref">2021</a>)</span>, are the right “can DeCovarT tell these types apart?” scores. They are <strong>not</strong> graph metrics; they are metrics on the generative object.</p>
+<p><strong>Bures–Wasserstein</strong> (<a href="06-population-alignment.html#sec-align-ot" class="quarto-xref"><span>Section 5.4</span></a>) splits mean displacement from covariance geometry. Use it both as a type-separation diagnostic and as an <strong>alignment</strong> loss between single-cell clouds and type-level Gaussians.</p>
 <div id="nte-metrics-scale" class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Note&nbsp;8.1: :information_source: Compare laws on the DeCovarT scale
+Note&nbsp;6.1: :information_source: Compare laws on the DeCovarT scale
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>KL between NPN-space Gaussians is not KL between count-scale pseudo-bulks. After each estimator has exported <a href="02-grn-graphical-lasso.html#eq-grn-export" class="quarto-xref">Equation&nbsp;<span>8.1</span></a>, compute KL / Hellinger / <span class="math inline">\(W_{2}\)</span> / MixSim on <strong>that</strong> Gaussian, the one that enters the convolution. Otherwise a “better” SILGGM graph can win on NPN likelihood and lose as a deconvolution prior.</p>
+<p>KL between NPN-space Gaussians is not KL between count-scale pseudo-bulks. After each estimator has exported <a href="02-grn-graphical-lasso.html#eq-grn-export" class="quarto-xref">Equation&nbsp;<span>4.6</span></a>, compute KL / Hellinger / <span class="math inline">W_{2}</span> / MixSim on <strong>that</strong> Gaussian, the one that enters the convolution. Otherwise a “better” SILGGM graph can win on NPN likelihood and lose as a deconvolution prior.</p>
 </div>
 </div>
 </section>
 </section>
-<section id="sec-metrics-topo" class="level1" data-number="9">
-<h1 data-number="9"><span class="header-section-number">9</span> Topological comparison</h1>
-<section id="skeleton-scores-beeline-reduced-to-undirected" class="level2" data-number="9.1">
-<h2 data-number="9.1" class="anchored" data-anchor-id="skeleton-scores-beeline-reduced-to-undirected"><span class="header-section-number">9.1</span> Skeleton scores (BEELINE, reduced to undirected)</h2>
+<section id="sec-metrics-topo" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="sec-metrics-topo"><span class="header-section-number">6.3</span> Topological comparison</h2>
+<section id="skeleton-scores-beeline-reduced-to-undirected" class="level3" data-number="6.3.1">
+<h3 data-number="6.3.1" class="anchored" data-anchor-id="skeleton-scores-beeline-reduced-to-undirected"><span class="header-section-number">6.3.1</span> Skeleton scores (BEELINE, reduced to undirected)</h3>
 <p>BEELINE <span class="citation" data-cites="pratapaBenchmarkingAlgorithmsGene2020">(<a href="#ref-pratapaBenchmarkingAlgorithmsGene2020" role="doc-biblioref">Pratapa et al. 2020</a>)</span> is the standard scRNA-seq GRN benchmark. Its headline findings that survive our constraints:</p>
 <ul>
 <li>AUPRC and <strong>early precision</strong> are moderate even with known synthetic graphs;</li>
 <li>methods that <strong>do not</strong> require pseudotime were generally more accurate — convenient, because we assume stationarity;</li>
 <li>recovery is easier on simple synthetic networks than on curated Boolean models.</li>
 </ul>
-<p>Scores we keep, always on <strong>undirected</strong> adjacency <span class="math inline">\(A_{gg'}=\mathbf{1}\{\hat\theta_{gg'}\neq 0\}\)</span> (or a thresholded posterior inclusion probability):</p>
+<p>Scores we keep, always on <strong>undirected</strong> adjacency <span class="math inline">A_{gg'}=\mathbf{1}\{\hat\theta_{gg'}\neq 0\}</span> (or a thresholded posterior inclusion probability):</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 17%">
@@ -441,14 +446,14 @@ Note&nbsp;8.1: :information_source: Compare laws on the DeCovarT scale
 </thead>
 <tbody>
 <tr class="odd">
-<td>Precision / recall / <span class="math inline">\(F_{1}\)</span> or <span class="math inline">\(F_{0.1}\)</span></td>
+<td>Precision / recall / <span class="math inline">F_{1}</span> or <span class="math inline">F_{0.1}</span></td>
 <td>TP, FP, FN against a reference skeleton</td>
-<td>Needs a reference; GRETA weights precision <span class="math inline">\(10\times\)</span> recall because inferred GRNs are sparse</td>
+<td>Needs a reference; GRETA weights precision <span class="math inline">10\times</span> recall because inferred GRNs are sparse</td>
 </tr>
 <tr class="even">
 <td>Early precision</td>
-<td>Precision among the top-<span class="math inline">\(k\)</span> edges</td>
-<td>Robust when <span class="math inline">\(k\)</span> is the expected degree <span class="math inline">\(\times G/2\)</span></td>
+<td>Precision among the top-<span class="math inline">k</span> edges</td>
+<td>Robust when <span class="math inline">k</span> is the expected degree <span class="math inline">\times G/2</span></td>
 </tr>
 <tr class="odd">
 <td>AUPRC / AUROC</td>
@@ -457,8 +462,8 @@ Note&nbsp;8.1: :information_source: Compare laws on the DeCovarT scale
 </tr>
 <tr class="even">
 <td>Structural Hamming distance</td>
-<td><span class="math inline">\(|A-\tilde A|\)</span> on undirected edges</td>
-<td>Scale with <span class="math inline">\(G\)</span>; report also normalised SHD</td>
+<td><span class="math inline">|A-\tilde A|</span> on undirected edges</td>
+<td>Scale with <span class="math inline">G</span>; report also normalised SHD</td>
 </tr>
 <tr class="odd">
 <td>MCC</td>
@@ -467,84 +472,84 @@ Note&nbsp;8.1: :information_source: Compare laws on the DeCovarT scale
 </tr>
 </tbody>
 </table>
-<p>Without a true DAG, the “reference” is one of: (i) a simulator whose GRN we supplied (<a href="06-population-alignment.html#sec-align-mc" class="quarto-xref"><span>Section 10.3</span></a>); (ii) another estimator (stability / concordance, not accuracy); (iii) a literature skeleton (<a href="#sec-metrics-knowledge" class="quarto-xref"><span>Chapter 10</span></a>). Concordance between SILGGM and <code>PLNnetwork</code> is a <strong>robustness</strong> number, not a validation.</p>
+<p>Without a true DAG, the “reference” is one of: (i) a simulator whose GRN we supplied (<a href="06-population-alignment.html#sec-align-mc" class="quarto-xref"><span>Section 5.5.3</span></a>); (ii) another estimator (stability / concordance, not accuracy); (iii) a literature skeleton (<a href="#sec-metrics-knowledge" class="quarto-xref"><span>Section 6.4</span></a>). Concordance between SILGGM and <code>PLNnetwork</code> is a <strong>robustness</strong> number, not a validation.</p>
 <p>CPDAG / orientation metrics from the causal-metrics notes apply only if we leave the core and score a DAG. We do not.</p>
 </section>
-<section id="graph-summaries-that-do-not-need-a-reference" class="level2" data-number="9.2">
-<h2 data-number="9.2" class="anchored" data-anchor-id="graph-summaries-that-do-not-need-a-reference"><span class="header-section-number">9.2</span> Graph summaries that do not need a reference</h2>
+<section id="graph-summaries-that-do-not-need-a-reference" class="level3" data-number="6.3.2">
+<h3 data-number="6.3.2" class="anchored" data-anchor-id="graph-summaries-that-do-not-need-a-reference"><span class="header-section-number">6.3.2</span> Graph summaries that do not need a reference</h3>
 <p>These describe <strong>shape</strong>, not correctness:</p>
 <ul>
-<li>degree distribution and a power-law diagnostic (SILGGM used <span class="math inline">\(\log\)</span>–<span class="math inline">\(\log\)</span> degree plots as a biological sanity check; many biological networks are not strictly scale-free);</li>
+<li>degree distribution and a power-law diagnostic (SILGGM used <span class="math inline">\log</span>–<span class="math inline">\log</span> degree plots as a biological sanity check; many biological networks are not strictly scale-free);</li>
 <li>hub overlap across types (rewiring of hubs is a DeCovarT-relevant summary);</li>
 <li>clustering coefficient, number of connected components, modularity;</li>
 <li>overlap coefficients of edge <strong>sets</strong> between methods, as in GRETA (intersection over the smaller set), which avoids punishing a method for returning a larger graph.</li>
 </ul>
 <p>GRETA’s most uncomfortable topological result should be treated as a prior: <strong>edge-level overlap across methods is tiny</strong> even when TF and gene sets overlap moderately. If our four core estimators disagree on edges, that is the expected state of GRN inference, not a bug unique to gastruloids. Downstream DeCovarT should therefore <strong>not</strong> depend on a single edge being true; it should depend on the SPD covariance being a stable discriminator.</p>
 </section>
-<section id="sec-metrics-viz" class="level2" data-number="9.3">
-<h2 data-number="9.3" class="anchored" data-anchor-id="sec-metrics-viz"><span class="header-section-number">9.3</span> Visualisations</h2>
+<section id="sec-metrics-viz" class="level3" data-number="6.3.3">
+<h3 data-number="6.3.3" class="anchored" data-anchor-id="sec-metrics-viz"><span class="header-section-number">6.3.3</span> Visualisations</h3>
 <p>The aim is to <strong>compare structure and inference</strong>, not to decorate a methods section. Each display should answer one question.</p>
 <p><strong>Supports and concordance</strong></p>
 <ul>
-<li>Binary adjacency heatmaps, genes ordered by a <strong>common</strong> hierarchical clustering (from a consensus distance <span class="math inline">\(d_{ab}=1-\bar r_{ab}\)</span> of methods, or from a biological ordering). Side-by-side heatmaps of <span class="math inline">\(\widehat{\boldsymbol{\Theta}}_{j}\)</span> for two types make rewiring visible; a third panel of <span class="math inline">\(|\hat\theta^{(j)}_{gg'}-\hat\theta^{(\ell)}_{gg'}|\)</span> is the differential-network view.</li>
+<li>Binary adjacency heatmaps, genes ordered by a <strong>common</strong> hierarchical clustering (from a consensus distance <span class="math inline">d_{ab}=1-\bar r_{ab}</span> of methods, or from a biological ordering). Side-by-side heatmaps of <span class="math inline">\widehat{\boldsymbol{\Theta}}_{j}</span> for two types make rewiring visible; a third panel of <span class="math inline">|\hat\theta^{(j)}_{gg'}-\hat\theta^{(\ell)}_{gg'}|</span> is the differential-network view.</li>
 <li>Upset plots or Jaccard heatmaps of edge sets across the four core methods.</li>
 <li>On-diagonal degree bars or a simple graph drawing <strong>only</strong> for a tiny TF subgraph; whole-transcriptome hairballs are not figures.</li>
 </ul>
 <p><strong>Signed partial correlations</strong></p>
 <ul>
-<li>Diverging tiles of partial correlations <span class="math inline">\(-\theta_{gg'}/\sqrt{\theta_{gg}\theta_{g'g'}}\)</span> with a midpoint scale, not viridis (the latter encodes magnitude, not sign). Keep gene order shared across types.</li>
+<li>Diverging tiles of partial correlations <span class="math inline">-\theta_{gg'}/\sqrt{\theta_{gg}\theta_{g'g'}}</span> with a midpoint scale, not viridis (the latter encodes magnitude, not sign). Keep gene order shared across types.</li>
 </ul>
 <p><strong>Stability</strong></p>
 <ul>
-<li>Edge-inclusion frequencies from the technical bootstrap as a heatmap or as a reliability curve (precision among edges with inclusion <span class="math inline">\(&gt;t\)</span>, as <span class="math inline">\(t\)</span> varies).</li>
+<li>Edge-inclusion frequencies from the technical bootstrap as a heatmap or as a reliability curve (precision among edges with inclusion <span class="math inline">&gt;t</span>, as <span class="math inline">t</span> varies).</li>
 <li>Sankey or alluvial <strong>only</strong> when nodes have a natural order (time, lineage). For unordered type-to-type edge flow, a chord diagram is the usual display; we do not need one in the core stationary analysis.</li>
 </ul>
-<p><strong>Distributional alignment (ties into <a href="06-population-alignment.html" class="quarto-xref"><span>Chapter 6</span></a>)</strong></p>
+<p><strong>Distributional alignment (ties into <a href="06-population-alignment.html#sec-align" class="quarto-xref"><span>Section 5.1</span></a>)</strong></p>
 <ul>
-<li>PCA / UMAP of cells with the type-level Gaussian as an ellipse is a cartoon (UMAP is not a Gaussian space). Prefer plots of <span class="math inline">\(W_{2}\)</span> or KL against bootstrap replicates, or rainclouds of <span class="math inline">\(\hat p\)</span> from DeCovarT under each GRN method (package helpers <code>plot_mc_raincloud()</code>, <code>plot_mc_forest()</code>), once simulations exist.</li>
+<li>PCA / UMAP of cells with the type-level Gaussian as an ellipse is a cartoon (UMAP is not a Gaussian space). Prefer plots of <span class="math inline">W_{2}</span> or KL against bootstrap replicates, or rainclouds of <span class="math inline">\hat p</span> from DeCovarT under each GRN method (package helpers <code>plot_mc_raincloud()</code>, <code>plot_mc_forest()</code>), once simulations exist.</li>
 </ul>
-<p><strong>GRETA-style genome tracks</strong> (TF–CRE–gene) require ATAC and are perspective-only (<a href="#sec-metrics-omics" class="quarto-xref"><span>Chapter 11</span></a>).</p>
+<p><strong>GRETA-style genome tracks</strong> (TF–CRE–gene) require ATAC and are perspective-only (<a href="#sec-metrics-omics" class="quarto-xref"><span>Section 6.5</span></a>).</p>
 </section>
 </section>
-<section id="sec-metrics-knowledge" class="level1" data-number="10">
-<h1 data-number="10"><span class="header-section-number">10</span> Knowledge-driven scoring</h1>
-<section id="gretas-three-buckets-restricted-to-undirected-transcriptomics" class="level2" data-number="10.1">
-<h2 data-number="10.1" class="anchored" data-anchor-id="gretas-three-buckets-restricted-to-undirected-transcriptomics"><span class="header-section-number">10.1</span> GRETA’s three buckets, restricted to undirected transcriptomics</h2>
+<section id="sec-metrics-knowledge" class="level2" data-number="6.4">
+<h2 data-number="6.4" class="anchored" data-anchor-id="sec-metrics-knowledge"><span class="header-section-number">6.4</span> Knowledge-driven scoring</h2>
+<section id="gretas-three-buckets-restricted-to-undirected-transcriptomics" class="level3" data-number="6.4.1">
+<h3 data-number="6.4.1" class="anchored" data-anchor-id="gretas-three-buckets-restricted-to-undirected-transcriptomics"><span class="header-section-number">6.4.1</span> GRETA’s three buckets, restricted to undirected transcriptomics</h3>
 <p>GRETA <span class="citation" data-cites="badia-i-mompelComparisonEvaluationMethods2025">(<a href="#ref-badia-i-mompelComparisonEvaluationMethods2025" role="doc-biblioref">Badia-i-Mompel et al. 2025</a>)</span> modularises multimodal GRN pipelines and scores them as <strong>mechanistic</strong>, <strong>predictive</strong>, and <strong>literature-based</strong>. Core carry-over:</p>
 <p><strong>Literature / knowledge</strong></p>
 <ul>
-<li><strong>Marker TFs</strong>: is a known type marker present as a hub, or as a high-degree node in <span class="math inline">\(\widehat{\boldsymbol{\Theta}}_{j}\)</span> for that type?</li>
-<li><strong>TF–target edges</strong>: if <span class="math inline">\(g\)</span> is a TF and <span class="math inline">\(g'\)</span> a curated target, does the undirected edge <span class="math inline">\(\{g,g'\}\)</span> appear? This is GRETA’s “known interaction” idea with orientation dropped. Resources: CollecTRI, DoRothEA, and mouse TF catalogues — all incomplete.</li>
+<li><strong>Marker TFs</strong>: is a known type marker present as a hub, or as a high-degree node in <span class="math inline">\widehat{\boldsymbol{\Theta}}_{j}</span> for that type?</li>
+<li><strong>TF–target edges</strong>: if <span class="math inline">g</span> is a TF and <span class="math inline">g'</span> a curated target, does the undirected edge <span class="math inline">\{g,g'\}</span> appear? This is GRETA’s “known interaction” idea with orientation dropped. Resources: CollecTRI, DoRothEA, and mouse TF catalogues — all incomplete.</li>
 <li><strong>TF–TF via shared targets</strong>: two TFs that share many neighbours may reflect a complex or an artefact of co-expression; report overlap with PPI / IntAct only as a soft score.</li>
 <li><strong>TF-binding / CRE / eQTL recovery</strong>: GRETA’s ChIP-Atlas, ReMap, ENCODE, eQTL tasks need sequence assays we do not use in the core.</li>
 </ul>
 <p><strong>Predictive (observational)</strong></p>
 <ul>
-<li>How well does the graph <strong>topology</strong> predict held-out expression (gene <span class="math inline">\(\sim\)</span> neighbours), as in GRETA’s “Omics” scores? For a GGM this is almost circular (the model <em>is</em> a prediction of each node given the rest), but a <strong>held-out cell</strong> nodewise <span class="math inline">\(R^{2}\)</span> is still a useful calibration: a graph that does not predict expression of its own nodes is a bad Gaussian.</li>
+<li>How well does the graph <strong>topology</strong> predict held-out expression (gene <span class="math inline">\sim</span> neighbours), as in GRETA’s “Omics” scores? For a GGM this is almost circular (the model <em>is</em> a prediction of each node given the rest), but a <strong>held-out cell</strong> nodewise <span class="math inline">R^{2}</span> is still a useful calibration: a graph that does not predict expression of its own nodes is a bad Gaussian.</li>
 <li>Gene-set enrichment of modules (Hallmark, KEGG, Reactome) is a sanity check, not a causal test.</li>
 </ul>
-<p><strong>Mechanistic (perturbation)</strong> — <strong>perspective</strong>. GRETA found that multimodal GRNs <strong>struggle to capture causal relationships from perturbation assays</strong>, even when predictive and literature scores look decent. That result should humble any claim that our undirected <span class="math inline">\(\boldsymbol{\Theta}_{j}\)</span> is a regulatory mechanism. We do not have a gastruloid TF knockout atlas in the core pipeline; we therefore <strong>do not</strong> use TF-activity enrichment after perturbation as a gate for DeCovarT.</p>
+<p><strong>Mechanistic (perturbation)</strong> — <strong>perspective</strong>. GRETA found that multimodal GRNs <strong>struggle to capture causal relationships from perturbation assays</strong>, even when predictive and literature scores look decent. That result should humble any claim that our undirected <span class="math inline">\boldsymbol{\Theta}_{j}</span> is a regulatory mechanism. We do not have a gastruloid TF knockout atlas in the core pipeline; we therefore <strong>do not</strong> use TF-activity enrichment after perturbation as a gate for DeCovarT.</p>
 <p>GRETA’s other operational warnings that apply unchanged: methods are sensitive to random seeds and to replacing a single pipeline step; paired versus unpaired multiome changes edges even when cell-type abundances look similar; de novo GRN inference from observational data is close to ill-posed. Our four-estimator design is a response to that ill-posedness, not a claim that one method is true.</p>
 </section>
-<section id="sec-metrics-integer" class="level2" data-number="10.2">
-<h2 data-number="10.2" class="anchored" data-anchor-id="sec-metrics-integer"><span class="header-section-number">10.2</span> Integer programmes and Boolean models</h2>
+<section id="sec-metrics-integer" class="level3" data-number="6.4.2">
+<h3 data-number="6.4.2" class="anchored" data-anchor-id="sec-metrics-integer"><span class="header-section-number">6.4.2</span> Integer programmes and Boolean models</h3>
 <p><strong>CORNETO</strong> <span class="citation" data-cites="rodriguez-mierUnifyingMultisampleNetwork2025">(<a href="#ref-rodriguez-mierUnifyingMultisampleNetwork2025" role="doc-biblioref">Rodriguez-Mier et al. 2025</a>)</span> reformulates knowledge-driven network inference as a joint constrained optimisation problem (LP / MILP) over prior knowledge networks: undirected PPI, signed directed signalling, or metabolic hypergraphs. It is <strong>not</strong> a GGM. As a <strong>perspective scorer</strong>, it can take our data-driven support (or a TF–target list derived from it) and ask whether a sparse subnetwork of a PKN explains the omics under flow / Steiner / CARNIVAL constraints. That tests <strong>mechanistic plausibility</strong>, not Gaussian fit. Joint multi-sample inference is CORNETO’s selling point; with one gastruloid experiment we would be back to a single-sample PKN extract.</p>
-<p><strong>Boolean / logical models</strong> (the BEELINE curated networks; BoolODE) are simpler mechanistic simulators: truth tables <span class="math inline">\(\to\)</span> ODEs <span class="math inline">\(\to\)</span> synthetic counts. They supply a <strong>known skeleton</strong> for AUPRC when we simulate (<a href="06-population-alignment.html#sec-align-mc" class="quarto-xref"><span>Section 10.3</span></a>). They are not fitted to Suppinger as the DeCovarT graph. Using a Boolean model <em>as the prior</em> and a GGM <em>as the data-driven proposal</em> is a legitimate consistency check; using the Boolean model <em>as</em> <span class="math inline">\(\boldsymbol{\Theta}_{j}\)</span> would abandon the Gaussian convolution.</p>
+<p><strong>Boolean / logical models</strong> (the BEELINE curated networks; BoolODE) are simpler mechanistic simulators: truth tables <span class="math inline">\to</span> ODEs <span class="math inline">\to</span> synthetic counts. They supply a <strong>known skeleton</strong> for AUPRC when we simulate (<a href="06-population-alignment.html#sec-align-mc" class="quarto-xref"><span>Section 5.5.3</span></a>). They are not fitted to Suppinger as the DeCovarT graph. Using a Boolean model <em>as the prior</em> and a GGM <em>as the data-driven proposal</em> is a legitimate consistency check; using the Boolean model <em>as</em> <span class="math inline">\boldsymbol{\Theta}_{j}</span> would abandon the Gaussian convolution.</p>
 </section>
 </section>
-<section id="sec-metrics-omics" class="level1" data-number="11">
-<h1 data-number="11"><span class="header-section-number">11</span> Perspectives: regulatory omics</h1>
-<p>ChIP-seq, CUT&amp;RUN, and ATAC-seq (or multiome) networks are closer to <strong>physical interaction</strong> than a partial correlation. GRETA exists because those assays still do not uniquely determine TF–gene edges: CRE-to-gene linking, motif scanning, and the modelling step each change the graph. If a later gastruloid multiome appears, GRETA is the evaluation harness; SCENIC+ / CellOracle / Dictys remain out of the DeCovarT <strong>input</strong>, because they return directed regulons, not SPD precisions. The honest use is: project our undirected skeleton onto TF–CRE–gene triples and score GRETA literature metrics; do not replace <span class="math inline">\(\boldsymbol{\Theta}_{j}\)</span> with a regulon adjacency.</p>
+<section id="sec-metrics-omics" class="level2" data-number="6.5">
+<h2 data-number="6.5" class="anchored" data-anchor-id="sec-metrics-omics"><span class="header-section-number">6.5</span> Perspectives: regulatory omics</h2>
+<p>ChIP-seq, CUT&amp;RUN, and ATAC-seq (or multiome) networks are closer to <strong>physical interaction</strong> than a partial correlation. GRETA exists because those assays still do not uniquely determine TF–gene edges: CRE-to-gene linking, motif scanning, and the modelling step each change the graph. If a later gastruloid multiome appears, GRETA is the evaluation harness; SCENIC+ / CellOracle / Dictys remain out of the DeCovarT <strong>input</strong>, because they return directed regulons, not SPD precisions. The honest use is: project our undirected skeleton onto TF–CRE–gene triples and score GRETA literature metrics; do not replace <span class="math inline">\boldsymbol{\Theta}_{j}</span> with a regulon adjacency.</p>
 </section>
-<section id="sec-metrics-scorecard" class="level1" data-number="12">
-<h1 data-number="12"><span class="header-section-number">12</span> Practical scorecard for this repository</h1>
-<p>For each core estimator and each cell type <span class="math inline">\(j\)</span>:</p>
+<section id="sec-metrics-scorecard" class="level2" data-number="6.6">
+<h2 data-number="6.6" class="anchored" data-anchor-id="sec-metrics-scorecard"><span class="header-section-number">6.6</span> Practical scorecard for this repository</h2>
+<p>For each core estimator and each cell type <span class="math inline">j</span>:</p>
 <ol type="1">
-<li><strong>Robustness:</strong> bootstrap edge-inclusion; <span class="math inline">\(W_{2}\)</span> / KL of <span class="math inline">\(\widehat{\boldsymbol{\Sigma}}_{j}\)</span> across bootstraps; seed overlap if stochastic.</li>
-<li><strong>Alignment:</strong> KL / Hellinger / <span class="math inline">\(W_{2}\)</span> / MixSim <strong>between types</strong> (discrimination) and between the type-level Gaussian and the empirical cell cloud (<a href="06-population-alignment.html" class="quarto-xref"><span>Chapter 6</span></a>).</li>
+<li><strong>Robustness:</strong> bootstrap edge-inclusion; <span class="math inline">W_{2}</span> / KL of <span class="math inline">\widehat{\boldsymbol{\Sigma}}_{j}</span> across bootstraps; seed overlap if stochastic.</li>
+<li><strong>Alignment:</strong> KL / Hellinger / <span class="math inline">W_{2}</span> / MixSim <strong>between types</strong> (discrimination) and between the type-level Gaussian and the empirical cell cloud (<a href="06-population-alignment.html#sec-align" class="quarto-xref"><span>Section 5.1</span></a>).</li>
 <li><strong>Topology:</strong> pairwise skeleton overlap among the four estimators; degree / hub concordance; no hairball as a main figure.</li>
 <li><strong>Knowledge:</strong> fraction of curated TF–target pairs recovered as undirected edges; marker-TF degree; stated as <strong>overlap with an incomplete prior</strong>, not as accuracy.</li>
-<li><strong>Downstream (the score that actually matters for this project):</strong> DeCovarT deconvolution error under a fixed mixture design when <span class="math inline">\(\boldsymbol{\zeta}\)</span> comes from each GRN method, with the misspecification sweep of <a href="04-sensitivity-misspecification.html" class="quarto-xref"><span>Chapter 8</span></a>.</li>
+<li><strong>Downstream (the score that actually matters for this project):</strong> DeCovarT deconvolution error under a fixed mixture design when <span class="math inline">\boldsymbol{\zeta}</span> comes from each GRN method, with the misspecification sweep of <a href="04-sensitivity-misspecification.html#sec-sensitivity" class="quarto-xref"><span>Section 8.1</span></a>.</li>
 </ol>
 <p>Item 5 is the only metric that is <strong>identified</strong> with the paper’s estimand. Items 1–4 are supporting diagnostics. Perspectives (CORNETO, Boolean, ChIP/ATAC, GRETA mechanistic) stay out of the scorecard until the corresponding data or simulator is in <code>data/processed/</code>.</p>
 
@@ -979,8 +984,8 @@ Rodriguez-Mier, Pablo, Martin Garrido-Rodriguez, Attila Gabor, and Julio Saez-Ro
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./04-sensitivity-misspecification.html" class="pagination-link" aria-label="Sensitivity analyses">
-        <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./07-feature-selection-all-versus-all.html" class="pagination-link" aria-label="All-versus-all gene panels">
+        <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">All-versus-all gene panels</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

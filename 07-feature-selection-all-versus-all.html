@@ -6,10 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Bastien Chassagnol">
-<meta name="dcterms.date" content="2026-09-21">
 
-<title>DeCovarT reproducibility</title>
+<title>7&nbsp; All-versus-all gene panels – DeCovarT reproducibility</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -28,7 +26,61 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -38,7 +90,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./01-data-suppinger.html" rel="next">
+<link href="./04-sensitivity-misspecification.html" rel="next">
+<link href="./05-grn-metrics.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -76,9 +129,6 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script src="site_libs/quarto-diagram/mermaid.min.js"></script>
-<script src="site_libs/quarto-diagram/mermaid-init.js"></script>
-<link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
   <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
   <script>document.addEventListener("DOMContentLoaded", function () {
@@ -135,7 +185,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Overview</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./02-grn-graphical-lasso.html">GRN inference</a></li><li class="breadcrumb-item"><a href="./07-feature-selection-all-versus-all.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">All-versus-all gene panels</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -162,7 +212,7 @@ window.Quarto = {
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link active">
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Overview</span></span></a>
   </div>
 </li>
@@ -229,7 +279,7 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./07-feature-selection-all-versus-all.html" class="sidebar-item-text sidebar-link">
+  <a href="./07-feature-selection-all-versus-all.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">All-versus-all gene panels</span></span></a>
   </div>
 </li>
@@ -251,36 +301,26 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#scripts-source-of-truth-for-computation" id="toc-scripts-source-of-truth-for-computation" class="nav-link active" data-scroll-target="#scripts-source-of-truth-for-computation"><span class="header-section-number">0.1</span> Scripts (source of truth for computation)</a></li>
+  <li><a href="#sec-fs-advanced" id="toc-sec-fs-advanced" class="nav-link active" data-scroll-target="#sec-fs-advanced"><span class="header-section-number">7.1</span> All-versus-all refinement</a></li>
+  <li><a href="#sec-fs-kappa" id="toc-sec-fs-kappa" class="nav-link" data-scroll-target="#sec-fs-kappa"><span class="header-section-number">7.2</span> Why mean-only <span class="math inline">\kappa</span> is not enough</a></li>
+  <li><a href="#sec-fs-ga" id="toc-sec-fs-ga" class="nav-link" data-scroll-target="#sec-fs-ga"><span class="header-section-number">7.3</span> Genetic algorithms</a></li>
+  <li><a href="#what-we-would-actually-run-optional-stage" id="toc-what-we-would-actually-run-optional-stage" class="nav-link" data-scroll-target="#what-we-would-actually-run-optional-stage"><span class="header-section-number">7.4</span> What we would actually run (optional stage)</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./02-grn-graphical-lasso.html">GRN inference</a></li><li class="breadcrumb-item"><a href="./07-feature-selection-all-versus-all.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">All-versus-all gene panels</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">DeCovarT reproducibility</h1>
-<p class="subtitle lead">Gastruloid GRNs, feature panels, and sensitivity analyses</p>
+<h1 class="title"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">All-versus-all gene panels</span></h1>
 </div>
 
 
 
 <div class="quarto-title-meta">
 
-    <div>
-    <div class="quarto-title-meta-heading">Author</div>
-    <div class="quarto-title-meta-contents">
-             <p>Bastien Chassagnol </p>
-          </div>
-  </div>
     
-    <div>
-    <div class="quarto-title-meta-heading">Published</div>
-    <div class="quarto-title-meta-contents">
-      <p class="date">September 21, 2026</p>
-    </div>
-  </div>
   
     
   </div>
@@ -290,87 +330,92 @@ window.Quarto = {
 </header>
 
 
-<p>This book is the narrative companion to <code>scripts/</code>. Computation stays in the scripts; the chapters are theory, design, and criticism of how those scripts should be run.</p>
-<p>The scientific target is DeCovarT’s cell-type Gaussians: sparse precisions <span class="math inline">\boldsymbol{\Theta}_{j}\equiv\boldsymbol{\Sigma}_{j}^{-1}</span> and means <span class="math inline">\boldsymbol{\mu}_{\cdot j}</span>, estimated from labelled single-cell transcriptomes and plugged into the bulk convolution. Indices follow the article Methods: gene <span class="math inline">g=1,\ldots,G</span>, cell type <span class="math inline">j=1,\ldots,J</span>, sample <span class="math inline">i=1,\ldots,N</span>.</p>
-<p>The planned Suppinger benchmark is a <strong><span class="math inline">4\times 3\times 2</span></strong> product, not a single pipeline. Four undirected GGM families, three lifts from cells to a population Gaussian, and two gene-panel strategies (a naive screen, plus an optional stricter Pareto refinement after the networks exist). That is up to 24 routes. The aim is to see <strong>which steps move deconvolution</strong>, not to retain every cell of the product in the paper.</p>
-<div class="cell" data-layout-align="default">
-<div class="cell-output-display">
-<div id="fig-pipeline" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-pipeline-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div>
-<pre class="mermaid mermaid-js" data-label="fig-pipeline">%%{init: {"theme": "sandstone", "flowchart": {"htmlLabels": true}}}%%
-flowchart TD
-  A["GSE229513 UMI, labels $$j$$"] --&gt; B["Naive screen $$\\mathcal{G}_0$$"]
-  B --&gt; C1["SILGGM / glasso"]
-  B --&gt; C2["PLNnetwork"]
-  B --&gt; C3["GmGM copula"]
-  B --&gt; C4["Sparse + low-rank GGM"]
-  C1 --&gt; T["Independent $$\\widehat{\\boldsymbol{\\Theta}}_{j,t}$$ at 48 h, 72 h, 96 h"]
-  C2 --&gt; T
-  C3 --&gt; T
-  C4 --&gt; T
-  T --&gt; L1["Affine Gaussian aggregation"]
-  T --&gt; L2["Bures--Wasserstein / OT"]
-  T --&gt; L3["scDesign2 copula pseudo-replicates"]
-  L1 --&gt; D["DeCovarT $$(\\boldsymbol{\\mu}_{\\cdot j},\\boldsymbol{\\Sigma}_j)$$"]
-  L2 --&gt; D
-  L3 --&gt; D
-  T --&gt; P["Optional NSGA-II: $$\\kappa_2(\\boldsymbol{\\mu}_{\\mathcal{G}})$$ and MixSim overlap"]
-  P --&gt; D
-</pre>
+<section id="sec-fs-advanced" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="sec-fs-advanced"><span class="header-section-number">7.1</span> All-versus-all refinement</h2>
+<p>The advanced stage treats <span class="math inline">\mathcal{G}</span> as a <strong>subset selection</strong> problem on the full <span class="math inline">J</span>-column signature. It comes <strong>after</strong> GRN inference (<a href="02-grn-graphical-lasso.html#sec-grn-top4" class="quarto-xref"><span>Section 4.4</span></a>), because the second objective uses <span class="math inline">\boldsymbol{\Sigma}_{j}</span>. The loss is defined on all types jointly. That is the right geometry for DeCovarT: the likelihood depends on <span class="math inline">\boldsymbol{\mu}\boldsymbol{p}</span> <strong>and</strong> on <span class="math inline">\sum_{j}p_{j}^{2}\boldsymbol{\Sigma}_{j}</span>.</p>
+<p>This stage is <strong>optional</strong>. The naive screen (<a href="03-feature-selection-naive.html#sec-fs-hvg" class="quarto-xref"><span>Section 3.2</span></a>) already supplies <span class="math inline">\mathcal{G}_{0}</span>. The stricter panel is the second factor in the <span class="math inline">4\times 3\times 2</span> design (<a href="index.html#fig-pipeline" class="quarto-xref">Figure&nbsp;<span>1</span></a>): four GGM families, three population lifts, and with/without this Pareto refinement.</p>
+<p>Let <span class="math inline">\boldsymbol{\mu}=(\boldsymbol{\mu}_{\cdot j})_{j=1}^{J}\in\mathbb{R}^{G\times J}</span> be the mean signature. The 2-norm condition number is</p>
+<p><span id="eq-fs-kappa"><span class="math display">
+\kappa_{2}(\boldsymbol{X})
+=
+\frac{\sigma_{\max}(\boldsymbol{X})}{\sigma_{\min}(\boldsymbol{X})}.
+\tag{7.1}</span></span></p>
+<p>Large <span class="math inline">\kappa_{2}(\boldsymbol{\mu}_{\mathcal{G}})</span> is multicollinearity of the <strong>mean</strong> design <span class="citation" data-cites="gongDeconRNASeqStatisticalFramework2013 newmanRobustEnumerationCell2015">(<a href="#ref-gongDeconRNASeqStatisticalFramework2013" role="doc-biblioref">Gong and Szustakowski 2013</a>; <a href="#ref-newmanRobustEnumerationCell2015" role="doc-biblioref">Newman et al. 2015</a>)</span>. It does <strong>not</strong> see precision rewiring.</p>
+</section>
+<section id="sec-fs-kappa" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="sec-fs-kappa"><span class="header-section-number">7.2</span> Why mean-only <span class="math inline">\kappa</span> is not enough</h2>
+<p>In a gastruloid continuum <span class="math inline">\kappa_{2}</span> is intrinsically large. Two closely related types can share nearly collinear means and still differ in <span class="math inline">\boldsymbol{\Theta}_{j}</span>. Mean-only pruning then under-represents adjacent or low-abundance states — exactly the types whose <strong>rewiring</strong> DeCovarT is meant to exploit. Use <span class="math inline">\kappa</span> as a <strong>diagnostic</strong>, not as the sole selector.</p>
+<p>A variance-weighted variant standardises rows by gene-wise uncertainties <span class="math inline">\tau_{g}^{2}</span> and evaluates conditioning in the <span class="math inline">(J-1)</span>-dimensional contrast space induced by <span class="math inline">\sum_{j}p_{j}=1</span> (package vignette <code>supp-S6-feature-selection.qmd</code>).</p>
+</section>
+<section id="sec-fs-ga" class="level2" data-number="7.3">
+<h2 data-number="7.3" class="anchored" data-anchor-id="sec-fs-ga"><span class="header-section-number">7.3</span> Genetic algorithms</h2>
+<p><code>AutoGeneS</code> searches subsets with a multi-objective genetic algorithm that minimises inter-population correlation while maximising centroid distance <span class="citation" data-cites="alieeAutoGeneSAutomaticGene2021">(<a href="#ref-alieeAutoGeneSAutomaticGene2021" role="doc-biblioref">Aliee and Theis 2021</a>)</span>. The loss is already all-versus-all.</p>
+<p>For this repository the planned optimiser is NSGA-II via <code>mco::nsga2()</code> <span class="citation" data-cites="R-mco">(<a href="#ref-R-mco" role="doc-biblioref">Mersmann et al. 2020</a>)</span>. Encode genes as a mask in <span class="math inline">[0,1]^{|\mathcal{G}_{0}|}</span> (thresholded to a target size). Minimise at least</p>
+<ol type="1">
+<li><span class="math inline">\kappa_{2}(\boldsymbol{\mu}_{\mathcal{G}})</span> (mean geometry);</li>
+<li>average pairwise overlap <span class="math inline">\overline{\omega}</span> of the <span class="math inline">J</span> Gaussians <span class="math inline">\mathcal{N}(\boldsymbol{\mu}_{\cdot j},\boldsymbol{\Sigma}_{j})</span> <span class="citation" data-cites="melnykovMixSimPackageSimulating2012 R-MixSim">(<a href="#ref-melnykovMixSimPackageSimulating2012" role="doc-biblioref">Melnykov et al. 2012</a>, <a href="#ref-R-MixSim" role="doc-biblioref">2021</a>)</span>.</li>
+</ol>
+<p><code>MixSim</code> defines pairwise overlap as the <strong>sum of the two misclassification probabilities</strong> under a Bayes / MAP rule, not as <span class="math inline">1</span> minus a distance. Optional analytic surrogates — Jeffreys (symmetric KL), Chernoff / Bhattacharyya, and the Bures–Wasserstein metric on <span class="math inline">(\boldsymbol{\mu}_{j},\boldsymbol{\Sigma}_{j})</span> — belong on the same Pareto front. They use <strong>both</strong> means and covariances, which <code>AutoGeneS</code> correlation / centroid objectives do not.</p>
+<p>Differential-network genes (<a href="03-feature-selection-naive.html#sec-fs-diffnet" class="quarto-xref"><span>Section 3.5</span></a>) may be injected into <span class="math inline">\mathcal{G}_{0}</span> before NSGA-II; they are candidates, not the panel.</p>
+<div id="nte-pareto-proposal" class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note&nbsp;7.1: :information_source: A DeCovarT-specific third objective (proposal)
 </div>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pipeline-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1: Design product for Suppinger: a naive gene screen, four GGM families, three population lifts, and an optional all-versus-all panel that uses the fitted precisions. BLGGM is not in the product.
-</figcaption>
-</figure>
+<div class="callout-body-container callout-body">
+<p>The improved pipeline proposed adding Fisher identifiability of <span class="math inline">\boldsymbol{p}</span>: maximise the smallest eigenvalue of the mixture information <span class="math inline">I_{\mathcal{G}}(\boldsymbol{p})</span>, or minimise its condition number. That objective is <strong>not</strong> in the literature corpus; it is a composition. Keep it as a <strong>sensitivity objective</strong> on a shortlist of non-dominated panels, not as the only fitness.</p>
 </div>
 </div>
+<p>Keep several non-dominated panels. Report the whole front. With one Suppinger scRNA-seq resource, the honest statement is: the panel is fitted on this atlas and must be challenged on an external gastruloid cohort.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Sketch: two-objective NSGA-II after Theta_j has been fit.</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># fitness &lt;- function(mask) {</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   g &lt;- which(mask &gt; 0.5)</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">#   kappa &lt;- kappa(mu[g, ], exact = TRUE)</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">#   ov &lt;- MixSim::overlap(</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">#     Pi = rep(1 / J, J),</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">#     Mu = t(mu[g, ]),</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">#     S = lapply(Sigma, \(A) A[g, g, drop = FALSE])</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">#   )</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co">#   c(kappa, mean(ov$OmegaMap[upper.tri(ov$OmegaMap)]))</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># }</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>Reading order in this book puts the <strong>naive</strong> screen before GRN inference, and the <strong>optional</strong> genetic algorithm after the graphs, because the second objective needs <span class="math inline">\boldsymbol{\Sigma}_{j}</span>. Network metrics and sensitivity analyses close the GRN part.</p>
-<section id="scripts-source-of-truth-for-computation" class="level2" data-number="0.1">
-<h2 data-number="0.1" class="anchored" data-anchor-id="scripts-source-of-truth-for-computation"><span class="header-section-number">0.1</span> Scripts (source of truth for computation)</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 57%">
-<col style="width: 42%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Script</th>
-<th>Role</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>scripts/01_01_single_cell_exploration_suppinger.R</code></td>
-<td>Explore GSE229513</td>
-</tr>
-<tr class="even">
-<td><code>scripts/02_01_deconvolution_preprocessing.R</code></td>
-<td>Harmonise genes; SE / SCE</td>
-</tr>
-<tr class="odd">
-<td><code>scripts/03_01_grn_silggm.R</code></td>
-<td>SILGGM GGM (NPN <strong>inside this branch</strong>)</td>
-</tr>
-<tr class="even">
-<td><code>scripts/04_01_feature_selection_pseudobulk_deseq2.R</code></td>
-<td>Naive screen (no DE <span class="math inline">p</span>-values on this atlas)</td>
-</tr>
-<tr class="odd">
-<td><code>scripts/04_02_feature_selection_genetic_algorithm.R</code></td>
-<td>Optional Pareto gene panel</td>
-</tr>
-<tr class="even">
-<td><code>scripts/05_01_sensitivity_precision_contamination.R</code></td>
-<td>Misspecify <span class="math inline">\boldsymbol{\Theta}_{j}</span></td>
-</tr>
-</tbody>
-</table>
+</section>
+<section id="what-we-would-actually-run-optional-stage" class="level2" data-number="7.4">
+<h2 data-number="7.4" class="anchored" data-anchor-id="what-we-would-actually-run-optional-stage"><span class="header-section-number">7.4</span> What we would actually run (optional stage)</h2>
+<ol type="1">
+<li>Start from <span class="math inline">\mathcal{G}_{0}</span> (<a href="03-feature-selection-naive.html#sec-fs-hvg" class="quarto-xref"><span>Section 3.2</span></a>).</li>
+<li>Fit <span class="math inline">\boldsymbol{\Theta}_{j}</span> with a core method (<a href="02-grn-graphical-lasso.html#sec-grn-top4" class="quarto-xref"><span>Section 4.4</span></a>).</li>
+<li>NSGA-II on <span class="math inline">\kappa_{2}(\boldsymbol{\mu}_{\mathcal{G}})</span> and MixSim <span class="math inline">\overline{\omega}</span>. Keep the Pareto set.</li>
+<li>Export linear-scale <span class="math inline">\boldsymbol{\mu}_{\mathcal{G}}</span> and <span class="math inline">\boldsymbol{\Theta}_{j}</span> into DeCovarT.</li>
+</ol>
+<p>Script template: <code>scripts/04_02_*.R</code>.</p>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-alieeAutoGeneSAutomaticGene2021" class="csl-entry" role="listitem">
+Aliee, Hananeh, and Fabian J. Theis. 2021. <span>“<span>AutoGeneS</span>: <span>Automatic</span> Gene Selection Using Multi-Objective Optimization for <span class="nocase">RNA-seq</span> Deconvolution.”</span> <em>Cell Systems</em> 12 (7): 706–715.e4. <a href="https://doi.org/10.1016/j.cels.2021.05.006">https://doi.org/10.1016/j.cels.2021.05.006</a>.
+</div>
+<div id="ref-gongDeconRNASeqStatisticalFramework2013" class="csl-entry" role="listitem">
+Gong, Ting, and Joseph D. Szustakowski. 2013. <span>“<span>DeconRNASeq</span>: A Statistical Framework for Deconvolution of Heterogeneous Tissue Samples Based on <span class="nocase">mRNA-Seq</span> Data.”</span> <em>Bioinformatics (Oxford, England)</em> 29. <a href="https://doi.org/10.1093/bioinformatics/btt090">https://doi.org/10.1093/bioinformatics/btt090</a>.
+</div>
+<div id="ref-melnykovMixSimPackageSimulating2012" class="csl-entry" role="listitem">
+Melnykov, Volodymyr, Wei-Chen Chen, and Ranjan Maitra. 2012. <span>“<span>MixSim</span>: <span>An R Package</span> for <span>Simulating Data</span> to <span>Study Performance</span> of <span>Clustering Algorithms</span>.”</span> <em>Journal of Statistical Software</em> 51. <a href="https://doi.org/10.18637/jss.v051.i12">https://doi.org/10.18637/jss.v051.i12</a>.
+</div>
+<div id="ref-R-MixSim" class="csl-entry" role="listitem">
+Melnykov, Volodymyr, Wei-Chen Chen, and Ranjan Maitra. 2021. <em>MixSim: Simulating Data to Study Performance of Clustering Algorithms</em>. <a href="https://CRAN.R-project.org/package=MixSim">https://CRAN.R-project.org/package=MixSim</a>.
+</div>
+<div id="ref-R-mco" class="csl-entry" role="listitem">
+Mersmann, Olaf, Heike Trautmann, Detlef Steuer, and Bernd Bischl. 2020. <em>Mco: Multiple Criteria Optimization Algorithms and Related Functions</em>. <a href="https://CRAN.R-project.org/package=mco">https://CRAN.R-project.org/package=mco</a>.
+</div>
+<div id="ref-newmanRobustEnumerationCell2015" class="csl-entry" role="listitem">
+Newman, Aaron, Chih Liu, Michael Green, et al. 2015. <span>“Robust Enumeration of Cell Subsets from Tissue Expression Profiles.”</span> <em>Nature Methods</em> 12. <a href="https://doi.org/10.1038/nmeth.3337">https://doi.org/10.1038/nmeth.3337</a>.
+</div>
+</div>
 </section>
 
 </main> <!-- /main -->
@@ -776,10 +821,13 @@ Figure&nbsp;1: Design product for Suppinger: a naive gene screen, four GGM famil
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
+      <a href="./05-grn-metrics.html" class="pagination-link" aria-label="Evaluating networks without a true DAG">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Evaluating networks without a true DAG</span></span>
+      </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./01-data-suppinger.html" class="pagination-link" aria-label="Suppinger gastruloids">
-        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Suppinger gastruloids</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./04-sensitivity-misspecification.html" class="pagination-link" aria-label="Sensitivity analyses">
+        <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

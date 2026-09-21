@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>3&nbsp; One-versus-rest gene screen – DeCovarT reproducibility</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./02-grn-graphical-lasso.html" rel="next">
+<link href="./01-data-suppinger.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-ed7344add5f1663e434276306a2aa159.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+ var mathElements = document.getElementsByClassName("math");
+ var macros = [];
+ for (var i = 0; i < mathElements.length; i++) {
+  var texText = mathElements[i].firstChild;
+  if (mathElements[i].tagName == "SPAN") {
+   katex.render(texText.data, mathElements[i], {
+    displayMode: mathElements[i].classList.contains('display'),
+    throwOnError: false,
+    macros: macros,
+    fleqn: false
+   });
+}}});
+  </script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./03-feature-selection-naive.html">Feature selection</a></li><li class="breadcrumb-item"><a href="./03-feature-selection-naive.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">One-versus-rest gene screen</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">DeCovarT reproducibility</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Overview</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Biological use case</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01-data-suppinger.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Suppinger gastruloids</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Feature selection</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-feature-selection-naive.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">One-versus-rest gene screen</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">GRN inference</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02-grn-graphical-lasso.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Undirected GGMs from single-cell transcriptomics</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06-population-alignment.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">From single cells to type-level Gaussians</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05-grn-metrics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Evaluating networks without a true DAG</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07-feature-selection-all-versus-all.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">All-versus-all gene panels</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-sensitivity-misspecification.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#sec-fs-naive" id="toc-sec-fs-naive" class="nav-link active" data-scroll-target="#sec-fs-naive"><span class="header-section-number">3.1</span> Building <span class="math inline">\mathcal{G}_{0}</span></a></li>
+  <li><a href="#sec-fs-hvg" id="toc-sec-fs-hvg" class="nav-link" data-scroll-target="#sec-fs-hvg"><span class="header-section-number">3.2</span> Highly variable genes as a signal-to-noise rank</a>
+  <ul class="collapse">
+  <li><a href="#total-biological-and-technical-pieces" id="toc-total-biological-and-technical-pieces" class="nav-link" data-scroll-target="#total-biological-and-technical-pieces"><span class="header-section-number">3.2.1</span> Total, biological, and technical pieces</a></li>
+  <li><a href="#sctransform-versus-findvariablefeatures" id="toc-sctransform-versus-findvariablefeatures" class="nav-link" data-scroll-target="#sctransform-versus-findvariablefeatures"><span class="header-section-number">3.2.2</span> <code>SCTransform</code> versus <code>FindVariableFeatures</code></a></li>
+  </ul></li>
+  <li><a href="#sec-fs-markers" id="toc-sec-fs-markers" class="nav-link" data-scroll-target="#sec-fs-markers"><span class="header-section-number">3.3</span> Marker genes</a></li>
+  <li><a href="#sec-fs-deg" id="toc-sec-fs-deg" class="nav-link" data-scroll-target="#sec-fs-deg"><span class="header-section-number">3.4</span> Differential expression — only with biological replication</a></li>
+  <li><a href="#sec-fs-diffnet" id="toc-sec-fs-diffnet" class="nav-link" data-scroll-target="#sec-fs-diffnet"><span class="header-section-number">3.5</span> Differential networks as candidate generators</a></li>
+  <li><a href="#sec-fs-perspective" id="toc-sec-fs-perspective" class="nav-link" data-scroll-target="#sec-fs-perspective"><span class="header-section-number">3.6</span> Perspectives: <code>INDEED</code> and D-trace</a>
+  <ul class="collapse">
+  <li><a href="#indeed" id="toc-indeed" class="nav-link" data-scroll-target="#indeed"><span class="header-section-number">3.6.1</span> <code>INDEED</code></a></li>
+  <li><a href="#d-trace" id="toc-d-trace" class="nav-link" data-scroll-target="#d-trace"><span class="header-section-number">3.6.2</span> D-trace</a></li>
+  <li><a href="#markov-boundaries" id="toc-markov-boundaries" class="nav-link" data-scroll-target="#markov-boundaries"><span class="header-section-number">3.6.3</span> Markov boundaries</a></li>
+  </ul></li>
+  <li><a href="#what-we-would-actually-run-naive-stage" id="toc-what-we-would-actually-run-naive-stage" class="nav-link" data-scroll-target="#what-we-would-actually-run-naive-stage"><span class="header-section-number">3.7</span> What we would actually run (naive stage)</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./03-feature-selection-naive.html">Feature selection</a></li><li class="breadcrumb-item"><a href="./03-feature-selection-naive.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">One-versus-rest gene screen</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">One-versus-rest gene screen</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="sec-fs-naive" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="sec-fs-naive"><span class="header-section-number">3.1</span> Building <span class="math inline">\mathcal{G}_{0}</span></h2>
+<p>This chapter builds a working universe <span class="math inline">\mathcal{G}_{0}</span> on which a GGM can be estimated. Each gene is scored <strong>marginally</strong> (one-versus-rest in spirit). That is cheap and biologically readable. It is the wrong place to stop for DeCovarT: concatenating per-type shortlists typically yields a multicollinear <span class="math inline">\boldsymbol{\mu}_{\mathcal{G}}</span> <span class="citation" data-cites="newmanRobustEnumerationCell2015">(<a href="#ref-newmanRobustEnumerationCell2015" role="doc-biblioref">Newman et al. 2015</a>)</span>. The all-versus-all refinement that uses <span class="math inline">\boldsymbol{\Theta}_{j}</span> comes <strong>after</strong> GRN inference (<a href="07-feature-selection-all-versus-all.html#sec-fs-advanced" class="quarto-xref"><span>Section 7.1</span></a>).</p>
+<p>Notation follows the article Methods: gene <span class="math inline">g=1,\ldots,G</span>; cell type <span class="math inline">j=1,\ldots,J</span>; sample (here a cell) <span class="math inline">i=1,\ldots,n</span>. The DeCovarT convolution is linear in <span class="math inline">\boldsymbol{p}</span> only on an additive scale (<a href="#nte-linear-scale" class="quarto-xref">Note&nbsp;<span>3.1</span></a>).</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div id="fig-fs-naive" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-fs-naive-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>
+<pre class="mermaid mermaid-js" data-label="fig-fs-naive">%%{init: {"theme": "sandstone", "flowchart": {"htmlLabels": true}}}%%
+flowchart TD
+  A["UMI $$y_{ig}$$, labels $$j$$"] --&gt; B["Technical NB null, library size only"]
+  B --&gt; C["Pearson residuals $$r_{ig}$$"]
+  C --&gt; D["Rank by between/within type"]
+  E["Knowledge markers"] --&gt; F["$$\\mathcal{G}_0$$"]
+  D --&gt; F
+  F --&gt; G["GGM chapter"]
+</pre>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-fs-naive-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.1: Naive screen: Pearson-residual ranking (signal-to-noise), knowledge-driven markers, and optional differential-network candidates. No DESeq2 p-values on this atlas.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div id="nte-linear-scale" class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important&nbsp;3.1: :warning: Keep the mixture on a linear scale
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The convolution <span class="math inline">\boldsymbol{y}\mid(\boldsymbol{\zeta},\boldsymbol{p})\sim\mathcal{N}_{G}(\boldsymbol{\mu}\boldsymbol{p},\sum_{j}p_{j}^{2}\boldsymbol{\Sigma}_{j})</span> is linear in <span class="math inline">\boldsymbol{p}</span> only if <span class="math inline">\boldsymbol{\mu}</span> and <span class="math inline">\boldsymbol{y}</span> live on the <strong>same additive scale</strong> (counts, CPM, or TPM). Logarithms, <code>SCTransform</code> Pearson residuals, and nonparanormal scores break that map <span class="citation" data-cites="sturmComprehensiveEvaluationTranscriptomebased2019 jinBenchmarkRNAseqDeconvolution2021 hoffmannRobustComputationalReconstitution2006">(<a href="#ref-sturmComprehensiveEvaluationTranscriptomebased2019" role="doc-biblioref">Sturm et al. 2019</a>; <a href="#ref-jinBenchmarkRNAseqDeconvolution2021" role="doc-biblioref">Jin and Liu 2021</a>; <a href="#ref-hoffmannRobustComputationalReconstitution2006" role="doc-biblioref">Hoffmann et al. 2006</a>)</span>. Use residualisation only to <strong>rank</strong> genes; export DeCovarT moments on the linear scale. The probabilistic reason is Jensen’s inequality (<a href="02-grn-graphical-lasso.html#nte-jensen-transform" class="quarto-xref">Note&nbsp;<span>4.2</span></a>, <a href="02-grn-graphical-lasso.html#nte-npn-moments" class="quarto-xref">Note&nbsp;<span>4.1</span></a>).</p>
+</div>
+</div>
+</section>
+<section id="sec-fs-hvg" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="sec-fs-hvg"><span class="header-section-number">3.2</span> Highly variable genes as a signal-to-noise rank</h2>
+<p>Single-cell UMI tables mix depth noise with biological heterogeneity. Regularised negative-binomial regression in <code>sctransform</code> <span class="citation" data-cites="R-sctransform">(<a href="#ref-R-sctransform" role="doc-biblioref">Hafemeister et al. 2025</a>)</span> / <code>Seurat::SCTransform</code> separates the two via Pearson residuals <span class="citation" data-cites="hafemeisterNormalizationVarianceStabilization2019">(<a href="#ref-hafemeisterNormalizationVarianceStabilization2019" role="doc-biblioref">Hafemeister and Satija 2019</a>)</span>. We use that transform <strong>only to rank genes</strong>, not to normalise the table that enters glasso or PLN, and not as a factorial arm of the GRN design (<a href="02-grn-graphical-lasso.html#sec-grn-observation" class="quarto-xref"><span>Section 4.2</span></a>).</p>
+<p>On this atlas the only technical covariate we actually have is <strong>library size</strong>. There is a single scRNA-seq resource, so batch, donor and unmeasured technical branches cannot be identified <span class="citation" data-cites="hafemeisterNormalizationVarianceStabilization2019">(<a href="#ref-hafemeisterNormalizationVarianceStabilization2019" role="doc-biblioref">Hafemeister and Satija 2019</a>)</span>. The technical null is therefore</p>
+<p><span id="eq-fs-nb-null"><span class="math display">
+\log\mu_{ig}
+=
+\beta_{0g}
++
+\operatorname{offset}(\log L_{i}),
+\qquad
+y_{ig}\sim\mathrm{NB}(\mu_{ig},\theta_{g}),
+\tag{3.1}</span></span></p>
+<p>with <span class="math inline">L_{i}</span> the library size of cell <span class="math inline">i</span>. <strong>Do not</strong> put cell type <span class="math inline">j</span> in this null: that would remove the between-type signal the panel is meant to keep.</p>
+<p>Pearson residuals are</p>
+<p><span id="eq-fs-pearson"><span class="math display">
+r_{ig}
+=
+\frac{y_{ig}-\hat{\mu}_{ig}}
+{\sqrt{\hat{\mu}_{ig}+\hat{\mu}_{ig}^{2}/\hat{\theta}_{g}}}.
+\tag{3.2}</span></span></p>
+<p><a href="#fig-sct-pearson" class="quarto-xref">Figure&nbsp;<span>3.2</span></a> recalls the NB mean–variance relation and the residual scale used by <code>SCTransform</code>.</p>
+<div id="fig-sct-pearson" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-sct-pearson-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<embed src="images/scTransform_computation.pdf" class="img-fluid">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-sct-pearson-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.2: <code>SCTransform</code> negative-binomial mean–variance relation and Pearson residuals (Seurat v5).
+</figcaption>
+</figure>
+</div>
+<section id="total-biological-and-technical-pieces" class="level3" data-number="3.2.1">
+<h3 data-number="3.2.1" class="anchored" data-anchor-id="total-biological-and-technical-pieces"><span class="header-section-number">3.2.1</span> Total, biological, and technical pieces</h3>
+<p>For gene <span class="math inline">g</span> write <span class="math inline">V_{\mathrm{total},g}=\mathrm{Var}_{i}(r_{ig})</span> for residual variation after the depth null. That leftover is <strong>not</strong> pure biology: it still contains model misspecification. What we can split with the labels <span class="math inline">j</span> is biological variation <strong>between</strong> versus <strong>within</strong> cell types,</p>
+<p><span id="eq-fs-ss"><span class="math display">
+\begin{aligned}
+\mathrm{SS}_{\mathrm{between},g}
+&amp;=
+\sum_{j=1}^{J}
+n_{j}
+\bigl(\bar{r}_{gj}-\bar{r}_{g}\bigr)^{2},
+\qquad
+\bar{r}_{gj}
+=
+n_{j}^{-1}\sum_{i:j(i)=j}r_{ig},\\
+\mathrm{SS}_{\mathrm{within},g}
+&amp;=
+\sum_{j=1}^{J}
+\sum_{i:j(i)=j}
+\bigl(r_{ig}-\bar{r}_{gj}\bigr)^{2}.
+\end{aligned}
+\tag{3.3}</span></span></p>
+<p>Because the residuals are globally approximately centred, <span class="math inline">\bar{r}_{g}\approx 0</span> and <span class="math inline">\mathrm{SS}_{\mathrm{between},g}\approx\sum_{j}n_{j}\bar{r}_{gj}^{2}</span>. A lineage marker (high between-type, low within-type) is the gene we want. A stress-response gene (low between-type, high within-type) is not, even if its <strong>total</strong> residual variance is large.</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div id="fig-fs-varsplit" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-fs-varsplit-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>
+<pre class="mermaid mermaid-js" data-label="fig-fs-varsplit">%%{init: {"theme": "sandstone", "flowchart": {"htmlLabels": true}}}%%
+flowchart TD
+  Y["$$y_{ig}$$"] --&gt; N["NB technical null: offset $$\\log L_i$$ only"]
+  N --&gt; R["Pearson $$r_{ig}$$"]
+  R --&gt; T["Total residual variance"]
+  T --&gt; B["Between type $$\\mathrm{SS}_{\\mathrm{between},g}$$"]
+  T --&gt; W["Within type $$\\mathrm{SS}_{\\mathrm{within},g}$$"]
+  B --&gt; S["Keep high between, low within"]
+  W --&gt; S
+</pre>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-fs-varsplit-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.3: Residual variance after a library-size NB null. Technical variation is whatever the null absorbed; leftover variation is split into between-type and within-type biological pieces. Rank genes by a high between / low within ratio, not by total residual variance alone.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>There is <strong>no</strong> calibrated differential-expression <span class="math inline">p</span>-value here: one technical replicate cannot support <code>DESeq2</code> (<a href="#nte-pseudoreplication" class="quarto-xref">Note&nbsp;<span>3.3</span></a>). The between-type sum of squares is a <strong>ranking score</strong>.</p>
+</section>
+<section id="sctransform-versus-findvariablefeatures" class="level3" data-number="3.2.2">
+<h3 data-number="3.2.2" class="anchored" data-anchor-id="sctransform-versus-findvariablefeatures"><span class="header-section-number">3.2.2</span> <code>SCTransform</code> versus <code>FindVariableFeatures</code></h3>
+<p>Use <code>Seurat::SCTransform()</code> with Pearson residuals (<code>residual.type = "pearson"</code>; <code>vst.flavor</code> as in <a href="01-data-suppinger.html#fig-seurat-workflow" class="quarto-xref">Figure&nbsp;<span>2.3</span></a>). That <strong>is</strong> the residual transformation. Then <strong>do not</strong> stop at Seurat’s default variable features: those rank genes by <strong>overall</strong> residual variance, which mixes within-type heterogeneity into the score.</p>
+<p>Do <strong>not</strong> use <code>Seurat::FindVariableFeatures(method = "vst")</code>. That path is log-normalisation plus the older variance-stabilising transform, not Pearson residuals of <a href="#eq-fs-pearson" class="quarto-xref">Equation&nbsp;<span>3.2</span></a>.</p>
+<p>After <code>SCTransform</code>, pull the residual matrix and compute <a href="#eq-fs-ss" class="quarto-xref">Equation&nbsp;<span>3.3</span></a> by the labelled type <span class="math inline">j</span>. Keep on the order of <span class="math inline">2{,}000</span> genes in <span class="math inline">\mathcal{G}_{0}</span> before any GGM <span class="citation" data-cites="friedmanSparseInverseCovariance2008">(<a href="#ref-friedmanSparseInverseCovariance2008" role="doc-biblioref">Friedman et al. 2008</a>)</span>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Sketch: Pearson residuals for ranking only; export counts to the GGM.</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>sct <span class="ot">&lt;-</span> Seurat<span class="sc">::</span><span class="fu">SCTransform</span>(</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  seu,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"glmGamPoi"</span>,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">residual.feature =</span> <span class="cn">NULL</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">return.only.var.genes =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">vst.flavor =</span> <span class="st">"v2"</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>R <span class="ot">&lt;-</span> Seurat<span class="sc">::</span><span class="fu">GetAssayData</span>(sct, <span class="at">assay =</span> <span class="st">"SCT"</span>, <span class="at">layer =</span> <span class="st">"scale.data"</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># rows gene g, columns cell i; align with cell-type factor j</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>j <span class="ot">&lt;-</span> sct<span class="sc">$</span>celltype</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>ss_between <span class="ot">&lt;-</span> <span class="fu">apply</span>(R, <span class="dv">1</span>, <span class="cf">function</span>(r) {</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  means <span class="ot">&lt;-</span> <span class="fu">tapply</span>(r, j, mean)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  n_j <span class="ot">&lt;-</span> <span class="fu">tapply</span>(r, j, length)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sum</span>(n_j <span class="sc">*</span> means<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>ss_within <span class="ot">&lt;-</span> <span class="fu">apply</span>(R, <span class="dv">1</span>, <span class="cf">function</span>(r) {</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sum</span>(<span class="fu">tapply</span>(r, j, <span class="cf">function</span>(z) <span class="fu">sum</span>((z <span class="sc">-</span> <span class="fu">mean</span>(z))<span class="sc">^</span><span class="dv">2</span>)))</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>snr <span class="ot">&lt;-</span> ss_between <span class="sc">/</span> <span class="fu">pmax</span>(ss_within, .Machine<span class="sc">$</span>double.eps)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="nte-hvg-not-gaussian" class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note&nbsp;3.2: :information_source: HVGs are not a GGM input
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Pearson residuals are closer to homoscedastic than raw UMI counts, which is why they are popular before PCA. They are still a <strong>nonlinear residualisation</strong>. Feeding them indiscriminately into <code>SILGGM</code> silently changes the estimand of <span class="math inline">\boldsymbol{\Theta}_{j}</span> away from the latent Gaussian that DeCovarT wants at the <strong>population</strong> level. If a Gaussian GGM is used, prefer a copula / nonparanormal map on the same gene set (<a href="02-grn-graphical-lasso.html#sec-silggm" class="quarto-xref"><span>Section 4.3.1</span></a>), or better a Poisson-lognormal latent Gaussian (<a href="02-grn-graphical-lasso.html#sec-pln" class="quarto-xref"><span>Section 4.3.2</span></a>).</p>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-fs-markers" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="sec-fs-markers"><span class="header-section-number">3.3</span> Marker genes</h2>
+<p>Shannon entropy and Gini of relative means <span class="math inline">\pi_{gj}=\mu_{gj}/\sum_{\ell}\mu_{g\ell}</span> are <strong>compaction</strong> tools for one-versus-rest lists, not all-versus-all selectors. Definitions, worked examples, and the warning that two markers of <em>different</em> types can still be collinear as rows of <span class="math inline">\boldsymbol{\mu}</span> live in the DeCovarT vignette <a href="https://github.com/bastienchassagnol/DeCovarT/blob/main/vignettes/supp-S6-feature-selection.qmd#L62-L254">supp-S6-feature-selection.qmd</a>.</p>
+<p>On Suppinger the seed list is <strong>knowledge-driven</strong>, not DE-driven. The Excel signalling map <code>data/cell markers/Mouse_gastruloid_signaling_network.xlsx</code> was read with the Office Open XML tables (coloured cells mark a gene as a marker of that Excel type) and written as</p>
+<p><code>data/dictionaries/mouse_gastruloid_signaling_markers.csv</code></p>
+<p>with three columns:</p>
+<ul>
+<li><code>cell_type_excel</code> — lineage name in the spreadsheet;</li>
+<li><code>cell_type_suppinger</code> — one-to-one map onto a Suppinger annotation, or <code>NA</code> if that Excel type is not in the gastruloid atlas (extra-embryonic, cardiac mesoderm, haemato-endothelium, non-neural ectoderm);</li>
+<li><code>gene_marker</code> — gene symbol associated with that type.</li>
+</ul>
+<p>These genes enter <span class="math inline">\mathcal{G}_{0}</span> as <strong>seeds</strong>, not as the whole panel. They are the natural starting points for Markov-boundary expansion once a GGM exists (<a href="#sec-fs-perspective" class="quarto-xref"><span>Section 3.6</span></a>). Concatenating per-type seeds without an all-versus-all stage repeats <a href="#nte-ovr-concat" class="quarto-xref">Note&nbsp;<span>3.4</span></a>.</p>
+</section>
+<section id="sec-fs-deg" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="sec-fs-deg"><span class="header-section-number">3.4</span> Differential expression — only with biological replication</h2>
+<p><code>DESeq2</code>, <code>edgeR</code> and <code>limma</code>–voom remain the workhorses of one-versus-rest ranking <span class="citation" data-cites="loveModeratedEstimationFold2014">(<a href="#ref-loveModeratedEstimationFold2014" role="doc-biblioref">Love et al. 2014</a>)</span>. That logic <strong>does not transfer</strong> to GSE229513 as a DE experiment.</p>
+<div id="nte-pseudoreplication" class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning&nbsp;3.3: :warning: Technical pseudo-bulks are not biological replicates
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Cells from a common experimental unit are not independent biological replicates. Splitting or bootstrapping cells characterises <strong>technical / sampling</strong> variability; it does not manufacture between-organoid uncertainty. Treating cells, or random partitions of cells, as <code>DESeq2</code> replicates inflates apparent degrees of freedom and produces false discoveries <span class="citation" data-cites="squairConfrontingFalseDiscoveries2021 crowellMuscatDetectsSubpopulationspecific2020">(<a href="#ref-squairConfrontingFalseDiscoveries2021" role="doc-biblioref">Squair et al. 2021</a>; <a href="#ref-crowellMuscatDetectsSubpopulationspecific2020" role="doc-biblioref">Crowell et al. 2020</a>)</span>.</p>
+<p>Use <code>DESeq2</code> in this book only if <strong>independent biological replicates</strong> exist. For GSE229513, skip calibrated DE <span class="math inline">p</span>-values. Rank genes by <a href="#eq-fs-ss" class="quarto-xref">Equation&nbsp;<span>3.3</span></a> or by the knowledge table, not by a nested-model <span class="math inline">F</span> treated as a <span class="math inline">p</span>-value.</p>
+<p>Bulk HTSeq tables (GSE229386) <strong>do</strong> have three biological replicates per time and Wnt schedule (<a href="01-data-suppinger.html#sec-geo-design" class="quarto-xref"><span>Section 2.1</span></a>). Those replicates support <strong>bulk</strong> DE of treatments, not cell-type GRNs from the scRNA-seq object.</p>
+</div>
+</div>
+<div id="nte-ovr-concat" class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning&nbsp;3.4: :warning: Limitation of one-versus-rest concatenation
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The union of per-type markers is usually a multicollinear <span class="math inline">\boldsymbol{\mu}_{\mathcal{G}}</span> that is still too large for stable NNLS / GLS / DeCovarT Fisher information <span class="citation" data-cites="newmanRobustEnumerationCell2015">(<a href="#ref-newmanRobustEnumerationCell2015" role="doc-biblioref">Newman et al. 2015</a>)</span>. A global all-versus-all stage is required (<a href="07-feature-selection-all-versus-all.html#sec-fs-advanced" class="quarto-xref"><span>Section 7.1</span></a>).</p>
+</div>
+</div>
+</section>
+<section id="sec-fs-diffnet" class="level2" data-number="3.5">
+<h2 data-number="3.5" class="anchored" data-anchor-id="sec-fs-diffnet"><span class="header-section-number">3.5</span> Differential networks as candidate generators</h2>
+<p>DeCovarT benefits from <strong>rewiring</strong> between populations. A gene that changes neighbourhood in <span class="math inline">\boldsymbol{\Theta}_{j}</span> is a better candidate than a gene that is merely highly variable. Two strategies exist; both need graphs, so they <strong>nominate extras for <span class="math inline">\mathcal{G}_{0}</span> after</strong> a first GGM pass, they do not replace the naive screen.</p>
+<p><strong>Fit every <span class="math inline">\boldsymbol{\Theta}_{j}</span>, then compare supports.</strong> Independent glasso / <code>SILGGM</code> fits (<a href="02-grn-graphical-lasso.html#sec-silggm" class="quarto-xref"><span>Section 4.3.1</span></a>) yield per-type edges; the symmetric difference of supports ranks genes by differential connectivity. The difference of two biased estimators is not a debiased estimator of <span class="math inline">\Delta_{j\ell}=\boldsymbol{\Theta}_{j}-\boldsymbol{\Theta}_{\ell}</span>.</p>
+<p><strong>Estimate <span class="math inline">\Delta_{j\ell}</span> directly.</strong> D-trace methods target the difference of precisions without necessarily reconstructing both graphs first (<a href="#sec-fs-perspective" class="quarto-xref"><span>Section 3.6</span></a>). They cannot replace <span class="math inline">\boldsymbol{\Theta}_{j}</span> in the generative model, but they are attractive <strong>feature objectives</strong> when the <em>difference</em> is sparse.</p>
+<p>Either way, treat differential-network hits as <strong>candidates</strong>, not as the final panel.</p>
+</section>
+<section id="sec-fs-perspective" class="level2" data-number="3.6">
+<h2 data-number="3.6" class="anchored" data-anchor-id="sec-fs-perspective"><span class="header-section-number">3.6</span> Perspectives: <code>INDEED</code> and D-trace</h2>
+<p>These methods are <strong>not</strong> in the core Suppinger pipeline. Full detail lives in DeCovarT <code>vignettes/supp-S6-feature-selection.qmd</code>.</p>
+<section id="indeed" class="level3" data-number="3.6.1">
+<h3 data-number="3.6.1" class="anchored" data-anchor-id="indeed"><span class="header-section-number">3.6.1</span> <code>INDEED</code></h3>
+<p><code>INDEED</code> multiplies a DE <span class="math inline">p</span>-value by a permutation-filtered change in partial correlation <span class="citation" data-cites="zuoINDEEDIntegratedDifferential2016">(<a href="#ref-zuoINDEEDIntegratedDifferential2016" role="doc-biblioref">Zuo et al. 2016</a>)</span>. On Suppinger the DE <span class="math inline">p</span>-value assumes biological replication (<a href="#nte-pseudoreplication" class="quarto-xref">Note&nbsp;<span>3.3</span></a>), and the permutation null among cells of one gastruloid is a technical null. Use it, if at all, as a ranking heuristic with <span class="math inline">p_{g}^{\mathrm{DE}}</span> replaced by a fold-change or between-type score.</p>
+</section>
+<section id="d-trace" class="level3" data-number="3.6.2">
+<h3 data-number="3.6.2" class="anchored" data-anchor-id="d-trace"><span class="header-section-number">3.6.2</span> D-trace</h3>
+<p>Zhang and Zou <span class="citation" data-cites="zhangSparsePrecisionMatrix2014">(<a href="#ref-zhangSparsePrecisionMatrix2014" role="doc-biblioref">Zhang and Zou 2014</a>)</span> introduced the lasso-penalised D-trace loss for a single sparse precision; the differential-network extension <span class="citation" data-cites="yuanDifferentialNetworkAnalysis2017">(<a href="#ref-yuanDifferentialNetworkAnalysis2017" role="doc-biblioref">Yuan et al. 2017</a>)</span> estimates <span class="math inline">\Delta_{j\ell}=\boldsymbol{\Theta}_{j}-\boldsymbol{\Theta}_{\ell}</span>. Empirically, D-trace is competitive when the <strong>difference</strong> is sparser than either graph <span class="citation" data-cites="plaksienkoMethodsDifferentialNetwork2025">(<a href="#ref-plaksienkoMethodsDifferentialNetwork2025" role="doc-biblioref">Plaksienko et al. 2025</a>)</span>. It still does <strong>not</strong> produce a pair of SPD precisions. A workable <strong>proposal</strong> is: use D-trace to nominate rewiring genes, then estimate each <span class="math inline">\boldsymbol{\Theta}_{j}</span> on that panel with a method from <a href="02-grn-graphical-lasso.html#sec-grn-top4" class="quarto-xref"><span>Section 4.4</span></a>.</p>
+</section>
+<section id="markov-boundaries" class="level3" data-number="3.6.3">
+<h3 data-number="3.6.3" class="anchored" data-anchor-id="markov-boundaries"><span class="header-section-number">3.6.3</span> Markov boundaries</h3>
+<p>Once a GGM exists, seeds (markers, high-SNR HVGs, D-trace hits) can be grown by undirected neighbours <span class="math inline">\{g':\theta_{gg'}\neq 0\}</span>. That is the Markov boundary in a Gaussian Markov random field, not DAG <span class="math inline">d</span>-separation.</p>
+</section>
+</section>
+<section id="what-we-would-actually-run-naive-stage" class="level2" data-number="3.7">
+<h2 data-number="3.7" class="anchored" data-anchor-id="what-we-would-actually-run-naive-stage"><span class="header-section-number">3.7</span> What we would actually run (naive stage)</h2>
+<ol type="1">
+<li><code>SCTransform</code> Pearson residuals under <a href="#eq-fs-nb-null" class="quarto-xref">Equation&nbsp;<span>3.1</span></a>; rank by between/within <a href="#eq-fs-ss" class="quarto-xref">Equation&nbsp;<span>3.3</span></a>.</li>
+<li>Union with <code>data/dictionaries/mouse_gastruloid_signaling_markers.csv</code> (drop rows with <code>cell_type_suppinger = NA</code> unless a later atlas needs them).</li>
+<li>Cap <span class="math inline">|\mathcal{G}_{0}|</span> at a few thousand genes.</li>
+<li><strong>No</strong> <code>DESeq2</code> <span class="math inline">p</span>-values on technical sc pseudo-bulks.</li>
+</ol>
+<p>Script template: <code>scripts/04_01_*.R</code>.</p>
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-crowellMuscatDetectsSubpopulationspecific2020" class="csl-entry" role="listitem">
+Crowell, Helena L., Charlotte Soneson, Pierre-Luc Germain, et al. 2020. <span>“Muscat Detects Subpopulation-Specific State Transitions from Multi-Sample Multi-Condition Single-Cell Transcriptomics Data.”</span> <em>Nature Communications</em> 11: 6077. <a href="https://doi.org/10.1038/s41467-020-19894-4">https://doi.org/10.1038/s41467-020-19894-4</a>.
+</div>
+<div id="ref-friedmanSparseInverseCovariance2008" class="csl-entry" role="listitem">
+Friedman, Jerome, Trevor Hastie, and Robert Tibshirani. 2008. <span>“Sparse Inverse Covariance Estimation with the Graphical Lasso.”</span> <em>Biostatistics (Oxford, England)</em> 9 (3): 432–41. <a href="https://doi.org/10.1093/biostatistics/kxm045">https://doi.org/10.1093/biostatistics/kxm045</a>.
+</div>
+<div id="ref-hafemeisterNormalizationVarianceStabilization2019" class="csl-entry" role="listitem">
+Hafemeister, Christoph, and Rahul Satija. 2019. <span>“Normalization and Variance Stabilization of Single-Cell <span class="nocase">RNA-seq</span> Data Using Regularized Negative Binomial Regression.”</span> <em>Genome Biology</em> 20 (1). <a href="https://doi.org/10.1186/s13059-019-1874-1">https://doi.org/10.1186/s13059-019-1874-1</a>.
+</div>
+<div id="ref-R-sctransform" class="csl-entry" role="listitem">
+Hafemeister, Christoph, Rahul Satija, and Saket Choudhary. 2025. <em>Sctransform: Variance Stabilizing Transformations for Single Cell UMI Data</em>. <a href="https://CRAN.R-project.org/package=sctransform">https://CRAN.R-project.org/package=sctransform</a>.
+</div>
+<div id="ref-hoffmannRobustComputationalReconstitution2006" class="csl-entry" role="listitem">
+Hoffmann, Martin, Dirk Pohlers, Dirk Koczan, Hans-Jürgen Thiesen, Stefan Wölfl, and Raimund W. Kinne. 2006. <span>“Robust Computational Reconstitution – a New Method for the Comparative Analysis of Gene Expression in Tissues and Isolated Cell Fractions.”</span> <em>BMC Bioinformatics</em> 7. <a href="https://doi.org/10.1186/1471-2105-7-369">https://doi.org/10.1186/1471-2105-7-369</a>.
+</div>
+<div id="ref-jinBenchmarkRNAseqDeconvolution2021" class="csl-entry" role="listitem">
+Jin, Haijing, and Zhandong Liu. 2021. <span>“A Benchmark for <span class="nocase">RNA-seq</span> Deconvolution Analysis Under Dynamic Testing Environments.”</span> <em>Genome Biology</em> 22. <a href="https://doi.org/10.1186/s13059-021-02290-6">https://doi.org/10.1186/s13059-021-02290-6</a>.
+</div>
+<div id="ref-loveModeratedEstimationFold2014" class="csl-entry" role="listitem">
+Love, Michael I., Wolfgang Huber, and Simon Anders. 2014. <span>“Moderated Estimation of Fold Change and Dispersion for <span class="nocase">RNA-seq</span> Data with <span>DESeq2</span>.”</span> <em>Genome Biology</em> 15 (12): 550. <a href="https://doi.org/10.1186/s13059-014-0550-8">https://doi.org/10.1186/s13059-014-0550-8</a>.
+</div>
+<div id="ref-newmanRobustEnumerationCell2015" class="csl-entry" role="listitem">
+Newman, Aaron, Chih Liu, Michael Green, et al. 2015. <span>“Robust Enumeration of Cell Subsets from Tissue Expression Profiles.”</span> <em>Nature Methods</em> 12. <a href="https://doi.org/10.1038/nmeth.3337">https://doi.org/10.1038/nmeth.3337</a>.
+</div>
+<div id="ref-plaksienkoMethodsDifferentialNetwork2025" class="csl-entry" role="listitem">
+Plaksienko, Anna, Magne Thoresen, and Vera Djordjilović. 2025. <em>Methods for Differential Network Estimation: An Empirical Comparison</em>. arXiv:2412.17922. arXiv. <a href="https://doi.org/10.48550/arXiv.2412.17922">https://doi.org/10.48550/arXiv.2412.17922</a>.
+</div>
+<div id="ref-squairConfrontingFalseDiscoveries2021" class="csl-entry" role="listitem">
+Squair, Jordan W., Matthieu Gautier, Claudia Kathe, et al. 2021. <span>“Confronting False Discoveries in Single-Cell Differential Expression.”</span> <em>Nature Communications</em> 12 (1). <a href="https://doi.org/10.1038/s41467-021-25960-2">https://doi.org/10.1038/s41467-021-25960-2</a>.
+</div>
+<div id="ref-sturmComprehensiveEvaluationTranscriptomebased2019" class="csl-entry" role="listitem">
+Sturm, Gregor, Francesca Finotello, Florent Petitprez, et al. 2019. <span>“Comprehensive Evaluation of Transcriptome-Based Cell-Type Quantification Methods for Immuno-Oncology.”</span> <em>Bioinformatics (Oxford, England)</em> 35. <a href="https://doi.org/10.1093/bioinformatics/btz363">https://doi.org/10.1093/bioinformatics/btz363</a>.
+</div>
+<div id="ref-yuanDifferentialNetworkAnalysis2017" class="csl-entry" role="listitem">
+Yuan, Huili, Ruibin Xi, Chong Chen, and Minghua Deng. 2017. <em>Differential <span>Network Analysis</span> via the <span>Lasso Penalized D-Trace Loss</span></em>. arXiv:1511.09188. arXiv. <a href="https://doi.org/10.48550/arXiv.1511.09188">https://doi.org/10.48550/arXiv.1511.09188</a>.
+</div>
+<div id="ref-zhangSparsePrecisionMatrix2014" class="csl-entry" role="listitem">
+Zhang, Teng, and Hui Zou. 2014. <span>“Sparse Precision Matrix Estimation via Lasso Penalized <span class="nocase">D-trace</span> Loss.”</span> <em>Biometrika</em> 101 (1): 103–20.
+</div>
+<div id="ref-zuoINDEEDIntegratedDifferential2016" class="csl-entry" role="listitem">
+Zuo, Yiming, Yi Cui, Cristina Di Poto, et al. 2016. <span>“<span>INDEED</span>: <span>Integrated</span> Differential Expression and Differential Network Analysis of Omic Data for Biomarker Discovery.”</span> <em>Methods (San Diego, Calif.)</em> 111: 12–20. <a href="https://doi.org/10.1016/j.ymeth.2016.08.015">https://doi.org/10.1016/j.ymeth.2016.08.015</a>.
+</div>
+</div>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./01-data-suppinger.html" class="pagination-link" aria-label="Suppinger gastruloids">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Suppinger gastruloids</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./02-grn-graphical-lasso.html" class="pagination-link" aria-label="Undirected GGMs from single-cell transcriptomics">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Undirected GGMs from single-cell transcriptomics</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
