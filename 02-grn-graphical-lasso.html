@@ -213,7 +213,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./03-feature-selection-naive.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">One-versus-rest gene screen</span></span></a>
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Naive gene screen</span></span></a>
   </div>
 </li>
       </ul>
@@ -251,10 +251,50 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">All-versus-all gene panels</span></span></a>
   </div>
 </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Deconvolution benchmark</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08-deconvolution-pipeline.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Mean-based deconvolution comparators</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09-deconvolution-guided-biological-insights.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Early versus standard Wnt</span></span></a>
+  </div>
+</li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./04-sensitivity-misspecification.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./A1-separation-criteria.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Separation, blankets, and boundaries</span></span></a>
   </div>
 </li>
       </ul>
@@ -278,7 +318,7 @@ window.Quarto = {
   <li><a href="#sec-gmgm" id="toc-sec-gmgm" class="nav-link" data-scroll-target="#sec-gmgm"><span class="header-section-number">4.3.3</span> Multi-axis GGMs (<code>GmGM</code>): cells are not independent rows</a></li>
   <li><a href="#sec-lowrank" id="toc-sec-lowrank" class="nav-link" data-scroll-target="#sec-lowrank"><span class="header-section-number">4.3.4</span> Sparse plus low-rank latent-variable GGMs</a></li>
   </ul></li>
-  <li><a href="#sec-grn-top4" id="toc-sec-grn-top4" class="nav-link" data-scroll-target="#sec-grn-top4"><span class="header-section-number">4.4</span> Four methods to carry forward</a></li>
+  <li><a href="#sec-grn-top4" id="toc-sec-grn-top4" class="nav-link" data-scroll-target="#sec-grn-top4"><span class="header-section-number">4.4</span> Three methods to carry forward</a></li>
   <li><a href="#sec-grn-design" id="toc-sec-grn-design" class="nav-link" data-scroll-target="#sec-grn-design"><span class="header-section-number">4.5</span> Revised design product</a></li>
   <li><a href="#sec-grn-appendix" id="toc-sec-grn-appendix" class="nav-link" data-scroll-target="#sec-grn-appendix"><span class="header-section-number">4.6</span> Appendix: sharing and copulas</a>
   <ul class="collapse">
@@ -535,7 +575,7 @@ Important&nbsp;4.2: :warning: Transforming the response is usually the wrong GLM
 </ol>
 <p><strong>Pros.</strong> Fast C++ implementation; <span class="math inline">p</span>-values and FDR; scales to thousands of genes; matches the undirected GGM language of DeCovarT; CRAN package.</p>
 <p><strong>Cons.</strong> Gaussian observations (NPN is a copula patch, not a count model); no dropout / library-size layer; independent cells; independent types (no pooling); debiased estimators are the wrong generative object; on UMI data the authors themselves used <span class="math inline">\log_{2}(\mathrm{UMI}+1)</span> then NPN — which is exactly the transform <a href="#nte-jensen-transform" class="quarto-xref">Note&nbsp;<span>4.2</span></a> criticises. That said, Zhang and Zou <span class="citation" data-cites="zhangSparsePrecisionMatrix2014">(<a href="#ref-zhangSparsePrecisionMatrix2014" role="doc-biblioref">Zhang and Zou 2014</a>)</span> report that the graphical lasso estimator of a sparse precision is usually still <strong>support-consistent</strong>: it recovers the zeros of the true direct (conditional) interactions even when the multivariate Gaussian assumption does not hold. That is reassurance for <strong>edge screening</strong>, not a licence to treat the glasso point estimate as the DeCovarT generative <span class="math inline">\boldsymbol{\Theta}_{j}</span>. We keep <code>SILGGM</code> as a <strong>benchmark branch</strong>, not as “the” pipeline, and we prefer <code>GFC_L</code> / glasso <strong>support</strong> plus an SPD refit over exporting <code>D-S_GL</code> point estimates.</p>
-<p>It does <strong>not</strong> model unknown mixtures: subset cells by annotation first. A Bayesian latent mixture with dropout (<code>BLGGM</code>) is <strong>not</strong> in the <span class="math inline">4\times 3\times 2</span> product: labels are already known, and MCMC plus a gene cap of a few hundred make it a perspective only.</p>
+<p>It does <strong>not</strong> model unknown mixtures: subset cells by annotation first. A Bayesian latent mixture with dropout (<code>BLGGM</code>) is <strong>not</strong> in the <span class="math inline">3\times 2\times 2</span> product: labels are already known, and MCMC plus a gene cap of a few hundred make it a perspective only.</p>
 </section>
 <section id="sec-pln" class="level3" data-number="4.3.2">
 <h3 data-number="4.3.2" class="anchored" data-anchor-id="sec-pln"><span class="header-section-number">4.3.2</span> Poisson-lognormal: Chiquet’s <code>PLNmodels</code> versus PLNFGL</h3>
@@ -621,14 +661,14 @@ Y_{cg}\mid\boldsymbol{Z}_{c}
 </section>
 </section>
 <section id="sec-grn-top4" class="level2" data-number="4.4">
-<h2 data-number="4.4" class="anchored" data-anchor-id="sec-grn-top4"><span class="header-section-number">4.4</span> Four methods to carry forward</h2>
-<p>Given stationarity, a multivariate Gaussian <strong>population</strong> object, sparsity, and single-cell transcriptomics only, the four most defensible <strong>core</strong> routes are:</p>
+<h2 data-number="4.4" class="anchored" data-anchor-id="sec-grn-top4"><span class="header-section-number">4.4</span> Three methods to carry forward</h2>
+<p>Given stationarity, a multivariate Gaussian <strong>population</strong> object, sparsity, and single-cell transcriptomics only, the three <strong>core</strong> routes in <a href="index.html#fig-pipeline" class="quarto-xref">Figure&nbsp;<span>1</span></a> are:</p>
 <ol type="1">
 <li><strong><code>SILGGM</code> <code>GFC_L</code> (or glasso) → FDR support → SPD refit</strong>, with NPN <strong>inside this branch only</strong>. Inferential, scalable, closest in language to the article’s gLasso precision <span class="citation" data-cites="mazumderGraphicalLassoNew2011 zhangSILGGMExtensivePackage2018">(<a href="#ref-mazumderGraphicalLassoNew2011" role="doc-biblioref">Mazumder and Hastie 2011</a>; <a href="#ref-zhangSILGGMExtensivePackage2018" role="doc-biblioref">Zhang et al. 2018a</a>)</span>.</li>
 <li><strong>Chiquet <code>PLNnetwork</code> per labelled type.</strong> Count-honest latent Gaussian; no NPN; library size explicit <span class="citation" data-cites="chiquetPoissonLognormalModelVersatile2021">(<a href="#ref-chiquetPoissonLognormalModelVersatile2021" role="doc-biblioref">Chiquet et al. 2021</a>)</span>.</li>
-<li><strong>Sparse + low-rank GGM</strong> on the Gaussianised (or copula) scale. Confounder check before trusting <span class="math inline">\boldsymbol{\Theta}_{j}</span>.</li>
 <li><strong><code>GmGM</code> on type subsets</strong> as a multi-axis stress test of independent cells — interpret the <strong>gene-axis</strong> precision, do not force the cell-axis precision into DeCovarT.</li>
 </ol>
+<p>Sparse-plus-low-rank GGMs (<a href="#sec-lowrank" class="quarto-xref"><span>Section 4.3.4</span></a>) remain a confounder check. They are <strong>not</strong> a factor of the <span class="math inline">3\times 2\times 2</span> product.</p>
 <p>PLNFGL, joint graphical lasso, and JGCGM are <strong>sharing</strong> strategies (<a href="#sec-grn-appendix" class="quarto-xref"><span>Section 4.6</span></a>). They may well beat independent fits on variance, but they risk shrinking away the rewiring that is the scientific target. <code>SCENIC</code> / <code>GRNBoost2</code> <span class="citation" data-cites="aibarScenicSinglecellRegulatory2017 moermanGRNBoost2ArboretoEfficient2019">(<a href="#ref-aibarScenicSinglecellRegulatory2017" role="doc-biblioref">Aibar et al. 2017</a>; <a href="#ref-moermanGRNBoost2ArboretoEfficient2019" role="doc-biblioref">Moerman et al. 2019</a>)</span> are directed, TF-centred boosting methods: valuable as <strong>knowledge-driven baselines</strong> in <a href="05-grn-metrics.html#sec-metrics-knowledge" class="quarto-xref"><span>Section 6.4</span></a>, not as DeCovarT precisions.</p>
 <p>Every core method must finally export the same object</p>
 <p><span id="eq-grn-export"><span class="math display">
@@ -655,7 +695,7 @@ Warning&nbsp;4.3: :warning: Why we drop zero-inflated directed graphs in the cor
 <div class="callout-body-container callout-body">
 <p>Directed zero-inflated DAGs (for example <a href="https://arxiv.org/abs/2512.16233">arXiv:2512.16233</a>) are the wrong object for DeCovarT: the output is a DAG, not an undirected SPD precision; projecting to a skeleton discards the Gaussian convolution that the likelihood needs.</p>
 <p>There is a deeper sampling reason not to <em>start</em> from ZINB at all on this dataset. Suppinger is <strong>droplet UMI</strong> 10x data. Svensson showed that zeros in droplet scRNA-seq are often explained by ordinary molecule-sampling count distributions <span class="citation" data-cites="svenssonDropletScRNAseqNot2020">(<a href="#ref-svenssonDropletScRNAseqNot2020" role="doc-biblioref">Svensson 2020</a>)</span>. Automatic zero-inflation is then unidentifiable and scientifically unmotivated.</p>
-<p>Keep hurdle / ZINB graphs in the sensitivity chapter (<a href="04-sensitivity-misspecification.html#sec-sensitivity" class="quarto-xref"><span>Section 8.1</span></a>) if we want to contaminate the observation model, not as a GRN estimator.</p>
+<p>Keep hurdle / ZINB graphs in the sensitivity chapter (<a href="04-sensitivity-misspecification.html#sec-sensitivity" class="quarto-xref"><span>Section 10.1</span></a>) if we want to contaminate the observation model, not as a GRN estimator.</p>
 </div>
 </div>
 </section>
@@ -663,13 +703,13 @@ Warning&nbsp;4.3: :warning: Why we drop zero-inflated directed graphs in the cor
 <h2 data-number="4.5" class="anchored" data-anchor-id="sec-grn-design"><span class="header-section-number">4.5</span> Revised design product</h2>
 <p>The improved pipeline’s three-way factorial is right in spirit and wrong in its first factor. The product we will actually interpret is (<a href="index.html#fig-pipeline" class="quarto-xref">Figure&nbsp;<span>1</span></a>)</p>
 <p><span id="eq-grn-product"><span class="math display">
-\underbrace{\{\text{SILGGM+NPN},\ \text{PLN counts},\ \text{sparse+low-rank},\ \text{GmGM}\}}_{\text{four GGM families}}
+\underbrace{\{\text{SILGGM+NPN},\ \text{PLN counts},\ \text{GmGM}\}}_{\text{three GGM families}}
 \times
-\underbrace{\{\text{affine},\ \text{Bures--Wasserstein},\ \text{scDesign2}\}}_{\text{three population lifts}}
+\underbrace{\{\text{affine},\ \text{scDesign2}\}}_{\text{two population lifts}}
 \times
 \underbrace{\{\mathcal{G}_{0},\ \text{optional NSGA-II}\}}_{\text{two panels}}.
 \tag{4.7}</span></span></p>
-<p>That is up to 24 routes. Independent type-level fits are the <strong>core</strong> sharing strategy; fused / copula-joint sharing stays in <a href="#sec-grn-appendix" class="quarto-xref"><span>Section 4.6</span></a>. <code>SCTransform</code> and <code>huge.npn</code> are <strong>not</strong> crossed with PLN. <code>BLGGM</code> is not in the product.</p>
+<p>That is 12 routes. Bures–Wasserstein stays a <strong>perspective</strong> metric (<a href="06-population-alignment.html#sec-align-ot" class="quarto-xref"><span>Section 5.4</span></a>), not a third lift. Independent type-level fits are the <strong>core</strong> sharing strategy; fused / copula-joint sharing stays in <a href="#sec-grn-appendix" class="quarto-xref"><span>Section 4.6</span></a>. <code>SCTransform</code> and <code>huge.npn</code> are <strong>not</strong> crossed with PLN. <code>BLGGM</code> is not in the product.</p>
 <p>Scripts (when implemented): <code>scripts/03_01_grn_silggm.R</code> and a PLN script still to be added. No code is given here.</p>
 </section>
 <section id="sec-grn-appendix" class="level2" data-number="4.6">
@@ -1162,8 +1202,8 @@ Zhao, Tuo, Han Liu, Kathryn Roeder, John Lafferty, and Larry Wasserman. 2022. <e
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./03-feature-selection-naive.html" class="pagination-link" aria-label="One-versus-rest gene screen">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">One-versus-rest gene screen</span></span>
+      <a href="./03-feature-selection-naive.html" class="pagination-link" aria-label="Naive gene screen">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Naive gene screen</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">

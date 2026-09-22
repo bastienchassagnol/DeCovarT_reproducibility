@@ -90,7 +90,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./04-sensitivity-misspecification.html" rel="next">
+<link href="./08-deconvolution-pipeline.html" rel="next">
 <link href="./05-grn-metrics.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -245,7 +245,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./03-feature-selection-naive.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">One-versus-rest gene screen</span></span></a>
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Naive gene screen</span></span></a>
   </div>
 </li>
       </ul>
@@ -283,10 +283,50 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">All-versus-all gene panels</span></span></a>
   </div>
 </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Deconvolution benchmark</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08-deconvolution-pipeline.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Mean-based deconvolution comparators</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09-deconvolution-guided-biological-insights.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Early versus standard Wnt</span></span></a>
+  </div>
+</li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./04-sensitivity-misspecification.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./A1-separation-criteria.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Separation, blankets, and boundaries</span></span></a>
   </div>
 </li>
       </ul>
@@ -333,7 +373,7 @@ window.Quarto = {
 <section id="sec-fs-advanced" class="level2" data-number="7.1">
 <h2 data-number="7.1" class="anchored" data-anchor-id="sec-fs-advanced"><span class="header-section-number">7.1</span> All-versus-all refinement</h2>
 <p>The advanced stage treats <span class="math inline">\mathcal{G}</span> as a <strong>subset selection</strong> problem on the full <span class="math inline">J</span>-column signature. It comes <strong>after</strong> GRN inference (<a href="02-grn-graphical-lasso.html#sec-grn-top4" class="quarto-xref"><span>Section 4.4</span></a>), because the second objective uses <span class="math inline">\boldsymbol{\Sigma}_{j}</span>. The loss is defined on all types jointly. That is the right geometry for DeCovarT: the likelihood depends on <span class="math inline">\boldsymbol{\mu}\boldsymbol{p}</span> <strong>and</strong> on <span class="math inline">\sum_{j}p_{j}^{2}\boldsymbol{\Sigma}_{j}</span>.</p>
-<p>This stage is <strong>optional</strong>. The naive screen (<a href="03-feature-selection-naive.html#sec-fs-hvg" class="quarto-xref"><span>Section 3.2</span></a>) already supplies <span class="math inline">\mathcal{G}_{0}</span>. The stricter panel is the second factor in the <span class="math inline">4\times 3\times 2</span> design (<a href="index.html#fig-pipeline" class="quarto-xref">Figure&nbsp;<span>1</span></a>): four GGM families, three population lifts, and with/without this Pareto refinement.</p>
+<p>This stage is <strong>optional</strong>. The naive screen (<a href="03-feature-selection-naive.html#sec-fs-hvg" class="quarto-xref"><span>Section 3.2</span></a>) already supplies <span class="math inline">\mathcal{G}_{0}</span>. The stricter panel is the second factor in the <span class="math inline">3\times 2\times 2</span> design (<a href="index.html#fig-pipeline" class="quarto-xref">Figure&nbsp;<span>1</span></a>): three GGM families, two population lifts, and with/without this Pareto refinement.</p>
 <p>Let <span class="math inline">\boldsymbol{\mu}=(\boldsymbol{\mu}_{\cdot j})_{j=1}^{J}\in\mathbb{R}^{G\times J}</span> be the mean signature. The 2-norm condition number is</p>
 <p><span id="eq-fs-kappa"><span class="math display">
 \kappa_{2}(\boldsymbol{X})
@@ -356,7 +396,7 @@ window.Quarto = {
 <li>average pairwise overlap <span class="math inline">\overline{\omega}</span> of the <span class="math inline">J</span> Gaussians <span class="math inline">\mathcal{N}(\boldsymbol{\mu}_{\cdot j},\boldsymbol{\Sigma}_{j})</span> <span class="citation" data-cites="melnykovMixSimPackageSimulating2012 R-MixSim">(<a href="#ref-melnykovMixSimPackageSimulating2012" role="doc-biblioref">Melnykov et al. 2012</a>, <a href="#ref-R-MixSim" role="doc-biblioref">2021</a>)</span>.</li>
 </ol>
 <p><code>MixSim</code> defines pairwise overlap as the <strong>sum of the two misclassification probabilities</strong> under a Bayes / MAP rule, not as <span class="math inline">1</span> minus a distance. Optional analytic surrogates — Jeffreys (symmetric KL), Chernoff / Bhattacharyya, and the Bures–Wasserstein metric on <span class="math inline">(\boldsymbol{\mu}_{j},\boldsymbol{\Sigma}_{j})</span> — belong on the same Pareto front. They use <strong>both</strong> means and covariances, which <code>AutoGeneS</code> correlation / centroid objectives do not.</p>
-<p>Differential-network genes (<a href="03-feature-selection-naive.html#sec-fs-diffnet" class="quarto-xref"><span>Section 3.5</span></a>) may be injected into <span class="math inline">\mathcal{G}_{0}</span> before NSGA-II; they are candidates, not the panel.</p>
+<p>Differential-network genes (<a href="03-feature-selection-naive.html#sec-fs-diffnet" class="quarto-xref"><span>Section 3.6.1</span></a>) may be injected into <span class="math inline">\mathcal{G}_{0}</span> before NSGA-II; they are candidates, not the panel.</p>
 <div id="nte-pareto-proposal" class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -826,8 +866,8 @@ Newman, Aaron, Chih Liu, Michael Green, et al. 2015. <span>“Robust Enumeration
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./04-sensitivity-misspecification.html" class="pagination-link" aria-label="Sensitivity analyses">
-        <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./08-deconvolution-pipeline.html" class="pagination-link" aria-label="Mean-based deconvolution comparators">
+        <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Mean-based deconvolution comparators</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

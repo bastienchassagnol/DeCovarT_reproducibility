@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Bastien Chassagnol">
-<meta name="dcterms.date" content="2026-09-21">
+<meta name="dcterms.date" content="2026-09-22">
 
 <title>DeCovarT reproducibility</title>
 <style>
@@ -195,7 +195,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./03-feature-selection-naive.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">One-versus-rest gene screen</span></span></a>
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Naive gene screen</span></span></a>
   </div>
 </li>
       </ul>
@@ -233,10 +233,50 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">All-versus-all gene panels</span></span></a>
   </div>
 </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Deconvolution benchmark</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08-deconvolution-pipeline.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Mean-based deconvolution comparators</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09-deconvolution-guided-biological-insights.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Early versus standard Wnt</span></span></a>
+  </div>
+</li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./04-sensitivity-misspecification.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./A1-separation-criteria.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Separation, blankets, and boundaries</span></span></a>
   </div>
 </li>
       </ul>
@@ -246,14 +286,8 @@ window.Quarto = {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Table of contents</h2>
-   
-  <ul>
-  <li><a href="#scripts-source-of-truth-for-computation" id="toc-scripts-source-of-truth-for-computation" class="nav-link active" data-scroll-target="#scripts-source-of-truth-for-computation"><span class="header-section-number">0.1</span> Scripts (source of truth for computation)</a></li>
-  </ul>
-</nav>
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+        
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -278,7 +312,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">September 21, 2026</p>
+      <p class="date">September 22, 2026</p>
     </div>
   </div>
   
@@ -292,7 +326,7 @@ window.Quarto = {
 
 <p>This book is the narrative companion to <code>scripts/</code>. Computation stays in the scripts; the chapters are theory, design, and criticism of how those scripts should be run.</p>
 <p>The scientific target is DeCovarT’s cell-type Gaussians: sparse precisions <span class="math inline">\boldsymbol{\Theta}_{j}\equiv\boldsymbol{\Sigma}_{j}^{-1}</span> and means <span class="math inline">\boldsymbol{\mu}_{\cdot j}</span>, estimated from labelled single-cell transcriptomes and plugged into the bulk convolution. Indices follow the article Methods: gene <span class="math inline">g=1,\ldots,G</span>, cell type <span class="math inline">j=1,\ldots,J</span>, sample <span class="math inline">i=1,\ldots,N</span>.</p>
-<p>The planned Suppinger benchmark is a <strong><span class="math inline">4\times 3\times 2</span></strong> product, not a single pipeline. Four undirected GGM families, three lifts from cells to a population Gaussian, and two gene-panel strategies (a naive screen, plus an optional stricter Pareto refinement after the networks exist). That is up to 24 routes. The aim is to see <strong>which steps move deconvolution</strong>, not to retain every cell of the product in the paper.</p>
+<p>The planned Suppinger benchmark is a <strong><span class="math inline">3\times 2\times 2</span></strong> product, not a single pipeline. Three undirected GGM families, two lifts from cells to a population Gaussian, and two gene-panel strategies (the naive screen alone, or that screen plus an optional stricter Pareto refinement). That is 12 routes. The aim is to see <strong>which steps move deconvolution</strong>, not to retain every cell of the product in the paper. Bures–Wasserstein alignment and sparse-plus-low-rank GGMs stay <strong>perspectives</strong>; they are not factors in <a href="#fig-pipeline" class="quarto-xref">Figure&nbsp;<span>1</span></a>.</p>
 <div class="cell" data-layout-align="default">
 <div class="cell-output-display">
 <div id="fig-pipeline" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -301,77 +335,33 @@ window.Quarto = {
 <div>
 <pre class="mermaid mermaid-js" data-label="fig-pipeline">%%{init: {"theme": "sandstone", "flowchart": {"htmlLabels": true}}}%%
 flowchart TD
-  A["GSE229513 UMI, labels $$j$$"] --&gt; B["Naive screen $$\\mathcal{G}_0$$"]
+  A["GSE229513 UMI, labels j"] --&gt; B["Naive screen G_0"]
   B --&gt; C1["SILGGM / glasso"]
   B --&gt; C2["PLNnetwork"]
   B --&gt; C3["GmGM copula"]
-  B --&gt; C4["Sparse + low-rank GGM"]
-  C1 --&gt; T["Independent $$\\widehat{\\boldsymbol{\\Theta}}_{j,t}$$ at 48 h, 72 h, 96 h"]
+  C1 --&gt; T["Independent Theta_j,t at 48 h, 72 h, 96 h"]
   C2 --&gt; T
   C3 --&gt; T
-  C4 --&gt; T
   T --&gt; L1["Affine Gaussian aggregation"]
-  T --&gt; L2["Bures--Wasserstein / OT"]
   T --&gt; L3["scDesign2 copula pseudo-replicates"]
-  L1 --&gt; D["DeCovarT $$(\\boldsymbol{\\mu}_{\\cdot j},\\boldsymbol{\\Sigma}_j)$$"]
-  L2 --&gt; D
-  L3 --&gt; D
-  T --&gt; P["Optional NSGA-II: $$\\kappa_2(\\boldsymbol{\\mu}_{\\mathcal{G}})$$ and MixSim overlap"]
+  L1 --&gt; Q{"Stricter NSGA-II panel?"}
+  L3 --&gt; Q
+  Q --&gt;|yes| P["kappa_2 of mu_G and MixSim overlap"]
+  Q --&gt;|no| D["DeCovarT mu_j and Sigma_j"]
   P --&gt; D
 </pre>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pipeline-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1: Design product for Suppinger: a naive gene screen, four GGM families, three population lifts, and an optional all-versus-all panel that uses the fitted precisions. BLGGM is not in the product.
+Figure&nbsp;1: Design product: a naive gene screen, three GGM families, two population lifts, then a yes/no choice of a stricter NSGA-II panel. Twelve routes. Bures–Wasserstein and sparse-plus-low-rank GGMs are not in the product.
 </figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p>Reading order in this book puts the <strong>naive</strong> screen before GRN inference, and the <strong>optional</strong> genetic algorithm after the graphs, because the second objective needs <span class="math inline">\boldsymbol{\Sigma}_{j}</span>. Network metrics and sensitivity analyses close the GRN part.</p>
-<section id="scripts-source-of-truth-for-computation" class="level2" data-number="0.1">
-<h2 data-number="0.1" class="anchored" data-anchor-id="scripts-source-of-truth-for-computation"><span class="header-section-number">0.1</span> Scripts (source of truth for computation)</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 57%">
-<col style="width: 42%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Script</th>
-<th>Role</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>scripts/01_01_single_cell_exploration_suppinger.R</code></td>
-<td>Explore GSE229513</td>
-</tr>
-<tr class="even">
-<td><code>scripts/02_01_deconvolution_preprocessing.R</code></td>
-<td>Harmonise genes; SE / SCE</td>
-</tr>
-<tr class="odd">
-<td><code>scripts/03_01_grn_silggm.R</code></td>
-<td>SILGGM GGM (NPN <strong>inside this branch</strong>)</td>
-</tr>
-<tr class="even">
-<td><code>scripts/04_01_feature_selection_pseudobulk_deseq2.R</code></td>
-<td>Naive screen (no DE <span class="math inline">p</span>-values on this atlas)</td>
-</tr>
-<tr class="odd">
-<td><code>scripts/04_02_feature_selection_genetic_algorithm.R</code></td>
-<td>Optional Pareto gene panel</td>
-</tr>
-<tr class="even">
-<td><code>scripts/05_01_sensitivity_precision_contamination.R</code></td>
-<td>Misspecify <span class="math inline">\boldsymbol{\Theta}_{j}</span></td>
-</tr>
-</tbody>
-</table>
+<p>Reading order puts the <strong>naive</strong> screen before GRN inference, and the <strong>optional</strong> genetic algorithm after the graphs, because the second objective needs <span class="math inline">\boldsymbol{\Sigma}_{j}</span>. Deconvolution comparators, the early-versus-standard Wnt reading, and sensitivity analyses close the book.</p>
 
 
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

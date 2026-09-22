@@ -213,7 +213,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./03-feature-selection-naive.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">One-versus-rest gene screen</span></span></a>
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Naive gene screen</span></span></a>
   </div>
 </li>
       </ul>
@@ -251,10 +251,50 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">All-versus-all gene panels</span></span></a>
   </div>
 </li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Deconvolution benchmark</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./08-deconvolution-pipeline.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Mean-based deconvolution comparators</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./09-deconvolution-guided-biological-insights.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Early versus standard Wnt</span></span></a>
+  </div>
+</li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./04-sensitivity-misspecification.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></span></a>
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./A1-separation-criteria.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Separation, blankets, and boundaries</span></span></a>
   </div>
 </li>
       </ul>
@@ -370,7 +410,7 @@ Figure&nbsp;6.1: Three evaluation families for undirected cell-type GGMs, plus t
 <li><strong>Technical cell bootstrap</strong> within type, labels fixed (<a href="06-population-alignment.html#sec-align-bootstrap" class="quarto-xref"><span>Section 5.5</span></a>). Re-estimate <span class="math inline">\boldsymbol{\Theta}_{j}</span>; record edge inclusion frequencies (stability selection in the sense of Meinshausen and Bühlmann <span class="citation" data-cites="meinshausenStabilitySelection2010">(<a href="#ref-meinshausenStabilitySelection2010" role="doc-biblioref">Meinshausen and Bühlmann 2010</a>)</span>) and the Frobenius / Bures spread of <span class="math inline">\widehat{\boldsymbol{\Sigma}}_{j}</span>.</li>
 <li><strong>Gene or cell downsampling</strong>, as GRETA does to test sensitivity to coverage. GRETA found that TF and gene <em>sets</em> can look stable while <strong>edges</strong> collapse under downsampling — a warning we should expect for glasso supports as well.</li>
 <li><strong>Random seeds</strong> for stochastic estimators (<code>GmGM</code>, Bayesian graphs, boosting). GRETA reported that some multimodal methods reverse high-weight edges across seeds; a GGM that needs a seed should publish edge-overlap across seeds.</li>
-<li><strong>Observation-model contamination</strong> (Gaussian, <span class="math inline">t_{\nu}</span>, PLN, extra zeros) belongs with <a href="04-sensitivity-misspecification.html#sec-sensitivity" class="quarto-xref"><span>Section 8.1</span></a>, not as a graph-recovery score.</li>
+<li><strong>Observation-model contamination</strong> (Gaussian, <span class="math inline">t_{\nu}</span>, PLN, extra zeros) belongs with <a href="04-sensitivity-misspecification.html#sec-sensitivity" class="quarto-xref"><span>Section 10.1</span></a>, not as a graph-recovery score.</li>
 </ul>
 <p>Biological (multi-organoid) bootstrap is <strong>unavailable</strong>. Reporting a bootstrap interval as if it were between-experiment uncertainty would repeat the pseudoreplication error of <a href="03-feature-selection-naive.html#nte-pseudoreplication" class="quarto-xref">Note&nbsp;<span>3.3</span></a>.</p>
 </section>
@@ -549,7 +589,7 @@ Note&nbsp;6.1: :information_source: Compare laws on the DeCovarT scale
 <li><strong>Alignment:</strong> KL / Hellinger / <span class="math inline">W_{2}</span> / MixSim <strong>between types</strong> (discrimination) and between the type-level Gaussian and the empirical cell cloud (<a href="06-population-alignment.html#sec-align" class="quarto-xref"><span>Section 5.1</span></a>).</li>
 <li><strong>Topology:</strong> pairwise skeleton overlap among the four estimators; degree / hub concordance; no hairball as a main figure.</li>
 <li><strong>Knowledge:</strong> fraction of curated TF–target pairs recovered as undirected edges; marker-TF degree; stated as <strong>overlap with an incomplete prior</strong>, not as accuracy.</li>
-<li><strong>Downstream (the score that actually matters for this project):</strong> DeCovarT deconvolution error under a fixed mixture design when <span class="math inline">\boldsymbol{\zeta}</span> comes from each GRN method, with the misspecification sweep of <a href="04-sensitivity-misspecification.html#sec-sensitivity" class="quarto-xref"><span>Section 8.1</span></a>.</li>
+<li><strong>Downstream (the score that actually matters for this project):</strong> DeCovarT deconvolution error under a fixed mixture design when <span class="math inline">\boldsymbol{\zeta}</span> comes from each GRN method, with the misspecification sweep of <a href="04-sensitivity-misspecification.html#sec-sensitivity" class="quarto-xref"><span>Section 10.1</span></a>.</li>
 </ol>
 <p>Item 5 is the only metric that is <strong>identified</strong> with the paper’s estimand. Items 1–4 are supporting diagnostics. Perspectives (CORNETO, Boolean, ChIP/ATAC, GRETA mechanistic) stay out of the scorecard until the corresponding data or simulator is in <code>data/processed/</code>.</p>
 

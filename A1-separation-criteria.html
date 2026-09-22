@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>2&nbsp; Suppinger gastruloids – DeCovarT reproducibility</title>
+<title>Appendix A — Separation, blankets, and boundaries – DeCovarT reproducibility</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -55,8 +55,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./03-feature-selection-naive.html" rel="next">
-<link href="./index.html" rel="prev">
+<link href="./04-sensitivity-misspecification.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -94,9 +93,6 @@ div.csl-indent {
     "search-label": "Search"
   }
 }</script>
-<script src="site_libs/quarto-diagram/mermaid.min.js"></script>
-<script src="site_libs/quarto-diagram/mermaid-init.js"></script>
-<link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
   <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
   <script>document.addEventListener("DOMContentLoaded", function () {
@@ -153,7 +149,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./01-data-suppinger.html">Biological use case</a></li><li class="breadcrumb-item"><a href="./01-data-suppinger.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Suppinger gastruloids</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./A1-separation-criteria.html">Appendices</a></li><li class="breadcrumb-item"><a href="./A1-separation-criteria.html"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Separation, blankets, and boundaries</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -195,7 +191,7 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./01-data-suppinger.html" class="sidebar-item-text sidebar-link active">
+  <a href="./01-data-suppinger.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Suppinger gastruloids</span></span></a>
   </div>
 </li>
@@ -293,7 +289,7 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./A1-separation-criteria.html" class="sidebar-item-text sidebar-link">
+  <a href="./A1-separation-criteria.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Separation, blankets, and boundaries</span></span></a>
   </div>
 </li>
@@ -309,19 +305,17 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#sec-geo-design" id="toc-sec-geo-design" class="nav-link active" data-scroll-target="#sec-geo-design"><span class="header-section-number">2.1</span> Hierarchical design</a></li>
-  <li><a href="#sec-seurat" id="toc-sec-seurat" class="nav-link" data-scroll-target="#sec-seurat"><span class="header-section-number">2.2</span> Seurat processing</a></li>
-  <li><a href="#sec-bio-sc" id="toc-sec-bio-sc" class="nav-link" data-scroll-target="#sec-bio-sc"><span class="header-section-number">2.3</span> Biological interpretation from single-cell compositions</a></li>
-  <li><a href="#sec-outputs" id="toc-sec-outputs" class="nav-link" data-scroll-target="#sec-outputs"><span class="header-section-number">2.4</span> Outputs</a></li>
+  <li><a href="#sec-separation" id="toc-sec-separation" class="nav-link active" data-scroll-target="#sec-separation"><span class="header-section-number">A.1</span> Directed and undirected separation</a></li>
+  <li><a href="#blanket-versus-boundary" id="toc-blanket-versus-boundary" class="nav-link" data-scroll-target="#blanket-versus-boundary"><span class="header-section-number">A.2</span> Blanket versus boundary</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./01-data-suppinger.html">Biological use case</a></li><li class="breadcrumb-item"><a href="./01-data-suppinger.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Suppinger gastruloids</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./A1-separation-criteria.html">Appendices</a></li><li class="breadcrumb-item"><a href="./A1-separation-criteria.html"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Separation, blankets, and boundaries</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Suppinger gastruloids</span></h1>
+<h1 class="title">Appendix A — Separation, blankets, and boundaries</h1>
 </div>
 
 
@@ -338,114 +332,34 @@ window.Quarto = {
 </header>
 
 
-<p>Single-cell UMI counts and bulk HTSeq tables from the murine gastruloid resource of Suppinger and colleagues (<em>Cell Stem Cell</em>, 2023; GEO <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE229513">GSE229513</a> and <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE229386">GSE229386</a>; <span class="citation" data-cites="suppingerMultimodalCharacterizationMurine2023">(<a href="#ref-suppingerMultimodalCharacterizationMurine2023" role="doc-biblioref">Suppinger et al. 2023</a>)</span>). Download commands belong in <code>data/raw/README.md</code>. Never overwrite <code>data/raw/</code>.</p>
-<p>The scRNA-seq experiment is <strong>one</strong> technical 10x Chromium 3′ v3 resource, not a panel of independent biological replicates for GRNs or for <code>DESeq2</code>. Zeros are molecule-sampling counts until proven otherwise (<a href="02-grn-graphical-lasso.html#nte-drop-zico" class="quarto-xref">Note&nbsp;<span>4.3</span></a>). GSE250136 is a later stem-embryo dataset and must not be conflated with Suppinger.</p>
-<section id="sec-geo-design" class="level2" data-number="2.1">
-<h2 data-number="2.1" class="anchored" data-anchor-id="sec-geo-design"><span class="header-section-number">2.1</span> Hierarchical design</h2>
-<p>The single-cell reference is nested. The first factor is the mESC <strong>cell line</strong> (B-S versus SBR). The second factor is the <strong>time slot</strong> (<a href="#fig-cell-line-time" class="quarto-xref">Figure&nbsp;<span>2.1</span></a>).</p>
-<div id="fig-cell-line-time" class="quarto-float quarto-figure quarto-figure-center anchored">
+<section id="sec-separation" class="level2" data-number="A.1">
+<h2 data-number="A.1" class="anchored" data-anchor-id="sec-separation"><span class="header-section-number">A.1</span> Directed and undirected separation</h2>
+<p>Glasso returns an <strong>undirected</strong> graph. Growing a gene panel by neighbours is therefore not the same operation as blocking paths on a DAG.</p>
+<p>On a DAG, <strong><span class="math inline">d</span>-separation</strong> uses the direction of edges. A chain is blocked by conditioning on the middle node; a collider is opened by conditioning on the collision node (or on one of its descendants). On an undirected graph, <strong><span class="math inline">u</span>-separation</strong> ignores direction: a path is blocked when it meets the conditioning set. <a href="#fig-separation" class="quarto-xref">Figure&nbsp;<span>A.1</span></a> draws both.</p>
+<div id="fig-separation" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-cell-line-time-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="images/suppinger_cell_line_time_design.png" class="img-fluid figure-img">
+<div aria-describedby="fig-separation-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/markov_boundary_versus_d_separation.png" class="img-fluid figure-img">
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-cell-line-time-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2.1: Single-cell hierarchy for GSE229513: cell line first, time slot second. Only 48 h is observed in both lines.
-</figcaption>
-</figure>
-</div>
-<div class="cell" data-layout-align="default">
-<div class="cell-output-display">
-<div id="fig-suppinger-design" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-suppinger-design-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div>
-<pre class="mermaid mermaid-js" data-label="fig-suppinger-design">%%{init: {"theme": "sandstone", "flowchart": {"htmlLabels": true}}}%%
-flowchart TD
-  SC["scRNA-seq GSE229513"] --&gt; BS["Cell line B-S"]
-  SC --&gt; SBR["Cell line SBR"]
-  BS --&gt; BS48["48 h"]
-  BS --&gt; BS52["52 h"]
-  BS --&gt; BS56["56 h"]
-  BS --&gt; BS96["96 h"]
-  BS --&gt; BS108["108 h"]
-  BS --&gt; BS120["120 h"]
-  SBR --&gt; S24["24 h"]
-  SBR --&gt; S36["36 h"]
-  SBR --&gt; S48["48 h"]
-  SBR --&gt; S60["60 h"]
-  SBR --&gt; S72["72 h"]
-  SBR --&gt; S84["84 h"]
-  BK["Bulk RNA-seq GSE229386"] --&gt; W1["Standard Wnt pulse at 48 h"]
-  BK --&gt; W2["Early Wnt pulse at 24 h"]
-  W1 --&gt; W148["48 h, 3 replicates"]
-  W1 --&gt; W172["72 h, 3 replicates"]
-  W1 --&gt; W196["96 h, 3 replicates"]
-  W2 --&gt; W248["48 h, 3 replicates"]
-  W2 --&gt; W272["72 h, 3 replicates"]
-  W2 --&gt; W296["96 h, 3 replicates"]
-</pre>
-</div>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-suppinger-design-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2.2: Two trees. Single-cell: cell line, then one leaf per time slot (48 h is drawn twice, once under each line). Bulk: Wnt schedule, then one leaf per time, each with three biological replicates.
-</figcaption>
-</figure>
-</div>
-</div>
-</div>
-<p><strong>Single-cell (GSE229513).</strong> Cell line is <strong>confounded with time</strong>: only 48 h has both lines; every other slot is a single line. We therefore <strong>do not</strong> put cell line in the GRN design. Developmental trajectories of B-S and SBR are treated as equivalent for type-level Gaussians (<a href="#fig-bio-space" class="quarto-xref">Figure&nbsp;<span>2.5</span></a>). Networks are learned independently per labelled type at the bulk-matched times 48 h, 72 h and 96 h only.</p>
-<p><strong>Bulk RNA-seq (GSE229386).</strong> First factor: the Wnt schedule — standard pulse at 48 h versus a premature pulse at 24 h. Second factor: <strong>three biological replicates</strong> at each of 48 h, 72 h and 96 h, drawn as separate leaves in <a href="#fig-suppinger-design" class="quarto-xref">Figure&nbsp;<span>2.2</span></a>.</p>
-</section>
-<section id="sec-seurat" class="level2" data-number="2.2">
-<h2 data-number="2.2" class="anchored" data-anchor-id="sec-seurat"><span class="header-section-number">2.2</span> Seurat processing</h2>
-<p>Embeddings, QC and clustering follow the Seurat workflow of the Suppinger gastruloid resource <span class="citation" data-cites="suppingerMultimodalCharacterizationMurine2023">(<a href="#ref-suppingerMultimodalCharacterizationMurine2023" role="doc-biblioref">Suppinger et al. 2023</a>)</span> in <a href="#fig-seurat-workflow" class="quarto-xref">Figure&nbsp;<span>2.3</span></a> (Alevin counts, <code>scater</code> QC, <code>SCTransform</code> Pearson residuals <strong>per batch</strong> for integration, CCA, PCA, UMAP, Louvain). That residualisation is for <strong>integration and visualisation</strong>. It is not the observation table of the graphical lasso (<a href="02-grn-graphical-lasso.html#sec-grn-observation" class="quarto-xref"><span>Section 4.2</span></a>, <a href="03-feature-selection-naive.html#sec-fs-hvg" class="quarto-xref"><span>Section 3.2</span></a>).</p>
-<div id="fig-seurat-workflow" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-seurat-workflow-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="images/suppinger_seurat_workflow_single_cell.png" class="img-fluid figure-img">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-seurat-workflow-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2.3: Seurat workflow used to extract embeddings and downstream analyses on GSE229513.
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-separation-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;A.1: Directed <span class="math inline">d</span>-separation (chain blocked, collider opened), undirected <span class="math inline">u</span>-separation on a minimal I-map, and the nesting of a Markov boundary inside a Markov blanket.
 </figcaption>
 </figure>
 </div>
 </section>
-<section id="sec-bio-sc" class="level2" data-number="2.3">
-<h2 data-number="2.3" class="anchored" data-anchor-id="sec-bio-sc"><span class="header-section-number">2.3</span> Biological interpretation from single-cell compositions</h2>
-<p><a href="#fig-bio-lineage" class="quarto-xref">Figure&nbsp;<span>2.4</span></a> and <a href="#fig-bio-space" class="quarto-xref">Figure&nbsp;<span>2.5</span></a> summarise a <strong>putative</strong> reading of annotated type proportions along gastruloid time. They are not a reconstruction of embryonic lineages. Two annotated states are treated as technical artefacts of culture stress. The working caudal sequence after the Chir/Wnt pulse is pluripotency <span class="math inline">\to</span> epiblast <span class="math inline">\to</span> primitive streak <span class="math inline">\to</span> caudal mesoderm / NMP <span class="math inline">\to</span> pre-somitic mesoderm / somites, with a residual endoderm bias typical of gastruloids.</p>
-<div id="fig-bio-lineage" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-bio-lineage-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="images/suppinger_biological_itepreation.png" class="img-fluid figure-img">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-bio-lineage-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2.4: Putative lineage reading of Suppinger annotations (disclaimer: not a ground-truth DAG).
-</figcaption>
-</figure>
-</div>
-<div id="fig-bio-space" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-bio-space-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="images/suppinger_biological_itepreation_2.png" class="img-fluid figure-img">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-bio-space-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2.5: Spatial / time-slot sketch of type composition, including the B-S and SBR series.
-</figcaption>
-</figure>
-</div>
-<p>The early-versus-standard Wnt reading of bulk compositions is in <a href="09-deconvolution-guided-biological-insights.html#sec-bio-deconv" class="quarto-xref"><span>Section 9.1</span></a>, after the mean-based comparators of <a href="08-deconvolution-pipeline.html#sec-deconv-models" class="quarto-xref"><span>Section 8.1</span></a>.</p>
-</section>
-<section id="sec-outputs" class="level2" data-number="2.4">
-<h2 data-number="2.4" class="anchored" data-anchor-id="sec-outputs"><span class="header-section-number">2.4</span> Outputs</h2>
-<ul>
-<li>Intermediate <code>SummarizedExperiment</code> and <code>SingleCellExperiment</code> under <code>data/intermediate/</code></li>
-<li>Knowledge-driven markers: <code>data/dictionaries/mouse_gastruloid_signaling_markers.csv</code></li>
-</ul>
+<section id="blanket-versus-boundary" class="level2" data-number="A.2">
+<h2 data-number="A.2" class="anchored" data-anchor-id="blanket-versus-boundary"><span class="header-section-number">A.2</span> Blanket versus boundary</h2>
+<p>A <strong>Markov blanket</strong> of a variable <span class="math inline">X</span> is any set <span class="math inline">S</span> that renders <span class="math inline">X</span> conditionally independent of the remaining variables <span class="citation" data-cites="pearlProbabilisticReasoningIntelligent1988">(<a href="#ref-pearlProbabilisticReasoningIntelligent1988" role="doc-biblioref">Pearl 1988</a>)</span>. The neighbours of <span class="math inline">X</span> in <em>some</em> undirected graph that is an I-map are always a blanket, but that graph may contain redundant edges, so the neighbour set need not be minimal.</p>
+<p>A <strong>Markov boundary</strong> is a <strong>minimal</strong> Markov blanket. For a positive distribution, that boundary is unique and equals the neighbour set of <span class="math inline">X</span> in the <strong>minimal undirected I-map</strong> <span class="citation" data-cites="pearlProbabilisticReasoningIntelligent1988 kollerProbabilisticGraphicalModels2009">(<a href="#ref-pearlProbabilisticReasoningIntelligent1988" role="doc-biblioref">Pearl 1988</a>; <a href="#ref-kollerProbabilisticGraphicalModels2009" role="doc-biblioref">Koller and Friedman 2009</a>)</span>. The boundary is therefore the lower bound on the size of a blanket: every blanket contains a boundary, and the boundary is the smallest one (<a href="#fig-separation" class="quarto-xref">Figure&nbsp;<span>A.1</span></a>, panel C).</p>
+<p>In this book, Markov-boundary expansion of marker seeds (<a href="03-feature-selection-naive.html#sec-fs-perspective" class="quarto-xref"><span>Section 3.6</span></a>) means the neighbour set of a fitted undirected GGM, under the extra assumption that the fitted graph is treated as a minimal I-map. It does <strong>not</strong> mean <span class="math inline">d</span>-separation on a regulatory DAG.</p>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="list">
-<div id="ref-suppingerMultimodalCharacterizationMurine2023" class="csl-entry" role="listitem">
-Suppinger, Simon, Marietta Zinner, Nadim Aizarani, et al. 2023. <span>“Multimodal Characterization of Murine Gastruloid Development.”</span> <em>Cell Stem Cell</em> 30 (6): 867–84. <a href="https://doi.org/10.1016/j.stem.2023.04.018">https://doi.org/10.1016/j.stem.2023.04.018</a>.
+<div id="ref-kollerProbabilisticGraphicalModels2009" class="csl-entry" role="listitem">
+Koller, Daphne, and Nir Friedman. 2009. <em>Probabilistic <span>Graphical Models</span>: <span>Principles</span> and <span>Techniques</span></em>. Edited by Francis Bach. MIT Press.
+</div>
+<div id="ref-pearlProbabilisticReasoningIntelligent1988" class="csl-entry" role="listitem">
+Pearl, Judea. 1988. <em>Probabilistic <span>Reasoning</span> in <span>Intelligent Systems</span>: <span>Networks</span> of <span>Plausible Inference</span></em>. Morgan Kaufmann.
 </div>
 </div>
 </section>
@@ -853,14 +767,11 @@ Suppinger, Simon, Marietta Zinner, Nadim Aizarani, et al. 2023. <span>“Multimo
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./index.html" class="pagination-link" aria-label="Overview">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Overview</span></span>
+      <a href="./04-sensitivity-misspecification.html" class="pagination-link" aria-label="Sensitivity analyses">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./03-feature-selection-naive.html" class="pagination-link" aria-label="Naive gene screen">
-        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Naive gene screen</span></span> <i class="bi bi-arrow-right-short"></i>
-      </a>
   </div>
 </nav>
 </div> <!-- /content -->
