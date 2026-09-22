@@ -1,0 +1,29 @@
+---
+title: "Early versus standard Wnt"
+---
+
+## Compositional reading {#sec-bio-deconv}
+
+Second-generation mean-based deconvolution (BayesPrism, SCDC, DWLS;
+@sec-deconv-models) on the bulk series is a **compositional narrative**,
+not DeCovarT's covariance model. @fig-bio-early contrasts a standard Wnt
+pulse at 48 h with a premature pulse at 24 h, at the three bulk-matched
+times.
+
+![Deconvolution-guided comparison of standard versus early Wnt
+gastruloids at 48 h, 72 h and 96 h.](images/deconvolution_guided_early_treatment-1.png){#fig-bio-early}
+
+On the **control-like** arm, 72 h is primitive-streak enriched and 96 h
+shows pre-somitic mesoderm and somite progression. On the **early Wnt**
+arm, 48 h retains more naïve pluripotency, 72 h is dominated by ectopic
+pluripotency with a reduced primitive streak, and 96 h nearly loses
+pre-somitic mesoderm. Absolute abundances disagree across algorithms —
+weighted least squares is sensitive to collinearity among neighbouring
+states — so we treat **direction of change** (ectopic pluripotency up,
+primitive streak and pre-somitic mesoderm down) as the consensus, not
+the point estimates.
+
+That reading is why GRNs are fit **per type and per time** at 48 h,
+72 h and 96 h (@sec-geo-design): those are the slots where a bulk
+composition exists to confront the Gaussians. Cell line remains out of
+the precision model.

@@ -13,50 +13,40 @@ transcriptomes and plugged into the bulk convolution. Indices follow
 the article Methods: gene $g=1,\ldots,G$, cell type $j=1,\ldots,J$,
 sample $i=1,\ldots,N$.
 
-The planned Suppinger benchmark is a **$4\times 3\times 2$** product,
-not a single pipeline. Four undirected GGM families, three lifts from
-cells to a population Gaussian, and two gene-panel strategies (a naive
-screen, plus an optional stricter Pareto refinement after the networks
-exist). That is up to 24 routes. The aim is to see **which steps move
+The planned Suppinger benchmark is a **$3\times 2\times 2$** product,
+not a single pipeline. Three undirected GGM families, two lifts from
+cells to a population Gaussian, and two gene-panel strategies (the naive
+screen alone, or that screen plus an optional stricter Pareto
+refinement). That is 12 routes. The aim is to see **which steps move
 deconvolution**, not to retain every cell of the product in the paper.
+Bures–Wasserstein alignment and sparse-plus-low-rank GGMs stay
+**perspectives**; they are not factors in @fig-pipeline.
 
 ```{mermaid}
 %%| echo: false
 %%| label: fig-pipeline
-%%| fig-cap: "Design product for Suppinger: a naive gene screen, four GGM families, three population lifts, and an optional all-versus-all panel that uses the fitted precisions. BLGGM is not in the product."
+%%| fig-cap: "Design product: a naive gene screen, three GGM families, two population lifts, then a yes/no choice of a stricter NSGA-II panel. Twelve routes. Bures–Wasserstein and sparse-plus-low-rank GGMs are not in the product."
 %%{init: {"theme": "sandstone", "flowchart": {"htmlLabels": true}}}%%
 flowchart TD
-  A["GSE229513 UMI, labels $$j$$"] --> B["Naive screen $$\\mathcal{G}_0$$"]
+  A["GSE229513 UMI, labels j"] --> B["Naive screen G_0"]
   B --> C1["SILGGM / glasso"]
   B --> C2["PLNnetwork"]
   B --> C3["GmGM copula"]
-  B --> C4["Sparse + low-rank GGM"]
-  C1 --> T["Independent $$\\widehat{\\boldsymbol{\\Theta}}_{j,t}$$ at 48 h, 72 h, 96 h"]
+  C1 --> T["Independent Theta_j,t at 48 h, 72 h, 96 h"]
   C2 --> T
   C3 --> T
-  C4 --> T
   T --> L1["Affine Gaussian aggregation"]
-  T --> L2["Bures--Wasserstein / OT"]
   T --> L3["scDesign2 copula pseudo-replicates"]
-  L1 --> D["DeCovarT $$(\\boldsymbol{\\mu}_{\\cdot j},\\boldsymbol{\\Sigma}_j)$$"]
-  L2 --> D
-  L3 --> D
-  T --> P["Optional NSGA-II: $$\\kappa_2(\\boldsymbol{\\mu}_{\\mathcal{G}})$$ and MixSim overlap"]
+  L1 --> Q{"Stricter NSGA-II panel?"}
+  L3 --> Q
+  Q -->|yes| P["kappa_2 of mu_G and MixSim overlap"]
+  Q -->|no| D["DeCovarT mu_j and Sigma_j"]
   P --> D
 ```
 
-Reading order in this book puts the **naive** screen before GRN
-inference, and the **optional** genetic algorithm after the graphs,
-because the second objective needs $\boldsymbol{\Sigma}_{j}$. Network
-metrics and sensitivity analyses close the GRN part.
+Reading order puts the **naive** screen before GRN inference, and the
+**optional** genetic algorithm after the graphs, because the second
+objective needs $\boldsymbol{\Sigma}_{j}$. Deconvolution comparators,
+the early-versus-standard Wnt reading, and sensitivity analyses close
+the book.
 
-## Scripts (source of truth for computation)
-
-| Script | Role |
-|--------|------|
-| `scripts/01_01_single_cell_exploration_suppinger.R` | Explore GSE229513 |
-| `scripts/02_01_deconvolution_preprocessing.R` | Harmonise genes; SE / SCE |
-| `scripts/03_01_grn_silggm.R` | SILGGM GGM (NPN **inside this branch**) |
-| `scripts/04_01_feature_selection_pseudobulk_deseq2.R` | Naive screen (no DE $p$-values on this atlas) |
-| `scripts/04_02_feature_selection_genetic_algorithm.R` | Optional Pareto gene panel |
-| `scripts/05_01_sensitivity_precision_contamination.R` | Misspecify $\boldsymbol{\Theta}_{j}$ |

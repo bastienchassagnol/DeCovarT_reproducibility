@@ -1,33 +1,33 @@
 ---
-title: "One-versus-rest gene screen"
+title: "Naive gene screen"
 ---
 
 ## Building $\mathcal{G}_{0}$ {#sec-fs-naive}
 
 This chapter builds a working universe $\mathcal{G}_{0}$ on which a GGM
-can be estimated. Each gene is scored **marginally** (one-versus-rest
-in spirit). That is cheap and biologically readable. It is the wrong
-place to stop for DeCovarT: concatenating per-type shortlists typically
-yields a multicollinear $\boldsymbol{\mu}_{\mathcal{G}}$
-[@newmanRobustEnumerationCell2015]. The all-versus-all refinement that
-uses $\boldsymbol{\Theta}_{j}$ comes **after** GRN inference
-(@sec-fs-advanced).
+can be estimated. Genes are scored from one labelled single-cell
+reference, used as a **signature**, not from a multi-sample atlas.
+Global ranks (highly variable genes) and a short knowledge-driven marker
+list both remove genes from the whole transcriptome. The all-versus-all
+refinement that uses $\boldsymbol{\Theta}_{j}$ comes **after** GRN
+inference (@sec-fs-advanced).
 
-Notation follows the article Methods: gene $g=1,\ldots,G$; cell type
-$j=1,\ldots,J$; sample (here a cell) $i=1,\ldots,n$. The DeCovarT
-convolution is linear in $\boldsymbol{p}$ only on an additive scale
+Notation: gene $g=1,\ldots,G$; cell type $j=1,\ldots,J$; cell
+$c=1,\ldots,C$. A cell labelled as type $j$ is written $c_{j}$. Bulk
+samples stay indexed by $i$, as in the article. The DeCovarT convolution
+is linear in $\boldsymbol{p}$ only on an additive scale
 (@nte-linear-scale).
 
 ```{mermaid}
 %%| echo: false
 %%| label: fig-fs-naive
-%%| fig-cap: "Naive screen: Pearson-residual ranking (signal-to-noise), knowledge-driven markers, and optional differential-network candidates. No DESeq2 p-values on this atlas."
+%%| fig-cap: "Naive screen on one labelled single-cell reference: Pearson-residual ranking and a short knowledge-driven marker list. No DESeq2 p-values."
 %%{init: {"theme": "sandstone", "flowchart": {"htmlLabels": true}}}%%
 flowchart TD
-  A["UMI $$y_{ig}$$, labels $$j$$"] --> B["Technical NB null, library size only"]
-  B --> C["Pearson residuals $$r_{ig}$$"]
-  C --> D["Rank by between/within type"]
-  E["Knowledge markers"] --> F["$$\\mathcal{G}_0$$"]
+  A["UMI y_cg, labels j"] --> B["Technical NB null, library size only"]
+  B --> C["Pearson residuals r_cg"]
+  C --> D["Rank by between versus within type"]
+  E["Knowledge markers"] --> F["Gene universe G_0"]
   D --> F
   F --> G["GGM chapter"]
 ```
@@ -58,44 +58,44 @@ that transform **only to rank genes**, not to normalise the table that
 enters glasso or PLN, and not as a factorial arm of the GRN design
 (@sec-grn-observation).
 
-On this atlas the only technical covariate we actually have is
-**library size**. There is a single scRNA-seq resource, so batch, donor
-and unmeasured technical branches cannot be identified
+On this single-cell reference the only technical covariate we actually
+have is **library size**. There is a single scRNA-seq resource, so
+batch, donor and unmeasured technical branches cannot be identified
 [@hafemeisterNormalizationVarianceStabilization2019]. The technical
 null is therefore
 
 $$
-\log\mu_{ig}
+\log\mu_{cg}
 =
 \beta_{0g}
 +
-\operatorname{offset}(\log L_{i}),
+\operatorname{offset}(\log L_{c}),
 \qquad
-y_{ig}\sim\mathrm{NB}(\mu_{ig},\theta_{g}),
+y_{cg}\sim\mathrm{NB}(\mu_{cg},\theta_{g}),
 $$ {#eq-fs-nb-null}
 
-with $L_{i}$ the library size of cell $i$. **Do not** put cell type
+with $L_{c}$ the library size of cell $c$. **Do not** put cell type
 $j$ in this null: that would remove the between-type signal the panel
 is meant to keep.
 
 Pearson residuals are
 
 $$
-r_{ig}
+r_{cg}
 =
-\frac{y_{ig}-\hat{\mu}_{ig}}
-{\sqrt{\hat{\mu}_{ig}+\hat{\mu}_{ig}^{2}/\hat{\theta}_{g}}}.
+\frac{y_{cg}-\hat{\mu}_{cg}}
+{\sqrt{\hat{\mu}_{cg}+\hat{\mu}_{cg}^{2}/\hat{\theta}_{g}}}.
 $$ {#eq-fs-pearson}
 
 @fig-sct-pearson recalls the NB mean–variance relation and the residual
 scale used by `SCTransform`.
 
 ![`SCTransform` negative-binomial mean–variance relation and Pearson
-residuals (Seurat v5).](images/scTransform_computation.pdf){#fig-sct-pearson}
+residuals (Seurat v5).](images/scTransform_computation-1.png){#fig-sct-pearson}
 
 ### Total, biological, and technical pieces
 
-For gene $g$ write $V_{\mathrm{total},g}=\mathrm{Var}_{i}(r_{ig})$ for
+For gene $g$ write $V_{\mathrm{total},g}=\mathrm{Var}_{c}(r_{cg})$ for
 residual variation after the depth null. That leftover is **not** pure
 biology: it still contains model misspecification. What we can split
 with the labels $j$ is biological variation **between** versus
@@ -106,26 +106,31 @@ $$
 \mathrm{SS}_{\mathrm{between},g}
 &=
 \sum_{j=1}^{J}
-n_{j}
+C_{j}
 \bigl(\bar{r}_{gj}-\bar{r}_{g}\bigr)^{2},
 \qquad
 \bar{r}_{gj}
 =
-n_{j}^{-1}\sum_{i:j(i)=j}r_{ig},\\
+C_{j}^{-1}\sum_{c_{j}}r_{c_{j}g},\\
 \mathrm{SS}_{\mathrm{within},g}
 &=
 \sum_{j=1}^{J}
-\sum_{i:j(i)=j}
-\bigl(r_{ig}-\bar{r}_{gj}\bigr)^{2}.
+\sum_{c_{j}}
+\bigl(r_{c_{j}g}-\bar{r}_{gj}\bigr)^{2}.
 \end{aligned}
 $$ {#eq-fs-ss}
 
-Because the residuals are globally approximately centred,
-$\bar{r}_{g}\approx 0$ and
-$\mathrm{SS}_{\mathrm{between},g}\approx\sum_{j}n_{j}\bar{r}_{gj}^{2}$.
+$C_{j}$ is the number of cells labelled $j$. Because the residuals are
+globally approximately centred, $\bar{r}_{g}\approx 0$ and
+$\mathrm{SS}_{\mathrm{between},g}\approx\sum_{j}C_{j}\bar{r}_{gj}^{2}$.
 A lineage marker (high between-type, low within-type) is the gene we
 want. A stress-response gene (low between-type, high within-type) is
 not, even if its **total** residual variance is large.
+@fig-pearson-sources sketches that split.
+
+![Technical variation absorbed by a library-size negative-binomial null,
+and biological residual variation split into between-type and
+within-type pieces.](images/pearson_residual_variance_sources.png){#fig-pearson-sources}
 
 ```{mermaid}
 %%| echo: false
@@ -133,11 +138,11 @@ not, even if its **total** residual variance is large.
 %%| fig-cap: "Residual variance after a library-size NB null. Technical variation is whatever the null absorbed; leftover variation is split into between-type and within-type biological pieces. Rank genes by a high between / low within ratio, not by total residual variance alone."
 %%{init: {"theme": "sandstone", "flowchart": {"htmlLabels": true}}}%%
 flowchart TD
-  Y["$$y_{ig}$$"] --> N["NB technical null: offset $$\\log L_i$$ only"]
-  N --> R["Pearson $$r_{ig}$$"]
+  Y["y_cg"] --> N["NB technical null: offset log L_c only"]
+  N --> R["Pearson r_cg"]
   R --> T["Total residual variance"]
-  T --> B["Between type $$\\mathrm{SS}_{\\mathrm{between},g}$$"]
-  T --> W["Within type $$\\mathrm{SS}_{\\mathrm{within},g}$$"]
+  T --> B["Between type"]
+  T --> W["Within type"]
   B --> S["Keep high between, low within"]
   W --> S
 ```
@@ -146,18 +151,10 @@ There is **no** calibrated differential-expression $p$-value here: one
 technical replicate cannot support `DESeq2` (@nte-pseudoreplication).
 The between-type sum of squares is a **ranking score**.
 
-### `SCTransform` versus `FindVariableFeatures`
-
-Use `Seurat::SCTransform()` with Pearson residuals
-(`residual.type = "pearson"`; `vst.flavor` as in @fig-seurat-workflow).
-That **is** the residual transformation. Then **do not** stop at
-Seurat's default variable features: those rank genes by **overall**
-residual variance, which mixes within-type heterogeneity into the
-score.
-
-Do **not** use `Seurat::FindVariableFeatures(method = "vst")`. That
-path is log-normalisation plus the older variance-stabilising transform,
-not Pearson residuals of @eq-fs-pearson.
+Use `Seurat::SCTransform()` with Pearson residuals. That **is** the
+residual transformation. Then **do not** stop at Seurat's default
+variable features: those rank genes by **overall** residual variance,
+which mixes within-type heterogeneity into the score.
 
 After `SCTransform`, pull the residual matrix and compute
 @eq-fs-ss by the labelled type $j$. Keep on the order of $2{,}000$
@@ -176,7 +173,7 @@ sct <- Seurat::SCTransform(
   vst.flavor = "v2"
 )
 R <- Seurat::GetAssayData(sct, assay = "SCT", layer = "scale.data")
-# rows gene g, columns cell i; align with cell-type factor j
+# rows gene g, columns cell c; align with cell-type factor j
 j <- sct$celltype
 ss_between <- apply(R, 1, function(r) {
   means <- tapply(r, j, mean)
@@ -204,36 +201,22 @@ GGM is used, prefer a copula / nonparanormal map on the same gene set
 
 ## Marker genes {#sec-fs-markers}
 
-Shannon entropy and Gini of relative means
-$\pi_{gj}=\mu_{gj}/\sum_{\ell}\mu_{g\ell}$ are **compaction** tools for
-one-versus-rest lists, not all-versus-all selectors. Definitions,
-worked examples, and the warning that two markers of *different* types
-can still be collinear as rows of $\boldsymbol{\mu}$ live in the DeCovarT
-vignette
+Shannon entropy and Gini of relative means are compaction scores for
+long one-versus-rest lists. Definitions live in the DeCovarT vignette
 [supp-S6-feature-selection.qmd](https://github.com/bastienchassagnol/DeCovarT/blob/main/vignettes/supp-S6-feature-selection.qmd#L62-L254).
 
-On Suppinger the seed list is **knowledge-driven**, not DE-driven. The
-Excel signalling map
-`data/cell markers/Mouse_gastruloid_signaling_network.xlsx` was read
-with the Office Open XML tables (coloured cells mark a gene as a marker
-of that Excel type) and written as
+On this reference the marker list is **knowledge-driven** and already
+short. It is stored as
 
 `data/dictionaries/mouse_gastruloid_signaling_markers.csv`
 
-with three columns:
-
-- `cell_type_excel` — lineage name in the spreadsheet;
-- `cell_type_suppinger` — one-to-one map onto a Suppinger annotation,
-  or `NA` if that Excel type is not in the gastruloid atlas
-  (extra-embryonic, cardiac mesoderm, haemato-endothelium, non-neural
-  ectoderm);
-- `gene_marker` — gene symbol associated with that type.
-
-These genes enter $\mathcal{G}_{0}$ as **seeds**, not as the whole
-panel. They are the natural starting points for Markov-boundary
-expansion once a GGM exists (@sec-fs-perspective). Concatenating
-per-type seeds without an all-versus-all stage repeats
-@nte-ovr-concat.
+with three columns: `cell_type_excel` (lineage name on the signalling
+map), `cell_type_suppinger` (the matching Suppinger label, or `NA` when
+that lineage is absent), and `gene_marker`. Because the list is a
+curated biological seed rather than a concatenated differential-expression
+shortlist, it does not by itself inflate collinearity of
+$\boldsymbol{\mu}_{\mathcal{G}}$. Seeds may later be grown by Markov
+boundaries (@sec-separation).
 
 ## Differential expression — only with biological replication {#sec-fs-deg}
 
@@ -263,23 +246,30 @@ per time and Wnt schedule (@sec-geo-design). Those replicates support
 object.
 :::
 
-::: {#nte-ovr-concat .callout-warning}
-## :warning: Limitation of one-versus-rest concatenation
+## What we would actually run
 
-The union of per-type markers is usually a multicollinear
-$\boldsymbol{\mu}_{\mathcal{G}}$ that is still too large for stable
-NNLS / GLS / DeCovarT Fisher information
-[@newmanRobustEnumerationCell2015]. A global all-versus-all stage is
-required (@sec-fs-advanced).
-:::
+1.  `SCTransform` Pearson residuals under @eq-fs-nb-null; rank by
+    between/within @eq-fs-ss.
+2.  Union with
+    `data/dictionaries/mouse_gastruloid_signaling_markers.csv`
+    (drop rows with `cell_type_suppinger` missing unless a later
+    reference needs them).
+3.  Cap $|\mathcal{G}_{0}|$ at a few thousand genes.
+4.  **No** `DESeq2` $p$-values on technical sc pseudo-bulks.
 
-## Differential networks as candidate generators {#sec-fs-diffnet}
+## Perspectives: differential networks {#sec-fs-perspective}
+
+These methods are **not** in the naive screen. They need graphs, so
+they nominate extras for $\mathcal{G}_{0}$ **after** a first GGM pass.
+Full algebraic detail of `INDEED` and D-trace lives in DeCovarT
+`vignettes/supp-S6-feature-selection.qmd`. Separation language
+(directed versus undirected) is in @sec-separation.
+
+### Comparing supports, or estimating the difference {#sec-fs-diffnet}
 
 DeCovarT benefits from **rewiring** between populations. A gene that
 changes neighbourhood in $\boldsymbol{\Theta}_{j}$ is a better candidate
-than a gene that is merely highly variable. Two strategies exist; both
-need graphs, so they **nominate extras for $\mathcal{G}_{0}$ after** a
-first GGM pass, they do not replace the naive screen.
+than a gene that is merely highly variable.
 
 **Fit every $\boldsymbol{\Theta}_{j}$, then compare supports.** Independent
 glasso / `SILGGM` fits (@sec-silggm) yield per-type edges; the symmetric
@@ -289,57 +279,34 @@ $\Delta_{j\ell}=\boldsymbol{\Theta}_{j}-\boldsymbol{\Theta}_{\ell}$.
 
 **Estimate $\Delta_{j\ell}$ directly.** D-trace methods target the
 difference of precisions without necessarily reconstructing both graphs
-first (@sec-fs-perspective). They cannot replace $\boldsymbol{\Theta}_{j}$
-in the generative model, but they are attractive **feature objectives**
-when the *difference* is sparse.
-
-Either way, treat differential-network hits as **candidates**, not as
-the final panel.
-
-## Perspectives: `INDEED` and D-trace {#sec-fs-perspective}
-
-These methods are **not** in the core Suppinger pipeline. Full detail
-lives in DeCovarT `vignettes/supp-S6-feature-selection.qmd`.
+first. Zhang and Zou [@zhangSparsePrecisionMatrix2014] introduced the
+lasso-penalised D-trace loss for a single sparse precision; the
+differential-network extension
+[@yuanDifferentialNetworkAnalysis2017] estimates
+$\Delta_{j\ell}$. Empirically, D-trace is competitive when the
+**difference** is sparser than either graph
+[@plaksienkoMethodsDifferentialNetwork2025]. It still does **not**
+produce a pair of SPD precisions. A workable **proposal** is: use
+D-trace to nominate rewiring genes, then estimate each
+$\boldsymbol{\Theta}_{j}$ on that panel with a method from @sec-grn-top4.
 
 ### `INDEED`
 
 `INDEED` multiplies a DE $p$-value by a permutation-filtered change in
-partial correlation [@zuoINDEEDIntegratedDifferential2016]. On
-Suppinger the DE $p$-value assumes biological replication
+partial correlation [@zuoINDEEDIntegratedDifferential2016]. On this
+reference the DE $p$-value assumes biological replication
 (@nte-pseudoreplication), and the permutation null among cells of one
 gastruloid is a technical null. Use it, if at all, as a ranking
 heuristic with $p_{g}^{\mathrm{DE}}$ replaced by a fold-change or
 between-type score.
 
-### D-trace
-
-Zhang and Zou [@zhangSparsePrecisionMatrix2014] introduced the
-lasso-penalised D-trace loss for a single sparse precision; the
-differential-network extension
-[@yuanDifferentialNetworkAnalysis2017] estimates
-$\Delta_{j\ell}=\boldsymbol{\Theta}_{j}-\boldsymbol{\Theta}_{\ell}$. Empirically,
-D-trace is competitive when the **difference** is sparser than either
-graph [@plaksienkoMethodsDifferentialNetwork2025]. It still does **not**
-produce a pair of SPD precisions. A workable **proposal** is: use
-D-trace to nominate rewiring genes, then estimate each
-$\boldsymbol{\Theta}_{j}$ on that panel with a method from @sec-grn-top4.
-
 ### Markov boundaries
 
-Once a GGM exists, seeds (markers, high-SNR HVGs, D-trace hits) can be
-grown by undirected neighbours $\{g':\theta_{gg'}\neq 0\}$. That is
-the Markov boundary in a Gaussian Markov random field, not DAG
-$d$-separation.
-
-## What we would actually run (naive stage)
-
-1.  `SCTransform` Pearson residuals under @eq-fs-nb-null; rank by
-    between/within @eq-fs-ss.
-2.  Union with
-    `data/dictionaries/mouse_gastruloid_signaling_markers.csv`
-    (drop rows with `cell_type_suppinger = NA` unless a later atlas
-    needs them).
-3.  Cap $|\mathcal{G}_{0}|$ at a few thousand genes.
-4.  **No** `DESeq2` $p$-values on technical sc pseudo-bulks.
-
-Script template: `scripts/04_01_*.R`.
+Once a GGM exists, seeds (markers, high signal-to-noise genes, D-trace
+hits) can be grown by undirected neighbours
+$\{g':\theta_{gg'}\neq 0\}$. On a minimal undirected I-map that neighbour
+set is the **Markov boundary**, the smallest Markov blanket
+[@pearlProbabilisticReasoningIntelligent1988;
+@kollerProbabilisticGraphicalModels2009]. That is undirected
+separation, not DAG $d$-separation (@sec-separation,
+@fig-separation).

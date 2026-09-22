@@ -18,78 +18,68 @@ be conflated with Suppinger.
 
 ## Hierarchical design {#sec-geo-design}
 
-The native hierarchy is the same idea as a barcode-nested gastruloid
-atlas (morphotype $\to$ sample $\to$ cells), but the factors here are
-**cell line** and **time**, not TLS versus neural-bias organoids.
+The single-cell reference is nested. The first factor is the mESC
+**cell line** (B-S versus SBR). The second factor is the **time slot**
+(@fig-cell-line-time).
 
-![Luque-style nested design (morphotype $\to$ barcode $\to$ cells). We
-keep the hierarchy and change the factors to Suppinger's cell lines and
-time slots.](images/luque_vaillaronage_factorial_desig_to_reproduce.png){#fig-luque-nest}
+![Single-cell hierarchy for GSE229513: cell line first, time slot
+second. Only 48 h is observed in both lines.](images/suppinger_cell_line_time_design.png){#fig-cell-line-time}
 
 ```{mermaid}
 %%| echo: false
 %%| label: fig-suppinger-design
-%%| fig-cap: "Suppinger hierarchy. Single-cell: cell line at the top, ordinal time slots below. Bulk RNA-seq: Wnt schedule at the top, three biological replicates at each of 48 h, 72 h and 96 h. Gene networks are learned only on the three bulk-matched times, independently per cell type."
+%%| fig-cap: "Two trees. Single-cell: cell line, then one leaf per time slot (48 h is drawn twice, once under each line). Bulk: Wnt schedule, then one leaf per time, each with three biological replicates."
 %%{init: {"theme": "sandstone", "flowchart": {"htmlLabels": true}}}%%
 flowchart TD
-  SC["scRNA-seq GSE229513"] --> L1["Cell line B-S"]
-  SC --> L2["Cell line SBR"]
-  L1 --> Tsc["Ordinal times 0–120 h"]
-  L2 --> Tsc
-  Tsc --> Both["Both lines only at 48 h"]
-  BULK["Bulk RNA-seq GSE229386"] --> W1["Standard Wnt pulse at 48 h"]
-  BULK --> W2["Early Wnt pulse at 24 h"]
-  W1 --> R1["48 h, 72 h, 96 h × 3 replicates"]
-  W2 --> R1
-  GRN["GGMs for DeCovarT"] --> TP["Independently at 48 h, 72 h, 96 h"]
-  TP --> CT["One $$\\widehat{\\boldsymbol{\\Theta}}_{j,t}$$ per labelled type"]
+  SC["scRNA-seq GSE229513"] --> BS["Cell line B-S"]
+  SC --> SBR["Cell line SBR"]
+  BS --> BS48["48 h"]
+  BS --> BS52["52 h"]
+  BS --> BS56["56 h"]
+  BS --> BS96["96 h"]
+  BS --> BS108["108 h"]
+  BS --> BS120["120 h"]
+  SBR --> S24["24 h"]
+  SBR --> S36["36 h"]
+  SBR --> S48["48 h"]
+  SBR --> S60["60 h"]
+  SBR --> S72["72 h"]
+  SBR --> S84["84 h"]
+  BK["Bulk RNA-seq GSE229386"] --> W1["Standard Wnt pulse at 48 h"]
+  BK --> W2["Early Wnt pulse at 24 h"]
+  W1 --> W148["48 h, 3 replicates"]
+  W1 --> W172["72 h, 3 replicates"]
+  W1 --> W196["96 h, 3 replicates"]
+  W2 --> W248["48 h, 3 replicates"]
+  W2 --> W272["72 h, 3 replicates"]
+  W2 --> W296["96 h, 3 replicates"]
 ```
 
-**Single-cell (GSE229513).** Top level: the mESC line (B-S versus SBR).
-Bottom level: the ordinal time slots of gastruloid development. The
-integrated Seurat object spans all times (@fig-seurat-workflow). Cell
-line is **confounded with time**: only 48 h has both lines; every other
-slot is a single line, and that line changes across the series. We
-therefore **do not** put cell line in the GRN design. Developmental
-trajectories of B-S and SBR are treated as equivalent for the purpose
-of type-level Gaussians (@fig-bio-space).
+**Single-cell (GSE229513).** Cell line is **confounded with time**: only
+48 h has both lines; every other slot is a single line. We therefore
+**do not** put cell line in the GRN design. Developmental trajectories
+of B-S and SBR are treated as equivalent for type-level Gaussians
+(@fig-bio-space). Networks are learned independently per labelled type
+at the bulk-matched times 48 h, 72 h and 96 h only.
 
-**Bulk RNA-seq (GSE229386).** Top level: the Wnt schedule — standard
-pulse at 48 h (control-like gastruloids) versus a premature pulse at
-24 h (early treatment). Bottom level: **three biological replicates**
-at each of 48 h, 72 h and 96 h.
-
-**GRN restriction.** We learn an undirected GGM **independently** for
-each labelled cell type $j$ at each time $t\in\{48,72,96\}\,\mathrm{h}$
-for which a bulk sample exists. We do not share graphs across time, and
-we do not estimate a cell-line effect.
+**Bulk RNA-seq (GSE229386).** First factor: the Wnt schedule — standard
+pulse at 48 h versus a premature pulse at 24 h. Second factor: **three
+biological replicates** at each of 48 h, 72 h and 96 h, drawn as
+separate leaves in @fig-suppinger-design.
 
 ## Seurat processing {#sec-seurat}
 
-Embeddings, QC and clustering for the atlas follow the Seurat workflow
-in @fig-seurat-workflow (Alevin counts, `scater` QC, `SCTransform`
-Pearson residuals **per batch** for integration, CCA, PCA, UMAP,
-Louvain). That residualisation is for **integration and visualisation**.
-It is not the observation table of the graphical lasso
+Embeddings, QC and clustering follow the Seurat workflow of the
+Suppinger gastruloid resource
+[@suppingerMultimodalCharacterizationMurine2023] in
+@fig-seurat-workflow (Alevin counts, `scater` QC, `SCTransform` Pearson
+residuals **per batch** for integration, CCA, PCA, UMAP, Louvain). That
+residualisation is for **integration and visualisation**. It is not the
+observation table of the graphical lasso
 (@sec-grn-observation, @sec-fs-hvg).
 
 ![Seurat workflow used to extract embeddings and downstream analyses on
 GSE229513.](images/suppinger_seurat_workflow_single_cell.png){#fig-seurat-workflow}
-
-Templates:
-[`01_01_single_cell_exploration_suppinger.R`](https://github.com/bastienchassagnol/GastroDeconv2FateMap/blob/main/scripts/01_01_single_cell_exploration_suppinger.R)
-and
-[`02_01_deconvolution_preprocessing.R`](https://github.com/bastienchassagnol/GastroDeconv2FateMap/blob/main/scripts/02_01_deconvolution_preprocessing.R);
-local copies `scripts/01_01_*.R` and `scripts/02_01_*.R`.
-
-```{r}
-#| label: load-placeholder
-#| eval: false
-# Run from the repository root.
-# seurat_obj <- readRDS(file.path(
-#   "data", "raw", "GSE229513_gastruloidsobject.rds"
-# ))
-```
 
 ## Biological interpretation from single-cell compositions {#sec-bio-sc}
 
@@ -107,35 +97,13 @@ ground-truth DAG).](images/suppinger_biological_itepreation.png){#fig-bio-lineag
 ![Spatial / time-slot sketch of type composition, including the B-S and
 SBR series.](images/suppinger_biological_itepreation_2.png){#fig-bio-space}
 
-## Deconvolution-guided reading of early versus standard Wnt {#sec-bio-deconv}
-
-Second-generation mean-based deconvolution (BayesPrism, SCDC, DWLS) on
-the bulk series is used only as a **compositional narrative**, not as
-DeCovarT's covariance model. @fig-bio-early contrasts a standard Wnt
-pulse at 48 h with a premature pulse at 24 h, at the three bulk-matched
-times.
-
-![Deconvolution-guided comparison of standard versus early Wnt
-gastruloids at 48 h, 72 h and 96 h.](images/deconvolution-guided_biological_interpeation_elarly_treatment.pdf){#fig-bio-early}
-
-On the **control-like** arm, 72 h is primitive-streak enriched and 96 h
-shows pre-somitic mesoderm and somite progression. On the **early Wnt**
-arm, 48 h retains more naïve pluripotency, 72 h is dominated by ectopic
-pluripotency with a reduced primitive streak, and 96 h nearly loses PSM.
-Absolute abundances disagree across algorithms — weighted least squares
-is sensitive to collinearity among neighbouring states — so we treat
-**direction of change** (ectopic pluripotency up, primitive streak and
-PSM down) as the consensus, not the point estimates.
-
-That is why GRNs are fit **per type and per time** at 48 h, 72 h and
-96 h: those are the slots where a bulk composition exists to confront
-the Gaussians. Cell line remains out of the precision model
-(@sec-geo-design).
+The early-versus-standard Wnt reading of bulk compositions is in
+@sec-bio-deconv, after the mean-based comparators of
+@sec-deconv-models.
 
 ## Outputs {#sec-outputs}
 
 - Intermediate `SummarizedExperiment` and `SingleCellExperiment` under
   `data/intermediate/`
-- Codebook: `data/dictionaries/suppinger_features.csv`
 - Knowledge-driven markers:
   `data/dictionaries/mouse_gastruloid_signaling_markers.csv`

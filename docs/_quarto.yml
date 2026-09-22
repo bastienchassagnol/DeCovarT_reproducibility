@@ -22,7 +22,13 @@ book:
         - 06-population-alignment.qmd
         - 05-grn-metrics.qmd
         - 07-feature-selection-all-versus-all.qmd
+    - part: "Deconvolution benchmark"
+      chapters:
+        - 08-deconvolution-pipeline.qmd
+        - 09-deconvolution-guided-biological-insights.qmd
         - 04-sensitivity-misspecification.qmd
+  appendices:
+    - A1-separation-criteria.qmd
   search: true
 
 bibliography:

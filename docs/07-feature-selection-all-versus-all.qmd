@@ -14,8 +14,8 @@ $\sum_{j}p_{j}^{2}\boldsymbol{\Sigma}_{j}$.
 
 This stage is **optional**. The naive screen (@sec-fs-hvg) already
 supplies $\mathcal{G}_{0}$. The stricter panel is the second factor in
-the $4\times 3\times 2$ design (@fig-pipeline): four GGM families,
-three population lifts, and with/without this Pareto refinement.
+the $3\times 2\times 2$ design (@fig-pipeline): three GGM families,
+two population lifts, and with/without this Pareto refinement.
 
 Let $\boldsymbol{\mu}=(\boldsymbol{\mu}_{\cdot j})_{j=1}^{J}\in\mathbb{R}^{G\times J}$
 be the mean signature. The 2-norm condition number is

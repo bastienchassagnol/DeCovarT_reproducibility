@@ -1,0 +1,38 @@
+---
+title: "Mean-based deconvolution comparators"
+---
+
+## What is being compared {#sec-deconv-models}
+
+DeCovarT deconvolves bulk profiles with both a mean signature and a
+per-type covariance. The comparators in this part do **not**. They
+estimate a composition $\boldsymbol{p}$ from a mean signature built on
+the same labelled single-cell reference, and they are the baseline
+against which a covariance model has to move the estimate.
+
+Three second-generation algorithms are planned on GSE229386, at 48 h,
+72 h and 96 h, for the standard Wnt pulse and the early pulse
+(@sec-geo-design):
+
+1.  **BayesPrism** — a Bayesian model that treats the single-cell
+    reference as a prior on cell-type expression and updates that prior
+    with the bulk counts.
+2.  **SCDC** — a weighted non-negative least-squares ensemble that can
+    combine more than one single-cell reference. Here there is only
+    one reference, so the ensemble weight is not a second biological
+    replicate.
+3.  **DWLS** — dampened weighted least squares, which down-weights
+    genes whose mean expression would otherwise dominate the fit.
+
+Literature keys for these three methods are **not yet** in
+`bibliography/REFERENCES.bib`. Add them from Zotero before a review
+pass; do not cite them by invented keys.
+
+None of the three returns $(\boldsymbol{\mu}_{\cdot j},\boldsymbol{\Sigma}_{j})$.
+They are composition estimators. Sensitivity of those compositions to a
+misspecified precision is the last chapter of this part
+(@sec-sensitivity). The early-versus-standard reading of their output
+is @sec-bio-deconv.
+
+No proportions are reported here. Scripts stay `eval: false` until the
+bulk and signature objects exist.

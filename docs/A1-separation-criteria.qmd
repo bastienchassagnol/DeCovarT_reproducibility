@@ -1,0 +1,42 @@
+---
+title: "Separation, blankets, and boundaries"
+---
+
+## Directed and undirected separation {#sec-separation}
+
+Glasso returns an **undirected** graph. Growing a gene panel by
+neighbours is therefore not the same operation as blocking paths on a
+DAG.
+
+On a DAG, **$d$-separation** uses the direction of edges. A chain is
+blocked by conditioning on the middle node; a collider is opened by
+conditioning on the collision node (or on one of its descendants). On
+an undirected graph, **$u$-separation** ignores direction: a path is
+blocked when it meets the conditioning set. @fig-separation draws both.
+
+![Directed $d$-separation (chain blocked, collider opened), undirected
+$u$-separation on a minimal I-map, and the nesting of a Markov boundary
+inside a Markov blanket.](images/markov_boundary_versus_d_separation.png){#fig-separation}
+
+## Blanket versus boundary
+
+A **Markov blanket** of a variable $X$ is any set $S$ that renders $X$
+conditionally independent of the remaining variables
+[@pearlProbabilisticReasoningIntelligent1988]. The neighbours of $X$ in
+*some* undirected graph that is an I-map are always a blanket, but that
+graph may contain redundant edges, so the neighbour set need not be
+minimal.
+
+A **Markov boundary** is a **minimal** Markov blanket. For a positive
+distribution, that boundary is unique and equals the neighbour set of
+$X$ in the **minimal undirected I-map**
+[@pearlProbabilisticReasoningIntelligent1988;
+@kollerProbabilisticGraphicalModels2009]. The boundary is therefore the
+lower bound on the size of a blanket: every blanket contains a
+boundary, and the boundary is the smallest one (@fig-separation, panel
+C).
+
+In this book, Markov-boundary expansion of marker seeds
+(@sec-fs-perspective) means the neighbour set of a fitted undirected
+GGM, under the extra assumption that the fitted graph is treated as a
+minimal I-map. It does **not** mean $d$-separation on a regulatory DAG.

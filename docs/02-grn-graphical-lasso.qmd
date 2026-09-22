@@ -284,7 +284,7 @@ prefer `GFC_L` / glasso **support** plus an SPD refit over exporting
 
 It does **not** model unknown mixtures: subset cells by annotation
 first. A Bayesian latent mixture with dropout (`BLGGM`) is **not** in
-the $4\times 3\times 2$ product: labels are already known, and MCMC
+the $3\times 2\times 2$ product: labels are already known, and MCMC
 plus a gene cap of a few hundred make it a perspective only.
 
 ### Poisson-lognormal: Chiquet's `PLNmodels` versus PLNFGL {#sec-pln}
@@ -425,11 +425,11 @@ have been global programmes.
 sparse edges are stable, ordinary glasso was not merely fitting cell
 cycle; if they collapse, do not export the dense glasso to DeCovarT.
 
-## Four methods to carry forward {#sec-grn-top4}
+## Three methods to carry forward {#sec-grn-top4}
 
 Given stationarity, a multivariate Gaussian **population** object,
-sparsity, and single-cell transcriptomics only, the four most
-defensible **core** routes are:
+sparsity, and single-cell transcriptomics only, the three **core**
+routes in @fig-pipeline are:
 
 1.  **`SILGGM` `GFC_L` (or glasso) → FDR support → SPD refit**, with
     NPN **inside this branch only**. Inferential, scalable, closest in
@@ -438,11 +438,12 @@ defensible **core** routes are:
 2.  **Chiquet `PLNnetwork` per labelled type.** Count-honest latent
     Gaussian; no NPN; library size explicit
     [@chiquetPoissonLognormalModelVersatile2021].
-3.  **Sparse + low-rank GGM** on the Gaussianised (or copula) scale.
-    Confounder check before trusting $\boldsymbol{\Theta}_{j}$.
-4.  **`GmGM` on type subsets** as a multi-axis stress test of
+3.  **`GmGM` on type subsets** as a multi-axis stress test of
     independent cells — interpret the **gene-axis** precision, do not
     force the cell-axis precision into DeCovarT.
+
+Sparse-plus-low-rank GGMs (@sec-lowrank) remain a confounder check.
+They are **not** a factor of the $3\times 2\times 2$ product.
 
 PLNFGL, joint graphical lasso, and JGCGM are **sharing** strategies
 (@sec-grn-appendix). They may well beat independent fits on variance,
@@ -495,14 +496,16 @@ in its first factor. The product we will actually interpret is
 (@fig-pipeline)
 
 $$
-\underbrace{\{\text{SILGGM+NPN},\ \text{PLN counts},\ \text{sparse+low-rank},\ \text{GmGM}\}}_{\text{four GGM families}}
+\underbrace{\{\text{SILGGM+NPN},\ \text{PLN counts},\ \text{GmGM}\}}_{\text{three GGM families}}
 \times
-\underbrace{\{\text{affine},\ \text{Bures--Wasserstein},\ \text{scDesign2}\}}_{\text{three population lifts}}
+\underbrace{\{\text{affine},\ \text{scDesign2}\}}_{\text{two population lifts}}
 \times
 \underbrace{\{\mathcal{G}_{0},\ \text{optional NSGA-II}\}}_{\text{two panels}}.
 $$ {#eq-grn-product}
 
-That is up to 24 routes. Independent type-level fits are the **core**
+That is 12 routes. Bures–Wasserstein stays a **perspective** metric
+(@sec-align-ot), not a third lift. Independent type-level fits are the
+**core**
 sharing strategy; fused / copula-joint sharing stays in
 @sec-grn-appendix. `SCTransform` and `huge.npn` are **not** crossed with
 PLN. `BLGGM` is not in the product.
