@@ -1,8 +1,9 @@
-
-
-- [DeCovarT reproducibility](#decovart-reproducibility)
-  - [Generative model](#generative-model)
-  - [How to render the Quarto book](#how-to-render-the-quarto-book)
+---
+format:
+  gfm:
+    toc: true
+    wrap: preserve
+---
 
 # DeCovarT reproducibility
 
@@ -14,11 +15,10 @@ Gaussian that DeCovarT convolves, and benchmark the resulting bulk
 deconvolution. The narrative lives in the Quarto book under `docs/`.
 
 <p>
-
-<img src="https://img.shields.io/badge/R-analysis-276DC3?style=flat-square&logo=r&logoColor=white" alt="R">
-<img src="https://img.shields.io/badge/renv-lockfile-276DC3?style=flat-square" alt="renv">
-<img src="https://img.shields.io/badge/Quarto-book-75AADB?style=flat-square&logo=quarto&logoColor=white" alt="Quarto">
-<img src="https://img.shields.io/badge/DeCovarT-companion-0F766E?style=flat-square" alt="DeCovarT">
+  <img src="https://img.shields.io/badge/R-analysis-276DC3?style=flat-square&logo=r&logoColor=white" alt="R">
+  <img src="https://img.shields.io/badge/renv-lockfile-276DC3?style=flat-square" alt="renv">
+  <img src="https://img.shields.io/badge/Quarto-book-75AADB?style=flat-square&logo=quarto&logoColor=white" alt="Quarto">
+  <img src="https://img.shields.io/badge/DeCovarT-companion-0F766E?style=flat-square" alt="DeCovarT">
 </p>
 
 All datasets are freely available via GEO. If you use the method in
@@ -31,7 +31,10 @@ cell-type profiles. Proportions lie on the simplex. Each type has its
 own mean and covariance; the precision is the sparse object estimated
 in this repository.
 
-``` mermaid
+```{mermaid}
+%%| echo: false
+%%| label: fig-readme-generative
+%%| fig-cap: "DeCovarT generative model. Cell-type profiles are Gaussian. Bulk observations are their mixture."
 %%{init: {"theme": "sandstone", "flowchart": {"curve": "basis"}}}%%
 flowchart TB
   subgraph plateJ["j = 1, ..., J"]
@@ -61,7 +64,7 @@ panel.
 
 From the repository root, after `renv::restore()`:
 
-``` bash
+```bash
 quarto render docs
 # first time only, once gh-pages is allowed:
 # quarto publish gh-pages docs

@@ -14,24 +14,26 @@ the article Methods: gene $g=1,\ldots,G$, cell type $j=1,\ldots,J$,
 sample $i=1,\ldots,N$.
 
 The planned Suppinger benchmark is a **$3\times 2\times 2$** product,
-not a single pipeline. Three undirected GGM families, two lifts from
-cells to a population Gaussian, and two gene-panel strategies (the naive
-screen alone, or that screen plus an optional stricter Pareto
-refinement). That is 12 routes. The aim is to see **which steps move
-deconvolution**, not to retain every cell of the product in the paper.
-Bures–Wasserstein alignment and sparse-plus-low-rank GGMs stay
-**perspectives**; they are not factors in @fig-pipeline.
+not a single pipeline. Three sparse-precision estimators (`huge`
+graphical lasso, `SILGGM` after a nonparanormal map, and
+`PLNnetwork`), two lifts from cells to a population Gaussian, and two
+gene-panel strategies (the naive screen alone, or that screen plus an
+optional stricter Pareto refinement). That is 12 routes. The aim is to
+see **which steps move deconvolution**, not to retain every cell of
+the product in the paper. Bures–Wasserstein alignment, `GmGM`, and
+sparse-plus-low-rank GGMs stay **perspectives**; they are not factors
+in @fig-pipeline.
 
 ```{mermaid}
 %%| echo: false
 %%| label: fig-pipeline
-%%| fig-cap: "Design product: a naive gene screen, three GGM families, two population lifts, then a yes/no choice of a stricter NSGA-II panel. Twelve routes. Bures–Wasserstein and sparse-plus-low-rank GGMs are not in the product."
+%%| fig-cap: "Design product: a naive gene screen, three precision estimators (huge, SILGGM with a nonparanormal map, PLNnetwork), two population lifts, then a yes/no choice of a stricter NSGA-II panel."
 %%{init: {"theme": "sandstone", "flowchart": {"htmlLabels": true}}}%%
 flowchart TD
   A["GSE229513 UMI, labels j"] --> B["Naive screen G_0"]
-  B --> C1["SILGGM / glasso"]
-  B --> C2["PLNnetwork"]
-  B --> C3["GmGM copula"]
+  B --> C1["huge graphical lasso"]
+  B --> C2["SILGGM after NPN, global FDR"]
+  B --> C3["PLNnetwork"]
   C1 --> T["Independent Theta_j,t at 48 h, 72 h, 96 h"]
   C2 --> T
   C3 --> T

@@ -151,10 +151,9 @@ There is **no** calibrated differential-expression $p$-value here: one
 technical replicate cannot support `DESeq2` (@nte-pseudoreplication).
 The between-type sum of squares is a **ranking score**.
 
-Use `Seurat::SCTransform()` with Pearson residuals. That **is** the
-residual transformation. Then **do not** stop at Seurat's default
-variable features: those rank genes by **overall** residual variance,
-which mixes within-type heterogeneity into the score.
+Use `Seurat::SCTransform()` with Pearson residuals
+(`vst.flavor = "v2"`). That **is** the residual transformation used to
+rank genes (@nte-sct-v1-v2).
 
 After `SCTransform`, pull the residual matrix and compute
 @eq-fs-ss by the labelled type $j$. Keep on the order of $2{,}000$
@@ -185,6 +184,42 @@ ss_within <- apply(R, 1, function(r) {
 })
 snr <- ss_between / pmax(ss_within, .Machine$double.eps)
 ```
+
+::: {#nte-sct-v1-v2 .callout-note}
+## :information_source: `vst.flavor = "v2"` still returns Pearson residuals
+
+Both flavours of `SCTransform` assume
+$Y_{cg}\sim\mathrm{NB}(\mu_{cg},\theta_{g})$ and store Pearson residuals.
+What changes is the fit that produces $\hat\mu_{cg}$ and $\hat\theta_{g}$
+(@fig-sct-v1-v2).
+
+In v1 the depth slope is a gene-wise coefficient,
+
+$$
+\log\mu_{cg}=\beta_{0g}+\beta_{1g}\log_{10}(n_{c}).
+$$
+
+In v2 that slope is fixed at $\ln 10$, so library size is an offset
+[@choudharyComparisonEvaluationStatistical2022;
+@lauseAnalyticPearsonResiduals2021]:
+
+$$
+\log\mu_{cg}=\beta_{0g}+\log n_{c},
+\qquad
+\mu_{cg}=e^{\beta_{0g}}\,n_{c}.
+$$
+
+Doubling the UMI depth then doubles every gene's expected count. v2
+also regularises dispersions with the `glmGamPoi` offset route, treats
+genes with no evidence of overdispersion as Poisson
+($\theta_{g}=\infty$), and floors the Pearson denominator at a minimum
+variance (`min_variance = "umi_median"`) before the separate residual
+clip. The ranking above uses those v2 residuals; it does not use
+Seurat's variable-feature shortlist.
+
+![Shared negative-binomial model, and the v1 gene-wise depth slope
+versus the v2 offset.](images/sctransform_v1_versus_v2.png){#fig-sct-v1-v2}
+:::
 
 ::: {#nte-hvg-not-gaussian .callout-note}
 ## :information_source: HVGs are not a GGM input
