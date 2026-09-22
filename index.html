@@ -326,7 +326,7 @@ window.Quarto = {
 
 <p>This book is the narrative companion to <code>scripts/</code>. Computation stays in the scripts; the chapters are theory, design, and criticism of how those scripts should be run.</p>
 <p>The scientific target is DeCovarT’s cell-type Gaussians: sparse precisions <span class="math inline">\boldsymbol{\Theta}_{j}\equiv\boldsymbol{\Sigma}_{j}^{-1}</span> and means <span class="math inline">\boldsymbol{\mu}_{\cdot j}</span>, estimated from labelled single-cell transcriptomes and plugged into the bulk convolution. Indices follow the article Methods: gene <span class="math inline">g=1,\ldots,G</span>, cell type <span class="math inline">j=1,\ldots,J</span>, sample <span class="math inline">i=1,\ldots,N</span>.</p>
-<p>The planned Suppinger benchmark is a <strong><span class="math inline">3\times 2\times 2</span></strong> product, not a single pipeline. Three undirected GGM families, two lifts from cells to a population Gaussian, and two gene-panel strategies (the naive screen alone, or that screen plus an optional stricter Pareto refinement). That is 12 routes. The aim is to see <strong>which steps move deconvolution</strong>, not to retain every cell of the product in the paper. Bures–Wasserstein alignment and sparse-plus-low-rank GGMs stay <strong>perspectives</strong>; they are not factors in <a href="#fig-pipeline" class="quarto-xref">Figure&nbsp;<span>1</span></a>.</p>
+<p>The planned Suppinger benchmark is a <strong><span class="math inline">3\times 2\times 2</span></strong> product, not a single pipeline. Three sparse-precision estimators (<code>huge</code> graphical lasso, <code>SILGGM</code> after a nonparanormal map, and <code>PLNnetwork</code>), two lifts from cells to a population Gaussian, and two gene-panel strategies (the naive screen alone, or that screen plus an optional stricter Pareto refinement). That is 12 routes. The aim is to see <strong>which steps move deconvolution</strong>, not to retain every cell of the product in the paper. Bures–Wasserstein alignment, <code>GmGM</code>, and sparse-plus-low-rank GGMs stay <strong>perspectives</strong>; they are not factors in <a href="#fig-pipeline" class="quarto-xref">Figure&nbsp;<span>1</span></a>.</p>
 <div class="cell" data-layout-align="default">
 <div class="cell-output-display">
 <div id="fig-pipeline" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -336,9 +336,9 @@ window.Quarto = {
 <pre class="mermaid mermaid-js" data-label="fig-pipeline">%%{init: {"theme": "sandstone", "flowchart": {"htmlLabels": true}}}%%
 flowchart TD
   A["GSE229513 UMI, labels j"] --&gt; B["Naive screen G_0"]
-  B --&gt; C1["SILGGM / glasso"]
-  B --&gt; C2["PLNnetwork"]
-  B --&gt; C3["GmGM copula"]
+  B --&gt; C1["huge graphical lasso"]
+  B --&gt; C2["SILGGM after NPN, global FDR"]
+  B --&gt; C3["PLNnetwork"]
   C1 --&gt; T["Independent Theta_j,t at 48 h, 72 h, 96 h"]
   C2 --&gt; T
   C3 --&gt; T
@@ -353,7 +353,7 @@ flowchart TD
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pipeline-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1: Design product: a naive gene screen, three GGM families, two population lifts, then a yes/no choice of a stricter NSGA-II panel. Twelve routes. Bures–Wasserstein and sparse-plus-low-rank GGMs are not in the product.
+Figure&nbsp;1: Design product: a naive gene screen, three precision estimators (huge, SILGGM with a nonparanormal map, PLNnetwork), two population lifts, then a yes/no choice of a stricter NSGA-II panel.
 </figcaption>
 </figure>
 </div>

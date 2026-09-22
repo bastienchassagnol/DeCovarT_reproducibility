@@ -310,20 +310,39 @@ window.Quarto = {
    
   <ul>
   <li><a href="#sec-grn-scope" id="toc-sec-grn-scope" class="nav-link active" data-scroll-target="#sec-grn-scope"><span class="header-section-number">4.1</span> Scope of the core pipeline</a></li>
-  <li><a href="#sec-grn-observation" id="toc-sec-grn-observation" class="nav-link" data-scroll-target="#sec-grn-observation"><span class="header-section-number">4.2</span> Observation processing is method-conditional</a></li>
-  <li><a href="#sec-grn-core" id="toc-sec-grn-core" class="nav-link" data-scroll-target="#sec-grn-core"><span class="header-section-number">4.3</span> Core comparators</a>
+  <li><a href="#sec-grn-observation" id="toc-sec-grn-observation" class="nav-link" data-scroll-target="#sec-grn-observation"><span class="header-section-number">4.2</span> How each estimator sees the counts</a></li>
+  <li><a href="#sec-grn-core" id="toc-sec-grn-core" class="nav-link" data-scroll-target="#sec-grn-core"><span class="header-section-number">4.3</span> Three sparse-precision estimators</a>
+  <ul>
+  <li><a href="#sec-huge" id="toc-sec-huge" class="nav-link" data-scroll-target="#sec-huge"><span class="header-section-number">4.3.1</span> Graphical lasso in <code>huge</code></a>
   <ul class="collapse">
-  <li><a href="#sec-silggm" id="toc-sec-silggm" class="nav-link" data-scroll-target="#sec-silggm"><span class="header-section-number">4.3.1</span> <code>SILGGM</code>: five inferential modes, one generative precision</a></li>
-  <li><a href="#sec-pln" id="toc-sec-pln" class="nav-link" data-scroll-target="#sec-pln"><span class="header-section-number">4.3.2</span> Poisson-lognormal: Chiquet’s <code>PLNmodels</code> versus PLNFGL</a></li>
-  <li><a href="#sec-gmgm" id="toc-sec-gmgm" class="nav-link" data-scroll-target="#sec-gmgm"><span class="header-section-number">4.3.3</span> Multi-axis GGMs (<code>GmGM</code>): cells are not independent rows</a></li>
-  <li><a href="#sec-lowrank" id="toc-sec-lowrank" class="nav-link" data-scroll-target="#sec-lowrank"><span class="header-section-number">4.3.4</span> Sparse plus low-rank latent-variable GGMs</a></li>
+  <li><a href="#generative-model" id="toc-generative-model" class="nav-link" data-scroll-target="#generative-model">Generative model</a></li>
+  <li><a href="#objective-and-assumptions" id="toc-objective-and-assumptions" class="nav-link" data-scroll-target="#objective-and-assumptions">Objective and assumptions</a></li>
+  <li><a href="#optimisation-and-the-ell_1-penalty" id="toc-optimisation-and-the-ell_1-penalty" class="nav-link" data-scroll-target="#optimisation-and-the-ell_1-penalty">Optimisation and the <span class="math inline">\ell_{1}</span> penalty</a></li>
+  <li><a href="#hyperparameters" id="toc-hyperparameters" class="nav-link" data-scroll-target="#hyperparameters">Hyperparameters</a></li>
   </ul></li>
-  <li><a href="#sec-grn-top4" id="toc-sec-grn-top4" class="nav-link" data-scroll-target="#sec-grn-top4"><span class="header-section-number">4.4</span> Three methods to carry forward</a></li>
-  <li><a href="#sec-grn-design" id="toc-sec-grn-design" class="nav-link" data-scroll-target="#sec-grn-design"><span class="header-section-number">4.5</span> Revised design product</a></li>
-  <li><a href="#sec-grn-appendix" id="toc-sec-grn-appendix" class="nav-link" data-scroll-target="#sec-grn-appendix"><span class="header-section-number">4.6</span> Appendix: sharing and copulas</a>
+  <li><a href="#sec-silggm" id="toc-sec-silggm" class="nav-link" data-scroll-target="#sec-silggm"><span class="header-section-number">4.3.2</span> <code>SILGGM</code> after a nonparanormal map</a>
   <ul class="collapse">
-  <li><a href="#fused-and-joint-graphical-lasso" id="toc-fused-and-joint-graphical-lasso" class="nav-link" data-scroll-target="#fused-and-joint-graphical-lasso"><span class="header-section-number">4.6.1</span> Fused and joint graphical lasso</a></li>
-  <li><a href="#gaussian-copulas-beyond-npn-jgcgm" id="toc-gaussian-copulas-beyond-npn-jgcgm" class="nav-link" data-scroll-target="#gaussian-copulas-beyond-npn-jgcgm"><span class="header-section-number">4.6.2</span> Gaussian copulas beyond NPN: JGCGM</a></li>
+  <li><a href="#generative-model-1" id="toc-generative-model-1" class="nav-link" data-scroll-target="#generative-model-1">Generative model</a></li>
+  <li><a href="#objective-and-the-de-sparsified-correction" id="toc-objective-and-the-de-sparsified-correction" class="nav-link" data-scroll-target="#objective-and-the-de-sparsified-correction">Objective and the de-sparsified correction</a></li>
+  <li><a href="#optimisation-and-global-fdr" id="toc-optimisation-and-global-fdr" class="nav-link" data-scroll-target="#optimisation-and-global-fdr">Optimisation and global FDR</a></li>
+  <li><a href="#hyperparameters-1" id="toc-hyperparameters-1" class="nav-link" data-scroll-target="#hyperparameters-1">Hyperparameters</a></li>
+  </ul></li>
+  <li><a href="#sec-pln" id="toc-sec-pln" class="nav-link" data-scroll-target="#sec-pln"><span class="header-section-number">4.3.3</span> Poisson-lognormal network</a>
+  <ul class="collapse">
+  <li><a href="#generative-model-2" id="toc-generative-model-2" class="nav-link" data-scroll-target="#generative-model-2">Generative model</a></li>
+  <li><a href="#objective-and-assumptions-1" id="toc-objective-and-assumptions-1" class="nav-link" data-scroll-target="#objective-and-assumptions-1">Objective and assumptions</a></li>
+  <li><a href="#optimisation-and-the-ell_1-penalty-1" id="toc-optimisation-and-the-ell_1-penalty-1" class="nav-link" data-scroll-target="#optimisation-and-the-ell_1-penalty-1">Optimisation and the <span class="math inline">\ell_{1}</span> penalty</a></li>
+  <li><a href="#hyperparameters-2" id="toc-hyperparameters-2" class="nav-link" data-scroll-target="#hyperparameters-2">Hyperparameters</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#sec-grn-top4" id="toc-sec-grn-top4" class="nav-link" data-scroll-target="#sec-grn-top4"><span class="header-section-number">4.4</span> Conclusion: twelve routes</a></li>
+  <li><a href="#sec-grn-penalty-path" id="toc-sec-grn-penalty-path" class="nav-link" data-scroll-target="#sec-grn-penalty-path"><span class="header-section-number">4.5</span> Choosing the penalty</a></li>
+  <li><a href="#sec-grn-appendix" id="toc-sec-grn-appendix" class="nav-link" data-scroll-target="#sec-grn-appendix"><span class="header-section-number">4.6</span> Perspectives</a>
+  <ul>
+  <li><a href="#sec-gmgm" id="toc-sec-gmgm" class="nav-link" data-scroll-target="#sec-gmgm"><span class="header-section-number">4.6.1</span> Cartesian <code>GmGM</code> cannot separate within-cell edges</a></li>
+  <li><a href="#sec-lowrank" id="toc-sec-lowrank" class="nav-link" data-scroll-target="#sec-lowrank"><span class="header-section-number">4.6.2</span> Sparse plus low-rank precisions</a></li>
+  <li><a href="#fused-graphical-lasso-on-a-pln" id="toc-fused-graphical-lasso-on-a-pln" class="nav-link" data-scroll-target="#fused-graphical-lasso-on-a-pln"><span class="header-section-number">4.6.3</span> Fused graphical lasso on a PLN</a></li>
+  <li><a href="#other-copula-joints" id="toc-other-copula-joints" class="nav-link" data-scroll-target="#other-copula-joints"><span class="header-section-number">4.6.4</span> Other copula joints</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -361,7 +380,8 @@ window.Quarto = {
 \boldsymbol{\Sigma}_{j}^{-1}
 \ \text{sparse},
 \tag{4.1}</span></span></p>
-<p>with undirected edges encoding conditional dependence <span class="citation" data-cites="friedmanSparseInverseCovariance2008 mazumderGraphicalLassoNew2011">(<a href="#ref-friedmanSparseInverseCovariance2008" role="doc-biblioref">Friedman et al. 2008</a>; <a href="#ref-mazumderGraphicalLassoNew2011" role="doc-biblioref">Mazumder and Hastie 2011</a>)</span>. Single-cell UMI profiles are the <strong>only observations</strong>. They are <strong>not</strong> the objects that enter the deconvolution likelihood: we use them to <strong>estimate</strong> <span class="math inline">(\boldsymbol{\mu}_{\cdot j},\boldsymbol{\Theta}_{j})</span> for labelled types in the Suppinger murine gastruloid resource <span class="citation" data-cites="suppingerMultimodalCharacterizationMurine2023">(<a href="#ref-suppingerMultimodalCharacterizationMurine2023" role="doc-biblioref">Suppinger et al. 2023</a>)</span>. Downstream, those parameters discriminate types via mean shifts <strong>and</strong> precision rewiring, then enter the convolution</p>
+<p>with undirected edges encoding conditional dependence <span class="citation" data-cites="friedmanSparseInverseCovariance2008 mazumderGraphicalLassoNew2011">(<a href="#ref-friedmanSparseInverseCovariance2008" role="doc-biblioref">Friedman et al. 2008</a>; <a href="#ref-mazumderGraphicalLassoNew2011" role="doc-biblioref">Mazumder and Hastie 2011</a>)</span>. Single-cell UMI profiles are the <strong>only observations</strong>.</p>
+<p>They are <strong>not</strong> the objects that enter the deconvolution likelihood: we use them to <strong>estimate</strong> <span class="math inline">(\boldsymbol{\mu}_{\cdot j},\boldsymbol{\Theta}_{j})</span> for labelled types in the Suppinger murine gastruloid resource <span class="citation" data-cites="suppingerMultimodalCharacterizationMurine2023">(<a href="#ref-suppingerMultimodalCharacterizationMurine2023" role="doc-biblioref">Suppinger et al. 2023</a>)</span>. Downstream, those parameters discriminate types via mean shifts <strong>and</strong> precision rewiring, then enter the convolution</p>
 <p><span id="eq-grn-convolution"><span class="math display">
 \boldsymbol{y}_{\cdot i}
 \mid
@@ -372,12 +392,10 @@ window.Quarto = {
 \textstyle\sum_{j}p_{ji}^{2}\boldsymbol{\Sigma}_{j}
 \bigr).
 \tag{4.2}</span></span></p>
-<p>Some DeCovarT vignettes write <span class="math inline">\boldsymbol{\Omega}_{j}</span> for the same precision; we keep <span class="math inline">\boldsymbol{\Theta}_{j}</span> as in the article Methods.</p>
 <section id="sec-grn-scope" class="level2" data-number="4.1">
 <h2 data-number="4.1" class="anchored" data-anchor-id="sec-grn-scope"><span class="header-section-number">4.1</span> Scope of the core pipeline</h2>
-<p><strong>In scope:</strong> undirected GGMs; single-cell <strong>transcriptomics only</strong>; <strong>stationarity</strong> (no RNA velocity, no time-varying graphs); labelled cell types (Suppinger annotations), not unsupervised clustering of the graph.</p>
-<p><strong>Out of scope for the core, relocated to <a href="#sec-grn-appendix" class="quarto-xref"><span>Section 4.6</span></a>:</strong> multi-omics (ATAC, ChIP, spatial); causal DAGs; temporal dynamics; fused / joint graphs across types; copula constructions such as JGCGM that go beyond a Gaussian or Poisson-lognormal observation model.</p>
-<p><strong>Dataset constraint.</strong> GSE229513 is a 10x Chromium 3′ v3 UMI resource with <strong>one</strong> technical scRNA-seq experiment, not independent biological replicates for GRNs. GSE250136 is a later stem-embryo dataset; it is external validation, not extra Suppinger replicates. Technical bootstrap of cells is allowed (<a href="06-population-alignment.html#sec-align-bootstrap" class="quarto-xref"><span>Section 5.5</span></a>); biological bootstrap is not.</p>
+<p><strong>In scope:</strong> undirected sparse precisions; single-cell transcriptomics only; stationarity; labelled cell types. The three estimators in <a href="index.html#fig-pipeline" class="quarto-xref">Figure&nbsp;<span>1</span></a> are <code>huge</code> (graphical lasso), <code>SILGGM</code> after a nonparanormal map with global FDR, and <code>PLNnetwork</code>.</p>
+<p><strong>Dataset constraint.</strong> GSE229513 is a 10x Chromium 3′ v3 UMI resource with <strong>one</strong> technical scRNA-seq experiment, not independent biological replicates for GRNs <span class="citation" data-cites="suppingerMultimodalCharacterizationMurine2023">(<a href="#ref-suppingerMultimodalCharacterizationMurine2023" role="doc-biblioref">Suppinger et al. 2023</a>)</span>. GSE250136 is a later stem-embryo dataset; it is external validation, not extra Suppinger replicates. Technical bootstrap of cells is allowed (<a href="06-population-alignment.html#sec-align-bootstrap" class="quarto-xref"><span>Section 5.5</span></a>); biological bootstrap is not. Networks are fit independently at 48 h, 72 h and 96 h (<a href="01-data-suppinger.html#sec-geo-design" class="quarto-xref"><span>Section 2.1</span></a>).</p>
 <div class="cell" data-layout-align="default">
 <div class="cell-output-display">
 <div id="fig-grn-core" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -386,20 +404,20 @@ window.Quarto = {
 <div>
 <pre class="mermaid mermaid-js" data-label="fig-grn-core">%%{init: {"theme": "sandstone"}}%%
 flowchart TD
-  A["UMI counts, labels j"] --&gt; B["Gene panel G"]
-  B --&gt; C{"Does the estimator assume Gaussian observations?"}
-  C --&gt;|yes: SILGGM, low-rank GGM, GmGM copula| D["NPN or depth residuals, then GGM"]
-  C --&gt;|no: PLN / PLNFGL| E["Raw counts, latent Gaussian"]
-  D --&gt; F["Sparse Theta_j, SPD"]
-  E --&gt; F
-  F --&gt; G["Type-level pseudo-bulk moments"]
-  G --&gt; H["DeCovarT mu_j, Sigma_j"]
-  B -.-&gt; I["Appendix: FGL, JGCGM"]
+  A["UMI counts, labels j, time t"] --&gt; B["Gene panel G_0"]
+  B --&gt; H["huge graphical lasso"]
+  B --&gt; N["Nonparanormal scores"]
+  N --&gt; S["SILGGM, global FDR"]
+  B --&gt; P["PLNnetwork on counts"]
+  H --&gt; F["Sparse Theta_j,t"]
+  S --&gt; F
+  P --&gt; F
+  F --&gt; D["DeCovarT population Gaussian"]
 </pre>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-grn-core-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;4.1: Core route from labelled UMI counts to DeCovarT population Gaussians. Observation processing is method-conditional, not a free factorial arm. Joint and copula estimators sit in the appendix.
+Figure&nbsp;4.1: Three core precision estimators. huge and SILGGM see a Gaussian table; only SILGGM is preceded by a nonparanormal map. PLNnetwork sees raw counts. GmGM and fused or low-rank models are perspectives.
 </figcaption>
 </figure>
 </div>
@@ -407,73 +425,40 @@ Figure&nbsp;4.1: Core route from labelled UMI counts to DeCovarT population Gaus
 </div>
 </section>
 <section id="sec-grn-observation" class="level2" data-number="4.2">
-<h2 data-number="4.2" class="anchored" data-anchor-id="sec-grn-observation"><span class="header-section-number">4.2</span> Observation processing is method-conditional</h2>
-<p>The first pipeline put <code>SCTransform</code> and <code>huge::huge.npn()</code> on the <strong>same Cartesian axis</strong> as the graph estimator. That is the wrong product. A transformation is part of the <strong>observation model of a given estimator</strong>, not an innocent preprocessing step that can be crossed with every GRN method.</p>
+<h2 data-number="4.2" class="anchored" data-anchor-id="sec-grn-observation"><span class="header-section-number">4.2</span> How each estimator sees the counts</h2>
+<p>A transformation belongs to <strong>one</strong> estimator. It is not crossed with the other two.</p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 30%">
-<col style="width: 22%">
-<col style="width: 47%">
+<col style="width: 23%">
+<col style="width: 40%">
+<col style="width: 36%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Estimator family</th>
-<th>Observation</th>
-<th>Latent object for DeCovarT</th>
+<th>Estimator</th>
+<th>What is passed in</th>
+<th>Object exported</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>SILGGM</code> / glasso / sparse+low-rank GGM</td>
-<td>Continuous Gaussian (after NPN or, at most, as a sensitivity, Pearson residuals)</td>
-<td><span class="math inline">\boldsymbol{\Theta}_{j}</span> on that Gaussian scale</td>
+<td><code>huge</code></td>
+<td>Continuous Gaussian table</td>
+<td>Sparse <span class="math inline">\boldsymbol{\Theta}_{j}</span></td>
 </tr>
 <tr class="even">
-<td><code>GmGM</code></td>
-<td>Gaussian copula / nonparanormal on the matrix</td>
-<td>gene-axis precision (and a cell-axis precision we do not export)</td>
+<td><code>SILGGM</code></td>
+<td>Nonparanormal scores, then global FDR</td>
+<td>Support, then an SPD refit</td>
 </tr>
 <tr class="odd">
-<td><code>PLNmodels</code> / PLNFGL</td>
-<td><strong>Raw UMI counts</strong></td>
-<td>precision of the <strong>latent</strong> log-normal Gaussian</td>
-</tr>
-<tr class="even">
-<td>Directed ZINB DAGs</td>
-<td>Counts with a structural-zero layer</td>
-<td><strong>not</strong> a DeCovarT precision (<a href="#nte-drop-zico" class="quarto-xref">Note&nbsp;<span>4.3</span></a>)</td>
+<td><code>PLNnetwork</code></td>
+<td>Raw UMI counts and a library-size offset</td>
+<td>Latent Gaussian precision</td>
 </tr>
 </tbody>
 </table>
-<p>If the method assumes a Gaussian vector, Gaussianise <strong>inside that method</strong>. If the method is a Poisson-lognormal hierarchical model, pass counts. Do <strong>not</strong> run <code>SCTransform</code> and then <code>PLNnetwork</code>: the PLN already has a Poisson sampling layer. Do <strong>not</strong> treat NPN as a global default (the improved pipeline is explicit that applying the ordinary nonparanormal map directly to counts can be problematic; JGCGM was written to avoid that).</p>
-<p>The three <code>huge.npn</code> modes remain relevant <strong>only</strong> for the Gaussian branch <span class="citation" data-cites="liuNonparanormalSemiparametricEstimation2009 R-huge">(<a href="#ref-liuNonparanormalSemiparametricEstimation2009" role="doc-biblioref">Liu et al. 2009</a>; <a href="#ref-R-huge" role="doc-biblioref">Zhao et al. 2022</a>)</span>:</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th><code>npn.func</code></th>
-<th>Returns</th>
-<th>Use with <code>SILGGM</code></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>shrinkage</code></td>
-<td><span class="math inline">n\times G</span> inverse-normal scores</td>
-<td>Default Gaussianisation</td>
-</tr>
-<tr class="even">
-<td><code>truncation</code></td>
-<td><span class="math inline">n\times G</span> winsorised scores</td>
-<td>Heavy tails</td>
-</tr>
-<tr class="odd">
-<td><code>skeptic</code></td>
-<td><span class="math inline">G\times G</span> <strong>correlation</strong> (rank copula; <a href="https://arxiv.org/abs/1202.2169">arXiv:1202.2169</a>)</td>
-<td><strong>Not</strong> a drop-in <code>SILGGM</code> data matrix</td>
-</tr>
-</tbody>
-</table>
-<p><code>SCTransform</code> Pearson residuals <span class="citation" data-cites="hafemeisterNormalizationVarianceStabilization2019">(<a href="#ref-hafemeisterNormalizationVarianceStabilization2019" role="doc-biblioref">Hafemeister and Satija 2019</a>)</span> stay in the <strong>HVG ranking</strong> of <a href="03-feature-selection-naive.html#sec-fs-hvg" class="quarto-xref"><span>Section 3.2</span></a>. Using them as the GGM table is a sensitivity arm, not a factorial factor.</p>
+<p><code>SCTransform</code> Pearson residuals stay in the HVG ranking of <a href="03-feature-selection-naive.html#sec-fs-hvg" class="quarto-xref"><span>Section 3.2</span></a>. Do not pass them to <code>PLNnetwork</code>: the PLN already has a Poisson sampling layer. Do not run the nonparanormal map before <code>huge</code> or before PLN; it is part of the <code>SILGGM</code> branch only.</p>
 <div id="nte-npn-moments" class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -484,7 +469,7 @@ Warning&nbsp;4.1: :warning: Nonparanormal maps are not affine, so they break mom
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><code>huge::huge.npn()</code> replaces each margin by a (truncated or shrunk) inverse-normal score <span class="citation" data-cites="liuNonparanormalSemiparametricEstimation2009">(<a href="#ref-liuNonparanormalSemiparametricEstimation2009" role="doc-biblioref">Liu et al. 2009</a>)</span>. That map <span class="math inline">\varphi</span> is <strong>monotone but not affine</strong>. Jensen’s inequality then says <span class="math inline">\varphi(\mathbb{E}[y_{g}])\neq\mathbb{E}[\varphi(y_{g})]</span> unless the margin is degenerate (<a href="#nte-jensen-transform" class="quarto-xref">Note&nbsp;<span>4.2</span></a>). A glasso fitted after NPN therefore targets the precision of a <strong>different random vector</strong> than the population Gaussian DeCovarT convolves. Use NPN only <strong>inside</strong> the SILGGM / Gaussian branch, never as a global preprocessing of counts, and never export NPN-scale means as <span class="math inline">\boldsymbol{\mu}_{\cdot j}</span>.</p>
+<p><code>huge::huge.npn()</code> replaces each margin by a (truncated or shrunk) inverse-normal score <span class="citation" data-cites="liuNonparanormalSemiparametricEstimation2009">(<a href="#ref-liuNonparanormalSemiparametricEstimation2009" role="doc-biblioref">Liu et al. 2009</a>)</span>. That map <span class="math inline">\varphi</span> is <strong>monotone but not affine</strong>. Jensen’s inequality then says <span class="math inline">\varphi(\mathbb{E}[y_{g}])\neq\mathbb{E}[\varphi(y_{g})]</span> unless the margin is degenerate (<a href="#nte-jensen-transform" class="quarto-xref">Note&nbsp;<span>4.2</span></a>). A precision fitted after NPN therefore targets a <strong>different random vector</strong> from the population Gaussian DeCovarT convolves. Use NPN only inside the <code>SILGGM</code> branch, and never export NPN-scale means as <span class="math inline">\boldsymbol{\mu}_{\cdot j}</span>.</p>
 </div>
 </div>
 <div id="nte-jensen-transform" class="callout callout-style-default callout-important callout-titled">
@@ -504,83 +489,194 @@ Important&nbsp;4.2: :warning: Transforming the response is usually the wrong GLM
 \le
 \log\mathbb{E}[y_{g}],
 \tag{4.3}</span></span></p>
-<p>and <span class="math inline">\log1p</span> is likewise concave on <span class="math inline">[0,\infty)</span>. A glasso fitted to <span class="math inline">\log1p</span> counts therefore targets a precision of a <strong>different random vector</strong>. The mean of the transformed table is not the transform of the mean that DeCovarT needs in <a href="#eq-grn-convolution" class="quarto-xref">Equation&nbsp;<span>4.2</span></a>, and the covariance is not the delta-method image of <span class="math inline">\boldsymbol{\Sigma}_{j}</span> unless one explicitly builds that expansion and lives with its bias. Population aggregation (<a href="06-population-alignment.html#sec-align-invariance" class="quarto-xref"><span>Section 5.3</span></a>) compounds the error: the sum of transformed cells is not the transform of the sum.</p>
-<p><strong>2. The estimand of a transformed linear model is not the estimand of the original mean.</strong> In a Gaussian linear model, <span class="math inline">\mathbb{E}[\log y\mid x]=\beta_{0}+\beta_{1}x</span> describes <strong>multiplicative</strong> effects on <span class="math inline">y</span> after exponentiation, not additive shifts of <span class="math inline">\mathbb{E}[y\mid x]</span> (<a href="https://library.virginia.edu/data/articles/interpreting-log-transformations-in-a-linear-model">University of Virginia Library, interpreting log transformations</a>). Coefficient recipes (<span class="math inline">e^{\hat\beta}-1</span> as a percent change, and the log–log elasticity case) are coherent <strong>only</strong> if that multiplicative model is the scientific target. DeCovarT’s target is a <strong>linear mixture of means</strong> plus a quadratic mixture of covariances. Percent changes on a log scale do not plug into <span class="math inline">\boldsymbol{\mu}\boldsymbol{p}</span> or <span class="math inline">\sum_{j}p_{j}^{2}\boldsymbol{\Sigma}_{j}</span>.</p>
-<p><strong>3. A GLM with the right mean–variance function is preferable to transforming <span class="math inline">y</span>.</strong> Transforming the response to force Gaussianity, homoscedasticity, or linearity is a classical but brittle habit: it changes the parameter, complicates residuals, and still fails when the mean–variance relationship is mean-dependent (count overdispersion). The constructive alternative is a generalised linear (or hierarchical) model on the original <span class="math inline">y</span> — here, Poisson-lognormal or negative-binomial sampling with a latent Gaussian — rather than <code>log1p</code> followed by glasso. That is the content of Olszewski’s argument against transforming the response in regression (<a href="https://www.linkedin.com/pulse/why-transforming-response-regression-analysis-testing-olszewski/">LinkedIn article</a>; <a href="https://www.linkedin.com/feed/update/urn:li:activity:7503551786855649280/">activity permalink</a>): test the mean–variance assumption; if it fails, change the <strong>model</strong>, not the <strong>measurement</strong>.</p>
-<p><strong>Consequence for this book.</strong> Variance-stabilising maps belong in HVG ranking and, when a method <em>literally</em> requires Gaussian rows, as a <strong>method-specific</strong> Gaussianisation. They are not a third axis of the benchmark. The improved pipeline’s factorial</p>
-<p><span class="math display">
-\text{observation model}
-\times
-\text{precision estimator}
-\times
-\text{cross-type sharing}
-</span></p>
-<p>collapses the first factor to: <strong>Gaussianised input if and only if the estimator is a Gaussian GGM; raw counts if the estimator is PLN</strong>. Cross-type sharing is appendix (<a href="#sec-grn-appendix" class="quarto-xref"><span>Section 4.6</span></a>).</p>
+<p>and <span class="math inline">\log1p</span> is likewise concave on <span class="math inline">[0,\infty)</span>. A graphical lasso fitted to <span class="math inline">\log1p</span> counts therefore targets a precision of a <strong>different random vector</strong>. The mean of the transformed table is not the transform of the mean that DeCovarT needs in <a href="#eq-grn-convolution" class="quarto-xref">Equation&nbsp;<span>4.2</span></a>. Population aggregation (<a href="06-population-alignment.html#sec-align-invariance" class="quarto-xref"><span>Section 5.3</span></a>) compounds the error: the sum of transformed cells is not the transform of the sum.</p>
+<p><strong>2. The estimand of a transformed linear model is not the estimand of the original mean.</strong> In a Gaussian linear model, <span class="math inline">\mathbb{E}[\log y\mid x]=\beta_{0}+\beta_{1}x</span> describes <strong>multiplicative</strong> effects on <span class="math inline">y</span> after exponentiation, not additive shifts of <span class="math inline">\mathbb{E}[y\mid x]</span> (<a href="https://library.virginia.edu/data/articles/interpreting-log-transformations-in-a-linear-model">University of Virginia Library, interpreting log transformations</a>). DeCovarT’s target is a <strong>linear mixture of means</strong> plus a quadratic mixture of covariances.</p>
+<p><strong>3. A GLM with the right mean–variance function is preferable to transforming <span class="math inline">y</span>.</strong> Transforming the response to force Gaussianity changes the parameter. The constructive alternative on counts is the Poisson-lognormal model (<a href="#sec-pln" class="quarto-xref"><span>Section 4.3.3</span></a>), not <code>log1p</code> followed by graphical lasso.</p>
 </div>
 </div>
 </section>
 <section id="sec-grn-core" class="level2" data-number="4.3">
-<h2 data-number="4.3" class="anchored" data-anchor-id="sec-grn-core"><span class="header-section-number">4.3</span> Core comparators</h2>
-<p>Four families respect the core constraints (undirected, stationary, transcriptomics-only, exportable as a sparse SPD <span class="math inline">\boldsymbol{\Theta}_{j}</span> or as a latent Gaussian precision). We compare them on assumptions versus <a href="#eq-grn-estimand" class="quarto-xref">Equation&nbsp;<span>4.1</span></a>, not on unpublished accuracy numbers.</p>
-<section id="sec-silggm" class="level3" data-number="4.3.1">
-<h3 data-number="4.3.1" class="anchored" data-anchor-id="sec-silggm"><span class="header-section-number">4.3.1</span> <code>SILGGM</code>: five inferential modes, one generative precision</h3>
-<p><code>SILGGM</code> is a frequentist toolkit for high-dimensional GGMs <span class="citation" data-cites="zhangSILGGMExtensivePackage2018 R-SILGGM">(<a href="#ref-zhangSILGGMExtensivePackage2018" role="doc-biblioref">Zhang et al. 2018a</a>, <a href="#ref-R-SILGGM" role="doc-biblioref">2018b</a>)</span>. After optional NPN, it takes an <span class="math inline">n\times G</span> table and estimates <span class="math inline">\theta_{gg'}</span> (or de-sparsified versions) with four inferential procedures, the last of which has two penalty flavours:</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 20%">
-<col style="width: 60%">
-<col style="width: 20%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Mode</th>
-<th>What is computed</th>
-<th>Role</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>B_NW_SL</code></td>
-<td>Bivariate nodewise scaled lasso</td>
-<td>Edge-wise <span class="math inline">\hat\theta_{gg'}</span>, CIs, <span class="math inline">p</span>-values</td>
-</tr>
-<tr class="even">
-<td><code>D-S_NW_SL</code></td>
-<td>De-sparsified nodewise scaled lasso</td>
-<td>Debiased nodewise edges, CIs</td>
-</tr>
-<tr class="odd">
-<td><code>D-S_GL</code></td>
-<td>De-sparsified graphical lasso</td>
-<td>Debiased glasso edges, CIs</td>
-</tr>
-<tr class="even">
-<td><code>GFC_SL</code></td>
-<td>GGM estimation with FDR, scaled lasso</td>
-<td>Simultaneous tests of all pairs</td>
-</tr>
-<tr class="odd">
-<td><code>GFC_L</code></td>
-<td>Same with lasso (tuning for FDR)</td>
-<td>Preferred when <span class="math inline">n</span> is small</td>
-</tr>
-</tbody>
-</table>
-<p>All five share two steps: a lasso-type regularisation (graphical lasso or <span class="math inline">O(G)</span> nodewise regressions), then <span class="math inline">(G^{2}-G)/2</span> asymptotically normal statistics under a sparsity condition on the maximum degree. <code>global=TRUE</code> extends the first three modes to the GFC FDR framework. Outputs include estimators, <span class="math inline">z</span>-scores, <span class="math inline">p</span>-values, and (for global mode) adjacency matrices at a target FDR.</p>
-<p><strong>What the first pipeline got wrong.</strong></p>
-<ol type="1">
-<li><strong>D-S_GL is not universally preferred.</strong> The SILGGM simulations report that <code>B_NW_SL</code> and <code>D-S_NW_SL</code> can give better confidence-interval behaviour for <em>non-zero</em> partial correlations than <code>D-S_GL</code>. For a small gene set that needs CIs, <code>B_NW_SL</code> is the authors’ own recommendation; <code>D-S_NW_SL</code> is the cheaper alternative at <span class="math inline">G\sim 10^{4}</span>. For whole-graph FDR, <code>GFC_L</code> is recommended when <span class="math inline">n</span> is small (order <span class="math inline">10^{2}</span>) because tuning helps FDR; at larger <span class="math inline">n</span> the four modes are similar.</li>
-<li><strong>The de-sparsified formula is not <span class="math inline">2\hat{\boldsymbol{\Theta}}-S</span>.</strong> The Janková–van de Geer estimator is <span class="math inline">\widehat{T}=2\widehat{\boldsymbol{\Theta}}-\widehat{\boldsymbol{\Theta}}\widehat{R}\widehat{\boldsymbol{\Theta}}</span> with <span class="math inline">\widehat{R}</span> the empirical correlation <span class="citation" data-cites="jankovaConfidenceIntervalsHighdimensional2015">(<a href="#ref-jankovaConfidenceIntervalsHighdimensional2015" role="doc-biblioref">Jankova and Geer 2015</a>)</span>. The first report’s <span class="math inline">2\hat\Theta-S</span> is incorrect.</li>
-<li><strong>The debiased matrix is deliberately non-sparse.</strong> It is built for inference, not as a generative precision. Feeding <span class="math inline">\widehat{T}</span> to DeCovarT would export a dense, not necessarily well-conditioned, <span class="math inline">\boldsymbol{\Theta}_{j}</span>. The statistically clean composition (<strong>proposal</strong>) is: use debiasing / FDR to <strong>select a support</strong>, then re-estimate a positive-definite precision <em>on that support</em> (constrained MLE when the graph is chordal; otherwise a constrained glasso or a small ridge). That separates <strong>edge testing</strong> from the <strong>SPD object</strong> in <a href="#eq-grn-estimand" class="quarto-xref">Equation&nbsp;<span>4.1</span></a>.</li>
-</ol>
-<p><strong>Pros.</strong> Fast C++ implementation; <span class="math inline">p</span>-values and FDR; scales to thousands of genes; matches the undirected GGM language of DeCovarT; CRAN package.</p>
-<p><strong>Cons.</strong> Gaussian observations (NPN is a copula patch, not a count model); no dropout / library-size layer; independent cells; independent types (no pooling); debiased estimators are the wrong generative object; on UMI data the authors themselves used <span class="math inline">\log_{2}(\mathrm{UMI}+1)</span> then NPN — which is exactly the transform <a href="#nte-jensen-transform" class="quarto-xref">Note&nbsp;<span>4.2</span></a> criticises. That said, Zhang and Zou <span class="citation" data-cites="zhangSparsePrecisionMatrix2014">(<a href="#ref-zhangSparsePrecisionMatrix2014" role="doc-biblioref">Zhang and Zou 2014</a>)</span> report that the graphical lasso estimator of a sparse precision is usually still <strong>support-consistent</strong>: it recovers the zeros of the true direct (conditional) interactions even when the multivariate Gaussian assumption does not hold. That is reassurance for <strong>edge screening</strong>, not a licence to treat the glasso point estimate as the DeCovarT generative <span class="math inline">\boldsymbol{\Theta}_{j}</span>. We keep <code>SILGGM</code> as a <strong>benchmark branch</strong>, not as “the” pipeline, and we prefer <code>GFC_L</code> / glasso <strong>support</strong> plus an SPD refit over exporting <code>D-S_GL</code> point estimates.</p>
-<p>It does <strong>not</strong> model unknown mixtures: subset cells by annotation first. A Bayesian latent mixture with dropout (<code>BLGGM</code>) is <strong>not</strong> in the <span class="math inline">3\times 2\times 2</span> product: labels are already known, and MCMC plus a gene cap of a few hundred make it a perspective only.</p>
+<h2 data-number="4.3" class="anchored" data-anchor-id="sec-grn-core"><span class="header-section-number">4.3</span> Three sparse-precision estimators</h2>
+<section id="sec-huge" class="level3" data-number="4.3.1">
+<h3 data-number="4.3.1" class="anchored" data-anchor-id="sec-huge"><span class="header-section-number">4.3.1</span> Graphical lasso in <code>huge</code></h3>
+<p><code>huge</code> is the maintained implementation of the graphical lasso of Friedman, Hastie and Tibshirani <span class="citation" data-cites="friedmanSparseInverseCovariance2008 mazumderGraphicalLassoNew2011 zhaoHugePackageHighdimensional R-huge">(<a href="#ref-friedmanSparseInverseCovariance2008" role="doc-biblioref">Friedman et al. 2008</a>; <a href="#ref-mazumderGraphicalLassoNew2011" role="doc-biblioref">Mazumder and Hastie 2011</a>; <a href="#ref-zhaoHugePackageHighdimensional" role="doc-biblioref">Zhao et al. 2012</a>, <a href="#ref-R-huge" role="doc-biblioref">2022</a>)</span>: a regularisation path, EBIC or StARS selection, and sparse-matrix output. The programme is the Friedman graphical lasso.</p>
+<section id="generative-model" class="level4">
+<h4 class="anchored" data-anchor-id="generative-model">Generative model</h4>
+<p>Cells of one labelled type, at one time, are treated as independent Gaussian replicates. The precision is sparse.</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div id="fig-huge-gen" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-huge-gen-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>
+<pre class="mermaid mermaid-js" data-label="fig-huge-gen">%%{init: {"theme": "sandstone", "flowchart": {"curve": "basis"}}}%%
+flowchart TB
+  subgraph plateC["c = 1, ..., n_j"]
+    direction TB
+    mu["mu_j"] --&gt; x(("x_c"))
+    Sig["Sigma_j"] --&gt; x
+  end
+  Th["Theta_j = Sigma_j inverse, sparse"] --&gt; Sig
+  classDef param fill:#ffffff,stroke:#0f172a,stroke-width:1.5px
+  classDef latent fill:#ffffff,stroke:#0f172a,stroke-width:1.5px
+  class mu,Sig,Th param
+  class x latent
+</pre>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-huge-gen-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4.2: Graphical lasso generative model: independent Gaussian cells of one type, with a sparse precision.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
 </section>
-<section id="sec-pln" class="level3" data-number="4.3.2">
-<h3 data-number="4.3.2" class="anchored" data-anchor-id="sec-pln"><span class="header-section-number">4.3.2</span> Poisson-lognormal: Chiquet’s <code>PLNmodels</code> versus PLNFGL</h3>
-<p>Two PLN estimators share Aitchison and Ho’s hierarchical construction and <strong>differ</strong> in how they estimate <span class="math inline">\boldsymbol{\Theta}</span>.</p>
-<p><strong>Observation model (common).</strong> For cell <span class="math inline">c</span> of type <span class="math inline">j</span>, library size <span class="math inline">S_{c}</span>, latent intensities <span class="math inline">\boldsymbol{Z}_{c}</span>,</p>
+<section id="objective-and-assumptions" class="level4">
+<h4 class="anchored" data-anchor-id="objective-and-assumptions">Objective and assumptions</h4>
+<p>Let <span class="math inline">S</span> be the sample covariance of the <span class="math inline">n</span> cells on the gene panel. The estimator is</p>
+<p><span id="eq-glasso"><span class="math display">
+\widehat{\boldsymbol{\Theta}}
+=
+\arg\min_{\boldsymbol{\Theta}\succ 0}
+\Bigl[
+-\log\det\boldsymbol{\Theta}
++
+\operatorname{tr}(S\boldsymbol{\Theta})
++
+\lambda\|\boldsymbol{\Theta}\|_{1}
+\Bigr].
+\tag{4.4}</span></span></p>
+<p>Assumptions: multivariate Gaussian observations; conditional independence encoded by zeros of <span class="math inline">\boldsymbol{\Theta}</span>; cells independent within the type-time subset; <span class="math inline">G</span> may exceed <span class="math inline">n</span>.</p>
+</section>
+<section id="optimisation-and-the-ell_1-penalty" class="level4">
+<h4 class="anchored" data-anchor-id="optimisation-and-the-ell_1-penalty">Optimisation and the <span class="math inline">\ell_{1}</span> penalty</h4>
+<p><code>huge(method = "glasso")</code> solves <a href="#eq-glasso" class="quarto-xref">Equation&nbsp;<span>4.4</span></a> by graphical-lasso coordinate descent. The <span class="math inline">\ell_{1}</span> term drives off-diagonal entries to zero. The diagonal is left unpenalised, so variances are not shrunk toward zero. A path of <span class="math inline">\lambda</span> values is computed; one <span class="math inline">\lambda</span> is then chosen.</p>
+</section>
+<section id="hyperparameters" class="level4">
+<h4 class="anchored" data-anchor-id="hyperparameters">Hyperparameters</h4>
+<ul>
+<li><span class="math inline">\lambda</span> path, and the selection rule in <code>huge.select()</code> (<code>ebic</code> <span class="citation" data-cites="foygelExtendedBayesianInformation2010">(<a href="#ref-foygelExtendedBayesianInformation2010" role="doc-biblioref">Foygel and Drton 2010</a>)</span> or <code>stars</code>);</li>
+<li>whether the diagonal is penalised (default in this design: no);</li>
+<li>the gene panel <span class="math inline">\mathcal{G}_{0}</span> and the type-time subset.</li>
+</ul>
+</section>
+</section>
+<section id="sec-silggm" class="level3" data-number="4.3.2">
+<h3 data-number="4.3.2" class="anchored" data-anchor-id="sec-silggm"><span class="header-section-number">4.3.2</span> <code>SILGGM</code> after a nonparanormal map</h3>
+<p><code>SILGGM</code> tests entries of a Gaussian precision and controls FDR on the whole graph <span class="citation" data-cites="zhangSILGGMExtensivePackage2018 R-SILGGM">(<a href="#ref-zhangSILGGMExtensivePackage2018" role="doc-biblioref">Zhang et al. 2018a</a>, <a href="#ref-R-SILGGM" role="doc-biblioref">2018b</a>)</span>. The arm used here is: nonparanormal scores, then de-sparsified graphical lasso (<code>D-S_GL</code>) with <code>global = TRUE</code>. With many cells the five <code>SILGGM</code> procedures tend to agree; at a bulk-sample size they need not. The export we keep is the FDR-selected edge list (Cytoscape CSV via <code>cytoscape_format</code> and <code>csv_save</code>), not the full inferential dump.</p>
+<div id="nte-npn-derivation" class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note&nbsp;4.3: :information_source: Nonparanormal scores
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Liu, Lafferty and Wasserman <span class="citation" data-cites="liuNonparanormalSemiparametricEstimation2009">(<a href="#ref-liuNonparanormalSemiparametricEstimation2009" role="doc-biblioref">Liu et al. 2009</a>)</span> define a nonparanormal vector by strictly increasing maps <span class="math inline">f_{g}</span> such that <span class="math inline">Z_{g}=f_{g}(X_{g})</span> is multivariate Gaussian with mean zero, covariance <span class="math inline">R</span>, and precision <span class="math inline">R^{-1}</span>. If each <span class="math inline">f_{g}</span> is unknown but monotone,</p>
+<p><span class="math display">
+Z_{g}
+=
+\Phi^{-1}\bigl(F_{g}(X_{g})\bigr),
+</span></p>
+<p>because <span class="math inline">F_{g}(X_{g})</span> is uniform and <span class="math inline">\Phi^{-1}</span> returns a standard normal margin. Replacing <span class="math inline">F_{g}</span> by a winsorised or shrunken empirical cdf is <code>huge.npn()</code> with <code>npn.func = "truncation"</code> or <code>"shrinkage"</code>. Graphical lasso on those scores estimates the precision of <span class="math inline">Z</span>, not of the raw counts. Both modes return an <span class="math inline">n\times G</span> score matrix that <code>SILGGM</code> can take. Shrinkage is the default; truncation is the heavy-tail alternative. Means on this scale are not <span class="math inline">\boldsymbol{\mu}_{\cdot j}</span> (<a href="#nte-npn-moments" class="quarto-xref">Note&nbsp;<span>4.1</span></a>).</p>
+</div>
+</div>
+<section id="generative-model-1" class="level4">
+<h4 class="anchored" data-anchor-id="generative-model-1">Generative model</h4>
+<p>Observed margins are monotone images of one latent Gaussian vector. The precision that <code>SILGGM</code> tests is the precision of that latent vector, not of the counts.</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div id="fig-silggm-gen" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-silggm-gen-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>
+<pre class="mermaid mermaid-js" data-label="fig-silggm-gen">%%{init: {"theme": "sandstone", "flowchart": {"curve": "basis"}}}%%
+flowchart TB
+  subgraph plateC["c = 1, ..., n_j"]
+    direction TB
+    R["Correlation R"] --&gt; Z(("Z_c"))
+    Z --&gt; f["Monotone f_g"]
+    f --&gt; X(["X_c"])
+  end
+  Th["Precision of Z, sparse"] --&gt; R
+  classDef param fill:#ffffff,stroke:#0f172a,stroke-width:1.5px
+  classDef latent fill:#ffffff,stroke:#0f172a,stroke-width:1.5px
+  classDef obs fill:#cbd5e1,stroke:#0f172a,stroke-width:1.5px
+  class R,Th,f param
+  class Z latent
+  class X obs
+</pre>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-silggm-gen-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4.3: Nonparanormal generative model: each gene margin is a monotone map of a latent Gaussian coordinate. SILGGM tests the precision of that latent vector.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="objective-and-the-de-sparsified-correction" class="level4">
+<h4 class="anchored" data-anchor-id="objective-and-the-de-sparsified-correction">Objective and the de-sparsified correction</h4>
+<p>The first step is still <a href="#eq-glasso" class="quarto-xref">Equation&nbsp;<span>4.4</span></a>, which is <span class="math inline">\ell_{1}</span>-biased. The Janková–van de Geer correction <span class="citation" data-cites="jankovaConfidenceIntervalsHighdimensional2015">(<a href="#ref-jankovaConfidenceIntervalsHighdimensional2015" role="doc-biblioref">Jankova and Geer 2015</a>)</span> is <strong>not</strong> <span class="math inline">2\widehat{\boldsymbol{\Theta}}-S</span>. On the correlation scale it is</p>
+<p><span id="eq-desparsify"><span class="math display">
+\widehat{T}
+=
+2\widehat{\boldsymbol{\Theta}}
+-
+\widehat{\boldsymbol{\Theta}}\,
+\widehat{R}\,
+\widehat{\boldsymbol{\Theta}},
+\tag{4.5}</span></span></p>
+<p>with <span class="math inline">\widehat{R}</span> the empirical correlation. <span class="math inline">\widehat{T}</span> recentres the edges so that they are asymptotically normal under a sparsity condition on the maximum degree. It is deliberately <strong>dense</strong>: it is an inferential object, not a generative precision. Zhang and Zou <span class="citation" data-cites="zhangSparsePrecisionMatrix2014">(<a href="#ref-zhangSparsePrecisionMatrix2014" role="doc-biblioref">Zhang and Zou 2014</a>)</span> note that graphical lasso remains useful for <strong>support</strong> recovery even when the Gaussian assumption fails. That supports edge screening, not export of <span class="math inline">\widehat{T}</span> itself as <span class="math inline">\boldsymbol{\Theta}_{j}</span>.</p>
+</section>
+<section id="optimisation-and-global-fdr" class="level4">
+<h4 class="anchored" data-anchor-id="optimisation-and-global-fdr">Optimisation and global FDR</h4>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div id="fig-silggm-steps" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-silggm-steps-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>
+<pre class="mermaid mermaid-js" data-label="fig-silggm-steps">%%{init: {"theme": "sandstone"}}%%
+flowchart LR
+  X["Counts"] --&gt; N["Nonparanormal scores"]
+  N --&gt; Gl["Graphical lasso"]
+  Gl --&gt; T["Debiased T"]
+  T --&gt; FDR["Global FDR support"]
+  FDR --&gt; SPD["SPD refit"]
+</pre>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-silggm-steps-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4.4: Estimation order for the SILGGM arm: nonparanormal scores, graphical lasso, de-sparsified matrix, global FDR support, then an SPD refit. The debiased matrix is not exported.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><code>SILGGM</code> runs a lasso-type fit, builds the debiased statistics, and, with <code>global = TRUE</code>, thresholds them by the global FDR rule for Gaussian graphical models <span class="citation" data-cites="liuGaussianGraphicalModel2013 zhangSILGGMExtensivePackage2018">(<a href="#ref-liuGaussianGraphicalModel2013" role="doc-biblioref">Liu 2013</a>; <a href="#ref-zhangSILGGMExtensivePackage2018" role="doc-biblioref">Zhang et al. 2018a</a>)</span>. The selected zeros define a support. An SPD precision is then refit on that support (graphical lasso constrained to the support, or a small ridge if the constrained MLE is unavailable). Edge testing and the DeCovarT precision stay separate (<a href="#eq-grn-estimand" class="quarto-xref">Equation&nbsp;<span>4.1</span></a>).</p>
+</section>
+<section id="hyperparameters-1" class="level4">
+<h4 class="anchored" data-anchor-id="hyperparameters-1">Hyperparameters</h4>
+<ul>
+<li><code>npn.func</code>: <code>shrinkage</code> or <code>truncation</code>;</li>
+<li><code>method = "D-S_GL"</code> and <code>global = TRUE</code>;</li>
+<li>FDR level <code>alpha</code>;</li>
+<li><code>lambda</code> if it is not left at the package default;</li>
+<li><code>cytoscape_format = TRUE</code> and <code>csv_save = TRUE</code> only as the edge-list export.</li>
+</ul>
+</section>
+</section>
+<section id="sec-pln" class="level3" data-number="4.3.3">
+<h3 data-number="4.3.3" class="anchored" data-anchor-id="sec-pln"><span class="header-section-number">4.3.3</span> Poisson-lognormal network</h3>
+<p><code>PLNnetwork</code> is the sparse-precision member of <code>PLNmodels</code> <span class="citation" data-cites="chiquetPoissonLognormalModelVersatile2021 chiquetVariationalInferenceSparse2018 R-PLNmodels">(<a href="#ref-chiquetPoissonLognormalModelVersatile2021" role="doc-biblioref">Chiquet et al. 2021</a>, <a href="#ref-chiquetVariationalInferenceSparse2018" role="doc-biblioref">2018</a>, <a href="#ref-R-PLNmodels" role="doc-biblioref">2025</a>)</span>. Fused PLN graphical lasso is a perspective (<a href="#sec-grn-appendix" class="quarto-xref"><span>Section 4.6</span></a>), not this arm.</p>
+<section id="generative-model-2" class="level4">
+<h4 class="anchored" data-anchor-id="generative-model-2">Generative model</h4>
+<p>For each cell <span class="math inline">c</span> in one type-time subset, with library size <span class="math inline">S_{c}</span>,</p>
 <p><span id="eq-pln"><span class="math display">
 Y_{cg}\mid\boldsymbol{Z}_{c}
 \sim
@@ -588,89 +684,96 @@ Y_{cg}\mid\boldsymbol{Z}_{c}
 \qquad
 \log\boldsymbol{Z}_{c}
 \sim
-\mathcal{N}_{G}(\boldsymbol{\mu}_{\cdot j},\boldsymbol{\Sigma}_{j}),
+\mathcal{N}_{G}(\boldsymbol{\mu},\boldsymbol{\Sigma}),
 \quad
-\boldsymbol{\Theta}_{j}=\boldsymbol{\Sigma}_{j}^{-1}.
-\tag{4.4}</span></span></p>
-<p>Zeros are sampling zeros under a Poisson with random log-normal mean; a separate structural-zero (ZINB) layer is not required <span class="citation" data-cites="chiquetPoissonLognormalModelVersatile2021">(<a href="#ref-chiquetPoissonLognormalModelVersatile2021" role="doc-biblioref">Chiquet et al. 2021</a>)</span>. That matches Svensson’s critique of automatic zero-inflation for droplet UMI data <span class="citation" data-cites="svenssonDropletScRNAseqNot2020">(<a href="#ref-svenssonDropletScRNAseqNot2020" role="doc-biblioref">Svensson 2020</a>)</span>.</p>
-<p><strong>Chiquet: variational sparse PLN (<code>PLNnetwork</code>).</strong> The <code>PLNmodels</code> framework <span class="citation" data-cites="R-PLNmodels">(<a href="#ref-R-PLNmodels" role="doc-biblioref">Chiquet et al. 2025</a>)</span> treats the PLN as a versatile count GGM and estimates a sparse latent precision by variational inference with an <span class="math inline">\ell_{1}</span> penalty on <span class="math inline">\boldsymbol{\Theta}</span> <span class="citation" data-cites="chiquetPoissonLognormalModelVersatile2021 chiquetVariationalInferenceSparse2018">(<a href="#ref-chiquetPoissonLognormalModelVersatile2021" role="doc-biblioref">Chiquet et al. 2021</a>, <a href="#ref-chiquetVariationalInferenceSparse2018" role="doc-biblioref">2018</a>)</span>. Later work in the same group studies zero-inflation <strong>inside</strong> the PLN family as an extension, not as the default <span class="citation" data-cites="batardiereZeroInflationMultivariatePoisson2025">(<a href="#ref-batardiereZeroInflationMultivariatePoisson2025" role="doc-biblioref">Batardière et al. 2025</a>)</span>. The exported object is exactly a latent Gaussian precision — the DeCovarT estimand — with a sampling model that respects UMI counts. Fits are typically <strong>per condition</strong> unless one stacks a group penalty by hand.</p>
-<p><strong>Zhai et al.&nbsp;PLNFGL (2026).</strong> PLNFGL estimates a moment covariance for the latent Gaussian and plugs it into the <strong>fused graphical lasso</strong> of Danaher, Wang and Witten: within-type <span class="math inline">\ell_{1}</span> sparsity plus a fusion penalty that shrinks <span class="math inline">\theta_{gg'}^{(j)}</span> towards <span class="math inline">\theta_{gg'}^{(\ell)}</span> across conditions <span class="citation" data-cites="zhaiPLNFGLJointEstimation2026 danaherJointGraphicalLasso2012">(<a href="#ref-zhaiPLNFGLJointEstimation2026" role="doc-biblioref">Zhai et al. 2026</a>; <a href="#ref-danaherJointGraphicalLasso2012" role="doc-biblioref">Danaher et al. 2012</a>)</span>. That is joint estimation. It belongs in <a href="#sec-grn-appendix" class="quarto-xref"><span>Section 4.6</span></a> as a sharing strategy, not in the core independent-type comparison. It is nonetheless the closest <strong>published</strong> composition to “PLN observations + several related <span class="math inline">\boldsymbol{\Theta}_{j}</span>”.</p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th></th>
-<th>Chiquet <code>PLNnetwork</code></th>
-<th>PLNFGL (Zhai)</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Sampling</td>
-<td>PLN</td>
-<td>PLN</td>
-</tr>
-<tr class="even">
-<td><span class="math inline">\Sigma</span></td>
-<td>Variational likelihood</td>
-<td>Moments + PD projection</td>
-</tr>
-<tr class="odd">
-<td><span class="math inline">\Theta</span></td>
-<td><span class="math inline">\ell_{1}</span> on one graph</td>
-<td>Fused glasso, <span class="math inline">J</span> graphs</td>
-</tr>
-<tr class="even">
-<td>Sharing across types</td>
-<td>No (unless redesigned)</td>
-<td>Yes (<span class="math inline">\lambda_{2}</span>)</td>
-</tr>
-<tr class="odd">
-<td>Core vs appendix</td>
-<td><strong>Core</strong></td>
-<td>Appendix</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Pros of the PLN family.</strong> Count likelihood; latent Gaussian precision is the DeCovarT object; no obligatory NPN; library size <span class="math inline">S_{c}</span> is explicit; fusion (PLNFGL) is available when we <em>choose</em> to pool.</p>
-<p><strong>Cons.</strong> Moment estimators of <span class="math inline">\Sigma</span> can be crude in <span class="math inline">G\gg n</span>; variational PLN is heavier than glasso; fusion can <strong>erase</strong> the rewiring DeCovarT wants if <span class="math inline">\lambda_{2}</span> is large; none of these methods gives SILGGM-style edgewise FDR out of the box.</p>
-<p><strong>Critical recommendation.</strong> Cite Chiquet for the PLN <strong>model and variational sparse precision</strong>, and Zhai for <strong>moments + fusion</strong>. On Suppinger, the core PLN arm is <strong>Chiquet <code>PLNnetwork</code> per labelled type</strong>. PLNFGL is the fused extension.</p>
+\boldsymbol{\Theta}=\boldsymbol{\Sigma}^{-1}.
+\tag{4.6}</span></span></p>
+<p>Zeros are Poisson sampling zeros <span class="citation" data-cites="svenssonDropletScRNAseqNot2020">(<a href="#ref-svenssonDropletScRNAseqNot2020" role="doc-biblioref">Svensson 2020</a>)</span>. The fit is <strong>independent</strong> for each labelled type at each of 48 h, 72 h and 96 h. A single formula with cell-type and time dummies would estimate <strong>one</strong> shared precision and only shift the mean; that is not the DeCovarT target. The formula interface is used inside each subset, with an offset and no further design.</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div id="fig-pln-gen" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-pln-gen-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>
+<pre class="mermaid mermaid-js" data-label="fig-pln-gen">%%{init: {"theme": "sandstone", "flowchart": {"curve": "basis"}}}%%
+flowchart TB
+  subgraph plateC["c in one type-time subset"]
+    direction TB
+    S["offset log S_c"] --&gt; Y(["Y_c"])
+    Z(("log Z_c")) --&gt; Y
+    mu["mu"] --&gt; Z
+    Sig["Sigma"] --&gt; Z
+  end
+  Th["Theta = Sigma inverse, sparse"] --&gt; Sig
+  classDef param fill:#ffffff,stroke:#0f172a,stroke-width:1.5px
+  classDef latent fill:#ffffff,stroke:#0f172a,stroke-width:1.5px
+  classDef obs fill:#cbd5e1,stroke:#0f172a,stroke-width:1.5px
+  class mu,Sig,Th,S param
+  class Z latent
+  class Y obs
+</pre>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pln-gen-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4.5: PLNnetwork: library size offsets a Poisson mean whose log-intensity is a sparse Gaussian. One such model per type and time.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
 </section>
-<section id="sec-gmgm" class="level3" data-number="4.3.3">
-<h3 data-number="4.3.3" class="anchored" data-anchor-id="sec-gmgm"><span class="header-section-number">4.3.3</span> Multi-axis GGMs (<code>GmGM</code>): cells are not independent rows</h3>
-<p>Almost every GGM above makes the <strong>independence assumption</strong>: to learn the gene precision, cells are i.i.d. rows. That is false in a gastruloid — cells share a microenvironment, a lineage, and (in spatial assays) neighbours. <code>GmGM</code> <span class="citation" data-cites="andrewMakingMultiaxisGaussian2026">(<a href="#ref-andrewMakingMultiaxisGaussian2026" role="doc-biblioref">Andrew et al. 2026</a>)</span> replaces independence with a <strong>Cartesian product</strong> assumption: gene <span class="math inline">g</span> in cell <span class="math inline">c</span> may depend on other genes in the same cell, or on the same gene in other cells, but not on arbitrary cell–gene pairs. The precision of <span class="math inline">\mathrm{vec}(X)</span> is a Kronecker <strong>sum</strong> of a gene precision and a cell precision. A Gaussian copula (nonparanormal) weakens Gaussian margins. The 2026 contribution is scalability to millions of cells via a low-rank / linearly sparse eigendecomposition; the Python package is <code>GmGM</code>.</p>
-<p><strong>Pros.</strong> Direct stress test of the i.i.d.-cell assumption that underwrites both SILGGM and the aggregation algebra in <a href="06-population-alignment.html#sec-align-invariance" class="quarto-xref"><span>Section 5.3</span></a>; jointly estimates a cell graph (lineage / communication proxy) and a gene graph; copula margins.</p>
-<p><strong>Cons.</strong> The statistical object is <strong>not</strong> <a href="#eq-grn-estimand" class="quarto-xref">Equation&nbsp;<span>4.1</span></a>: one gene precision is shared across cells, with residual dependence pushed into the cell axis. DeCovarT wants <strong>type-specific</strong> <span class="math inline">\boldsymbol{\Theta}_{j}</span>, which requires subsetting types <em>or</em> interpreting the cell graph as a substitute for type labels. Kronecker structure is a modelling restriction. Multi-omics shared-axis examples in the paper (RNA+ATAC) are out of our core scope.</p>
-<p><strong>Use.</strong> External stress test, not the default DeCovarT estimator. If the gene-axis precision on a type subset disagrees violently with per-type SILGGM / PLN, the i.i.d. assumption is a suspect.</p>
-</section>
-<section id="sec-lowrank" class="level3" data-number="4.3.4">
-<h3 data-number="4.3.4" class="anchored" data-anchor-id="sec-lowrank"><span class="header-section-number">4.3.4</span> Sparse plus low-rank latent-variable GGMs</h3>
-<p>A sparse GGM assumes that, after conditioning on the observed genes, the remaining dependence is sparse. Unmeasured programmes — cell cycle, maturation, sequencing depth not captured by a size factor — induce a <strong>dense</strong> marginal precision. Chandrasekaran, Parrilo and Willsky separate a sparse conditional interaction matrix among observed genes from a <strong>low-rank</strong> contribution of latent factors <span class="citation" data-cites="chandrasekaranLatentVariableGraphical2012">(<a href="#ref-chandrasekaranLatentVariableGraphical2012" role="doc-biblioref">Chandrasekaran et al. 2012</a>)</span>:</p>
-<p><span id="eq-slr"><span class="math display">
-\boldsymbol{\Theta}_{\mathrm{marg}}
+<section id="objective-and-assumptions-1" class="level4">
+<h4 class="anchored" data-anchor-id="objective-and-assumptions-1">Objective and assumptions</h4>
+<p>The observed-data likelihood integrates the latent Gaussian. That integral is intractable. Variational inference replaces the posterior of <span class="math inline">\boldsymbol{Z}</span> by a tractable <span class="math inline">q</span> and maximises the evidence lower bound, which is the expected complete log-likelihood minus <span class="math inline">\mathrm{KL}(q\,\|\,p(Z\mid Y))</span>. An <span class="math inline">\ell_{1}</span> penalty is added on off-diagonal entries of <span class="math inline">\boldsymbol{\Theta}</span>.</p>
+<div id="nte-vi-em" class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important&nbsp;4.4: :information_source: Variational EM, KL, and why not Monte Carlo
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>EM alternates an expectation under the <strong>true</strong> conditional <span class="math inline">p(Z\mid Y)</span> with a maximisation of the expected complete log-likelihood. When that conditional is unavailable, variational EM restricts the expectation to a family <span class="math inline">q</span>. The identity</p>
+<p><span class="math display">
+\log p(Y)
 =
-\boldsymbol{\Theta}_{\mathrm{sparse}}
--
-\boldsymbol{L},
-\qquad
-\boldsymbol{L}\succeq 0,\
-\mathrm{rank}(\boldsymbol{L})\ll G.
-\tag{4.5}</span></span></p>
-<p><strong>Pros.</strong> Protects the gene graph against global confounders that are rampant in scRNA-seq; the sparse summand is the object one would like to call “regulation”; conceptually close to factor-adjusted GGMs.</p>
-<p><strong>Cons.</strong> Identifiability needs incoherence between the sparse and low-rank parts; tuning two penalties; the low-rank piece is <strong>not</strong> a DeCovarT type covariance — it is a nuisance. If the sparse component changes dramatically relative to ordinary glasso, inferred edges may have been global programmes.</p>
-<p><strong>Use.</strong> Robustness experiment on the same gene panel as SILGGM. If sparse edges are stable, ordinary glasso was not merely fitting cell cycle; if they collapse, do not export the dense glasso to DeCovarT.</p>
+\mathrm{ELBO}(q)
++
+\mathrm{KL}\bigl(q\,\|\,p(Z\mid Y)\bigr)
+</span></p>
+<p>shows that maximising the ELBO is the same as minimising the Kullback–Leibler divergence from <span class="math inline">q</span> to the true posterior. Equality holds when <span class="math inline">q=p(Z\mid Y)</span>, which is ordinary EM. A Monte Carlo E-step would draw the latent Gaussian at every iteration. The variational step replaces those draws by a closed-form update of <span class="math inline">q</span>, which is why the same sparse PLN is practical at single-cell <span class="math inline">n</span> <span class="citation" data-cites="chiquetVariationalInferenceSparse2018">(<a href="#ref-chiquetVariationalInferenceSparse2018" role="doc-biblioref">Chiquet et al. 2018</a>)</span>.</p>
+</div>
+</div>
+</section>
+<section id="optimisation-and-the-ell_1-penalty-1" class="level4">
+<h4 class="anchored" data-anchor-id="optimisation-and-the-ell_1-penalty-1">Optimisation and the <span class="math inline">\ell_{1}</span> penalty</h4>
+<p><code>PLNnetwork()</code> runs that variational scheme over a grid of penalties (<a href="https://www.rdocumentation.org/packages/PLNmodels/versions/0.10.6/topics/PLNnetwork">PLNnetwork</a>). <code>penalize_diagonal</code> stays <code>FALSE</code> in <code>control_main</code>, matching the graphical-lasso convention. The penalty grid is set by <code>penalties</code>, or by <code>nPenalties</code> and <code>min.ratio</code> in <code>control_init</code>.</p>
+</section>
+<section id="hyperparameters-2" class="level4">
+<h4 class="anchored" data-anchor-id="hyperparameters-2">Hyperparameters</h4>
+<p>Inside each type-time subset the call is of the form <code>abundance ~ 1 + offset(log_library)</code>, with <code>log_library</code> the natural log of that cell’s library size. Play with:</p>
+<ul>
+<li>the penalty grid (<code>penalties</code>, or <code>nPenalties</code> and <code>min.ratio</code>);</li>
+<li><code>penalize_diagonal</code> (kept false);</li>
+<li>outer-loop tolerances <code>ftol_out</code> and <code>maxit_out</code> only if a subset fails to converge.</li>
+</ul>
+<p>Zero-inflated PLN is not the default (<a href="#nte-drop-zico" class="quarto-xref">Note&nbsp;<span>4.5</span></a>).</p>
+</section>
 </section>
 </section>
 <section id="sec-grn-top4" class="level2" data-number="4.4">
-<h2 data-number="4.4" class="anchored" data-anchor-id="sec-grn-top4"><span class="header-section-number">4.4</span> Three methods to carry forward</h2>
-<p>Given stationarity, a multivariate Gaussian <strong>population</strong> object, sparsity, and single-cell transcriptomics only, the three <strong>core</strong> routes in <a href="index.html#fig-pipeline" class="quarto-xref">Figure&nbsp;<span>1</span></a> are:</p>
-<ol type="1">
-<li><strong><code>SILGGM</code> <code>GFC_L</code> (or glasso) → FDR support → SPD refit</strong>, with NPN <strong>inside this branch only</strong>. Inferential, scalable, closest in language to the article’s gLasso precision <span class="citation" data-cites="mazumderGraphicalLassoNew2011 zhangSILGGMExtensivePackage2018">(<a href="#ref-mazumderGraphicalLassoNew2011" role="doc-biblioref">Mazumder and Hastie 2011</a>; <a href="#ref-zhangSILGGMExtensivePackage2018" role="doc-biblioref">Zhang et al. 2018a</a>)</span>.</li>
-<li><strong>Chiquet <code>PLNnetwork</code> per labelled type.</strong> Count-honest latent Gaussian; no NPN; library size explicit <span class="citation" data-cites="chiquetPoissonLognormalModelVersatile2021">(<a href="#ref-chiquetPoissonLognormalModelVersatile2021" role="doc-biblioref">Chiquet et al. 2021</a>)</span>.</li>
-<li><strong><code>GmGM</code> on type subsets</strong> as a multi-axis stress test of independent cells — interpret the <strong>gene-axis</strong> precision, do not force the cell-axis precision into DeCovarT.</li>
-</ol>
-<p>Sparse-plus-low-rank GGMs (<a href="#sec-lowrank" class="quarto-xref"><span>Section 4.3.4</span></a>) remain a confounder check. They are <strong>not</strong> a factor of the <span class="math inline">3\times 2\times 2</span> product.</p>
-<p>PLNFGL, joint graphical lasso, and JGCGM are <strong>sharing</strong> strategies (<a href="#sec-grn-appendix" class="quarto-xref"><span>Section 4.6</span></a>). They may well beat independent fits on variance, but they risk shrinking away the rewiring that is the scientific target. <code>SCENIC</code> / <code>GRNBoost2</code> <span class="citation" data-cites="aibarScenicSinglecellRegulatory2017 moermanGRNBoost2ArboretoEfficient2019">(<a href="#ref-aibarScenicSinglecellRegulatory2017" role="doc-biblioref">Aibar et al. 2017</a>; <a href="#ref-moermanGRNBoost2ArboretoEfficient2019" role="doc-biblioref">Moerman et al. 2019</a>)</span> are directed, TF-centred boosting methods: valuable as <strong>knowledge-driven baselines</strong> in <a href="05-grn-metrics.html#sec-metrics-knowledge" class="quarto-xref"><span>Section 6.4</span></a>, not as DeCovarT precisions.</p>
-<p>Every core method must finally export the same object</p>
+<h2 data-number="4.4" class="anchored" data-anchor-id="sec-grn-top4"><span class="header-section-number">4.4</span> Conclusion: twelve routes</h2>
+<p>The product in <a href="index.html#fig-pipeline" class="quarto-xref">Figure&nbsp;<span>1</span></a> is</p>
+<p><span id="eq-grn-product"><span class="math display">
+\underbrace{\{\texttt{huge},\ \texttt{SILGGM+NPN},\ \texttt{PLNnetwork}\}}_{\text{three precisions}}
+\times
+\underbrace{\{\text{affine},\ \text{scDesign2}\}}_{\text{two lifts}}
+\times
+\underbrace{\{\mathcal{G}_{0},\ \text{optional NSGA-II}\}}_{\text{two panels}}.
+\tag{4.7}</span></span></p>
+<p>Every core method must finally export</p>
 <p><span id="eq-grn-export"><span class="math display">
 \bigl\{
 \widehat{\boldsymbol{\mu}}_{\cdot j},\,
@@ -681,59 +784,133 @@ Y_{cg}\mid\boldsymbol{Z}_{c}
 \widehat{\boldsymbol{\Theta}}_{j}
 =
 \widehat{\boldsymbol{\Sigma}}_{j}^{-1}
-\succ 0.
-\tag{4.6}</span></span></p>
+\succ 0,
+\tag{4.8}</span></span></p>
+<p>on the linear scale of <a href="#eq-grn-convolution" class="quarto-xref">Equation&nbsp;<span>4.2</span></a>, not on NPN scores.</p>
+<div id="tbl-grn-core" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-grn-core-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;4.1: Three core precision estimators.
+</figcaption>
+<div aria-describedby="tbl-grn-core-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 35%">
+<col style="width: 11%">
+<col style="width: 11%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Estimator</th>
+<th>Reference</th>
+<th>What it estimates</th>
+<th>Pros</th>
+<th>Cons</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>huge</code></td>
+<td><span class="citation" data-cites="friedmanSparseInverseCovariance2008">Friedman et al. (<a href="#ref-friedmanSparseInverseCovariance2008" role="doc-biblioref">2008</a>)</span>; <span class="citation" data-cites="zhaoHugePackageHighdimensional">Zhao et al. (<a href="#ref-zhaoHugePackageHighdimensional" role="doc-biblioref">2012</a>)</span></td>
+<td>Sparse Gaussian <span class="math inline">\boldsymbol{\Theta}</span></td>
+<td>Fast path; EBIC / StARS; maintained</td>
+<td>Needs Gaussian rows; no library-size layer</td>
+</tr>
+<tr class="even">
+<td><code>SILGGM</code> <code>D-S_GL</code></td>
+<td><span class="citation" data-cites="zhangSILGGMExtensivePackage2018">Zhang et al. (<a href="#ref-zhangSILGGMExtensivePackage2018" role="doc-biblioref">2018a</a>)</span>; <span class="citation" data-cites="liuGaussianGraphicalModel2013">Liu (<a href="#ref-liuGaussianGraphicalModel2013" role="doc-biblioref">2013</a>)</span></td>
+<td>Debiased edges, then an FDR support</td>
+<td>Global FDR; large <span class="math inline">n</span> makes modes agree</td>
+<td>Debiased <span class="math inline">\widehat{T}</span> is dense; NPN changes the mean</td>
+</tr>
+<tr class="odd">
+<td><code>PLNnetwork</code></td>
+<td><span class="citation" data-cites="chiquetPoissonLognormalModelVersatile2021">Chiquet et al. (<a href="#ref-chiquetPoissonLognormalModelVersatile2021" role="doc-biblioref">2021</a>)</span></td>
+<td>Latent precision of a PLN</td>
+<td>Counts and offset; variational, not MCMC</td>
+<td>Heavier than graphical lasso; no edgewise FDR</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>The knobs that the penalty figures in <a href="#sec-grn-penalty-path" class="quarto-xref"><span>Section 4.5</span></a> are meant to set are <span class="math inline">\lambda</span> (<code>huge</code>), <code>alpha</code> (<code>SILGGM</code>), and the PLN penalty grid.</p>
 <div id="nte-drop-zico" class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Warning&nbsp;4.3: :warning: Why we drop zero-inflated directed graphs in the core
+Warning&nbsp;4.5: :warning: Why we drop zero-inflated directed graphs in the core
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Directed zero-inflated DAGs (for example <a href="https://arxiv.org/abs/2512.16233">arXiv:2512.16233</a>) are the wrong object for DeCovarT: the output is a DAG, not an undirected SPD precision; projecting to a skeleton discards the Gaussian convolution that the likelihood needs.</p>
-<p>There is a deeper sampling reason not to <em>start</em> from ZINB at all on this dataset. Suppinger is <strong>droplet UMI</strong> 10x data. Svensson showed that zeros in droplet scRNA-seq are often explained by ordinary molecule-sampling count distributions <span class="citation" data-cites="svenssonDropletScRNAseqNot2020">(<a href="#ref-svenssonDropletScRNAseqNot2020" role="doc-biblioref">Svensson 2020</a>)</span>. Automatic zero-inflation is then unidentifiable and scientifically unmotivated.</p>
-<p>Keep hurdle / ZINB graphs in the sensitivity chapter (<a href="04-sensitivity-misspecification.html#sec-sensitivity" class="quarto-xref"><span>Section 10.1</span></a>) if we want to contaminate the observation model, not as a GRN estimator.</p>
+<p>Directed zero-inflated DAGs are the wrong object for DeCovarT: the output is a DAG, not an undirected SPD precision. Suppinger is droplet UMI data. Svensson showed that zeros in droplet scRNA-seq are often explained by ordinary molecule-sampling counts <span class="citation" data-cites="svenssonDropletScRNAseqNot2020">(<a href="#ref-svenssonDropletScRNAseqNot2020" role="doc-biblioref">Svensson 2020</a>)</span>. Keep hurdle or ZINB graphs in <a href="04-sensitivity-misspecification.html#sec-sensitivity" class="quarto-xref"><span>Section 10.1</span></a> if the observation model is to be contaminated, not as a GRN estimator.</p>
 </div>
 </div>
 </section>
-<section id="sec-grn-design" class="level2" data-number="4.5">
-<h2 data-number="4.5" class="anchored" data-anchor-id="sec-grn-design"><span class="header-section-number">4.5</span> Revised design product</h2>
-<p>The improved pipeline’s three-way factorial is right in spirit and wrong in its first factor. The product we will actually interpret is (<a href="index.html#fig-pipeline" class="quarto-xref">Figure&nbsp;<span>1</span></a>)</p>
-<p><span id="eq-grn-product"><span class="math display">
-\underbrace{\{\text{SILGGM+NPN},\ \text{PLN counts},\ \text{GmGM}\}}_{\text{three GGM families}}
-\times
-\underbrace{\{\text{affine},\ \text{scDesign2}\}}_{\text{two population lifts}}
-\times
-\underbrace{\{\mathcal{G}_{0},\ \text{optional NSGA-II}\}}_{\text{two panels}}.
-\tag{4.7}</span></span></p>
-<p>That is 12 routes. Bures–Wasserstein stays a <strong>perspective</strong> metric (<a href="06-population-alignment.html#sec-align-ot" class="quarto-xref"><span>Section 5.4</span></a>), not a third lift. Independent type-level fits are the <strong>core</strong> sharing strategy; fused / copula-joint sharing stays in <a href="#sec-grn-appendix" class="quarto-xref"><span>Section 4.6</span></a>. <code>SCTransform</code> and <code>huge.npn</code> are <strong>not</strong> crossed with PLN. <code>BLGGM</code> is not in the product.</p>
-<p>Scripts (when implemented): <code>scripts/03_01_grn_silggm.R</code> and a PLN script still to be added. No code is given here.</p>
+<section id="sec-grn-penalty-path" class="level2" data-number="4.5">
+<h2 data-number="4.5" class="anchored" data-anchor-id="sec-grn-penalty-path"><span class="header-section-number">4.5</span> Choosing the penalty</h2>
+<p>Four displays, and only these, are used to pick the penalty for each of the three estimators. Partial-correlation <strong>weights</strong> matter, so heatmaps show the precision, not a binary adjacency.</p>
+<ol type="1">
+<li><strong>Regularisation paths.</strong> Plot each off-diagonal entry of <span class="math inline">\widehat{\boldsymbol{\Theta}}(\lambda)</span> against <span class="math inline">\lambda</span> or <span class="math inline">\log\lambda</span>. This is the classical lasso path: which edges enter as the penalty relaxes.</li>
+<li><strong>EBIC against <span class="math inline">\lambda</span>.</strong> Plot <span class="math inline">\mathrm{EBIC}_{\gamma}(\lambda)</span> against <span class="math inline">\log\lambda</span>, with a line at the minimiser <span class="citation" data-cites="foygelExtendedBayesianInformation2010">(<a href="#ref-foygelExtendedBayesianInformation2010" role="doc-biblioref">Foygel and Drton 2010</a>)</span>. Overlay <span class="math inline">\gamma\in\{0,0.25,0.5\}</span> when that hyperparameter is free. A flat valley means many penalties are equivalent.</li>
+<li><strong>Precision heatmaps along the path.</strong> At a few <span class="math inline">\lambda</span> values, including the selected one, show</li>
+</ol>
+<p><span id="eq-partial"><span class="math display">
+\rho_{gg'\mid\mathrm{rest}}
+=
+-\frac{\theta_{gg'}}{\sqrt{\theta_{gg}\theta_{g'g'}}}.
+\tag{4.9}</span></span></p>
+<p>Freeze the gene order (cluster once). Blocks that survive a stronger penalty are the stable ones. 4. <strong>Edge-count against EBIC.</strong> Put the number of edges on the horizontal axis and EBIC on the vertical axis, and mark the optimum. That is the sparsity–fit tradeoff without depending on the numerical scale of <span class="math inline">\lambda</span>.</p>
+<p>For <code>SILGGM</code>, repeat the same four pictures with the FDR level in place of <span class="math inline">\lambda</span> when a path of <code>alpha</code> is computed. For <code>PLNnetwork</code>, the horizontal axis is the penalty grid.</p>
 </section>
 <section id="sec-grn-appendix" class="level2" data-number="4.6">
-<h2 data-number="4.6" class="anchored" data-anchor-id="sec-grn-appendix"><span class="header-section-number">4.6</span> Appendix: sharing and copulas</h2>
-<section id="fused-and-joint-graphical-lasso" class="level3" data-number="4.6.1">
-<h3 data-number="4.6.1" class="anchored" data-anchor-id="fused-and-joint-graphical-lasso"><span class="header-section-number">4.6.1</span> Fused and joint graphical lasso</h3>
-<p>Related gastruloid types should share part of their graph and differ on a sparse rewiring set. The joint graphical lasso <span class="citation" data-cites="danaherJointGraphicalLasso2012">(<a href="#ref-danaherJointGraphicalLasso2012" role="doc-biblioref">Danaher et al. 2012</a>)</span> estimates <span class="math inline">\boldsymbol{\Theta}_{1},\ldots,\boldsymbol{\Theta}_{J}</span> together with a group or fused penalty. <strong>PLNFGL</strong> is the PLN observation layer plus fused glasso <span class="citation" data-cites="zhaiPLNFGLJointEstimation2026">(<a href="#ref-zhaiPLNFGLJointEstimation2026" role="doc-biblioref">Zhai et al. 2026</a>)</span>.</p>
-<p>The modelling decision — independent versus partially pooled precisions — is more consequential than glasso versus nodewise lasso. For DeCovarT the risk is shrinkage of <span class="math inline">\Delta_{j\ell}</span>. If fusion is used, keep <span class="math inline">\lambda_{2}</span> small and compare supports to the independent SILGGM / PLN fits. Full joint estimation is <strong>not</strong> the core default until we can show that rewiring of developmental neighbours is preserved.</p>
+<h2 data-number="4.6" class="anchored" data-anchor-id="sec-grn-appendix"><span class="header-section-number">4.6</span> Perspectives</h2>
+<section id="sec-gmgm" class="level3" data-number="4.6.1">
+<h3 data-number="4.6.1" class="anchored" data-anchor-id="sec-gmgm"><span class="header-section-number">4.6.1</span> Cartesian <code>GmGM</code> cannot separate within-cell edges</h3>
+<p><code>GmGM</code> replaces independent cells by a Cartesian product: gene <span class="math inline">g</span> in cell <span class="math inline">c</span> may depend on other genes in the same cell, or on the same gene in other cells, but not on an arbitrary pair <span class="math inline">(c,g)\neq(c',g')</span> <span class="citation" data-cites="andrewMakingMultiaxisGaussian2026">(<a href="#ref-andrewMakingMultiaxisGaussian2026" role="doc-biblioref">Andrew et al. 2026</a>)</span>. The precision of the vectorised matrix is a Kronecker <strong>sum</strong> of a gene precision and a cell precision. That sum forbids the cross terms that would distinguish regulation inside a cell from dependence across cells.</p>
+<p>A strong-product Gaussian graphical model is the extension that can carry both within-cell and across-cell edges. It is not available as a drop-in for this design. <a href="#fig-gmgm-extend" class="quarto-xref">Figure&nbsp;<span>4.6</span></a> sketches why labelled types still do not rescue the Cartesian support: hard cell-type blocks remove cross-type edges, but inside a type the Cartesian sum still cannot separate intracellular regulation from cell–cell dependence.</p>
+<div id="fig-gmgm-extend" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-gmgm-extend-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/gmgm_complexity.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-gmgm-extend-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4.6: Cartesian GmGM, type-specific fits, and the strong-product extension that would separate within-cell edges from across-cell edges.
+</figcaption>
+</figure>
+</div>
 </section>
-<section id="gaussian-copulas-beyond-npn-jgcgm" class="level3" data-number="4.6.2">
-<h3 data-number="4.6.2" class="anchored" data-anchor-id="gaussian-copulas-beyond-npn-jgcgm"><span class="header-section-number">4.6.2</span> Gaussian copulas beyond NPN: JGCGM</h3>
-<p>JGCGM learns several subgroup networks from scRNA-seq with a Gaussian copula and an explicit split between shared and subgroup-specific edges <span class="citation" data-cites="wuJointLearningMultiple2020">(<a href="#ref-wuJointLearningMultiple2020" role="doc-biblioref">Wu et al. 2020</a>)</span>. The authors warn against naïve NPN on counts. That is the right warning; the method is still a <strong>copula GGM</strong>, hence undirected and stationary, but it is a joint estimator (appendix) and it does not provide a PLN sampling layer. Use it as a copula-aware fused comparator if an implementation is available; do not replace PLN on UMI counts without a benchmark.</p>
-<p>Chiquet’s earlier work on latent organisation, sample heterogeneity, time-course, and multi-attribute GGMs (HDR; SIMoNe; cooperative lasso) supplies <strong>structured penalties</strong> <span class="citation" data-cites="chiquetSparsitySigncoherentGroups2012">(<a href="#ref-chiquetSparsitySigncoherentGroups2012" role="doc-biblioref">Chiquet et al. 2012</a>)</span> that could encode pathway modules. Those penalties are optional regularisers, not a second estimand.</p>
+<section id="sec-lowrank" class="level3" data-number="4.6.2">
+<h3 data-number="4.6.2" class="anchored" data-anchor-id="sec-lowrank"><span class="header-section-number">4.6.2</span> Sparse plus low-rank precisions</h3>
+<p>Unmeasured programmes can make the marginal precision dense. Chandrasekaran, Parrilo and Willsky split it into a sparse conditional graph minus a low-rank factor term <span class="citation" data-cites="chandrasekaranLatentVariableGraphical2012">(<a href="#ref-chandrasekaranLatentVariableGraphical2012" role="doc-biblioref">Chandrasekaran et al. 2012</a>)</span>,</p>
+<p><span id="eq-slr"><span class="math display">
+\boldsymbol{\Theta}_{\mathrm{marg}}
+=
+\boldsymbol{\Theta}_{\mathrm{sparse}}
+-
+\boldsymbol{L},
+\qquad
+\boldsymbol{L}\succeq 0.
+\tag{4.10}</span></span></p>
+<p>A useful reading of <span class="math inline">\boldsymbol{L}</span> is a small set of transcription factors, or of co-regulated pathways, that lower the rank of the residual dependence. <span class="math inline">\boldsymbol{L}</span> is a nuisance for DeCovarT, not a type covariance. This check is not in the <span class="math inline">3\times 2\times 2</span> product.</p>
+</section>
+<section id="fused-graphical-lasso-on-a-pln" class="level3" data-number="4.6.3">
+<h3 data-number="4.6.3" class="anchored" data-anchor-id="fused-graphical-lasso-on-a-pln"><span class="header-section-number">4.6.3</span> Fused graphical lasso on a PLN</h3>
+<p>Related types can share part of a graph. The joint graphical lasso <span class="citation" data-cites="danaherJointGraphicalLasso2012">(<a href="#ref-danaherJointGraphicalLasso2012" role="doc-biblioref">Danaher et al. 2012</a>)</span> penalises both sparsity and the gap between <span class="math inline">\theta_{gg'}^{(j)}</span> and <span class="math inline">\theta_{gg'}^{(\ell)}</span>. PLNFGL puts a Poisson-lognormal sampling layer under that fused penalty <span class="citation" data-cites="zhaiPLNFGLJointEstimation2026">(<a href="#ref-zhaiPLNFGLJointEstimation2026" role="doc-biblioref">Zhai et al. 2026</a>)</span>. Fusion can shrink away the rewiring DeCovarT is meant to keep, so it stays out of the independent-type comparison.</p>
+</section>
+<section id="other-copula-joints" class="level3" data-number="4.6.4">
+<h3 data-number="4.6.4" class="anchored" data-anchor-id="other-copula-joints"><span class="header-section-number">4.6.4</span> Other copula joints</h3>
+<p>JGCGM learns shared and subgroup-specific edges under a Gaussian copula and warns against a naive nonparanormal map on counts <span class="citation" data-cites="wuJointLearningMultiple2020">(<a href="#ref-wuJointLearningMultiple2020" role="doc-biblioref">Wu et al. 2020</a>)</span>. It does not replace <code>PLNnetwork</code> on UMI counts. Structured penalties from earlier Chiquet work <span class="citation" data-cites="chiquetSparsitySigncoherentGroups2012">(<a href="#ref-chiquetSparsitySigncoherentGroups2012" role="doc-biblioref">Chiquet et al. 2012</a>)</span> could encode pathway modules; they are optional regularisers, not a fourth core estimator.</p>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="list">
-<div id="ref-aibarScenicSinglecellRegulatory2017" class="csl-entry" role="listitem">
-Aibar, Sara, Carmen Bravo González-Blas, Thomas Moerman, et al. 2017. <span>“SCENIC: Single-Cell Regulatory Network Inference and Clustering.”</span> <em>Nature Methods</em> 14 (11): 1083–86. <a href="https://doi.org/10.1038/nmeth.4463">https://doi.org/10.1038/nmeth.4463</a>.
-</div>
 <div id="ref-andrewMakingMultiaxisGaussian2026" class="csl-entry" role="listitem">
 Andrew, Bailey, Erica L Harris, James A Poulter, David R Westhead, and Luisa Cutillo. 2026. <span>“Making Multi-Axis <span>Gaussian</span> Graphical Models Scalable to Millions of Cells.”</span> <em>Bioinformatics</em> 42 (8): btag523. <a href="https://doi.org/10.1093/bioinformatics/btag523">https://doi.org/10.1093/bioinformatics/btag523</a>.
-</div>
-<div id="ref-batardiereZeroInflationMultivariatePoisson2025" class="csl-entry" role="listitem">
-Batardière, Bastien, Julien Chiquet, François Gindraud, and Mahendra Mariadassou. 2025. <span>“Zero-Inflation in the Multivariate Poisson Lognormal Family.”</span> <em>Statistics and Computing</em> 35 (6). <a href="https://doi.org/10.1007/s11222-025-10729-0">https://doi.org/10.1007/s11222-025-10729-0</a>.
 </div>
 <div id="ref-chandrasekaranLatentVariableGraphical2012" class="csl-entry" role="listitem">
 Chandrasekaran, Venkat, Pablo A. Parrilo, and Alan S. Willsky. 2012. <span>“Latent Variable Graphical Model Selection via Convex Optimization.”</span> <em>The Annals of Statistics</em> 40 (4). <a href="https://doi.org/10.1214/11-AOS949">https://doi.org/10.1214/11-AOS949</a>.
@@ -753,11 +930,11 @@ Chiquet, Julien, Mahendra Mariadassou, and Stéphane Robin. 2025. <em>PLNmodels:
 <div id="ref-danaherJointGraphicalLasso2012" class="csl-entry" role="listitem">
 Danaher, Patrick, Pei Wang, and Daniela M. Witten. 2012. <em>The Joint Graphical Lasso for Inverse Covariance Estimation Across Multiple Classes</em>. arXiv:1111.0324. arXiv. <a href="https://doi.org/10.48550/arXiv.1111.0324">https://doi.org/10.48550/arXiv.1111.0324</a>.
 </div>
+<div id="ref-foygelExtendedBayesianInformation2010" class="csl-entry" role="listitem">
+Foygel, Rina, and Mathias Drton. 2010. <em>Extended <span>Bayesian Information Criteria</span> for <span>Gaussian Graphical Models</span></em>. arXiv:1011.6640. arXiv. <a href="https://doi.org/10.48550/arXiv.1011.6640">https://doi.org/10.48550/arXiv.1011.6640</a>.
+</div>
 <div id="ref-friedmanSparseInverseCovariance2008" class="csl-entry" role="listitem">
 Friedman, Jerome, Trevor Hastie, and Robert Tibshirani. 2008. <span>“Sparse Inverse Covariance Estimation with the Graphical Lasso.”</span> <em>Biostatistics (Oxford, England)</em> 9 (3): 432–41. <a href="https://doi.org/10.1093/biostatistics/kxm045">https://doi.org/10.1093/biostatistics/kxm045</a>.
-</div>
-<div id="ref-hafemeisterNormalizationVarianceStabilization2019" class="csl-entry" role="listitem">
-Hafemeister, Christoph, and Rahul Satija. 2019. <span>“Normalization and Variance Stabilization of Single-Cell <span class="nocase">RNA-seq</span> Data Using Regularized Negative Binomial Regression.”</span> <em>Genome Biology</em> 20 (1). <a href="https://doi.org/10.1186/s13059-019-1874-1">https://doi.org/10.1186/s13059-019-1874-1</a>.
 </div>
 <div id="ref-jankovaConfidenceIntervalsHighdimensional2015" class="csl-entry" role="listitem">
 Jankova, Jana, and Sara van de Geer. 2015. <span>“Confidence Intervals for High-Dimensional Inverse Covariance Estimation.”</span> <em>Electronic Journal of Statistics</em> 9 (1). <a href="https://doi.org/10.1214/15-EJS1031">https://doi.org/10.1214/15-EJS1031</a>.
@@ -765,11 +942,11 @@ Jankova, Jana, and Sara van de Geer. 2015. <span>“Confidence Intervals for Hig
 <div id="ref-liuNonparanormalSemiparametricEstimation2009" class="csl-entry" role="listitem">
 Liu, Han, John Lafferty, and Larry Wasserman. 2009. <span>“The Nonparanormal: Semiparametric Estimation of High Dimensional Undirected Graphs.”</span> <em>Journal of Machine Learning Research</em> 10 (80): 2295–328.
 </div>
+<div id="ref-liuGaussianGraphicalModel2013" class="csl-entry" role="listitem">
+Liu, Weidong. 2013. <em>Gaussian <span>Graphical Model Estimation</span> with <span>False Discovery Rate Control</span></em>. arXiv:1306.0976. arXiv. <a href="https://doi.org/10.48550/arXiv.1306.0976">https://doi.org/10.48550/arXiv.1306.0976</a>.
+</div>
 <div id="ref-mazumderGraphicalLassoNew2011" class="csl-entry" role="listitem">
 Mazumder, Rahul, and Trevor Hastie. 2011. <span>“The <span>Graphical Lasso</span>: <span>New Insights</span> and <span>Alternatives</span>.”</span> <em>Electronic Journal of Statistics</em> 6. <a href="https://doi.org/10.1214/12-EJS740">https://doi.org/10.1214/12-EJS740</a>.
-</div>
-<div id="ref-moermanGRNBoost2ArboretoEfficient2019" class="csl-entry" role="listitem">
-Moerman, Thomas, Sara Aibar Santos, Carmen Bravo González-Blas, et al. 2019. <span>“<span>GRNBoost2</span> and <span>Arboreto</span>: Efficient and Scalable Inference of Gene Regulatory Networks.”</span> <em>Bioinformatics</em> 35 (12): 2159–61. <a href="https://doi.org/10.1093/bioinformatics/bty916">https://doi.org/10.1093/bioinformatics/bty916</a>.
 </div>
 <div id="ref-suppingerMultimodalCharacterizationMurine2023" class="csl-entry" role="listitem">
 Suppinger, Simon, Marietta Zinner, Nadim Aizarani, et al. 2023. <span>“Multimodal Characterization of Murine Gastruloid Development.”</span> <em>Cell Stem Cell</em> 30 (6): 867–84. <a href="https://doi.org/10.1016/j.stem.2023.04.018">https://doi.org/10.1016/j.stem.2023.04.018</a>.
@@ -791,6 +968,9 @@ Zhang, Rong, Zhao Ren, and Wei Chen. 2018b. <em>SILGGM: Statistical Inference of
 </div>
 <div id="ref-zhangSparsePrecisionMatrix2014" class="csl-entry" role="listitem">
 Zhang, Teng, and Hui Zou. 2014. <span>“Sparse Precision Matrix Estimation via Lasso Penalized <span class="nocase">D-trace</span> Loss.”</span> <em>Biometrika</em> 101 (1): 103–20.
+</div>
+<div id="ref-zhaoHugePackageHighdimensional" class="csl-entry" role="listitem">
+Zhao, Tuo, Han Liu, Kathryn Roeder, John Lafferty, and Larry Wasserman. 2012. <span>“The Huge <span>Package</span> for <span class="nocase">High-dimensional Undirected Graph Estimation</span> in <span>R</span>.”</span> <em>Journal of Machine Learning Research</em> 13 (37): 1059–62. <a href="https://jmlr.org/papers/v13/zhao12a.html">https://jmlr.org/papers/v13/zhao12a.html</a>.
 </div>
 <div id="ref-R-huge" class="csl-entry" role="listitem">
 Zhao, Tuo, Han Liu, Kathryn Roeder, John Lafferty, and Larry Wasserman. 2022. <em>Huge: High-Dimensional Undirected Graph Estimation</em>. <a href="https://CRAN.R-project.org/package=huge">https://CRAN.R-project.org/package=huge</a>.

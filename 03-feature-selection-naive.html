@@ -346,14 +346,14 @@ window.Quarto = {
   <ul>
   <li><a href="#sec-fs-naive" id="toc-sec-fs-naive" class="nav-link active" data-scroll-target="#sec-fs-naive"><span class="header-section-number">3.1</span> Building <span class="math inline">\mathcal{G}_{0}</span></a></li>
   <li><a href="#sec-fs-hvg" id="toc-sec-fs-hvg" class="nav-link" data-scroll-target="#sec-fs-hvg"><span class="header-section-number">3.2</span> Highly variable genes as a signal-to-noise rank</a>
-  <ul class="collapse">
+  <ul>
   <li><a href="#total-biological-and-technical-pieces" id="toc-total-biological-and-technical-pieces" class="nav-link" data-scroll-target="#total-biological-and-technical-pieces"><span class="header-section-number">3.2.1</span> Total, biological, and technical pieces</a></li>
   </ul></li>
   <li><a href="#sec-fs-markers" id="toc-sec-fs-markers" class="nav-link" data-scroll-target="#sec-fs-markers"><span class="header-section-number">3.3</span> Marker genes</a></li>
   <li><a href="#sec-fs-deg" id="toc-sec-fs-deg" class="nav-link" data-scroll-target="#sec-fs-deg"><span class="header-section-number">3.4</span> Differential expression — only with biological replication</a></li>
   <li><a href="#what-we-would-actually-run" id="toc-what-we-would-actually-run" class="nav-link" data-scroll-target="#what-we-would-actually-run"><span class="header-section-number">3.5</span> What we would actually run</a></li>
   <li><a href="#sec-fs-perspective" id="toc-sec-fs-perspective" class="nav-link" data-scroll-target="#sec-fs-perspective"><span class="header-section-number">3.6</span> Perspectives: differential networks</a>
-  <ul class="collapse">
+  <ul>
   <li><a href="#sec-fs-diffnet" id="toc-sec-fs-diffnet" class="nav-link" data-scroll-target="#sec-fs-diffnet"><span class="header-section-number">3.6.1</span> Comparing supports, or estimating the difference</a></li>
   <li><a href="#indeed" id="toc-indeed" class="nav-link" data-scroll-target="#indeed"><span class="header-section-number">3.6.2</span> <code>INDEED</code></a></li>
   <li><a href="#markov-boundaries" id="toc-markov-boundaries" class="nav-link" data-scroll-target="#markov-boundaries"><span class="header-section-number">3.6.3</span> Markov boundaries</a></li>
@@ -514,8 +514,8 @@ Figure&nbsp;3.4: Residual variance after a library-size NB null. Technical varia
 </div>
 </div>
 </div>
-<p>There is <strong>no</strong> calibrated differential-expression <span class="math inline">p</span>-value here: one technical replicate cannot support <code>DESeq2</code> (<a href="#nte-pseudoreplication" class="quarto-xref">Note&nbsp;<span>3.3</span></a>). The between-type sum of squares is a <strong>ranking score</strong>.</p>
-<p>Use <code>Seurat::SCTransform()</code> with Pearson residuals. That <strong>is</strong> the residual transformation. Then <strong>do not</strong> stop at Seurat’s default variable features: those rank genes by <strong>overall</strong> residual variance, which mixes within-type heterogeneity into the score.</p>
+<p>There is <strong>no</strong> calibrated differential-expression <span class="math inline">p</span>-value here: one technical replicate cannot support <code>DESeq2</code> (<a href="#nte-pseudoreplication" class="quarto-xref">Note&nbsp;<span>3.4</span></a>). The between-type sum of squares is a <strong>ranking score</strong>.</p>
+<p>Use <code>Seurat::SCTransform()</code> with Pearson residuals (<code>vst.flavor = "v2"</code>). That <strong>is</strong> the residual transformation used to rank genes (<a href="#nte-sct-v1-v2" class="quarto-xref">Note&nbsp;<span>3.2</span></a>).</p>
 <p>After <code>SCTransform</code>, pull the residual matrix and compute <a href="#eq-fs-ss" class="quarto-xref">Equation&nbsp;<span>3.3</span></a> by the labelled type <span class="math inline">j</span>. Keep on the order of <span class="math inline">2{,}000</span> genes in <span class="math inline">\mathcal{G}_{0}</span> before any GGM <span class="citation" data-cites="friedmanSparseInverseCovariance2008">(<a href="#ref-friedmanSparseInverseCovariance2008" role="doc-biblioref">Friedman et al. 2008</a>)</span>.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Sketch: Pearson residuals for ranking only; export counts to the GGM.</span></span>
@@ -539,17 +539,51 @@ Figure&nbsp;3.4: Residual variance after a library-size NB null. Technical varia
 <span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>})</span>
 <span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>snr <span class="ot">&lt;-</span> ss_between <span class="sc">/</span> <span class="fu">pmax</span>(ss_within, .Machine<span class="sc">$</span>double.eps)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+<div id="nte-sct-v1-v2" class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note&nbsp;3.2: :information_source: <code>vst.flavor = "v2"</code> still returns Pearson residuals
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Both flavours of <code>SCTransform</code> assume <span class="math inline">Y_{cg}\sim\mathrm{NB}(\mu_{cg},\theta_{g})</span> and store Pearson residuals. What changes is the fit that produces <span class="math inline">\hat\mu_{cg}</span> and <span class="math inline">\hat\theta_{g}</span> (<a href="#fig-sct-v1-v2" class="quarto-xref">Figure&nbsp;<span>3.5</span></a>).</p>
+<p>In v1 the depth slope is a gene-wise coefficient,</p>
+<p><span class="math display">
+\log\mu_{cg}=\beta_{0g}+\beta_{1g}\log_{10}(n_{c}).
+</span></p>
+<p>In v2 that slope is fixed at <span class="math inline">\ln 10</span>, so library size is an offset <span class="citation" data-cites="choudharyComparisonEvaluationStatistical2022 lauseAnalyticPearsonResiduals2021">(<a href="#ref-choudharyComparisonEvaluationStatistical2022" role="doc-biblioref">Choudhary and Satija 2022</a>; <a href="#ref-lauseAnalyticPearsonResiduals2021" role="doc-biblioref">Lause et al. 2021</a>)</span>:</p>
+<p><span class="math display">
+\log\mu_{cg}=\beta_{0g}+\log n_{c},
+\qquad
+\mu_{cg}=e^{\beta_{0g}}\,n_{c}.
+</span></p>
+<p>Doubling the UMI depth then doubles every gene’s expected count. v2 also regularises dispersions with the <code>glmGamPoi</code> offset route, treats genes with no evidence of overdispersion as Poisson (<span class="math inline">\theta_{g}=\infty</span>), and floors the Pearson denominator at a minimum variance (<code>min_variance = "umi_median"</code>) before the separate residual clip. The ranking above uses those v2 residuals; it does not use Seurat’s variable-feature shortlist.</p>
+<div id="fig-sct-v1-v2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-sct-v1-v2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/sctransform_v1_versus_v2.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-sct-v1-v2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.5: Shared negative-binomial model, and the v1 gene-wise depth slope versus the v2 offset.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
 <div id="nte-hvg-not-gaussian" class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Note&nbsp;3.2: :information_source: HVGs are not a GGM input
+Note&nbsp;3.3: :information_source: HVGs are not a GGM input
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Pearson residuals are closer to homoscedastic than raw UMI counts, which is why they are popular before PCA. They are still a <strong>nonlinear residualisation</strong>. Feeding them indiscriminately into <code>SILGGM</code> silently changes the estimand of <span class="math inline">\boldsymbol{\Theta}_{j}</span> away from the latent Gaussian that DeCovarT wants at the <strong>population</strong> level. If a Gaussian GGM is used, prefer a copula / nonparanormal map on the same gene set (<a href="02-grn-graphical-lasso.html#sec-silggm" class="quarto-xref"><span>Section 4.3.1</span></a>), or better a Poisson-lognormal latent Gaussian (<a href="02-grn-graphical-lasso.html#sec-pln" class="quarto-xref"><span>Section 4.3.2</span></a>).</p>
+<p>Pearson residuals are closer to homoscedastic than raw UMI counts, which is why they are popular before PCA. They are still a <strong>nonlinear residualisation</strong>. Feeding them indiscriminately into <code>SILGGM</code> silently changes the estimand of <span class="math inline">\boldsymbol{\Theta}_{j}</span> away from the latent Gaussian that DeCovarT wants at the <strong>population</strong> level. If a Gaussian GGM is used, prefer a copula / nonparanormal map on the same gene set (<a href="02-grn-graphical-lasso.html#sec-silggm" class="quarto-xref"><span>Section 4.3.2</span></a>), or better a Poisson-lognormal latent Gaussian (<a href="02-grn-graphical-lasso.html#sec-pln" class="quarto-xref"><span>Section 4.3.3</span></a>).</p>
 </div>
 </div>
 </section>
@@ -570,7 +604,7 @@ Note&nbsp;3.2: :information_source: HVGs are not a GGM input
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Warning&nbsp;3.3: :warning: Technical pseudo-bulks are not biological replicates
+Warning&nbsp;3.4: :warning: Technical pseudo-bulks are not biological replicates
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -595,12 +629,12 @@ Warning&nbsp;3.3: :warning: Technical pseudo-bulks are not biological replicates
 <section id="sec-fs-diffnet" class="level3" data-number="3.6.1">
 <h3 data-number="3.6.1" class="anchored" data-anchor-id="sec-fs-diffnet"><span class="header-section-number">3.6.1</span> Comparing supports, or estimating the difference</h3>
 <p>DeCovarT benefits from <strong>rewiring</strong> between populations. A gene that changes neighbourhood in <span class="math inline">\boldsymbol{\Theta}_{j}</span> is a better candidate than a gene that is merely highly variable.</p>
-<p><strong>Fit every <span class="math inline">\boldsymbol{\Theta}_{j}</span>, then compare supports.</strong> Independent glasso / <code>SILGGM</code> fits (<a href="02-grn-graphical-lasso.html#sec-silggm" class="quarto-xref"><span>Section 4.3.1</span></a>) yield per-type edges; the symmetric difference of supports ranks genes by differential connectivity. The difference of two biased estimators is not a debiased estimator of <span class="math inline">\Delta_{j\ell}=\boldsymbol{\Theta}_{j}-\boldsymbol{\Theta}_{\ell}</span>.</p>
+<p><strong>Fit every <span class="math inline">\boldsymbol{\Theta}_{j}</span>, then compare supports.</strong> Independent glasso / <code>SILGGM</code> fits (<a href="02-grn-graphical-lasso.html#sec-silggm" class="quarto-xref"><span>Section 4.3.2</span></a>) yield per-type edges; the symmetric difference of supports ranks genes by differential connectivity. The difference of two biased estimators is not a debiased estimator of <span class="math inline">\Delta_{j\ell}=\boldsymbol{\Theta}_{j}-\boldsymbol{\Theta}_{\ell}</span>.</p>
 <p><strong>Estimate <span class="math inline">\Delta_{j\ell}</span> directly.</strong> D-trace methods target the difference of precisions without necessarily reconstructing both graphs first. Zhang and Zou <span class="citation" data-cites="zhangSparsePrecisionMatrix2014">(<a href="#ref-zhangSparsePrecisionMatrix2014" role="doc-biblioref">Zhang and Zou 2014</a>)</span> introduced the lasso-penalised D-trace loss for a single sparse precision; the differential-network extension <span class="citation" data-cites="yuanDifferentialNetworkAnalysis2017">(<a href="#ref-yuanDifferentialNetworkAnalysis2017" role="doc-biblioref">Yuan et al. 2017</a>)</span> estimates <span class="math inline">\Delta_{j\ell}</span>. Empirically, D-trace is competitive when the <strong>difference</strong> is sparser than either graph <span class="citation" data-cites="plaksienkoMethodsDifferentialNetwork2025">(<a href="#ref-plaksienkoMethodsDifferentialNetwork2025" role="doc-biblioref">Plaksienko et al. 2025</a>)</span>. It still does <strong>not</strong> produce a pair of SPD precisions. A workable <strong>proposal</strong> is: use D-trace to nominate rewiring genes, then estimate each <span class="math inline">\boldsymbol{\Theta}_{j}</span> on that panel with a method from <a href="02-grn-graphical-lasso.html#sec-grn-top4" class="quarto-xref"><span>Section 4.4</span></a>.</p>
 </section>
 <section id="indeed" class="level3" data-number="3.6.2">
 <h3 data-number="3.6.2" class="anchored" data-anchor-id="indeed"><span class="header-section-number">3.6.2</span> <code>INDEED</code></h3>
-<p><code>INDEED</code> multiplies a DE <span class="math inline">p</span>-value by a permutation-filtered change in partial correlation <span class="citation" data-cites="zuoINDEEDIntegratedDifferential2016">(<a href="#ref-zuoINDEEDIntegratedDifferential2016" role="doc-biblioref">Zuo et al. 2016</a>)</span>. On this reference the DE <span class="math inline">p</span>-value assumes biological replication (<a href="#nte-pseudoreplication" class="quarto-xref">Note&nbsp;<span>3.3</span></a>), and the permutation null among cells of one gastruloid is a technical null. Use it, if at all, as a ranking heuristic with <span class="math inline">p_{g}^{\mathrm{DE}}</span> replaced by a fold-change or between-type score.</p>
+<p><code>INDEED</code> multiplies a DE <span class="math inline">p</span>-value by a permutation-filtered change in partial correlation <span class="citation" data-cites="zuoINDEEDIntegratedDifferential2016">(<a href="#ref-zuoINDEEDIntegratedDifferential2016" role="doc-biblioref">Zuo et al. 2016</a>)</span>. On this reference the DE <span class="math inline">p</span>-value assumes biological replication (<a href="#nte-pseudoreplication" class="quarto-xref">Note&nbsp;<span>3.4</span></a>), and the permutation null among cells of one gastruloid is a technical null. Use it, if at all, as a ranking heuristic with <span class="math inline">p_{g}^{\mathrm{DE}}</span> replaced by a fold-change or between-type score.</p>
 </section>
 <section id="markov-boundaries" class="level3" data-number="3.6.3">
 <h3 data-number="3.6.3" class="anchored" data-anchor-id="markov-boundaries"><span class="header-section-number">3.6.3</span> Markov boundaries</h3>
@@ -608,6 +642,9 @@ Warning&nbsp;3.3: :warning: Technical pseudo-bulks are not biological replicates
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-choudharyComparisonEvaluationStatistical2022" class="csl-entry" role="listitem">
+Choudhary, Saket, and Rahul Satija. 2022. <span>“Comparison and Evaluation of Statistical Error Models for <span class="nocase">scRNA-seq</span>.”</span> <em>Genome Biology</em> 23 (1): 27. <a href="https://doi.org/10.1186/s13059-021-02584-9">https://doi.org/10.1186/s13059-021-02584-9</a>.
+</div>
 <div id="ref-crowellMuscatDetectsSubpopulationspecific2020" class="csl-entry" role="listitem">
 Crowell, Helena L., Charlotte Soneson, Pierre-Luc Germain, et al. 2020. <span>“Muscat Detects Subpopulation-Specific State Transitions from Multi-Sample Multi-Condition Single-Cell Transcriptomics Data.”</span> <em>Nature Communications</em> 11: 6077. <a href="https://doi.org/10.1038/s41467-020-19894-4">https://doi.org/10.1038/s41467-020-19894-4</a>.
 </div>
@@ -628,6 +665,9 @@ Jin, Haijing, and Zhandong Liu. 2021. <span>“A Benchmark for <span class="noca
 </div>
 <div id="ref-kollerProbabilisticGraphicalModels2009" class="csl-entry" role="listitem">
 Koller, Daphne, and Nir Friedman. 2009. <em>Probabilistic <span>Graphical Models</span>: <span>Principles</span> and <span>Techniques</span></em>. Edited by Francis Bach. MIT Press.
+</div>
+<div id="ref-lauseAnalyticPearsonResiduals2021" class="csl-entry" role="listitem">
+Lause, Jan, Philipp Berens, and Dmitry Kobak. 2021. <span>“Analytic <span>Pearson</span> Residuals for Normalization of Single-Cell <span class="nocase">RNA-seq UMI</span> Data.”</span> <em>Genome Biology</em> 22 (1): 258. <a href="https://doi.org/10.1186/s13059-021-02451-7">https://doi.org/10.1186/s13059-021-02451-7</a>.
 </div>
 <div id="ref-loveModeratedEstimationFold2014" class="csl-entry" role="listitem">
 Love, Michael I., Wolfgang Huber, and Simon Anders. 2014. <span>“Moderated Estimation of Fold Change and Dispersion for <span class="nocase">RNA-seq</span> Data with <span>DESeq2</span>.”</span> <em>Genome Biology</em> 15 (12): 550. <a href="https://doi.org/10.1186/s13059-014-0550-8">https://doi.org/10.1186/s13059-014-0550-8</a>.

@@ -311,19 +311,19 @@ window.Quarto = {
   <ul>
   <li><a href="#sec-metrics-scope" id="toc-sec-metrics-scope" class="nav-link active" data-scroll-target="#sec-metrics-scope"><span class="header-section-number">6.1</span> What we are <em>not</em> claiming</a></li>
   <li><a href="#sec-metrics-stat" id="toc-sec-metrics-stat" class="nav-link" data-scroll-target="#sec-metrics-stat"><span class="header-section-number">6.2</span> Statistical robustness and alignment</a>
-  <ul class="collapse">
+  <ul>
   <li><a href="#resampling-and-noise" id="toc-resampling-and-noise" class="nav-link" data-scroll-target="#resampling-and-noise"><span class="header-section-number">6.2.1</span> Resampling and noise</a></li>
   <li><a href="#likelihood-and-information-criteria" id="toc-likelihood-and-information-criteria" class="nav-link" data-scroll-target="#likelihood-and-information-criteria"><span class="header-section-number">6.2.2</span> Likelihood and information criteria</a></li>
   <li><a href="#distances-between-type-level-gaussians" id="toc-distances-between-type-level-gaussians" class="nav-link" data-scroll-target="#distances-between-type-level-gaussians"><span class="header-section-number">6.2.3</span> Distances between type-level Gaussians</a></li>
   </ul></li>
   <li><a href="#sec-metrics-topo" id="toc-sec-metrics-topo" class="nav-link" data-scroll-target="#sec-metrics-topo"><span class="header-section-number">6.3</span> Topological comparison</a>
-  <ul class="collapse">
+  <ul>
   <li><a href="#skeleton-scores-beeline-reduced-to-undirected" id="toc-skeleton-scores-beeline-reduced-to-undirected" class="nav-link" data-scroll-target="#skeleton-scores-beeline-reduced-to-undirected"><span class="header-section-number">6.3.1</span> Skeleton scores (BEELINE, reduced to undirected)</a></li>
   <li><a href="#graph-summaries-that-do-not-need-a-reference" id="toc-graph-summaries-that-do-not-need-a-reference" class="nav-link" data-scroll-target="#graph-summaries-that-do-not-need-a-reference"><span class="header-section-number">6.3.2</span> Graph summaries that do not need a reference</a></li>
   <li><a href="#sec-metrics-viz" id="toc-sec-metrics-viz" class="nav-link" data-scroll-target="#sec-metrics-viz"><span class="header-section-number">6.3.3</span> Visualisations</a></li>
   </ul></li>
   <li><a href="#sec-metrics-knowledge" id="toc-sec-metrics-knowledge" class="nav-link" data-scroll-target="#sec-metrics-knowledge"><span class="header-section-number">6.4</span> Knowledge-driven scoring</a>
-  <ul class="collapse">
+  <ul>
   <li><a href="#gretas-three-buckets-restricted-to-undirected-transcriptomics" id="toc-gretas-three-buckets-restricted-to-undirected-transcriptomics" class="nav-link" data-scroll-target="#gretas-three-buckets-restricted-to-undirected-transcriptomics"><span class="header-section-number">6.4.1</span> GRETA’s three buckets, restricted to undirected transcriptomics</a></li>
   <li><a href="#sec-metrics-integer" id="toc-sec-metrics-integer" class="nav-link" data-scroll-target="#sec-metrics-integer"><span class="header-section-number">6.4.2</span> Integer programmes and Boolean models</a></li>
   </ul></li>
@@ -412,7 +412,7 @@ Figure&nbsp;6.1: Three evaluation families for undirected cell-type GGMs, plus t
 <li><strong>Random seeds</strong> for stochastic estimators (<code>GmGM</code>, Bayesian graphs, boosting). GRETA reported that some multimodal methods reverse high-weight edges across seeds; a GGM that needs a seed should publish edge-overlap across seeds.</li>
 <li><strong>Observation-model contamination</strong> (Gaussian, <span class="math inline">t_{\nu}</span>, PLN, extra zeros) belongs with <a href="04-sensitivity-misspecification.html#sec-sensitivity" class="quarto-xref"><span>Section 10.1</span></a>, not as a graph-recovery score.</li>
 </ul>
-<p>Biological (multi-organoid) bootstrap is <strong>unavailable</strong>. Reporting a bootstrap interval as if it were between-experiment uncertainty would repeat the pseudoreplication error of <a href="03-feature-selection-naive.html#nte-pseudoreplication" class="quarto-xref">Note&nbsp;<span>3.3</span></a>.</p>
+<p>Biological (multi-organoid) bootstrap is <strong>unavailable</strong>. Reporting a bootstrap interval as if it were between-experiment uncertainty would repeat the pseudoreplication error of <a href="03-feature-selection-naive.html#nte-pseudoreplication" class="quarto-xref">Note&nbsp;<span>3.4</span></a>.</p>
 </section>
 <section id="likelihood-and-information-criteria" class="level3" data-number="6.2.2">
 <h3 data-number="6.2.2" class="anchored" data-anchor-id="likelihood-and-information-criteria"><span class="header-section-number">6.2.2</span> Likelihood and information criteria</h3>
@@ -455,7 +455,7 @@ Note&nbsp;6.1: :information_source: Compare laws on the DeCovarT scale
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>KL between NPN-space Gaussians is not KL between count-scale pseudo-bulks. After each estimator has exported <a href="02-grn-graphical-lasso.html#eq-grn-export" class="quarto-xref">Equation&nbsp;<span>4.6</span></a>, compute KL / Hellinger / <span class="math inline">W_{2}</span> / MixSim on <strong>that</strong> Gaussian, the one that enters the convolution. Otherwise a “better” SILGGM graph can win on NPN likelihood and lose as a deconvolution prior.</p>
+<p>KL between NPN-space Gaussians is not KL between count-scale pseudo-bulks. After each estimator has exported <a href="02-grn-graphical-lasso.html#eq-grn-export" class="quarto-xref">Equation&nbsp;<span>4.8</span></a>, compute KL / Hellinger / <span class="math inline">W_{2}</span> / MixSim on <strong>that</strong> Gaussian, the one that enters the convolution. Otherwise a “better” SILGGM graph can win on NPN likelihood and lose as a deconvolution prior.</p>
 </div>
 </div>
 </section>

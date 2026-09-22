@@ -315,7 +315,7 @@ window.Quarto = {
 
 <section id="sec-sensitivity" class="level2" data-number="10.1">
 <h2 data-number="10.1" class="anchored" data-anchor-id="sec-sensitivity"><span class="header-section-number">10.1</span> Contaminating <span class="math inline">\boldsymbol{\Theta}_{j}</span></h2>
-<p>Starting from the fitted sparse precisions (<a href="02-grn-graphical-lasso.html#eq-grn-export" class="quarto-xref">Equation&nbsp;<span>4.6</span></a>), apply the misspecification factors described in DeCovarT <code>vignettes/supp-S5-misspecification.qmd</code>:</p>
+<p>Starting from the fitted sparse precisions (<a href="02-grn-graphical-lasso.html#eq-grn-export" class="quarto-xref">Equation&nbsp;<span>4.8</span></a>), apply the misspecification factors described in DeCovarT <code>vignettes/supp-S5-misspecification.qmd</code>:</p>
 <ol type="1">
 <li>Observation noise (Gaussian, <span class="math inline">t_\nu</span>, PLN, contaminated Gaussian)</li>
 <li>Missing reference component (0%, 2%, 10%)</li>
@@ -324,7 +324,7 @@ window.Quarto = {
 <li>Outlier genes</li>
 <li>Wrong covariance reference (perturb or subsample the glasso / PLN fit)</li>
 </ol>
-<p>Zero-inflated or hurdle observation models belong <strong>here</strong>, as a contamination of the sampling layer, not as the default GRN (<a href="02-grn-graphical-lasso.html#nte-drop-zico" class="quarto-xref">Note&nbsp;<span>4.3</span></a>).</p>
+<p>Zero-inflated or hurdle observation models belong <strong>here</strong>, as a contamination of the sampling layer, not as the default GRN (<a href="02-grn-graphical-lasso.html#nte-drop-zico" class="quarto-xref">Note&nbsp;<span>4.5</span></a>).</p>
 <p>Template: <code>scripts/05_01_sensitivity_precision_contamination.R</code>.</p>
 <p>Compare <code>DeCovarT::deconvolute_ratios()</code> to mean-only baselines on the <strong>same</strong> genes and mixtures. Pre-declare estimands and Monte Carlo error as in the package synthetic-scenarios vignette <code>{#sec-nmeth}</code>.</p>
 
