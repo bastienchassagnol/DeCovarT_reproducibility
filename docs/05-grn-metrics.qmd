@@ -144,10 +144,9 @@ misclassification probabilities [@melnykovMixSimPackageSimulating2012;
 are the right “can DeCovarT tell these types apart?” scores. They are
 **not** graph metrics; they are metrics on the generative object.
 
-**Bures–Wasserstein** (@sec-align-ot) splits mean displacement from
-covariance geometry. Use it both as a type-separation diagnostic and as
-an **alignment** loss between single-cell clouds and type-level
-Gaussians.
+**Bures–Wasserstein** (@sec-align-ot) is a perspective metric. It splits
+mean displacement from covariance geometry when an external population
+Gaussian is available.
 
 ::: {#nte-metrics-scale .callout-note}
 ## :information_source: Compare laws on the DeCovarT scale
