@@ -7,7 +7,7 @@ in the scripts; the chapters are theory, design, and criticism of how
 those scripts should be run.
 
 The scientific target is DeCovarT's cell-type Gaussians: sparse
-precisions $\boldsymbol{\Theta}_{j}\equiv\boldsymbol{\Sigma}_{j}^{-1}$ and means
+precisions $\boldsymbol{\Omega}_{j}\equiv\boldsymbol{\Sigma}_{j}^{-1}$ and means
 $\boldsymbol{\mu}_{\cdot j}$, estimated from labelled single-cell
 transcriptomes and plugged into the bulk convolution. Indices follow
 the article Methods: gene $g=1,\ldots,G$, cell type $j=1,\ldots,J$,
@@ -34,7 +34,7 @@ flowchart TD
   B --> C1["huge graphical lasso"]
   B --> C2["SILGGM after NPN, global FDR"]
   B --> C3["PLNnetwork"]
-  C1 --> T["Independent Theta_j,t at 48 h, 72 h, 96 h"]
+  C1 --> T["Independent Omega_j,t at 48 h, 72 h, 96 h"]
   C2 --> T
   C3 --> T
   T --> L1["Affine Gaussian aggregation"]

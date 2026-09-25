@@ -36,7 +36,7 @@ rewiring.
 
 In a gastruloid continuum $\kappa_{2}$ is intrinsically large. Two
 closely related types can share nearly collinear means and still differ
-in $\boldsymbol{\Theta}_{j}$. Mean-only pruning then under-represents
+in $\boldsymbol{\Omega}_{j}$. Mean-only pruning then under-represents
 adjacent or low-abundance states — exactly the types whose **rewiring**
 DeCovarT is meant to exploit. Use $\kappa$ as a **diagnostic**, not as
 the sole selector.
@@ -92,7 +92,7 @@ cohort.
 ```{r}
 #| label: nsga2-sketch
 #| eval: false
-# Sketch: two-objective NSGA-II after Theta_j has been fit.
+# Sketch: two-objective NSGA-II after Omega_j has been fit.
 # fitness <- function(mask) {
 #   g <- which(mask > 0.5)
 #   kappa <- kappa(mu[g, ], exact = TRUE)
@@ -108,10 +108,10 @@ cohort.
 ## What we would actually run (optional stage)
 
 1.  Start from $\mathcal{G}_{0}$ (@sec-fs-hvg).
-2.  Fit $\boldsymbol{\Theta}_{j}$ with a core method (@sec-grn-top4).
+2.  Fit $\boldsymbol{\Omega}_{j}$ with a core method (@sec-grn-top4).
 3.  NSGA-II on $\kappa_{2}(\boldsymbol{\mu}_{\mathcal{G}})$ and MixSim
     $\overline{\omega}$. Keep the Pareto set.
 4.  Export linear-scale $\boldsymbol{\mu}_{\mathcal{G}}$ and
-    $\boldsymbol{\Theta}_{j}$ into DeCovarT.
+    $\boldsymbol{\Omega}_{j}$ into DeCovarT.
 
 Script template: `scripts/04_02_*.R`.

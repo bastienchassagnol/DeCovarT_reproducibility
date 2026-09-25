@@ -2,12 +2,19 @@ project:
   type: book
   output-dir: _book
 
+# GitHub shortcodes such as :warning: and :information_source:
+from: markdown+emoji
+
 book:
   title: "DeCovarT reproducibility"
   subtitle: "Gastruloid GRNs, feature panels, and sensitivity analyses"
   author: "Bastien Chassagnol"
   date: today
   page-navigation: true
+  repo-url: https://github.com/bastienchassagnol/DeCovarT_reproducibility
+  repo-branch: main
+  repo-subdir: docs
+  repo-actions: [edit, source, issue]
   chapters:
     - index.qmd
     - part: "Biological use case"
@@ -30,11 +37,25 @@ book:
   appendices:
     - A1-separation-criteria.qmd
   search: true
+  navbar:
+    search: true
+    right:
+      - icon: github
+        href: https://github.com/bastienchassagnol/DeCovarT_reproducibility
+        aria-label: GitHub repository
 
 bibliography:
   - ../bibliography/packages.bib
   - ../bibliography/REFERENCES.bib
 link-citations: true
+
+filters:
+  - pseudocode
+
+pseudocode:
+  caption-prefix: "Algorithm"
+  reference-prefix: "Algorithm"
+  caption-number: true
 
 # freeze: auto stores executed output in docs/_freeze (commit that folder).
 # https://quarto.org/docs/projects/code-execution.html#freeze
@@ -46,12 +67,18 @@ execute:
 
 format:
   html:
-    theme: cosmo
+    theme:
+      light: cosmo
+      dark: darkly
     toc: true
     toc-depth: 4
     number-sections: true
     number-depth: 3
     html-math-method: katex
+    include-in-header:
+      text: |
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css" />
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
   # pdf:
   #   documentclass: scrreprt
   #   toc: true

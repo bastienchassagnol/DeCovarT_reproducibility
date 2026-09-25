@@ -9,7 +9,7 @@ can be estimated. Genes are scored from one labelled single-cell
 reference, used as a **signature**, not from a multi-sample atlas.
 Global ranks (highly variable genes) and a short knowledge-driven marker
 list both remove genes from the whole transcriptome. The all-versus-all
-refinement that uses $\boldsymbol{\Theta}_{j}$ comes **after** GRN
+refinement that uses $\boldsymbol{\Omega}_{j}$ comes **after** GRN
 inference (@sec-fs-advanced).
 
 Notation: gene $g=1,\ldots,G$; cell type $j=1,\ldots,J$; cell
@@ -44,8 +44,8 @@ map [@sturmComprehensiveEvaluationTranscriptomebased2019;
 @jinBenchmarkRNAseqDeconvolution2021;
 @hoffmannRobustComputationalReconstitution2006]. Use residualisation
 only to **rank** genes; export DeCovarT moments on the linear scale.
-The probabilistic reason is Jensen's inequality
-(@nte-jensen-transform, @nte-npn-moments).
+Non-affine maps (logarithms, Pearson residuals, nonparanormal scores)
+change the estimand by Jensen's inequality.
 :::
 
 ## Highly variable genes as a signal-to-noise rank {#sec-fs-hvg}
@@ -227,7 +227,7 @@ versus the v2 offset.](images/sctransform_v1_versus_v2.png){#fig-sct-v1-v2}
 Pearson residuals are closer to homoscedastic than raw UMI counts,
 which is why they are popular before PCA. They are still a **nonlinear
 residualisation**. Feeding them indiscriminately into `SILGGM` silently
-changes the estimand of $\boldsymbol{\Theta}_{j}$ away from the latent
+changes the estimand of $\boldsymbol{\Omega}_{j}$ away from the latent
 Gaussian that DeCovarT wants at the **population** level. If a Gaussian
 GGM is used, prefer a copula / nonparanormal map on the same gene set
 (@sec-silggm), or better a Poisson-lognormal latent Gaussian
@@ -303,14 +303,14 @@ Full algebraic detail of `INDEED` and D-trace lives in DeCovarT
 ### Comparing supports, or estimating the difference {#sec-fs-diffnet}
 
 DeCovarT benefits from **rewiring** between populations. A gene that
-changes neighbourhood in $\boldsymbol{\Theta}_{j}$ is a better candidate
+changes neighbourhood in $\boldsymbol{\Omega}_{j}$ is a better candidate
 than a gene that is merely highly variable.
 
-**Fit every $\boldsymbol{\Theta}_{j}$, then compare supports.** Independent
+**Fit every $\boldsymbol{\Omega}_{j}$, then compare supports.** Independent
 glasso / `SILGGM` fits (@sec-silggm) yield per-type edges; the symmetric
 difference of supports ranks genes by differential connectivity. The
 difference of two biased estimators is not a debiased estimator of
-$\Delta_{j\ell}=\boldsymbol{\Theta}_{j}-\boldsymbol{\Theta}_{\ell}$.
+$\Delta_{j\ell}=\boldsymbol{\Omega}_{j}-\boldsymbol{\Omega}_{\ell}$.
 
 **Estimate $\Delta_{j\ell}$ directly.** D-trace methods target the
 difference of precisions without necessarily reconstructing both graphs
@@ -323,7 +323,7 @@ $\Delta_{j\ell}$. Empirically, D-trace is competitive when the
 [@plaksienkoMethodsDifferentialNetwork2025]. It still does **not**
 produce a pair of SPD precisions. A workable **proposal** is: use
 D-trace to nominate rewiring genes, then estimate each
-$\boldsymbol{\Theta}_{j}$ on that panel with a method from @sec-grn-top4.
+$\boldsymbol{\Omega}_{j}$ on that panel with a method from @sec-grn-top4.
 
 ### `INDEED`
 
@@ -339,7 +339,7 @@ between-type score.
 
 Once a GGM exists, seeds (markers, high signal-to-noise genes, D-trace
 hits) can be grown by undirected neighbours
-$\{g':\theta_{gg'}\neq 0\}$. On a minimal undirected I-map that neighbour
+$\{g':\omega_{gg'}\neq 0\}$. On a minimal undirected I-map that neighbour
 set is the **Markov boundary**, the smallest Markov blanket
 [@pearlProbabilisticReasoningIntelligent1988;
 @kollerProbabilisticGraphicalModels2009]. That is undirected

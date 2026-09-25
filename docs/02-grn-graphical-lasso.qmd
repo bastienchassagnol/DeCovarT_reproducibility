@@ -11,7 +11,7 @@ $$
 \sim
 \mathcal{N}_{G}\bigl(\boldsymbol{\mu}_{\cdot j},\,\boldsymbol{\Sigma}_{j}\bigr),
 \qquad
-\boldsymbol{\Theta}_{j}
+\boldsymbol{\Omega}_{j}
 \equiv
 \boldsymbol{\Sigma}_{j}^{-1}
 \ \text{sparse},
@@ -19,11 +19,27 @@ $$ {#eq-grn-estimand}
 
 with undirected edges encoding conditional dependence
 [@friedmanSparseInverseCovariance2008; @mazumderGraphicalLassoNew2011].
-Single-cell UMI profiles are the **only observations**. 
+We write $\boldsymbol{\Omega}=\boldsymbol{\Sigma}^{-1}$ for the precision
+and keep $\theta$ for a generic parameter, not for a precision entry.
+Hats, checks and asterisks distinguish estimators from the truth:
 
+- $\boldsymbol{\Omega}^{\ast}$ (entries $\omega_{gg'}^{\ast}$) is the
+  **true** precision;
+- $\widehat{\boldsymbol{\Omega}}$ is the **sparse** $\ell_{1}$ estimator
+  (graphical lasso or penalised PLN);
+- $\check{\boldsymbol{\Omega}}$ is the **de-sparsified** matrix obtained
+  by one Newton step from $\widehat{\boldsymbol{\Omega}}$. Use the caron
+  only when the two matrices could be confused: $\check{\boldsymbol{\Omega}}$
+  is dense and intended for entrywise inference, not as the DeCovarT
+  plug-in.
 
+The object exported to the convolution is the sparse SPD matrix
+$\widehat{\boldsymbol{\Omega}}_{j}$ (or an SPD refit on an FDR support),
+on the linear scale of @eq-grn-convolution.
+
+Single-cell UMI profiles are the **only observations**.
 They are **not** the objects that enter the deconvolution likelihood: we use them to
-**estimate** $(\boldsymbol{\mu}_{\cdot j},\boldsymbol{\Theta}_{j})$ for labelled
+**estimate** $(\boldsymbol{\mu}_{\cdot j},\boldsymbol{\Omega}_{j})$ for labelled
 types in the Suppinger murine gastruloid resource
 [@suppingerMultimodalCharacterizationMurine2023]. Downstream, those
 parameters discriminate types via mean shifts **and** precision rewiring,
@@ -67,7 +83,7 @@ flowchart TD
   B --> N["Nonparanormal scores"]
   N --> S["SILGGM, global FDR"]
   B --> P["PLNnetwork on counts"]
-  H --> F["Sparse Theta_j,t"]
+  H --> F["Sparse Omega_j,t"]
   S --> F
   P --> F
   F --> D["DeCovarT population Gaussian"]
@@ -80,74 +96,14 @@ the other two.
 
 | Estimator | What is passed in | Object exported |
 |-----------|-------------------|-----------------|
-| `huge` | Continuous Gaussian table | Sparse $\boldsymbol{\Theta}_{j}$ |
+| `huge` | Continuous Gaussian table | Sparse $\widehat{\boldsymbol{\Omega}}_{j}$ |
 | `SILGGM` | Nonparanormal scores, then global FDR | Support, then an SPD refit |
 | `PLNnetwork` | Raw UMI counts and a library-size offset | Latent Gaussian precision |
 
 `SCTransform` Pearson residuals stay in the HVG ranking of
 @sec-fs-hvg. Do not pass them to `PLNnetwork`: the PLN already has a
-Poisson sampling layer. Do not run the nonparanormal map before `huge`
-or before PLN; it is part of the `SILGGM` branch only.
-
-::: {#nte-npn-moments .callout-warning}
-## :warning: Nonparanormal maps are not affine, so they break moments
-
-`huge::huge.npn()` replaces each margin by a (truncated or shrunk)
-inverse-normal score
-[@liuNonparanormalSemiparametricEstimation2009]. That map $\varphi$ is
-**monotone but not affine**. Jensen's inequality then says
-$\varphi(\mathbb{E}[y_{g}])\neq\mathbb{E}[\varphi(y_{g})]$ unless the
-margin is degenerate (@nte-jensen-transform). A precision fitted after
-NPN therefore targets a **different random vector** from the population
-Gaussian DeCovarT convolves. Use NPN only inside the `SILGGM` branch,
-and never export NPN-scale means as $\boldsymbol{\mu}_{\cdot j}$.
-:::
-
-::: {#nte-jensen-transform .callout-important}
-## :warning: Transforming the response is usually the wrong GLM
-
-DeCovarT's mean map $\boldsymbol{y}=\boldsymbol{\mu}\boldsymbol{p}$ is **additive on
-the measurement scale of $\boldsymbol{y}$**. Replacing $\boldsymbol{y}$ by
-$\varphi(\boldsymbol{y})$ and then treating the transform as Gaussian does
-three separate kinds of damage.
-
-**1. Jensen: moments of $\varphi(\boldsymbol{y})$ are not $\varphi$ of the
-moments.** For a convex $\varphi$, the probabilistic form of Jensen's
-inequality states
-$\varphi(\mathbb{E}[\boldsymbol{y}])\le\mathbb{E}[\varphi(\boldsymbol{y})]$, with
-equality iff $\boldsymbol{y}$ is almost surely constant or $\varphi$ is
-affine
-([Wikipedia, probabilistic form](https://en.wikipedia.org/wiki/Jensen%27s_inequality#Probabilistic_form)).
-The logarithm is **concave**, so
-
-$$
-\mathbb{E}[\log y_{g}]
-\le
-\log\mathbb{E}[y_{g}],
-$$ {#eq-jensen-log}
-
-and $\log1p$ is likewise concave on $[0,\infty)$. A graphical lasso
-fitted to $\log1p$ counts therefore targets a precision of a
-**different random vector**. The mean of the transformed table is not
-the transform of the mean that DeCovarT needs in @eq-grn-convolution.
-Population aggregation (@sec-align-invariance) compounds the error: the
-sum of transformed cells is not the transform of the sum.
-
-**2. The estimand of a transformed linear model is not the estimand of
-the original mean.** In a Gaussian linear model,
-$\mathbb{E}[\log y\mid x]=\beta_{0}+\beta_{1}x$ describes
-**multiplicative** effects on $y$ after exponentiation, not additive
-shifts of $\mathbb{E}[y\mid x]$
-([University of Virginia Library, interpreting log transformations](https://library.virginia.edu/data/articles/interpreting-log-transformations-in-a-linear-model)).
-DeCovarT's target is a **linear mixture of means** plus a quadratic
-mixture of covariances.
-
-**3. A GLM with the right mean–variance function is preferable to
-transforming $y$.** Transforming the response to force Gaussianity
-changes the parameter. The constructive alternative on counts is the
-Poisson-lognormal model (@sec-pln), not `log1p` followed by graphical
-lasso.
-:::
+Poisson sampling layer. The nonparanormal map is part of the `SILGGM`
+branch only (@nte-npn-derivation).
 
 
 ## Three sparse-precision estimators {#sec-grn-core}
@@ -177,7 +133,7 @@ flowchart TB
     mu["mu_j"] --> x(("x_c"))
     Sig["Sigma_j"] --> x
   end
-  Th["Theta_j = Sigma_j inverse, sparse"] --> Sig
+  Th["Omega_j = Sigma_j inverse, sparse"] --> Sig
   classDef param fill:#ffffff,stroke:#0f172a,stroke-width:1.5px
   classDef latent fill:#ffffff,stroke:#0f172a,stroke-width:1.5px
   class mu,Sig,Th param
@@ -190,20 +146,20 @@ Let $S$ be the sample covariance of the $n$ cells on the gene panel.
 The estimator is
 
 $$
-\widehat{\boldsymbol{\Theta}}
+\widehat{\boldsymbol{\Omega}}
 =
-\arg\min_{\boldsymbol{\Theta}\succ 0}
+\arg\min_{\boldsymbol{\Omega}\succ 0}
 \Bigl[
--\log\det\boldsymbol{\Theta}
+-\log\det\boldsymbol{\Omega}
 +
-\operatorname{tr}(S\boldsymbol{\Theta})
+\operatorname{tr}(S\boldsymbol{\Omega})
 +
-\lambda\|\boldsymbol{\Theta}\|_{1}
+\lambda\|\boldsymbol{\Omega}\|_{1}
 \Bigr].
 $$ {#eq-glasso}
 
 Assumptions: multivariate Gaussian observations; conditional
-independence encoded by zeros of $\boldsymbol{\Theta}$; cells independent
+independence encoded by zeros of $\boldsymbol{\Omega}$; cells independent
 within the type-time subset; $G$ may exceed $n$.
 
 #### Optimisation and the $\ell_{1}$ penalty
@@ -217,7 +173,8 @@ then chosen.
 #### Hyperparameters
 
 - $\lambda$ path, and the selection rule in `huge.select()` (`ebic`
-  [@foygelExtendedBayesianInformation2010] or `stars`);
+  [@foygelExtendedBayesianInformation2010] or `stars`
+  [@liuStabilityApproachRegularization2010]);
 - whether the diagonal is penalised (default in this design: no);
 - the gene panel $\mathcal{G}_{0}$ and the type-time subset.
 
@@ -228,33 +185,116 @@ whole graph [@zhangSILGGMExtensivePackage2018; @R-SILGGM]. The arm used
 here is: nonparanormal scores, then de-sparsified graphical lasso
 (`D-S_GL`) with `global = TRUE`. With many cells the five `SILGGM`
 procedures tend to agree; at a bulk-sample size they need not. The
-export we keep is the FDR-selected edge list (Cytoscape CSV via
-`cytoscape_format` and `csv_save`), not the full inferential dump.
+object we keep is the **SPD precision refit on the FDR support**, not
+the dense de-sparsified matrix.
 
 ::: {#nte-npn-derivation .callout-note}
-## :information_source: Nonparanormal scores
+## :information_source: Shrinkage versus truncation in `huge.npn`
 
 Liu, Lafferty and Wasserman
 [@liuNonparanormalSemiparametricEstimation2009] define a nonparanormal
-vector by strictly increasing maps $f_{g}$ such that
-$Z_{g}=f_{g}(X_{g})$ is multivariate Gaussian with mean zero,
-covariance $R$, and precision $R^{-1}$. If each $f_{g}$ is unknown but
-monotone,
+vector by monotone maps $f_{g}$ such that
+$Z_{g}=f_{g}(X_{g})$ and
+$\boldsymbol{Z}\sim\mathcal{N}_{G}(\boldsymbol{0},R)$, with latent precision
+$\boldsymbol{\Omega}=R^{-1}$. By Sklar's theorem, if the margins $F_{g}$
+are continuous,
+
+$$
+F_{\boldsymbol{X}}(x_{1},\ldots,x_{G})
+=
+C_{R}\bigl(F_{1}(x_{1}),\ldots,F_{G}(x_{G})\bigr),
+$$
+
+where $C_{R}$ is the Gaussian copula with correlation $R$. Then
+$U_{g}=F_{g}(X_{g})\sim\mathrm{Unif}(0,1)$ and
 
 $$
 Z_{g}
 =
-\Phi^{-1}\bigl(F_{g}(X_{g})\bigr),
+\Phi^{-1}\bigl(F_{g}(X_{g})\bigr).
 $$
 
-because $F_{g}(X_{g})$ is uniform and $\Phi^{-1}$ returns a standard
-normal margin. Replacing $F_{g}$ by a winsorised or shrunken empirical
-cdf is `huge.npn()` with `npn.func = "truncation"` or `"shrinkage"`.
-Graphical lasso on those scores estimates the precision of $Z$, not of
-the raw counts. Both modes return an $n\times G$ score matrix that
-`SILGGM` can take. Shrinkage is the default; truncation is the
-heavy-tail alternative. Means on this scale are not
-$\boldsymbol{\mu}_{\cdot j}$ (@nte-npn-moments).
+The unknown monotone margins change the observed scale, not the latent
+copula graph.
+
+Let $R_{ig}=\operatorname{rank}(X_{ig})$ in a sample of size $n$. The
+raw empirical cdf $\widehat{F}_{g}(X_{ig})=R_{ig}/n$ hits $1$ at the
+sample maximum, and $\Phi^{-1}(1)=+\infty$. The score map is also
+unstable in the tails because
+
+$$
+\frac{\mathrm{d}}{\mathrm{d}u}\Phi^{-1}(u)
+=
+\frac{1}{\phi\bigl(\Phi^{-1}(u)\bigr)}
+$$
+
+diverges as $u\downarrow 0$ or $u\uparrow 1$. `huge.npn()` therefore
+regularises the plotting positions before $\Phi^{-1}$
+[@R-huge]. Both options address that instability; truncation is not
+intrinsically a “heavy-tail model”.
+
+**Shrinkage** (`npn.func = "shrinkage"`, the `huge` default, and ours)
+uses the plotting positions $R_{ig}/(n+1)$:
+
+$$
+\widetilde{Z}_{ig}^{\mathrm{shr}}
+=
+\Phi^{-1}\!\left(\frac{R_{ig}}{n+1}\right).
+$$
+
+Attainable probabilities lie in
+$\{1/(n+1),\ldots,n/(n+1)\}$, so every Gaussian score stays finite
+and each distinct rank keeps a distinct score. Relative to $R_{ig}/n$
+the shift is at most $1/(n+1)$, not an $O(n^{-1/2})$ pull toward
+$1/2$.
+
+**Truncation** (`npn.func = "truncation"`) winsorises $R_{ig}/n$ at
+$\delta_{n}$ before $\Phi^{-1}$. Unless `npn.thresh` is set, `huge`
+uses
+
+$$
+\delta_{n}
+=
+\frac{1}{4\,n^{1/4}\sqrt{\pi\log n}}
+=
+O\bigl(n^{-1/4}(\log n)^{-1/2}\bigr),
+$$
+
+not order $n^{-1/2}$. Central ranks are unchanged; all probabilities
+beyond the cutoff share the same endpoint score
+$\Phi^{-1}(\delta_{n})$ or $\Phi^{-1}(1-\delta_{n})$. That clips the
+tails more aggressively and discards rank information past the cutoff.
+
+$$
+\begin{aligned}
+\text{shrinkage:}
+&\quad
+\widetilde{Z}_{ig}
+=
+\Phi^{-1}\!\left(\frac{R_{ig}}{n+1}\right),
+\\
+\text{truncation:}
+&\quad
+\widetilde{Z}_{ig}
+=
+\Phi^{-1}\!\left[
+\min\bigl\{1-\delta_{n},\,
+\max(\delta_{n},R_{ig}/n)\bigr\}
+\right].
+\end{aligned}
+$$ {#eq-npn-shrink-trunc}
+
+`huge.npn()` then standardises columns. The output of `shrinkage` or
+`truncation` is an $n\times G$ score matrix (`skeptic` returns a
+correlation matrix instead). Graphical lasso on those scores targets
+$\boldsymbol{\Omega}=R^{-1}$ of the latent Gaussian $\boldsymbol{Z}$, not the
+precision of the raw counts. Means on this scale are not
+$\boldsymbol{\mu}_{\cdot j}$.
+
+![Two regularisations of $\Phi^{-1}$ in `huge.npn()`: truncation clips
+the empirical tails at $\delta_{n}$; shrinkage moves the whole rank
+grid strictly inside $(0,1)$. Both keep Gaussian scores finite before
+the latent graph is estimated.](images/npn_shrinkage_truncation.png){#fig-npn-shrink-trunc}
 :::
 
 #### Generative model
@@ -289,26 +329,111 @@ flowchart TB
 The first step is still @eq-glasso, which is $\ell_{1}$-biased. The
 Janková–van de Geer correction
 [@jankovaConfidenceIntervalsHighdimensional2015] is **not**
-$2\widehat{\boldsymbol{\Theta}}-S$. On the correlation scale it is
+$2\widehat{\boldsymbol{\Omega}}-S$. On the correlation scale it is the
+one-step Newton update
 
 $$
-\widehat{T}
+\check{\boldsymbol{\Omega}}
 =
-2\widehat{\boldsymbol{\Theta}}
+2\widehat{\boldsymbol{\Omega}}
 -
-\widehat{\boldsymbol{\Theta}}\,
+\widehat{\boldsymbol{\Omega}}\,
 \widehat{R}\,
-\widehat{\boldsymbol{\Theta}},
+\widehat{\boldsymbol{\Omega}},
 $$ {#eq-desparsify}
 
-with $\widehat{R}$ the empirical correlation. $\widehat{T}$ recentres
-the edges so that they are asymptotically normal under a sparsity
-condition on the maximum degree. It is deliberately **dense**: it is an
-inferential object, not a generative precision. Zhang and Zou
+with $\widehat{R}$ the empirical correlation of the NPN scores (replace
+$\widehat{R}$ by $\widehat{\boldsymbol{\Sigma}}$ on the covariance
+scale). $\check{\boldsymbol{\Omega}}$ recentres the edges so that they are
+asymptotically normal under a sparsity condition on the maximum
+degree. It is deliberately **dense**: it is an inferential object, not
+a generative precision. Zhang and Zou
 [@zhangSparsePrecisionMatrix2014] note that graphical lasso remains
 useful for **support** recovery even when the Gaussian assumption
-fails. That supports edge screening, not export of $\widehat{T}$ itself
-as $\boldsymbol{\Theta}_{j}$.
+fails. That supports edge screening, not export of
+$\check{\boldsymbol{\Omega}}$ itself as $\widehat{\boldsymbol{\Omega}}_{j}$.
+
+::: {#nte-desparsify .callout-note}
+## :information_source: One Newton step removes the first-order $\ell_{1}$ bias
+
+The graphical-lasso KKT condition at $\widehat{\boldsymbol{\Omega}}$ is
+
+$$
+\widehat{\boldsymbol{\Sigma}}
+-
+\widehat{\boldsymbol{\Omega}}^{-1}
++
+\lambda\widehat{\boldsymbol{Z}}
+=
+0,
+$$
+
+where $\widehat{Z}_{gg'}\in[-1,1]$ is a subgradient of the $\ell_{1}$
+norm (and $\widehat{Z}_{gg'}=\operatorname{sign}(\hat\omega_{gg'})$
+when $\hat\omega_{gg'}\neq 0$). The penalised estimator therefore does
+**not** solve the unpenalised score
+$g(\boldsymbol{\Omega})=\widehat{\boldsymbol{\Sigma}}-\boldsymbol{\Omega}^{-1}=0$.
+The leftover score $\lambda\widehat{\boldsymbol{Z}}$ **is** the
+first-order shrinkage bias.
+
+The Fréchet derivative of $g$ at $\boldsymbol{\Omega}$ maps
+$H\mapsto\boldsymbol{\Omega}^{-1}H\boldsymbol{\Omega}^{-1}$, so its inverse
+sends $A\mapsto\boldsymbol{\Omega}A\boldsymbol{\Omega}$. One Newton step from
+$\widehat{\boldsymbol{\Omega}}$ is therefore
+
+$$
+\begin{aligned}
+\check{\boldsymbol{\Omega}}
+&=
+\widehat{\boldsymbol{\Omega}}
+-
+\widehat{\boldsymbol{\Omega}}
+\bigl(\widehat{\boldsymbol{\Sigma}}-\widehat{\boldsymbol{\Omega}}^{-1}\bigr)
+\widehat{\boldsymbol{\Omega}}
+\\
+&=
+2\widehat{\boldsymbol{\Omega}}
+-
+\widehat{\boldsymbol{\Omega}}\,
+\widehat{\boldsymbol{\Sigma}}\,
+\widehat{\boldsymbol{\Omega}},
+\end{aligned}
+$$
+
+which is @eq-desparsify on the covariance scale. Equivalently,
+$\check{\boldsymbol{\Omega}}=\widehat{\boldsymbol{\Omega}}+\lambda\widehat{\boldsymbol{\Omega}}\widehat{\boldsymbol{Z}}\widehat{\boldsymbol{\Omega}}$:
+the correction adds back the KKT bias term.
+
+Under the usual sparsity and rate conditions the remainder after this
+linear expansion is $o_{p}(n^{-1/2})$, so a **single** Newton step is
+enough for entrywise $\sqrt{n}$-normality
+[@jankovaConfidenceIntervalsHighdimensional2015]:
+
+$$
+\sqrt{n}\,
+(\check\omega_{gg'}-\omega_{gg'}^{\ast})
+\;\xrightarrow{d}\;
+\mathcal{N}\bigl(0,\;
+\omega_{gg}^{\ast}\omega_{g'g'}^{\ast}
++(\omega_{gg'}^{\ast})^{2}
+\bigr).
+$$
+
+The plug-in standard error is
+$\widehat{\mathrm{se}}(\check\omega_{gg'})
+=\sqrt{(\hat\omega_{gg}\hat\omega_{g'g'}+\hat\omega_{gg'}^{2})/n}$.
+`SILGGM` (`D-S_GL`, `global = TRUE`) thresholds these de-sparsified
+$z$-statistics by the Liu–et-al.\ global FDR rule at
+$\alpha=0.05$
+[@liuGaussianGraphicalModel2013]. The resulting **support** is sparse;
+$\check{\boldsymbol{\Omega}}$ itself stays dense. DeCovarT then refits an
+SPD $\widehat{\boldsymbol{\Omega}}_{j}$ on that support.
+
+![One Newton step de-sparsifies the graphical lasso: the $\ell_{1}$
+estimator $\widehat{\boldsymbol{\Omega}}$ is biased and sparse; the
+corrected $\check{\boldsymbol{\Omega}}$ is dense and asymptotically
+normal entrywise, which is what the FDR threshold uses.](images/desparsified_graphical_lasso.png){#fig-desparsify}
+:::
 
 #### Optimisation and global FDR
 
@@ -320,7 +445,7 @@ as $\boldsymbol{\Theta}_{j}$.
 flowchart LR
   X["Counts"] --> N["Nonparanormal scores"]
   N --> Gl["Graphical lasso"]
-  Gl --> T["Debiased T"]
+  Gl --> T["Debiased check-Omega"]
   T --> FDR["Global FDR support"]
   FDR --> SPD["SPD refit"]
 ```
@@ -337,12 +462,10 @@ stay separate (@eq-grn-estimand).
 
 #### Hyperparameters
 
-- `npn.func`: `shrinkage` or `truncation`;
+- `npn.func`: `shrinkage` (default) or `truncation` (@nte-npn-derivation);
 - `method = "D-S_GL"` and `global = TRUE`;
-- FDR level `alpha`;
-- `lambda` if it is not left at the package default;
-- `cytoscape_format = TRUE` and `csv_save = TRUE` only as the edge-list
-  export.
+- FDR level $\alpha=0.05$;
+- `lambda` if it is not left at the package default.
 
 ### Poisson-lognormal network {#sec-pln}
 
@@ -364,7 +487,7 @@ Y_{cg}\mid\boldsymbol{Z}_{c}
 \sim
 \mathcal{N}_{G}(\boldsymbol{\mu},\boldsymbol{\Sigma}),
 \quad
-\boldsymbol{\Theta}=\boldsymbol{\Sigma}^{-1}.
+\boldsymbol{\Omega}=\boldsymbol{\Sigma}^{-1}.
 $$ {#eq-pln}
 
 Zeros are Poisson sampling zeros
@@ -388,7 +511,7 @@ flowchart TB
     mu["mu"] --> Z
     Sig["Sigma"] --> Z
   end
-  Th["Theta = Sigma inverse, sparse"] --> Sig
+  Th["Omega = Sigma inverse, sparse"] --> Sig
   classDef param fill:#ffffff,stroke:#0f172a,stroke-width:1.5px
   classDef latent fill:#ffffff,stroke:#0f172a,stroke-width:1.5px
   classDef obs fill:#cbd5e1,stroke:#0f172a,stroke-width:1.5px
@@ -404,7 +527,7 @@ integral is intractable. Variational inference replaces the posterior
 of $\boldsymbol{Z}$ by a tractable $q$ and maximises the evidence lower
 bound, which is the expected complete log-likelihood minus
 $\mathrm{KL}(q\,\|\,p(Z\mid Y))$. An $\ell_{1}$ penalty is added on
-off-diagonal entries of $\boldsymbol{\Theta}$.
+off-diagonal entries of $\boldsymbol{\Omega}$.
 
 ::: {#nte-vi-em .callout-important}
 ## :information_source: Variational EM, KL, and why not Monte Carlo
@@ -435,33 +558,235 @@ same sparse PLN is practical at single-cell $n$
 
 `PLNnetwork()` runs that variational scheme over a grid of penalties
 ([PLNnetwork](https://www.rdocumentation.org/packages/PLNmodels/versions/0.10.6/topics/PLNnetwork)).
+The pair-specific graphical-lasso weight is $\rho_{gg'}=\lambda w_{gg'}$.
 `penalize_diagonal` stays `FALSE` in `control_main`, matching the
 graphical-lasso convention. The penalty grid is set by `penalties`, or
 by `nPenalties` and `min.ratio` in `control_init`.
+
+The inner continuous problem in $(B,M,S)$ at fixed $\boldsymbol{\Omega}$
+is solved by NLopt. We keep the conservative quadratic solver
+**`CCSAQ`** as the default `algorithm`
+[@chiquetVariationalInferenceSparse2018].
+
+```pseudocode
+#| label: algo-plnnetwork
+#| html-line-number: true
+#| pdf-line-number: true
+
+\begin{algorithm}
+\caption{PLNnetwork alternating variational / graphical-lasso optimisation}
+\begin{algorithmic}
+\Require Counts $Y$, covariates $X$, offsets $O$, penalty $\lambda$
+\Require penalty weights $W$
+\Require inner tolerances $(f_{\mathrm{rel}},f_{\mathrm{abs}},
+x_{\mathrm{rel}},x_{\mathrm{abs}})$ and \texttt{maxeval}
+\Require outer tolerance \texttt{ftol\_out} and \texttt{maxit\_out}
+
+\State Initialize $(B,M,S,\Sigma)$
+\State $\rho \gets \lambda W$
+
+\For{$h = 1,\ldots,\texttt{maxit\_out}$}
+
+  \State $\Omega^{(h)}
+    \gets \Call{GraphicalLasso}{\Sigma^{(h-1)},\rho}$
+  \Comment{precision / sparsity update}
+
+  \State $(B^{(h)},M^{(h)},S^{(h)})
+    \gets
+    \Call{NLOPT}{
+      B^{(h-1)},M^{(h-1)},S^{(h-1)};
+      \Omega^{(h)}
+    }$
+  \Comment{inner CCSAQ solve}
+
+  \Statex \hspace{\algorithmicindent}
+  \Comment{NLOPT stops by ftol\_rel/abs, xtol\_rel/abs or maxeval}
+
+  \State $\Sigma^{(h)}
+    \gets
+    n^{-1}\left[
+      {M^{(h)}}^\top M^{(h)}
+      + \sum_i S_i^{(h)}
+    \right]$
+
+  \State $F_h
+    \gets
+    -\mathrm{ELBO}(B^{(h)},M^{(h)},S^{(h)},\Omega^{(h)})
+    + \lambda\|\Omega^{(h)}\|_{1,W}$
+
+  \If{$|F_h-F_{h-1}|/|F_h| < \texttt{ftol\_out}$}
+    \State \textbf{break}
+  \EndIf
+
+\EndFor
+
+\State \Return $(B,M,S,\Omega,\Sigma)$
+\end{algorithmic}
+\end{algorithm}
+```
+
+@algo-plnnetwork is the block-coordinate scheme of
+@chiquetVariationalInferenceSparse2018: graphical lasso updates
+$\boldsymbol{\Omega}$, then NLopt updates $(B,M,S)$. Inner stopping uses
+`ftol_*`, `xtol_*` and `maxeval`; outer stopping uses `ftol_out` and
+`maxit_out`.
 
 #### Hyperparameters
 
 Inside each type-time subset the call is of the form
 `abundance ~ 1 + offset(log_library)`, with `log_library` the natural
-log of that cell's library size. Play with:
+log of that cell's library size. @tbl-pln-hyperparameters lists the
+knobs that change either sparsity or numerical convergence.
 
-- the penalty grid (`penalties`, or `nPenalties` and `min.ratio`);
-- `penalize_diagonal` (kept false);
-- outer-loop tolerances `ftol_out` and `maxit_out` only if a subset
-  fails to converge.
+| Control | Role | Default we use |
+|---------|------|----------------|
+| `penalties` (or `nPenalties`, `min.ratio`) | Sparsity path $\lambda$; larger $\lambda$ gives a sparser $\widehat{\boldsymbol{\Omega}}$ | Package grid, then @sec-grn-penalty-path |
+| `penalty_weights` | Edge-specific weights $w_{gg'}$ in $\rho_{gg'}=\lambda w_{gg'}$ | Ones (no adaptive prior) |
+| `penalize_diagonal` | Whether diagonal precision entries are penalised | `FALSE` |
+| `algorithm` | Inner NLopt solver for $(B,M,S)$ | **`CCSAQ`** |
+| `ftol_rel` / `ftol_abs` | Inner **objective** tolerances | `1e-8` / `0` |
+| `xtol_rel` / `xtol_abs` | Inner **parameter** tolerances | `1e-4` / solver default |
+| `maxeval` | Cap on one inner NLopt call | `10000` |
+| `ftol_out` | Outer relative change of the penalised ELBO | `1e-5` |
+| `maxit_out` | Cap on glasso $\leftrightarrow$ NLopt alternations | `50` |
+
+: Core `PLNnetwork` hyperparameters. {#tbl-pln-hyperparameters}
+
+`CCSAQ` is a conservative quadratic separable approximation with bound
+constraints; NLopt recommends trying it before MMA. `LBFGS`, `VAR1` and
+`VAR2` remain alternatives if the inner solve is the bottleneck, not
+the default.
 
 Zero-inflated PLN is not the default (@nte-drop-zico).
 
-## Conclusion: twelve routes {#sec-grn-top4}
+::: {#nte-pln-offset .callout-note}
+## :information_source: The offset compares library-size-adjusted rates
 
-The product in @fig-pipeline is
+In the simplest Poisson GLM for a gene $g$ and cell (or sample) $c$,
 
 $$
-\underbrace{\{\texttt{huge},\ \texttt{SILGGM+NPN},\ \texttt{PLNnetwork}\}}_{\text{three precisions}}
-\times
-\underbrace{\{\text{affine},\ \text{scDesign2}\}}_{\text{two lifts}}
-\times
-\underbrace{\{\mathcal{G}_{0},\ \text{optional NSGA-II}\}}_{\text{two panels}}.
+Y_{gc}\sim\mathrm{Poisson}(\mu_{gc}),
+\qquad
+\log\mu_{gc}
+=
+\log L_{c}
++
+\beta_{0g}
++
+\beta_{1g}X_{c},
+$$
+
+the term $\log L_{c}$ is an **offset**: its coefficient is fixed at
+one. The mean therefore factors as
+$\mu_{gc}=L_{c}\,q_{gc}$ with rate
+$q_{gc}=\exp(\beta_{0g}+\beta_{1g}X_{c})$. The response remains the
+**raw count**; the offset makes the condition coefficient a log ratio
+of rates,
+
+$$
+\beta_{1g}
+=
+\log(q_{gB}/q_{gA}),
+$$
+
+not a log ratio of raw read counts. `PLNnetwork` uses the same device
+in @eq-pln: $S_{c}$ (library size) multiplies the latent intensity, so
+the latent Gaussian $\log\boldsymbol{Z}_{c}$ is a model for
+**relative** abundance after sequencing exposure.
+
+@fig-poisson-offset shows the two-condition cartoon. Equal rates and a
+doubled library yield doubled counts but $\beta_{1}=0$. A 1.5-fold
+rate increase at doubled depth yields $\beta_{1}=\ln(1.5)\approx0.405$
+($\log_{2}$ fold change $\approx 0.585$).
+
+McCarthy, Chen and Smyth write the RNA-seq GLM with the (effective)
+library size as an offset in the linear predictor, so that the
+condition coefficient is a log ratio of relative abundances after
+sequencing depth [@mccarthyDifferentialExpressionAnalysis2012a].
+DESeq2 uses the same multiplicative mean $\mu_{gc}=s_{c}q_{gc}$, with
+$s_{c}$ a size factor and $q_{gc}$ the abundance that carries the fold
+change [@loveModeratedEstimationFold2014]. In PLN we pass
+`offset(log_library)` rather than transforming $Y$. The offset is
+relative normalisation, not conversion to absolute molecule counts.
+
+![Library-size offset in a Poisson log-link: raw counts scale with
+sequencing depth, while $\beta_{1}$ is the log ratio of
+library-size-adjusted expression rates.](images/poisson_offset.png){#fig-poisson-offset}
+:::
+
+## Choosing the penalty {#sec-grn-penalty-path}
+
+Four displays, and only these, are used to pick the penalty for each of
+the three estimators. Partial-correlation **weights** matter, so heatmaps
+show the precision, not a binary adjacency.
+
+### Stability criteria {#sec-grn-penalty-stability}
+
+These plots decide $\lambda$ (`huge`), $\alpha$ (`SILGGM`; we use
+$0.05$), or the PLN penalty grid. They are **not** the final
+cell-type report.
+
+1. **Regularisation paths.** Plot each off-diagonal entry of
+   $\widehat{\boldsymbol{\Omega}}(\lambda)$ against $\lambda$ or
+   $\log\lambda$. This is the classical lasso path: which edges enter
+   as the penalty relaxes.
+2. **EBIC against $\lambda$.** Plot $\mathrm{EBIC}_{\gamma}(\lambda)$
+   against $\log\lambda$, with a line at the minimiser
+   [@foygelExtendedBayesianInformation2010]. Overlay
+   $\gamma\in\{0,0.25,0.5\}$ when that hyperparameter is free. A flat
+   valley means many penalties are equivalent.
+3. **StARS-style instability** (@sec-metrics-stat). For
+   `huge`, `huge.select(..., criterion = "stars")` is the subsample
+   edge-instability rule; we reuse the same idea as a diagnostic for
+   the other two estimators.
+4. **Edge-count against EBIC.** Put the number of edges on the
+   horizontal axis and EBIC on the vertical axis, and mark the
+   optimum. That is the sparsity–fit tradeoff without depending on the
+   numerical scale of $\lambda$.
+
+For `SILGGM`, repeat the same pictures with the FDR level in place of
+$\lambda$ when a path of $\alpha$ is computed. For `PLNnetwork`, the
+horizontal axis is the penalty grid in @tbl-pln-hyperparameters.
+
+### Descriptive plots per cell type {#sec-grn-penalty-describe}
+
+Once a penalty is fixed, two figure folders (not a single mixed
+gallery) report the selected networks.
+
+**Folder 1 — one type, one time, all estimators.** A `funkyheatmap`
+table with rows = cell types (or type $\times$ time) and columns =
+global scores of each selected network: EBIC, Hellinger distance to
+the empirical cell cloud, mean off-diagonal edge density, number of
+edges, and a degree-distribution summary (mean degree; a bar plot of
+degrees sits beside the heatmap, never as a transcriptome hairball).
+Partial-correlation heatmaps at the selected penalty use a **frozen**
+gene order (cluster once) and
+
+$$
+\rho_{gg'\mid\mathrm{rest}}
+=
+-\frac{\omega_{gg'}}{\sqrt{\omega_{gg}\omega_{g'g'}}}.
+$$ {#eq-partial}
+
+Blocks that survive a stronger penalty are the stable ones.
+
+**Folder 2 — pairwise type comparisons.** The same global scores, now
+as pairwise contrasts (difference or ratio of EBIC, Hellinger,
+density, \ldots) between cell types at a fixed time, again with
+`funkyheatmap`. This is the rewiring view at the **metric** level;
+signed partial-correlation difference heatmaps belong with the
+visualisations in @sec-metrics-viz.
+
+## Three core estimators {#sec-grn-top4}
+
+This chapter's product is the **three** precision estimators, not the
+full $3\times 2\times 2$ design of @fig-pipeline (lifts and gene
+panels are later chapters).
+
+$$
+\{\texttt{huge},\;
+\texttt{SILGGM+NPN},\;
+\texttt{PLNnetwork}\}.
 $$ {#eq-grn-product}
 
 Every core method must finally export
@@ -470,10 +795,10 @@ $$
 \bigl\{
 \widehat{\boldsymbol{\mu}}_{\cdot j},\,
 \widehat{\boldsymbol{\Sigma}}_{j},\,
-\widehat{\boldsymbol{\Theta}}_{j}
+\widehat{\boldsymbol{\Omega}}_{j}
 \bigr\}_{j=1}^{J},
 \qquad
-\widehat{\boldsymbol{\Theta}}_{j}
+\widehat{\boldsymbol{\Omega}}_{j}
 =
 \widehat{\boldsymbol{\Sigma}}_{j}^{-1}
 \succ 0,
@@ -483,15 +808,14 @@ on the linear scale of @eq-grn-convolution, not on NPN scores.
 
 | Estimator | Reference | What it estimates | Pros | Cons |
 |-----------|-----------|-------------------|------|------|
-| `huge` | @friedmanSparseInverseCovariance2008; @zhaoHugePackageHighdimensional | Sparse Gaussian $\boldsymbol{\Theta}$ | Fast path; EBIC / StARS; maintained | Needs Gaussian rows; no library-size layer |
-| `SILGGM` `D-S_GL` | @zhangSILGGMExtensivePackage2018; @liuGaussianGraphicalModel2013 | Debiased edges, then an FDR support | Global FDR; large $n$ makes modes agree | Debiased $\widehat{T}$ is dense; NPN changes the mean |
+| `huge` | @friedmanSparseInverseCovariance2008; @zhaoHugePackageHighdimensional | Sparse Gaussian $\widehat{\boldsymbol{\Omega}}$ | Fast path; EBIC / StARS; maintained | Needs Gaussian rows; no library-size layer |
+| `SILGGM` `D-S_GL` | @zhangSILGGMExtensivePackage2018; @liuGaussianGraphicalModel2013 | De-sparsified edges, then an FDR support | Global FDR at $\alpha=0.05$; large $n$ makes modes agree | $\check{\boldsymbol{\Omega}}$ is dense; NPN changes the mean |
 | `PLNnetwork` | @chiquetPoissonLognormalModelVersatile2021 | Latent precision of a PLN | Counts and offset; variational, not MCMC | Heavier than graphical lasso; no edgewise FDR |
 
 : Three core precision estimators. {#tbl-grn-core}
 
-The knobs that the penalty figures in @sec-grn-penalty-path are meant
-to set are $\lambda$ (`huge`), `alpha` (`SILGGM`), and the PLN penalty
-grid.
+The knobs that @sec-grn-penalty-path is meant to set are $\lambda$
+(`huge`), $\alpha=0.05$ (`SILGGM`), and the PLN penalty grid.
 
 ::: {#nte-drop-zico .callout-warning}
 ## :warning: Why we drop zero-inflated directed graphs in the core
@@ -504,43 +828,6 @@ explained by ordinary molecule-sampling counts
 @sec-sensitivity if the observation model is to be contaminated, not as
 a GRN estimator.
 :::
-
-## Choosing the penalty {#sec-grn-penalty-path}
-
-Four displays, and only these, are used to pick the penalty for each of
-the three estimators. Partial-correlation **weights** matter, so heatmaps
-show the precision, not a binary adjacency.
-
-1. **Regularisation paths.** Plot each off-diagonal entry of
-   $\widehat{\boldsymbol{\Theta}}(\lambda)$ against $\lambda$ or
-   $\log\lambda$. This is the classical lasso path: which edges enter
-   as the penalty relaxes.
-2. **EBIC against $\lambda$.** Plot $\mathrm{EBIC}_{\gamma}(\lambda)$
-   against $\log\lambda$, with a line at the minimiser
-   [@foygelExtendedBayesianInformation2010]. Overlay
-   $\gamma\in\{0,0.25,0.5\}$ when that hyperparameter is free. A flat
-   valley means many penalties are equivalent.
-3. **Precision heatmaps along the path.** At a few $\lambda$ values,
-   including the selected one, show
-
-$$
-\rho_{gg'\mid\mathrm{rest}}
-=
--\frac{\theta_{gg'}}{\sqrt{\theta_{gg}\theta_{g'g'}}}.
-$$ {#eq-partial}
-
-   Freeze the gene order (cluster once). Blocks that survive a stronger
-   penalty are the stable ones.
-4. **Edge-count against EBIC.** Put the number of edges on the
-   horizontal axis and EBIC on the vertical axis, and mark the
-   optimum. That is the sparsity–fit tradeoff without depending on the
-   numerical scale of $\lambda$.
-
-For `SILGGM`, repeat the same four pictures with the FDR level in place
-of $\lambda$ when a path of `alpha` is computed. For `PLNnetwork`, the
-horizontal axis is the penalty grid.
-
-## Perspectives {#sec-grn-appendix}
 
 ### Cartesian `GmGM` cannot separate within-cell edges {#sec-gmgm}
 
@@ -571,9 +858,9 @@ graph minus a low-rank factor term
 [@chandrasekaranLatentVariableGraphical2012],
 
 $$
-\boldsymbol{\Theta}_{\mathrm{marg}}
+\boldsymbol{\Omega}_{\mathrm{marg}}
 =
-\boldsymbol{\Theta}_{\mathrm{sparse}}
+\boldsymbol{\Omega}_{\mathrm{sparse}}
 -
 \boldsymbol{L},
 \qquad
@@ -589,7 +876,7 @@ type covariance. This check is not in the $3\times 2\times 2$ product.
 
 Related types can share part of a graph. The joint graphical lasso
 [@danaherJointGraphicalLasso2012] penalises both sparsity and the gap
-between $\theta_{gg'}^{(j)}$ and $\theta_{gg'}^{(\ell)}$. PLNFGL puts a
+between $\omega_{gg'}^{(j)}$ and $\omega_{gg'}^{(\ell)}$. PLNFGL puts a
 Poisson-lognormal sampling layer under that fused penalty
 [@zhaiPLNFGLJointEstimation2026]. Fusion can shrink away the rewiring
 DeCovarT is meant to keep, so it stays out of the independent-type

@@ -219,27 +219,27 @@ Special cases used in practice:
 
 | Weights | Mean | Covariance | Precision |
 |---------|------|------------|-----------|
-| $w_{c}=1$ (sum of $n$ i.i.d. cells) | $n\boldsymbol{\mu}$ | $n\boldsymbol{\Sigma}$ | $n^{-1}\boldsymbol{\Theta}$ |
-| $w_{c}=1/n$ (average) | $\boldsymbol{\mu}$ | $n^{-1}\boldsymbol{\Sigma}$ | $n\boldsymbol{\Theta}$ |
+| $w_{c}=1$ (sum of $n$ i.i.d. cells) | $n\boldsymbol{\mu}$ | $n\boldsymbol{\Sigma}$ | $n^{-1}\boldsymbol{\Omega}$ |
+| $w_{c}=1/n$ (average) | $\boldsymbol{\mu}$ | $n^{-1}\boldsymbol{\Sigma}$ | $n\boldsymbol{\Omega}$ |
 | $w_{c}=S_{c}/\sum S_{c'}$ (library-size weights) | $\sum w_{c}\boldsymbol{\mu}_{c}$ | $\sum w_{c}^{2}\boldsymbol{\Sigma}_{c}$ | inverse of that sum |
 
-Zeros of $\boldsymbol{\Theta}$ survive the sum **only when every cell
+Zeros of $\boldsymbol{\Omega}$ survive the sum **only when every cell
 shares the same covariance**. If
 $\boldsymbol{\Sigma}_{c}=\boldsymbol{\Sigma}$ for all $c$, then
 $\boldsymbol{\Sigma}_{\widetilde{\boldsymbol{x}}}=(\sum_{c}w_{c}^{2})\boldsymbol{\Sigma}$
 and
 
 $$
-\boldsymbol{\Theta}_{\widetilde{\boldsymbol{x}}}
+\boldsymbol{\Omega}_{\widetilde{\boldsymbol{x}}}
 =
-\frac{1}{\sum_{c}w_{c}^{2}}\,\boldsymbol{\Theta},
+\frac{1}{\sum_{c}w_{c}^{2}}\,\boldsymbol{\Omega},
 $$ {#eq-theta-scale}
 
 so the zero pattern is unchanged. If the cells have different
 $\boldsymbol{\Sigma}_{c}$,
 
 $$
-\boldsymbol{\Theta}_{\widetilde{\boldsymbol{x}}}
+\boldsymbol{\Omega}_{\widetilde{\boldsymbol{x}}}
 =
 \Bigl(\sum_{c}w_{c}^{2}\boldsymbol{\Sigma}_{c}\Bigr)^{-1},
 $$ {#eq-theta-sum}
@@ -280,7 +280,7 @@ whose mean is $\boldsymbol{\mu}_{\cdot j}$.
 
 Resample cells **with replacement within type**, labels fixed. Each
 replicate yields
-$(\hat{\boldsymbol{\mu}}^{\ast},\widehat{\boldsymbol{\Theta}}^{\ast})$
+$(\hat{\boldsymbol{\mu}}^{\ast},\widehat{\boldsymbol{\Omega}}^{\ast})$
 and therefore edge-inclusion frequencies (@sec-metrics-stat) and Monte
 Carlo error for MixSim overlap and for downstream
 $\hat{\boldsymbol{p}}$.
@@ -302,7 +302,7 @@ count margin gene by gene and estimates a Gaussian copula correlation
 from the data. The arm used here keeps the two-step layout and changes
 the dependence: margins are negative binomial, and the copula
 correlation is the correlation matrix of
-$\widehat{\boldsymbol{\Sigma}}_{j}=\widehat{\boldsymbol{\Theta}}_{j}^{-1}$.
+$\widehat{\boldsymbol{\Sigma}}_{j}=\widehat{\boldsymbol{\Omega}}_{j}^{-1}$.
 
 ![Modified scDesign2 pipeline: negative-binomial margins per labelled type, a Gaussian copula whose correlation comes from the sparse precision, then synthetic counts with the observed cell-type proportions and library sizes.](images/scdesign2_sparse_copula.png){#fig-scdesign2}
 
@@ -335,7 +335,7 @@ That latent map is the same idea as `huge.npn()` followed by a Gaussian
 precision (@sec-huge, @sec-silggm, @nte-npn-derivation): monotone
 margins, then a Gaussian vector. `SILGGM` estimates the precision of
 those scores. Here the precision is already the exported
-$\widehat{\boldsymbol{\Theta}}_{j}$, and the copula is not refit. The
+$\widehat{\boldsymbol{\Omega}}_{j}$, and the copula is not refit. The
 correlation that enters the copula is
 
 $$
@@ -345,7 +345,7 @@ R_{gg'}
 \qquad
 \boldsymbol{\Sigma}
 =
-\widehat{\boldsymbol{\Theta}}_{j}^{-1}.
+\widehat{\boldsymbol{\Omega}}_{j}^{-1}.
 $$ {#eq-copula-r}
 
 $R$ is the correlation of that covariance. It is not the matrix of
@@ -394,7 +394,7 @@ composition and the observed read depths.
     function at $(\mu_{gj},\psi_{gj})$.
 
 The synthetic matrix has the same genes, the same type proportions, and
-matched per-cell depth. Re-fitting $\boldsymbol{\Theta}_{j}$ on it is
+matched per-cell depth. Re-fitting $\boldsymbol{\Omega}_{j}$ on it is
 the recovery check for the exported precision.
 
 ## What we would actually run {#sec-align-recommend}
@@ -464,7 +464,7 @@ can encourage shared edges between the cell-level and population-level
 precisions; that penalty is not the transport. DecOT estimates bulk
 proportions by an entropic transport loss between count histograms
 [@liuDecotBulkDeconvolutionOptimal2022]. That is a deconvolution
-competitor, not a construction of $\boldsymbol{\Theta}_{j}$.
+competitor, not a construction of $\boldsymbol{\Omega}_{j}$.
 
 ![Two regulatory scales, and Gaussian Wasserstein alignment of population profiles to an external reference.](images/multiscale_optimal_transport.png){#fig-ot-scales}
 
