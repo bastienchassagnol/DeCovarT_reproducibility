@@ -63,16 +63,22 @@ div.csl-indent {
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-ed7344add5f1663e434276306a2aa159.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-fd0503e23dce65854c81c5baaade3bdf.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-4dc5810a0ca2761c5abee21657872ed5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-fd0503e23dce65854c81c5baaade3bdf.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script src="site_libs/quarto-contrib/pseudocode-2.4.1/pseudocode.min.js"></script>
+<link href="site_libs/quarto-contrib/pseudocode-2.4.1/pseudocode.min.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
-  "location": "sidebar",
+  "location": "navbar",
   "copy-button": false,
   "collapse-after": 3,
-  "panel-placement": "start",
-  "type": "textbox",
+  "panel-placement": "end",
+  "type": "overlay",
   "limit": 50,
   "keyboard-shortcut": [
     "f",
@@ -97,8 +103,34 @@ div.csl-indent {
 <script src="site_libs/quarto-diagram/mermaid.min.js"></script>
 <script src="site_libs/quarto-diagram/mermaid-init.js"></script>
 <link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+<script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+<script>window.backupDefine = window.define; window.define = undefined;</script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+    <style type="text/css">
+    .ps-root .ps-algorithm {
+      border-top: 2px solid;
+      border-bottom: 2px solid;
+    }
+    .pseudocode-container {
+      text-align: left;
+    }
+    .callout .pseudocode-container .ps-root {
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+    }
+    .callout .pseudocode-container .ps-root .ps-algorithm p {
+      margin-top: 0 !important;
+      margin-bottom: 0 !important;
+    }
+    </style>
+  
+      <style type="text/css">
+      .ps-algorithm > .ps-line {
+        text-align: left;
+      }
+      </style>
+    
 
-  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
   <script>document.addEventListener("DOMContentLoaded", function () {
  var mathElements = document.getElementsByClassName("math");
  var macros = [];
@@ -113,7 +145,7 @@ div.csl-indent {
    });
 }}});
   </script>
-  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -144,10 +176,198 @@ window.Quarto = {
 
 </head>
 
-<body class="nav-sidebar floating quarto-light">
+<body class="nav-sidebar floating nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">DeCovarT reproducibility</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/bastienchassagnol/DeCovarT_reproducibility"> <i class="bi bi-github" role="img" aria-label="GitHub repository">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+    <a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/tree/main/docs/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
@@ -156,26 +376,13 @@ window.Quarto = {
         <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./02-grn-graphical-lasso.html">GRN inference</a></li><li class="breadcrumb-item"><a href="./02-grn-graphical-lasso.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Undirected GGMs from single-cell transcriptomics</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
-      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
-        <i class="bi bi-search"></i>
-      </button>
     </div>
   </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header">
-    <div class="sidebar-title mb-0 py-0">
-      <a href="./">DeCovarT reproducibility</a> 
-    </div>
-      </div>
-        <div class="mt-2 flex-shrink-0 align-items-center">
-        <div class="sidebar-search">
-        <div id="quarto-search" class="" title="Search"></div>
-        </div>
-        </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
@@ -242,7 +449,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./05-grn-metrics.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Evaluating networks without a true DAG</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Evaluating undirected cell-type networks</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -335,20 +542,24 @@ window.Quarto = {
   <li><a href="#hyperparameters-2" id="toc-hyperparameters-2" class="nav-link" data-scroll-target="#hyperparameters-2">Hyperparameters</a></li>
   </ul></li>
   </ul></li>
-  <li><a href="#sec-grn-top4" id="toc-sec-grn-top4" class="nav-link" data-scroll-target="#sec-grn-top4"><span class="header-section-number">4.4</span> Conclusion: twelve routes</a></li>
-  <li><a href="#sec-grn-penalty-path" id="toc-sec-grn-penalty-path" class="nav-link" data-scroll-target="#sec-grn-penalty-path"><span class="header-section-number">4.5</span> Choosing the penalty</a></li>
-  <li><a href="#sec-grn-appendix" id="toc-sec-grn-appendix" class="nav-link" data-scroll-target="#sec-grn-appendix"><span class="header-section-number">4.6</span> Perspectives</a>
+  <li><a href="#sec-grn-penalty-path" id="toc-sec-grn-penalty-path" class="nav-link" data-scroll-target="#sec-grn-penalty-path"><span class="header-section-number">4.4</span> Choosing the penalty</a>
   <ul>
-  <li><a href="#sec-gmgm" id="toc-sec-gmgm" class="nav-link" data-scroll-target="#sec-gmgm"><span class="header-section-number">4.6.1</span> Cartesian <code>GmGM</code> cannot separate within-cell edges</a></li>
-  <li><a href="#sec-lowrank" id="toc-sec-lowrank" class="nav-link" data-scroll-target="#sec-lowrank"><span class="header-section-number">4.6.2</span> Sparse plus low-rank precisions</a></li>
-  <li><a href="#fused-graphical-lasso-on-a-pln" id="toc-fused-graphical-lasso-on-a-pln" class="nav-link" data-scroll-target="#fused-graphical-lasso-on-a-pln"><span class="header-section-number">4.6.3</span> Fused graphical lasso on a PLN</a></li>
-  <li><a href="#other-copula-joints" id="toc-other-copula-joints" class="nav-link" data-scroll-target="#other-copula-joints"><span class="header-section-number">4.6.4</span> Other copula joints</a></li>
+  <li><a href="#sec-grn-penalty-stability" id="toc-sec-grn-penalty-stability" class="nav-link" data-scroll-target="#sec-grn-penalty-stability"><span class="header-section-number">4.4.1</span> Stability criteria</a></li>
+  <li><a href="#sec-grn-penalty-describe" id="toc-sec-grn-penalty-describe" class="nav-link" data-scroll-target="#sec-grn-penalty-describe"><span class="header-section-number">4.4.2</span> Descriptive plots per cell type</a></li>
+  </ul></li>
+  <li><a href="#sec-grn-top4" id="toc-sec-grn-top4" class="nav-link" data-scroll-target="#sec-grn-top4"><span class="header-section-number">4.5</span> Three core estimators</a>
+  <ul>
+  <li><a href="#sec-gmgm" id="toc-sec-gmgm" class="nav-link" data-scroll-target="#sec-gmgm"><span class="header-section-number">4.5.1</span> Cartesian <code>GmGM</code> cannot separate within-cell edges</a></li>
+  <li><a href="#sec-lowrank" id="toc-sec-lowrank" class="nav-link" data-scroll-target="#sec-lowrank"><span class="header-section-number">4.5.2</span> Sparse plus low-rank precisions</a></li>
+  <li><a href="#fused-graphical-lasso-on-a-pln" id="toc-fused-graphical-lasso-on-a-pln" class="nav-link" data-scroll-target="#fused-graphical-lasso-on-a-pln"><span class="header-section-number">4.5.3</span> Fused graphical lasso on a PLN</a></li>
+  <li><a href="#other-copula-joints" id="toc-other-copula-joints" class="nav-link" data-scroll-target="#other-copula-joints"><span class="header-section-number">4.5.4</span> Other copula joints</a></li>
   </ul></li>
   </ul>
-</nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/edit/main/docs/02-grn-graphical-lasso.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/blob/main/docs/02-grn-graphical-lasso.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
+
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./02-grn-graphical-lasso.html">GRN inference</a></li><li class="breadcrumb-item"><a href="./02-grn-graphical-lasso.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Undirected GGMs from single-cell transcriptomics</span></a></li></ol></nav>
 <div class="quarto-title">
@@ -375,13 +586,19 @@ window.Quarto = {
 \sim
 \mathcal{N}_{G}\bigl(\boldsymbol{\mu}_{\cdot j},\,\boldsymbol{\Sigma}_{j}\bigr),
 \qquad
-\boldsymbol{\Theta}_{j}
+\boldsymbol{\Omega}_{j}
 \equiv
 \boldsymbol{\Sigma}_{j}^{-1}
 \ \text{sparse},
 \tag{4.1}</span></span></p>
-<p>with undirected edges encoding conditional dependence <span class="citation" data-cites="friedmanSparseInverseCovariance2008 mazumderGraphicalLassoNew2011">(<a href="#ref-friedmanSparseInverseCovariance2008" role="doc-biblioref">Friedman et al. 2008</a>; <a href="#ref-mazumderGraphicalLassoNew2011" role="doc-biblioref">Mazumder and Hastie 2011</a>)</span>. Single-cell UMI profiles are the <strong>only observations</strong>.</p>
-<p>They are <strong>not</strong> the objects that enter the deconvolution likelihood: we use them to <strong>estimate</strong> <span class="math inline">(\boldsymbol{\mu}_{\cdot j},\boldsymbol{\Theta}_{j})</span> for labelled types in the Suppinger murine gastruloid resource <span class="citation" data-cites="suppingerMultimodalCharacterizationMurine2023">(<a href="#ref-suppingerMultimodalCharacterizationMurine2023" role="doc-biblioref">Suppinger et al. 2023</a>)</span>. Downstream, those parameters discriminate types via mean shifts <strong>and</strong> precision rewiring, then enter the convolution</p>
+<p>with undirected edges encoding conditional dependence <span class="citation" data-cites="friedmanSparseInverseCovariance2008 mazumderGraphicalLassoNew2011">(<a href="#ref-friedmanSparseInverseCovariance2008" role="doc-biblioref">Friedman et al. 2008</a>; <a href="#ref-mazumderGraphicalLassoNew2011" role="doc-biblioref">Mazumder and Hastie 2011</a>)</span>. We write <span class="math inline">\boldsymbol{\Omega}=\boldsymbol{\Sigma}^{-1}</span> for the precision and keep <span class="math inline">\theta</span> for a generic parameter, not for a precision entry. Hats, checks and asterisks distinguish estimators from the truth:</p>
+<ul>
+<li><span class="math inline">\boldsymbol{\Omega}^{\ast}</span> (entries <span class="math inline">\omega_{gg'}^{\ast}</span>) is the <strong>true</strong> precision;</li>
+<li><span class="math inline">\widehat{\boldsymbol{\Omega}}</span> is the <strong>sparse</strong> <span class="math inline">\ell_{1}</span> estimator (graphical lasso or penalised PLN);</li>
+<li><span class="math inline">\check{\boldsymbol{\Omega}}</span> is the <strong>de-sparsified</strong> matrix obtained by one Newton step from <span class="math inline">\widehat{\boldsymbol{\Omega}}</span>. Use the caron only when the two matrices could be confused: <span class="math inline">\check{\boldsymbol{\Omega}}</span> is dense and intended for entrywise inference, not as the DeCovarT plug-in.</li>
+</ul>
+<p>The object exported to the convolution is the sparse SPD matrix <span class="math inline">\widehat{\boldsymbol{\Omega}}_{j}</span> (or an SPD refit on an FDR support), on the linear scale of <a href="#eq-grn-convolution" class="quarto-xref">Equation&nbsp;<span>4.2</span></a>.</p>
+<p>Single-cell UMI profiles are the <strong>only observations</strong>. They are <strong>not</strong> the objects that enter the deconvolution likelihood: we use them to <strong>estimate</strong> <span class="math inline">(\boldsymbol{\mu}_{\cdot j},\boldsymbol{\Omega}_{j})</span> for labelled types in the Suppinger murine gastruloid resource <span class="citation" data-cites="suppingerMultimodalCharacterizationMurine2023">(<a href="#ref-suppingerMultimodalCharacterizationMurine2023" role="doc-biblioref">Suppinger et al. 2023</a>)</span>. Downstream, those parameters discriminate types via mean shifts <strong>and</strong> precision rewiring, then enter the convolution</p>
 <p><span id="eq-grn-convolution"><span class="math display">
 \boldsymbol{y}_{\cdot i}
 \mid
@@ -409,7 +626,7 @@ flowchart TD
   B --&gt; N["Nonparanormal scores"]
   N --&gt; S["SILGGM, global FDR"]
   B --&gt; P["PLNnetwork on counts"]
-  H --&gt; F["Sparse Theta_j,t"]
+  H --&gt; F["Sparse Omega_j,t"]
   S --&gt; F
   P --&gt; F
   F --&gt; D["DeCovarT population Gaussian"]
@@ -444,7 +661,7 @@ Figure&nbsp;4.1: Three core precision estimators. huge and SILGGM see a Gaussian
 <tr class="odd">
 <td><code>huge</code></td>
 <td>Continuous Gaussian table</td>
-<td>Sparse <span class="math inline">\boldsymbol{\Theta}_{j}</span></td>
+<td>Sparse <span class="math inline">\widehat{\boldsymbol{\Omega}}_{j}</span></td>
 </tr>
 <tr class="even">
 <td><code>SILGGM</code></td>
@@ -458,42 +675,7 @@ Figure&nbsp;4.1: Three core precision estimators. huge and SILGGM see a Gaussian
 </tr>
 </tbody>
 </table>
-<p><code>SCTransform</code> Pearson residuals stay in the HVG ranking of <a href="03-feature-selection-naive.html#sec-fs-hvg" class="quarto-xref"><span>Section 3.2</span></a>. Do not pass them to <code>PLNnetwork</code>: the PLN already has a Poisson sampling layer. Do not run the nonparanormal map before <code>huge</code> or before PLN; it is part of the <code>SILGGM</code> branch only.</p>
-<div id="nte-npn-moments" class="callout callout-style-default callout-warning callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Warning&nbsp;4.1: :warning: Nonparanormal maps are not affine, so they break moments
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><code>huge::huge.npn()</code> replaces each margin by a (truncated or shrunk) inverse-normal score <span class="citation" data-cites="liuNonparanormalSemiparametricEstimation2009">(<a href="#ref-liuNonparanormalSemiparametricEstimation2009" role="doc-biblioref">Liu et al. 2009</a>)</span>. That map <span class="math inline">\varphi</span> is <strong>monotone but not affine</strong>. Jensen’s inequality then says <span class="math inline">\varphi(\mathbb{E}[y_{g}])\neq\mathbb{E}[\varphi(y_{g})]</span> unless the margin is degenerate (<a href="#nte-jensen-transform" class="quarto-xref">Note&nbsp;<span>4.2</span></a>). A precision fitted after NPN therefore targets a <strong>different random vector</strong> from the population Gaussian DeCovarT convolves. Use NPN only inside the <code>SILGGM</code> branch, and never export NPN-scale means as <span class="math inline">\boldsymbol{\mu}_{\cdot j}</span>.</p>
-</div>
-</div>
-<div id="nte-jensen-transform" class="callout callout-style-default callout-important callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Important&nbsp;4.2: :warning: Transforming the response is usually the wrong GLM
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>DeCovarT’s mean map <span class="math inline">\boldsymbol{y}=\boldsymbol{\mu}\boldsymbol{p}</span> is <strong>additive on the measurement scale of <span class="math inline">\boldsymbol{y}</span></strong>. Replacing <span class="math inline">\boldsymbol{y}</span> by <span class="math inline">\varphi(\boldsymbol{y})</span> and then treating the transform as Gaussian does three separate kinds of damage.</p>
-<p><strong>1. Jensen: moments of <span class="math inline">\varphi(\boldsymbol{y})</span> are not <span class="math inline">\varphi</span> of the moments.</strong> For a convex <span class="math inline">\varphi</span>, the probabilistic form of Jensen’s inequality states <span class="math inline">\varphi(\mathbb{E}[\boldsymbol{y}])\le\mathbb{E}[\varphi(\boldsymbol{y})]</span>, with equality iff <span class="math inline">\boldsymbol{y}</span> is almost surely constant or <span class="math inline">\varphi</span> is affine (<a href="https://en.wikipedia.org/wiki/Jensen%27s_inequality#Probabilistic_form">Wikipedia, probabilistic form</a>). The logarithm is <strong>concave</strong>, so</p>
-<p><span id="eq-jensen-log"><span class="math display">
-\mathbb{E}[\log y_{g}]
-\le
-\log\mathbb{E}[y_{g}],
-\tag{4.3}</span></span></p>
-<p>and <span class="math inline">\log1p</span> is likewise concave on <span class="math inline">[0,\infty)</span>. A graphical lasso fitted to <span class="math inline">\log1p</span> counts therefore targets a precision of a <strong>different random vector</strong>. The mean of the transformed table is not the transform of the mean that DeCovarT needs in <a href="#eq-grn-convolution" class="quarto-xref">Equation&nbsp;<span>4.2</span></a>. Population aggregation (<a href="06-population-alignment.html#sec-align-invariance" class="quarto-xref"><span>Section 5.3</span></a>) compounds the error: the sum of transformed cells is not the transform of the sum.</p>
-<p><strong>2. The estimand of a transformed linear model is not the estimand of the original mean.</strong> In a Gaussian linear model, <span class="math inline">\mathbb{E}[\log y\mid x]=\beta_{0}+\beta_{1}x</span> describes <strong>multiplicative</strong> effects on <span class="math inline">y</span> after exponentiation, not additive shifts of <span class="math inline">\mathbb{E}[y\mid x]</span> (<a href="https://library.virginia.edu/data/articles/interpreting-log-transformations-in-a-linear-model">University of Virginia Library, interpreting log transformations</a>). DeCovarT’s target is a <strong>linear mixture of means</strong> plus a quadratic mixture of covariances.</p>
-<p><strong>3. A GLM with the right mean–variance function is preferable to transforming <span class="math inline">y</span>.</strong> Transforming the response to force Gaussianity changes the parameter. The constructive alternative on counts is the Poisson-lognormal model (<a href="#sec-pln" class="quarto-xref"><span>Section 4.3.3</span></a>), not <code>log1p</code> followed by graphical lasso.</p>
-</div>
-</div>
+<p><code>SCTransform</code> Pearson residuals stay in the HVG ranking of <a href="03-feature-selection-naive.html#sec-fs-hvg" class="quarto-xref"><span>Section 3.2</span></a>. Do not pass them to <code>PLNnetwork</code>: the PLN already has a Poisson sampling layer. The nonparanormal map is part of the <code>SILGGM</code> branch only (<a href="#nte-npn-derivation" class="quarto-xref">Note&nbsp;<span>4.1</span></a>).</p>
 </section>
 <section id="sec-grn-core" class="level2" data-number="4.3">
 <h2 data-number="4.3" class="anchored" data-anchor-id="sec-grn-core"><span class="header-section-number">4.3</span> Three sparse-precision estimators</h2>
@@ -516,7 +698,7 @@ flowchart TB
     mu["mu_j"] --&gt; x(("x_c"))
     Sig["Sigma_j"] --&gt; x
   end
-  Th["Theta_j = Sigma_j inverse, sparse"] --&gt; Sig
+  Th["Omega_j = Sigma_j inverse, sparse"] --&gt; Sig
   classDef param fill:#ffffff,stroke:#0f172a,stroke-width:1.5px
   classDef latent fill:#ffffff,stroke:#0f172a,stroke-width:1.5px
   class mu,Sig,Th param
@@ -536,27 +718,27 @@ Figure&nbsp;4.2: Graphical lasso generative model: independent Gaussian cells of
 <h4 class="anchored" data-anchor-id="objective-and-assumptions">Objective and assumptions</h4>
 <p>Let <span class="math inline">S</span> be the sample covariance of the <span class="math inline">n</span> cells on the gene panel. The estimator is</p>
 <p><span id="eq-glasso"><span class="math display">
-\widehat{\boldsymbol{\Theta}}
+\widehat{\boldsymbol{\Omega}}
 =
-\arg\min_{\boldsymbol{\Theta}\succ 0}
+\arg\min_{\boldsymbol{\Omega}\succ 0}
 \Bigl[
--\log\det\boldsymbol{\Theta}
+-\log\det\boldsymbol{\Omega}
 +
-\operatorname{tr}(S\boldsymbol{\Theta})
+\operatorname{tr}(S\boldsymbol{\Omega})
 +
-\lambda\|\boldsymbol{\Theta}\|_{1}
+\lambda\|\boldsymbol{\Omega}\|_{1}
 \Bigr].
-\tag{4.4}</span></span></p>
-<p>Assumptions: multivariate Gaussian observations; conditional independence encoded by zeros of <span class="math inline">\boldsymbol{\Theta}</span>; cells independent within the type-time subset; <span class="math inline">G</span> may exceed <span class="math inline">n</span>.</p>
+\tag{4.3}</span></span></p>
+<p>Assumptions: multivariate Gaussian observations; conditional independence encoded by zeros of <span class="math inline">\boldsymbol{\Omega}</span>; cells independent within the type-time subset; <span class="math inline">G</span> may exceed <span class="math inline">n</span>.</p>
 </section>
 <section id="optimisation-and-the-ell_1-penalty" class="level4">
 <h4 class="anchored" data-anchor-id="optimisation-and-the-ell_1-penalty">Optimisation and the <span class="math inline">\ell_{1}</span> penalty</h4>
-<p><code>huge(method = "glasso")</code> solves <a href="#eq-glasso" class="quarto-xref">Equation&nbsp;<span>4.4</span></a> by graphical-lasso coordinate descent. The <span class="math inline">\ell_{1}</span> term drives off-diagonal entries to zero. The diagonal is left unpenalised, so variances are not shrunk toward zero. A path of <span class="math inline">\lambda</span> values is computed; one <span class="math inline">\lambda</span> is then chosen.</p>
+<p><code>huge(method = "glasso")</code> solves <a href="#eq-glasso" class="quarto-xref">Equation&nbsp;<span>4.3</span></a> by graphical-lasso coordinate descent. The <span class="math inline">\ell_{1}</span> term drives off-diagonal entries to zero. The diagonal is left unpenalised, so variances are not shrunk toward zero. A path of <span class="math inline">\lambda</span> values is computed; one <span class="math inline">\lambda</span> is then chosen.</p>
 </section>
 <section id="hyperparameters" class="level4">
 <h4 class="anchored" data-anchor-id="hyperparameters">Hyperparameters</h4>
 <ul>
-<li><span class="math inline">\lambda</span> path, and the selection rule in <code>huge.select()</code> (<code>ebic</code> <span class="citation" data-cites="foygelExtendedBayesianInformation2010">(<a href="#ref-foygelExtendedBayesianInformation2010" role="doc-biblioref">Foygel and Drton 2010</a>)</span> or <code>stars</code>);</li>
+<li><span class="math inline">\lambda</span> path, and the selection rule in <code>huge.select()</code> (<code>ebic</code> <span class="citation" data-cites="foygelExtendedBayesianInformation2010">(<a href="#ref-foygelExtendedBayesianInformation2010" role="doc-biblioref">Foygel and Drton 2010</a>)</span> or <code>stars</code> <span class="citation" data-cites="liuStabilityApproachRegularization2010">(<a href="#ref-liuStabilityApproachRegularization2010" role="doc-biblioref">Liu et al. 2010</a>)</span>);</li>
 <li>whether the diagonal is penalised (default in this design: no);</li>
 <li>the gene panel <span class="math inline">\mathcal{G}_{0}</span> and the type-time subset.</li>
 </ul>
@@ -564,24 +746,82 @@ Figure&nbsp;4.2: Graphical lasso generative model: independent Gaussian cells of
 </section>
 <section id="sec-silggm" class="level3" data-number="4.3.2">
 <h3 data-number="4.3.2" class="anchored" data-anchor-id="sec-silggm"><span class="header-section-number">4.3.2</span> <code>SILGGM</code> after a nonparanormal map</h3>
-<p><code>SILGGM</code> tests entries of a Gaussian precision and controls FDR on the whole graph <span class="citation" data-cites="zhangSILGGMExtensivePackage2018 R-SILGGM">(<a href="#ref-zhangSILGGMExtensivePackage2018" role="doc-biblioref">Zhang et al. 2018a</a>, <a href="#ref-R-SILGGM" role="doc-biblioref">2018b</a>)</span>. The arm used here is: nonparanormal scores, then de-sparsified graphical lasso (<code>D-S_GL</code>) with <code>global = TRUE</code>. With many cells the five <code>SILGGM</code> procedures tend to agree; at a bulk-sample size they need not. The export we keep is the FDR-selected edge list (Cytoscape CSV via <code>cytoscape_format</code> and <code>csv_save</code>), not the full inferential dump.</p>
+<p><code>SILGGM</code> tests entries of a Gaussian precision and controls FDR on the whole graph <span class="citation" data-cites="zhangSILGGMExtensivePackage2018 R-SILGGM">(<a href="#ref-zhangSILGGMExtensivePackage2018" role="doc-biblioref">Zhang et al. 2018a</a>, <a href="#ref-R-SILGGM" role="doc-biblioref">2018b</a>)</span>. The arm used here is: nonparanormal scores, then de-sparsified graphical lasso (<code>D-S_GL</code>) with <code>global = TRUE</code>. With many cells the five <code>SILGGM</code> procedures tend to agree; at a bulk-sample size they need not. The object we keep is the <strong>SPD precision refit on the FDR support</strong>, not the dense de-sparsified matrix.</p>
 <div id="nte-npn-derivation" class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Note&nbsp;4.3: :information_source: Nonparanormal scores
+Note&nbsp;4.1: <span class="emoji" data-emoji="information_source">ℹ️</span> Shrinkage versus truncation in <code>huge.npn</code>
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Liu, Lafferty and Wasserman <span class="citation" data-cites="liuNonparanormalSemiparametricEstimation2009">(<a href="#ref-liuNonparanormalSemiparametricEstimation2009" role="doc-biblioref">Liu et al. 2009</a>)</span> define a nonparanormal vector by strictly increasing maps <span class="math inline">f_{g}</span> such that <span class="math inline">Z_{g}=f_{g}(X_{g})</span> is multivariate Gaussian with mean zero, covariance <span class="math inline">R</span>, and precision <span class="math inline">R^{-1}</span>. If each <span class="math inline">f_{g}</span> is unknown but monotone,</p>
+<p>Liu, Lafferty and Wasserman <span class="citation" data-cites="liuNonparanormalSemiparametricEstimation2009">(<a href="#ref-liuNonparanormalSemiparametricEstimation2009" role="doc-biblioref">Liu et al. 2009</a>)</span> define a nonparanormal vector by monotone maps <span class="math inline">f_{g}</span> such that <span class="math inline">Z_{g}=f_{g}(X_{g})</span> and <span class="math inline">\boldsymbol{Z}\sim\mathcal{N}_{G}(\boldsymbol{0},R)</span>, with latent precision <span class="math inline">\boldsymbol{\Omega}=R^{-1}</span>. By Sklar’s theorem, if the margins <span class="math inline">F_{g}</span> are continuous,</p>
+<p><span class="math display">
+F_{\boldsymbol{X}}(x_{1},\ldots,x_{G})
+=
+C_{R}\bigl(F_{1}(x_{1}),\ldots,F_{G}(x_{G})\bigr),
+</span></p>
+<p>where <span class="math inline">C_{R}</span> is the Gaussian copula with correlation <span class="math inline">R</span>. Then <span class="math inline">U_{g}=F_{g}(X_{g})\sim\mathrm{Unif}(0,1)</span> and</p>
 <p><span class="math display">
 Z_{g}
 =
-\Phi^{-1}\bigl(F_{g}(X_{g})\bigr),
+\Phi^{-1}\bigl(F_{g}(X_{g})\bigr).
 </span></p>
-<p>because <span class="math inline">F_{g}(X_{g})</span> is uniform and <span class="math inline">\Phi^{-1}</span> returns a standard normal margin. Replacing <span class="math inline">F_{g}</span> by a winsorised or shrunken empirical cdf is <code>huge.npn()</code> with <code>npn.func = "truncation"</code> or <code>"shrinkage"</code>. Graphical lasso on those scores estimates the precision of <span class="math inline">Z</span>, not of the raw counts. Both modes return an <span class="math inline">n\times G</span> score matrix that <code>SILGGM</code> can take. Shrinkage is the default; truncation is the heavy-tail alternative. Means on this scale are not <span class="math inline">\boldsymbol{\mu}_{\cdot j}</span> (<a href="#nte-npn-moments" class="quarto-xref">Note&nbsp;<span>4.1</span></a>).</p>
+<p>The unknown monotone margins change the observed scale, not the latent copula graph.</p>
+<p>Let <span class="math inline">R_{ig}=\operatorname{rank}(X_{ig})</span> in a sample of size <span class="math inline">n</span>. The raw empirical cdf <span class="math inline">\widehat{F}_{g}(X_{ig})=R_{ig}/n</span> hits <span class="math inline">1</span> at the sample maximum, and <span class="math inline">\Phi^{-1}(1)=+\infty</span>. The score map is also unstable in the tails because</p>
+<p><span class="math display">
+\frac{\mathrm{d}}{\mathrm{d}u}\Phi^{-1}(u)
+=
+\frac{1}{\phi\bigl(\Phi^{-1}(u)\bigr)}
+</span></p>
+<p>diverges as <span class="math inline">u\downarrow 0</span> or <span class="math inline">u\uparrow 1</span>. <code>huge.npn()</code> therefore regularises the plotting positions before <span class="math inline">\Phi^{-1}</span> <span class="citation" data-cites="R-huge">(<a href="#ref-R-huge" role="doc-biblioref">Zhao et al. 2022</a>)</span>. Both options address that instability; truncation is not intrinsically a “heavy-tail model”.</p>
+<p><strong>Shrinkage</strong> (<code>npn.func = "shrinkage"</code>, the <code>huge</code> default, and ours) uses the plotting positions <span class="math inline">R_{ig}/(n+1)</span>:</p>
+<p><span class="math display">
+\widetilde{Z}_{ig}^{\mathrm{shr}}
+=
+\Phi^{-1}\!\left(\frac{R_{ig}}{n+1}\right).
+</span></p>
+<p>Attainable probabilities lie in <span class="math inline">\{1/(n+1),\ldots,n/(n+1)\}</span>, so every Gaussian score stays finite and each distinct rank keeps a distinct score. Relative to <span class="math inline">R_{ig}/n</span> the shift is at most <span class="math inline">1/(n+1)</span>, not an <span class="math inline">O(n^{-1/2})</span> pull toward <span class="math inline">1/2</span>.</p>
+<p><strong>Truncation</strong> (<code>npn.func = "truncation"</code>) winsorises <span class="math inline">R_{ig}/n</span> at <span class="math inline">\delta_{n}</span> before <span class="math inline">\Phi^{-1}</span>. Unless <code>npn.thresh</code> is set, <code>huge</code> uses</p>
+<p><span class="math display">
+\delta_{n}
+=
+\frac{1}{4\,n^{1/4}\sqrt{\pi\log n}}
+=
+O\bigl(n^{-1/4}(\log n)^{-1/2}\bigr),
+</span></p>
+<p>not order <span class="math inline">n^{-1/2}</span>. Central ranks are unchanged; all probabilities beyond the cutoff share the same endpoint score <span class="math inline">\Phi^{-1}(\delta_{n})</span> or <span class="math inline">\Phi^{-1}(1-\delta_{n})</span>. That clips the tails more aggressively and discards rank information past the cutoff.</p>
+<p><span id="eq-npn-shrink-trunc"><span class="math display">
+\begin{aligned}
+\text{shrinkage:}
+&amp;\quad
+\widetilde{Z}_{ig}
+=
+\Phi^{-1}\!\left(\frac{R_{ig}}{n+1}\right),
+\\
+\text{truncation:}
+&amp;\quad
+\widetilde{Z}_{ig}
+=
+\Phi^{-1}\!\left[
+\min\bigl\{1-\delta_{n},\,
+\max(\delta_{n},R_{ig}/n)\bigr\}
+\right].
+\end{aligned}
+\tag{4.4}</span></span></p>
+<p><code>huge.npn()</code> then standardises columns. The output of <code>shrinkage</code> or <code>truncation</code> is an <span class="math inline">n\times G</span> score matrix (<code>skeptic</code> returns a correlation matrix instead). Graphical lasso on those scores targets <span class="math inline">\boldsymbol{\Omega}=R^{-1}</span> of the latent Gaussian <span class="math inline">\boldsymbol{Z}</span>, not the precision of the raw counts. Means on this scale are not <span class="math inline">\boldsymbol{\mu}_{\cdot j}</span>.</p>
+<div id="fig-npn-shrink-trunc" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-npn-shrink-trunc-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/npn_shrinkage_truncation.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-npn-shrink-trunc-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4.3: Two regularisations of <span class="math inline">\Phi^{-1}</span> in <code>huge.npn()</code>: truncation clips the empirical tails at <span class="math inline">\delta_{n}</span>; shrinkage moves the whole rank grid strictly inside <span class="math inline">(0,1)</span>. Both keep Gaussian scores finite before the latent graph is estimated.
+</figcaption>
+</figure>
+</div>
 </div>
 </div>
 <section id="generative-model-1" class="level4">
@@ -612,7 +852,7 @@ flowchart TB
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-silggm-gen-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;4.3: Nonparanormal generative model: each gene margin is a monotone map of a latent Gaussian coordinate. SILGGM tests the precision of that latent vector.
+Figure&nbsp;4.4: Nonparanormal generative model: each gene margin is a monotone map of a latent Gaussian coordinate. SILGGM tests the precision of that latent vector.
 </figcaption>
 </figure>
 </div>
@@ -621,17 +861,82 @@ Figure&nbsp;4.3: Nonparanormal generative model: each gene margin is a monotone 
 </section>
 <section id="objective-and-the-de-sparsified-correction" class="level4">
 <h4 class="anchored" data-anchor-id="objective-and-the-de-sparsified-correction">Objective and the de-sparsified correction</h4>
-<p>The first step is still <a href="#eq-glasso" class="quarto-xref">Equation&nbsp;<span>4.4</span></a>, which is <span class="math inline">\ell_{1}</span>-biased. The Janková–van de Geer correction <span class="citation" data-cites="jankovaConfidenceIntervalsHighdimensional2015">(<a href="#ref-jankovaConfidenceIntervalsHighdimensional2015" role="doc-biblioref">Jankova and Geer 2015</a>)</span> is <strong>not</strong> <span class="math inline">2\widehat{\boldsymbol{\Theta}}-S</span>. On the correlation scale it is</p>
+<p>The first step is still <a href="#eq-glasso" class="quarto-xref">Equation&nbsp;<span>4.3</span></a>, which is <span class="math inline">\ell_{1}</span>-biased. The Janková–van de Geer correction <span class="citation" data-cites="jankovaConfidenceIntervalsHighdimensional2015">(<a href="#ref-jankovaConfidenceIntervalsHighdimensional2015" role="doc-biblioref">Jankova and Geer 2015</a>)</span> is <strong>not</strong> <span class="math inline">2\widehat{\boldsymbol{\Omega}}-S</span>. On the correlation scale it is the one-step Newton update</p>
 <p><span id="eq-desparsify"><span class="math display">
-\widehat{T}
+\check{\boldsymbol{\Omega}}
 =
-2\widehat{\boldsymbol{\Theta}}
+2\widehat{\boldsymbol{\Omega}}
 -
-\widehat{\boldsymbol{\Theta}}\,
+\widehat{\boldsymbol{\Omega}}\,
 \widehat{R}\,
-\widehat{\boldsymbol{\Theta}},
+\widehat{\boldsymbol{\Omega}},
 \tag{4.5}</span></span></p>
-<p>with <span class="math inline">\widehat{R}</span> the empirical correlation. <span class="math inline">\widehat{T}</span> recentres the edges so that they are asymptotically normal under a sparsity condition on the maximum degree. It is deliberately <strong>dense</strong>: it is an inferential object, not a generative precision. Zhang and Zou <span class="citation" data-cites="zhangSparsePrecisionMatrix2014">(<a href="#ref-zhangSparsePrecisionMatrix2014" role="doc-biblioref">Zhang and Zou 2014</a>)</span> note that graphical lasso remains useful for <strong>support</strong> recovery even when the Gaussian assumption fails. That supports edge screening, not export of <span class="math inline">\widehat{T}</span> itself as <span class="math inline">\boldsymbol{\Theta}_{j}</span>.</p>
+<p>with <span class="math inline">\widehat{R}</span> the empirical correlation of the NPN scores (replace <span class="math inline">\widehat{R}</span> by <span class="math inline">\widehat{\boldsymbol{\Sigma}}</span> on the covariance scale). <span class="math inline">\check{\boldsymbol{\Omega}}</span> recentres the edges so that they are asymptotically normal under a sparsity condition on the maximum degree. It is deliberately <strong>dense</strong>: it is an inferential object, not a generative precision. Zhang and Zou <span class="citation" data-cites="zhangSparsePrecisionMatrix2014">(<a href="#ref-zhangSparsePrecisionMatrix2014" role="doc-biblioref">Zhang and Zou 2014</a>)</span> note that graphical lasso remains useful for <strong>support</strong> recovery even when the Gaussian assumption fails. That supports edge screening, not export of <span class="math inline">\check{\boldsymbol{\Omega}}</span> itself as <span class="math inline">\widehat{\boldsymbol{\Omega}}_{j}</span>.</p>
+<div id="nte-desparsify" class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note&nbsp;4.2: <span class="emoji" data-emoji="information_source">ℹ️</span> One Newton step removes the first-order <span class="math inline">\ell_{1}</span> bias
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The graphical-lasso KKT condition at <span class="math inline">\widehat{\boldsymbol{\Omega}}</span> is</p>
+<p><span class="math display">
+\widehat{\boldsymbol{\Sigma}}
+-
+\widehat{\boldsymbol{\Omega}}^{-1}
++
+\lambda\widehat{\boldsymbol{Z}}
+=
+0,
+</span></p>
+<p>where <span class="math inline">\widehat{Z}_{gg'}\in[-1,1]</span> is a subgradient of the <span class="math inline">\ell_{1}</span> norm (and <span class="math inline">\widehat{Z}_{gg'}=\operatorname{sign}(\hat\omega_{gg'})</span> when <span class="math inline">\hat\omega_{gg'}\neq 0</span>). The penalised estimator therefore does <strong>not</strong> solve the unpenalised score <span class="math inline">g(\boldsymbol{\Omega})=\widehat{\boldsymbol{\Sigma}}-\boldsymbol{\Omega}^{-1}=0</span>. The leftover score <span class="math inline">\lambda\widehat{\boldsymbol{Z}}</span> <strong>is</strong> the first-order shrinkage bias.</p>
+<p>The Fréchet derivative of <span class="math inline">g</span> at <span class="math inline">\boldsymbol{\Omega}</span> maps <span class="math inline">H\mapsto\boldsymbol{\Omega}^{-1}H\boldsymbol{\Omega}^{-1}</span>, so its inverse sends <span class="math inline">A\mapsto\boldsymbol{\Omega}A\boldsymbol{\Omega}</span>. One Newton step from <span class="math inline">\widehat{\boldsymbol{\Omega}}</span> is therefore</p>
+<p><span class="math display">
+\begin{aligned}
+\check{\boldsymbol{\Omega}}
+&amp;=
+\widehat{\boldsymbol{\Omega}}
+-
+\widehat{\boldsymbol{\Omega}}
+\bigl(\widehat{\boldsymbol{\Sigma}}-\widehat{\boldsymbol{\Omega}}^{-1}\bigr)
+\widehat{\boldsymbol{\Omega}}
+\\
+&amp;=
+2\widehat{\boldsymbol{\Omega}}
+-
+\widehat{\boldsymbol{\Omega}}\,
+\widehat{\boldsymbol{\Sigma}}\,
+\widehat{\boldsymbol{\Omega}},
+\end{aligned}
+</span></p>
+<p>which is <a href="#eq-desparsify" class="quarto-xref">Equation&nbsp;<span>4.5</span></a> on the covariance scale. Equivalently, <span class="math inline">\check{\boldsymbol{\Omega}}=\widehat{\boldsymbol{\Omega}}+\lambda\widehat{\boldsymbol{\Omega}}\widehat{\boldsymbol{Z}}\widehat{\boldsymbol{\Omega}}</span>: the correction adds back the KKT bias term.</p>
+<p>Under the usual sparsity and rate conditions the remainder after this linear expansion is <span class="math inline">o_{p}(n^{-1/2})</span>, so a <strong>single</strong> Newton step is enough for entrywise <span class="math inline">\sqrt{n}</span>-normality <span class="citation" data-cites="jankovaConfidenceIntervalsHighdimensional2015">(<a href="#ref-jankovaConfidenceIntervalsHighdimensional2015" role="doc-biblioref">Jankova and Geer 2015</a>)</span>:</p>
+<p><span class="math display">
+\sqrt{n}\,
+(\check\omega_{gg'}-\omega_{gg'}^{\ast})
+\;\xrightarrow{d}\;
+\mathcal{N}\bigl(0,\;
+\omega_{gg}^{\ast}\omega_{g'g'}^{\ast}
++(\omega_{gg'}^{\ast})^{2}
+\bigr).
+</span></p>
+<p>The plug-in standard error is <span class="math inline">\widehat{\mathrm{se}}(\check\omega_{gg'})
+=\sqrt{(\hat\omega_{gg}\hat\omega_{g'g'}+\hat\omega_{gg'}^{2})/n}</span>. <code>SILGGM</code> (<code>D-S_GL</code>, <code>global = TRUE</code>) thresholds these de-sparsified <span class="math inline">z</span>-statistics by the Liu–et-al.&nbsp;global FDR rule at <span class="math inline">\alpha=0.05</span> <span class="citation" data-cites="liuGaussianGraphicalModel2013">(<a href="#ref-liuGaussianGraphicalModel2013" role="doc-biblioref">Liu 2013</a>)</span>. The resulting <strong>support</strong> is sparse; <span class="math inline">\check{\boldsymbol{\Omega}}</span> itself stays dense. DeCovarT then refits an SPD <span class="math inline">\widehat{\boldsymbol{\Omega}}_{j}</span> on that support.</p>
+<div id="fig-desparsify" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-desparsify-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/desparsified_graphical_lasso.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-desparsify-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4.5: One Newton step de-sparsifies the graphical lasso: the <span class="math inline">\ell_{1}</span> estimator <span class="math inline">\widehat{\boldsymbol{\Omega}}</span> is biased and sparse; the corrected <span class="math inline">\check{\boldsymbol{\Omega}}</span> is dense and asymptotically normal entrywise, which is what the FDR threshold uses.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
 </section>
 <section id="optimisation-and-global-fdr" class="level4">
 <h4 class="anchored" data-anchor-id="optimisation-and-global-fdr">Optimisation and global FDR</h4>
@@ -645,14 +950,14 @@ Figure&nbsp;4.3: Nonparanormal generative model: each gene margin is a monotone 
 flowchart LR
   X["Counts"] --&gt; N["Nonparanormal scores"]
   N --&gt; Gl["Graphical lasso"]
-  Gl --&gt; T["Debiased T"]
+  Gl --&gt; T["Debiased check-Omega"]
   T --&gt; FDR["Global FDR support"]
   FDR --&gt; SPD["SPD refit"]
 </pre>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-silggm-steps-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;4.4: Estimation order for the SILGGM arm: nonparanormal scores, graphical lasso, de-sparsified matrix, global FDR support, then an SPD refit. The debiased matrix is not exported.
+Figure&nbsp;4.6: Estimation order for the SILGGM arm: nonparanormal scores, graphical lasso, de-sparsified matrix, global FDR support, then an SPD refit. The debiased matrix is not exported.
 </figcaption>
 </figure>
 </div>
@@ -663,17 +968,16 @@ Figure&nbsp;4.4: Estimation order for the SILGGM arm: nonparanormal scores, grap
 <section id="hyperparameters-1" class="level4">
 <h4 class="anchored" data-anchor-id="hyperparameters-1">Hyperparameters</h4>
 <ul>
-<li><code>npn.func</code>: <code>shrinkage</code> or <code>truncation</code>;</li>
+<li><code>npn.func</code>: <code>shrinkage</code> (default) or <code>truncation</code> (<a href="#nte-npn-derivation" class="quarto-xref">Note&nbsp;<span>4.1</span></a>);</li>
 <li><code>method = "D-S_GL"</code> and <code>global = TRUE</code>;</li>
-<li>FDR level <code>alpha</code>;</li>
-<li><code>lambda</code> if it is not left at the package default;</li>
-<li><code>cytoscape_format = TRUE</code> and <code>csv_save = TRUE</code> only as the edge-list export.</li>
+<li>FDR level <span class="math inline">\alpha=0.05</span>;</li>
+<li><code>lambda</code> if it is not left at the package default.</li>
 </ul>
 </section>
 </section>
 <section id="sec-pln" class="level3" data-number="4.3.3">
 <h3 data-number="4.3.3" class="anchored" data-anchor-id="sec-pln"><span class="header-section-number">4.3.3</span> Poisson-lognormal network</h3>
-<p><code>PLNnetwork</code> is the sparse-precision member of <code>PLNmodels</code> <span class="citation" data-cites="chiquetPoissonLognormalModelVersatile2021 chiquetVariationalInferenceSparse2018 R-PLNmodels">(<a href="#ref-chiquetPoissonLognormalModelVersatile2021" role="doc-biblioref">Chiquet et al. 2021</a>, <a href="#ref-chiquetVariationalInferenceSparse2018" role="doc-biblioref">2018</a>, <a href="#ref-R-PLNmodels" role="doc-biblioref">2025</a>)</span>. Fused PLN graphical lasso is a perspective (<a href="#sec-grn-appendix" class="quarto-xref"><span>Section 4.6</span></a>), not this arm.</p>
+<p><code>PLNnetwork</code> is the sparse-precision member of <code>PLNmodels</code> <span class="citation" data-cites="chiquetPoissonLognormalModelVersatile2021 chiquetVariationalInferenceSparse2018 R-PLNmodels">(<a href="#ref-chiquetPoissonLognormalModelVersatile2021" role="doc-biblioref">Chiquet et al. 2021</a>, <a href="#ref-chiquetVariationalInferenceSparse2018" role="doc-biblioref">2018</a>, <a href="#ref-R-PLNmodels" role="doc-biblioref">2025</a>)</span>. Fused PLN graphical lasso is a perspective (<span class="quarto-unresolved-ref">?sec-grn-appendix</span>), not this arm.</p>
 <section id="generative-model-2" class="level4">
 <h4 class="anchored" data-anchor-id="generative-model-2">Generative model</h4>
 <p>For each cell <span class="math inline">c</span> in one type-time subset, with library size <span class="math inline">S_{c}</span>,</p>
@@ -686,7 +990,7 @@ Y_{cg}\mid\boldsymbol{Z}_{c}
 \sim
 \mathcal{N}_{G}(\boldsymbol{\mu},\boldsymbol{\Sigma}),
 \quad
-\boldsymbol{\Theta}=\boldsymbol{\Sigma}^{-1}.
+\boldsymbol{\Omega}=\boldsymbol{\Sigma}^{-1}.
 \tag{4.6}</span></span></p>
 <p>Zeros are Poisson sampling zeros <span class="citation" data-cites="svenssonDropletScRNAseqNot2020">(<a href="#ref-svenssonDropletScRNAseqNot2020" role="doc-biblioref">Svensson 2020</a>)</span>. The fit is <strong>independent</strong> for each labelled type at each of 48 h, 72 h and 96 h. A single formula with cell-type and time dummies would estimate <strong>one</strong> shared precision and only shift the mean; that is not the DeCovarT target. The formula interface is used inside each subset, with an offset and no further design.</p>
 <div class="cell" data-layout-align="default">
@@ -704,7 +1008,7 @@ flowchart TB
     mu["mu"] --&gt; Z
     Sig["Sigma"] --&gt; Z
   end
-  Th["Theta = Sigma inverse, sparse"] --&gt; Sig
+  Th["Omega = Sigma inverse, sparse"] --&gt; Sig
   classDef param fill:#ffffff,stroke:#0f172a,stroke-width:1.5px
   classDef latent fill:#ffffff,stroke:#0f172a,stroke-width:1.5px
   classDef obs fill:#cbd5e1,stroke:#0f172a,stroke-width:1.5px
@@ -715,7 +1019,7 @@ flowchart TB
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pln-gen-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;4.5: PLNnetwork: library size offsets a Poisson mean whose log-intensity is a sparse Gaussian. One such model per type and time.
+Figure&nbsp;4.7: PLNnetwork: library size offsets a Poisson mean whose log-intensity is a sparse Gaussian. One such model per type and time.
 </figcaption>
 </figure>
 </div>
@@ -724,14 +1028,14 @@ Figure&nbsp;4.5: PLNnetwork: library size offsets a Poisson mean whose log-inten
 </section>
 <section id="objective-and-assumptions-1" class="level4">
 <h4 class="anchored" data-anchor-id="objective-and-assumptions-1">Objective and assumptions</h4>
-<p>The observed-data likelihood integrates the latent Gaussian. That integral is intractable. Variational inference replaces the posterior of <span class="math inline">\boldsymbol{Z}</span> by a tractable <span class="math inline">q</span> and maximises the evidence lower bound, which is the expected complete log-likelihood minus <span class="math inline">\mathrm{KL}(q\,\|\,p(Z\mid Y))</span>. An <span class="math inline">\ell_{1}</span> penalty is added on off-diagonal entries of <span class="math inline">\boldsymbol{\Theta}</span>.</p>
+<p>The observed-data likelihood integrates the latent Gaussian. That integral is intractable. Variational inference replaces the posterior of <span class="math inline">\boldsymbol{Z}</span> by a tractable <span class="math inline">q</span> and maximises the evidence lower bound, which is the expected complete log-likelihood minus <span class="math inline">\mathrm{KL}(q\,\|\,p(Z\mid Y))</span>. An <span class="math inline">\ell_{1}</span> penalty is added on off-diagonal entries of <span class="math inline">\boldsymbol{\Omega}</span>.</p>
 <div id="nte-vi-em" class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Important&nbsp;4.4: :information_source: Variational EM, KL, and why not Monte Carlo
+Important&nbsp;4.3: <span class="emoji" data-emoji="information_source">ℹ️</span> Variational EM, KL, and why not Monte Carlo
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -749,48 +1053,189 @@ Important&nbsp;4.4: :information_source: Variational EM, KL, and why not Monte C
 </section>
 <section id="optimisation-and-the-ell_1-penalty-1" class="level4">
 <h4 class="anchored" data-anchor-id="optimisation-and-the-ell_1-penalty-1">Optimisation and the <span class="math inline">\ell_{1}</span> penalty</h4>
-<p><code>PLNnetwork()</code> runs that variational scheme over a grid of penalties (<a href="https://www.rdocumentation.org/packages/PLNmodels/versions/0.10.6/topics/PLNnetwork">PLNnetwork</a>). <code>penalize_diagonal</code> stays <code>FALSE</code> in <code>control_main</code>, matching the graphical-lasso convention. The penalty grid is set by <code>penalties</code>, or by <code>nPenalties</code> and <code>min.ratio</code> in <code>control_init</code>.</p>
+<p><code>PLNnetwork()</code> runs that variational scheme over a grid of penalties (<a href="https://www.rdocumentation.org/packages/PLNmodels/versions/0.10.6/topics/PLNnetwork">PLNnetwork</a>). The pair-specific graphical-lasso weight is <span class="math inline">\rho_{gg'}=\lambda w_{gg'}</span>. <code>penalize_diagonal</code> stays <code>FALSE</code> in <code>control_main</code>, matching the graphical-lasso convention. The penalty grid is set by <code>penalties</code>, or by <code>nPenalties</code> and <code>min.ratio</code> in <code>control_init</code>.</p>
+<p>The inner continuous problem in <span class="math inline">(B,M,S)</span> at fixed <span class="math inline">\boldsymbol{\Omega}</span> is solved by NLopt. We keep the conservative quadratic solver <strong><code>CCSAQ</code></strong> as the default <code>algorithm</code> <span class="citation" data-cites="chiquetVariationalInferenceSparse2018">(<a href="#ref-chiquetVariationalInferenceSparse2018" role="doc-biblioref">Chiquet et al. 2018</a>)</span>.</p>
+<div id="algo-plnnetwork" class="pseudocode-container quarto-float" data-chapter-level="4" data-indent-size="1.2em" data-no-end="false" data-comment-delimiter="//" data-caption-prefix="Algorithm" data-line-number="true" data-indent-lines="false" data-line-number-punc=":" data-pseudocode-number="1">
+<div class="pseudocode">
+\begin{algorithm} \caption{PLNnetwork alternating variational / graphical-lasso optimisation} \begin{algorithmic} \Require Counts $Y$, covariates $X$, offsets $O$, penalty $\lambda$ \Require penalty weights $W$ \Require inner tolerances $(f_{\mathrm{rel}},f_{\mathrm{abs}}, x_{\mathrm{rel}},x_{\mathrm{abs}})$ and \texttt{maxeval} \Require outer tolerance \texttt{ftol\_out} and \texttt{maxit\_out} \State Initialize $(B,M,S,\Sigma)$ \State $\rho \gets \lambda W$ \For{$h = 1,\ldots,\texttt{maxit\_out}$} \State $\Omega^{(h)} \gets \Call{GraphicalLasso}{\Sigma^{(h-1)},\rho}$ \Comment{precision / sparsity update} \State $(B^{(h)},M^{(h)},S^{(h)}) \gets \Call{NLOPT}{ B^{(h-1)},M^{(h-1)},S^{(h-1)}; \Omega^{(h)} }$ \Comment{inner CCSAQ solve} \Statex \hspace{\algorithmicindent} \Comment{NLOPT stops by ftol\_rel/abs, xtol\_rel/abs or maxeval} \State $\Sigma^{(h)} \gets n^{-1}\left[ {M^{(h)}}^\top M^{(h)} + \sum_i S_i^{(h)} \right]$ \State $F_h \gets -\mathrm{ELBO}(B^{(h)},M^{(h)},S^{(h)},\Omega^{(h)}) + \lambda\|\Omega^{(h)}\|_{1,W}$ \If{$|F_h-F_{h-1}|/|F_h| &lt; \texttt{ftol\_out}$} \State \textbf{break} \EndIf \EndFor \State \Return $(B,M,S,\Omega,\Sigma)$ \end{algorithmic} \end{algorithm}
+</div>
+</div>
+<p><a href="#algo-plnnetwork" class="quarto-xref">Algorithm 4.1</a> is the block-coordinate scheme of <span class="citation" data-cites="chiquetVariationalInferenceSparse2018">Chiquet et al. (<a href="#ref-chiquetVariationalInferenceSparse2018" role="doc-biblioref">2018</a>)</span>: graphical lasso updates <span class="math inline">\boldsymbol{\Omega}</span>, then NLopt updates <span class="math inline">(B,M,S)</span>. Inner stopping uses <code>ftol_*</code>, <code>xtol_*</code> and <code>maxeval</code>; outer stopping uses <code>ftol_out</code> and <code>maxit_out</code>.</p>
 </section>
 <section id="hyperparameters-2" class="level4">
 <h4 class="anchored" data-anchor-id="hyperparameters-2">Hyperparameters</h4>
-<p>Inside each type-time subset the call is of the form <code>abundance ~ 1 + offset(log_library)</code>, with <code>log_library</code> the natural log of that cell’s library size. Play with:</p>
-<ul>
-<li>the penalty grid (<code>penalties</code>, or <code>nPenalties</code> and <code>min.ratio</code>);</li>
-<li><code>penalize_diagonal</code> (kept false);</li>
-<li>outer-loop tolerances <code>ftol_out</code> and <code>maxit_out</code> only if a subset fails to converge.</li>
-</ul>
+<p>Inside each type-time subset the call is of the form <code>abundance ~ 1 + offset(log_library)</code>, with <code>log_library</code> the natural log of that cell’s library size. <a href="#tbl-pln-hyperparameters" class="quarto-xref">Table&nbsp;<span>4.1</span></a> lists the knobs that change either sparsity or numerical convergence.</p>
+<div id="tbl-pln-hyperparameters" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-pln-hyperparameters-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;4.1: Core <code>PLNnetwork</code> hyperparameters.
+</figcaption>
+<div aria-describedby="tbl-pln-hyperparameters-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 29%">
+<col style="width: 19%">
+<col style="width: 51%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Control</th>
+<th>Role</th>
+<th>Default we use</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>penalties</code> (or <code>nPenalties</code>, <code>min.ratio</code>)</td>
+<td>Sparsity path <span class="math inline">\lambda</span>; larger <span class="math inline">\lambda</span> gives a sparser <span class="math inline">\widehat{\boldsymbol{\Omega}}</span></td>
+<td>Package grid, then <a href="#sec-grn-penalty-path" class="quarto-xref"><span>Section 4.4</span></a></td>
+</tr>
+<tr class="even">
+<td><code>penalty_weights</code></td>
+<td>Edge-specific weights <span class="math inline">w_{gg'}</span> in <span class="math inline">\rho_{gg'}=\lambda w_{gg'}</span></td>
+<td>Ones (no adaptive prior)</td>
+</tr>
+<tr class="odd">
+<td><code>penalize_diagonal</code></td>
+<td>Whether diagonal precision entries are penalised</td>
+<td><code>FALSE</code></td>
+</tr>
+<tr class="even">
+<td><code>algorithm</code></td>
+<td>Inner NLopt solver for <span class="math inline">(B,M,S)</span></td>
+<td><strong><code>CCSAQ</code></strong></td>
+</tr>
+<tr class="odd">
+<td><code>ftol_rel</code> / <code>ftol_abs</code></td>
+<td>Inner <strong>objective</strong> tolerances</td>
+<td><code>1e-8</code> / <code>0</code></td>
+</tr>
+<tr class="even">
+<td><code>xtol_rel</code> / <code>xtol_abs</code></td>
+<td>Inner <strong>parameter</strong> tolerances</td>
+<td><code>1e-4</code> / solver default</td>
+</tr>
+<tr class="odd">
+<td><code>maxeval</code></td>
+<td>Cap on one inner NLopt call</td>
+<td><code>10000</code></td>
+</tr>
+<tr class="even">
+<td><code>ftol_out</code></td>
+<td>Outer relative change of the penalised ELBO</td>
+<td><code>1e-5</code></td>
+</tr>
+<tr class="odd">
+<td><code>maxit_out</code></td>
+<td>Cap on glasso <span class="math inline">\leftrightarrow</span> NLopt alternations</td>
+<td><code>50</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p><code>CCSAQ</code> is a conservative quadratic separable approximation with bound constraints; NLopt recommends trying it before MMA. <code>LBFGS</code>, <code>VAR1</code> and <code>VAR2</code> remain alternatives if the inner solve is the bottleneck, not the default.</p>
 <p>Zero-inflated PLN is not the default (<a href="#nte-drop-zico" class="quarto-xref">Note&nbsp;<span>4.5</span></a>).</p>
+<div id="nte-pln-offset" class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note&nbsp;4.4: <span class="emoji" data-emoji="information_source">ℹ️</span> The offset compares library-size-adjusted rates
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In the simplest Poisson GLM for a gene <span class="math inline">g</span> and cell (or sample) <span class="math inline">c</span>,</p>
+<p><span class="math display">
+Y_{gc}\sim\mathrm{Poisson}(\mu_{gc}),
+\qquad
+\log\mu_{gc}
+=
+\log L_{c}
++
+\beta_{0g}
++
+\beta_{1g}X_{c},
+</span></p>
+<p>the term <span class="math inline">\log L_{c}</span> is an <strong>offset</strong>: its coefficient is fixed at one. The mean therefore factors as <span class="math inline">\mu_{gc}=L_{c}\,q_{gc}</span> with rate <span class="math inline">q_{gc}=\exp(\beta_{0g}+\beta_{1g}X_{c})</span>. The response remains the <strong>raw count</strong>; the offset makes the condition coefficient a log ratio of rates,</p>
+<p><span class="math display">
+\beta_{1g}
+=
+\log(q_{gB}/q_{gA}),
+</span></p>
+<p>not a log ratio of raw read counts. <code>PLNnetwork</code> uses the same device in <a href="#eq-pln" class="quarto-xref">Equation&nbsp;<span>4.6</span></a>: <span class="math inline">S_{c}</span> (library size) multiplies the latent intensity, so the latent Gaussian <span class="math inline">\log\boldsymbol{Z}_{c}</span> is a model for <strong>relative</strong> abundance after sequencing exposure.</p>
+<p><a href="#fig-poisson-offset" class="quarto-xref">Figure&nbsp;<span>4.8</span></a> shows the two-condition cartoon. Equal rates and a doubled library yield doubled counts but <span class="math inline">\beta_{1}=0</span>. A 1.5-fold rate increase at doubled depth yields <span class="math inline">\beta_{1}=\ln(1.5)\approx0.405</span> (<span class="math inline">\log_{2}</span> fold change <span class="math inline">\approx 0.585</span>).</p>
+<p>McCarthy, Chen and Smyth write the RNA-seq GLM with the (effective) library size as an offset in the linear predictor, so that the condition coefficient is a log ratio of relative abundances after sequencing depth <span class="citation" data-cites="mccarthyDifferentialExpressionAnalysis2012a">(<a href="#ref-mccarthyDifferentialExpressionAnalysis2012a" role="doc-biblioref">McCarthy et al. 2012</a>)</span>. DESeq2 uses the same multiplicative mean <span class="math inline">\mu_{gc}=s_{c}q_{gc}</span>, with <span class="math inline">s_{c}</span> a size factor and <span class="math inline">q_{gc}</span> the abundance that carries the fold change <span class="citation" data-cites="loveModeratedEstimationFold2014">(<a href="#ref-loveModeratedEstimationFold2014" role="doc-biblioref">Love et al. 2014</a>)</span>. In PLN we pass <code>offset(log_library)</code> rather than transforming <span class="math inline">Y</span>. The offset is relative normalisation, not conversion to absolute molecule counts.</p>
+<div id="fig-poisson-offset" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-poisson-offset-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/poisson_offset.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-poisson-offset-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4.8: Library-size offset in a Poisson log-link: raw counts scale with sequencing depth, while <span class="math inline">\beta_{1}</span> is the log ratio of library-size-adjusted expression rates.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
 </section>
 </section>
 </section>
-<section id="sec-grn-top4" class="level2" data-number="4.4">
-<h2 data-number="4.4" class="anchored" data-anchor-id="sec-grn-top4"><span class="header-section-number">4.4</span> Conclusion: twelve routes</h2>
-<p>The product in <a href="index.html#fig-pipeline" class="quarto-xref">Figure&nbsp;<span>1</span></a> is</p>
-<p><span id="eq-grn-product"><span class="math display">
-\underbrace{\{\texttt{huge},\ \texttt{SILGGM+NPN},\ \texttt{PLNnetwork}\}}_{\text{three precisions}}
-\times
-\underbrace{\{\text{affine},\ \text{scDesign2}\}}_{\text{two lifts}}
-\times
-\underbrace{\{\mathcal{G}_{0},\ \text{optional NSGA-II}\}}_{\text{two panels}}.
+<section id="sec-grn-penalty-path" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="sec-grn-penalty-path"><span class="header-section-number">4.4</span> Choosing the penalty</h2>
+<p>Four displays, and only these, are used to pick the penalty for each of the three estimators. Partial-correlation <strong>weights</strong> matter, so heatmaps show the precision, not a binary adjacency.</p>
+<section id="sec-grn-penalty-stability" class="level3" data-number="4.4.1">
+<h3 data-number="4.4.1" class="anchored" data-anchor-id="sec-grn-penalty-stability"><span class="header-section-number">4.4.1</span> Stability criteria</h3>
+<p>These plots decide <span class="math inline">\lambda</span> (<code>huge</code>), <span class="math inline">\alpha</span> (<code>SILGGM</code>; we use <span class="math inline">0.05</span>), or the PLN penalty grid. They are <strong>not</strong> the final cell-type report.</p>
+<ol type="1">
+<li><strong>Regularisation paths.</strong> Plot each off-diagonal entry of <span class="math inline">\widehat{\boldsymbol{\Omega}}(\lambda)</span> against <span class="math inline">\lambda</span> or <span class="math inline">\log\lambda</span>. This is the classical lasso path: which edges enter as the penalty relaxes.</li>
+<li><strong>EBIC against <span class="math inline">\lambda</span>.</strong> Plot <span class="math inline">\mathrm{EBIC}_{\gamma}(\lambda)</span> against <span class="math inline">\log\lambda</span>, with a line at the minimiser <span class="citation" data-cites="foygelExtendedBayesianInformation2010">(<a href="#ref-foygelExtendedBayesianInformation2010" role="doc-biblioref">Foygel and Drton 2010</a>)</span>. Overlay <span class="math inline">\gamma\in\{0,0.25,0.5\}</span> when that hyperparameter is free. A flat valley means many penalties are equivalent.</li>
+<li><strong>StARS-style instability</strong> (<a href="05-grn-metrics.html#sec-metrics-stat" class="quarto-xref"><span>Section 6.1</span></a>). For <code>huge</code>, <code>huge.select(..., criterion = "stars")</code> is the subsample edge-instability rule; we reuse the same idea as a diagnostic for the other two estimators.</li>
+<li><strong>Edge-count against EBIC.</strong> Put the number of edges on the horizontal axis and EBIC on the vertical axis, and mark the optimum. That is the sparsity–fit tradeoff without depending on the numerical scale of <span class="math inline">\lambda</span>.</li>
+</ol>
+<p>For <code>SILGGM</code>, repeat the same pictures with the FDR level in place of <span class="math inline">\lambda</span> when a path of <span class="math inline">\alpha</span> is computed. For <code>PLNnetwork</code>, the horizontal axis is the penalty grid in <a href="#tbl-pln-hyperparameters" class="quarto-xref">Table&nbsp;<span>4.1</span></a>.</p>
+</section>
+<section id="sec-grn-penalty-describe" class="level3" data-number="4.4.2">
+<h3 data-number="4.4.2" class="anchored" data-anchor-id="sec-grn-penalty-describe"><span class="header-section-number">4.4.2</span> Descriptive plots per cell type</h3>
+<p>Once a penalty is fixed, two figure folders (not a single mixed gallery) report the selected networks.</p>
+<p><strong>Folder 1 — one type, one time, all estimators.</strong> A <code>funkyheatmap</code> table with rows = cell types (or type <span class="math inline">\times</span> time) and columns = global scores of each selected network: EBIC, Hellinger distance to the empirical cell cloud, mean off-diagonal edge density, number of edges, and a degree-distribution summary (mean degree; a bar plot of degrees sits beside the heatmap, never as a transcriptome hairball). Partial-correlation heatmaps at the selected penalty use a <strong>frozen</strong> gene order (cluster once) and</p>
+<p><span id="eq-partial"><span class="math display">
+\rho_{gg'\mid\mathrm{rest}}
+=
+-\frac{\omega_{gg'}}{\sqrt{\omega_{gg}\omega_{g'g'}}}.
 \tag{4.7}</span></span></p>
+<p>Blocks that survive a stronger penalty are the stable ones.</p>
+<p><strong>Folder 2 — pairwise type comparisons.</strong> The same global scores, now as pairwise contrasts (difference or ratio of EBIC, Hellinger, density, ) between cell types at a fixed time, again with <code>funkyheatmap</code>. This is the rewiring view at the <strong>metric</strong> level; signed partial-correlation difference heatmaps belong with the visualisations in <a href="05-grn-metrics.html#sec-metrics-viz" class="quarto-xref"><span>Section 6.3</span></a>.</p>
+</section>
+</section>
+<section id="sec-grn-top4" class="level2" data-number="4.5">
+<h2 data-number="4.5" class="anchored" data-anchor-id="sec-grn-top4"><span class="header-section-number">4.5</span> Three core estimators</h2>
+<p>This chapter’s product is the <strong>three</strong> precision estimators, not the full <span class="math inline">3\times 2\times 2</span> design of <a href="index.html#fig-pipeline" class="quarto-xref">Figure&nbsp;<span>1</span></a> (lifts and gene panels are later chapters).</p>
+<p><span id="eq-grn-product"><span class="math display">
+\{\texttt{huge},\;
+\texttt{SILGGM+NPN},\;
+\texttt{PLNnetwork}\}.
+\tag{4.8}</span></span></p>
 <p>Every core method must finally export</p>
 <p><span id="eq-grn-export"><span class="math display">
 \bigl\{
 \widehat{\boldsymbol{\mu}}_{\cdot j},\,
 \widehat{\boldsymbol{\Sigma}}_{j},\,
-\widehat{\boldsymbol{\Theta}}_{j}
+\widehat{\boldsymbol{\Omega}}_{j}
 \bigr\}_{j=1}^{J},
 \qquad
-\widehat{\boldsymbol{\Theta}}_{j}
+\widehat{\boldsymbol{\Omega}}_{j}
 =
 \widehat{\boldsymbol{\Sigma}}_{j}^{-1}
 \succ 0,
-\tag{4.8}</span></span></p>
+\tag{4.9}</span></span></p>
 <p>on the linear scale of <a href="#eq-grn-convolution" class="quarto-xref">Equation&nbsp;<span>4.2</span></a>, not on NPN scores.</p>
 <div id="tbl-grn-core" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-grn-core-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;4.1: Three core precision estimators.
+Table&nbsp;4.2: Three core precision estimators.
 </figcaption>
 <div aria-describedby="tbl-grn-core-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <table class="caption-top table">
@@ -814,16 +1259,16 @@ Table&nbsp;4.1: Three core precision estimators.
 <tr class="odd">
 <td><code>huge</code></td>
 <td><span class="citation" data-cites="friedmanSparseInverseCovariance2008">Friedman et al. (<a href="#ref-friedmanSparseInverseCovariance2008" role="doc-biblioref">2008</a>)</span>; <span class="citation" data-cites="zhaoHugePackageHighdimensional">Zhao et al. (<a href="#ref-zhaoHugePackageHighdimensional" role="doc-biblioref">2012</a>)</span></td>
-<td>Sparse Gaussian <span class="math inline">\boldsymbol{\Theta}</span></td>
+<td>Sparse Gaussian <span class="math inline">\widehat{\boldsymbol{\Omega}}</span></td>
 <td>Fast path; EBIC / StARS; maintained</td>
 <td>Needs Gaussian rows; no library-size layer</td>
 </tr>
 <tr class="even">
 <td><code>SILGGM</code> <code>D-S_GL</code></td>
 <td><span class="citation" data-cites="zhangSILGGMExtensivePackage2018">Zhang et al. (<a href="#ref-zhangSILGGMExtensivePackage2018" role="doc-biblioref">2018a</a>)</span>; <span class="citation" data-cites="liuGaussianGraphicalModel2013">Liu (<a href="#ref-liuGaussianGraphicalModel2013" role="doc-biblioref">2013</a>)</span></td>
-<td>Debiased edges, then an FDR support</td>
-<td>Global FDR; large <span class="math inline">n</span> makes modes agree</td>
-<td>Debiased <span class="math inline">\widehat{T}</span> is dense; NPN changes the mean</td>
+<td>De-sparsified edges, then an FDR support</td>
+<td>Global FDR at <span class="math inline">\alpha=0.05</span>; large <span class="math inline">n</span> makes modes agree</td>
+<td><span class="math inline">\check{\boldsymbol{\Omega}}</span> is dense; NPN changes the mean</td>
 </tr>
 <tr class="odd">
 <td><code>PLNnetwork</code></td>
@@ -837,61 +1282,42 @@ Table&nbsp;4.1: Three core precision estimators.
 </div>
 </figure>
 </div>
-<p>The knobs that the penalty figures in <a href="#sec-grn-penalty-path" class="quarto-xref"><span>Section 4.5</span></a> are meant to set are <span class="math inline">\lambda</span> (<code>huge</code>), <code>alpha</code> (<code>SILGGM</code>), and the PLN penalty grid.</p>
+<p>The knobs that <a href="#sec-grn-penalty-path" class="quarto-xref"><span>Section 4.4</span></a> is meant to set are <span class="math inline">\lambda</span> (<code>huge</code>), <span class="math inline">\alpha=0.05</span> (<code>SILGGM</code>), and the PLN penalty grid.</p>
 <div id="nte-drop-zico" class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Warning&nbsp;4.5: :warning: Why we drop zero-inflated directed graphs in the core
+Warning&nbsp;4.5: <span class="emoji" data-emoji="warning">⚠️</span> Why we drop zero-inflated directed graphs in the core
 </div>
 </div>
 <div class="callout-body-container callout-body">
 <p>Directed zero-inflated DAGs are the wrong object for DeCovarT: the output is a DAG, not an undirected SPD precision. Suppinger is droplet UMI data. Svensson showed that zeros in droplet scRNA-seq are often explained by ordinary molecule-sampling counts <span class="citation" data-cites="svenssonDropletScRNAseqNot2020">(<a href="#ref-svenssonDropletScRNAseqNot2020" role="doc-biblioref">Svensson 2020</a>)</span>. Keep hurdle or ZINB graphs in <a href="04-sensitivity-misspecification.html#sec-sensitivity" class="quarto-xref"><span>Section 10.1</span></a> if the observation model is to be contaminated, not as a GRN estimator.</p>
 </div>
 </div>
-</section>
-<section id="sec-grn-penalty-path" class="level2" data-number="4.5">
-<h2 data-number="4.5" class="anchored" data-anchor-id="sec-grn-penalty-path"><span class="header-section-number">4.5</span> Choosing the penalty</h2>
-<p>Four displays, and only these, are used to pick the penalty for each of the three estimators. Partial-correlation <strong>weights</strong> matter, so heatmaps show the precision, not a binary adjacency.</p>
-<ol type="1">
-<li><strong>Regularisation paths.</strong> Plot each off-diagonal entry of <span class="math inline">\widehat{\boldsymbol{\Theta}}(\lambda)</span> against <span class="math inline">\lambda</span> or <span class="math inline">\log\lambda</span>. This is the classical lasso path: which edges enter as the penalty relaxes.</li>
-<li><strong>EBIC against <span class="math inline">\lambda</span>.</strong> Plot <span class="math inline">\mathrm{EBIC}_{\gamma}(\lambda)</span> against <span class="math inline">\log\lambda</span>, with a line at the minimiser <span class="citation" data-cites="foygelExtendedBayesianInformation2010">(<a href="#ref-foygelExtendedBayesianInformation2010" role="doc-biblioref">Foygel and Drton 2010</a>)</span>. Overlay <span class="math inline">\gamma\in\{0,0.25,0.5\}</span> when that hyperparameter is free. A flat valley means many penalties are equivalent.</li>
-<li><strong>Precision heatmaps along the path.</strong> At a few <span class="math inline">\lambda</span> values, including the selected one, show</li>
-</ol>
-<p><span id="eq-partial"><span class="math display">
-\rho_{gg'\mid\mathrm{rest}}
-=
--\frac{\theta_{gg'}}{\sqrt{\theta_{gg}\theta_{g'g'}}}.
-\tag{4.9}</span></span></p>
-<p>Freeze the gene order (cluster once). Blocks that survive a stronger penalty are the stable ones. 4. <strong>Edge-count against EBIC.</strong> Put the number of edges on the horizontal axis and EBIC on the vertical axis, and mark the optimum. That is the sparsity–fit tradeoff without depending on the numerical scale of <span class="math inline">\lambda</span>.</p>
-<p>For <code>SILGGM</code>, repeat the same four pictures with the FDR level in place of <span class="math inline">\lambda</span> when a path of <code>alpha</code> is computed. For <code>PLNnetwork</code>, the horizontal axis is the penalty grid.</p>
-</section>
-<section id="sec-grn-appendix" class="level2" data-number="4.6">
-<h2 data-number="4.6" class="anchored" data-anchor-id="sec-grn-appendix"><span class="header-section-number">4.6</span> Perspectives</h2>
-<section id="sec-gmgm" class="level3" data-number="4.6.1">
-<h3 data-number="4.6.1" class="anchored" data-anchor-id="sec-gmgm"><span class="header-section-number">4.6.1</span> Cartesian <code>GmGM</code> cannot separate within-cell edges</h3>
+<section id="sec-gmgm" class="level3" data-number="4.5.1">
+<h3 data-number="4.5.1" class="anchored" data-anchor-id="sec-gmgm"><span class="header-section-number">4.5.1</span> Cartesian <code>GmGM</code> cannot separate within-cell edges</h3>
 <p><code>GmGM</code> replaces independent cells by a Cartesian product: gene <span class="math inline">g</span> in cell <span class="math inline">c</span> may depend on other genes in the same cell, or on the same gene in other cells, but not on an arbitrary pair <span class="math inline">(c,g)\neq(c',g')</span> <span class="citation" data-cites="andrewMakingMultiaxisGaussian2026">(<a href="#ref-andrewMakingMultiaxisGaussian2026" role="doc-biblioref">Andrew et al. 2026</a>)</span>. The precision of the vectorised matrix is a Kronecker <strong>sum</strong> of a gene precision and a cell precision. That sum forbids the cross terms that would distinguish regulation inside a cell from dependence across cells.</p>
-<p>A strong-product Gaussian graphical model is the extension that can carry both within-cell and across-cell edges. It is not available as a drop-in for this design. <a href="#fig-gmgm-extend" class="quarto-xref">Figure&nbsp;<span>4.6</span></a> sketches why labelled types still do not rescue the Cartesian support: hard cell-type blocks remove cross-type edges, but inside a type the Cartesian sum still cannot separate intracellular regulation from cell–cell dependence.</p>
+<p>A strong-product Gaussian graphical model is the extension that can carry both within-cell and across-cell edges. It is not available as a drop-in for this design. <a href="#fig-gmgm-extend" class="quarto-xref">Figure&nbsp;<span>4.9</span></a> sketches why labelled types still do not rescue the Cartesian support: hard cell-type blocks remove cross-type edges, but inside a type the Cartesian sum still cannot separate intracellular regulation from cell–cell dependence.</p>
 <div id="fig-gmgm-extend" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-gmgm-extend-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="images/gmgm_complexity.png" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-gmgm-extend-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;4.6: Cartesian GmGM, type-specific fits, and the strong-product extension that would separate within-cell edges from across-cell edges.
+Figure&nbsp;4.9: Cartesian GmGM, type-specific fits, and the strong-product extension that would separate within-cell edges from across-cell edges.
 </figcaption>
 </figure>
 </div>
 </section>
-<section id="sec-lowrank" class="level3" data-number="4.6.2">
-<h3 data-number="4.6.2" class="anchored" data-anchor-id="sec-lowrank"><span class="header-section-number">4.6.2</span> Sparse plus low-rank precisions</h3>
+<section id="sec-lowrank" class="level3" data-number="4.5.2">
+<h3 data-number="4.5.2" class="anchored" data-anchor-id="sec-lowrank"><span class="header-section-number">4.5.2</span> Sparse plus low-rank precisions</h3>
 <p>Unmeasured programmes can make the marginal precision dense. Chandrasekaran, Parrilo and Willsky split it into a sparse conditional graph minus a low-rank factor term <span class="citation" data-cites="chandrasekaranLatentVariableGraphical2012">(<a href="#ref-chandrasekaranLatentVariableGraphical2012" role="doc-biblioref">Chandrasekaran et al. 2012</a>)</span>,</p>
 <p><span id="eq-slr"><span class="math display">
-\boldsymbol{\Theta}_{\mathrm{marg}}
+\boldsymbol{\Omega}_{\mathrm{marg}}
 =
-\boldsymbol{\Theta}_{\mathrm{sparse}}
+\boldsymbol{\Omega}_{\mathrm{sparse}}
 -
 \boldsymbol{L},
 \qquad
@@ -899,12 +1325,12 @@ Figure&nbsp;4.6: Cartesian GmGM, type-specific fits, and the strong-product exte
 \tag{4.10}</span></span></p>
 <p>A useful reading of <span class="math inline">\boldsymbol{L}</span> is a small set of transcription factors, or of co-regulated pathways, that lower the rank of the residual dependence. <span class="math inline">\boldsymbol{L}</span> is a nuisance for DeCovarT, not a type covariance. This check is not in the <span class="math inline">3\times 2\times 2</span> product.</p>
 </section>
-<section id="fused-graphical-lasso-on-a-pln" class="level3" data-number="4.6.3">
-<h3 data-number="4.6.3" class="anchored" data-anchor-id="fused-graphical-lasso-on-a-pln"><span class="header-section-number">4.6.3</span> Fused graphical lasso on a PLN</h3>
-<p>Related types can share part of a graph. The joint graphical lasso <span class="citation" data-cites="danaherJointGraphicalLasso2012">(<a href="#ref-danaherJointGraphicalLasso2012" role="doc-biblioref">Danaher et al. 2012</a>)</span> penalises both sparsity and the gap between <span class="math inline">\theta_{gg'}^{(j)}</span> and <span class="math inline">\theta_{gg'}^{(\ell)}</span>. PLNFGL puts a Poisson-lognormal sampling layer under that fused penalty <span class="citation" data-cites="zhaiPLNFGLJointEstimation2026">(<a href="#ref-zhaiPLNFGLJointEstimation2026" role="doc-biblioref">Zhai et al. 2026</a>)</span>. Fusion can shrink away the rewiring DeCovarT is meant to keep, so it stays out of the independent-type comparison.</p>
+<section id="fused-graphical-lasso-on-a-pln" class="level3" data-number="4.5.3">
+<h3 data-number="4.5.3" class="anchored" data-anchor-id="fused-graphical-lasso-on-a-pln"><span class="header-section-number">4.5.3</span> Fused graphical lasso on a PLN</h3>
+<p>Related types can share part of a graph. The joint graphical lasso <span class="citation" data-cites="danaherJointGraphicalLasso2012">(<a href="#ref-danaherJointGraphicalLasso2012" role="doc-biblioref">Danaher et al. 2012</a>)</span> penalises both sparsity and the gap between <span class="math inline">\omega_{gg'}^{(j)}</span> and <span class="math inline">\omega_{gg'}^{(\ell)}</span>. PLNFGL puts a Poisson-lognormal sampling layer under that fused penalty <span class="citation" data-cites="zhaiPLNFGLJointEstimation2026">(<a href="#ref-zhaiPLNFGLJointEstimation2026" role="doc-biblioref">Zhai et al. 2026</a>)</span>. Fusion can shrink away the rewiring DeCovarT is meant to keep, so it stays out of the independent-type comparison.</p>
 </section>
-<section id="other-copula-joints" class="level3" data-number="4.6.4">
-<h3 data-number="4.6.4" class="anchored" data-anchor-id="other-copula-joints"><span class="header-section-number">4.6.4</span> Other copula joints</h3>
+<section id="other-copula-joints" class="level3" data-number="4.5.4">
+<h3 data-number="4.5.4" class="anchored" data-anchor-id="other-copula-joints"><span class="header-section-number">4.5.4</span> Other copula joints</h3>
 <p>JGCGM learns shared and subgroup-specific edges under a Gaussian copula and warns against a naive nonparanormal map on counts <span class="citation" data-cites="wuJointLearningMultiple2020">(<a href="#ref-wuJointLearningMultiple2020" role="doc-biblioref">Wu et al. 2020</a>)</span>. It does not replace <code>PLNnetwork</code> on UMI counts. Structured penalties from earlier Chiquet work <span class="citation" data-cites="chiquetSparsitySigncoherentGroups2012">(<a href="#ref-chiquetSparsitySigncoherentGroups2012" role="doc-biblioref">Chiquet et al. 2012</a>)</span> could encode pathway modules; they are optional regularisers, not a fourth core estimator.</p>
 
 
@@ -942,11 +1368,20 @@ Jankova, Jana, and Sara van de Geer. 2015. <span>“Confidence Intervals for Hig
 <div id="ref-liuNonparanormalSemiparametricEstimation2009" class="csl-entry" role="listitem">
 Liu, Han, John Lafferty, and Larry Wasserman. 2009. <span>“The Nonparanormal: Semiparametric Estimation of High Dimensional Undirected Graphs.”</span> <em>Journal of Machine Learning Research</em> 10 (80): 2295–328.
 </div>
+<div id="ref-liuStabilityApproachRegularization2010" class="csl-entry" role="listitem">
+Liu, Han, Kathryn Roeder, and Larry Wasserman. 2010. <span>“Stability Approach to Regularization Selection (<span>StARS</span>) for High Dimensional Graphical Models.”</span> <em>Advances in Neural Information Processing Systems</em> 24 (2): 1432–40.
+</div>
 <div id="ref-liuGaussianGraphicalModel2013" class="csl-entry" role="listitem">
 Liu, Weidong. 2013. <em>Gaussian <span>Graphical Model Estimation</span> with <span>False Discovery Rate Control</span></em>. arXiv:1306.0976. arXiv. <a href="https://doi.org/10.48550/arXiv.1306.0976">https://doi.org/10.48550/arXiv.1306.0976</a>.
 </div>
+<div id="ref-loveModeratedEstimationFold2014" class="csl-entry" role="listitem">
+Love, Michael I., Wolfgang Huber, and Simon Anders. 2014. <span>“Moderated Estimation of Fold Change and Dispersion for <span class="nocase">RNA-seq</span> Data with <span>DESeq2</span>.”</span> <em>Genome Biology</em> 15 (12): 550. <a href="https://doi.org/10.1186/s13059-014-0550-8">https://doi.org/10.1186/s13059-014-0550-8</a>.
+</div>
 <div id="ref-mazumderGraphicalLassoNew2011" class="csl-entry" role="listitem">
 Mazumder, Rahul, and Trevor Hastie. 2011. <span>“The <span>Graphical Lasso</span>: <span>New Insights</span> and <span>Alternatives</span>.”</span> <em>Electronic Journal of Statistics</em> 6. <a href="https://doi.org/10.1214/12-EJS740">https://doi.org/10.1214/12-EJS740</a>.
+</div>
+<div id="ref-mccarthyDifferentialExpressionAnalysis2012a" class="csl-entry" role="listitem">
+McCarthy, Davis J., Yunshun Chen, and Gordon K. Smyth. 2012. <span>“Differential Expression Analysis of Multifactor <span>RNA-Seq</span> Experiments with Respect to Biological Variation.”</span> <em>Nucleic Acids Research</em> 40 (10): 4288–97. <a href="https://doi.org/10.1093/nar/gks042">https://doi.org/10.1093/nar/gks042</a>.
 </div>
 <div id="ref-suppingerMultimodalCharacterizationMurine2023" class="csl-entry" role="listitem">
 Suppinger, Simon, Marietta Zinner, Nadim Aizarani, et al. 2023. <span>“Multimodal Characterization of Murine Gastruloid Development.”</span> <em>Cell Stem Cell</em> 30 (6): 867–84. <a href="https://doi.org/10.1016/j.stem.2023.04.018">https://doi.org/10.1016/j.stem.2023.04.018</a>.
@@ -982,6 +1417,19 @@ Zhao, Tuo, Han Liu, Kathryn Roeder, John Lafferty, and Larry Wasserman. 2022. <e
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
     const icon = "";
     const anchorJS = new window.AnchorJS();
     anchorJS.options = {
@@ -1393,6 +1841,39 @@ Zhao, Tuo, Han Liu, Kathryn Roeder, John Lafferty, and Larry Wasserman. 2022. <e
   </div>
 </nav>
 </div> <!-- /content -->
+    <footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/edit/main/docs/02-grn-graphical-lasso.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/blob/main/docs/02-grn-graphical-lasso.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script type="text/javascript">
+    (function(d) {
+      d.querySelectorAll(".pseudocode-container").forEach(function(el) {
+        let pseudocodeOptions = {
+          indentSize: el.dataset.indentSize,
+          commentDelimiter: " " + el.dataset.commentDelimiter + " ",
+          lineNumber: el.dataset.lineNumber.toLowerCase() === "true",
+          lineNumberPunc: el.dataset.lineNumberPunc,
+          noEnd: el.dataset.noEnd.toLowerCase() === "true",
+          scopeLines: el.dataset.indentLines.toLowerCase() === "true",
+          titlePrefix: el.dataset.captionPrefix,
+        };
+        pseudocode.renderElement(el.querySelector(".pseudocode"), pseudocodeOptions);
+      });
+    })(document);
+    (function(d) {
+      d.querySelectorAll(".pseudocode-container").forEach(function(el) {
+        let captionSpan = el.querySelector(".ps-root > .ps-algorithm > .ps-line > .ps-keyword")
+        if (captionSpan !== null) {
+          let captionPrefix = el.dataset.captionPrefix + " ";
+          let captionNumber = "";
+          if (el.dataset.pseudocodeNumber) {
+            captionNumber = el.dataset.pseudocodeNumber + " ";
+            if (el.dataset.chapterLevel) {
+              captionNumber = el.dataset.chapterLevel + "." + captionNumber;
+            }
+          }
+          captionSpan.innerHTML = captionPrefix + captionNumber;
+        }
+      });
+    })(document);
+    </script>
+  
 
 
 

@@ -98,16 +98,22 @@ div.csl-indent {
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-ed7344add5f1663e434276306a2aa159.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-fd0503e23dce65854c81c5baaade3bdf.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-4dc5810a0ca2761c5abee21657872ed5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-fd0503e23dce65854c81c5baaade3bdf.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script src="site_libs/quarto-contrib/pseudocode-2.4.1/pseudocode.min.js"></script>
+<link href="site_libs/quarto-contrib/pseudocode-2.4.1/pseudocode.min.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
-  "location": "sidebar",
+  "location": "navbar",
   "copy-button": false,
   "collapse-after": 3,
-  "panel-placement": "start",
-  "type": "textbox",
+  "panel-placement": "end",
+  "type": "overlay",
   "limit": 50,
   "keyboard-shortcut": [
     "f",
@@ -132,8 +138,34 @@ div.csl-indent {
 <script src="site_libs/quarto-diagram/mermaid.min.js"></script>
 <script src="site_libs/quarto-diagram/mermaid-init.js"></script>
 <link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+<script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+<script>window.backupDefine = window.define; window.define = undefined;</script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+    <style type="text/css">
+    .ps-root .ps-algorithm {
+      border-top: 2px solid;
+      border-bottom: 2px solid;
+    }
+    .pseudocode-container {
+      text-align: left;
+    }
+    .callout .pseudocode-container .ps-root {
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+    }
+    .callout .pseudocode-container .ps-root .ps-algorithm p {
+      margin-top: 0 !important;
+      margin-bottom: 0 !important;
+    }
+    </style>
+  
+      <style type="text/css">
+      .ps-algorithm > .ps-line {
+        text-align: left;
+      }
+      </style>
+    
 
-  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
   <script>document.addEventListener("DOMContentLoaded", function () {
  var mathElements = document.getElementsByClassName("math");
  var macros = [];
@@ -148,7 +180,7 @@ div.csl-indent {
    });
 }}});
   </script>
-  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -179,10 +211,198 @@ window.Quarto = {
 
 </head>
 
-<body class="nav-sidebar floating quarto-light">
+<body class="nav-sidebar floating nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">DeCovarT reproducibility</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/bastienchassagnol/DeCovarT_reproducibility"> <i class="bi bi-github" role="img" aria-label="GitHub repository">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+    <a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/tree/main/docs/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
@@ -191,26 +411,13 @@ window.Quarto = {
         <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./03-feature-selection-naive.html">Feature selection</a></li><li class="breadcrumb-item"><a href="./03-feature-selection-naive.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Naive gene screen</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
-      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
-        <i class="bi bi-search"></i>
-      </button>
     </div>
   </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header">
-    <div class="sidebar-title mb-0 py-0">
-      <a href="./">DeCovarT reproducibility</a> 
-    </div>
-      </div>
-        <div class="mt-2 flex-shrink-0 align-items-center">
-        <div class="sidebar-search">
-        <div id="quarto-search" class="" title="Search"></div>
-        </div>
-        </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
@@ -277,7 +484,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./05-grn-metrics.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Evaluating networks without a true DAG</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Evaluating undirected cell-type networks</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -359,10 +566,11 @@ window.Quarto = {
   <li><a href="#markov-boundaries" id="toc-markov-boundaries" class="nav-link" data-scroll-target="#markov-boundaries"><span class="header-section-number">3.6.3</span> Markov boundaries</a></li>
   </ul></li>
   </ul>
-</nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/edit/main/docs/03-feature-selection-naive.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/blob/main/docs/03-feature-selection-naive.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
+
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./03-feature-selection-naive.html">Feature selection</a></li><li class="breadcrumb-item"><a href="./03-feature-selection-naive.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Naive gene screen</span></a></li></ol></nav>
 <div class="quarto-title">
@@ -385,7 +593,7 @@ window.Quarto = {
 
 <section id="sec-fs-naive" class="level2" data-number="3.1">
 <h2 data-number="3.1" class="anchored" data-anchor-id="sec-fs-naive"><span class="header-section-number">3.1</span> Building <span class="math inline">\mathcal{G}_{0}</span></h2>
-<p>This chapter builds a working universe <span class="math inline">\mathcal{G}_{0}</span> on which a GGM can be estimated. Genes are scored from one labelled single-cell reference, used as a <strong>signature</strong>, not from a multi-sample atlas. Global ranks (highly variable genes) and a short knowledge-driven marker list both remove genes from the whole transcriptome. The all-versus-all refinement that uses <span class="math inline">\boldsymbol{\Theta}_{j}</span> comes <strong>after</strong> GRN inference (<a href="07-feature-selection-all-versus-all.html#sec-fs-advanced" class="quarto-xref"><span>Section 7.1</span></a>).</p>
+<p>This chapter builds a working universe <span class="math inline">\mathcal{G}_{0}</span> on which a GGM can be estimated. Genes are scored from one labelled single-cell reference, used as a <strong>signature</strong>, not from a multi-sample atlas. Global ranks (highly variable genes) and a short knowledge-driven marker list both remove genes from the whole transcriptome. The all-versus-all refinement that uses <span class="math inline">\boldsymbol{\Omega}_{j}</span> comes <strong>after</strong> GRN inference (<a href="07-feature-selection-all-versus-all.html#sec-fs-advanced" class="quarto-xref"><span>Section 7.1</span></a>).</p>
 <p>Notation: gene <span class="math inline">g=1,\ldots,G</span>; cell type <span class="math inline">j=1,\ldots,J</span>; cell <span class="math inline">c=1,\ldots,C</span>. A cell labelled as type <span class="math inline">j</span> is written <span class="math inline">c_{j}</span>. Bulk samples stay indexed by <span class="math inline">i</span>, as in the article. The DeCovarT convolution is linear in <span class="math inline">\boldsymbol{p}</span> only on an additive scale (<a href="#nte-linear-scale" class="quarto-xref">Note&nbsp;<span>3.1</span></a>).</p>
 <div class="cell" data-layout-align="default">
 <div class="cell-output-display">
@@ -417,11 +625,11 @@ Figure&nbsp;3.1: Naive screen on one labelled single-cell reference: Pearson-res
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Important&nbsp;3.1: :warning: Keep the mixture on a linear scale
+Important&nbsp;3.1: <span class="emoji" data-emoji="warning">⚠️</span> Keep the mixture on a linear scale
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The convolution <span class="math inline">\boldsymbol{y}\mid(\boldsymbol{\zeta},\boldsymbol{p})\sim\mathcal{N}_{G}(\boldsymbol{\mu}\boldsymbol{p},\sum_{j}p_{j}^{2}\boldsymbol{\Sigma}_{j})</span> is linear in <span class="math inline">\boldsymbol{p}</span> only if <span class="math inline">\boldsymbol{\mu}</span> and <span class="math inline">\boldsymbol{y}</span> live on the <strong>same additive scale</strong> (counts, CPM, or TPM). Logarithms, <code>SCTransform</code> Pearson residuals, and nonparanormal scores break that map <span class="citation" data-cites="sturmComprehensiveEvaluationTranscriptomebased2019 jinBenchmarkRNAseqDeconvolution2021 hoffmannRobustComputationalReconstitution2006">(<a href="#ref-sturmComprehensiveEvaluationTranscriptomebased2019" role="doc-biblioref">Sturm et al. 2019</a>; <a href="#ref-jinBenchmarkRNAseqDeconvolution2021" role="doc-biblioref">Jin and Liu 2021</a>; <a href="#ref-hoffmannRobustComputationalReconstitution2006" role="doc-biblioref">Hoffmann et al. 2006</a>)</span>. Use residualisation only to <strong>rank</strong> genes; export DeCovarT moments on the linear scale. The probabilistic reason is Jensen’s inequality (<a href="02-grn-graphical-lasso.html#nte-jensen-transform" class="quarto-xref">Note&nbsp;<span>4.2</span></a>, <a href="02-grn-graphical-lasso.html#nte-npn-moments" class="quarto-xref">Note&nbsp;<span>4.1</span></a>).</p>
+<p>The convolution <span class="math inline">\boldsymbol{y}\mid(\boldsymbol{\zeta},\boldsymbol{p})\sim\mathcal{N}_{G}(\boldsymbol{\mu}\boldsymbol{p},\sum_{j}p_{j}^{2}\boldsymbol{\Sigma}_{j})</span> is linear in <span class="math inline">\boldsymbol{p}</span> only if <span class="math inline">\boldsymbol{\mu}</span> and <span class="math inline">\boldsymbol{y}</span> live on the <strong>same additive scale</strong> (counts, CPM, or TPM). Logarithms, <code>SCTransform</code> Pearson residuals, and nonparanormal scores break that map <span class="citation" data-cites="sturmComprehensiveEvaluationTranscriptomebased2019 jinBenchmarkRNAseqDeconvolution2021 hoffmannRobustComputationalReconstitution2006">(<a href="#ref-sturmComprehensiveEvaluationTranscriptomebased2019" role="doc-biblioref">Sturm et al. 2019</a>; <a href="#ref-jinBenchmarkRNAseqDeconvolution2021" role="doc-biblioref">Jin and Liu 2021</a>; <a href="#ref-hoffmannRobustComputationalReconstitution2006" role="doc-biblioref">Hoffmann et al. 2006</a>)</span>. Use residualisation only to <strong>rank</strong> genes; export DeCovarT moments on the linear scale. Non-affine maps (logarithms, Pearson residuals, nonparanormal scores) change the estimand by Jensen’s inequality.</p>
 </div>
 </div>
 </section>
@@ -545,7 +753,7 @@ Figure&nbsp;3.4: Residual variance after a library-size NB null. Technical varia
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Note&nbsp;3.2: :information_source: <code>vst.flavor = "v2"</code> still returns Pearson residuals
+Note&nbsp;3.2: <span class="emoji" data-emoji="information_source">ℹ️</span> <code>vst.flavor = "v2"</code> still returns Pearson residuals
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -579,11 +787,11 @@ Figure&nbsp;3.5: Shared negative-binomial model, and the v1 gene-wise depth slop
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Note&nbsp;3.3: :information_source: HVGs are not a GGM input
+Note&nbsp;3.3: <span class="emoji" data-emoji="information_source">ℹ️</span> HVGs are not a GGM input
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Pearson residuals are closer to homoscedastic than raw UMI counts, which is why they are popular before PCA. They are still a <strong>nonlinear residualisation</strong>. Feeding them indiscriminately into <code>SILGGM</code> silently changes the estimand of <span class="math inline">\boldsymbol{\Theta}_{j}</span> away from the latent Gaussian that DeCovarT wants at the <strong>population</strong> level. If a Gaussian GGM is used, prefer a copula / nonparanormal map on the same gene set (<a href="02-grn-graphical-lasso.html#sec-silggm" class="quarto-xref"><span>Section 4.3.2</span></a>), or better a Poisson-lognormal latent Gaussian (<a href="02-grn-graphical-lasso.html#sec-pln" class="quarto-xref"><span>Section 4.3.3</span></a>).</p>
+<p>Pearson residuals are closer to homoscedastic than raw UMI counts, which is why they are popular before PCA. They are still a <strong>nonlinear residualisation</strong>. Feeding them indiscriminately into <code>SILGGM</code> silently changes the estimand of <span class="math inline">\boldsymbol{\Omega}_{j}</span> away from the latent Gaussian that DeCovarT wants at the <strong>population</strong> level. If a Gaussian GGM is used, prefer a copula / nonparanormal map on the same gene set (<a href="02-grn-graphical-lasso.html#sec-silggm" class="quarto-xref"><span>Section 4.3.2</span></a>), or better a Poisson-lognormal latent Gaussian (<a href="02-grn-graphical-lasso.html#sec-pln" class="quarto-xref"><span>Section 4.3.3</span></a>).</p>
 </div>
 </div>
 </section>
@@ -604,7 +812,7 @@ Note&nbsp;3.3: :information_source: HVGs are not a GGM input
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Warning&nbsp;3.4: :warning: Technical pseudo-bulks are not biological replicates
+Warning&nbsp;3.4: <span class="emoji" data-emoji="warning">⚠️</span> Technical pseudo-bulks are not biological replicates
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -628,9 +836,9 @@ Warning&nbsp;3.4: :warning: Technical pseudo-bulks are not biological replicates
 <p>These methods are <strong>not</strong> in the naive screen. They need graphs, so they nominate extras for <span class="math inline">\mathcal{G}_{0}</span> <strong>after</strong> a first GGM pass. Full algebraic detail of <code>INDEED</code> and D-trace lives in DeCovarT <code>vignettes/supp-S6-feature-selection.qmd</code>. Separation language (directed versus undirected) is in <a href="A1-separation-criteria.html#sec-separation" class="quarto-xref"><span>Section A.1</span></a>.</p>
 <section id="sec-fs-diffnet" class="level3" data-number="3.6.1">
 <h3 data-number="3.6.1" class="anchored" data-anchor-id="sec-fs-diffnet"><span class="header-section-number">3.6.1</span> Comparing supports, or estimating the difference</h3>
-<p>DeCovarT benefits from <strong>rewiring</strong> between populations. A gene that changes neighbourhood in <span class="math inline">\boldsymbol{\Theta}_{j}</span> is a better candidate than a gene that is merely highly variable.</p>
-<p><strong>Fit every <span class="math inline">\boldsymbol{\Theta}_{j}</span>, then compare supports.</strong> Independent glasso / <code>SILGGM</code> fits (<a href="02-grn-graphical-lasso.html#sec-silggm" class="quarto-xref"><span>Section 4.3.2</span></a>) yield per-type edges; the symmetric difference of supports ranks genes by differential connectivity. The difference of two biased estimators is not a debiased estimator of <span class="math inline">\Delta_{j\ell}=\boldsymbol{\Theta}_{j}-\boldsymbol{\Theta}_{\ell}</span>.</p>
-<p><strong>Estimate <span class="math inline">\Delta_{j\ell}</span> directly.</strong> D-trace methods target the difference of precisions without necessarily reconstructing both graphs first. Zhang and Zou <span class="citation" data-cites="zhangSparsePrecisionMatrix2014">(<a href="#ref-zhangSparsePrecisionMatrix2014" role="doc-biblioref">Zhang and Zou 2014</a>)</span> introduced the lasso-penalised D-trace loss for a single sparse precision; the differential-network extension <span class="citation" data-cites="yuanDifferentialNetworkAnalysis2017">(<a href="#ref-yuanDifferentialNetworkAnalysis2017" role="doc-biblioref">Yuan et al. 2017</a>)</span> estimates <span class="math inline">\Delta_{j\ell}</span>. Empirically, D-trace is competitive when the <strong>difference</strong> is sparser than either graph <span class="citation" data-cites="plaksienkoMethodsDifferentialNetwork2025">(<a href="#ref-plaksienkoMethodsDifferentialNetwork2025" role="doc-biblioref">Plaksienko et al. 2025</a>)</span>. It still does <strong>not</strong> produce a pair of SPD precisions. A workable <strong>proposal</strong> is: use D-trace to nominate rewiring genes, then estimate each <span class="math inline">\boldsymbol{\Theta}_{j}</span> on that panel with a method from <a href="02-grn-graphical-lasso.html#sec-grn-top4" class="quarto-xref"><span>Section 4.4</span></a>.</p>
+<p>DeCovarT benefits from <strong>rewiring</strong> between populations. A gene that changes neighbourhood in <span class="math inline">\boldsymbol{\Omega}_{j}</span> is a better candidate than a gene that is merely highly variable.</p>
+<p><strong>Fit every <span class="math inline">\boldsymbol{\Omega}_{j}</span>, then compare supports.</strong> Independent glasso / <code>SILGGM</code> fits (<a href="02-grn-graphical-lasso.html#sec-silggm" class="quarto-xref"><span>Section 4.3.2</span></a>) yield per-type edges; the symmetric difference of supports ranks genes by differential connectivity. The difference of two biased estimators is not a debiased estimator of <span class="math inline">\Delta_{j\ell}=\boldsymbol{\Omega}_{j}-\boldsymbol{\Omega}_{\ell}</span>.</p>
+<p><strong>Estimate <span class="math inline">\Delta_{j\ell}</span> directly.</strong> D-trace methods target the difference of precisions without necessarily reconstructing both graphs first. Zhang and Zou <span class="citation" data-cites="zhangSparsePrecisionMatrix2014">(<a href="#ref-zhangSparsePrecisionMatrix2014" role="doc-biblioref">Zhang and Zou 2014</a>)</span> introduced the lasso-penalised D-trace loss for a single sparse precision; the differential-network extension <span class="citation" data-cites="yuanDifferentialNetworkAnalysis2017">(<a href="#ref-yuanDifferentialNetworkAnalysis2017" role="doc-biblioref">Yuan et al. 2017</a>)</span> estimates <span class="math inline">\Delta_{j\ell}</span>. Empirically, D-trace is competitive when the <strong>difference</strong> is sparser than either graph <span class="citation" data-cites="plaksienkoMethodsDifferentialNetwork2025">(<a href="#ref-plaksienkoMethodsDifferentialNetwork2025" role="doc-biblioref">Plaksienko et al. 2025</a>)</span>. It still does <strong>not</strong> produce a pair of SPD precisions. A workable <strong>proposal</strong> is: use D-trace to nominate rewiring genes, then estimate each <span class="math inline">\boldsymbol{\Omega}_{j}</span> on that panel with a method from <a href="02-grn-graphical-lasso.html#sec-grn-top4" class="quarto-xref"><span>Section 4.5</span></a>.</p>
 </section>
 <section id="indeed" class="level3" data-number="3.6.2">
 <h3 data-number="3.6.2" class="anchored" data-anchor-id="indeed"><span class="header-section-number">3.6.2</span> <code>INDEED</code></h3>
@@ -638,7 +846,7 @@ Warning&nbsp;3.4: :warning: Technical pseudo-bulks are not biological replicates
 </section>
 <section id="markov-boundaries" class="level3" data-number="3.6.3">
 <h3 data-number="3.6.3" class="anchored" data-anchor-id="markov-boundaries"><span class="header-section-number">3.6.3</span> Markov boundaries</h3>
-<p>Once a GGM exists, seeds (markers, high signal-to-noise genes, D-trace hits) can be grown by undirected neighbours <span class="math inline">\{g':\theta_{gg'}\neq 0\}</span>. On a minimal undirected I-map that neighbour set is the <strong>Markov boundary</strong>, the smallest Markov blanket <span class="citation" data-cites="pearlProbabilisticReasoningIntelligent1988 kollerProbabilisticGraphicalModels2009">(<a href="#ref-pearlProbabilisticReasoningIntelligent1988" role="doc-biblioref">Pearl 1988</a>; <a href="#ref-kollerProbabilisticGraphicalModels2009" role="doc-biblioref">Koller and Friedman 2009</a>)</span>. That is undirected separation, not DAG <span class="math inline">d</span>-separation (<a href="A1-separation-criteria.html#sec-separation" class="quarto-xref"><span>Section A.1</span></a>, <a href="A1-separation-criteria.html#fig-separation" class="quarto-xref">Figure&nbsp;<span>A.1</span></a>).</p>
+<p>Once a GGM exists, seeds (markers, high signal-to-noise genes, D-trace hits) can be grown by undirected neighbours <span class="math inline">\{g':\omega_{gg'}\neq 0\}</span>. On a minimal undirected I-map that neighbour set is the <strong>Markov boundary</strong>, the smallest Markov blanket <span class="citation" data-cites="pearlProbabilisticReasoningIntelligent1988 kollerProbabilisticGraphicalModels2009">(<a href="#ref-pearlProbabilisticReasoningIntelligent1988" role="doc-biblioref">Pearl 1988</a>; <a href="#ref-kollerProbabilisticGraphicalModels2009" role="doc-biblioref">Koller and Friedman 2009</a>)</span>. That is undirected separation, not DAG <span class="math inline">d</span>-separation (<a href="A1-separation-criteria.html#sec-separation" class="quarto-xref"><span>Section A.1</span></a>, <a href="A1-separation-criteria.html#fig-separation" class="quarto-xref">Figure&nbsp;<span>A.1</span></a>).</p>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="list">
@@ -700,6 +908,19 @@ Zuo, Yiming, Yi Cui, Cristina Di Poto, et al. 2016. <span>“<span>INDEED</span>
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
     const icon = "";
     const anchorJS = new window.AnchorJS();
     anchorJS.options = {
@@ -1111,6 +1332,39 @@ Zuo, Yiming, Yi Cui, Cristina Di Poto, et al. 2016. <span>“<span>INDEED</span>
   </div>
 </nav>
 </div> <!-- /content -->
+    <footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/edit/main/docs/03-feature-selection-naive.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/blob/main/docs/03-feature-selection-naive.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script type="text/javascript">
+    (function(d) {
+      d.querySelectorAll(".pseudocode-container").forEach(function(el) {
+        let pseudocodeOptions = {
+          indentSize: el.dataset.indentSize,
+          commentDelimiter: " " + el.dataset.commentDelimiter + " ",
+          lineNumber: el.dataset.lineNumber.toLowerCase() === "true",
+          lineNumberPunc: el.dataset.lineNumberPunc,
+          noEnd: el.dataset.noEnd.toLowerCase() === "true",
+          scopeLines: el.dataset.indentLines.toLowerCase() === "true",
+          titlePrefix: el.dataset.captionPrefix,
+        };
+        pseudocode.renderElement(el.querySelector(".pseudocode"), pseudocodeOptions);
+      });
+    })(document);
+    (function(d) {
+      d.querySelectorAll(".pseudocode-container").forEach(function(el) {
+        let captionSpan = el.querySelector(".ps-root > .ps-algorithm > .ps-line > .ps-keyword")
+        if (captionSpan !== null) {
+          let captionPrefix = el.dataset.captionPrefix + " ";
+          let captionNumber = "";
+          if (el.dataset.pseudocodeNumber) {
+            captionNumber = el.dataset.pseudocodeNumber + " ";
+            if (el.dataset.chapterLevel) {
+              captionNumber = el.dataset.chapterLevel + "." + captionNumber;
+            }
+          }
+          captionSpan.innerHTML = captionPrefix + captionNumber;
+        }
+      });
+    })(document);
+    </script>
+  
 
 
 

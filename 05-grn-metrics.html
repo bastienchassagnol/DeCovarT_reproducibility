@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>6&nbsp; Evaluating networks without a true DAG – DeCovarT reproducibility</title>
+<title>6&nbsp; Evaluating undirected cell-type networks – DeCovarT reproducibility</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -63,16 +63,22 @@ div.csl-indent {
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-ed7344add5f1663e434276306a2aa159.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-fd0503e23dce65854c81c5baaade3bdf.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-4dc5810a0ca2761c5abee21657872ed5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-fd0503e23dce65854c81c5baaade3bdf.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script src="site_libs/quarto-contrib/pseudocode-2.4.1/pseudocode.min.js"></script>
+<link href="site_libs/quarto-contrib/pseudocode-2.4.1/pseudocode.min.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
-  "location": "sidebar",
+  "location": "navbar",
   "copy-button": false,
   "collapse-after": 3,
-  "panel-placement": "start",
-  "type": "textbox",
+  "panel-placement": "end",
+  "type": "overlay",
   "limit": 50,
   "keyboard-shortcut": [
     "f",
@@ -97,8 +103,34 @@ div.csl-indent {
 <script src="site_libs/quarto-diagram/mermaid.min.js"></script>
 <script src="site_libs/quarto-diagram/mermaid-init.js"></script>
 <link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+<script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+<script>window.backupDefine = window.define; window.define = undefined;</script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+    <style type="text/css">
+    .ps-root .ps-algorithm {
+      border-top: 2px solid;
+      border-bottom: 2px solid;
+    }
+    .pseudocode-container {
+      text-align: left;
+    }
+    .callout .pseudocode-container .ps-root {
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+    }
+    .callout .pseudocode-container .ps-root .ps-algorithm p {
+      margin-top: 0 !important;
+      margin-bottom: 0 !important;
+    }
+    </style>
+  
+      <style type="text/css">
+      .ps-algorithm > .ps-line {
+        text-align: left;
+      }
+      </style>
+    
 
-  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
   <script>document.addEventListener("DOMContentLoaded", function () {
  var mathElements = document.getElementsByClassName("math");
  var macros = [];
@@ -113,7 +145,7 @@ div.csl-indent {
    });
 }}});
   </script>
-  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -144,38 +176,213 @@ window.Quarto = {
 
 </head>
 
-<body class="nav-sidebar floating quarto-light">
+<body class="nav-sidebar floating nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">DeCovarT reproducibility</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/bastienchassagnol/DeCovarT_reproducibility"> <i class="bi bi-github" role="img" aria-label="GitHub repository">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+    <a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/tree/main/docs/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./02-grn-graphical-lasso.html">GRN inference</a></li><li class="breadcrumb-item"><a href="./05-grn-metrics.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Evaluating networks without a true DAG</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./02-grn-graphical-lasso.html">GRN inference</a></li><li class="breadcrumb-item"><a href="./05-grn-metrics.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Evaluating undirected cell-type networks</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
-      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
-        <i class="bi bi-search"></i>
-      </button>
     </div>
   </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header">
-    <div class="sidebar-title mb-0 py-0">
-      <a href="./">DeCovarT reproducibility</a> 
-    </div>
-      </div>
-        <div class="mt-2 flex-shrink-0 align-items-center">
-        <div class="sidebar-search">
-        <div id="quarto-search" class="" title="Search"></div>
-        </div>
-        </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
@@ -242,7 +449,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./05-grn-metrics.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Evaluating networks without a true DAG</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Evaluating undirected cell-type networks</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -309,35 +516,33 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#sec-metrics-scope" id="toc-sec-metrics-scope" class="nav-link active" data-scroll-target="#sec-metrics-scope"><span class="header-section-number">6.1</span> What we are <em>not</em> claiming</a></li>
-  <li><a href="#sec-metrics-stat" id="toc-sec-metrics-stat" class="nav-link" data-scroll-target="#sec-metrics-stat"><span class="header-section-number">6.2</span> Statistical robustness and alignment</a>
+  <li><a href="#sec-metrics-stat" id="toc-sec-metrics-stat" class="nav-link active" data-scroll-target="#sec-metrics-stat"><span class="header-section-number">6.1</span> Statistical robustness and alignment</a>
   <ul>
-  <li><a href="#resampling-and-noise" id="toc-resampling-and-noise" class="nav-link" data-scroll-target="#resampling-and-noise"><span class="header-section-number">6.2.1</span> Resampling and noise</a></li>
-  <li><a href="#likelihood-and-information-criteria" id="toc-likelihood-and-information-criteria" class="nav-link" data-scroll-target="#likelihood-and-information-criteria"><span class="header-section-number">6.2.2</span> Likelihood and information criteria</a></li>
-  <li><a href="#distances-between-type-level-gaussians" id="toc-distances-between-type-level-gaussians" class="nav-link" data-scroll-target="#distances-between-type-level-gaussians"><span class="header-section-number">6.2.3</span> Distances between type-level Gaussians</a></li>
+  <li><a href="#resampling" id="toc-resampling" class="nav-link" data-scroll-target="#resampling"><span class="header-section-number">6.1.1</span> Resampling</a></li>
+  <li><a href="#likelihood-and-information-criteria" id="toc-likelihood-and-information-criteria" class="nav-link" data-scroll-target="#likelihood-and-information-criteria"><span class="header-section-number">6.1.2</span> Likelihood and information criteria</a></li>
+  <li><a href="#distances-between-type-level-gaussians" id="toc-distances-between-type-level-gaussians" class="nav-link" data-scroll-target="#distances-between-type-level-gaussians"><span class="header-section-number">6.1.3</span> Distances between type-level Gaussians</a></li>
   </ul></li>
-  <li><a href="#sec-metrics-topo" id="toc-sec-metrics-topo" class="nav-link" data-scroll-target="#sec-metrics-topo"><span class="header-section-number">6.3</span> Topological comparison</a>
+  <li><a href="#sec-metrics-topo" id="toc-sec-metrics-topo" class="nav-link" data-scroll-target="#sec-metrics-topo"><span class="header-section-number">6.2</span> Topological comparison</a></li>
+  <li><a href="#sec-metrics-viz" id="toc-sec-metrics-viz" class="nav-link" data-scroll-target="#sec-metrics-viz"><span class="header-section-number">6.3</span> Visualisations</a></li>
+  <li><a href="#sec-metrics-knowledge" id="toc-sec-metrics-knowledge" class="nav-link" data-scroll-target="#sec-metrics-knowledge"><span class="header-section-number">6.4</span> Knowledge-driven scoring</a></li>
+  <li><a href="#sec-metrics-scorecard" id="toc-sec-metrics-scorecard" class="nav-link" data-scroll-target="#sec-metrics-scorecard"><span class="header-section-number">6.5</span> Practical scorecard for this repository</a></li>
+  <li><a href="#sec-metrics-perspectives" id="toc-sec-metrics-perspectives" class="nav-link" data-scroll-target="#sec-metrics-perspectives"><span class="header-section-number">6.6</span> Perspectives</a>
   <ul>
-  <li><a href="#skeleton-scores-beeline-reduced-to-undirected" id="toc-skeleton-scores-beeline-reduced-to-undirected" class="nav-link" data-scroll-target="#skeleton-scores-beeline-reduced-to-undirected"><span class="header-section-number">6.3.1</span> Skeleton scores (BEELINE, reduced to undirected)</a></li>
-  <li><a href="#graph-summaries-that-do-not-need-a-reference" id="toc-graph-summaries-that-do-not-need-a-reference" class="nav-link" data-scroll-target="#graph-summaries-that-do-not-need-a-reference"><span class="header-section-number">6.3.2</span> Graph summaries that do not need a reference</a></li>
-  <li><a href="#sec-metrics-viz" id="toc-sec-metrics-viz" class="nav-link" data-scroll-target="#sec-metrics-viz"><span class="header-section-number">6.3.3</span> Visualisations</a></li>
+  <li><a href="#sec-metrics-true-skeleton" id="toc-sec-metrics-true-skeleton" class="nav-link" data-scroll-target="#sec-metrics-true-skeleton"><span class="header-section-number">6.6.1</span> When a true skeleton is available</a></li>
+  <li><a href="#sec-metrics-dags" id="toc-sec-metrics-dags" class="nav-link" data-scroll-target="#sec-metrics-dags"><span class="header-section-number">6.6.2</span> Directed DAGs</a></li>
+  <li><a href="#sec-metrics-omics" id="toc-sec-metrics-omics" class="nav-link" data-scroll-target="#sec-metrics-omics"><span class="header-section-number">6.6.3</span> Orthogonal assays</a></li>
+  <li><a href="#sec-metrics-perturb" id="toc-sec-metrics-perturb" class="nav-link" data-scroll-target="#sec-metrics-perturb"><span class="header-section-number">6.6.4</span> Perturbations and integer programmes</a></li>
   </ul></li>
-  <li><a href="#sec-metrics-knowledge" id="toc-sec-metrics-knowledge" class="nav-link" data-scroll-target="#sec-metrics-knowledge"><span class="header-section-number">6.4</span> Knowledge-driven scoring</a>
-  <ul>
-  <li><a href="#gretas-three-buckets-restricted-to-undirected-transcriptomics" id="toc-gretas-three-buckets-restricted-to-undirected-transcriptomics" class="nav-link" data-scroll-target="#gretas-three-buckets-restricted-to-undirected-transcriptomics"><span class="header-section-number">6.4.1</span> GRETA’s three buckets, restricted to undirected transcriptomics</a></li>
-  <li><a href="#sec-metrics-integer" id="toc-sec-metrics-integer" class="nav-link" data-scroll-target="#sec-metrics-integer"><span class="header-section-number">6.4.2</span> Integer programmes and Boolean models</a></li>
-  </ul></li>
-  <li><a href="#sec-metrics-omics" id="toc-sec-metrics-omics" class="nav-link" data-scroll-target="#sec-metrics-omics"><span class="header-section-number">6.5</span> Perspectives: regulatory omics</a></li>
-  <li><a href="#sec-metrics-scorecard" id="toc-sec-metrics-scorecard" class="nav-link" data-scroll-target="#sec-metrics-scorecard"><span class="header-section-number">6.6</span> Practical scorecard for this repository</a></li>
   </ul>
-</nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/edit/main/docs/05-grn-metrics.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/blob/main/docs/05-grn-metrics.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./02-grn-graphical-lasso.html">GRN inference</a></li><li class="breadcrumb-item"><a href="./05-grn-metrics.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Evaluating networks without a true DAG</span></a></li></ol></nav>
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./02-grn-graphical-lasso.html">GRN inference</a></li><li class="breadcrumb-item"><a href="./05-grn-metrics.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Evaluating undirected cell-type networks</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Evaluating networks without a true DAG</span></h1>
+<h1 class="title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Evaluating undirected cell-type networks</span></h1>
 </div>
 
 
@@ -354,14 +559,14 @@ window.Quarto = {
 </header>
 
 
-<p>There is <strong>no</strong> complete ground-truth GRN for murine gastruloids. Mouse TF catalogues are incomplete; ChIP-seq and ATAC-seq are <strong>not</strong> measured in the core Suppinger scRNA-seq table we use for <span class="math inline">\boldsymbol{\Theta}_{j}</span>; and undirected GGM edges are not the same objects as directed TF–target arrows. Evaluation must therefore be <strong>relative</strong> (methods against each other, against perturbed data, and against partial priors), not a claim of causal recovery.</p>
-<p>This chapter groups metrics into three families, following GRETA’s split of mechanistic / predictive / literature tasks and BEELINE’s emphasis on precision–recall against synthetic or curated graphs:</p>
+<p>There is <strong>no</strong> complete ground-truth GRN for murine gastruloids. Mouse TF catalogues are incomplete, and undirected GGM edges are not the same objects as directed TF–target arrows. Evaluation in the <strong>core</strong> is therefore <strong>relative</strong>: methods against each other, against technical resampling of this atlas, and against partial literature priors. It is not a claim of causal recovery.</p>
+<p>The score families and stability scenarios below are <strong>inspired by</strong> GRETA <span class="citation" data-cites="badia-i-mompelComparisonEvaluationMethods2025">(<a href="#ref-badia-i-mompelComparisonEvaluationMethods2025" role="doc-biblioref">Badia-i-Mompel et al. 2025</a>)</span> and BEELINE <span class="citation" data-cites="pratapaBenchmarkingAlgorithmsGene2020">(<a href="#ref-pratapaBenchmarkingAlgorithmsGene2020" role="doc-biblioref">Pratapa et al. 2020</a>)</span>. We do not import those pipelines. We keep three <strong>undirected</strong>, observational families:</p>
 <ol type="1">
 <li><strong>Statistical robustness and distributional alignment</strong> — does the fitted Gaussian (or its graph) stay put under resampling, and does it match the type-level law that DeCovarT needs?</li>
-<li><strong>Topological comparison</strong> — undirected skeleton similarity, without pretending we have orientations.</li>
-<li><strong>Knowledge-driven scoring</strong> — TFs connected to plausible targets, pathway overlap, integer programmes over prior networks.</li>
+<li><strong>Topological comparison</strong> — skeleton similarity among the three core estimators, without a true DAG.</li>
+<li><strong>Knowledge-driven scoring</strong> — TFs connected to plausible targets and pathway overlap, always as overlap with an incomplete prior.</li>
 </ol>
-<p>Directed causal metrics, multimodal ATAC/ChIP recovery, and perturbation forecasting are <strong>perspectives</strong>: they judge a different estimand than <a href="02-grn-graphical-lasso.html#eq-grn-estimand" class="quarto-xref">Equation&nbsp;<span>4.1</span></a>.</p>
+<p>Directed DAGs, multimodal ATAC/ChIP recovery, perturbation forecasting, and any metric that needs a <strong>known true skeleton</strong> are <strong>perspectives</strong> (<a href="#sec-metrics-perspectives" class="quarto-xref"><span>Section 6.6</span></a>). They judge a different estimand than <a href="02-grn-graphical-lasso.html#eq-grn-estimand" class="quarto-xref">Equation&nbsp;<span>4.1</span></a>.</p>
 <div class="cell" data-layout-align="default">
 <div class="cell-output-display">
 <div id="fig-metrics-families" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -370,62 +575,74 @@ window.Quarto = {
 <div>
 <pre class="mermaid mermaid-js" data-label="fig-metrics-families">%%{init: {"theme": "sandstone"}}%%
 flowchart TD
-  A["Estimated Theta_j"] --&gt; B["Statistical robustness"]
-  A --&gt; C["Topology"]
+  A["Estimated Omega_j"] --&gt; B["Statistical robustness"]
+  A --&gt; C["Topology (undirected)"]
   A --&gt; D["Knowledge-driven"]
-  B --&gt; B1["Bootstrap / noise injection"]
-  B --&gt; B2["KL, Hellinger, W2, eBIC"]
-  C --&gt; C1["Precision, recall, F, SHD"]
+  B --&gt; B1["Technical bootstrap"]
+  B --&gt; B2["StARS-style instability"]
+  B --&gt; B3["KL, Hellinger, eBIC"]
   C --&gt; C2["Degree, hubs, modules"]
+  C --&gt; C3["Concordance among estimators"]
   D --&gt; D3["TF–target priors"]
-  D --&gt; D4["GRETA literature scores"]
-  A -.-&gt; E["Perspective: Boolean / CORNETO"]
-  A -.-&gt; F["Perspective: ChIP / ATAC"]
+  D --&gt; D4["Pathway overlap"]
 </pre>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-metrics-families-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;6.1: Three evaluation families for undirected cell-type GGMs, plus two perspective tracks that require extra assays or a mechanistic simulator.
+Figure&nbsp;6.1: Three core evaluation families for undirected cell-type GGMs. Perspectives that need a true skeleton, a DAG, extra assays, or perturbations are collected in <a href="#sec-metrics-perspectives" class="quarto-xref"><span>Section 6.6</span></a>.
 </figcaption>
 </figure>
 </div>
 </div>
 </div>
-<section id="sec-metrics-scope" class="level2" data-number="6.1">
-<h2 data-number="6.1" class="anchored" data-anchor-id="sec-metrics-scope"><span class="header-section-number">6.1</span> What we are <em>not</em> claiming</h2>
-<p>BEELINE evaluated <strong>directed</strong> GRN algorithms, often on pseudotime-ordered cells, against synthetic Boolean networks and curated TF–gene graphs. GRETA evaluated <strong>multimodal</strong> (RNA+ATAC) pipelines on mechanistic perturbation tasks, predictive reconstruction of omics, and literature databases. Our core graphs are <strong>undirected</strong>, <strong>stationary</strong>, and <strong>transcriptomics-only</strong>. We therefore:</p>
-<ul>
-<li>reduce BEELINE-style scores to <strong>skeletons</strong> (forget orientation and sign unless a method supplies them);</li>
-<li>drop GRETA mechanistic forecasting as a <strong>core</strong> criterion (no perturbation assay on these gastruloids in the core pipeline);</li>
-<li>keep GRETA-style <strong>literature</strong> and <strong>predictive</strong> ideas only where they survive without ATAC.</li>
-</ul>
-</section>
-<section id="sec-metrics-stat" class="level2" data-number="6.2">
-<h2 data-number="6.2" class="anchored" data-anchor-id="sec-metrics-stat"><span class="header-section-number">6.2</span> Statistical robustness and alignment</h2>
+<section id="sec-metrics-stat" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="sec-metrics-stat"><span class="header-section-number">6.1</span> Statistical robustness and alignment</h2>
 <p>These scores do not need a true graph. They ask whether <span class="math inline">(\widehat{\boldsymbol{\mu}}_{\cdot j},\widehat{\boldsymbol{\Sigma}}_{j})</span> is a stable, distinguishable plug-in for <a href="02-grn-graphical-lasso.html#eq-grn-convolution" class="quarto-xref">Equation&nbsp;<span>4.2</span></a>.</p>
-<section id="resampling-and-noise" class="level3" data-number="6.2.1">
-<h3 data-number="6.2.1" class="anchored" data-anchor-id="resampling-and-noise"><span class="header-section-number">6.2.1</span> Resampling and noise</h3>
+<section id="resampling" class="level3" data-number="6.1.1">
+<h3 data-number="6.1.1" class="anchored" data-anchor-id="resampling"><span class="header-section-number">6.1.1</span> Resampling</h3>
 <p>With one experiment, the honest uncertainty is <strong>conditional on this atlas</strong>:</p>
 <ul>
-<li><strong>Technical cell bootstrap</strong> within type, labels fixed (<a href="06-population-alignment.html#sec-align-bootstrap" class="quarto-xref"><span>Section 5.4</span></a>). Re-estimate <span class="math inline">\boldsymbol{\Theta}_{j}</span>; record edge inclusion frequencies (stability selection in the sense of Meinshausen and Bühlmann <span class="citation" data-cites="meinshausenStabilitySelection2010">(<a href="#ref-meinshausenStabilitySelection2010" role="doc-biblioref">Meinshausen and Bühlmann 2010</a>)</span>) and the Frobenius / Bures spread of <span class="math inline">\widehat{\boldsymbol{\Sigma}}_{j}</span>.</li>
-<li><strong>Gene or cell downsampling</strong>, as GRETA does to test sensitivity to coverage. GRETA found that TF and gene <em>sets</em> can look stable while <strong>edges</strong> collapse under downsampling — a warning we should expect for glasso supports as well.</li>
-<li><strong>Random seeds</strong> for stochastic estimators (<code>GmGM</code>, Bayesian graphs, boosting). GRETA reported that some multimodal methods reverse high-weight edges across seeds; a GGM that needs a seed should publish edge-overlap across seeds.</li>
-<li><strong>Observation-model contamination</strong> (Gaussian, <span class="math inline">t_{\nu}</span>, PLN, extra zeros) belongs with <a href="04-sensitivity-misspecification.html#sec-sensitivity" class="quarto-xref"><span>Section 10.1</span></a>, not as a graph-recovery score.</li>
+<li><strong>Technical cell bootstrap</strong> within type, labels fixed (<a href="06-population-alignment.html#sec-align-bootstrap" class="quarto-xref"><span>Section 5.4</span></a>). Re-estimate <span class="math inline">\boldsymbol{\Omega}_{j}</span>; record edge inclusion frequencies (stability selection in the sense of Meinshausen and Bühlmann <span class="citation" data-cites="meinshausenStabilitySelection2010">(<a href="#ref-meinshausenStabilitySelection2010" role="doc-biblioref">Meinshausen and Bühlmann 2010</a>)</span>) and the Frobenius / Bures spread of <span class="math inline">\widehat{\boldsymbol{\Sigma}}_{j}</span>.</li>
+<li><strong>Gene or cell downsampling</strong> as a coverage check. GRETA found that TF and gene <em>sets</em> can look stable while <strong>edges</strong> collapse under downsampling — a warning we should expect for glasso supports as well.</li>
 </ul>
+<p>The three core estimators (<code>huge</code>, <code>SILGGM</code> <code>D-S_GL</code>, <code>PLNnetwork</code>) are <strong>deterministic given the data and the penalty</strong>. We do not report seed-overlap diagnostics for them.</p>
 <p>Biological (multi-organoid) bootstrap is <strong>unavailable</strong>. Reporting a bootstrap interval as if it were between-experiment uncertainty would repeat the pseudoreplication error of <a href="03-feature-selection-naive.html#nte-pseudoreplication" class="quarto-xref">Note&nbsp;<span>3.4</span></a>.</p>
+<p>Observation-model <strong>contamination</strong> (wrong sampling layer, spillover, missing types) is not a GRN-stability experiment. It belongs to the misspecification sweep of <a href="04-sensitivity-misspecification.html#sec-sensitivity" class="quarto-xref"><span>Section 10.1</span></a>.</p>
+<div id="nte-stars" class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note&nbsp;6.1: <span class="emoji" data-emoji="information_source">ℹ️</span> StARS selects <span class="math inline">\lambda</span> from edge instability
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In <code>huge</code>, StARS (stability approach to regularisation selection) <span class="citation" data-cites="liuStabilityApproachRegularization2010">(<a href="#ref-liuStabilityApproachRegularization2010" role="doc-biblioref">Liu et al. 2010</a>)</span> does <strong>not</strong> score likelihood or the numerical accuracy of <span class="math inline">\widehat{\boldsymbol{\Omega}}</span>. Liu, Roeder and Wasserman choose the <strong>least amount of regularisation</strong> that still makes the graph sparse and replicable under random sampling. For each penalty <span class="math inline">\lambda</span>, the data are subsampled, the graph is re-estimated, and <span class="math inline">\hat\pi_{gg'}(\lambda)</span> is the fraction of subsamples in which edge <span class="math inline">\{g,g'\}</span> appears. Edge instability is of the form</p>
+<p><span class="math display">
+2\hat\pi_{gg'}(\lambda)\bigl(1-\hat\pi_{gg'}(\lambda)\bigr),
+</span></p>
+<p>which is near zero when the edge is almost always absent or almost always present, and largest when it appears about half the time. These terms are averaged over possible edges. StARS then takes the <strong>least sparse</strong> graph whose overall instability stays below <code>stars.thresh</code> (<a href="https://www.rdocumentation.org/packages/huge/topics/huge.stars"><code>huge.stars</code></a>; <a href="https://www.rdocumentation.org/packages/huge/topics/huge.select"><code>huge.select</code></a>).</p>
+<p>Practical settings:</p>
+<ul>
+<li><code>stars.thresh = 0.1</code> — package default; allows about 10% graph variability and tends to give a denser network;</li>
+<li><code>stars.thresh = 0.05</code> — stricter, typically sparser; the documentation presents <span class="math inline">0.05</span> as more appropriate when the graphical model is believed to be well specified.</li>
+</ul>
+<p>The selected <span class="math inline">\lambda</span> determines <strong>both</strong> the adjacency (<code>refit</code>) <strong>and</strong> the precision (<code>opt.icov</code>). There is no separate StARS criterion for a “best precision matrix”. The <code>huge</code> documentation also warns that StARS can <strong>overselect</strong> edges in Gaussian graphical models, so we compare it with EBIC (<a href="02-grn-graphical-lasso.html#sec-grn-penalty-stability" class="quarto-xref"><span>Section 4.4.1</span></a>) rather than treating it as ground truth. For <code>SILGGM</code> and <code>PLNnetwork</code> we reuse the same instability diagnostic on technical subsamples; we do not pretend those packages ship StARS.</p>
+</div>
+</div>
 </section>
-<section id="likelihood-and-information-criteria" class="level3" data-number="6.2.2">
-<h3 data-number="6.2.2" class="anchored" data-anchor-id="likelihood-and-information-criteria"><span class="header-section-number">6.2.2</span> Likelihood and information criteria</h3>
+<section id="likelihood-and-information-criteria" class="level3" data-number="6.1.2">
+<h3 data-number="6.1.2" class="anchored" data-anchor-id="likelihood-and-information-criteria"><span class="header-section-number">6.1.2</span> Likelihood and information criteria</h3>
 <p>On the Gaussian scale actually used by the estimator,</p>
 <ul>
 <li><strong>eBIC</strong> (extended BIC) is the usual glasso selection criterion when FDR methods are not used;</li>
-<li>held-out log-likelihood on cells left out within type (still technical, not biological);</li>
-<li>SILGGM’s own global FDR and, when a simulator supplies a true skeleton, power and Matthews correlation (the package’s simulation diagnostics).</li>
+<li>held-out log-likelihood on cells left out within type (still technical, not biological).</li>
 </ul>
 <p>These scores compare <strong>nested Gaussian models</strong>. They do not validate a PLN latent graph against a glasso graph on NPN data: the observation models differ. Cross-family comparison must move to a common object — the exported <span class="math inline">(\boldsymbol{\mu}_{\cdot j},\boldsymbol{\Sigma}_{j})</span> on the <strong>linear</strong> DeCovarT scale — and use distributional distances.</p>
 </section>
-<section id="distances-between-type-level-gaussians" class="level3" data-number="6.2.3">
-<h3 data-number="6.2.3" class="anchored" data-anchor-id="distances-between-type-level-gaussians"><span class="header-section-number">6.2.3</span> Distances between type-level Gaussians</h3>
+<section id="distances-between-type-level-gaussians" class="level3" data-number="6.1.3">
+<h3 data-number="6.1.3" class="anchored" data-anchor-id="distances-between-type-level-gaussians"><span class="header-section-number">6.1.3</span> Distances between type-level Gaussians</h3>
 <p>Closed forms, for non-degenerate <span class="math inline">P_{j}=\mathcal{N}(\boldsymbol{\mu}_{\cdot j},\boldsymbol{\Sigma}_{j})</span>:</p>
 <p><strong>Kullback–Leibler</strong></p>
 <p><span id="eq-kl-gauss"><span class="math display">
@@ -443,7 +660,7 @@ D_{\mathrm{KL}}(P_{j}\parallel P_{\ell})
 \end{aligned}
 \tag{6.1}</span></span></p>
 <p><strong>Jeffreys</strong> <span class="math inline">J(P_{j},P_{\ell})=D_{\mathrm{KL}}(P_{j}\parallel P_{\ell})+D_{\mathrm{KL}}(P_{\ell}\parallel P_{j})</span> is the symmetric version used as a separation monitor in the feature chapter.</p>
-<p><strong>Hellinger</strong> via Gaussian affinity, and <strong>MixSim overlap</strong> <span class="math inline">\omega_{j\ell}=\Omega_{j\ell}+\Omega_{\ell j}</span> as the sum of misclassification probabilities <span class="citation" data-cites="melnykovMixSimPackageSimulating2012 R-MixSim">(<a href="#ref-melnykovMixSimPackageSimulating2012" role="doc-biblioref">Melnykov et al. 2012</a>, <a href="#ref-R-MixSim" role="doc-biblioref">2021</a>)</span>, are the right “can DeCovarT tell these types apart?” scores. They are <strong>not</strong> graph metrics; they are metrics on the generative object.</p>
+<p><strong>Hellinger</strong> via Gaussian affinity, and <strong>MixSim overlap</strong> <span class="math inline">\omega_{j\ell}^{\mathrm{MS}}</span> as the sum of misclassification probabilities <span class="citation" data-cites="melnykovMixSimPackageSimulating2012 R-MixSim">(<a href="#ref-melnykovMixSimPackageSimulating2012" role="doc-biblioref">Melnykov et al. 2012</a>, <a href="#ref-R-MixSim" role="doc-biblioref">2021</a>)</span>, are the right “can DeCovarT tell these types apart?” scores. They are <strong>not</strong> graph metrics; they are metrics on the generative object. (The superscript <span class="math inline">\mathrm{MS}</span> avoids clashing with precision entries <span class="math inline">\omega_{gg'}</span>.)</p>
 <p><strong>Bures–Wasserstein</strong> (<a href="06-population-alignment.html#sec-align-ot" class="quarto-xref"><span>Section 5.7.1</span></a>) is a perspective metric. It splits mean displacement from covariance geometry when an external population Gaussian is available.</p>
 <div id="nte-metrics-scale" class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -451,26 +668,86 @@ D_{\mathrm{KL}}(P_{j}\parallel P_{\ell})
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Note&nbsp;6.1: :information_source: Compare laws on the DeCovarT scale
+Note&nbsp;6.2: <span class="emoji" data-emoji="information_source">ℹ️</span> Compare laws on the DeCovarT scale
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>KL between NPN-space Gaussians is not KL between count-scale pseudo-bulks. After each estimator has exported <a href="02-grn-graphical-lasso.html#eq-grn-export" class="quarto-xref">Equation&nbsp;<span>4.8</span></a>, compute KL / Hellinger / <span class="math inline">W_{2}</span> / MixSim on <strong>that</strong> Gaussian, the one that enters the convolution. Otherwise a “better” SILGGM graph can win on NPN likelihood and lose as a deconvolution prior.</p>
+<p>KL between NPN-space Gaussians is not KL between count-scale pseudo-bulks. After each estimator has exported <a href="02-grn-graphical-lasso.html#eq-grn-export" class="quarto-xref">Equation&nbsp;<span>4.9</span></a>, compute KL / Hellinger / <span class="math inline">W_{2}</span> / MixSim on <strong>that</strong> Gaussian, the one that enters the convolution. Otherwise a “better” SILGGM graph can win on NPN likelihood and lose as a deconvolution prior.</p>
 </div>
 </div>
 </section>
 </section>
-<section id="sec-metrics-topo" class="level2" data-number="6.3">
-<h2 data-number="6.3" class="anchored" data-anchor-id="sec-metrics-topo"><span class="header-section-number">6.3</span> Topological comparison</h2>
-<section id="skeleton-scores-beeline-reduced-to-undirected" class="level3" data-number="6.3.1">
-<h3 data-number="6.3.1" class="anchored" data-anchor-id="skeleton-scores-beeline-reduced-to-undirected"><span class="header-section-number">6.3.1</span> Skeleton scores (BEELINE, reduced to undirected)</h3>
-<p>BEELINE <span class="citation" data-cites="pratapaBenchmarkingAlgorithmsGene2020">(<a href="#ref-pratapaBenchmarkingAlgorithmsGene2020" role="doc-biblioref">Pratapa et al. 2020</a>)</span> is the standard scRNA-seq GRN benchmark. Its headline findings that survive our constraints:</p>
+<section id="sec-metrics-topo" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="sec-metrics-topo"><span class="header-section-number">6.2</span> Topological comparison</h2>
+<p>These describe <strong>shape and concordance</strong>, not correctness against a true DAG. The core object is the undirected adjacency <span class="math inline">A_{gg'}=\mathbf{1}\{\hat\omega_{gg'}\neq 0\}</span>.</p>
 <ul>
-<li>AUPRC and <strong>early precision</strong> are moderate even with known synthetic graphs;</li>
-<li>methods that <strong>do not</strong> require pseudotime were generally more accurate — convenient, because we assume stationarity;</li>
-<li>recovery is easier on simple synthetic networks than on curated Boolean models.</li>
+<li>degree distribution and a power-law diagnostic (many biological networks are not strictly scale-free);</li>
+<li>hub overlap across types (rewiring of hubs is a DeCovarT-relevant summary);</li>
+<li>clustering coefficient, number of connected components, modularity;</li>
+<li>overlap coefficients of edge <strong>sets</strong> between the three methods (intersection over the smaller set), which avoids punishing a method for returning a larger graph.</li>
 </ul>
-<p>Scores we keep, always on <strong>undirected</strong> adjacency <span class="math inline">A_{gg'}=\mathbf{1}\{\hat\theta_{gg'}\neq 0\}</span> (or a thresholded posterior inclusion probability):</p>
+<p><strong>Structural distances between two estimated undirected graphs</strong> (no true skeleton required) follow the <code>bnlearn</code> comparison helpers (<a href="https://www.bnlearn.com/examples/compare-dags/">Comparing network structures</a>):</p>
+<ul>
+<li><code>hamming()</code> — Hamming distance: the number of edge additions and deletions needed to turn one skeleton into the other (no orientation term, because our graphs are undirected);</li>
+<li><code>shd()</code> — structural Hamming distance (SHD). For DAGs it also counts reversals; on undirected skeletons it reduces to the same add/delete count. Report both the raw distance and a version normalised by <span class="math inline">G(G-1)/2</span>.</li>
+</ul>
+<p>Concordance between <code>SILGGM</code> and <code>PLNnetwork</code> is a <strong>robustness</strong> number, not a validation. If the three core estimators disagree on edges, that is the expected state of observational GRN inference, not a bug unique to gastruloids. Downstream DeCovarT should therefore <strong>not</strong> depend on a single edge being true; it should depend on the SPD covariance being a stable discriminator.</p>
+<p>Metrics that need a <strong>known true skeleton</strong> (precision, recall, <span class="math inline">F</span>, AUPRC, MCC against a simulator DAG) are in <a href="#sec-metrics-true-skeleton" class="quarto-xref"><span>Section 6.6.1</span></a>.</p>
+</section>
+<section id="sec-metrics-viz" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="sec-metrics-viz"><span class="header-section-number">6.3</span> Visualisations</h2>
+<p>The aim is to <strong>compare structure and inference</strong>, not to decorate a methods section. Each display should answer one question. Penalty-path and <code>funkyheatmap</code> scoreboards live in <a href="02-grn-graphical-lasso.html#sec-grn-penalty-path" class="quarto-xref"><span>Section 4.4</span></a>; this section is about <strong>supports, signs, and modules</strong>.</p>
+<p><strong>Supports and concordance (one type, one time)</strong></p>
+<ul>
+<li>Binary adjacency heatmaps, genes ordered by a <strong>common</strong> hierarchical clustering (from a consensus distance <span class="math inline">d_{ab}=1-\bar r_{ab}</span> of methods, or from a biological ordering). Side-by-side heatmaps of <span class="math inline">\widehat{\boldsymbol{\Omega}}_{j}</span> for two types make rewiring visible; a third panel of <span class="math inline">|\hat\omega^{(j)}_{gg'}-\hat\omega^{(\ell)}_{gg'}|</span> is the differential-network view.</li>
+<li><strong>Upset plots of edge presence</strong> across <code>huge</code>, <code>SILGGM</code> and <code>PLNnetwork</code> at a fixed type <span class="math inline">\times</span> time: how many edges are unique to one estimator, shared by two, or shared by all three.</li>
+<li><strong>Upset plots of edge sign</strong>, which is stricter. An edge is a signed pair <span class="math inline">\bigl(\{g,g'\},\operatorname{sign}(\hat\omega_{gg'})\bigr)</span>. Two methods can share the support and still disagree on the sign of the partial correlation; that disagreement is visible only in the signed Upset.</li>
+<li>On-diagonal degree bars or a simple graph drawing <strong>only</strong> for a tiny TF subgraph; whole-transcriptome hairballs are not figures.</li>
+</ul>
+<p><strong>Leiden modules from the precision weights</strong></p>
+<p>Treat <span class="math inline">\widehat{\boldsymbol{\Omega}}_{j}</span> as a weighted undirected graph with edge weights <span class="math inline">|\hat\omega_{gg'}|</span> (or <span class="math inline">|\rho_{gg'\mid\mathrm{rest}}|</span> from <a href="02-grn-graphical-lasso.html#eq-partial" class="quarto-xref">Equation&nbsp;<span>4.7</span></a>) on the selected support. Cluster genes with Leiden (<a href="https://igraph.org/r/html/1.3.4/cluster_leiden.html"><code>igraph::cluster_leiden()</code></a>): the weights enter the quality function directly, so modules reflect <strong>strength of conditional dependence</strong>, not just binary adjacency. Compare partitions across the three estimators (adjusted Rand index) and across types (rewiring of modules). Do not feed the dense <span class="math inline">\check{\boldsymbol{\Omega}}</span> into Leiden.</p>
+<p><strong>Signed partial correlations</strong></p>
+<ul>
+<li>Diverging tiles of <span class="math inline">-\omega_{gg'}/\sqrt{\omega_{gg}\omega_{g'g'}}</span> with a midpoint scale, not viridis (the latter encodes magnitude, not sign). Keep gene order shared across types.</li>
+</ul>
+<p><strong>Stability</strong></p>
+<ul>
+<li>Edge-inclusion frequencies from the technical bootstrap as a heatmap or as a reliability curve (precision among edges with inclusion <span class="math inline">&gt;t</span>, as <span class="math inline">t</span> varies).</li>
+<li>Sankey or alluvial <strong>only</strong> when nodes have a natural order (time, lineage). For unordered type-to-type edge flow, a chord diagram is the usual display; we do not need one in the core stationary analysis.</li>
+</ul>
+</section>
+<section id="sec-metrics-knowledge" class="level2" data-number="6.4">
+<h2 data-number="6.4" class="anchored" data-anchor-id="sec-metrics-knowledge"><span class="header-section-number">6.4</span> Knowledge-driven scoring</h2>
+<p><strong>Literature / knowledge (observational, undirected)</strong></p>
+<ul>
+<li><strong>Marker TFs</strong>: is a known type marker present as a hub, or as a high-degree node in <span class="math inline">\widehat{\boldsymbol{\Omega}}_{j}</span> for that type?</li>
+<li><strong>TF–target edges</strong>: if <span class="math inline">g</span> is a TF and <span class="math inline">g'</span> a curated target, does the undirected edge <span class="math inline">\{g,g'\}</span> appear? Resources: CollecTRI, DoRothEA, and mouse TF catalogues — all incomplete.</li>
+<li><strong>TF–TF via shared targets</strong>: two TFs that share many neighbours may reflect a complex or an artefact of co-expression; report overlap with PPI / IntAct only as a soft score.</li>
+</ul>
+<p><strong>Predictive (observational)</strong></p>
+<ul>
+<li>How well does the graph <strong>topology</strong> predict held-out expression (gene <span class="math inline">\sim</span> neighbours)? For a GGM this is almost circular (the model <em>is</em> a prediction of each node given the rest), but a <strong>held-out cell</strong> nodewise <span class="math inline">R^{2}</span> is still a useful calibration: a graph that does not predict expression of its own nodes is a bad Gaussian.</li>
+<li>Gene-set enrichment of Leiden or other modules (Hallmark, KEGG, Reactome) is a sanity check, not a causal test.</li>
+</ul>
+</section>
+<section id="sec-metrics-scorecard" class="level2" data-number="6.5">
+<h2 data-number="6.5" class="anchored" data-anchor-id="sec-metrics-scorecard"><span class="header-section-number">6.5</span> Practical scorecard for this repository</h2>
+<p>For each core estimator and each cell type <span class="math inline">j</span>:</p>
+<ol type="1">
+<li><strong>Robustness:</strong> bootstrap edge-inclusion; StARS-style instability (<a href="#nte-stars" class="quarto-xref">Note&nbsp;<span>6.1</span></a>); <span class="math inline">W_{2}</span> / KL of <span class="math inline">\widehat{\boldsymbol{\Sigma}}_{j}</span> across bootstraps.</li>
+<li><strong>Alignment:</strong> KL / Hellinger / MixSim <strong>between types</strong> (discrimination) and between the type-level Gaussian and the empirical cell cloud (<a href="06-population-alignment.html#sec-align" class="quarto-xref"><span>Section 5.1</span></a>).</li>
+<li><strong>Topology:</strong> Hamming / SHD and Upset concordance among the three estimators; degree / hub concordance; Leiden ARI; no hairball as a main figure.</li>
+<li><strong>Knowledge:</strong> fraction of curated TF–target pairs recovered as undirected edges; marker-TF degree; stated as <strong>overlap with an incomplete prior</strong>, not as accuracy.</li>
+<li><strong>Downstream (the score that actually matters for this project):</strong> DeCovarT deconvolution error under a fixed mixture design when <span class="math inline">\boldsymbol{\zeta}</span> comes from each GRN method, with the misspecification sweep of <a href="04-sensitivity-misspecification.html#sec-sensitivity" class="quarto-xref"><span>Section 10.1</span></a>.</li>
+</ol>
+<p>Item 5 is the only metric that is <strong>identified</strong> with the paper’s estimand. Items 1–4 are supporting diagnostics. Perspectives stay out of the scorecard until the corresponding data or simulator is in <code>data/processed/</code>.</p>
+</section>
+<section id="sec-metrics-perspectives" class="level2" data-number="6.6">
+<h2 data-number="6.6" class="anchored" data-anchor-id="sec-metrics-perspectives"><span class="header-section-number">6.6</span> Perspectives</h2>
+<p>The core graphs are <strong>undirected</strong>, <strong>observational</strong>, and fitted without a true gastruloid skeleton. The following tasks are useful later; they are not gates for DeCovarT.</p>
+<section id="sec-metrics-true-skeleton" class="level3" data-number="6.6.1">
+<h3 data-number="6.6.1" class="anchored" data-anchor-id="sec-metrics-true-skeleton"><span class="header-section-number">6.6.1</span> When a true skeleton is available</h3>
+<p>On a simulator whose GRN we supplied (<a href="06-population-alignment.html#sec-align-mc" class="quarto-xref"><span>Section 5.5</span></a>), or on a curated Boolean skeleton used only as a <strong>reference</strong>, the usual ranking scores apply to the <strong>undirected</strong> adjacency:</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 17%">
@@ -487,8 +764,8 @@ Note&nbsp;6.1: :information_source: Compare laws on the DeCovarT scale
 <tbody>
 <tr class="odd">
 <td>Precision / recall / <span class="math inline">F_{1}</span> or <span class="math inline">F_{0.1}</span></td>
-<td>TP, FP, FN against a reference skeleton</td>
-<td>Needs a reference; GRETA weights precision <span class="math inline">10\times</span> recall because inferred GRNs are sparse</td>
+<td>TP, FP, FN against the reference skeleton</td>
+<td>Needs a true or curated support; GRETA weights precision <span class="math inline">10\times</span> recall because inferred GRNs are sparse</td>
 </tr>
 <tr class="even">
 <td>Early precision</td>
@@ -502,101 +779,39 @@ Note&nbsp;6.1: :information_source: Compare laws on the DeCovarT scale
 </tr>
 <tr class="even">
 <td>Structural Hamming distance</td>
-<td><span class="math inline">|A-\tilde A|</span> on undirected edges</td>
+<td>Hamming / SHD against the true skeleton</td>
 <td>Scale with <span class="math inline">G</span>; report also normalised SHD</td>
 </tr>
 <tr class="odd">
 <td>MCC</td>
 <td>Balanced correlation of binary edges</td>
-<td>SILGGM simulations use it; still needs a reference</td>
+<td>Still needs a reference</td>
 </tr>
 </tbody>
 </table>
-<p>Without a true DAG, the “reference” is one of: (i) a simulator whose GRN we supplied (<a href="06-population-alignment.html#sec-align-mc" class="quarto-xref"><span>Section 5.5</span></a>); (ii) another estimator (stability / concordance, not accuracy); (iii) a literature skeleton (<a href="#sec-metrics-knowledge" class="quarto-xref"><span>Section 6.4</span></a>). Concordance between SILGGM and <code>PLNnetwork</code> is a <strong>robustness</strong> number, not a validation.</p>
-<p>CPDAG / orientation metrics from the causal-metrics notes apply only if we leave the core and score a DAG. We do not.</p>
+<p>Without that reference, these numbers are undefined. CPDAG / orientation metrics apply only if we leave the core and score a DAG. We do not, in the main pipeline.</p>
+<p>Boolean / logical models (BEELINE curated networks; BoolODE) are mechanistic simulators: truth tables <span class="math inline">\to</span> ODEs <span class="math inline">\to</span> synthetic counts. They supply a <strong>known skeleton</strong> for AUPRC when we simulate. They are not fitted to Suppinger as the DeCovarT graph. Using a Boolean model <em>as the prior</em> and a GGM <em>as the data-driven proposal</em> is a legitimate consistency check; using the Boolean model <em>as</em> <span class="math inline">\boldsymbol{\Omega}_{j}</span> would abandon the Gaussian convolution.</p>
 </section>
-<section id="graph-summaries-that-do-not-need-a-reference" class="level3" data-number="6.3.2">
-<h3 data-number="6.3.2" class="anchored" data-anchor-id="graph-summaries-that-do-not-need-a-reference"><span class="header-section-number">6.3.2</span> Graph summaries that do not need a reference</h3>
-<p>These describe <strong>shape</strong>, not correctness:</p>
-<ul>
-<li>degree distribution and a power-law diagnostic (SILGGM used <span class="math inline">\log</span>–<span class="math inline">\log</span> degree plots as a biological sanity check; many biological networks are not strictly scale-free);</li>
-<li>hub overlap across types (rewiring of hubs is a DeCovarT-relevant summary);</li>
-<li>clustering coefficient, number of connected components, modularity;</li>
-<li>overlap coefficients of edge <strong>sets</strong> between methods, as in GRETA (intersection over the smaller set), which avoids punishing a method for returning a larger graph.</li>
-</ul>
-<p>GRETA’s most uncomfortable topological result should be treated as a prior: <strong>edge-level overlap across methods is tiny</strong> even when TF and gene sets overlap moderately. If our four core estimators disagree on edges, that is the expected state of GRN inference, not a bug unique to gastruloids. Downstream DeCovarT should therefore <strong>not</strong> depend on a single edge being true; it should depend on the SPD covariance being a stable discriminator.</p>
+<section id="sec-metrics-dags" class="level3" data-number="6.6.2">
+<h3 data-number="6.6.2" class="anchored" data-anchor-id="sec-metrics-dags"><span class="header-section-number">6.6.2</span> Directed DAGs</h3>
+<p>Our estimand is an undirected SPD precision. Directed causal metrics (SHD on orientations, SID, CPDAG comparisons) judge a different object. They belong here only if a later analysis fits a DAG.</p>
 </section>
-<section id="sec-metrics-viz" class="level3" data-number="6.3.3">
-<h3 data-number="6.3.3" class="anchored" data-anchor-id="sec-metrics-viz"><span class="header-section-number">6.3.3</span> Visualisations</h3>
-<p>The aim is to <strong>compare structure and inference</strong>, not to decorate a methods section. Each display should answer one question.</p>
-<p><strong>Supports and concordance</strong></p>
-<ul>
-<li>Binary adjacency heatmaps, genes ordered by a <strong>common</strong> hierarchical clustering (from a consensus distance <span class="math inline">d_{ab}=1-\bar r_{ab}</span> of methods, or from a biological ordering). Side-by-side heatmaps of <span class="math inline">\widehat{\boldsymbol{\Theta}}_{j}</span> for two types make rewiring visible; a third panel of <span class="math inline">|\hat\theta^{(j)}_{gg'}-\hat\theta^{(\ell)}_{gg'}|</span> is the differential-network view.</li>
-<li>Upset plots or Jaccard heatmaps of edge sets across the four core methods.</li>
-<li>On-diagonal degree bars or a simple graph drawing <strong>only</strong> for a tiny TF subgraph; whole-transcriptome hairballs are not figures.</li>
-</ul>
-<p><strong>Signed partial correlations</strong></p>
-<ul>
-<li>Diverging tiles of partial correlations <span class="math inline">-\theta_{gg'}/\sqrt{\theta_{gg}\theta_{g'g'}}</span> with a midpoint scale, not viridis (the latter encodes magnitude, not sign). Keep gene order shared across types.</li>
-</ul>
-<p><strong>Stability</strong></p>
-<ul>
-<li>Edge-inclusion frequencies from the technical bootstrap as a heatmap or as a reliability curve (precision among edges with inclusion <span class="math inline">&gt;t</span>, as <span class="math inline">t</span> varies).</li>
-<li>Sankey or alluvial <strong>only</strong> when nodes have a natural order (time, lineage). For unordered type-to-type edge flow, a chord diagram is the usual display; we do not need one in the core stationary analysis.</li>
-</ul>
-<p><strong>Distributional alignment (ties into <a href="06-population-alignment.html#sec-align" class="quarto-xref"><span>Section 5.1</span></a>)</strong></p>
-<ul>
-<li>PCA / UMAP of cells with the type-level Gaussian as an ellipse is a cartoon (UMAP is not a Gaussian space). Prefer plots of <span class="math inline">W_{2}</span> or KL against bootstrap replicates, or rainclouds of <span class="math inline">\hat p</span> from DeCovarT under each GRN method (package helpers <code>plot_mc_raincloud()</code>, <code>plot_mc_forest()</code>), once simulations exist.</li>
-</ul>
-<p><strong>GRETA-style genome tracks</strong> (TF–CRE–gene) require ATAC and are perspective-only (<a href="#sec-metrics-omics" class="quarto-xref"><span>Section 6.5</span></a>).</p>
+<section id="sec-metrics-omics" class="level3" data-number="6.6.3">
+<h3 data-number="6.6.3" class="anchored" data-anchor-id="sec-metrics-omics"><span class="header-section-number">6.6.3</span> Orthogonal assays</h3>
+<p>ChIP-seq, CUT&amp;RUN, and ATAC-seq (or multiome) networks are closer to <strong>physical interaction</strong> than a partial correlation. They are orthogonal, complementary modalities; they are <strong>not</strong> measured in the core Suppinger scRNA-seq table we use for <span class="math inline">\boldsymbol{\Omega}_{j}</span>. If a later gastruloid multiome appears, GRETA is a possible evaluation harness; SCENIC+ / CellOracle / Dictys remain out of the DeCovarT <strong>input</strong>, because they return directed regulons, not SPD precisions. The honest use is: project our undirected skeleton onto TF–CRE–gene triples and score literature overlap; do not replace <span class="math inline">\boldsymbol{\Omega}_{j}</span> with a regulon adjacency.</p>
 </section>
-</section>
-<section id="sec-metrics-knowledge" class="level2" data-number="6.4">
-<h2 data-number="6.4" class="anchored" data-anchor-id="sec-metrics-knowledge"><span class="header-section-number">6.4</span> Knowledge-driven scoring</h2>
-<section id="gretas-three-buckets-restricted-to-undirected-transcriptomics" class="level3" data-number="6.4.1">
-<h3 data-number="6.4.1" class="anchored" data-anchor-id="gretas-three-buckets-restricted-to-undirected-transcriptomics"><span class="header-section-number">6.4.1</span> GRETA’s three buckets, restricted to undirected transcriptomics</h3>
-<p>GRETA <span class="citation" data-cites="badia-i-mompelComparisonEvaluationMethods2025">(<a href="#ref-badia-i-mompelComparisonEvaluationMethods2025" role="doc-biblioref">Badia-i-Mompel et al. 2025</a>)</span> modularises multimodal GRN pipelines and scores them as <strong>mechanistic</strong>, <strong>predictive</strong>, and <strong>literature-based</strong>. Core carry-over:</p>
-<p><strong>Literature / knowledge</strong></p>
-<ul>
-<li><strong>Marker TFs</strong>: is a known type marker present as a hub, or as a high-degree node in <span class="math inline">\widehat{\boldsymbol{\Theta}}_{j}</span> for that type?</li>
-<li><strong>TF–target edges</strong>: if <span class="math inline">g</span> is a TF and <span class="math inline">g'</span> a curated target, does the undirected edge <span class="math inline">\{g,g'\}</span> appear? This is GRETA’s “known interaction” idea with orientation dropped. Resources: CollecTRI, DoRothEA, and mouse TF catalogues — all incomplete.</li>
-<li><strong>TF–TF via shared targets</strong>: two TFs that share many neighbours may reflect a complex or an artefact of co-expression; report overlap with PPI / IntAct only as a soft score.</li>
-<li><strong>TF-binding / CRE / eQTL recovery</strong>: GRETA’s ChIP-Atlas, ReMap, ENCODE, eQTL tasks need sequence assays we do not use in the core.</li>
-</ul>
-<p><strong>Predictive (observational)</strong></p>
-<ul>
-<li>How well does the graph <strong>topology</strong> predict held-out expression (gene <span class="math inline">\sim</span> neighbours), as in GRETA’s “Omics” scores? For a GGM this is almost circular (the model <em>is</em> a prediction of each node given the rest), but a <strong>held-out cell</strong> nodewise <span class="math inline">R^{2}</span> is still a useful calibration: a graph that does not predict expression of its own nodes is a bad Gaussian.</li>
-<li>Gene-set enrichment of modules (Hallmark, KEGG, Reactome) is a sanity check, not a causal test.</li>
-</ul>
-<p><strong>Mechanistic (perturbation)</strong> — <strong>perspective</strong>. GRETA found that multimodal GRNs <strong>struggle to capture causal relationships from perturbation assays</strong>, even when predictive and literature scores look decent. That result should humble any claim that our undirected <span class="math inline">\boldsymbol{\Theta}_{j}</span> is a regulatory mechanism. We do not have a gastruloid TF knockout atlas in the core pipeline; we therefore <strong>do not</strong> use TF-activity enrichment after perturbation as a gate for DeCovarT.</p>
-<p>GRETA’s other operational warnings that apply unchanged: methods are sensitive to random seeds and to replacing a single pipeline step; paired versus unpaired multiome changes edges even when cell-type abundances look similar; de novo GRN inference from observational data is close to ill-posed. Our four-estimator design is a response to that ill-posedness, not a claim that one method is true.</p>
-</section>
-<section id="sec-metrics-integer" class="level3" data-number="6.4.2">
-<h3 data-number="6.4.2" class="anchored" data-anchor-id="sec-metrics-integer"><span class="header-section-number">6.4.2</span> Integer programmes and Boolean models</h3>
-<p><strong>CORNETO</strong> <span class="citation" data-cites="rodriguez-mierUnifyingMultisampleNetwork2025">(<a href="#ref-rodriguez-mierUnifyingMultisampleNetwork2025" role="doc-biblioref">Rodriguez-Mier et al. 2025</a>)</span> reformulates knowledge-driven network inference as a joint constrained optimisation problem (LP / MILP) over prior knowledge networks: undirected PPI, signed directed signalling, or metabolic hypergraphs. It is <strong>not</strong> a GGM. As a <strong>perspective scorer</strong>, it can take our data-driven support (or a TF–target list derived from it) and ask whether a sparse subnetwork of a PKN explains the omics under flow / Steiner / CARNIVAL constraints. That tests <strong>mechanistic plausibility</strong>, not Gaussian fit. Joint multi-sample inference is CORNETO’s selling point; with one gastruloid experiment we would be back to a single-sample PKN extract.</p>
-<p><strong>Boolean / logical models</strong> (the BEELINE curated networks; BoolODE) are simpler mechanistic simulators: truth tables <span class="math inline">\to</span> ODEs <span class="math inline">\to</span> synthetic counts. They supply a <strong>known skeleton</strong> for AUPRC when we simulate (<a href="06-population-alignment.html#sec-align-mc" class="quarto-xref"><span>Section 5.5</span></a>). They are not fitted to Suppinger as the DeCovarT graph. Using a Boolean model <em>as the prior</em> and a GGM <em>as the data-driven proposal</em> is a legitimate consistency check; using the Boolean model <em>as</em> <span class="math inline">\boldsymbol{\Theta}_{j}</span> would abandon the Gaussian convolution.</p>
-</section>
-</section>
-<section id="sec-metrics-omics" class="level2" data-number="6.5">
-<h2 data-number="6.5" class="anchored" data-anchor-id="sec-metrics-omics"><span class="header-section-number">6.5</span> Perspectives: regulatory omics</h2>
-<p>ChIP-seq, CUT&amp;RUN, and ATAC-seq (or multiome) networks are closer to <strong>physical interaction</strong> than a partial correlation. GRETA exists because those assays still do not uniquely determine TF–gene edges: CRE-to-gene linking, motif scanning, and the modelling step each change the graph. If a later gastruloid multiome appears, GRETA is the evaluation harness; SCENIC+ / CellOracle / Dictys remain out of the DeCovarT <strong>input</strong>, because they return directed regulons, not SPD precisions. The honest use is: project our undirected skeleton onto TF–CRE–gene triples and score GRETA literature metrics; do not replace <span class="math inline">\boldsymbol{\Theta}_{j}</span> with a regulon adjacency.</p>
-</section>
-<section id="sec-metrics-scorecard" class="level2" data-number="6.6">
-<h2 data-number="6.6" class="anchored" data-anchor-id="sec-metrics-scorecard"><span class="header-section-number">6.6</span> Practical scorecard for this repository</h2>
-<p>For each core estimator and each cell type <span class="math inline">j</span>:</p>
-<ol type="1">
-<li><strong>Robustness:</strong> bootstrap edge-inclusion; <span class="math inline">W_{2}</span> / KL of <span class="math inline">\widehat{\boldsymbol{\Sigma}}_{j}</span> across bootstraps; seed overlap if stochastic.</li>
-<li><strong>Alignment:</strong> KL / Hellinger / <span class="math inline">W_{2}</span> / MixSim <strong>between types</strong> (discrimination) and between the type-level Gaussian and the empirical cell cloud (<a href="06-population-alignment.html#sec-align" class="quarto-xref"><span>Section 5.1</span></a>).</li>
-<li><strong>Topology:</strong> pairwise skeleton overlap among the four estimators; degree / hub concordance; no hairball as a main figure.</li>
-<li><strong>Knowledge:</strong> fraction of curated TF–target pairs recovered as undirected edges; marker-TF degree; stated as <strong>overlap with an incomplete prior</strong>, not as accuracy.</li>
-<li><strong>Downstream (the score that actually matters for this project):</strong> DeCovarT deconvolution error under a fixed mixture design when <span class="math inline">\boldsymbol{\zeta}</span> comes from each GRN method, with the misspecification sweep of <a href="04-sensitivity-misspecification.html#sec-sensitivity" class="quarto-xref"><span>Section 10.1</span></a>.</li>
-</ol>
-<p>Item 5 is the only metric that is <strong>identified</strong> with the paper’s estimand. Items 1–4 are supporting diagnostics. Perspectives (CORNETO, Boolean, ChIP/ATAC, GRETA mechanistic) stay out of the scorecard until the corresponding data or simulator is in <code>data/processed/</code>.</p>
+<section id="sec-metrics-perturb" class="level3" data-number="6.6.4">
+<h3 data-number="6.6.4" class="anchored" data-anchor-id="sec-metrics-perturb"><span class="header-section-number">6.6.4</span> Perturbations and integer programmes</h3>
+<p>We do not have a gastruloid TF knockout atlas. GRETA found that multimodal GRNs <strong>struggle to capture causal relationships from perturbation assays</strong>, even when predictive and literature scores look decent. We therefore <strong>do not</strong> use TF-activity enrichment after perturbation as a gate for DeCovarT.</p>
+<p><strong>CORNETO</strong> <span class="citation" data-cites="rodriguez-mierUnifyingMultisampleNetwork2025">(<a href="#ref-rodriguez-mierUnifyingMultisampleNetwork2025" role="doc-biblioref">Rodriguez-Mier et al. 2025</a>)</span> reformulates knowledge-driven network inference as a joint constrained optimisation problem (LP / MILP) over prior knowledge networks. It is <strong>not</strong> a GGM. As a perspective scorer, it can take our data-driven support and ask whether a sparse subnetwork of a PKN explains the omics under flow / Steiner / CARNIVAL constraints. That tests <strong>mechanistic plausibility</strong>, not Gaussian fit.</p>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="list">
 <div id="ref-badia-i-mompelComparisonEvaluationMethods2025" class="csl-entry" role="listitem">
 Badia-i-Mompel, Pau, Roger Casals-Franch, Lorna Wessels, et al. 2025. <em>Comparison and Evaluation of Methods to Infer Gene Regulatory Networks from Multimodal Single-Cell Data</em>. bioRxiv. <a href="https://doi.org/10.1101/2024.12.20.629764">https://doi.org/10.1101/2024.12.20.629764</a>.
+</div>
+<div id="ref-liuStabilityApproachRegularization2010" class="csl-entry" role="listitem">
+Liu, Han, Kathryn Roeder, and Larry Wasserman. 2010. <span>“Stability Approach to Regularization Selection (<span>StARS</span>) for High Dimensional Graphical Models.”</span> <em>Advances in Neural Information Processing Systems</em> 24 (2): 1432–40.
 </div>
 <div id="ref-meinshausenStabilitySelection2010" class="csl-entry" role="listitem">
 Meinshausen, Nicolai, and Peter Bühlmann. 2010. <span>“Stability Selection.”</span> <em>Journal of the Royal Statistical Society. Series B (Statistical Methodology)</em> 72: 417–73. <a href="https://doi.org/10.1111/j.1467-9868.2010.00740.x">https://doi.org/10.1111/j.1467-9868.2010.00740.x</a>.
@@ -615,10 +830,24 @@ Rodriguez-Mier, Pablo, Martin Garrido-Rodriguez, Attila Gabor, and Julio Saez-Ro
 </div>
 </div>
 </section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
     const icon = "";
     const anchorJS = new window.AnchorJS();
     anchorJS.options = {
@@ -1030,6 +1259,39 @@ Rodriguez-Mier, Pablo, Martin Garrido-Rodriguez, Attila Gabor, and Julio Saez-Ro
   </div>
 </nav>
 </div> <!-- /content -->
+    <footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/edit/main/docs/05-grn-metrics.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/blob/main/docs/05-grn-metrics.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script type="text/javascript">
+    (function(d) {
+      d.querySelectorAll(".pseudocode-container").forEach(function(el) {
+        let pseudocodeOptions = {
+          indentSize: el.dataset.indentSize,
+          commentDelimiter: " " + el.dataset.commentDelimiter + " ",
+          lineNumber: el.dataset.lineNumber.toLowerCase() === "true",
+          lineNumberPunc: el.dataset.lineNumberPunc,
+          noEnd: el.dataset.noEnd.toLowerCase() === "true",
+          scopeLines: el.dataset.indentLines.toLowerCase() === "true",
+          titlePrefix: el.dataset.captionPrefix,
+        };
+        pseudocode.renderElement(el.querySelector(".pseudocode"), pseudocodeOptions);
+      });
+    })(document);
+    (function(d) {
+      d.querySelectorAll(".pseudocode-container").forEach(function(el) {
+        let captionSpan = el.querySelector(".ps-root > .ps-algorithm > .ps-line > .ps-keyword")
+        if (captionSpan !== null) {
+          let captionPrefix = el.dataset.captionPrefix + " ";
+          let captionNumber = "";
+          if (el.dataset.pseudocodeNumber) {
+            captionNumber = el.dataset.pseudocodeNumber + " ";
+            if (el.dataset.chapterLevel) {
+              captionNumber = el.dataset.chapterLevel + "." + captionNumber;
+            }
+          }
+          captionSpan.innerHTML = captionPrefix + captionNumber;
+        }
+      });
+    })(document);
+    </script>
+  
 
 
 
