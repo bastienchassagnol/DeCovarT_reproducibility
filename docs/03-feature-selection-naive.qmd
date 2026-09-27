@@ -221,6 +221,83 @@ Seurat's variable-feature shortlist.
 versus the v2 offset.](images/sctransform_v1_versus_v2.png){#fig-sct-v1-v2}
 :::
 
+### Design used for the naive screen {#sec-fs-sct-design}
+
+`sctransform::vst()` with `vst.flavor = "v2"` is an intercept plus a
+library-size offset. There is no richer design matrix on this object
+that we can identify.
+
+The fitted mean, for each gene $g$ and cell $c$, is
+
+$$
+\log\mu_{cg}
+=
+\beta_{0g}
++
+\operatorname{offset}(\log L_{c}),
+\qquad
+\mu_{cg}
+=
+e^{\beta_{0g}} L_{c},
+$$ {#eq-fs-v2-offset}
+
+with $L_{c}$ the full RNA library size (column sum of the unfiltered
+count matrix), not the sum over the gene allow-list. In the
+implementation the offset is $\log L_{c}$ and the stored slope on
+$\log_{10} L_{c}$ is the constant $\ln 10$. When `glmGamPoi` is
+installed the fitter is `glmGamPoi_offset`; otherwise v2 falls back to
+the same offset model (`nb_offset`). `vars.to.regress` is empty.
+
+What we deliberately leave out:
+
+- **Cell type** is not a covariate. Putting $j$ in the null would
+  remove the between-type residual the rank is meant to keep
+  (@eq-fs-ss).
+- **Cell line** (B-S versus SBR) is not a covariate. It is confounded
+  with time except at 48 h (@sec-geo-design), and the chapter treats
+  the two lines as equivalent trajectories.
+- **Time** is not a column inside one regression. The negative-binomial
+  fit is repeated **independently at 48 h, 72 h and 96 h**, which are
+  the slots shared with the bulk HTSeq table. Cells of every retained
+  type at that slot are fitted together. A single fit across times
+  would mix stage differences into the residuals; a time coefficient
+  would partial those differences out of a contrast we want to make
+  inside each slot, where the GRN is learned.
+
+The fit is **not** stratified by cell type. Subsetting to one type
+before `SCTransform` would absorb that type's mean and leave residuals
+with no between-type signal.
+
+The author `SCT` assay is used only as a gene-name allow-list: the
+genes present in its `counts` layer (the less stringent
+`scater` / `SCTransform` filter already stored on
+`GSE229513_gastruloidsobject.rds`). Pearson residuals are refit on the
+**raw** RNA counts of those genes. The stored integration residuals are
+not the ranking table.
+
+Two caps are applied after @eq-fs-ss, then each list is united with the
+signalling markers of the cell types actually scored in that time slot
+(`data/dictionaries/mouse_gastruloid_signaling_markers.csv`, symbols
+mapped offline with `org.Mm.eg.db`, not biomaRt):
+
+1. **Global.** Top `n_genes_global` genes by
+   $\mathrm{SS}_{\mathrm{between}}/\mathrm{SS}_{\mathrm{within}}$
+   (default 500). This is below the few-thousand ceiling suggested
+   before a GGM; the cap is an argument of the script.
+2. **Per cell type.** One-versus-rest ANOVA, top
+   `n_genes_celltype` genes by the same ratio (default 50).
+   $\mathrm{SS}_{\mathrm{between}}>\mathrm{SS}_{\mathrm{within}}$
+   is recorded and drawn, and is not a hard gate. Pearson residuals
+   are scaled to unit variance, so that inequality is an $R^{2}>1/2$
+   cut and almost no gene meets it when one type dominates the slot.
+
+Culture-stress labels in
+`data/dictionaries/suppinger_celltype_crosswalk.csv` are dropped before
+the fit. Types with fewer than `min_cells` cells (default 20) in a slot
+stay out of the sum of squares. The entry points are
+`scripts/01_01_prepare_and_filter_genes_sctransform.R` and
+`scripts/01_02_plot_naively_selected_genes.R`.
+
 ::: {#nte-hvg-not-gaussian .callout-note}
 ## :information_source: HVGs are not a GGM input
 
@@ -283,13 +360,16 @@ object.
 
 ## What we would actually run
 
-1.  `SCTransform` Pearson residuals under @eq-fs-nb-null; rank by
-    between/within @eq-fs-ss.
+1.  `SCTransform` Pearson residuals under @eq-fs-v2-offset, separately
+    at 48 h, 72 h and 96 h; rank by between/within @eq-fs-ss
+    (@sec-fs-sct-design). Global cap 500 genes; per type, top 50 by
+    the same ratio.
 2.  Union with
     `data/dictionaries/mouse_gastruloid_signaling_markers.csv`
-    (drop rows with `cell_type_suppinger` missing unless a later
-    reference needs them).
-3.  Cap $|\mathcal{G}_{0}|$ at a few thousand genes.
+    for cell types scored in that time slot (drop rows with
+    `cell_type_suppinger` missing unless a later reference needs them).
+3.  Keep $|\mathcal{G}_{0}|$ on the order of a few thousand genes before
+    a GGM. The naive screen above is a tighter, tunable subset.
 4.  **No** `DESeq2` $p$-values on technical sc pseudo-bulks.
 
 ## Perspectives: differential networks {#sec-fs-perspective}

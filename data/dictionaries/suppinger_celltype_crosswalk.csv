@@ -1,0 +1,22 @@
+celltypeannotation,include_in_ranking,use_markers,cell_type_excel,note
+Anterior primitive streak/Def. endoderm,TRUE,TRUE,Anterior mesoderm,Label covers anterior mesoderm on the signalling map
+Anterior primitive streak/Def. endoderm,TRUE,TRUE,Definitive endoderm,The same label also names definitive endoderm
+Caudal epiblast,TRUE,FALSE,,No row in the signalling-marker dictionary
+Caudal epiblast/primitive streak,TRUE,FALSE,,No row in the signalling-marker dictionary
+Caudal mesoderm,TRUE,TRUE,Nascent/Posterior mesoderm,Dictionary cell_type_suppinger is Caudal mesoderm
+Cd63+ ectoderm-like artefact,FALSE,FALSE,,Culture-stress artefact; excluded from residual ranking
+Ectopic pluripotency,TRUE,FALSE,,No row in the signalling-marker dictionary
+Epiblast,TRUE,FALSE,,No row in the signalling-marker dictionary
+Epiblast/primitive streak,TRUE,FALSE,,No row in the signalling-marker dictionary
+Exiting naïve pluripotency,TRUE,FALSE,,No row in the signalling-marker dictionary
+Gut,TRUE,TRUE,Definitive endoderm,Dictionary cell_type_suppinger is Endoderm / gut
+Hemogenic endothelium,TRUE,FALSE,Haemato-endothelium,cell_type_suppinger is NA; markers are not unioned
+Naïve pluripotency,TRUE,FALSE,,No row in the signalling-marker dictionary
+Neuromesodermal progenitors,TRUE,TRUE,Neuromesodermal progenitors NMP,Dictionary cell_type_suppinger is NMP
+Paraxial mesoderm,TRUE,FALSE,,No row in the signalling-marker dictionary
+Pre-somitic mesoderm,TRUE,TRUE,Presomitic mesoderm PSM,Dictionary cell_type_suppinger is Pre-somitic mesoderm
+Primitive streak,TRUE,TRUE,Primitive streak,Dictionary cell_type_suppinger is Primitive streak
+Somite,TRUE,TRUE,Somite endoderm,Dictionary cell_type_suppinger is Somites
+Somite,TRUE,TRUE,Myogenic progenitor,Dictionary cell_type_suppinger is Somite / myogenic progenitors
+Somite differentiation front,TRUE,FALSE,,Not the same label as Somite; no marker row
+Zscan4+ Artefact,FALSE,FALSE,,Culture-stress artefact; excluded from residual ranking

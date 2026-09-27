@@ -10,7 +10,20 @@ Paper: Suppinger et al., Cell Stem Cell 2023.
 DOI: https://doi.org/10.1016/j.stem.2023.04.018
 GEO series: GSE229513 (single-cell), GSE229386 (bulk).
 
-Example (adjust names to the GEO supplementary file list):
+The single-cell Seurat object is tracked with DVC in the sibling
+repository `GastroDeconv2FateMap`
+(`data/raw/GSE229513_gastruloidsobject.rds.dvc`, remote
+`mmg_cluster`). From that repository:
+
+```bash
+dvc pull data/raw/GSE229513_gastruloidsobject.rds.dvc
+```
+
+The file is about 14 GB. Pull it on a machine whose `data/raw` is not
+cloud-synced. `GSE229386_AllHTSeqCountsWithGeneNames.txt.gz` is the
+bulk HTSeq table, not the single-cell counts.
+
+Example GEO download (adjust names to the supplementary file list):
 
 ```bash
 # cd data/raw
