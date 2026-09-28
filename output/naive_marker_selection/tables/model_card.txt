@@ -1,0 +1,13 @@
+SCTransform v2 design
+formula: log(mu_cg) = beta_0g + offset(log(library size_c))
+slope: fixed (ln 10 on the log10-depth scale; glmGamPoi offset)
+vars.to.regress: none
+cell type in the fit: no
+cell line / batch in the fit: no
+split: one fit per bulk-matched time (48h, 72h, 96h)
+gene allow-list: rownames of the author SCT counts layer
+library size: column sums of the full RNA count matrix
+n_genes_global: 500
+n_genes_celltype: 50
+min_cells: 20
+excluded types: Cd63+ ectoderm-like artefact | Zscan4+ Artefact

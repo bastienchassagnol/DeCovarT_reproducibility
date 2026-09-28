@@ -85,8 +85,16 @@ for (time_level in time_levels) {
     After = slice[slice$in_sct_filter %in% TRUE, , drop = FALSE]
   )
   plots <- lapply(names(panels), function(panel_name) {
+    panel <- panels[[panel_name]]
+    null_share <- stats::aggregate(
+      mean_log_cpm ~ cell_type,
+      data = panel,
+      FUN = function(z) mean(z <= 1e-8)
+    )
+    names(null_share)[2] <- "null_share"
+    null_share$label <- sprintf("%d%% null", round(100 * null_share$null_share))
     ggplot2::ggplot(
-      panels[[panel_name]],
+      panel,
       ggplot2::aes(
         x = mean_log_cpm,
         y = cell_type,
@@ -100,6 +108,21 @@ for (time_level in time_levels) {
         scale = 1.15,
         rel_min_height = 0.01
       ) +
+      ggplot2::geom_rug(
+        sides = "b",
+        alpha = 0.35,
+        linewidth = 0.2,
+        length = grid::unit(0.025, "npc")
+      ) +
+      ggplot2::geom_label(
+        data = null_share,
+        ggplot2::aes(x = xmax * 0.78, y = cell_type, label = label),
+        inherit.aes = FALSE,
+        size = 2.8,
+        fill = "white",
+        linewidth = 0.2,
+        label.padding = ggplot2::unit(0.12, "lines")
+      ) +
       ggplot2::scale_fill_manual(values = type_colours, drop = TRUE) +
       ggplot2::scale_colour_manual(values = type_colours, drop = TRUE) +
       ggplot2::scale_x_continuous(limits = c(0, xmax * 1.02)) +
@@ -110,7 +133,10 @@ for (time_level in time_levels) {
         colour = "Cell type"
       ) +
       ggplot2::theme_minimal(base_size = 11) +
-      ggplot2::theme(legend.position = "bottom")
+      ggplot2::theme(
+        legend.position = "bottom",
+        axis.text.y = ggplot2::element_text(face = "bold", size = 12)
+      )
   })
   names(plots) <- names(panels)
   legend <- cowplot::get_legend(
@@ -141,8 +167,8 @@ for (time_level in time_levels) {
         ),
         fontface = "bold",
         size = 12,
-        x = 0.01,
-        hjust = 0
+        x = 0.5,
+        hjust = 0.5
       ),
     page,
     ncol = 1L,
@@ -165,38 +191,170 @@ message("Wrote density_log_cpm_before_after.pdf")
 
 venn_sets <- read_table("venn_gene_sets.csv")
 venn_list <- split(venn_sets$gene, venn_sets$set)
-venn_pages <- list(
-  list(
-    sets = list(
-      `RNA counts` = unique(venn_list$rna_counts),
-      `Marker genes` = unique(venn_list$markers)
-    ),
-    title = "Raw RNA symbols and signalling markers"
-  ),
-  list(
-    sets = list(
-      `SCT pre-filter` = unique(venn_list$sct_prefilter),
-      `Marker genes` = unique(venn_list$markers)
-    ),
-    title = "SCT counts allow-list and signalling markers"
-  )
+sct_genes <- unique(venn_list$sct_prefilter)
+marker_genes <- unique(venn_list$markers)
+rna_genes <- unique(venn_list$rna_counts)
+in_both <- intersect(marker_genes, sct_genes)
+marker_only <- setdiff(marker_genes, sct_genes)
+n_rna <- length(rna_genes)
+n_sct <- length(sct_genes)
+n_marker <- length(marker_genes)
+n_both <- length(in_both)
+# P(X >= n_both) under a uniform draw of the marker panel from the RNA universe.
+hyper_p <- stats::phyper(
+  n_both - 1L,
+  n_sct,
+  n_rna - n_sct,
+  n_marker,
+  lower.tail = FALSE
 )
-venn_grobs <- lapply(venn_pages, function(page) {
-    plot <- ggVennDiagram::ggVennDiagram(page$sets, label_alpha = 0) +
-      ggplot2::labs(title = page$title) +
-      ggplot2::scale_fill_gradient(low = "#f7f7f7", high = "#74a9cf") +
-      ggplot2::coord_cartesian(clip = "off") +
-      ggplot2::theme(
-        legend.position = "none",
-        plot.margin = ggplot2::margin(12, 16, 12, 36)
-      )
-    cowplot::as_grob(plot)
-})
+utils::write.csv(
+  data.frame(
+    n_rna = n_rna,
+    n_sct = n_sct,
+    n_marker = n_marker,
+    n_in_both = n_both,
+    hypergeometric_p = hyper_p,
+    absent_markers = paste(sort(marker_only), collapse = ";"),
+    stringsAsFactors = FALSE
+  ),
+  file = file.path(table_dir, "marker_sct_hypergeometric.csv"),
+  row.names = FALSE
+)
+circle_df <- function(x0, y0, radius, id, n = 240L) {
+  theta <- seq(0, 2 * pi, length.out = n)
+  data.frame(
+    x = x0 + radius * cos(theta),
+    y = y0 + radius * sin(theta),
+    id = id,
+    stringsAsFactors = FALSE
+  )
+}
+sct_r <- 1.85
+marker_r <- 1.15
+sct_x <- 0
+marker_x <- 1.85
+circles <- rbind(
+  circle_df(sct_x, 0, sct_r, "sct"),
+  circle_df(marker_x, 0, marker_r, "marker")
+)
+lens_x <- (
+  (marker_x - sct_x)^2 + sct_r^2 - marker_r^2
+) / (2 * (marker_x - sct_x))
+both_sorted <- sort(in_both)
+n_left <- ceiling(length(both_sorted) / 2)
+marker_venn <- ggplot2::ggplot() +
+  ggplot2::geom_polygon(
+    data = circles,
+    ggplot2::aes(x = x, y = y, group = id, fill = id),
+    colour = "#333333",
+    alpha = 0.28,
+    linewidth = 0.4
+  ) +
+  ggplot2::annotate(
+    "text",
+    x = sct_x - 0.55,
+    y = 0.15,
+    label = format(n_sct - n_both, big.mark = ","),
+    size = 4.5
+  ) +
+  ggplot2::annotate(
+    "text",
+    x = lens_x,
+    y = 0.95,
+    label = as.character(n_both),
+    size = 4.5
+  ) +
+  ggplot2::annotate(
+    "text",
+    x = marker_x + 0.42,
+    y = 0.72,
+    label = as.character(length(marker_only)),
+    size = 4.5
+  ) +
+  ggplot2::annotate(
+    "text",
+    x = lens_x - 0.22,
+    y = -0.15,
+    label = paste(both_sorted[seq_len(n_left)], collapse = "\n"),
+    colour = "#2ca25f",
+    size = 2.5,
+    fontface = "bold",
+    lineheight = 0.88
+  ) +
+  ggplot2::annotate(
+    "text",
+    x = lens_x + 0.18,
+    y = -0.15,
+    label = paste(both_sorted[-seq_len(n_left)], collapse = "\n"),
+    colour = "#2ca25f",
+    size = 2.5,
+    fontface = "bold",
+    lineheight = 0.88
+  ) +
+  ggplot2::annotate(
+    "text",
+    x = marker_x + 0.58,
+    y = -0.05,
+    label = paste(sort(marker_only), collapse = "\n"),
+    colour = "#e34a33",
+    size = 3,
+    fontface = "bold",
+    lineheight = 0.9
+  ) +
+  ggplot2::annotate(
+    "text",
+    x = sct_x - 0.15,
+    y = sct_r + 0.18,
+    label = "SCT pre-filter",
+    fontface = "bold",
+    size = 3.4
+  ) +
+  ggplot2::annotate(
+    "text",
+    x = marker_x,
+    y = marker_r + 0.22,
+    label = "Marker genes",
+    fontface = "bold",
+    size = 3.4
+  ) +
+  ggplot2::scale_fill_manual(
+    values = c(sct = "#d9d9d9", marker = "#74a9cf"),
+    guide = "none"
+  ) +
+  ggplot2::coord_fixed(
+    xlim = c(sct_x - sct_r - 0.15, marker_x + marker_r + 0.35),
+    ylim = c(-sct_r - 0.15, sct_r + 0.55),
+    clip = "off"
+  ) +
+  ggplot2::labs(
+    title = "SCT counts allow-list and signalling markers",
+    subtitle = sprintf(
+      paste0(
+        "Hypergeometric P(X >= %d) = %.2g. ",
+        "Uniform draw of %d markers from %s RNA genes; ",
+        "%s of those genes are in the SCT allow-list."
+      ),
+      n_both,
+      hyper_p,
+      n_marker,
+      format(n_rna, big.mark = ","),
+      format(n_sct, big.mark = ",")
+    ),
+    x = NULL,
+    y = NULL
+  ) +
+  ggplot2::theme_void(base_size = 11) +
+  ggplot2::theme(
+    plot.title = ggplot2::element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = ggplot2::element_text(hjust = 0.5),
+    plot.margin = ggplot2::margin(12, 28, 12, 16)
+  )
 save_pages(
-  grobs = venn_grobs,
+  grobs = list(cowplot::as_grob(marker_venn)),
   filename = "venn_markers_vs_counts.pdf",
-  width = 8,
-  height = 7
+  width = 10,
+  height = 8
 )
 message("Wrote venn_markers_vs_counts.pdf")
 
@@ -299,182 +457,156 @@ if (length(stability_grobs) > 0L) {
 }
 
 # ==========================================================================
+# ==========================================================================
 # SECTION 5 · Global between versus within stacked bars ----
 # ==========================================================================
 
-global <- read_table("ranks_global.csv")
-global <- global[is.finite(global$between_over_total) & !is.na(global$rank), ]
-bar_grobs <- list()
-
-for (time_level in time_levels) {
-  df <- global[global$time_point == time_level, , drop = FALSE]
-  if (nrow(df) == 0L) {
-    next
-  }
-  n_cut <- max(df$rank[df$selected %in% TRUE], na.rm = TRUE)
-  if (!is.finite(n_cut)) {
-    n_cut <- min(500L, max(df$rank))
-  }
-  cross <- df$rank[df$between_over_within < 1]
-  cross <- if (length(cross) == 0L) NA_integer_ else min(cross)
-  show_until <- n_cut
-  if (!is.na(cross)) {
-    show_until <- max(show_until, min(cross + 40L, max(df$rank)))
-  }
-  show_until <- min(show_until, 1200L, max(df$rank))
-  df <- df[df$rank <= show_until, , drop = FALSE]
-  long <- rbind(
-    data.frame(
-      rank = df$rank,
-      gene = df$gene,
-      fraction = df$between_over_total,
-      component = "between",
-      stringsAsFactors = FALSE
-    ),
-    data.frame(
-      rank = df$rank,
-      gene = df$gene,
-      fraction = 1 - df$between_over_total,
-      component = "within",
-      stringsAsFactors = FALSE
-    )
-  )
-  long$component <- factor(long$component, levels = c("between", "within"))
-  cut_row <- df[df$rank == n_cut, , drop = FALSE][1, , drop = FALSE]
-  top10 <- df[df$rank <= 10L, , drop = FALSE]
-  top10$label <- paste0(top10$gene, "\n", top10$top_cell_type)
-  green_right <- if (is.na(cross)) {
-    show_until + 0.5
-  } else {
-    min(cross, show_until + 1L) - 0.5
-  }
-  formula_y <- min(cut_row$between_over_total + 0.16, 1.28)
-  plot <- ggplot2::ggplot(
-    long,
-    ggplot2::aes(x = rank, y = fraction, fill = component)
-  ) +
-    ggplot2::annotate(
-      "rect",
-      xmin = 0.5,
-      xmax = green_right,
-      ymin = 0,
-      ymax = 1.65,
-      fill = "#2ca25f",
-      alpha = 0.08
-    )
-  if (!is.na(cross) && cross <= show_until) {
-    plot <- plot +
-      ggplot2::annotate(
-        "rect",
-        xmin = green_right,
-        xmax = show_until + 0.5,
+global_bar_pages <- function(ranks, weighting_label, share_title, y_label) {
+  ranks <- ranks[
+    is.finite(ranks$between_over_total) & !is.na(ranks$rank),
+    ,
+    drop = FALSE
+  ]
+  grobs <- list()
+  for (time_level in time_levels) {
+    df <- ranks[ranks$time_point == time_level, , drop = FALSE]
+    if (nrow(df) == 0L) {
+      next
+    }
+    n_cut <- max(df$rank[df$selected %in% TRUE], na.rm = TRUE)
+    if (!is.finite(n_cut)) {
+      n_cut <- min(500L, max(df$rank))
+    }
+    df <- df[df$rank <= n_cut, , drop = FALSE]
+    df <- df[order(df$rank), , drop = FALSE]
+    pieces <- rbind(
+      data.frame(
+        rank = df$rank,
         ymin = 0,
-        ymax = 1.65,
-        fill = "#e34a33",
-        alpha = 0.08
+        ymax = pmin(pmax(df$between_over_total, 0), 1),
+        component = "between",
+        stringsAsFactors = FALSE
+      ),
+      data.frame(
+        rank = df$rank,
+        ymin = pmin(pmax(df$between_over_total, 0), 1),
+        ymax = 1,
+        component = "within",
+        stringsAsFactors = FALSE
       )
-  }
-  plot <- plot +
-    ggplot2::geom_col(width = 0.9, colour = NA) +
-    ggplot2::geom_hline(
-      yintercept = 0.5,
-      linetype = "dashed",
-      colour = "#e34a33",
-      linewidth = 0.4
-    ) +
-    ggplot2::geom_hline(
-      yintercept = cut_row$between_over_total,
-      linetype = "solid",
-      colour = "#222222",
-      linewidth = 0.35
-    ) +
-    ggplot2::geom_vline(
-      xintercept = n_cut,
-      linetype = "solid",
-      colour = "#222222",
-      linewidth = 0.35
-    ) +
-    ggplot2::annotate(
-      "label",
-      x = n_cut,
-      y = formula_y,
+    )
+    pieces$component <- factor(
+      pieces$component,
+      levels = c("between", "within")
+    )
+    n_lab <- min(10L, nrow(df))
+    top_n <- df[seq_len(n_lab), , drop = FALSE]
+    x_lab <- seq(n_cut * 0.08, n_cut * 0.92, length.out = n_lab)
+    leaders <- data.frame(
+      x = top_n$rank,
+      xend = x_lab,
+      y = 1,
+      yend = 1.22,
       label = sprintf(
-        "frac(SS[between], SS[within]) == %.3g",
-        cut_row$between_over_within
+        "%s\n%s\n%.3f",
+        top_n$gene,
+        top_n$top_cell_type,
+        top_n$between_over_within
       ),
-      parse = TRUE,
-      hjust = 1,
-      size = 3.2,
-      fill = "white",
-      linewidth = 0.2
-    ) +
-    ggplot2::annotate(
-      "label",
-      x = n_cut,
-      y = min(formula_y + 0.14, 1.48),
-      label = paste0(cut_row$gene, " (", cut_row$top_cell_type, ")"),
-      hjust = 1,
-      size = 3,
-      fill = "white",
-      linewidth = 0.2
-    ) +
-    ggplot2::annotate(
-      "label",
-      x = max(1, show_until * 0.72),
-      y = 0.5,
-      label = "SS[within] > SS[between]",
-      parse = TRUE,
-      size = 3,
-      fill = "#fee0d2",
-      vjust = -0.4
-    ) +
-    ggrepel::geom_text_repel(
-      data = top10,
-      ggplot2::aes(x = rank, y = 1, label = label),
-      inherit.aes = FALSE,
-      nudge_y = 0.38,
-      direction = "y",
-      min.segment.length = 0,
-      size = 2.6,
-      max.overlaps = Inf,
-      seed = 1,
-      box.padding = 0.15
-    ) +
-    ggplot2::scale_fill_manual(
-      values = c(between = "#2ca25f", within = "#e34a33"),
-      labels = c(
-        between = "Between cell types",
-        within = "Within cell types"
+      stringsAsFactors = FALSE
+    )
+    line_key <- "Dashed line: between share equals within share"
+    plot <- ggplot2::ggplot() +
+      ggplot2::geom_rect(
+        data = pieces,
+        ggplot2::aes(
+          xmin = rank - 0.5,
+          xmax = rank + 0.5,
+          ymin = ymin,
+          ymax = ymax,
+          fill = component
+        ),
+        colour = NA
+      ) +
+      ggplot2::geom_hline(
+        data = data.frame(y = 0.5, role = line_key),
+        ggplot2::aes(yintercept = y, linetype = role),
+        colour = "#e34a33",
+        linewidth = 1.15
+      ) +
+      ggplot2::geom_segment(
+        data = leaders,
+        ggplot2::aes(x = x, xend = xend, y = y, yend = yend),
+        linewidth = 0.3,
+        colour = "#333333"
+      ) +
+      ggplot2::geom_label(
+        data = leaders,
+        ggplot2::aes(x = xend, y = 1.48, label = label),
+        size = 2.2,
+        linewidth = 0.2,
+        fill = "white",
+        lineheight = 0.88,
+        label.padding = ggplot2::unit(0.12, "lines")
+      ) +
+      ggplot2::scale_fill_manual(
+        values = c(between = "#2ca25f", within = "#e34a33"),
+        labels = c(
+          between = "Between cell types",
+          within = "Within cell types"
+        ),
+        name = NULL
+      ) +
+      ggplot2::scale_linetype_manual(
+        values = stats::setNames("dashed", line_key),
+        name = NULL
+      ) +
+      ggplot2::guides(
+        linetype = ggplot2::guide_legend(
+          override.aes = list(colour = "#e34a33", linewidth = 1.15)
+        )
+      ) +
+      ggplot2::scale_x_continuous(
+        breaks = sort(unique(c(1, 10, 50, 100, 250, n_cut)))
+      ) +
+      ggplot2::scale_y_continuous(
+        limits = c(0, 1.85),
+        expand = ggplot2::expansion(mult = c(0, 0.02))
+      ) +
+      ggplot2::labs(
+        x = "Gene rank (decreasing between / within)",
+        y = y_label,
+        title = share_title,
+        subtitle = paste0(
+          pretty_time(time_level),
+          " · ",
+          weighting_label,
+          "\nGreen: steadier between-type signal (marker-like). ",
+          "Red: variation inside types (stress-like). ",
+          "Callouts: gene, highest-mean cell type, between/within ratio."
+        )
+      ) +
+      ggplot2::theme_minimal(base_size = 11) +
+      ggplot2::theme(
+        legend.position = "bottom",
+        plot.title = ggplot2::element_text(hjust = 0.5, face = "bold"),
+        plot.subtitle = ggplot2::element_text(hjust = 0.5),
+        plot.margin = ggplot2::margin(8, 12, 8, 8)
       )
-    ) +
-    ggplot2::scale_x_continuous(
-      breaks = sort(unique(c(1, 10, 50, 100, 250, n_cut, show_until)))
-    ) +
-    ggplot2::scale_y_continuous(
-      limits = c(0, 1.65),
-      expand = ggplot2::expansion(mult = c(0, 0.02))
-    ) +
-    ggplot2::labs(
-      x = "Gene rank (decreasing between / within)",
-      y = "Share of residual sum of squares",
-      fill = NULL,
-      title = paste0(
-        pretty_time(time_level),
-        ": global screen, between-type share of Pearson-residual SS"
-      ),
-      subtitle = paste0(
-        "Vertical line at rank ",
-        n_cut,
-        " (",
-        cut_row$gene,
-        "). Green background: between exceeds within."
-      )
-    ) +
-    ggplot2::theme_minimal(base_size = 11) +
-    ggplot2::theme(legend.position = "bottom")
-  bar_grobs[[time_level]] <- cowplot::as_grob(plot)
+    grobs[[time_level]] <- cowplot::as_grob(plot)
+  }
+  grobs
 }
 
+global <- read_table("ranks_global.csv")
+bar_grobs <- global_bar_pages(
+  ranks = global,
+  weighting_label = "Equal cell weight.",
+  share_title = expression(
+    "Share" ~ frac(SS[between], SS[between] + SS[within])
+  ),
+  y_label = "Share of residual sum of squares"
+)
 if (length(bar_grobs) > 0L) {
   save_pages(
     grobs = bar_grobs,
@@ -484,6 +616,101 @@ if (length(bar_grobs) > 0L) {
   )
   message("Wrote bar_between_within_global.pdf")
 }
+
+equal_path <- file.path(table_dir, "ranks_global_equal_type.csv")
+if (file.exists(equal_path)) {
+  equal <- utils::read.csv(
+    equal_path,
+    stringsAsFactors = FALSE,
+    fileEncoding = "UTF-8"
+  )
+  equal_grobs <- global_bar_pages(
+    ranks = equal,
+    weighting_label = "Equal type weight (1/J per scored type).",
+    share_title = expression(
+      "Share" ~ frac(MS[between], MS[between] + MS[within])
+    ),
+    y_label = "Share of residual mean squares"
+  )
+  if (length(equal_grobs) > 0L) {
+    save_pages(
+      grobs = equal_grobs,
+      filename = "bar_between_within_equal_type.pdf",
+      width = 16,
+      height = 8
+    )
+    message("Wrote bar_between_within_equal_type.pdf")
+  }
+
+  venn_weight <- list()
+  overlap_rows <- list()
+  for (time_level in time_levels) {
+    cell_genes <- global$gene[
+      global$time_point == time_level & global$selected %in% TRUE
+    ]
+    type_genes <- equal$gene[
+      equal$time_point == time_level & equal$selected %in% TRUE
+    ]
+    if (length(cell_genes) == 0L || length(type_genes) == 0L) {
+      next
+    }
+    overlap_rows[[time_level]] <- data.frame(
+      time_point = time_level,
+      n_equal_cell = length(unique(cell_genes)),
+      n_equal_type = length(unique(type_genes)),
+      n_shared = length(intersect(cell_genes, type_genes)),
+      stringsAsFactors = FALSE
+    )
+    venn_plot <- ggVennDiagram::ggVennDiagram(
+      list(
+        `Equal cell weight` = unique(cell_genes),
+        `Equal type weight` = unique(type_genes)
+      ),
+      label_alpha = 0
+    ) +
+      ggplot2::labs(
+        title = paste0(
+          pretty_time(time_level),
+          ": top ",
+          length(unique(cell_genes)),
+          " genes, equal cell weight versus equal type weight"
+        ),
+        subtitle = paste(
+          length(intersect(cell_genes, type_genes)),
+          "genes are shared."
+        )
+      ) +
+      ggplot2::scale_fill_gradient(low = "#f7f7f7", high = "#74a9cf") +
+      ggplot2::coord_cartesian(clip = "off") +
+      ggplot2::theme(
+        legend.position = "none",
+        plot.title = ggplot2::element_text(hjust = 0.5, face = "bold"),
+        plot.subtitle = ggplot2::element_text(hjust = 0.5),
+        plot.margin = ggplot2::margin(12, 24, 12, 24)
+      )
+    venn_weight[[time_level]] <- cowplot::as_grob(venn_plot)
+  }
+  if (length(venn_weight) > 0L) {
+    save_pages(
+      grobs = venn_weight,
+      filename = "venn_global_cell_vs_type_weight.pdf",
+      width = 8,
+      height = 7
+    )
+    utils::write.csv(
+      do.call(rbind, overlap_rows),
+      file = file.path(table_dir, "global_weighting_overlap.csv"),
+      row.names = FALSE
+    )
+    message("Wrote venn_global_cell_vs_type_weight.pdf")
+  }
+} else {
+  message(
+    "ranks_global_equal_type.csv is absent; ",
+    "skipping the equal-type bar and the weighting Venn."
+  )
+}
+
 
 # ==========================================================================
 # SECTION 6 · Cell and gene counts ----

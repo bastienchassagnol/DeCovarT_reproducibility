@@ -1,0 +1,15 @@
+"time_point","cell_type","n_cells_single_cell","n_sctransform_plus_marker_genes"
+"48h","Epiblast",10590,50
+"48h","Exiting naïve pluripotency",265,50
+"48h","Naïve pluripotency",36,50
+"48h","Zscan4+ Artefact",44,0
+"72h","Cd63+ ectoderm-like artefact",100,0
+"72h","Ectopic pluripotency",266,50
+"72h","Exiting naïve pluripotency",8,0
+"72h","Naïve pluripotency",66,50
+"72h","Primitive streak",4279,52
+"96h","Caudal mesoderm",1061,51
+"96h","Ectopic pluripotency",116,50
+"96h","Gut",140,52
+"96h","Pre-somitic mesoderm",3589,52
+"96h","Somite differentiation front",29,50

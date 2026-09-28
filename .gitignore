@@ -43,7 +43,6 @@ data/processed/*
 !data/processed/.gitkeep
 
 # Run artefacts
-output/*
 !output/.gitkeep
 logs/*
 !logs/.gitkeep

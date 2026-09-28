@@ -223,6 +223,50 @@ versus the v2 offset.](images/sctransform_v1_versus_v2.png){#fig-sct-v1-v2}
 
 ### Design used for the naive screen {#sec-fs-sct-design}
 
+::: {#nte-fs-prefilter .callout-warning}
+## :warning: What is removed before the v2 fit
+
+The regression is not run on the full transcriptome. Three filters
+change which residuals enter the rank.
+
+1. **Gene allow-list.** Of 27,027 genes in the RNA assay, the author
+   SCT `counts` layer keeps 2,944 symbols. The remaining genes are
+   treated as having failed the authors' bare QC and never enter the
+   negative-binomial fit.
+2. **Residual clip.** `SCTransform` winsorises Pearson residuals at
+   $\pm\sqrt{n/30}$ before they are used downstream. On the fitted
+   slots that bound is about $\pm 19.1$ at 48 h ($n = 10{,}891$),
+   $\pm 12.4$ at 72 h ($n = 4{,}619$) and $\pm 12.8$ at 96 h
+   ($n = 4{,}935$). The clip limits the leverage of a few cells with
+   extreme counts, so one barcode cannot dominate a sum of squares.
+   The leading genes are not a short list of single-cell spikes: at
+   48 h the top ratios are modest and land on naïve-pluripotency
+   markers, and at 96 h the top gene is the endoderm marker *Sox17*.
+   The bound is wide relative to a unit-variance residual, so it
+   changes only the far tail.
+3. **Cell-type filter.** Culture-stress labels (Cd63+ ectoderm-like
+   artefact, Zscan4+ artefact) are dropped before the fit. A type with
+   fewer than 20 cells in a slot is kept in the fit and then left out
+   of the sums of squares. Exiting naïve pluripotency at 72 h has 8
+   cells and is not scored.
+:::
+
+```{mermaid}
+%%| label: fig-fs-prefilter
+%%| fig-cap: "Pre-filter, v2 fit, and the two global rankings."
+%%{init: {"theme": "sandstone"}}%%
+flowchart TD
+  A["27,027 RNA genes"] --> B["2,944 symbols in the SCT counts layer"]
+  B --> C["Drop culture-stress labels"]
+  C --> D["SCTransform v2 per time slot"]
+  D --> E["Clip Pearson residuals at ±sqrt of n over 30"]
+  E --> F["Leave out types with fewer than 20 cells"]
+  F --> G["Equal-cell sums of squares"]
+  F --> H["Equal-type mean squares, weight 1/J"]
+  G --> I["Top 500 genes"]
+  H --> I
+```
+
 `sctransform::vst()` with `vst.flavor = "v2"` is an intercept plus a
 library-size offset. There is no richer design matrix on this object
 that we can identify.
@@ -264,28 +308,40 @@ What we deliberately leave out:
   would partial those differences out of a contrast we want to make
   inside each slot, where the GRN is learned.
 
-The fit is **not** stratified by cell type. Subsetting to one type
-before `SCTransform` would absorb that type's mean and leave residuals
-with no between-type signal.
 
-The author `SCT` assay is used only as a gene-name allow-list: the
-genes present in its `counts` layer (the less stringent
-`scater` / `SCTransform` filter already stored on
-`GSE229513_gastruloidsobject.rds`). Pearson residuals are refit on the
-**raw** RNA counts of those genes. The stored integration residuals are
-not the ranking table.
-
-Two caps are applied after @eq-fs-ss, then each list is united with the
+Three lists are built after the residual split, then each list is united with the
 signalling markers of the cell types actually scored in that time slot
 (`data/dictionaries/mouse_gastruloid_signaling_markers.csv`, symbols
 mapped offline with `org.Mm.eg.db`, not biomaRt):
 
-1. **Global.** Top `n_genes_global` genes by
+1. **Global, equal cell weight.** Top `n_genes_global` genes by
    $\mathrm{SS}_{\mathrm{between}}/\mathrm{SS}_{\mathrm{within}}$
-   (default 500). This is below the few-thousand ceiling suggested
-   before a GGM; the cap is an argument of the script.
-2. **Per cell type.** One-versus-rest ANOVA, top
-   `n_genes_celltype` genes by the same ratio (default 50).
+   (default 500). Every barcode contributes equally, so the largest
+   type dominates the sums of squares. The cap sits below the
+   few-thousand ceiling suggested before a GGM and is an argument of
+   the script.
+2. **Global, equal type weight.** The same cap of 500, with each of
+   the $J$ scored types given weight $1/J$. Let $\bar r_{gj}$ be the
+   mean residual of gene $g$ in type $j$ and $v_{gj}$ the within-type
+   variance. The equal-type mean and the two mean squares are
+   $$
+   \bar r_{g}^{\mathrm{eq}}
+   =
+   J^{-1}\sum_{j=1}^{J}\bar r_{gj},
+   \quad
+   \mathrm{MS}_{\mathrm{between},g}
+   =
+   J^{-1}\sum_{j=1}^{J}
+   (\bar r_{gj}-\bar r_{g}^{\mathrm{eq}})^{2},
+   \quad
+   \mathrm{MS}_{\mathrm{within},g}
+   =
+   J^{-1}\sum_{j=1}^{J} v_{gj}.
+   $$ {#eq-fs-equal-type}
+   Genes are ranked by
+   $\mathrm{MS}_{\mathrm{between}}/\mathrm{MS}_{\mathrm{within}}$.
+3. **Per cell type.** One-versus-rest ANOVA, top
+   `n_genes_celltype` genes by the equal-cell ratio (default 50).
    $\mathrm{SS}_{\mathrm{between}}>\mathrm{SS}_{\mathrm{within}}$
    is recorded and drawn, and is not a hard gate. Pearson residuals
    are scaled to unit variance, so that inequality is an $R^{2}>1/2$
@@ -297,6 +353,13 @@ the fit. Types with fewer than `min_cells` cells (default 20) in a slot
 stay out of the sum of squares. The entry points are
 `scripts/01_01_prepare_and_filter_genes_sctransform.R` and
 `scripts/01_02_plot_naively_selected_genes.R`.
+`scripts/01_03_sensitivity_48h_cell_line.R` refits the same v2 model
+inside B-S and inside SBR at 48 h, the only slot that contains both
+lines, and compares the equal-cell top 500 and the per-type top 50.
+Those two global lists share 308 of 500 genes (Jaccard 0.45). Epiblast
+and exiting naïve pluripotency share 29 and 30 of their top 50.
+Naïve pluripotency is scored only in SBR: B-S has fewer than 20 cells
+of that type.
 
 ::: {#nte-hvg-not-gaussian .callout-note}
 ## :information_source: HVGs are not a GGM input
@@ -330,6 +393,15 @@ shortlist, it does not by itself inflate collinearity of
 $\boldsymbol{\mu}_{\mathcal{G}}$. Seeds may later be grown by Markov
 boundaries (@sec-separation).
 
+Fifteen of the 19 mouse symbols fall in the 2,944-gene SCT allow-list.
+Under a uniform draw of 19 genes from the 27,027 RNA symbols, the
+expected overlap is about 2.1. The upper tail probability is
+$P(X \ge 15) = 8.8 \times 10^{-12}$
+(hypergeometric; population 27,027, 2,944 marked as the allow-list,
+draw of 19). The four markers absent from the allow-list are
+*Myod1*, *Pax6*, *Sox1* and *Tfap2a*. They are drawn on
+`venn_markers_vs_counts.pdf`.
+
 ## Differential expression — only with biological replication {#sec-fs-deg}
 
 `DESeq2`, `edgeR` and `limma`–voom remain the workhorses of
@@ -361,9 +433,10 @@ object.
 ## What we would actually run
 
 1.  `SCTransform` Pearson residuals under @eq-fs-v2-offset, separately
-    at 48 h, 72 h and 96 h; rank by between/within @eq-fs-ss
-    (@sec-fs-sct-design). Global cap 500 genes; per type, top 50 by
-    the same ratio.
+    at 48 h, 72 h and 96 h (@sec-fs-sct-design). Rank by between/within
+    @eq-fs-ss with equal cell weight, and by the equal-type mean
+    squares @eq-fs-equal-type. Global cap 500 genes on each ranking;
+    per type, top 50 by the equal-cell ratio.
 2.  Union with
     `data/dictionaries/mouse_gastruloid_signaling_markers.csv`
     for cell types scored in that time slot (drop rows with

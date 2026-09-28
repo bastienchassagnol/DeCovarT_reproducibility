@@ -282,6 +282,19 @@ seu_sct$log_umi <- meta[colnames(seu_sct), "log_umi"]
 rm(counts_sct)
 gc()
 
+# Slim object for the 48 h cell-line sensitivity, which refits v2
+# inside each line and does not need the 14 GB GEO file.
+dir.create(file.path(root, "data", "intermediate"), recursive = TRUE)
+saveRDS(
+  seu_sct,
+  file = file.path(
+    root,
+    "data",
+    "intermediate",
+    "suppinger_sct_allowlist_seurat.rds"
+  )
+)
+
 ranked <- rank_genes_sctransform(
   seu = seu_sct,
   strategy = "both",
@@ -391,6 +404,11 @@ ranked$global <- attach_union(
   marker_df = marker_at_time,
   by_cell_type = FALSE
 )
+ranked$global_equal_type <- attach_union(
+  ranks = ranked$global_equal_type,
+  marker_df = marker_at_time,
+  by_cell_type = FALSE
+)
 ranked$per_cell_type <- attach_union(
   ranks = ranked$per_cell_type,
   marker_df = marker_at_time,
@@ -398,6 +416,7 @@ ranked$per_cell_type <- attach_union(
 )
 
 write_table(ranked$global, "ranks_global.csv")
+write_table(ranked$global_equal_type, "ranks_global_equal_type.csv")
 write_table(ranked$per_cell_type, "ranks_per_cell_type.csv")
 write_table(ranked$model, "model_card.csv")
 

@@ -70,6 +70,67 @@ anova_ss <- function(residual, groups) {
   )
 }
 
+# Equal type weight. Each of the J types has weight 1/J, so a large
+# type cannot dominate the rank. `ss_between` and `ss_within` here are
+# mean squares: the variance of the J type means, and the mean of the
+# J within-type variances.
+anova_ms_equal_type <- function(residual, groups) {
+  groups <- droplevels(factor(groups))
+  if (nlevels(groups) < 2L) {
+    stop("Need at least two groups for a between/within split.")
+  }
+  group_levels <- levels(groups)
+  means <- matrix(
+    NA_real_,
+    nrow = nrow(residual),
+    ncol = length(group_levels),
+    dimnames = list(rownames(residual), group_levels)
+  )
+  variances <- means
+  for (group in group_levels) {
+    idx <- which(groups == group)
+    group_mean <- rowMeans(residual[, idx, drop = FALSE])
+    means[, group] <- group_mean
+    deviation <- residual[, idx, drop = FALSE] - group_mean
+    variances[, group] <- rowSums(deviation * deviation) / length(idx)
+  }
+  grand <- rowMeans(means)
+  list(
+    ss_between = rowMeans((means - grand)^2),
+    ss_within = rowMeans(variances),
+    means = means
+  )
+}
+
+rank_from_ss <- function(ss, time_level, n_genes, cell_type = NA_character_) {
+  scored <- rank_ratio(ss$ss_between, ss$ss_within)
+  order_gene <- order(
+    -scored$between_over_within,
+    -ss$ss_between,
+    rownames(ss$means)
+  )
+  rank <- integer(nrow(ss$means))
+  rank[order_gene] <- seq_along(order_gene)
+  data.frame(
+    time_point = time_level,
+    cell_type = cell_type,
+    gene = rownames(ss$means),
+    ss_between = ss$ss_between,
+    ss_within = ss$ss_within,
+    between_over_within = scored$between_over_within,
+    between_over_total = scored$between_over_total,
+    top_cell_type = if (length(cell_type) == 1L && is.na(cell_type)) {
+      top_mean_group(ss$means)
+    } else {
+      cell_type
+    },
+    passes_between_gt_within = ss$ss_between > ss$ss_within,
+    rank = rank,
+    selected = rank <= n_genes & is.finite(scored$between_over_within),
+    stringsAsFactors = FALSE
+  )
+}
+
 rank_ratio <- function(ss_between, ss_within) {
   total <- ss_between + ss_within
   keep <- total > 0
@@ -295,6 +356,7 @@ rank_genes_sctransform <- function(
   split_values <- as.character(seu@meta.data[[split_by]])
   levels_split <- unique(split_values)
   global_parts <- list()
+  global_equal_parts <- list()
   type_parts <- list()
   model_parts <- list()
 
@@ -367,29 +429,15 @@ rank_genes_sctransform <- function(
     }
 
     if (do_global) {
-      ss <- anova_ss(residual, type_fit)
-      scored <- rank_ratio(ss$ss_between, ss$ss_within)
-      order_gene <- order(
-        -scored$between_over_within,
-        -ss$ss_between,
-        rownames(residual)
+      global_parts[[level]] <- rank_from_ss(
+        ss = anova_ss(residual, type_fit),
+        time_level = level,
+        n_genes = n_genes_global
       )
-      rank <- integer(nrow(residual))
-      rank[order_gene] <- seq_along(order_gene)
-      global_parts[[level]] <- data.frame(
-        time_point = level,
-        cell_type = NA_character_,
-        gene = rownames(residual),
-        ss_between = ss$ss_between,
-        ss_within = ss$ss_within,
-        between_over_within = scored$between_over_within,
-        between_over_total = scored$between_over_total,
-        top_cell_type = top_mean_group(ss$means),
-        passes_between_gt_within = ss$ss_between > ss$ss_within,
-        rank = rank,
-        selected = rank <= n_genes_global &
-          is.finite(scored$between_over_within),
-        stringsAsFactors = FALSE
+      global_equal_parts[[level]] <- rank_from_ss(
+        ss = anova_ms_equal_type(residual, type_fit),
+        time_level = level,
+        n_genes = n_genes_global
       )
     }
 
@@ -437,6 +485,7 @@ rank_genes_sctransform <- function(
 
   list(
     global = if (do_global) bind(global_parts) else NULL,
+    global_equal_type = if (do_global) bind(global_equal_parts) else NULL,
     per_cell_type = if (do_type) bind(type_parts) else NULL,
     model = if (length(model_parts) == 0L) {
       data.frame(

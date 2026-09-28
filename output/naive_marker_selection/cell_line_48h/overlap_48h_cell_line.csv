@@ -1,0 +1,5 @@
+"contrast","cell_type","n_bs","n_sbr","n_shared","jaccard"
+"global_equal_cell_top500",NA,500,500,308,0.445086705202312
+"per_cell_type_top50","Epiblast",50,50,29,0.408450704225352
+"per_cell_type_top50","Exiting naïve pluripotency",50,50,30,0.428571428571429
+"per_cell_type_top50","Naïve pluripotency",0,50,0,NA
