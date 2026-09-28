@@ -402,6 +402,146 @@ draw of 19). The four markers absent from the allow-list are
 *Myod1*, *Pax6*, *Sox1* and *Tfap2a*. They are drawn on
 `venn_markers_vs_counts.pdf`.
 
+## What we would actually run
+
+1.  `SCTransform` Pearson residuals under @eq-fs-v2-offset, separately
+    at 48 h, 72 h and 96 h (@sec-fs-sct-design). Rank by between/within
+    @eq-fs-ss with equal cell weight, and by the equal-type mean
+    squares @eq-fs-equal-type. Global cap 500 genes on each ranking;
+    per type, top 50 by the equal-cell ratio.
+2.  Union with
+    `data/dictionaries/mouse_gastruloid_signaling_markers.csv`
+    for cell types scored in that time slot (drop rows with
+    `cell_type_suppinger` missing unless a later reference needs them).
+3.  Keep $|\mathcal{G}_{0}|$ on the order of a few thousand genes before
+    a GGM. The naive screen above is a tighter, tunable subset.
+4.  **No** `DESeq2` $p$-values on technical sc pseudo-bulks; see
+    @sec-fs-deg for `MAST` when an omnibus cell-type test is needed.
+    For a calibrated gene threshold instead of a fixed rank cap, see
+    @sec-fs-permutation.
+
+## Permutation calibration of between-type signal {#sec-fs-permutation}
+
+The naive screen ranks genes by the between/within split in
+@eq-fs-ss. An alternative is to **calibrate** that signal against a
+null in which cell type and expression are unrelated, and to set the
+shortlist from empirical $p$-values or a multiplicity-adjusted
+threshold rather than from a fixed top-$G$ cut.
+
+::: {#nte-f-anova .callout-note}
+## :information_source: The usual $F$ statistic and its assumptions
+
+For gene $g$, with $J$ cell types, $N$ cells and type counts $C_j$,
+the one-way ANOVA $F$-ratio compares **between-type** and
+**within-type** mean squares built from @eq-fs-ss:
+
+$$
+F_g
+=
+\frac{\mathrm{SS}_{\mathrm{between},g}/(J-1)}
+     {\mathrm{SS}_{\mathrm{within},g}/(N-J)}.
+$$ {#eq-fs-fanova}
+
+Large $F_g$ means type means differ relative to scatter inside types.
+Under a **classical** linear model the null distribution of $F_g$ is
+$F_{J-1,\,N-J}$ when, for that gene,
+
+- residuals are **homoscedastic** across types and cells;
+- observations are **independent** (or the design is balanced enough
+  that the usual ANOVA table still targets the intended contrast);
+- within-type residuals are **Gaussian** (or $N$ is large enough that
+  the ratio is still usable).
+
+The **degrees-of-freedom** correction in @eq-fs-fanova matters: a raw
+ratio $\mathrm{SS}_{\mathrm{between}}/\mathrm{SS}_{\mathrm{within}}$
+without dividing by $J-1$ and $N-J$ is not the same estimand and should
+not be read off the $F$ table. The naive bar plots report the
+**share** $\mathrm{SS}_{\mathrm{between}}/(\mathrm{SS}_{\mathrm{between}}+\mathrm{SS}_{\mathrm{within}})$ for
+interpretation; @eq-fs-fanova is the inferential counterpart.
+:::
+
+On single-cell Pearson residuals those assumptions are **unlikely** to
+hold gene by gene: genes are **correlated**, variances differ with
+mean and detection rate, and tails are heavy after SCTransform
+clipping. Treating $F_g$ as $F_{J-1,\,N-J}$ therefore mis-calibrates
+the tail. A **permutation** scheme keeps the same $F_g$ (or the same
+between/within ratio used in the screen) but estimates its null from
+replicated label randomisations, yielding gene-wise
+$p_g=(1+\sum_b I(F_g^{(b)}\ge F_g^{\mathrm{obs}}))/(B+1)$ and,
+optionally, Benjamini–Hochberg FDR or a single **max-$F$** cutoff from
+the permutation maxima $M_b=\max_g F_g^{(b)}$.
+
+**Cell-type label shuffling, not gene shuffling.** Apply one
+permutation of cell indices to **all genes** at once. Each gene keeps
+its marginal residual distribution, sparsity and gene–gene dependence;
+only the link $R_g \perp C$ is broken. That is the null
+$H_{0g}:$ cell type carries no extra information about gene $g$
+beyond chance assignment. **Gene-label** permutations do not generate
+that null: renaming columns leaves the empirical $F$ distribution
+unchanged; independent shuffles within cells destroy marginal structure
+and treat genes as exchangeable, which SCTransform residuals are not.
+
+**Nuisance structure.** With only cell type in the model, permute labels
+(optionally **within donor** or batch strata so group sizes and
+exchangeability match the design). With fixed covariates
+(donor, batch, condition, …), naive global label swaps can create
+impossible factor combinations. Then use **Freedman–Lane** residual
+permutation [@freedmanNonstochasticInterpretation1983]: fit the
+**reduced** model without cell type, obtain residuals $e_g$, and form
+$R_g^{*}=\hat R_{0g}+P e_g$ with the **same** row permutation $P$ for
+every gene; refit the full model and recompute $F_g$. The response is
+the matrix of Pearson residuals (or another downstream quantity); the
+“residuals” being permuted are from the **biological** linear predictor
+that holds nuisance terms fixed, not a blind shuffle of SCTransform
+Pearson residuals across cells. The `glmperm` package implements the
+same shuffle-$R$ idea for GLMs via permutation of regressor residuals
+[@werftGlmpermPermutation2010]. In regression we typically test the
+**conditional mean** given covariates, not the raw expression margin.
+
+```{mermaid}
+%%| label: fig-fs-permutation-choice
+%%| fig-cap: "Choosing a classical F test versus label or Freedman–Lane permutation for the between-type signal."
+%%{init: {"theme": "sandstone", "flowchart": {"htmlLabels": true}}}%%
+flowchart TD
+  A["Matrix R: cells by genes; type labels and covariates"] --> B{"Classical one-way ANOVA assumptions acceptable?"}
+  B -->|Yes| C["F_g with SS and df from eq-fs-fanova"]
+  C --> D["Compare to F_{J-1, N-J} or GLM F test"]
+  B -->|No| E{"Nuisance covariates absent?"}
+  E -->|Yes| F["Permute cell-type labels; same permutation for all genes"]
+  E -->|No| G["Freedman–Lane: fit reduced model without cell type"]
+  G --> H["Permute rows of biological residuals; refit full model"]
+  F --> I["Empirical p_g; BH FDR or max-F threshold"]
+  H --> I
+  D --> J["Fixed alpha or FDR on analytic p-values"]
+```
+
+This chapter does **not** run that permutation pipeline on GSE229513;
+it records the design choice. When implemented, use the **identical**
+statistic in every replicate and document whether labels are permuted
+globally or within strata.
+
+::: {#nte-permutation-circularity .callout-warning}
+## :warning: Double dipping and post-clustering inference
+
+Permutation $p$-values are only meaningful if the **labels tested** are
+fixed **before** the statistic is defined on the same matrix. If cell
+types were **estimated** by clustering (or refined post hoc) on the same
+expression that enters $F_g$, the test reuses information that built
+the groups: apparent between-type separation is inflated and
+$p$-values are anti-conservative. The same circularity arises when
+genes are chosen because they **define** clusters and are then
+reported as “markers” of those clusters.
+
+Post-clustering and post-selection inference formalise this bias:
+hypotheses must be corrected for the **selection event** (selective
+type I error), not treated as if labels were exogenous
+[@gonzalezDelgadoPostclusteringInference2025]. Practical mitigations
+include held-out cells or donors, pre-specified author annotations,
+prospective marker lists (as in @sec-fs-markers), or selective
+inference machinery—not rerunning a label permutation on labels that the
+data helped create.
+:::
+
 ## Differential expression — only with biological replication {#sec-fs-deg}
 
 `DESeq2`, `edgeR` and `limma`–voom remain the workhorses of
@@ -420,9 +560,12 @@ produces false discoveries [@squairConfrontingFalseDiscoveries2021;
 @crowellMuscatDetectsSubpopulationspecific2020].
 
 Use `DESeq2` in this book only if **independent biological replicates**
-exist. For GSE229513, skip calibrated DE $p$-values. Rank genes by
-@eq-fs-ss or by the knowledge table, not by a nested-model $F$ treated
-as a $p$-value.
+exist at the level of the contrast (for example, organoids or animals).
+For omnibus **cell-type** contrasts on single cells without a valid
+pseudo-bulk design, prefer the `MAST` hurdle workflow (@nte-mast-omnibus)
+over `DESeq2`. For GSE229513, skip calibrated DE $p$-values. Rank genes
+by @eq-fs-ss or by the knowledge table, not by a nested-model $F$
+treated as a $p$-value.
 
 Bulk HTSeq tables (GSE229386) **do** have three biological replicates
 per time and Wnt schedule (@sec-geo-design). Those replicates support
@@ -430,30 +573,68 @@ per time and Wnt schedule (@sec-geo-design). Those replicates support
 object.
 :::
 
-## What we would actually run
+::: {#nte-mast-omnibus .callout-note}
+## :information_source: Omnibus cell-type testing with `MAST`
 
-1.  `SCTransform` Pearson residuals under @eq-fs-v2-offset, separately
-    at 48 h, 72 h and 96 h (@sec-fs-sct-design). Rank by between/within
-    @eq-fs-ss with equal cell weight, and by the equal-type mean
-    squares @eq-fs-equal-type. Global cap 500 genes on each ranking;
-    per type, top 50 by the equal-cell ratio.
-2.  Union with
-    `data/dictionaries/mouse_gastruloid_signaling_markers.csv`
-    for cell types scored in that time slot (drop rows with
-    `cell_type_suppinger` missing unless a later reference needs them).
-3.  Keep $|\mathcal{G}_{0}|$ on the order of a few thousand genes before
-    a GGM. The naive screen above is a tighter, tunable subset.
-4.  **No** `DESeq2` $p$-values on technical sc pseudo-bulks.
+When the goal is **which genes differ among annotated cell types on
+single cells**, but there are no independent biological replicates to
+feed a pseudo-bulk `DESeq2` design, the cell-level hurdle model in
+`MAST` [@finakMASTFlexibleStatistical2015] is the usual alternative.
+It keeps one row per cell, models dropout and expression on the
+log-normalised scale, and adjusts for cellular detection rate
+(`cngeneson`, the scaled number of genes detected per cell).
 
-## Perspectives: differential networks {#sec-fs-perspective}
+Fit a **full** model with `MAST::zlm()`: cell type and any nuisance
+factors (condition, sex, batch, …) as **fixed** effects, plus
+`(1 | sample_id)` when true biological replicates exist. Compare to a
+**reduced** model that drops only the whole `cell_type` factor, using
+`MAST::lrTest(fit, "cell_type")`. That likelihood-ratio test is the
+omnibus analogue of a multi-level ANOVA: it does **not** enumerate
+pairwise one-versus-rest contrasts.
+
+Each gene yields three $p$-values: **discrete** (`disc`), whether
+detection probability differs among types; **continuous** (`cont`),
+whether positive expression magnitude differs among types; and
+**hurdle** (`hurdle`), which combines the two components. For feature
+shortlists, require both `disc` and `cont` to be small (or use the
+combined hurdle with Benjamini–Hochberg FDR), then keep genes that are
+detected in a minimal subset of types, not only significant on
+dropout-driven signal. The omnibus test has **no single log-fold-change
+direction**; after global LRT and FDR, inspect type means or run
+selected post-hoc contrasts only for genes that pass the hurdle.
+
+With a **single** organoid or donor, the estimand is variation **within
+that specimen**, not a population claim across individuals. That
+matches GSE229513 for exploratory ranking, but it does not replace the
+Pearson-residual screen in this chapter when batch and time are
+confounded.
+:::
+
+```{mermaid}
+%%| label: fig-fs-mast-omnibus
+%%| fig-cap: "MAST omnibus workflow for cell-type differential expression when pseudo-bulk DESeq2 is inappropriate."
+%%{init: {"theme": "sandstone", "flowchart": {"htmlLabels": true}}}%%
+flowchart TD
+  A["Log-normalised RNA matrix and cell metadata"] --> B["SingleCellAssay; standardise cngeneson"]
+  B --> C["MAST::zlm full model"]
+  C --> D["cell_type plus fixed covariates"]
+  C --> E["(1 | sample_id) when biological replicates exist"]
+  D --> F["MAST::lrTest fit, cell_type"]
+  E --> F
+  F --> G["Reduced model drops cell_type only"]
+  G --> H["Per gene: disc, cont, hurdle LRT"]
+  H --> I["BH FDR on hurdle; check disc and cont"]
+  I --> J["Keep genes detected across a minimal type subset"]
+  J --> K["Post-hoc means or contrasts on significant genes only"]
+```
+
+### Differential networks {#sec-fs-perspective}
 
 These methods are **not** in the naive screen. They need graphs, so
 they nominate extras for $\mathcal{G}_{0}$ **after** a first GGM pass.
 Full algebraic detail of `INDEED` and D-trace lives in DeCovarT
 `vignettes/supp-S6-feature-selection.qmd`. Separation language
 (directed versus undirected) is in @sec-separation.
-
-### Comparing supports, or estimating the difference {#sec-fs-diffnet}
 
 DeCovarT benefits from **rewiring** between populations. A gene that
 changes neighbourhood in $\boldsymbol{\Omega}_{j}$ is a better candidate
@@ -477,8 +658,6 @@ $\Delta_{j\ell}$. Empirically, D-trace is competitive when the
 produce a pair of SPD precisions. A workable **proposal** is: use
 D-trace to nominate rewiring genes, then estimate each
 $\boldsymbol{\Omega}_{j}$ on that panel with a method from @sec-grn-top4.
-
-### `INDEED`
 
 `INDEED` multiplies a DE $p$-value by a permutation-filtered change in
 partial correlation [@zuoINDEEDIntegratedDifferential2016]. On this
