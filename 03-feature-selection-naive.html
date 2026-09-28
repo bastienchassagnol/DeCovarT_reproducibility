@@ -555,6 +555,7 @@ window.Quarto = {
   <li><a href="#sec-fs-hvg" id="toc-sec-fs-hvg" class="nav-link" data-scroll-target="#sec-fs-hvg"><span class="header-section-number">3.2</span> Highly variable genes as a signal-to-noise rank</a>
   <ul>
   <li><a href="#total-biological-and-technical-pieces" id="toc-total-biological-and-technical-pieces" class="nav-link" data-scroll-target="#total-biological-and-technical-pieces"><span class="header-section-number">3.2.1</span> Total, biological, and technical pieces</a></li>
+  <li><a href="#sec-fs-sct-design" id="toc-sec-fs-sct-design" class="nav-link" data-scroll-target="#sec-fs-sct-design"><span class="header-section-number">3.2.2</span> Design used for the naive screen</a></li>
   </ul></li>
   <li><a href="#sec-fs-markers" id="toc-sec-fs-markers" class="nav-link" data-scroll-target="#sec-fs-markers"><span class="header-section-number">3.3</span> Marker genes</a></li>
   <li><a href="#sec-fs-deg" id="toc-sec-fs-deg" class="nav-link" data-scroll-target="#sec-fs-deg"><span class="header-section-number">3.4</span> Differential expression — only with biological replication</a></li>
@@ -722,7 +723,7 @@ Figure&nbsp;3.4: Residual variance after a library-size NB null. Technical varia
 </div>
 </div>
 </div>
-<p>There is <strong>no</strong> calibrated differential-expression <span class="math inline">p</span>-value here: one technical replicate cannot support <code>DESeq2</code> (<a href="#nte-pseudoreplication" class="quarto-xref">Note&nbsp;<span>3.4</span></a>). The between-type sum of squares is a <strong>ranking score</strong>.</p>
+<p>There is <strong>no</strong> calibrated differential-expression <span class="math inline">p</span>-value here: one technical replicate cannot support <code>DESeq2</code> (<a href="#nte-pseudoreplication" class="quarto-xref">Note&nbsp;<span>3.5</span></a>). The between-type sum of squares is a <strong>ranking score</strong>.</p>
 <p>Use <code>Seurat::SCTransform()</code> with Pearson residuals (<code>vst.flavor = "v2"</code>). That <strong>is</strong> the residual transformation used to rank genes (<a href="#nte-sct-v1-v2" class="quarto-xref">Note&nbsp;<span>3.2</span></a>).</p>
 <p>After <code>SCTransform</code>, pull the residual matrix and compute <a href="#eq-fs-ss" class="quarto-xref">Equation&nbsp;<span>3.3</span></a> by the labelled type <span class="math inline">j</span>. Keep on the order of <span class="math inline">2{,}000</span> genes in <span class="math inline">\mathcal{G}_{0}</span> before any GGM <span class="citation" data-cites="friedmanSparseInverseCovariance2008">(<a href="#ref-friedmanSparseInverseCovariance2008" role="doc-biblioref">Friedman et al. 2008</a>)</span>.</p>
 <div class="cell">
@@ -781,13 +782,112 @@ Figure&nbsp;3.5: Shared negative-binomial model, and the v1 gene-wise depth slop
 </div>
 </div>
 </div>
+</section>
+<section id="sec-fs-sct-design" class="level3" data-number="3.2.2">
+<h3 data-number="3.2.2" class="anchored" data-anchor-id="sec-fs-sct-design"><span class="header-section-number">3.2.2</span> Design used for the naive screen</h3>
+<div id="nte-fs-prefilter" class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning&nbsp;3.3: <span class="emoji" data-emoji="warning">⚠️</span> What is removed before the v2 fit
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The regression is not run on the full transcriptome. Three filters change which residuals enter the rank.</p>
+<ol type="1">
+<li><strong>Gene allow-list.</strong> Of 27,027 genes in the RNA assay, the author SCT <code>counts</code> layer keeps 2,944 symbols. The remaining genes are treated as having failed the authors’ bare QC and never enter the negative-binomial fit.</li>
+<li><strong>Residual clip.</strong> <code>SCTransform</code> winsorises Pearson residuals at <span class="math inline">\pm\sqrt{n/30}</span> before they are used downstream. On the fitted slots that bound is about <span class="math inline">\pm 19.1</span> at 48 h (<span class="math inline">n = 10{,}891</span>), <span class="math inline">\pm 12.4</span> at 72 h (<span class="math inline">n = 4{,}619</span>) and <span class="math inline">\pm 12.8</span> at 96 h (<span class="math inline">n = 4{,}935</span>). The clip limits the leverage of a few cells with extreme counts, so one barcode cannot dominate a sum of squares. The leading genes are not a short list of single-cell spikes: at 48 h the top ratios are modest and land on naïve-pluripotency markers, and at 96 h the top gene is the endoderm marker <em>Sox17</em>. The bound is wide relative to a unit-variance residual, so it changes only the far tail.</li>
+<li><strong>Cell-type filter.</strong> Culture-stress labels (Cd63+ ectoderm-like artefact, Zscan4+ artefact) are dropped before the fit. A type with fewer than 20 cells in a slot is kept in the fit and then left out of the sums of squares. Exiting naïve pluripotency at 72 h has 8 cells and is not scored.</li>
+</ol>
+</div>
+</div>
+<div class="cell" data-layout-align="default">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>%%{init: {"theme": "sandstone"}}%%</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>flowchart TD</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  A["27,027 RNA genes"] --&gt; B["2,944 symbols in the SCT counts layer"]</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  B --&gt; C["Drop culture-stress labels"]</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  C --&gt; D["SCTransform v2 per time slot"]</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  D --&gt; E["Clip Pearson residuals at ±sqrt of n over 30"]</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  E --&gt; F["Leave out types with fewer than 20 cells"]</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  F --&gt; G["Equal-cell sums of squares"]</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  F --&gt; H["Equal-type mean squares, weight 1/J"]</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  G --&gt; I["Top 500 genes"]</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  H --&gt; I</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="fig-fs-prefilter" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-fs-prefilter-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>
+<pre class="mermaid mermaid-js" data-label="fig-fs-prefilter">%%{init: {"theme": "sandstone"}}%%
+flowchart TD
+  A["27,027 RNA genes"] --&gt; B["2,944 symbols in the SCT counts layer"]
+  B --&gt; C["Drop culture-stress labels"]
+  C --&gt; D["SCTransform v2 per time slot"]
+  D --&gt; E["Clip Pearson residuals at ±sqrt of n over 30"]
+  E --&gt; F["Leave out types with fewer than 20 cells"]
+  F --&gt; G["Equal-cell sums of squares"]
+  F --&gt; H["Equal-type mean squares, weight 1/J"]
+  G --&gt; I["Top 500 genes"]
+  H --&gt; I
+</pre>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-fs-prefilter-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.6: Pre-filter, v2 fit, and the two global rankings.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p><code>sctransform::vst()</code> with <code>vst.flavor = "v2"</code> is an intercept plus a library-size offset. There is no richer design matrix on this object that we can identify.</p>
+<p>The fitted mean, for each gene <span class="math inline">g</span> and cell <span class="math inline">c</span>, is</p>
+<p><span id="eq-fs-v2-offset"><span class="math display">
+\log\mu_{cg}
+=
+\beta_{0g}
++
+\operatorname{offset}(\log L_{c}),
+\qquad
+\mu_{cg}
+=
+e^{\beta_{0g}} L_{c},
+\tag{3.4}</span></span></p>
+<p>with <span class="math inline">L_{c}</span> the full RNA library size (column sum of the unfiltered count matrix), not the sum over the gene allow-list. In the implementation the offset is <span class="math inline">\log L_{c}</span> and the stored slope on <span class="math inline">\log_{10} L_{c}</span> is the constant <span class="math inline">\ln 10</span>. When <code>glmGamPoi</code> is installed the fitter is <code>glmGamPoi_offset</code>; otherwise v2 falls back to the same offset model (<code>nb_offset</code>). <code>vars.to.regress</code> is empty.</p>
+<p>What we deliberately leave out:</p>
+<ul>
+<li><strong>Cell type</strong> is not a covariate. Putting <span class="math inline">j</span> in the null would remove the between-type residual the rank is meant to keep (<a href="#eq-fs-ss" class="quarto-xref">Equation&nbsp;<span>3.3</span></a>).</li>
+<li><strong>Cell line</strong> (B-S versus SBR) is not a covariate. It is confounded with time except at 48 h (<a href="01-data-suppinger.html#sec-geo-design" class="quarto-xref"><span>Section 2.1</span></a>), and the chapter treats the two lines as equivalent trajectories.</li>
+<li><strong>Time</strong> is not a column inside one regression. The negative-binomial fit is repeated <strong>independently at 48 h, 72 h and 96 h</strong>, which are the slots shared with the bulk HTSeq table. Cells of every retained type at that slot are fitted together. A single fit across times would mix stage differences into the residuals; a time coefficient would partial those differences out of a contrast we want to make inside each slot, where the GRN is learned.</li>
+</ul>
+<p>Three lists are built after the residual split, then each list is united with the signalling markers of the cell types actually scored in that time slot (<code>data/dictionaries/mouse_gastruloid_signaling_markers.csv</code>, symbols mapped offline with <code>org.Mm.eg.db</code>, not biomaRt):</p>
+<ol type="1">
+<li><strong>Global, equal cell weight.</strong> Top <code>n_genes_global</code> genes by <span class="math inline">\mathrm{SS}_{\mathrm{between}}/\mathrm{SS}_{\mathrm{within}}</span> (default 500). Every barcode contributes equally, so the largest type dominates the sums of squares. The cap sits below the few-thousand ceiling suggested before a GGM and is an argument of the script.</li>
+<li><strong>Global, equal type weight.</strong> The same cap of 500, with each of the <span class="math inline">J</span> scored types given weight <span class="math inline">1/J</span>. Let <span class="math inline">\bar r_{gj}</span> be the mean residual of gene <span class="math inline">g</span> in type <span class="math inline">j</span> and <span class="math inline">v_{gj}</span> the within-type variance. The equal-type mean and the two mean squares are <span id="eq-fs-equal-type"><span class="math display">
+\bar r_{g}^{\mathrm{eq}}
+=
+J^{-1}\sum_{j=1}^{J}\bar r_{gj},
+\quad
+\mathrm{MS}_{\mathrm{between},g}
+=
+J^{-1}\sum_{j=1}^{J}
+(\bar r_{gj}-\bar r_{g}^{\mathrm{eq}})^{2},
+\quad
+\mathrm{MS}_{\mathrm{within},g}
+=
+J^{-1}\sum_{j=1}^{J} v_{gj}.
+\tag{3.5}</span></span> Genes are ranked by <span class="math inline">\mathrm{MS}_{\mathrm{between}}/\mathrm{MS}_{\mathrm{within}}</span>.</li>
+<li><strong>Per cell type.</strong> One-versus-rest ANOVA, top <code>n_genes_celltype</code> genes by the equal-cell ratio (default 50). <span class="math inline">\mathrm{SS}_{\mathrm{between}}&gt;\mathrm{SS}_{\mathrm{within}}</span> is recorded and drawn, and is not a hard gate. Pearson residuals are scaled to unit variance, so that inequality is an <span class="math inline">R^{2}&gt;1/2</span> cut and almost no gene meets it when one type dominates the slot.</li>
+</ol>
+<p>Culture-stress labels in <code>data/dictionaries/suppinger_celltype_crosswalk.csv</code> are dropped before the fit. Types with fewer than <code>min_cells</code> cells (default 20) in a slot stay out of the sum of squares. The entry points are <code>scripts/01_01_prepare_and_filter_genes_sctransform.R</code> and <code>scripts/01_02_plot_naively_selected_genes.R</code>. <code>scripts/01_03_sensitivity_48h_cell_line.R</code> refits the same v2 model inside B-S and inside SBR at 48 h, the only slot that contains both lines, and compares the equal-cell top 500 and the per-type top 50. Those two global lists share 308 of 500 genes (Jaccard 0.45). Epiblast and exiting naïve pluripotency share 29 and 30 of their top 50. Naïve pluripotency is scored only in SBR: B-S has fewer than 20 cells of that type.</p>
 <div id="nte-hvg-not-gaussian" class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Note&nbsp;3.3: <span class="emoji" data-emoji="information_source">ℹ️</span> HVGs are not a GGM input
+Note&nbsp;3.4: <span class="emoji" data-emoji="information_source">ℹ️</span> HVGs are not a GGM input
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -802,6 +902,7 @@ Note&nbsp;3.3: <span class="emoji" data-emoji="information_source">ℹ️</span>
 <p>On this reference the marker list is <strong>knowledge-driven</strong> and already short. It is stored as</p>
 <p><code>data/dictionaries/mouse_gastruloid_signaling_markers.csv</code></p>
 <p>with three columns: <code>cell_type_excel</code> (lineage name on the signalling map), <code>cell_type_suppinger</code> (the matching Suppinger label, or <code>NA</code> when that lineage is absent), and <code>gene_marker</code>. Because the list is a curated biological seed rather than a concatenated differential-expression shortlist, it does not by itself inflate collinearity of <span class="math inline">\boldsymbol{\mu}_{\mathcal{G}}</span>. Seeds may later be grown by Markov boundaries (<a href="A1-separation-criteria.html#sec-separation" class="quarto-xref"><span>Section A.1</span></a>).</p>
+<p>Fifteen of the 19 mouse symbols fall in the 2,944-gene SCT allow-list. Under a uniform draw of 19 genes from the 27,027 RNA symbols, the expected overlap is about 2.1. The upper tail probability is <span class="math inline">P(X \ge 15) = 8.8 \times 10^{-12}</span> (hypergeometric; population 27,027, 2,944 marked as the allow-list, draw of 19). The four markers absent from the allow-list are <em>Myod1</em>, <em>Pax6</em>, <em>Sox1</em> and <em>Tfap2a</em>. They are drawn on <code>venn_markers_vs_counts.pdf</code>.</p>
 </section>
 <section id="sec-fs-deg" class="level2" data-number="3.4">
 <h2 data-number="3.4" class="anchored" data-anchor-id="sec-fs-deg"><span class="header-section-number">3.4</span> Differential expression — only with biological replication</h2>
@@ -812,7 +913,7 @@ Note&nbsp;3.3: <span class="emoji" data-emoji="information_source">ℹ️</span>
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Warning&nbsp;3.4: <span class="emoji" data-emoji="warning">⚠️</span> Technical pseudo-bulks are not biological replicates
+Warning&nbsp;3.5: <span class="emoji" data-emoji="warning">⚠️</span> Technical pseudo-bulks are not biological replicates
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -825,9 +926,9 @@ Warning&nbsp;3.4: <span class="emoji" data-emoji="warning">⚠️</span> Technic
 <section id="what-we-would-actually-run" class="level2" data-number="3.5">
 <h2 data-number="3.5" class="anchored" data-anchor-id="what-we-would-actually-run"><span class="header-section-number">3.5</span> What we would actually run</h2>
 <ol type="1">
-<li><code>SCTransform</code> Pearson residuals under <a href="#eq-fs-nb-null" class="quarto-xref">Equation&nbsp;<span>3.1</span></a>; rank by between/within <a href="#eq-fs-ss" class="quarto-xref">Equation&nbsp;<span>3.3</span></a>.</li>
-<li>Union with <code>data/dictionaries/mouse_gastruloid_signaling_markers.csv</code> (drop rows with <code>cell_type_suppinger</code> missing unless a later reference needs them).</li>
-<li>Cap <span class="math inline">|\mathcal{G}_{0}|</span> at a few thousand genes.</li>
+<li><code>SCTransform</code> Pearson residuals under <a href="#eq-fs-v2-offset" class="quarto-xref">Equation&nbsp;<span>3.4</span></a>, separately at 48 h, 72 h and 96 h (<a href="#sec-fs-sct-design" class="quarto-xref"><span>Section 3.2.2</span></a>). Rank by between/within <a href="#eq-fs-ss" class="quarto-xref">Equation&nbsp;<span>3.3</span></a> with equal cell weight, and by the equal-type mean squares <a href="#eq-fs-equal-type" class="quarto-xref">Equation&nbsp;<span>3.5</span></a>. Global cap 500 genes on each ranking; per type, top 50 by the equal-cell ratio.</li>
+<li>Union with <code>data/dictionaries/mouse_gastruloid_signaling_markers.csv</code> for cell types scored in that time slot (drop rows with <code>cell_type_suppinger</code> missing unless a later reference needs them).</li>
+<li>Keep <span class="math inline">|\mathcal{G}_{0}|</span> on the order of a few thousand genes before a GGM. The naive screen above is a tighter, tunable subset.</li>
 <li><strong>No</strong> <code>DESeq2</code> <span class="math inline">p</span>-values on technical sc pseudo-bulks.</li>
 </ol>
 </section>
@@ -842,7 +943,7 @@ Warning&nbsp;3.4: <span class="emoji" data-emoji="warning">⚠️</span> Technic
 </section>
 <section id="indeed" class="level3" data-number="3.6.2">
 <h3 data-number="3.6.2" class="anchored" data-anchor-id="indeed"><span class="header-section-number">3.6.2</span> <code>INDEED</code></h3>
-<p><code>INDEED</code> multiplies a DE <span class="math inline">p</span>-value by a permutation-filtered change in partial correlation <span class="citation" data-cites="zuoINDEEDIntegratedDifferential2016">(<a href="#ref-zuoINDEEDIntegratedDifferential2016" role="doc-biblioref">Zuo et al. 2016</a>)</span>. On this reference the DE <span class="math inline">p</span>-value assumes biological replication (<a href="#nte-pseudoreplication" class="quarto-xref">Note&nbsp;<span>3.4</span></a>), and the permutation null among cells of one gastruloid is a technical null. Use it, if at all, as a ranking heuristic with <span class="math inline">p_{g}^{\mathrm{DE}}</span> replaced by a fold-change or between-type score.</p>
+<p><code>INDEED</code> multiplies a DE <span class="math inline">p</span>-value by a permutation-filtered change in partial correlation <span class="citation" data-cites="zuoINDEEDIntegratedDifferential2016">(<a href="#ref-zuoINDEEDIntegratedDifferential2016" role="doc-biblioref">Zuo et al. 2016</a>)</span>. On this reference the DE <span class="math inline">p</span>-value assumes biological replication (<a href="#nte-pseudoreplication" class="quarto-xref">Note&nbsp;<span>3.5</span></a>), and the permutation null among cells of one gastruloid is a technical null. Use it, if at all, as a ranking heuristic with <span class="math inline">p_{g}^{\mathrm{DE}}</span> replaced by a fold-change or between-type score.</p>
 </section>
 <section id="markov-boundaries" class="level3" data-number="3.6.3">
 <h3 data-number="3.6.3" class="anchored" data-anchor-id="markov-boundaries"><span class="header-section-number">3.6.3</span> Markov boundaries</h3>
