@@ -604,7 +604,7 @@ window.Quarto = {
 <li>average pairwise overlap <span class="math inline">\overline{\omega}</span> of the <span class="math inline">J</span> Gaussians <span class="math inline">\mathcal{N}(\boldsymbol{\mu}_{\cdot j},\boldsymbol{\Sigma}_{j})</span> <span class="citation" data-cites="melnykovMixSimPackageSimulating2012 R-MixSim">(<a href="#ref-melnykovMixSimPackageSimulating2012" role="doc-biblioref">Melnykov et al. 2012</a>, <a href="#ref-R-MixSim" role="doc-biblioref">2021</a>)</span>.</li>
 </ol>
 <p><code>MixSim</code> defines pairwise overlap as the <strong>sum of the two misclassification probabilities</strong> under a Bayes / MAP rule, not as <span class="math inline">1</span> minus a distance. Optional analytic surrogates — Jeffreys (symmetric KL), Chernoff / Bhattacharyya, and the Bures–Wasserstein metric on <span class="math inline">(\boldsymbol{\mu}_{j},\boldsymbol{\Sigma}_{j})</span> — belong on the same Pareto front. They use <strong>both</strong> means and covariances, which <code>AutoGeneS</code> correlation / centroid objectives do not.</p>
-<p>Differential-network genes (<a href="03-feature-selection-naive.html#sec-fs-diffnet" class="quarto-xref"><span>Section 3.6.1</span></a>) may be injected into <span class="math inline">\mathcal{G}_{0}</span> before NSGA-II; they are candidates, not the panel.</p>
+<p>Differential-network genes (<span class="quarto-unresolved-ref">?sec-fs-diffnet</span>) may be injected into <span class="math inline">\mathcal{G}_{0}</span> before NSGA-II; they are candidates, not the panel.</p>
 <div id="nte-pareto-proposal" class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">

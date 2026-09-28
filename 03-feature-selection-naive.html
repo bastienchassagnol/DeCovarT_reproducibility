@@ -558,13 +558,12 @@ window.Quarto = {
   <li><a href="#sec-fs-sct-design" id="toc-sec-fs-sct-design" class="nav-link" data-scroll-target="#sec-fs-sct-design"><span class="header-section-number">3.2.2</span> Design used for the naive screen</a></li>
   </ul></li>
   <li><a href="#sec-fs-markers" id="toc-sec-fs-markers" class="nav-link" data-scroll-target="#sec-fs-markers"><span class="header-section-number">3.3</span> Marker genes</a></li>
-  <li><a href="#sec-fs-deg" id="toc-sec-fs-deg" class="nav-link" data-scroll-target="#sec-fs-deg"><span class="header-section-number">3.4</span> Differential expression — only with biological replication</a></li>
-  <li><a href="#what-we-would-actually-run" id="toc-what-we-would-actually-run" class="nav-link" data-scroll-target="#what-we-would-actually-run"><span class="header-section-number">3.5</span> What we would actually run</a></li>
-  <li><a href="#sec-fs-perspective" id="toc-sec-fs-perspective" class="nav-link" data-scroll-target="#sec-fs-perspective"><span class="header-section-number">3.6</span> Perspectives: differential networks</a>
+  <li><a href="#what-we-would-actually-run" id="toc-what-we-would-actually-run" class="nav-link" data-scroll-target="#what-we-would-actually-run"><span class="header-section-number">3.4</span> What we would actually run</a></li>
+  <li><a href="#sec-fs-permutation" id="toc-sec-fs-permutation" class="nav-link" data-scroll-target="#sec-fs-permutation"><span class="header-section-number">3.5</span> Permutation calibration of between-type signal</a></li>
+  <li><a href="#sec-fs-deg" id="toc-sec-fs-deg" class="nav-link" data-scroll-target="#sec-fs-deg"><span class="header-section-number">3.6</span> Differential expression — only with biological replication</a>
   <ul>
-  <li><a href="#sec-fs-diffnet" id="toc-sec-fs-diffnet" class="nav-link" data-scroll-target="#sec-fs-diffnet"><span class="header-section-number">3.6.1</span> Comparing supports, or estimating the difference</a></li>
-  <li><a href="#indeed" id="toc-indeed" class="nav-link" data-scroll-target="#indeed"><span class="header-section-number">3.6.2</span> <code>INDEED</code></a></li>
-  <li><a href="#markov-boundaries" id="toc-markov-boundaries" class="nav-link" data-scroll-target="#markov-boundaries"><span class="header-section-number">3.6.3</span> Markov boundaries</a></li>
+  <li><a href="#sec-fs-perspective" id="toc-sec-fs-perspective" class="nav-link" data-scroll-target="#sec-fs-perspective"><span class="header-section-number">3.6.1</span> Differential networks</a></li>
+  <li><a href="#markov-boundaries" id="toc-markov-boundaries" class="nav-link" data-scroll-target="#markov-boundaries"><span class="header-section-number">3.6.2</span> Markov boundaries</a></li>
   </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/edit/main/docs/03-feature-selection-naive.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/blob/main/docs/03-feature-selection-naive.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
@@ -723,7 +722,7 @@ Figure&nbsp;3.4: Residual variance after a library-size NB null. Technical varia
 </div>
 </div>
 </div>
-<p>There is <strong>no</strong> calibrated differential-expression <span class="math inline">p</span>-value here: one technical replicate cannot support <code>DESeq2</code> (<a href="#nte-pseudoreplication" class="quarto-xref">Note&nbsp;<span>3.5</span></a>). The between-type sum of squares is a <strong>ranking score</strong>.</p>
+<p>There is <strong>no</strong> calibrated differential-expression <span class="math inline">p</span>-value here: one technical replicate cannot support <code>DESeq2</code> (<a href="#nte-pseudoreplication" class="quarto-xref">Note&nbsp;<span>3.7</span></a>). The between-type sum of squares is a <strong>ranking score</strong>.</p>
 <p>Use <code>Seurat::SCTransform()</code> with Pearson residuals (<code>vst.flavor = "v2"</code>). That <strong>is</strong> the residual transformation used to rank genes (<a href="#nte-sct-v1-v2" class="quarto-xref">Note&nbsp;<span>3.2</span></a>).</p>
 <p>After <code>SCTransform</code>, pull the residual matrix and compute <a href="#eq-fs-ss" class="quarto-xref">Equation&nbsp;<span>3.3</span></a> by the labelled type <span class="math inline">j</span>. Keep on the order of <span class="math inline">2{,}000</span> genes in <span class="math inline">\mathcal{G}_{0}</span> before any GGM <span class="citation" data-cites="friedmanSparseInverseCovariance2008">(<a href="#ref-friedmanSparseInverseCovariance2008" role="doc-biblioref">Friedman et al. 2008</a>)</span>.</p>
 <div class="cell">
@@ -904,8 +903,108 @@ Note&nbsp;3.4: <span class="emoji" data-emoji="information_source">ℹ️</span>
 <p>with three columns: <code>cell_type_excel</code> (lineage name on the signalling map), <code>cell_type_suppinger</code> (the matching Suppinger label, or <code>NA</code> when that lineage is absent), and <code>gene_marker</code>. Because the list is a curated biological seed rather than a concatenated differential-expression shortlist, it does not by itself inflate collinearity of <span class="math inline">\boldsymbol{\mu}_{\mathcal{G}}</span>. Seeds may later be grown by Markov boundaries (<a href="A1-separation-criteria.html#sec-separation" class="quarto-xref"><span>Section A.1</span></a>).</p>
 <p>Fifteen of the 19 mouse symbols fall in the 2,944-gene SCT allow-list. Under a uniform draw of 19 genes from the 27,027 RNA symbols, the expected overlap is about 2.1. The upper tail probability is <span class="math inline">P(X \ge 15) = 8.8 \times 10^{-12}</span> (hypergeometric; population 27,027, 2,944 marked as the allow-list, draw of 19). The four markers absent from the allow-list are <em>Myod1</em>, <em>Pax6</em>, <em>Sox1</em> and <em>Tfap2a</em>. They are drawn on <code>venn_markers_vs_counts.pdf</code>.</p>
 </section>
-<section id="sec-fs-deg" class="level2" data-number="3.4">
-<h2 data-number="3.4" class="anchored" data-anchor-id="sec-fs-deg"><span class="header-section-number">3.4</span> Differential expression — only with biological replication</h2>
+<section id="what-we-would-actually-run" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="what-we-would-actually-run"><span class="header-section-number">3.4</span> What we would actually run</h2>
+<ol type="1">
+<li><code>SCTransform</code> Pearson residuals under <a href="#eq-fs-v2-offset" class="quarto-xref">Equation&nbsp;<span>3.4</span></a>, separately at 48 h, 72 h and 96 h (<a href="#sec-fs-sct-design" class="quarto-xref"><span>Section 3.2.2</span></a>). Rank by between/within <a href="#eq-fs-ss" class="quarto-xref">Equation&nbsp;<span>3.3</span></a> with equal cell weight, and by the equal-type mean squares <a href="#eq-fs-equal-type" class="quarto-xref">Equation&nbsp;<span>3.5</span></a>. Global cap 500 genes on each ranking; per type, top 50 by the equal-cell ratio.</li>
+<li>Union with <code>data/dictionaries/mouse_gastruloid_signaling_markers.csv</code> for cell types scored in that time slot (drop rows with <code>cell_type_suppinger</code> missing unless a later reference needs them).</li>
+<li>Keep <span class="math inline">|\mathcal{G}_{0}|</span> on the order of a few thousand genes before a GGM. The naive screen above is a tighter, tunable subset.</li>
+<li><strong>No</strong> <code>DESeq2</code> <span class="math inline">p</span>-values on technical sc pseudo-bulks; see <a href="#sec-fs-deg" class="quarto-xref"><span>Section 3.6</span></a> for <code>MAST</code> when an omnibus cell-type test is needed. For a calibrated gene threshold instead of a fixed rank cap, see
+<ol class="example" type="1">
+<li></li>
+</ol></li>
+</ol>
+</section>
+<section id="sec-fs-permutation" class="level2" data-number="3.5">
+<h2 data-number="3.5" class="anchored" data-anchor-id="sec-fs-permutation"><span class="header-section-number">3.5</span> Permutation calibration of between-type signal</h2>
+<p>The naive screen ranks genes by the between/within split in <a href="#eq-fs-ss" class="quarto-xref">Equation&nbsp;<span>3.3</span></a>. An alternative is to <strong>calibrate</strong> that signal against a null in which cell type and expression are unrelated, and to set the shortlist from empirical <span class="math inline">p</span>-values or a multiplicity-adjusted threshold rather than from a fixed top-<span class="math inline">G</span> cut.</p>
+<div id="nte-f-anova" class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note&nbsp;3.5: <span class="emoji" data-emoji="information_source">ℹ️</span> The usual <span class="math inline">F</span> statistic and its assumptions
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>For gene <span class="math inline">g</span>, with <span class="math inline">J</span> cell types, <span class="math inline">N</span> cells and type counts <span class="math inline">C_j</span>, the one-way ANOVA <span class="math inline">F</span>-ratio compares <strong>between-type</strong> and <strong>within-type</strong> mean squares built from <a href="#eq-fs-ss" class="quarto-xref">Equation&nbsp;<span>3.3</span></a>:</p>
+<p><span id="eq-fs-fanova"><span class="math display">
+F_g
+=
+\frac{\mathrm{SS}_{\mathrm{between},g}/(J-1)}
+     {\mathrm{SS}_{\mathrm{within},g}/(N-J)}.
+\tag{3.6}</span></span></p>
+<p>Large <span class="math inline">F_g</span> means type means differ relative to scatter inside types. Under a <strong>classical</strong> linear model the null distribution of <span class="math inline">F_g</span> is <span class="math inline">F_{J-1,\,N-J}</span> when, for that gene,</p>
+<ul>
+<li>residuals are <strong>homoscedastic</strong> across types and cells;</li>
+<li>observations are <strong>independent</strong> (or the design is balanced enough that the usual ANOVA table still targets the intended contrast);</li>
+<li>within-type residuals are <strong>Gaussian</strong> (or <span class="math inline">N</span> is large enough that the ratio is still usable).</li>
+</ul>
+<p>The <strong>degrees-of-freedom</strong> correction in <a href="#eq-fs-fanova" class="quarto-xref">Equation&nbsp;<span>3.6</span></a> matters: a raw ratio <span class="math inline">\mathrm{SS}_{\mathrm{between}}/\mathrm{SS}_{\mathrm{within}}</span> without dividing by <span class="math inline">J-1</span> and <span class="math inline">N-J</span> is not the same estimand and should not be read off the <span class="math inline">F</span> table. The naive bar plots report the <strong>share</strong> <span class="math inline">\mathrm{SS}_{\mathrm{between}}/(\mathrm{SS}_{\mathrm{between}}+\mathrm{SS}_{\mathrm{within}})</span> for interpretation; <a href="#eq-fs-fanova" class="quarto-xref">Equation&nbsp;<span>3.6</span></a> is the inferential counterpart.</p>
+</div>
+</div>
+<p>On single-cell Pearson residuals those assumptions are <strong>unlikely</strong> to hold gene by gene: genes are <strong>correlated</strong>, variances differ with mean and detection rate, and tails are heavy after SCTransform clipping. Treating <span class="math inline">F_g</span> as <span class="math inline">F_{J-1,\,N-J}</span> therefore mis-calibrates the tail. A <strong>permutation</strong> scheme keeps the same <span class="math inline">F_g</span> (or the same between/within ratio used in the screen) but estimates its null from replicated label randomisations, yielding gene-wise <span class="math inline">p_g=(1+\sum_b I(F_g^{(b)}\ge F_g^{\mathrm{obs}}))/(B+1)</span> and, optionally, Benjamini–Hochberg FDR or a single <strong>max-<span class="math inline">F</span></strong> cutoff from the permutation maxima <span class="math inline">M_b=\max_g F_g^{(b)}</span>.</p>
+<p><strong>Cell-type label shuffling, not gene shuffling.</strong> Apply one permutation of cell indices to <strong>all genes</strong> at once. Each gene keeps its marginal residual distribution, sparsity and gene–gene dependence; only the link <span class="math inline">R_g \perp C</span> is broken. That is the null <span class="math inline">H_{0g}:</span> cell type carries no extra information about gene <span class="math inline">g</span> beyond chance assignment. <strong>Gene-label</strong> permutations do not generate that null: renaming columns leaves the empirical <span class="math inline">F</span> distribution unchanged; independent shuffles within cells destroy marginal structure and treat genes as exchangeable, which SCTransform residuals are not.</p>
+<p><strong>Nuisance structure.</strong> With only cell type in the model, permute labels (optionally <strong>within donor</strong> or batch strata so group sizes and exchangeability match the design). With fixed covariates (donor, batch, condition, …), naive global label swaps can create impossible factor combinations. Then use <strong>Freedman–Lane</strong> residual permutation <span class="citation" data-cites="freedmanNonstochasticInterpretation1983">(<a href="#ref-freedmanNonstochasticInterpretation1983" role="doc-biblioref">Freedman and Lane 1983</a>)</span>: fit the <strong>reduced</strong> model without cell type, obtain residuals <span class="math inline">e_g</span>, and form <span class="math inline">R_g^{*}=\hat R_{0g}+P e_g</span> with the <strong>same</strong> row permutation <span class="math inline">P</span> for every gene; refit the full model and recompute <span class="math inline">F_g</span>. The response is the matrix of Pearson residuals (or another downstream quantity); the “residuals” being permuted are from the <strong>biological</strong> linear predictor that holds nuisance terms fixed, not a blind shuffle of SCTransform Pearson residuals across cells. The <code>glmperm</code> package implements the same shuffle-<span class="math inline">R</span> idea for GLMs via permutation of regressor residuals <span class="citation" data-cites="werftGlmpermPermutation2010">(<a href="#ref-werftGlmpermPermutation2010" role="doc-biblioref">Werft and Benner 2010</a>)</span>. In regression we typically test the <strong>conditional mean</strong> given covariates, not the raw expression margin.</p>
+<div class="cell" data-layout-align="default">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>%%{init: {"theme": "sandstone", "flowchart": {"htmlLabels": true}}}%%</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>flowchart TD</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  A["Matrix R: cells by genes; type labels and covariates"] --&gt; B{"Classical one-way ANOVA assumptions acceptable?"}</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  B --&gt;|Yes| C["F_g with SS and df from eq-fs-fanova"]</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  C --&gt; D["Compare to F_{J-1, N-J} or GLM F test"]</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  B --&gt;|No| E{"Nuisance covariates absent?"}</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  E --&gt;|Yes| F["Permute cell-type labels; same permutation for all genes"]</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  E --&gt;|No| G["Freedman–Lane: fit reduced model without cell type"]</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  G --&gt; H["Permute rows of biological residuals; refit full model"]</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  F --&gt; I["Empirical p_g; BH FDR or max-F threshold"]</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  H --&gt; I</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  D --&gt; J["Fixed alpha or FDR on analytic p-values"]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="fig-fs-permutation-choice" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-fs-permutation-choice-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>
+<pre class="mermaid mermaid-js" data-label="fig-fs-permutation-choice">%%{init: {"theme": "sandstone", "flowchart": {"htmlLabels": true}}}%%
+flowchart TD
+  A["Matrix R: cells by genes; type labels and covariates"] --&gt; B{"Classical one-way ANOVA assumptions acceptable?"}
+  B --&gt;|Yes| C["F_g with SS and df from eq-fs-fanova"]
+  C --&gt; D["Compare to F_{J-1, N-J} or GLM F test"]
+  B --&gt;|No| E{"Nuisance covariates absent?"}
+  E --&gt;|Yes| F["Permute cell-type labels; same permutation for all genes"]
+  E --&gt;|No| G["Freedman–Lane: fit reduced model without cell type"]
+  G --&gt; H["Permute rows of biological residuals; refit full model"]
+  F --&gt; I["Empirical p_g; BH FDR or max-F threshold"]
+  H --&gt; I
+  D --&gt; J["Fixed alpha or FDR on analytic p-values"]
+</pre>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-fs-permutation-choice-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.7: Choosing a classical F test versus label or Freedman–Lane permutation for the between-type signal.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>This chapter does <strong>not</strong> run that permutation pipeline on GSE229513; it records the design choice. When implemented, use the <strong>identical</strong> statistic in every replicate and document whether labels are permuted globally or within strata.</p>
+<div id="nte-permutation-circularity" class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning&nbsp;3.6: <span class="emoji" data-emoji="warning">⚠️</span> Double dipping and post-clustering inference
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Permutation <span class="math inline">p</span>-values are only meaningful if the <strong>labels tested</strong> are fixed <strong>before</strong> the statistic is defined on the same matrix. If cell types were <strong>estimated</strong> by clustering (or refined post hoc) on the same expression that enters <span class="math inline">F_g</span>, the test reuses information that built the groups: apparent between-type separation is inflated and <span class="math inline">p</span>-values are anti-conservative. The same circularity arises when genes are chosen because they <strong>define</strong> clusters and are then reported as “markers” of those clusters.</p>
+<p>Post-clustering and post-selection inference formalise this bias: hypotheses must be corrected for the <strong>selection event</strong> (selective type I error), not treated as if labels were exogenous <span class="citation" data-cites="gonzalezDelgadoPostclusteringInference2025">(<a href="#ref-gonzalezDelgadoPostclusteringInference2025" role="doc-biblioref">González-Delgado et al. 2025</a>)</span>. Practical mitigations include held-out cells or donors, pre-specified author annotations, prospective marker lists (as in <a href="#sec-fs-markers" class="quarto-xref"><span>Section 3.3</span></a>), or selective inference machinery—not rerunning a label permutation on labels that the data helped create.</p>
+</div>
+</div>
+</section>
+<section id="sec-fs-deg" class="level2" data-number="3.6">
+<h2 data-number="3.6" class="anchored" data-anchor-id="sec-fs-deg"><span class="header-section-number">3.6</span> Differential expression — only with biological replication</h2>
 <p><code>DESeq2</code>, <code>edgeR</code> and <code>limma</code>–voom remain the workhorses of one-versus-rest ranking <span class="citation" data-cites="loveModeratedEstimationFold2014">(<a href="#ref-loveModeratedEstimationFold2014" role="doc-biblioref">Love et al. 2014</a>)</span>. That logic <strong>does not transfer</strong> to GSE229513 as a DE experiment.</p>
 <div id="nte-pseudoreplication" class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -913,40 +1012,83 @@ Note&nbsp;3.4: <span class="emoji" data-emoji="information_source">ℹ️</span>
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Warning&nbsp;3.5: <span class="emoji" data-emoji="warning">⚠️</span> Technical pseudo-bulks are not biological replicates
+Warning&nbsp;3.7: <span class="emoji" data-emoji="warning">⚠️</span> Technical pseudo-bulks are not biological replicates
 </div>
 </div>
 <div class="callout-body-container callout-body">
 <p>Cells from a common experimental unit are not independent biological replicates. Splitting or bootstrapping cells characterises <strong>technical / sampling</strong> variability; it does not manufacture between-organoid uncertainty. Treating cells, or random partitions of cells, as <code>DESeq2</code> replicates inflates apparent degrees of freedom and produces false discoveries <span class="citation" data-cites="squairConfrontingFalseDiscoveries2021 crowellMuscatDetectsSubpopulationspecific2020">(<a href="#ref-squairConfrontingFalseDiscoveries2021" role="doc-biblioref">Squair et al. 2021</a>; <a href="#ref-crowellMuscatDetectsSubpopulationspecific2020" role="doc-biblioref">Crowell et al. 2020</a>)</span>.</p>
-<p>Use <code>DESeq2</code> in this book only if <strong>independent biological replicates</strong> exist. For GSE229513, skip calibrated DE <span class="math inline">p</span>-values. Rank genes by <a href="#eq-fs-ss" class="quarto-xref">Equation&nbsp;<span>3.3</span></a> or by the knowledge table, not by a nested-model <span class="math inline">F</span> treated as a <span class="math inline">p</span>-value.</p>
+<p>Use <code>DESeq2</code> in this book only if <strong>independent biological replicates</strong> exist at the level of the contrast (for example, organoids or animals). For omnibus <strong>cell-type</strong> contrasts on single cells without a valid pseudo-bulk design, prefer the <code>MAST</code> hurdle workflow (<a href="#nte-mast-omnibus" class="quarto-xref">Note&nbsp;<span>3.8</span></a>) over <code>DESeq2</code>. For GSE229513, skip calibrated DE <span class="math inline">p</span>-values. Rank genes by <a href="#eq-fs-ss" class="quarto-xref">Equation&nbsp;<span>3.3</span></a> or by the knowledge table, not by a nested-model <span class="math inline">F</span> treated as a <span class="math inline">p</span>-value.</p>
 <p>Bulk HTSeq tables (GSE229386) <strong>do</strong> have three biological replicates per time and Wnt schedule (<a href="01-data-suppinger.html#sec-geo-design" class="quarto-xref"><span>Section 2.1</span></a>). Those replicates support <strong>bulk</strong> DE of treatments, not cell-type GRNs from the scRNA-seq object.</p>
 </div>
 </div>
-</section>
-<section id="what-we-would-actually-run" class="level2" data-number="3.5">
-<h2 data-number="3.5" class="anchored" data-anchor-id="what-we-would-actually-run"><span class="header-section-number">3.5</span> What we would actually run</h2>
-<ol type="1">
-<li><code>SCTransform</code> Pearson residuals under <a href="#eq-fs-v2-offset" class="quarto-xref">Equation&nbsp;<span>3.4</span></a>, separately at 48 h, 72 h and 96 h (<a href="#sec-fs-sct-design" class="quarto-xref"><span>Section 3.2.2</span></a>). Rank by between/within <a href="#eq-fs-ss" class="quarto-xref">Equation&nbsp;<span>3.3</span></a> with equal cell weight, and by the equal-type mean squares <a href="#eq-fs-equal-type" class="quarto-xref">Equation&nbsp;<span>3.5</span></a>. Global cap 500 genes on each ranking; per type, top 50 by the equal-cell ratio.</li>
-<li>Union with <code>data/dictionaries/mouse_gastruloid_signaling_markers.csv</code> for cell types scored in that time slot (drop rows with <code>cell_type_suppinger</code> missing unless a later reference needs them).</li>
-<li>Keep <span class="math inline">|\mathcal{G}_{0}|</span> on the order of a few thousand genes before a GGM. The naive screen above is a tighter, tunable subset.</li>
-<li><strong>No</strong> <code>DESeq2</code> <span class="math inline">p</span>-values on technical sc pseudo-bulks.</li>
-</ol>
-</section>
-<section id="sec-fs-perspective" class="level2" data-number="3.6">
-<h2 data-number="3.6" class="anchored" data-anchor-id="sec-fs-perspective"><span class="header-section-number">3.6</span> Perspectives: differential networks</h2>
+<div id="nte-mast-omnibus" class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note&nbsp;3.8: <span class="emoji" data-emoji="information_source">ℹ️</span> Omnibus cell-type testing with <code>MAST</code>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>When the goal is <strong>which genes differ among annotated cell types on single cells</strong>, but there are no independent biological replicates to feed a pseudo-bulk <code>DESeq2</code> design, the cell-level hurdle model in <code>MAST</code> <span class="citation" data-cites="finakMASTFlexibleStatistical2015">(<a href="#ref-finakMASTFlexibleStatistical2015" role="doc-biblioref">Finak et al. 2015</a>)</span> is the usual alternative. It keeps one row per cell, models dropout and expression on the log-normalised scale, and adjusts for cellular detection rate (<code>cngeneson</code>, the scaled number of genes detected per cell).</p>
+<p>Fit a <strong>full</strong> model with <code>MAST::zlm()</code>: cell type and any nuisance factors (condition, sex, batch, …) as <strong>fixed</strong> effects, plus <code>(1 | sample_id)</code> when true biological replicates exist. Compare to a <strong>reduced</strong> model that drops only the whole <code>cell_type</code> factor, using <code>MAST::lrTest(fit, "cell_type")</code>. That likelihood-ratio test is the omnibus analogue of a multi-level ANOVA: it does <strong>not</strong> enumerate pairwise one-versus-rest contrasts.</p>
+<p>Each gene yields three <span class="math inline">p</span>-values: <strong>discrete</strong> (<code>disc</code>), whether detection probability differs among types; <strong>continuous</strong> (<code>cont</code>), whether positive expression magnitude differs among types; and <strong>hurdle</strong> (<code>hurdle</code>), which combines the two components. For feature shortlists, require both <code>disc</code> and <code>cont</code> to be small (or use the combined hurdle with Benjamini–Hochberg FDR), then keep genes that are detected in a minimal subset of types, not only significant on dropout-driven signal. The omnibus test has <strong>no single log-fold-change direction</strong>; after global LRT and FDR, inspect type means or run selected post-hoc contrasts only for genes that pass the hurdle.</p>
+<p>With a <strong>single</strong> organoid or donor, the estimand is variation <strong>within that specimen</strong>, not a population claim across individuals. That matches GSE229513 for exploratory ranking, but it does not replace the Pearson-residual screen in this chapter when batch and time are confounded.</p>
+</div>
+</div>
+<div class="cell" data-layout-align="default">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>%%{init: {"theme": "sandstone", "flowchart": {"htmlLabels": true}}}%%</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>flowchart TD</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  A["Log-normalised RNA matrix and cell metadata"] --&gt; B["SingleCellAssay; standardise cngeneson"]</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  B --&gt; C["MAST::zlm full model"]</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  C --&gt; D["cell_type plus fixed covariates"]</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  C --&gt; E["(1 | sample_id) when biological replicates exist"]</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  D --&gt; F["MAST::lrTest fit, cell_type"]</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  E --&gt; F</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  F --&gt; G["Reduced model drops cell_type only"]</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  G --&gt; H["Per gene: disc, cont, hurdle LRT"]</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  H --&gt; I["BH FDR on hurdle; check disc and cont"]</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  I --&gt; J["Keep genes detected across a minimal type subset"]</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  J --&gt; K["Post-hoc means or contrasts on significant genes only"]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="fig-fs-mast-omnibus" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-fs-mast-omnibus-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>
+<pre class="mermaid mermaid-js" data-label="fig-fs-mast-omnibus">%%{init: {"theme": "sandstone", "flowchart": {"htmlLabels": true}}}%%
+flowchart TD
+  A["Log-normalised RNA matrix and cell metadata"] --&gt; B["SingleCellAssay; standardise cngeneson"]
+  B --&gt; C["MAST::zlm full model"]
+  C --&gt; D["cell_type plus fixed covariates"]
+  C --&gt; E["(1 | sample_id) when biological replicates exist"]
+  D --&gt; F["MAST::lrTest fit, cell_type"]
+  E --&gt; F
+  F --&gt; G["Reduced model drops cell_type only"]
+  G --&gt; H["Per gene: disc, cont, hurdle LRT"]
+  H --&gt; I["BH FDR on hurdle; check disc and cont"]
+  I --&gt; J["Keep genes detected across a minimal type subset"]
+  J --&gt; K["Post-hoc means or contrasts on significant genes only"]
+</pre>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-fs-mast-omnibus-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.8: MAST omnibus workflow for cell-type differential expression when pseudo-bulk DESeq2 is inappropriate.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<section id="sec-fs-perspective" class="level3" data-number="3.6.1">
+<h3 data-number="3.6.1" class="anchored" data-anchor-id="sec-fs-perspective"><span class="header-section-number">3.6.1</span> Differential networks</h3>
 <p>These methods are <strong>not</strong> in the naive screen. They need graphs, so they nominate extras for <span class="math inline">\mathcal{G}_{0}</span> <strong>after</strong> a first GGM pass. Full algebraic detail of <code>INDEED</code> and D-trace lives in DeCovarT <code>vignettes/supp-S6-feature-selection.qmd</code>. Separation language (directed versus undirected) is in <a href="A1-separation-criteria.html#sec-separation" class="quarto-xref"><span>Section A.1</span></a>.</p>
-<section id="sec-fs-diffnet" class="level3" data-number="3.6.1">
-<h3 data-number="3.6.1" class="anchored" data-anchor-id="sec-fs-diffnet"><span class="header-section-number">3.6.1</span> Comparing supports, or estimating the difference</h3>
 <p>DeCovarT benefits from <strong>rewiring</strong> between populations. A gene that changes neighbourhood in <span class="math inline">\boldsymbol{\Omega}_{j}</span> is a better candidate than a gene that is merely highly variable.</p>
 <p><strong>Fit every <span class="math inline">\boldsymbol{\Omega}_{j}</span>, then compare supports.</strong> Independent glasso / <code>SILGGM</code> fits (<a href="02-grn-graphical-lasso.html#sec-silggm" class="quarto-xref"><span>Section 4.3.2</span></a>) yield per-type edges; the symmetric difference of supports ranks genes by differential connectivity. The difference of two biased estimators is not a debiased estimator of <span class="math inline">\Delta_{j\ell}=\boldsymbol{\Omega}_{j}-\boldsymbol{\Omega}_{\ell}</span>.</p>
 <p><strong>Estimate <span class="math inline">\Delta_{j\ell}</span> directly.</strong> D-trace methods target the difference of precisions without necessarily reconstructing both graphs first. Zhang and Zou <span class="citation" data-cites="zhangSparsePrecisionMatrix2014">(<a href="#ref-zhangSparsePrecisionMatrix2014" role="doc-biblioref">Zhang and Zou 2014</a>)</span> introduced the lasso-penalised D-trace loss for a single sparse precision; the differential-network extension <span class="citation" data-cites="yuanDifferentialNetworkAnalysis2017">(<a href="#ref-yuanDifferentialNetworkAnalysis2017" role="doc-biblioref">Yuan et al. 2017</a>)</span> estimates <span class="math inline">\Delta_{j\ell}</span>. Empirically, D-trace is competitive when the <strong>difference</strong> is sparser than either graph <span class="citation" data-cites="plaksienkoMethodsDifferentialNetwork2025">(<a href="#ref-plaksienkoMethodsDifferentialNetwork2025" role="doc-biblioref">Plaksienko et al. 2025</a>)</span>. It still does <strong>not</strong> produce a pair of SPD precisions. A workable <strong>proposal</strong> is: use D-trace to nominate rewiring genes, then estimate each <span class="math inline">\boldsymbol{\Omega}_{j}</span> on that panel with a method from <a href="02-grn-graphical-lasso.html#sec-grn-top4" class="quarto-xref"><span>Section 4.5</span></a>.</p>
+<p><code>INDEED</code> multiplies a DE <span class="math inline">p</span>-value by a permutation-filtered change in partial correlation <span class="citation" data-cites="zuoINDEEDIntegratedDifferential2016">(<a href="#ref-zuoINDEEDIntegratedDifferential2016" role="doc-biblioref">Zuo et al. 2016</a>)</span>. On this reference the DE <span class="math inline">p</span>-value assumes biological replication (<a href="#nte-pseudoreplication" class="quarto-xref">Note&nbsp;<span>3.7</span></a>), and the permutation null among cells of one gastruloid is a technical null. Use it, if at all, as a ranking heuristic with <span class="math inline">p_{g}^{\mathrm{DE}}</span> replaced by a fold-change or between-type score.</p>
 </section>
-<section id="indeed" class="level3" data-number="3.6.2">
-<h3 data-number="3.6.2" class="anchored" data-anchor-id="indeed"><span class="header-section-number">3.6.2</span> <code>INDEED</code></h3>
-<p><code>INDEED</code> multiplies a DE <span class="math inline">p</span>-value by a permutation-filtered change in partial correlation <span class="citation" data-cites="zuoINDEEDIntegratedDifferential2016">(<a href="#ref-zuoINDEEDIntegratedDifferential2016" role="doc-biblioref">Zuo et al. 2016</a>)</span>. On this reference the DE <span class="math inline">p</span>-value assumes biological replication (<a href="#nte-pseudoreplication" class="quarto-xref">Note&nbsp;<span>3.5</span></a>), and the permutation null among cells of one gastruloid is a technical null. Use it, if at all, as a ranking heuristic with <span class="math inline">p_{g}^{\mathrm{DE}}</span> replaced by a fold-change or between-type score.</p>
-</section>
-<section id="markov-boundaries" class="level3" data-number="3.6.3">
-<h3 data-number="3.6.3" class="anchored" data-anchor-id="markov-boundaries"><span class="header-section-number">3.6.3</span> Markov boundaries</h3>
+<section id="markov-boundaries" class="level3" data-number="3.6.2">
+<h3 data-number="3.6.2" class="anchored" data-anchor-id="markov-boundaries"><span class="header-section-number">3.6.2</span> Markov boundaries</h3>
 <p>Once a GGM exists, seeds (markers, high signal-to-noise genes, D-trace hits) can be grown by undirected neighbours <span class="math inline">\{g':\omega_{gg'}\neq 0\}</span>. On a minimal undirected I-map that neighbour set is the <strong>Markov boundary</strong>, the smallest Markov blanket <span class="citation" data-cites="pearlProbabilisticReasoningIntelligent1988 kollerProbabilisticGraphicalModels2009">(<a href="#ref-pearlProbabilisticReasoningIntelligent1988" role="doc-biblioref">Pearl 1988</a>; <a href="#ref-kollerProbabilisticGraphicalModels2009" role="doc-biblioref">Koller and Friedman 2009</a>)</span>. That is undirected separation, not DAG <span class="math inline">d</span>-separation (<a href="A1-separation-criteria.html#sec-separation" class="quarto-xref"><span>Section A.1</span></a>, <a href="A1-separation-criteria.html#fig-separation" class="quarto-xref">Figure&nbsp;<span>A.1</span></a>).</p>
 
 
@@ -957,8 +1099,17 @@ Choudhary, Saket, and Rahul Satija. 2022. <span>“Comparison and Evaluation of 
 <div id="ref-crowellMuscatDetectsSubpopulationspecific2020" class="csl-entry" role="listitem">
 Crowell, Helena L., Charlotte Soneson, Pierre-Luc Germain, et al. 2020. <span>“Muscat Detects Subpopulation-Specific State Transitions from Multi-Sample Multi-Condition Single-Cell Transcriptomics Data.”</span> <em>Nature Communications</em> 11: 6077. <a href="https://doi.org/10.1038/s41467-020-19894-4">https://doi.org/10.1038/s41467-020-19894-4</a>.
 </div>
+<div id="ref-finakMASTFlexibleStatistical2015" class="csl-entry" role="listitem">
+Finak, Greg, Andrew McDavid, Masanao Yajima, et al. 2015. <span>“<span>MAST</span>: A Flexible Statistical Framework for Assessing Transcriptional Changes and Characterizing Heterogeneity in Single-Cell <span>RNA</span> Sequencing Data.”</span> <em>Genome Biology</em> 16: 278. <a href="https://doi.org/10.1186/s13059-015-0844-5">https://doi.org/10.1186/s13059-015-0844-5</a>.
+</div>
+<div id="ref-freedmanNonstochasticInterpretation1983" class="csl-entry" role="listitem">
+Freedman, David, and Daryl Lane. 1983. <span>“A Nonstochastic Interpretation of Reported Significance Levels.”</span> <em>Journal of Business &amp; Economic Statistics</em> 1 (4): 292–98. <a href="https://doi.org/10.1080/07350015.1983.10509359">https://doi.org/10.1080/07350015.1983.10509359</a>.
+</div>
 <div id="ref-friedmanSparseInverseCovariance2008" class="csl-entry" role="listitem">
 Friedman, Jerome, Trevor Hastie, and Robert Tibshirani. 2008. <span>“Sparse Inverse Covariance Estimation with the Graphical Lasso.”</span> <em>Biostatistics (Oxford, England)</em> 9 (3): 432–41. <a href="https://doi.org/10.1093/biostatistics/kxm045">https://doi.org/10.1093/biostatistics/kxm045</a>.
+</div>
+<div id="ref-gonzalezDelgadoPostclusteringInference2025" class="csl-entry" role="listitem">
+González-Delgado, Javier, Mathis Deronzier, Juan Cortés, and Pierre Neuvial. 2025. <span>“Post-Clustering Inference Under Dependence.”</span> <em>arXiv</em>, ahead of print. <a href="https://doi.org/10.48550/arXiv.2310.11822">https://doi.org/10.48550/arXiv.2310.11822</a>.
 </div>
 <div id="ref-hafemeisterNormalizationVarianceStabilization2019" class="csl-entry" role="listitem">
 Hafemeister, Christoph, and Rahul Satija. 2019. <span>“Normalization and Variance Stabilization of Single-Cell <span class="nocase">RNA-seq</span> Data Using Regularized Negative Binomial Regression.”</span> <em>Genome Biology</em> 20 (1). <a href="https://doi.org/10.1186/s13059-019-1874-1">https://doi.org/10.1186/s13059-019-1874-1</a>.
@@ -992,6 +1143,9 @@ Squair, Jordan W., Matthieu Gautier, Claudia Kathe, et al. 2021. <span>“Confro
 </div>
 <div id="ref-sturmComprehensiveEvaluationTranscriptomebased2019" class="csl-entry" role="listitem">
 Sturm, Gregor, Francesca Finotello, Florent Petitprez, et al. 2019. <span>“Comprehensive Evaluation of Transcriptome-Based Cell-Type Quantification Methods for Immuno-Oncology.”</span> <em>Bioinformatics (Oxford, England)</em> 35. <a href="https://doi.org/10.1093/bioinformatics/btz363">https://doi.org/10.1093/bioinformatics/btz363</a>.
+</div>
+<div id="ref-werftGlmpermPermutation2010" class="csl-entry" role="listitem">
+Werft, Wiebke, and Axel Benner. 2010. <span>“Glmperm: A Permutation of Regressor Residuals Test for Inference in Generalized Linear Models.”</span> <em>The R Journal</em> 2 (1): 12–16. <a href="https://doi.org/10.32614/RJ-2010-007">https://doi.org/10.32614/RJ-2010-007</a>.
 </div>
 <div id="ref-yuanDifferentialNetworkAnalysis2017" class="csl-entry" role="listitem">
 Yuan, Huili, Ruibin Xi, Chong Chen, and Minghua Deng. 2017. <em>Differential <span>Network Analysis</span> via the <span>Lasso Penalized D-Trace Loss</span></em>. arXiv:1511.09188. arXiv. <a href="https://doi.org/10.48550/arXiv.1511.09188">https://doi.org/10.48550/arXiv.1511.09188</a>.
