@@ -606,7 +606,7 @@ Figure&nbsp;6.1: Three core evaluation families for undirected cell-type GGMs. P
 <li><strong>Gene or cell downsampling</strong> as a coverage check. GRETA found that TF and gene <em>sets</em> can look stable while <strong>edges</strong> collapse under downsampling — a warning we should expect for glasso supports as well.</li>
 </ul>
 <p>The three core estimators (<code>huge</code>, <code>SILGGM</code> <code>D-S_GL</code>, <code>PLNnetwork</code>) are <strong>deterministic given the data and the penalty</strong>. We do not report seed-overlap diagnostics for them.</p>
-<p>Biological (multi-organoid) bootstrap is <strong>unavailable</strong>. Reporting a bootstrap interval as if it were between-experiment uncertainty would repeat the pseudoreplication error of <a href="03-feature-selection-naive.html#nte-pseudoreplication" class="quarto-xref">Note&nbsp;<span>3.7</span></a>.</p>
+<p>Biological (multi-organoid) bootstrap is <strong>unavailable</strong>. Reporting a bootstrap interval as if it were between-experiment uncertainty would repeat the pseudoreplication error of <a href="03-feature-selection-naive.html#nte-pseudoreplication" class="quarto-xref">Note&nbsp;<span>3.6</span></a>.</p>
 <p>Observation-model <strong>contamination</strong> (wrong sampling layer, spillover, missing types) is not a GRN-stability experiment. It belongs to the misspecification sweep of <a href="04-sensitivity-misspecification.html#sec-sensitivity" class="quarto-xref"><span>Section 10.1</span></a>.</p>
 <div id="nte-stars" class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
