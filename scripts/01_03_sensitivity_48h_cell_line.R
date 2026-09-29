@@ -3,8 +3,7 @@
 #   scripts/01_03_sensitivity_48h_cell_line.R \
 #   > "logs/01_03_sensitivity_48h_$(date +%F).log" 2>&1 &
 #
-# Refits SCTransform v2 inside each cell line at 48 h, the only
-# bulk-matched slot that contains both B-S and SBR. Reads the slim
+# Refits SCTransform v2 inside each cell line at 48 h. Reads the slim
 # Seurat object written by
 # scripts/01_01_prepare_and_filter_genes_sctransform.R.
 
@@ -15,24 +14,22 @@
 args_all <- commandArgs(trailingOnly = FALSE)
 file_arg <- grep("^--file=", args_all, value = TRUE)
 script_dir <- if (length(file_arg) == 1L) {
-  dirname(normalizePath(sub("^--file=", "", file_arg)))
+  dirname(sub("^--file=", "", file_arg))
 } else {
-  file.path(getwd(), "scripts")
+  "scripts"
 }
-root <- normalizePath(file.path(script_dir, ".."))
-source(file.path(script_dir, "utils_rank_genes_sctransform.R"))
+r_dir <- file.path(script_dir, "..", "R")
+source(file.path(r_dir, "utils_general.R"))
+source(file.path(r_dir, "rank_sctransform_naive.R"))
 
-Sys.setenv(
-  OMP_NUM_THREADS = "8",
-  OPENBLAS_NUM_THREADS = "8",
-  MKL_NUM_THREADS = "8"
-)
-if (requireNamespace("future", quietly = TRUE)) {
-  future::plan("sequential")
-}
+n_genes_global <- 500L
+n_genes_celltype <- 50L
+min_cells <- 20L
+sct_seed <- 1L
 
 slim_path <- file.path(
-  root,
+  script_dir,
+  "..",
   "data",
   "intermediate",
   "suppinger_sct_allowlist_seurat.rds"
@@ -45,11 +42,23 @@ if (!file.exists(slim_path)) {
   )
 }
 
-out_dir <- file.path(root, "output", "naive_marker_selection", "cell_line_48h")
+out_dir <- file.path(
+  script_dir,
+  "..",
+  "output",
+  "naive_marker_selection",
+  "cell_line_48h"
+)
 dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
 
 crosswalk <- utils::read.csv(
-  file.path(root, "data", "dictionaries", "suppinger_celltype_crosswalk.csv"),
+  file.path(
+    script_dir,
+    "..",
+    "data",
+    "dictionaries",
+    "suppinger_celltype_crosswalk.csv"
+  ),
   stringsAsFactors = FALSE,
   fileEncoding = "UTF-8"
 )
@@ -57,6 +66,12 @@ exclude_types <- unique(
   crosswalk$celltypeannotation[!crosswalk$include_in_ranking]
 )
 
+#' Write a list of grobs as a multi-page PDF.
+#'
+#' @param grobs List of grobs.
+#' @param filename File name under `out_dir`.
+#' @param width,height Device size in inches.
+#' @return The path is written by `ggsave`; the value is invisible.
 save_pages <- function(grobs, filename, width, height) {
   pages <- gridExtra::marrangeGrob(
     grobs = grobs,
@@ -91,6 +106,11 @@ if (length(lines) < 2L) {
 # SECTION 2 · Method ----
 # ==========================================================================
 
+#' Rank genes inside one 48 h cell line.
+#'
+#' @param line Batch label (`"B-S"` or `"SBR"`).
+#' @return The list from `rank_genes_sctransform()`, with `time_point`
+#'   overwritten by `line`.
 fit_line <- function(line) {
   message("SCTransform v2 at 48 h, line ", line, " ...")
   cells <- colnames(seu)[as.character(seu$batch) == line]
@@ -100,11 +120,11 @@ fit_line <- function(line) {
     strategy = "both",
     cell_type_col = "celltypeannotation",
     split_by = NULL,
-    n_genes_global = 500L,
-    n_genes_celltype = 50L,
+    n_genes_global = n_genes_global,
+    n_genes_celltype = n_genes_celltype,
     exclude_cell_types = exclude_types,
-    min_cells = 20L,
-    seed = 1L
+    min_cells = min_cells,
+    seed = sct_seed
   )
   ranked$global$time_point <- line
   ranked$per_cell_type$time_point <- line
@@ -129,6 +149,12 @@ utils::write.csv(
   row.names = FALSE
 )
 
+#' Genes flagged `selected` for one cell line (and optional type).
+#'
+#' @param df Rank table with `time_point`, `selected`, `gene`.
+#' @param line Line label stored in `time_point` after the 48 h split.
+#' @param cell_type Optional type filter; ignored when `NULL`.
+#' @return Unique gene symbols.
 selected_genes <- function(df, line, cell_type = NULL) {
   keep <- df$time_point == line & df$selected %in% TRUE
   if (!is.null(cell_type)) {
@@ -194,6 +220,11 @@ utils::write.csv(
   row.names = FALSE
 )
 
+#' Two-set Venn grob for B-S versus SBR gene lists.
+#'
+#' @param set_a,set_b Character vectors of gene symbols.
+#' @param title,subtitle Plot labels.
+#' @return A grob suitable for `save_pages()`.
 venn_page <- function(set_a, set_b, title, subtitle) {
   plot <- ggVennDiagram::ggVennDiagram(
     list(`B-S` = set_a, SBR = set_b),

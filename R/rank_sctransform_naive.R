@@ -1,46 +1,26 @@
-# Rank genes from SCTransform v2 Pearson residuals.
-#
-# The fit is an intercept plus a library-size offset. Cell type and
-# cell line are not covariates. Pass `split_by` (here, time) to fit
-# once within each level, on all retained types together. Do not
-# subset by cell type before the fit: that would absorb the
-# between-type mean the ranking is meant to keep.
-#
-# Caller responsibility: if the count matrix has already been
-# restricted to a gene allow-list, set metadata column `log_umi` to
-# log10 of the full-transcriptome library size. sctransform reuses
-# that column as the v2 offset and otherwise recomputes depth from
-# the genes still in the assay.
-
-# ==========================================================================
-# Helpers ----
-# ==========================================================================
-
-`%||%` <- function(x, y) {
-  if (is.null(x) || length(x) == 0L || all(is.na(x))) y else x
-}
-
-assay_matrix <- function(seu, assay, layer) {
-  got <- tryCatch(
-    SeuratObject::GetAssayData(
-      object = seu,
-      assay = assay,
-      layer = layer
-    ),
-    error = function(e) NULL
-  )
-  if (is.null(got)) {
-    got <- SeuratObject::GetAssayData(
-      object = seu,
-      assay = assay,
-      slot = layer
-    )
-  }
-  got
-}
-
-# Between / within sums of squares on a genes x cells residual matrix.
-# `groups` aligns with columns. This is the ANOVA split in eq-fs-ss.
+#' Cell-weighted between/within sums of squares of Pearson residuals.
+#'
+#' This is the one-way ANOVA split used in the naive-screen chapter:
+#' each barcode has weight one, so a large type dominates `ss_between`
+#' and `ss_within`.
+#'
+#' @param residual Numeric matrix, genes in rows and cells in columns.
+#' @param groups Factor or character vector of group labels, one per
+#'   column of `residual`.
+#' @return A list with `ss_between`, `ss_within` (length `nrow(residual)`),
+#'   and `means` (genes by groups).
+#' @details
+#'   For gene \(g\) and groups \(j=1,\ldots,J\) with sizes \(C_j\),
+#'   \[
+#'   \mathrm{SS}_{\mathrm{between},g}
+#'   =
+#'   \sum_{j} C_j (\bar r_{gj}-\bar r_{g})^{2},
+#'   \qquad
+#'   \mathrm{SS}_{\mathrm{within},g}
+#'   =
+#'   \sum_{j}\sum_{c_j}(r_{c_j g}-\bar r_{gj})^{2}.
+#'   \]
+#' @seealso [anova_ms_equal_type()]
 anova_ss <- function(residual, groups) {
   groups <- droplevels(factor(groups))
   if (nlevels(groups) < 2L) {
@@ -70,10 +50,33 @@ anova_ss <- function(residual, groups) {
   )
 }
 
-# Equal type weight. Each of the J types has weight 1/J, so a large
-# type cannot dominate the rank. `ss_between` and `ss_within` here are
-# mean squares: the variance of the J type means, and the mean of the
-# J within-type variances.
+#' Type-equal between/within mean squares of Pearson residuals.
+#'
+#' Each of the \(J\) types has weight \(1/J\), so a large type cannot
+#' dominate the rank. The returned `ss_between` and `ss_within` are
+#' mean squares, not ANOVA sums of squares.
+#'
+#' @param residual Numeric matrix, genes in rows and cells in columns.
+#' @param groups Factor or character vector of group labels, one per
+#'   column of `residual`.
+#' @return A list with `ss_between` (variance of the \(J\) type means),
+#'   `ss_within` (mean of the \(J\) within-type variances), and `means`.
+#' @details
+#'   Let \(\bar r_{gj}\) be the mean residual of gene \(g\) in type
+#'   \(j\) and \(v_{gj}\) the mean squared deviation inside that type.
+#'   Then
+#'   \[
+#'   \bar r_{g}^{\mathrm{eq}} = J^{-1}\sum_{j}\bar r_{gj},
+#'   \quad
+#'   \mathrm{MS}_{\mathrm{between},g}
+#'   =
+#'   J^{-1}\sum_{j}(\bar r_{gj}-\bar r_{g}^{\mathrm{eq}})^{2},
+#'   \quad
+#'   \mathrm{MS}_{\mathrm{within},g}
+#'   =
+#'   J^{-1}\sum_{j} v_{gj}.
+#'   \]
+#' @seealso [anova_ss()]
 anova_ms_equal_type <- function(residual, groups) {
   groups <- droplevels(factor(groups))
   if (nlevels(groups) < 2L) {
@@ -102,53 +105,42 @@ anova_ms_equal_type <- function(residual, groups) {
   )
 }
 
-rank_from_ss <- function(ss, time_level, n_genes, cell_type = NA_character_) {
-  scored <- rank_ratio(ss$ss_between, ss$ss_within)
-  order_gene <- order(
-    -scored$between_over_within,
-    -ss$ss_between,
-    rownames(ss$means)
-  )
-  rank <- integer(nrow(ss$means))
-  rank[order_gene] <- seq_along(order_gene)
-  data.frame(
-    time_point = time_level,
-    cell_type = cell_type,
-    gene = rownames(ss$means),
-    ss_between = ss$ss_between,
-    ss_within = ss$ss_within,
-    between_over_within = scored$between_over_within,
-    between_over_total = scored$between_over_total,
-    top_cell_type = if (length(cell_type) == 1L && is.na(cell_type)) {
-      top_mean_group(ss$means)
-    } else {
-      cell_type
-    },
-    passes_between_gt_within = ss$ss_between > ss$ss_within,
-    rank = rank,
-    selected = rank <= n_genes & is.finite(scored$between_over_within),
-    stringsAsFactors = FALSE
-  )
-}
-
+#' Between/within ratio and share for a pair of residual scores.
+#'
+#' @param ss_between Numeric vector of between-type scores (sums of
+#'   squares or mean squares).
+#' @param ss_within Numeric vector of within-type scores, same length.
+#' @return A list with `between_over_within` and `between_over_total`.
+#'   Both are `NA` when `ss_between + ss_within` is not positive.
 rank_ratio <- function(ss_between, ss_within) {
   total <- ss_between + ss_within
   keep <- total > 0
   ratio <- rep(NA_real_, length(ss_between))
   share <- rep(NA_real_, length(ss_between))
-  ratio[keep] <- ss_between[keep] / pmax(
-    ss_within[keep],
-    .Machine$double.eps
-  )
+  ratio[keep] <- ss_between[keep] /
+    pmax(
+      ss_within[keep],
+      .Machine$double.eps
+    )
   share[keep] <- ss_between[keep] / total[keep]
   list(between_over_within = ratio, between_over_total = share)
 }
 
+#' Cell type with the largest mean residual for each gene.
+#'
+#' @param means Numeric matrix, genes in rows and types in columns.
+#' @return Character vector of column names, one per gene. Ties take
+#'   the first type in column order.
 top_mean_group <- function(means) {
   idx <- max.col(means, ties.method = "first")
   colnames(means)[idx]
 }
 
+#' Empty rank table with the columns written by the naive screen.
+#'
+#' @return A zero-row data frame with `time_point`, `cell_type`,
+#'   `gene`, the between/within scores, `top_cell_type`,
+#'   `passes_between_gt_within`, `rank`, and `selected`.
 empty_rank_table <- function() {
   data.frame(
     time_point = character(),
@@ -166,6 +158,13 @@ empty_rank_table <- function() {
   )
 }
 
+#' Record the SCTransform v2 arguments used for one time slot.
+#'
+#' @param seu_fit Seurat object after `Seurat::SCTransform()`.
+#' @param time_point Label stored in the model card, typically `"48h"`.
+#' @param n_cells_fit Number of cells passed to the fit.
+#' @return A one-row data frame of flavour, method, offset variable,
+#'   cell counts, residual gene count, and residual clip.
 capture_sct_model <- function(seu_fit, time_point, n_cells_fit) {
   fallback <- data.frame(
     time_point = time_point,
@@ -209,89 +208,93 @@ capture_sct_model <- function(seu_fit, time_point, n_cells_fit) {
   )
 }
 
-# Map dictionary symbols onto mouse symbols in `universe`.
-# Offline: case fold, then org.Mm.eg.db SYMBOL / ALIAS. No biomaRt.
-map_marker_symbols <- function(markers, universe) {
-  if (!requireNamespace("org.Mm.eg.db", quietly = TRUE)) {
-    stop(
-      "Package org.Mm.eg.db is required for offline mouse symbol ",
-      "mapping. Install it with BiocManager::install(\"org.Mm.eg.db\")."
+#' Flag ranked genes that also sit in the signalling-marker panel.
+#'
+#' Adds `in_marker_panel`, `in_union`, and `source`. Marker genes that
+#' were never scored (absent from the residual matrix) are appended
+#' with missing between/within columns.
+#'
+#' @param ranks Rank table from the global or per-type screen.
+#' @param marker_df Marker rows with `time_point`, `gene`, and, when
+#'   `by_cell_type` is `TRUE`, `celltypeannotation`.
+#' @param by_cell_type Logical. Match on type as well as time and gene
+#'   when `TRUE` (per-type table); match on time and gene only when
+#'   `FALSE` (global tables).
+#' @return `ranks` with the three union columns. `source` is
+#'   `"both"`, `"sctransform"`, `"marker"`, or `"screened"`.
+attach_union <- function(ranks, marker_df, by_cell_type) {
+  ranks$in_marker_panel <- FALSE
+  if (by_cell_type) {
+    id_rank <- paste(ranks$time_point, ranks$cell_type, ranks$gene, sep = "\r")
+    id_mark <- paste(
+      marker_df$time_point,
+      marker_df$celltypeannotation,
+      marker_df$gene,
+      sep = "\r"
     )
+    key_df <- unique(marker_df[, c(
+      "time_point",
+      "celltypeannotation",
+      "gene"
+    )])
+  } else {
+    id_rank <- paste(ranks$time_point, ranks$gene, sep = "\r")
+    id_mark <- paste(marker_df$time_point, marker_df$gene, sep = "\r")
+    key_df <- unique(marker_df[, c("time_point", "gene")])
   }
-  if (!requireNamespace("AnnotationDbi", quietly = TRUE)) {
-    stop("Package AnnotationDbi is required for offline mouse symbol mapping.")
+  if (nrow(key_df) > 0L) {
+    ranks$in_marker_panel <- id_rank %in% unique(id_mark)
+    missing_id <- unique(id_mark[!id_mark %in% id_rank])
+    if (length(missing_id) > 0L) {
+      if (by_cell_type) {
+        bits <- strsplit(missing_id, "\r", fixed = TRUE)
+        extra <- data.frame(
+          time_point = vapply(bits, `[`, character(1), 1L),
+          cell_type = vapply(bits, `[`, character(1), 2L),
+          gene = vapply(bits, `[`, character(1), 3L),
+          stringsAsFactors = FALSE
+        )
+      } else {
+        bits <- strsplit(missing_id, "\r", fixed = TRUE)
+        extra <- data.frame(
+          time_point = vapply(bits, `[`, character(1), 1L),
+          cell_type = NA_character_,
+          gene = vapply(bits, `[`, character(1), 2L),
+          stringsAsFactors = FALSE
+        )
+      }
+      extra$ss_between <- NA_real_
+      extra$ss_within <- NA_real_
+      extra$between_over_within <- NA_real_
+      extra$between_over_total <- NA_real_
+      extra$top_cell_type <- extra$cell_type
+      extra$passes_between_gt_within <- NA
+      extra$rank <- NA_integer_
+      extra$selected <- FALSE
+      extra$in_marker_panel <- TRUE
+      ranks <- rbind(ranks, extra[colnames(ranks)])
+    }
   }
-  markers <- unique(as.character(markers))
-  universe <- unique(as.character(universe))
-  upper_hits <- split(universe, toupper(universe))
-  symbols <- AnnotationDbi::keys(
-    org.Mm.eg.db::org.Mm.eg.db,
-    keytype = "SYMBOL"
-  )
-  alias_tbl <- suppressMessages(
-    AnnotationDbi::select(
-      org.Mm.eg.db::org.Mm.eg.db,
-      keys = symbols,
-      columns = "ALIAS",
-      keytype = "SYMBOL"
+  ranks$in_union <- ranks$selected %in% TRUE | ranks$in_marker_panel %in% TRUE
+  ranks$source <- ifelse(
+    ranks$selected %in% TRUE & ranks$in_marker_panel %in% TRUE,
+    "both",
+    ifelse(
+      ranks$selected %in% TRUE,
+      "sctransform",
+      ifelse(ranks$in_marker_panel %in% TRUE, "marker", "screened")
     )
   )
-  alias_tbl <- alias_tbl[
-    !is.na(alias_tbl$ALIAS) & nzchar(alias_tbl$ALIAS),
-    ,
-    drop = FALSE
-  ]
-  alias_upper <- split(alias_tbl$SYMBOL, toupper(alias_tbl$ALIAS))
-  symbol_upper <- split(symbols, toupper(symbols))
-
-  resolve_one <- function(marker) {
-    key <- toupper(marker)
-    in_matrix <- upper_hits[[key]] %||% character()
-    if (length(unique(in_matrix)) == 1L) {
-      return(list(mouse = unique(in_matrix), method = "casefold_universe"))
-    }
-    if (length(unique(in_matrix)) > 1L) {
-      return(list(mouse = NA_character_, method = "ambiguous_universe"))
-    }
-    db_hit <- unique(symbol_upper[[key]] %||% character())
-    in_universe <- intersect(db_hit, universe)
-    if (length(in_universe) == 1L) {
-      return(list(mouse = in_universe, method = "org.Mm.eg.db_symbol"))
-    }
-    if (length(db_hit) == 1L && length(in_universe) == 0L) {
-      return(list(mouse = db_hit, method = "org.Mm.eg.db_symbol_absent"))
-    }
-    alias_hit <- unique(alias_upper[[key]] %||% character())
-    alias_in <- intersect(alias_hit, universe)
-    if (length(alias_in) == 1L) {
-      return(list(mouse = alias_in, method = "org.Mm.eg.db_alias"))
-    }
-    if (length(alias_hit) == 1L && length(alias_in) == 0L) {
-      return(list(
-        mouse = alias_hit,
-        method = "org.Mm.eg.db_alias_absent"
-      ))
-    }
-    if (length(alias_in) > 1L || length(db_hit) > 1L) {
-      return(list(mouse = NA_character_, method = "ambiguous_alias"))
-    }
-    list(mouse = NA_character_, method = "unmapped")
-  }
-
-  resolved <- lapply(markers, resolve_one)
-  data.frame(
-    gene_marker = markers,
-    mouse_symbol = vapply(resolved, function(x) x$mouse, character(1)),
-    map_method = vapply(resolved, function(x) x$method, character(1)),
-    stringsAsFactors = FALSE
-  )
+  ranks
 }
 
-# ==========================================================================
-# Ranker ----
-# ==========================================================================
-
-#' Rank genes by between/within Pearson-residual sums of squares.
+#' Rank genes from one SCTransform v2 fit per split of the object.
+#'
+#' The negative-binomial mean is an intercept plus a library-size
+#' offset. Cell type is not a covariate. After the fit, residuals are
+#' scored twice globally (cell-weighted sums of squares, then
+#' type-equal mean squares) and optionally once per type
+#' (one-versus-rest).
 #'
 #' @param seu Seurat object. RNA `counts` are the UMI table.
 #'   Metadata column `log_umi`, when present, is the v2 offset
@@ -310,7 +313,8 @@ map_marker_symbols <- function(markers, universe) {
 #' @param min_cells Types with fewer cells in a split are dropped
 #'   from the sum-of-squares split only after the fit.
 #' @param seed Passed to `SCTransform(seed.use)`.
-#' @return A list with `global`, `per_cell_type`, and `model`.
+#' @return A list with `global` (cell-weighted), `global_equal_type`
+#'   (type-equal mean squares), `per_cell_type`, and `model`.
 rank_genes_sctransform <- function(
   seu,
   strategy = c("global", "per_cell_type", "both"),
@@ -429,15 +433,56 @@ rank_genes_sctransform <- function(
     }
 
     if (do_global) {
-      global_parts[[level]] <- rank_from_ss(
-        ss = anova_ss(residual, type_fit),
-        time_level = level,
-        n_genes = n_genes_global
+      # Cell-weighted global rank: each barcode has weight one.
+      ss_cell <- anova_ss(residual, type_fit)
+      scored_cell <- rank_ratio(ss_cell$ss_between, ss_cell$ss_within)
+      order_cell <- order(
+        -scored_cell$between_over_within,
+        -ss_cell$ss_between,
+        rownames(ss_cell$means)
       )
-      global_equal_parts[[level]] <- rank_from_ss(
-        ss = anova_ms_equal_type(residual, type_fit),
-        time_level = level,
-        n_genes = n_genes_global
+      rank_cell <- integer(nrow(ss_cell$means))
+      rank_cell[order_cell] <- seq_along(order_cell)
+      global_parts[[level]] <- data.frame(
+        time_point = level,
+        cell_type = NA_character_,
+        gene = rownames(ss_cell$means),
+        ss_between = ss_cell$ss_between,
+        ss_within = ss_cell$ss_within,
+        between_over_within = scored_cell$between_over_within,
+        between_over_total = scored_cell$between_over_total,
+        top_cell_type = top_mean_group(ss_cell$means),
+        passes_between_gt_within = ss_cell$ss_between > ss_cell$ss_within,
+        rank = rank_cell,
+        selected = rank_cell <= n_genes_global &
+          is.finite(scored_cell$between_over_within),
+        stringsAsFactors = FALSE
+      )
+
+      # Type-equal global rank: each scored type has weight 1/J.
+      ss_eq <- anova_ms_equal_type(residual, type_fit)
+      scored_eq <- rank_ratio(ss_eq$ss_between, ss_eq$ss_within)
+      order_eq <- order(
+        -scored_eq$between_over_within,
+        -ss_eq$ss_between,
+        rownames(ss_eq$means)
+      )
+      rank_eq <- integer(nrow(ss_eq$means))
+      rank_eq[order_eq] <- seq_along(order_eq)
+      global_equal_parts[[level]] <- data.frame(
+        time_point = level,
+        cell_type = NA_character_,
+        gene = rownames(ss_eq$means),
+        ss_between = ss_eq$ss_between,
+        ss_within = ss_eq$ss_within,
+        between_over_within = scored_eq$between_over_within,
+        between_over_total = scored_eq$between_over_total,
+        top_cell_type = top_mean_group(ss_eq$means),
+        passes_between_gt_within = ss_eq$ss_between > ss_eq$ss_within,
+        rank = rank_eq,
+        selected = rank_eq <= n_genes_global &
+          is.finite(scored_eq$between_over_within),
+        stringsAsFactors = FALSE
       )
     }
 
@@ -476,17 +521,34 @@ rank_genes_sctransform <- function(
     gc()
   }
 
-  bind <- function(parts) {
-    if (length(parts) == 0L) {
-      return(empty_rank_table())
-    }
-    do.call(rbind, parts)
-  }
-
   list(
-    global = if (do_global) bind(global_parts) else NULL,
-    global_equal_type = if (do_global) bind(global_equal_parts) else NULL,
-    per_cell_type = if (do_type) bind(type_parts) else NULL,
+    global = if (do_global) {
+      if (length(global_parts) == 0L) {
+        empty_rank_table()
+      } else {
+        do.call(rbind, global_parts)
+      }
+    } else {
+      NULL
+    },
+    global_equal_type = if (do_global) {
+      if (length(global_equal_parts) == 0L) {
+        empty_rank_table()
+      } else {
+        do.call(rbind, global_equal_parts)
+      }
+    } else {
+      NULL
+    },
+    per_cell_type = if (do_type) {
+      if (length(type_parts) == 0L) {
+        empty_rank_table()
+      } else {
+        do.call(rbind, type_parts)
+      }
+    } else {
+      NULL
+    },
     model = if (length(model_parts) == 0L) {
       data.frame(
         time_point = character(),

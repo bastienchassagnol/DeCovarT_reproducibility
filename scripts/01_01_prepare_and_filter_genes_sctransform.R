@@ -1,120 +1,78 @@
 # mkdir -p logs
-# nohup Rscript --no-save --no-restore \
+# nohup Rscript --vanilla \
 #   scripts/01_01_prepare_and_filter_genes_sctransform.R \
 #   > "logs/01_01_sctransform_$(date +%F)_naive.log" 2>&1 &
 #
-# If this repository's renv library does not contain Seurat, the
-# project .Rprofile hides the user library. Run with --vanilla so
-# the user library is used:
-#   Rscript --vanilla scripts/01_01_prepare_and_filter_genes_sctransform.R
-#
-# Optional key=value arguments:
-#   seu_path=...  n_genes_global=500  n_genes_celltype=50  min_cells=20
-#
-# The Seurat RDS is the DVC target
-# GastroDeconv2FateMap/data/raw/GSE229513_gastruloidsobject.rds
-# (about 14 GB). Pull it with `dvc pull` in that repository. Do not
-# copy it into a cloud-synced data/raw. GSE229386 is the bulk HTSeq
-# table; this script uses it only to choose the shared times 48 h,
-# 72 h and 96 h.
+# Place GSE229513_gastruloidsobject.rds under data/raw/ (DVC pull in
+# GastroDeconv2FateMap; do not cloud-sync the 14 GB file). GSE229386
+# is the bulk HTSeq table and is not read here.
 
 # ==========================================================================
-# SECTION 0 · Dependencies and paths ----
+# SECTION 0 · Dependencies, hyperparameters, paths ----
 # ==========================================================================
 
 args_all <- commandArgs(trailingOnly = FALSE)
 file_arg <- grep("^--file=", args_all, value = TRUE)
 script_dir <- if (length(file_arg) == 1L) {
-  dirname(normalizePath(sub("^--file=", "", file_arg)))
+  dirname(sub("^--file=", "", file_arg))
 } else {
-  file.path(getwd(), "scripts")
+  "scripts"
 }
-root <- normalizePath(file.path(script_dir, ".."))
-source(file.path(script_dir, "utils_rank_genes_sctransform.R"))
+r_dir <- file.path(script_dir, "..", "R")
+source(file.path(r_dir, "utils_general.R"))
+source(file.path(r_dir, "rank_sctransform_naive.R"))
+source(file.path(r_dir, "map_marker_symbols.R"))
 
-Sys.setenv(
-  OMP_NUM_THREADS = "8",
-  OPENBLAS_NUM_THREADS = "8",
-  MKL_NUM_THREADS = "8"
+n_genes_global <- 500L
+n_genes_celltype <- 50L
+min_cells <- 20L
+sct_seed <- 1L
+time_levels <- c("48h", "72h", "96h")
+cell_type_col <- "celltypeannotation"
+
+seu_path <- file.path(
+  script_dir,
+  "..",
+  "data",
+  "raw",
+  "GSE229513_gastruloidsobject.rds"
 )
-if (requireNamespace("future", quietly = TRUE)) {
-  future::plan("sequential")
-}
-
-parse_kv_args <- function(defaults) {
-  out <- defaults
-  for (arg in commandArgs(trailingOnly = TRUE)) {
-    parts <- strsplit(arg, "=", fixed = TRUE)[[1]]
-    if (length(parts) != 2L) {
-      stop("Expected key=value arguments, received ", arg, ".")
-    }
-    key <- parts[[1]]
-    if (!key %in% names(out)) {
-      stop("Unknown argument ", key, ".")
-    }
-    out[[key]] <- parts[[2]]
-  }
-  out
-}
-
-opts <- parse_kv_args(list(
-  seu_path = "",
-  n_genes_global = "500",
-  n_genes_celltype = "50",
-  min_cells = "20"
-))
-n_genes_global <- as.integer(opts$n_genes_global)
-n_genes_celltype <- as.integer(opts$n_genes_celltype)
-min_cells <- as.integer(opts$min_cells)
-
-read_dict <- function(name) {
-  path <- file.path(root, "data", "dictionaries", name)
-  if (!file.exists(path)) {
-    stop("Missing dictionary ", path, ".")
-  }
-  utils::read.csv(path, stringsAsFactors = FALSE, fileEncoding = "UTF-8")
-}
-
-write_table <- function(x, name) {
-  utils::write.csv(
-    x,
-    file = file.path(table_dir, name),
-    row.names = FALSE,
-    fileEncoding = "UTF-8"
-  )
-}
-
-table_dir <- file.path(root, "output", "naive_marker_selection", "tables")
+table_dir <- file.path(
+  script_dir,
+  "..",
+  "output",
+  "naive_marker_selection",
+  "tables"
+)
+slim_path <- file.path(
+  script_dir,
+  "..",
+  "data",
+  "intermediate",
+  "suppinger_sct_allowlist_seurat.rds"
+)
+result_dir <- file.path(
+  script_dir,
+  "..",
+  "results",
+  "naive_marker_selection"
+)
+dict_dir <- file.path(script_dir, "..", "data", "dictionaries")
 dir.create(table_dir, recursive = TRUE, showWarnings = FALSE)
+dir.create(dirname(slim_path), recursive = TRUE, showWarnings = FALSE)
+dir.create(result_dir, recursive = TRUE, showWarnings = FALSE)
 
 # ==========================================================================
 # SECTION 1 · Load counts, annotate, keep bulk-matched times ----
 # ==========================================================================
 
-candidates <- c(
-  opts$seu_path,
-  file.path(root, "data", "raw", "GSE229513_gastruloidsobject.rds"),
-  file.path(
-    root,
-    "..",
-    "GastroDeconv2FateMap",
-    "data",
-    "raw",
-    "GSE229513_gastruloidsobject.rds"
-  ),
-  paste0(
-    "/mnt/DATA_11TB/projects/dtoo_project/",
-    "GastroDeconv2FateMap/data/raw/",
-    "GSE229513_gastruloidsobject.rds"
-  )
-)
-candidates <- candidates[nzchar(candidates)]
-seu_path <- candidates[file.exists(candidates)][1]
-if (is.na(seu_path) || !nzchar(seu_path)) {
+if (!file.exists(seu_path)) {
   stop(
-    "GSE229513_gastruloidsobject.rds was not found. ",
-    "From GastroDeconv2FateMap run: ",
-    "dvc pull data/raw/GSE229513_gastruloidsobject.rds.dvc"
+    "Missing ",
+    seu_path,
+    ". Download GSE229513_gastruloidsobject.rds into data/raw/ ",
+    "(from GastroDeconv2FateMap: dvc pull ",
+    "data/raw/GSE229513_gastruloidsobject.rds.dvc)."
   )
 }
 message("Reading ", seu_path)
@@ -126,13 +84,6 @@ sct_genes <- intersect(sct_genes, rownames(counts))
 meta <- seu@meta.data
 rm(seu)
 gc()
-
-if (!all(c("timepoints", "batch", "celltypeannotation") %in% colnames(meta))) {
-  stop(
-    "Seurat metadata must contain timepoints, batch and ",
-    "celltypeannotation."
-  )
-}
 
 hours <- as.integer(gsub("[^0-9]", "", as.character(meta$timepoints)))
 meta$time_point <- ifelse(
@@ -155,10 +106,26 @@ message(
   length(sct_genes)
 )
 
-batch_dict <- read_dict("suppinger_batch_shapes.csv")
-colour_dict <- read_dict("suppinger_celltype_colours.csv")
-crosswalk <- read_dict("suppinger_celltype_crosswalk.csv")
-markers <- read_dict("mouse_gastruloid_signaling_markers.csv")
+batch_dict <- utils::read.csv(
+  file.path(dict_dir, "suppinger_batch_shapes.csv"),
+  stringsAsFactors = FALSE,
+  fileEncoding = "UTF-8"
+)
+colour_dict <- utils::read.csv(
+  file.path(dict_dir, "suppinger_celltype_colours.csv"),
+  stringsAsFactors = FALSE,
+  fileEncoding = "UTF-8"
+)
+crosswalk <- utils::read.csv(
+  file.path(dict_dir, "suppinger_celltype_crosswalk.csv"),
+  stringsAsFactors = FALSE,
+  fileEncoding = "UTF-8"
+)
+markers <- utils::read.csv(
+  file.path(dict_dir, "mouse_gastruloid_signaling_markers.csv"),
+  stringsAsFactors = FALSE,
+  fileEncoding = "UTF-8"
+)
 
 meta$batch_raw <- as.character(meta$batch)
 recoded <- batch_dict$batch[match(meta$batch_raw, batch_dict$batch_raw)]
@@ -183,13 +150,6 @@ if (length(missing_types) > 0L || length(missing_cross) > 0L) {
   )
 }
 
-batch_by_time <- as.data.frame(
-  table(time_point = meta$time_point, batch = meta$batch),
-  stringsAsFactors = FALSE,
-  responseName = "n_cells"
-)
-write_table(batch_by_time, "batch_by_time.csv")
-
 exclude_types <- unique(
   crosswalk$celltypeannotation[!crosswalk$include_in_ranking]
 )
@@ -202,7 +162,7 @@ message("Gene-wise mean log1p CPM for the ridge plots ...")
 lib_named <- lib_size
 names(lib_named) <- colnames(counts)
 mean_parts <- list()
-for (time_level in c("48h", "72h", "96h")) {
+for (time_level in time_levels) {
   cells_tp <- colnames(counts)[meta$time_point == time_level]
   types_tp <- unique(as.character(meta[cells_tp, "celltypeannotation"]))
   for (type_name in types_tp) {
@@ -219,9 +179,10 @@ for (time_level in c("48h", "72h", "96h")) {
       " cells)"
     )
     scaled <- counts[, cells_ct, drop = FALSE]
-    scaled <- scaled %*% Matrix::Diagonal(
-      x = 10000 / lib_named[cells_ct]
-    )
+    scaled <- scaled %*%
+      Matrix::Diagonal(
+        x = 10000 / lib_named[cells_ct]
+      )
     scaled@x <- log1p(scaled@x)
     mean_parts[[paste(time_level, type_name)]] <- data.frame(
       time_point = time_level,
@@ -235,7 +196,12 @@ for (time_level in c("48h", "72h", "96h")) {
   }
 }
 gene_means <- do.call(rbind, mean_parts)
-write_table(gene_means, "gene_mean_log_cpm.csv")
+utils::write.csv(
+  gene_means,
+  file = file.path(table_dir, "gene_mean_log_cpm.csv"),
+  row.names = FALSE,
+  fileEncoding = "UTF-8"
+)
 rm(gene_means, mean_parts)
 gc()
 
@@ -245,7 +211,12 @@ symbol_map <- map_marker_symbols(
 )
 symbol_map$in_rna <- symbol_map$mouse_symbol %in% rownames(counts)
 symbol_map$in_sct <- symbol_map$mouse_symbol %in% sct_genes
-write_table(symbol_map, "marker_symbol_map.csv")
+utils::write.csv(
+  symbol_map,
+  file = file.path(table_dir, "marker_symbol_map.csv"),
+  row.names = FALSE,
+  fileEncoding = "UTF-8"
+)
 message("Marker symbol map:")
 print(symbol_map[, c("gene_marker", "mouse_symbol", "map_method")])
 
@@ -259,7 +230,12 @@ venn_sets <- rbind(
   data.frame(set = "sct_prefilter", gene = sct_genes),
   data.frame(set = "markers", gene = unique(marker_symbol))
 )
-write_table(venn_sets, "venn_gene_sets.csv")
+utils::write.csv(
+  venn_sets,
+  file = file.path(table_dir, "venn_gene_sets.csv"),
+  row.names = FALSE,
+  fileEncoding = "UTF-8"
+)
 
 # ==========================================================================
 # SECTION 3 · SCTransform v2 ranks and marker union ----
@@ -282,32 +258,19 @@ seu_sct$log_umi <- meta[colnames(seu_sct), "log_umi"]
 rm(counts_sct)
 gc()
 
-# Slim object for the 48 h cell-line sensitivity, which refits v2
-# inside each line and does not need the 14 GB GEO file.
-dir.create(file.path(root, "data", "intermediate"), recursive = TRUE)
-saveRDS(
-  seu_sct,
-  file = file.path(
-    root,
-    "data",
-    "intermediate",
-    "suppinger_sct_allowlist_seurat.rds"
-  )
-)
+saveRDS(seu_sct, file = slim_path)
 
 ranked <- rank_genes_sctransform(
   seu = seu_sct,
   strategy = "both",
-  cell_type_col = "celltypeannotation",
+  cell_type_col = cell_type_col,
   split_by = "time_point",
   n_genes_global = n_genes_global,
   n_genes_celltype = n_genes_celltype,
   exclude_cell_types = exclude_types,
   min_cells = min_cells,
-  seed = 1L
+  seed = sct_seed
 )
-rm(seu_sct)
-gc()
 
 marker_links <- merge(
   crosswalk[crosswalk$use_markers, c("celltypeannotation", "cell_type_excel")],
@@ -333,72 +296,6 @@ marker_at_time <- merge(
 )
 marker_at_time$gene <- marker_at_time$mouse_symbol
 
-attach_union <- function(ranks, marker_df, by_cell_type) {
-  ranks$in_marker_panel <- FALSE
-  if (by_cell_type) {
-    id_rank <- paste(ranks$time_point, ranks$cell_type, ranks$gene, sep = "\r")
-    id_mark <- paste(
-      marker_df$time_point,
-      marker_df$celltypeannotation,
-      marker_df$gene,
-      sep = "\r"
-    )
-    key_df <- unique(marker_df[, c(
-      "time_point",
-      "celltypeannotation",
-      "gene"
-    )])
-  } else {
-    id_rank <- paste(ranks$time_point, ranks$gene, sep = "\r")
-    id_mark <- paste(marker_df$time_point, marker_df$gene, sep = "\r")
-    key_df <- unique(marker_df[, c("time_point", "gene")])
-  }
-  if (nrow(key_df) > 0L) {
-    ranks$in_marker_panel <- id_rank %in% unique(id_mark)
-    missing_id <- unique(id_mark[!id_mark %in% id_rank])
-    if (length(missing_id) > 0L) {
-      if (by_cell_type) {
-        bits <- strsplit(missing_id, "\r", fixed = TRUE)
-        extra <- data.frame(
-          time_point = vapply(bits, `[`, character(1), 1L),
-          cell_type = vapply(bits, `[`, character(1), 2L),
-          gene = vapply(bits, `[`, character(1), 3L),
-          stringsAsFactors = FALSE
-        )
-      } else {
-        bits <- strsplit(missing_id, "\r", fixed = TRUE)
-        extra <- data.frame(
-          time_point = vapply(bits, `[`, character(1), 1L),
-          cell_type = NA_character_,
-          gene = vapply(bits, `[`, character(1), 2L),
-          stringsAsFactors = FALSE
-        )
-      }
-      extra$ss_between <- NA_real_
-      extra$ss_within <- NA_real_
-      extra$between_over_within <- NA_real_
-      extra$between_over_total <- NA_real_
-      extra$top_cell_type <- extra$cell_type
-      extra$passes_between_gt_within <- NA
-      extra$rank <- NA_integer_
-      extra$selected <- FALSE
-      extra$in_marker_panel <- TRUE
-      ranks <- rbind(ranks, extra[colnames(ranks)])
-    }
-  }
-  ranks$in_union <- ranks$selected %in% TRUE | ranks$in_marker_panel %in% TRUE
-  ranks$source <- ifelse(
-    ranks$selected %in% TRUE & ranks$in_marker_panel %in% TRUE,
-    "both",
-    ifelse(
-      ranks$selected %in% TRUE,
-      "sctransform",
-      ifelse(ranks$in_marker_panel %in% TRUE, "marker", "screened")
-    )
-  )
-  ranks
-}
-
 ranked$global <- attach_union(
   ranks = ranked$global,
   marker_df = marker_at_time,
@@ -415,10 +312,30 @@ ranked$per_cell_type <- attach_union(
   by_cell_type = TRUE
 )
 
-write_table(ranked$global, "ranks_global.csv")
-write_table(ranked$global_equal_type, "ranks_global_equal_type.csv")
-write_table(ranked$per_cell_type, "ranks_per_cell_type.csv")
-write_table(ranked$model, "model_card.csv")
+utils::write.csv(
+  ranked$global,
+  file = file.path(table_dir, "ranks_global.csv"),
+  row.names = FALSE,
+  fileEncoding = "UTF-8"
+)
+utils::write.csv(
+  ranked$global_equal_type,
+  file = file.path(table_dir, "ranks_global_equal_type.csv"),
+  row.names = FALSE,
+  fileEncoding = "UTF-8"
+)
+utils::write.csv(
+  ranked$per_cell_type,
+  file = file.path(table_dir, "ranks_per_cell_type.csv"),
+  row.names = FALSE,
+  fileEncoding = "UTF-8"
+)
+utils::write.csv(
+  ranked$model,
+  file = file.path(table_dir, "model_card.csv"),
+  row.names = FALSE,
+  fileEncoding = "UTF-8"
+)
 
 cell_counts <- as.data.frame(
   table(
@@ -442,8 +359,15 @@ cell_counts <- merge(
   all.x = TRUE
 )
 cell_counts$n_genes_union[is.na(cell_counts$n_genes_union)] <- 0L
-cell_counts <- cell_counts[order(cell_counts$time_point, cell_counts$cell_type), ]
-write_table(cell_counts, "cell_counts.csv")
+cell_counts <- cell_counts[
+  order(cell_counts$time_point, cell_counts$cell_type),
+]
+utils::write.csv(
+  cell_counts,
+  file = file.path(table_dir, "cell_counts.csv"),
+  row.names = FALSE,
+  fileEncoding = "UTF-8"
+)
 
 writeLines(
   c(
@@ -468,4 +392,52 @@ writeLines(
   con = file.path(table_dir, "session_info.txt")
 )
 
+# ==========================================================================
+# SECTION 4 · Equal-type top 500 raw-count Seurat objects ----
+# ==========================================================================
+
+rna_counts <- assay_matrix(seu_sct, "RNA", "counts")
+objects <- vector("list", length(time_levels))
+names(objects) <- time_levels
+eq <- ranked$global_equal_type
+keep_export <- !as.character(seu_sct$celltypeannotation) %in% exclude_types
+
+for (time_level in time_levels) {
+  genes <- unique(eq$gene[eq$time_point == time_level & eq$selected %in% TRUE])
+  if (length(genes) != n_genes_global) {
+    stop(
+      "Expected ",
+      n_genes_global,
+      " selected genes at ",
+      time_level,
+      ", found ",
+      length(genes),
+      "."
+    )
+  }
+  cells <- colnames(seu_sct)[
+    seu_sct$time_point == time_level & keep_export
+  ]
+  objects[[time_level]] <- Seurat::CreateSeuratObject(
+    counts = rna_counts[genes, cells, drop = FALSE],
+    meta.data = seu_sct@meta.data[cells, , drop = FALSE],
+    min.cells = 0L,
+    min.features = 0L,
+    project = paste0("equal_type_top500_", time_level)
+  )
+  message(
+    time_level,
+    ": ",
+    nrow(objects[[time_level]]),
+    " genes x ",
+    ncol(objects[[time_level]]),
+    " cells"
+  )
+}
+out_rds <- file.path(result_dir, "equal_type_top500_by_time.rds")
+saveRDS(objects, out_rds)
+rm(seu_sct, rna_counts, objects)
+gc()
+
 message("Wrote tables under ", table_dir)
+message("Wrote ", out_rds)

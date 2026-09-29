@@ -737,12 +737,9 @@ tab <- tinytable::tt(
     "(artefact, or fewer than the minimum number of cells)."
   )
 )
-html_path <- file.path(out_dir, "strategy2_celltype_counts.html")
-tinytable::save_tt(tab, output = html_path, overwrite = TRUE)
 utils::write.csv(
   show_df,
   file = file.path(out_dir, "strategy2_celltype_counts.csv"),
   row.names = FALSE,
   fileEncoding = "UTF-8"
 )
-message("Wrote strategy2_celltype_counts.html")

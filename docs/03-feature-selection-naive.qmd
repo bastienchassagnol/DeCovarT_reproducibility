@@ -361,18 +361,6 @@ and exiting naïve pluripotency share 29 and 30 of their top 50.
 Naïve pluripotency is scored only in SBR: B-S has fewer than 20 cells
 of that type.
 
-::: {#nte-hvg-not-gaussian .callout-note}
-## :information_source: HVGs are not a GGM input
-
-Pearson residuals are closer to homoscedastic than raw UMI counts,
-which is why they are popular before PCA. They are still a **nonlinear
-residualisation**. Feeding them indiscriminately into `SILGGM` silently
-changes the estimand of $\boldsymbol{\Omega}_{j}$ away from the latent
-Gaussian that DeCovarT wants at the **population** level. If a Gaussian
-GGM is used, prefer a copula / nonparanormal map on the same gene set
-(@sec-silggm), or better a Poisson-lognormal latent Gaussian
-(@sec-pln).
-:::
 
 ## Marker genes {#sec-fs-markers}
 
@@ -402,23 +390,105 @@ draw of 19). The four markers absent from the allow-list are
 *Myod1*, *Pax6*, *Sox1* and *Tfap2a*. They are drawn on
 `venn_markers_vs_counts.pdf`.
 
-## What we would actually run
+## Equal-type rank table {#sec-fs-equal-type-table}
 
-1.  `SCTransform` Pearson residuals under @eq-fs-v2-offset, separately
-    at 48 h, 72 h and 96 h (@sec-fs-sct-design). Rank by between/within
-    @eq-fs-ss with equal cell weight, and by the equal-type mean
-    squares @eq-fs-equal-type. Global cap 500 genes on each ranking;
-    per type, top 50 by the equal-cell ratio.
-2.  Union with
-    `data/dictionaries/mouse_gastruloid_signaling_markers.csv`
-    for cell types scored in that time slot (drop rows with
-    `cell_type_suppinger` missing unless a later reference needs them).
-3.  Keep $|\mathcal{G}_{0}|$ on the order of a few thousand genes before
-    a GGM. The naive screen above is a tighter, tunable subset.
-4.  **No** `DESeq2` $p$-values on technical sc pseudo-bulks; see
-    @sec-fs-deg for `MAST` when an omnibus cell-type test is needed.
-    For a calibrated gene threshold instead of a fixed rank cap, see
-    @sec-fs-permutation.
+`scripts/01_01_prepare_and_filter_genes_sctransform.R` writes
+`output/naive_marker_selection/tables/ranks_global_equal_type.csv`
+after one SCTransform v2 fit per bulk-matched time. Each row is one
+gene at 48 h, 72 h or 96 h. The residual matrix is split by labelled
+type in two ways that share column names but not definitions
+(@tbl-fs-equal-type-columns).
+
+The **type-equal** scores in this file are the unweighted mean squares
+in @eq-fs-equal-type: each of the \(J\) scored types has weight
+\(1/J\). Genes are ordered by
+\(\mathrm{MS}_{\mathrm{between}}/\mathrm{MS}_{\mathrm{within}}\);
+`selected` keeps the top 500 finite ratios in that slot. The
+**cell-weighted** analogue lives in `ranks_global.csv` and uses
+@eq-fs-ss, where each barcode has weight one. We omit `cell_type`
+from @tbl-fs-equal-type-columns: it is unused in both global tables
+because the contrast is all scored types jointly. The type with the
+largest mean residual is `top_cell_type`.
+`passes_between_gt_within` is
+\(\mathrm{MS}_{\mathrm{between}}>\mathrm{MS}_{\mathrm{within}}\)
+(equivalently a residual \(R^{2}\) above one half). It is stored and
+not used as a gate.
+
+```{r}
+#| label: tbl-fs-equal-type-columns
+#| tbl-cap: "Columns of the type-equal global rank table, grouped by role. The middle block is what `ranks_global_equal_type.csv` stores. The cell-weighted block is the same names in `ranks_global.csv`. `cell_type` is omitted because it is unused in both global files."
+#| echo: false
+codebook <- data.frame(
+  Column = c(
+    "time_point",
+    "gene",
+    "top_cell_type",
+    "ss_between",
+    "ss_within",
+    "between_over_within",
+    "between_over_total",
+    "passes_between_gt_within",
+    "ss_between",
+    "ss_within",
+    "between_over_within",
+    "between_over_total",
+    "passes_between_gt_within",
+    "rank",
+    "selected",
+    "in_marker_panel",
+    "in_union",
+    "source"
+  ),
+  File = c(
+    rep("both global tables", 3L),
+    rep("ranks_global_equal_type.csv", 5L),
+    rep("ranks_global.csv", 5L),
+    rep("both global tables", 5L)
+  ),
+  Meaning = c(
+    "Bulk-matched slot of the v2 fit (48h, 72h, 96h).",
+    "Mouse symbol on the author SCT allow-list.",
+    "Type with the largest mean Pearson residual.",
+    paste(
+      "Unweighted variance of the J type means",
+      "(type-equal MS_between)."
+    ),
+    paste(
+      "Mean of the J within-type residual variances",
+      "(type-equal MS_within)."
+    ),
+    "MS_between / MS_within; ranking score.",
+    "MS_between / (MS_between + MS_within).",
+    "TRUE when MS_between > MS_within (not a selection gate).",
+    paste(
+      "Cell-weighted between-type sum of squares;",
+      "each barcode has weight one."
+    ),
+    "Cell-weighted within-type sum of squares.",
+    "SS_between / SS_within; ranking score in ranks_global.csv.",
+    "SS_between / (SS_between + SS_within).",
+    "TRUE when SS_between > SS_within (not a selection gate).",
+    "Order by between_over_within, then ss_between, then gene name.",
+    "TRUE for the top 500 finite ratios in that slot.",
+    "Signalling-dictionary marker for a type scored in that slot.",
+    "selected or in_marker_panel.",
+    paste(
+      "sctransform (top 500 only), marker (panel only),",
+      "both, or screened (allow-list, neither)."
+    )
+  ),
+  stringsAsFactors = FALSE
+)
+tinytable::tt(codebook, width = 1) |>
+  tinytable::group_tt(
+    i = list(
+      "Identifiers" = 1,
+      "Unweighted type-equal mean squares" = 4,
+      "Cell-weighted sums of squares" = 9,
+      "Ranking and marker union" = 14
+    )
+  )
+```
 
 ## Permutation calibration of between-type signal {#sec-fs-permutation}
 
@@ -515,10 +585,6 @@ flowchart TD
   D --> J["Fixed alpha or FDR on analytic p-values"]
 ```
 
-This chapter does **not** run that permutation pipeline on GSE229513;
-it records the design choice. When implemented, use the **identical**
-statistic in every replicate and document whether labels are permuted
-globally or within strata.
 
 ::: {#nte-permutation-circularity .callout-warning}
 ## :warning: Double dipping and post-clustering inference
