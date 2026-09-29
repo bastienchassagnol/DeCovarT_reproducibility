@@ -3,22 +3,16 @@
 #   scripts/01_01_prepare_and_filter_genes_sctransform.R \
 #   > "logs/01_01_sctransform_$(date +%F)_naive.log" 2>&1 &
 #
-# Place GSE229513_gastruloidsobject.rds under data/raw/ (DVC pull in
-# GastroDeconv2FateMap; do not cloud-sync the 14 GB file). GSE229386
-# is the bulk HTSeq table and is not read here.
+# Place GSE229513_gastruloidsobject.rds under data/raw/
+# (dvc pull data/raw/GSE229513_gastruloidsobject.rds.dvc).
+# GSE229386 is the bulk HTSeq table and is not read here.
 
 # ==========================================================================
 # SECTION 0 · Dependencies, hyperparameters, paths ----
 # ==========================================================================
 
-args_all <- commandArgs(trailingOnly = FALSE)
-file_arg <- grep("^--file=", args_all, value = TRUE)
-script_dir <- if (length(file_arg) == 1L) {
-  dirname(sub("^--file=", "", file_arg))
-} else {
-  "scripts"
-}
-r_dir <- file.path(script_dir, "..", "R")
+root <- getwd()
+r_dir <- file.path(root, "R")
 source(file.path(r_dir, "utils_general.R"))
 source(file.path(r_dir, "rank_sctransform_naive.R"))
 source(file.path(r_dir, "map_marker_symbols.R"))
@@ -30,34 +24,16 @@ sct_seed <- 1L
 time_levels <- c("48h", "72h", "96h")
 cell_type_col <- "celltypeannotation"
 
-seu_path <- file.path(
-  script_dir,
-  "..",
-  "data",
-  "raw",
-  "GSE229513_gastruloidsobject.rds"
-)
-table_dir <- file.path(
-  script_dir,
-  "..",
-  "output",
-  "naive_marker_selection",
-  "tables"
-)
+seu_path <- file.path(root, "data", "raw", "GSE229513_gastruloidsobject.rds")
+table_dir <- file.path(root, "output", "naive_marker_selection", "tables")
 slim_path <- file.path(
-  script_dir,
-  "..",
+  root,
   "data",
   "intermediate",
   "suppinger_sct_allowlist_seurat.rds"
 )
-result_dir <- file.path(
-  script_dir,
-  "..",
-  "results",
-  "naive_marker_selection"
-)
-dict_dir <- file.path(script_dir, "..", "data", "dictionaries")
+result_dir <- file.path(root, "data", "intermediate")
+dict_dir <- file.path(root, "data", "dictionaries")
 dir.create(table_dir, recursive = TRUE, showWarnings = FALSE)
 dir.create(dirname(slim_path), recursive = TRUE, showWarnings = FALSE)
 dir.create(result_dir, recursive = TRUE, showWarnings = FALSE)
@@ -70,9 +46,8 @@ if (!file.exists(seu_path)) {
   stop(
     "Missing ",
     seu_path,
-    ". Download GSE229513_gastruloidsobject.rds into data/raw/ ",
-    "(from GastroDeconv2FateMap: dvc pull ",
-    "data/raw/GSE229513_gastruloidsobject.rds.dvc)."
+    ". From the repository root run: dvc pull ",
+    "data/raw/GSE229513_gastruloidsobject.rds.dvc."
   )
 }
 message("Reading ", seu_path)

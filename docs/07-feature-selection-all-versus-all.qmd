@@ -70,7 +70,7 @@ metric on $(\boldsymbol{\mu}_{j},\boldsymbol{\Sigma}_{j})$ — belong on the sam
 Pareto front. They use **both** means and covariances, which
 `AutoGeneS` correlation / centroid objectives do not.
 
-Differential-network genes (@sec-fs-diffnet) may be injected into
+Differential-network genes (@sec-fs-perspective) may be injected into
 $\mathcal{G}_{0}$ before NSGA-II; they are candidates, not the panel.
 
 ::: {#nte-pareto-proposal .callout-note}

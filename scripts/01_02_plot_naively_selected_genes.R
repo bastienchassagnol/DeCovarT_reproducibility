@@ -11,14 +11,7 @@
 # SECTION 0 · Dependencies and paths ----
 # ==========================================================================
 
-args_all <- commandArgs(trailingOnly = FALSE)
-file_arg <- grep("^--file=", args_all, value = TRUE)
-script_dir <- if (length(file_arg) == 1L) {
-  dirname(normalizePath(sub("^--file=", "", file_arg)))
-} else {
-  file.path(getwd(), "scripts")
-}
-root <- normalizePath(file.path(script_dir, ".."))
+root <- getwd()
 out_dir <- file.path(root, "output", "naive_marker_selection")
 table_dir <- file.path(out_dir, "tables")
 dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)

@@ -10,10 +10,10 @@ Paper: Suppinger et al., Cell Stem Cell 2023.
 DOI: https://doi.org/10.1016/j.stem.2023.04.018
 GEO series: GSE229513 (single-cell), GSE229386 (bulk).
 
-The single-cell Seurat object is tracked with DVC in the sibling
-repository `GastroDeconv2FateMap`
-(`data/raw/GSE229513_gastruloidsobject.rds.dvc`, remote
-`mmg_cluster`). From that repository:
+The single-cell Seurat object is tracked with DVC in this repository
+(`data/raw/GSE229513_gastruloidsobject.rds.dvc`). The same pointer
+originates from the sibling repository `GastroDeconv2FateMap` (remote
+`mmg_cluster`). From **this** repository root:
 
 ```bash
 dvc pull data/raw/GSE229513_gastruloidsobject.rds.dvc

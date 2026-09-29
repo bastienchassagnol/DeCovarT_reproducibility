@@ -178,6 +178,67 @@ then chosen.
 - whether the diagonal is penalised (default in this design: no);
 - the gene panel $\mathcal{G}_{0}$ and the type-time subset.
 
+#### Choosing $\lambda$ {#sec-huge-lambda}
+
+All three core estimators share the same **endpoints**, then branch on
+what the path is for.
+
+```{mermaid}
+%%| echo: false
+%%| label: fig-lambda-strategies
+%%| fig-cap: "Penalty-path strategies. The endpoints are shared. Only the safeguarded EBIC interval search is implemented; TAV and global-local shrinkage remain alternatives."
+%%{init: {"theme": "sandstone"}}%%
+flowchart TD
+  S["Sample covariance S"] --> Lmax["lambda_max = max off-diagonal |S_ij|"]
+  N["n cells, p genes"] --> Lmin["lambda_min of order C sqrt(log p / n)"]
+  Lmax --> Branch{"Objective"}
+  Lmin --> Branch
+  Branch -->|"minimise EBIC"| EBIC["Safeguarded log-interval search"]
+  Branch -->|"recover the support"| TAV["TAV / thAV, one line search"]
+  Branch -->|"no global lambda"| HS["Graphical horseshoe / spike-and-slab"]
+  EBIC --> Fit["At most 40 precision solves"]
+```
+
+1. **Shared endpoints.** At
+   $\lambda_{\max}=\max_{g\neq g'}|S_{gg'}|$ the off-diagonal precision
+   is zero. Useful regularisation sits at order
+   $\lambda_{\min}\asymp C\sqrt{\log p/n}$, so the search does not
+   waste solves near the unregularised MLE.
+2. **EBIC interval search (implemented).** The target is
+   $\lambda^{\star}=\arg\min_{\lambda}\mathrm{EBIC}_{\gamma}(\lambda)$
+   [@foygelExtendedBayesianInformation2010]. Six log-spaced anchors,
+   then geometric midpoints
+   $\sqrt{\lambda_{L}\lambda_{R}}$ in the basin of the current minimum,
+   while neighbouring intervals stay alive. That is **not** golden
+   section: EBIC jumps when an edge appears or disappears, so a
+   unimodal search would be the wrong algorithm. The same driver,
+   `ebic_adaptive_path()`, takes a `fit_precision` callback, so
+   `SILGGM` and `PLNnetwork` can reuse it.
+3. **TAV, if the target is the support.** Thresholded adaptive
+   validation (Laszkiewicz, Fischer and Lederer, AISTATS 2021; **not**
+   in `REFERENCES.bib`) calibrates graphical lasso for **graph
+   recovery** with at most one line search. We document it here and do
+   not implement it in the core scripts.
+4. **Global-local shrinkage, if there should be no $\lambda$ path.** A
+   graphical horseshoe (Li, Craig and Bhadra, 2019; **not** in
+   `REFERENCES.bib`) puts a half-Cauchy local scale on each
+   $\omega_{gg'}$ and a global scale $\tau$. That replaces the lasso
+   path rather than choosing 40 lasso penalties, and it is heavier
+   than the EBIC search.
+
+::: {#nte-stars-cost .callout-warning}
+## :warning: Why we do not run StARS on this panel
+
+StARS asks whether edges are stable under subsampling
+[@liuStabilityApproachRegularization2010]. The cost is $B\times L$
+graphical-lasso fits. In `huge.select()` the default is 20 subsamples,
+and for $n>144$ each subsample has size $10\sqrt{n}$. At $n=5{,}000$
+that is about 700 cells per subsample; 20 penalties then become on
+the order of 400 full-data-scale solves, not 40. We keep StARS as a
+stability **diagnostic** in @sec-metrics-stat, not as the selector for
+$\mathcal{G}_{0}=500$.
+:::
+
 ### `SILGGM` after a nonparanormal map {#sec-silggm}
 
 `SILGGM` tests entries of a Gaussian precision and controls FDR on the
@@ -729,24 +790,27 @@ cell-type report.
 1. **Regularisation paths.** Plot each off-diagonal entry of
    $\widehat{\boldsymbol{\Omega}}(\lambda)$ against $\lambda$ or
    $\log\lambda$. This is the classical lasso path: which edges enter
-   as the penalty relaxes.
+   as the penalty relaxes. The figures keep five edges that survive at
+   $\lambda^{\star}$ and five that are driven to zero.
 2. **EBIC against $\lambda$.** Plot $\mathrm{EBIC}_{\gamma}(\lambda)$
-   against $\log\lambda$, with a line at the minimiser
-   [@foygelExtendedBayesianInformation2010]. Overlay
+   against $\log\lambda$, with a rug of evaluated penalties and a mark
+   at the minimiser [@foygelExtendedBayesianInformation2010]. Overlay
    $\gamma\in\{0,0.25,0.5\}$ when that hyperparameter is free. A flat
    valley means many penalties are equivalent.
-3. **StARS-style instability** (@sec-metrics-stat). For
-   `huge`, `huge.select(..., criterion = "stars")` is the subsample
-   edge-instability rule; we reuse the same idea as a diagnostic for
-   the other two estimators.
-4. **Edge-count against EBIC.** Put the number of edges on the
-   horizontal axis and EBIC on the vertical axis, and mark the
-   optimum. That is the sparsity–fit tradeoff without depending on the
-   numerical scale of $\lambda$.
+3. **Edge density against EBIC.** Put the undirected density
+   $|E|/\bigl(G(G-1)/2\bigr)$ on the horizontal axis and EBIC on the
+   vertical axis, and mark the optimum. That is the sparsity–fit
+   tradeoff without depending on the numerical scale of $\lambda$.
+4. **Weighted interval score.** For consecutive penalties, combine EBIC
+   curvature, the change in support, and the Frobenius gap of
+   $\widehat{\boldsymbol{\Omega}}$. Large scores are the intervals the
+   adaptive search bisects.
+
+StARS is not one of these four displays (@nte-stars-cost).
 
 For `SILGGM`, repeat the same pictures with the FDR level in place of
 $\lambda$ when a path of $\alpha$ is computed. For `PLNnetwork`, the
-horizontal axis is the penalty grid in @tbl-pln-hyperparameters.
+horizontal axis is the sparsity penalty grid.
 
 ### Descriptive plots per cell type {#sec-grn-penalty-describe}
 
@@ -772,8 +836,7 @@ Blocks that survive a stronger penalty are the stable ones.
 
 **Folder 2 — pairwise type comparisons.** The same global scores, now
 as pairwise contrasts (difference or ratio of EBIC, Hellinger,
-density, \ldots) between cell types at a fixed time, again with
-`funkyheatmap`. This is the rewiring view at the **metric** level;
+density, \ldots) between cell types at a fixed time. This is the rewiring view at the **metric** level;
 signed partial-correlation difference heatmaps belong with the
 visualisations in @sec-metrics-viz.
 
@@ -828,6 +891,8 @@ explained by ordinary molecule-sampling counts
 @sec-sensitivity if the observation model is to be contaminated, not as
 a GRN estimator.
 :::
+
+## Perspectives {#sec-grn-appendix}
 
 ### Cartesian `GmGM` cannot separate within-cell edges {#sec-gmgm}
 
