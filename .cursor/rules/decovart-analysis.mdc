@@ -1,0 +1,48 @@
+---
+description: DeCovarT analysis repo — not a package; layout, renv, scripts, dependencies
+alwaysApply: true
+---
+
+# DeCovarT reproducibility repository
+
+Companion analysis repo for the **DeCovarT** package. **R + Quarto + renv**, not an R package. Do not add `DESCRIPTION`, `NAMESPACE`, roxygen, `R CMD check`, pkgdown, or CRAN workflows. Call the package as `DeCovarT::…`. Do not invent results; keep heavy chunks `eval: false` until asked to run them.
+
+Working directory: `DeCovarT_reproducibility.Rproj` (repository root). Do not `setwd()`.
+
+## Layout
+
+- `scripts/` — numbered pipelines (`01_01_…`). Run `Rscript --no-save --no-restore` from the root. Paths via `file.path()` (`data/raw/`, `output/`, …). Optional CLI: `key=value` on `commandArgs(trailingOnly = TRUE)`.
+- `docs/` — Quarto book. Heavy work stays in `scripts/`; the book reads saved artefacts.
+- `data/raw/` — immutable (GEO / DVC). Never edit. `data/intermediate/` staged objects; `data/processed/` regenerated tables; `data/dictionaries/` codebooks.
+- `output/` — figures, tables, run logs. `bibliography/` — `REFERENCES.bib` and `packages.bib`. Commit `renv.lock` and `renv/activate.R`; do not commit `renv/library/`.
+- Version-control code and small text. Large raw files via [DVC](https://dvc.org/) (commit `.dvc` pointers). GEO accessions and download commands live in the README. README badges only for R, renv, Quarto, and DeCovarT.
+
+Long `scripts/*.R` files start with a commented `nohup` invocation (`mkdir -p logs`, log under `logs/<stem>_$(date +%F)_<slug>.log`). Banner sections whose title line ends in ` ----`, numbered 0 dependencies, 1 inputs, 2 method, 3 outputs.
+
+## renv
+
+Lockfile is the source of truth. After new packages: `renv::install()` (Bioconductor as `renv::install("bioc::DESeq2")`; install DeCovarT explicitly) then `renv::snapshot()`. Do not set `RENV_CONFIG_AUTOLOADER_ENABLED=FALSE` (that flag belongs to the package repo). Never call `install.packages()` from scripts or book chunks that run on CI.
+
+Outputs go under `output/` or `data/intermediate/`. CI and book render: at most **2** cores. `requireNamespace()` for optional packages; never `installed.packages()`.
+
+## Dependencies
+
+| Task | Package |
+|------|---------|
+| Library | `renv` |
+| Paths | `here`, `fs` |
+| Tables | `dplyr`, `tidyr`, `tibble` |
+| Single-cell | `Seurat`, `SingleCellExperiment` |
+| Bulk / DE | `SummarizedExperiment`, `DESeq2`, `edgeR` |
+| GRN / GGM | `huge` |
+| Deconvolution | `DeCovarT` |
+| Feature search | `mco` (NSGA-II); optional `GA`, `GenSA` |
+| Plots | `ggplot2`, `patchwork`; `tinytable` in the book |
+| Monte Carlo | `furrr` with `furrr_options(seed = TRUE)`; never nest workers |
+| Strings / checks | `glue`, `stringr`, `checkmate` |
+
+Match `renv.lock`. Do not add unused dependencies. Plots: `theme_minimal()` family; `ggsave(limitsize = FALSE)` around 320 dpi; reuse `DeCovarT::plot_mc_forest()` and `plot_mc_raincloud()` when they exist. Seeds via `withr::with_seed()`.
+
+## Graphify
+
+Prefer Graphify before a repo-wide grep. Chat: `/graphify query`. Terminal: `graphify extract . --code-only`, scope `scripts/` and `docs/*.qmd`, exclude `_freeze/` and `renv/`. Do not commit `graphify-out/`. `.R` files may lack an AST extractor; use search for R helpers.

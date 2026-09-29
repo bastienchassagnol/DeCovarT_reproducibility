@@ -215,16 +215,16 @@ flowchart TD
    `ebic_adaptive_path()`, takes a `fit_precision` callback, so
    `SILGGM` and `PLNnetwork` can reuse it.
 3. **TAV, if the target is the support.** Thresholded adaptive
-   validation (Laszkiewicz, Fischer and Lederer, AISTATS 2021; **not**
-   in `REFERENCES.bib`) calibrates graphical lasso for **graph
-   recovery** with at most one line search. We document it here and do
-   not implement it in the core scripts.
+   validation
+   [@laszkiewiczThresholdedAdaptiveValidation2021]
+   calibrates graphical lasso for **graph recovery** with at most one
+   line search. We document it here and do not implement it in the core
+   scripts.
 4. **Global-local shrinkage, if there should be no $\lambda$ path.** A
-   graphical horseshoe (Li, Craig and Bhadra, 2019; **not** in
-   `REFERENCES.bib`) puts a half-Cauchy local scale on each
-   $\omega_{gg'}$ and a global scale $\tau$. That replaces the lasso
-   path rather than choosing 40 lasso penalties, and it is heavier
-   than the EBIC search.
+   graphical horseshoe [@liGraphicalHorseshoeEstimator2019] puts a
+   half-Cauchy local scale on each $\omega_{gg'}$ and a global scale
+   $\tau$. That replaces the lasso path rather than choosing 40 lasso
+   penalties, and it is heavier than the EBIC search.
 
 ::: {#nte-stars-cost .callout-warning}
 ## :warning: Why we do not run StARS on this panel

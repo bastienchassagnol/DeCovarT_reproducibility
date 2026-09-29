@@ -54,12 +54,21 @@ withr::with_seed(seed, {
   results <- lapply(time_levels, function(time_level) {
     seu <- objects[[time_level]]
     counts <- assay_matrix(seu, "RNA", "counts")
-    types <- sort(unique(as.character(seu[[cell_type_col]])))
+    labels <- seurat_metadata_chr(seu, cell_type_col)
+    types <- sort(unique(labels[!is.na(labels) & nzchar(labels)]))
     fits <- list()
     for (tp in types) {
-      cells <- colnames(seu)[as.character(seu[[cell_type_col]]) == tp]
+      cells <- unique(colnames(seu)[labels == tp])
       if (length(cells) < min_cells) {
-        message("Skipping ", time_level, " ", tp, " (n = ", length(cells), ")")
+        message(
+          "Skipping ",
+          time_level,
+          " / ",
+          tp,
+          " (n = ",
+          length(cells),
+          " cells)"
+        )
         next
       }
       x <- t(as.matrix(counts[, cells, drop = FALSE]))

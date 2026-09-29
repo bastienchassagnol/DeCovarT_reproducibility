@@ -1,0 +1,44 @@
+---
+description: Two citation streams — Zotero literature and generated software BibTeX
+globs: bibliography/**,docs/**/*.qmd,docs/_quarto.yml
+alwaysApply: false
+---
+
+# Bibliography
+
+Two streams. Do not mix them. Do not invent BibTeX entries, citekeys, or DOIs.
+
+## Literature
+
+Source of truth: the author’s [Zotero library](https://www.zotero.org/bastienchassagnol/library) (library ID `7172053`). Add items in Zotero first, export to `bibliography/REFERENCES.bib`, then:
+
+```bash
+python3 ../DeCovarT/scripts/curate_bibliography/check_bibliography.py --clean
+```
+
+Assign exactly one Zotero collection — the most specific leaf. **Git → Zotero:** `zotc keys extract`, then `collection add` (dry-run first).
+
+Allowed fields: `title`, `author`, `editor`, `year`, `journal`, `booktitle`, `publisher`, `howpublished`, `doi`, `volume`, `number`, `pages`, `isbn`, `issn`, `edition`, `school`, `institution`, `url`.
+
+Required: `@article` title, author, year, journal; `@book` title, year, publisher, and author or editor; `@incollection` title, author, year, booktitle, publisher; theses title, author, year, school; `@techreport` title, author, year, institution.
+
+Enrich gaps with Crossref (`bib_enrich.py`) without overwriting values and without inventing DOIs, then `bibtex-tidy`.
+
+## Software
+
+Not Zotero. Regenerate `bibliography/packages.bib` from packages used in `docs/` and `scripts/`:
+
+```bash
+Rscript scripts/curate_bibliography/generate_packages_bib.R
+```
+
+Book YAML (or each `docs/*.qmd`) must declare both files:
+
+```yaml
+bibliography:
+  - ../bibliography/packages.bib
+  - ../bibliography/REFERENCES.bib
+link-citations: true
+```
+
+Literature keys such as `@suppingerMultimodalCharacterizationMurine2023`; software keys `@R-DESeq2`, `@R-huge`, `@R-DeCovarT`. If a key is missing, flag it.

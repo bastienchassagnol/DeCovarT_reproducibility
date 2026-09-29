@@ -1,0 +1,19 @@
+---
+description: Quarto book source, cross-references, render, and GitHub Pages
+globs: docs/**/*.{qmd,yml},docs/_quarto.yml
+alwaysApply: false
+---
+
+# Quarto book
+
+User-facing site is a Quarto **book** (HTML and PDF) under `docs/`. CI publishes with the `gh-pages` branch ([Quarto GitHub Pages](https://quarto.org/docs/publishing/github-pages.html), including Knitr with renv). Do not use pkgdown.
+
+- Both bibliographies in book YAML (see the bibliography rule). `link-citations: true`.
+- Cross-references: `{#sec-…}`, `#fig-…`, `see @fig-…`.
+- Lists: only `-` and `1.`. No Pandoc example lists (`(@)`) and no task lists.
+- Package and method names in inline code (`` `DESeq2` ``, `` `huge` ``).
+- Labelled Quarto callouts, not raw blockquotes.
+- Pipelines: `{mermaid}` chunks, theme **sandstone**, with `%%| label:` and `%%| fig-cap:`. Do not use a raw mermaid fence in `.qmd`.
+- Heavy chunks stay `eval: false` until artefacts exist; then `freeze: auto` with `_freeze/` committed, or execute on CI via renv.
+- British English; spell-check before treating a chapter as review-ready.
+- Render with `quarto render docs`. Do not commit `_book/` or `.quarto/`. Commit `_freeze/` only when the project freezes instead of executing on CI.

@@ -90,7 +90,8 @@ interval_priority <- function(
   w2 = 1,
   w3 = 1
 ) {
-  w1 * abs(d2_ebic) +
+  w1 *
+    abs(d2_ebic) +
     w2 * abs(d_edges) / max(n_possible, 1) +
     w3 * (d_omega %||% 0)
 }
@@ -131,7 +132,8 @@ interval_priority <- function(
 #' @param eps Numerical zero for edges.
 #' @param verbose Print the penalty being solved.
 #' @return A list with one entry per solve: `lambda`, `ebic`, `n_edges`,
-#'   `density`, `priority`, `omega`, plus `selected` (index of the EBIC
+#'   `density`, `priority`, `omega`, `fallback` (TRUE when that solve
+#'   used a diagonal precision), plus `selected` (index of the EBIC
 #'   minimum) and the endpoints.
 ebic_adaptive_path <- function(
   fit_precision,
@@ -158,7 +160,9 @@ ebic_adaptive_path <- function(
   if (is.null(lambda_min)) {
     lambda_min <- ends$lambda_min
   }
-  if (!(is.finite(lambda_min) && is.finite(lambda_max) && lambda_min < lambda_max)) {
+  if (
+    !(is.finite(lambda_min) && is.finite(lambda_max) && lambda_min < lambda_max)
+  ) {
     stop("Need finite lambda_min < lambda_max.")
   }
 
@@ -180,7 +184,8 @@ ebic_adaptive_path <- function(
       n_edges = n_edges,
       density = n_edges / n_possible,
       ebic = ebic_gaussian_ggm(loglik, n_edges, n, p, gamma),
-      priority = NA_real_
+      priority = NA_real_,
+      fallback = isTRUE(fit$fallback)
     )
   }
 
@@ -188,7 +193,10 @@ ebic_adaptive_path <- function(
   path <- lapply(anchors, eval_one)
 
   n_basin <- min(n_solves - length(path), max(0L, round(0.4 * n_solves)))
-  n_adjacent <- min(n_solves - length(path) - n_basin, max(0L, round(0.2 * n_solves)))
+  n_adjacent <- min(
+    n_solves - length(path) - n_basin,
+    max(0L, round(0.2 * n_solves))
+  )
 
   score_intervals <- function(path_sorted) {
     m <- length(path_sorted)
@@ -237,12 +245,19 @@ ebic_adaptive_path <- function(
     if (identical(phase, "basin")) {
       eligible <- unique(pmax(1L, pmin(length(scores), (i_min - 1L):i_min)))
     } else if (identical(phase, "adjacent")) {
-      eligible <- unique(pmax(1L, pmin(length(scores), (i_min - 2L):(i_min + 1L))))
+      eligible <- unique(pmax(
+        1L,
+        pmin(length(scores), (i_min - 2L):(i_min + 1L))
+      ))
     }
     pick <- eligible[[which.max(scores[eligible])]]
     lambda_new <- sqrt(path[[pick]]$lambda * path[[pick + 1L]]$lambda)
-    if (any(abs(vapply(path, `[[`, numeric(1), "lambda") - lambda_new) <
-      .Machine$double.eps^0.5)) {
+    if (
+      any(
+        abs(vapply(path, `[[`, numeric(1), "lambda") - lambda_new) <
+          .Machine$double.eps^0.5
+      )
+    ) {
       next
     }
     added <- eval_one(lambda_new)
@@ -261,6 +276,7 @@ ebic_adaptive_path <- function(
     priority = vapply(path, `[[`, numeric(1), "priority"),
     loglik = vapply(path, `[[`, numeric(1), "loglik"),
     omega = lapply(path, `[[`, "omega"),
+    fallback = vapply(path, function(z) isTRUE(z$fallback), logical(1)),
     selected = which.min(ebic),
     lambda_min = lambda_min,
     lambda_max = lambda_max,
@@ -270,21 +286,65 @@ ebic_adaptive_path <- function(
   )
 }
 
+#' Diagonal precision from marginal variances.
+#'
+#' Off-diagonal covariance is set to zero, so the precision is the
+#' inverse of those diagonal terms.
+#'
+#' @param variances Marginal variances, one per gene.
+#' @return A list with `omega` and `fallback = TRUE`.
+diagonal_precision_fallback <- function(variances) {
+  variances <- as.numeric(variances)
+  variances[!is.finite(variances) | variances <= 0] <- .Machine$double.eps
+  list(
+    omega = diag(1 / variances, nrow = length(variances)),
+    fallback = TRUE
+  )
+}
+
 #' Graphical-lasso solver for [ebic_adaptive_path()] via `huge`.
 #'
-#' The diagonal is left unpenalised (huge default).
+#' The diagonal is left unpenalised (huge default). `huge` 2.0.1
+#' solves each penalty by column-wise coordinate descent, symmetrises
+#' the precision, and stops when the infinity norm of
+#' `covariance %*% precision - I` stays above `1e-2` after one
+#' refinement at tolerance `1e-8`. That check fails at small penalties
+#' when the two estimates are no longer inverses (dense or
+#' ill-conditioned graphs, often `n < p`). A second start would repeat
+#' the same residual test, so a failed solve returns
+#' [diagonal_precision_fallback()] instead of aborting the path.
 #'
 #' @param x Cells-by-genes numeric matrix.
 #' @return A function of one `lambda`.
 make_huge_solver <- function(x) {
+  marginal_var <- apply(x, 2L, stats::var)
   function(penalty) {
-    fit <- huge::huge(
-      x,
-      method = "glasso",
-      lambda = penalty,
-      verbose = FALSE
+    fit <- tryCatch(
+      huge::huge(
+        x,
+        method = "glasso",
+        lambda = penalty,
+        verbose = FALSE
+      ),
+      error = function(e) e
     )
-    list(omega = as.matrix(fit$icov[[1L]]))
+    if (inherits(fit, "error")) {
+      message(
+        "  glasso failed (",
+        conditionMessage(fit),
+        "); diagonal precision from marginal variances."
+      )
+      return(diagonal_precision_fallback(marginal_var))
+    }
+    omega <- as.matrix(fit$icov[[1L]])
+    if (!all(is.finite(omega))) {
+      message(
+        "  glasso returned a non-finite precision; ",
+        "diagonal precision from marginal variances."
+      )
+      return(diagonal_precision_fallback(marginal_var))
+    }
+    list(omega = omega, fallback = FALSE)
   }
 }
 
@@ -309,8 +369,8 @@ gaussian_hellinger <- function(mu1, sigma1, mu2, sigma2) {
 gaussian_mixsim_overlap <- function(mu1, sigma1, n1, mu2, sigma2, n2) {
   g <- length(mu1)
   s <- array(0, dim = c(g, g, 2L))
-  s[, , 1L] <- sigma1
-  s[, , 2L] <- sigma2
+  s[,, 1L] <- sigma1
+  s[,, 2L] <- sigma2
   ov <- MixSim::overlap(
     Pi = c(n1, n2) / (n1 + n2),
     Mu = rbind(mu1, mu2),

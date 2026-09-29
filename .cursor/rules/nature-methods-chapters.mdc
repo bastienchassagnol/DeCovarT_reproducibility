@@ -1,0 +1,25 @@
+---
+description: Nature Methods article limits when book chapters mirror the parent paper
+globs: docs/**/*.qmd
+alwaysApply: false
+---
+
+# Nature Methods discipline
+
+Parent paper target is a Nature Methods *Article*. Apply these limits when a chapter will migrate into that paper, unless the user overrides them. LaTeX later uses Springer Nature `sn-jnl` / `sn-nature`.
+
+| Element | Limit |
+|---------|--------|
+| Abstract | ≤ 150 words, unreferenced |
+| Main text | ~3,000 words (up to ~5,000); excludes abstract, Methods, references, legends |
+| Footnotes | None in the main article |
+| References | ≤ 50 |
+| Display items | ≤ 6 figures and/or tables combined |
+
+Fold background into the Introduction. Skeletons: Abstract IMRaD; Introduction context → aim → gap → direction; Methods population → approach → steps → tools → evaluation; Results and discussion summary → interpretation → prior work → limitations; close by restating the problem, insights, and significance, with no new results.
+
+Validation is comparative (baselines, ablation, or controls) with seeds, versions, and data availability. Cite every display item. Figure captions must stand alone (axes, labels, colours, panels). Prefer vector PDF/SVG. Bar charts include 0. Mute gridlines; no dual-y axes; greyscale- and CVD-safe colours; no red–green encoding. One question per panel.
+
+When asked to critique: 1–4 major and 2–6 minor issues, covering claims, baselines, methods, validation, venue fit, and a one-sentence recommendation.
+
+Simulations: link the DeCovarT vignette `how-to-build-synthetic-scenarios-mean-covariance.qmd` `{#sec-nmeth}` (DGM, estimand, L'Ecuyer-CMRG, Monte Carlo error). Do not duplicate that table. rOpenSci `@srrstats` tags live in the package. Reproducibility here means `renv.lock`, `DeCovarT::fit_decovart()` / `deconvolute_ratios()`, evaluation scripts, and small fixtures under `data/processed/` when needed.

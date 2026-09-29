@@ -1,0 +1,24 @@
+---
+description: Convert office files, slides, and PDFs with anydoc before rewriting them
+alwaysApply: false
+---
+
+# Literature intake
+
+Use a structural converter, then a cleanup pass (YAML, headings, tables, captions, image paths, alt-text). Do not ask a model to read a whole office file or PDF when a converter can parse it. Do not rewrite scientific content.
+
+Default: [anydoc](https://github.com/firecrawl/anydoc) (skill `convert-documents-to-markdown`, Node 20+).
+
+```bash
+npx -y @firecrawl/anydoc document.docx -o document.md
+npx -y @firecrawl/anydoc notes.pdf -o notes.md
+npx -y @firecrawl/anydoc talk.pptx -o talk.md
+```
+
+Text PDFs convert locally. Exit code 3 (`NeedsOcr`) means scanned pages; rerun `npx -y @firecrawl/anydoc scan.pdf --ocr hosted -o scan.md`. Keep `FIRECRAWL_API_KEY` in the user environment, never in the repo.
+
+Pandoc is optional for `--extract-media`, or when anydoc is unavailable. `pdftoppm` only for figures the Markdown conversion missed.
+
+Slides → Quarto reveal.js: prefer Markdown, then PPTX, then PDF. Restore equations as `$...$` / `$$...$$` when the converter emitted LaTeX; otherwise transcribe. Keep links. Do not ship raw PDF or PPTX as the live deck.
+
+Broken URLs: try the live DOI, publisher, GitHub, or GEO link; then the [Wayback Machine](https://web.archive.org/) snapshot closest to publication. Prefer `doi`, GEO, or CRAN. Never invent archive timestamps.

@@ -8,6 +8,23 @@
   if (is.null(x) || length(x) == 0L || all(is.na(x))) y else x
 }
 
+#' One character label per cell from a Seurat metadata column.
+#'
+#' `seu[[column]]` is a one-column data frame. Coercing that frame
+#' with `as.character()` deparses every cell, so callers must take
+#' the column vector before `unique()` or a type loop.
+#'
+#' @param seu A Seurat object (or anything whose `[[` returns the column).
+#' @param column Metadata column name.
+#' @return An unnamed character vector of length `ncol(seu)`.
+seurat_metadata_chr <- function(seu, column) {
+  values <- seu[[column]]
+  if (is.data.frame(values)) {
+    values <- values[[1L]]
+  }
+  as.character(values)
+}
+
 #' Pull a dense or sparse assay layer from a Seurat object.
 #'
 #' Tries the Seurat v5 `layer` argument first, then the v4 `slot`

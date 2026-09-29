@@ -43,14 +43,6 @@ dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
 # SECTION 1 · Inputs ----
 # ==========================================================================
 
-if (!file.exists(input_rds)) {
-  stop(
-    "Missing ",
-    input_rds,
-    ". Run scripts/01_03_export_equal_type_seurat.R first."
-  )
-}
-
 objects <- readRDS(input_rds)
 colour_dict <- utils::read.csv(
   colour_path,
@@ -69,12 +61,22 @@ type_colours <- stats::setNames(
 results <- lapply(time_levels, function(time_level) {
   seu <- objects[[time_level]]
   counts <- assay_matrix(seu, "RNA", "counts")
-  types <- sort(unique(as.character(seu[[cell_type_col]])))
+  labels <- seurat_metadata_chr(seu, cell_type_col)
+  types <- sort(unique(labels[!is.na(labels) & nzchar(labels)]))
   fits <- list()
   for (tp in types) {
-    cells <- colnames(seu)[as.character(seu[[cell_type_col]]) == tp]
+    # Cells of one type at one time, treated as i.i.d. draws.
+    cells <- unique(colnames(seu)[labels == tp])
     if (length(cells) < min_cells) {
-      message("Skipping ", time_level, " ", tp, " (n = ", length(cells), ")")
+      message(
+        "Skipping ",
+        time_level,
+        " / ",
+        tp,
+        " (n = ",
+        length(cells),
+        " cells)"
+      )
       next
     }
     x <- t(as.matrix(counts[, cells, drop = FALSE]))
@@ -85,7 +87,19 @@ results <- lapply(time_levels, function(time_level) {
       stop("Expected ", n_genes_global, " genes, found ", p, ".")
     }
     S <- stats::cov(x)
-    message("Fitting huge glasso: ", time_level, " / ", tp, " (n = ", n, ")")
+    ends <- lambda_endpoints(n, p, S)
+    message(
+      "Fitting huge glasso: ",
+      time_level,
+      " / ",
+      tp,
+      " (n = ",
+      n,
+      " cells); lambda_min = ",
+      signif(ends$lambda_min, 4),
+      "; lambda_max = ",
+      signif(ends$lambda_max, 4)
+    )
     path <- ebic_adaptive_path(
       fit_precision = make_huge_solver(x),
       n = n,
@@ -93,6 +107,8 @@ results <- lapply(time_levels, function(time_level) {
       S = S,
       n_solves = n_solves,
       gamma = ebic_gamma,
+      lambda_min = ends$lambda_min,
+      lambda_max = ends$lambda_max,
       verbose = TRUE
     )
     sel <- path$selected
@@ -189,7 +205,12 @@ for (time_level in time_levels) {
       )
       ov <- tryCatch(
         gaussian_mixsim_overlap(
-          ia$mu, ia$sigma, ia$n, ib$mu, ib$sigma, ib$n
+          ia$mu,
+          ia$sigma,
+          ia$n,
+          ib$mu,
+          ib$sigma,
+          ib$n
         ),
         error = function(e) NA_real_
       )
