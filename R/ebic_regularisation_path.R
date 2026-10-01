@@ -286,19 +286,71 @@ ebic_adaptive_path <- function(
   )
 }
 
-#' Diagonal precision from marginal variances.
+#' Diagonal covariance of marginal variances, and its precision.
 #'
-#' Off-diagonal covariance is set to zero, so the precision is the
-#' inverse of those diagonal terms.
+#' Off-diagonal entries are zero. A gene with zero sample variance
+#' stays zero on both diagonals: replacing it by
+#' `1 / .Machine$double.eps` makes `solve()` numerically singular.
+#'
+#' @param variances Marginal variances, one per gene.
+#' @return A list with `sigma`, `omega`, and `fallback = TRUE`.
+diagonal_marginal_fit <- function(variances) {
+  variances <- as.numeric(variances)
+  variances[!is.finite(variances) | variances < 0] <- 0
+  precision_diag <- rep(0, length(variances))
+  positive <- variances > 0
+  precision_diag[positive] <- 1 / variances[positive]
+  list(
+    sigma = diag(variances, nrow = length(variances)),
+    omega = diag(precision_diag, nrow = length(variances)),
+    fallback = TRUE
+  )
+}
+
+#' Diagonal precision from marginal variances.
 #'
 #' @param variances Marginal variances, one per gene.
 #' @return A list with `omega` and `fallback = TRUE`.
 diagonal_precision_fallback <- function(variances) {
-  variances <- as.numeric(variances)
-  variances[!is.finite(variances) | variances <= 0] <- .Machine$double.eps
+  fit <- diagonal_marginal_fit(variances)
+  list(omega = fit$omega, fallback = TRUE)
+}
+
+#' One-point path when graphical lasso cannot be started.
+#'
+#' Used when at least one gene is constant, so every penalty would
+#' fail with the same `huge` error.
+#'
+#' @param n,p Sample size and number of genes.
+#' @param S Sample covariance.
+#' @param lambda_min,lambda_max Endpoints already reported in the log.
+#' @param gamma EBIC extra-penalty, stored for the same shape as
+#'   [ebic_adaptive_path()].
+#' @return A path list with one diagonal precision.
+diagonal_only_path <- function(
+  n,
+  p,
+  S,
+  lambda_min,
+  lambda_max,
+  gamma = 0.5
+) {
+  fit <- diagonal_marginal_fit(diag(S))
   list(
-    omega = diag(1 / variances, nrow = length(variances)),
-    fallback = TRUE
+    lambda = lambda_max,
+    ebic = NA_real_,
+    n_edges = 0L,
+    density = 0,
+    priority = NA_real_,
+    loglik = NA_real_,
+    omega = list(fit$omega),
+    fallback = TRUE,
+    selected = 1L,
+    lambda_min = lambda_min,
+    lambda_max = lambda_max,
+    n = n,
+    p = p,
+    gamma = gamma
   )
 }
 
@@ -348,8 +400,28 @@ make_huge_solver <- function(x) {
   }
 }
 
+#' Stop when a covariance is not a non-degenerate Gaussian scale.
+#'
+#' A non-positive diagonal variance makes the Hellinger denominator
+#' undefined and sends `MixSim::overlap()` into a long failing solve.
+#'
+#' @param sigma Square covariance.
+#' @param label Which covariance, used in the error message.
+#' @return `TRUE`, invisibly, when every variance is positive.
+require_positive_variances <- function(sigma, label) {
+  variances <- diag(sigma)
+  if (
+    any(!is.finite(sigma)) || any(!is.finite(variances)) || any(variances <= 0)
+  ) {
+    stop(label, " covariance has a non-positive variance.")
+  }
+  invisible(TRUE)
+}
+
 #' Hellinger distance between two non-degenerate Gaussians.
 gaussian_hellinger <- function(mu1, sigma1, mu2, sigma2) {
+  require_positive_variances(sigma1, "First")
+  require_positive_variances(sigma2, "Second")
   mu1 <- as.numeric(mu1)
   mu2 <- as.numeric(mu2)
   sigma_bar <- (sigma1 + sigma2) / 2
@@ -367,6 +439,8 @@ gaussian_hellinger <- function(mu1, sigma1, mu2, sigma2) {
 #'
 #' @return Sum of the two misclassification probabilities.
 gaussian_mixsim_overlap <- function(mu1, sigma1, n1, mu2, sigma2, n2) {
+  require_positive_variances(sigma1, "First")
+  require_positive_variances(sigma2, "Second")
   g <- length(mu1)
   s <- array(0, dim = c(g, g, 2L))
   s[,, 1L] <- sigma1

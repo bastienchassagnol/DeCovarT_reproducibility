@@ -3691,6 +3691,58 @@
       "Repository": "CRAN",
       "Encoding": "UTF-8"
     },
+    "gridmicrotex": {
+      "Package": "gridmicrotex",
+      "Version": "0.1.1",
+      "Source": "Repository",
+      "Title": "Native 'LaTeX' Math Rendering for Grid Graphics",
+      "Authors@R": "c( person(\"Alim\", \"Dayim\", role = c(\"aut\", \"cre\"), email = \"ad938@cam.ac.uk\", comment = c(ORCID = \"0000-0001-9998-7463\")), person(\"Nano\", \"Michael\", role = \"cph\", comment = \"Author of included 'MicroTeX' library\"), person(family = \"Bundled math font authors\", role = \"cph\", comment = \"See inst/COPYRIGHTS for the full list of authors of the bundled math fonts.\"))",
+      "Description": "Renders 'LaTeX' math equations as native R grid graphics objects (grobs) using the 'MicroTeX' 'C++' library as the layout engine. Produces resolution-independent vector output that works on any R graphics device, with no external 'LaTeX' installation required. Markdown labels and block documents that mix prose formatting with math are also rendered, for use with both 'grid' and 'ggplot2'.",
+      "License": "MIT + file LICENSE",
+      "Encoding": "UTF-8",
+      "SystemRequirements": "C++17, FreeType (>= 2.9), pkg-config, FriBidi (optional)",
+      "Depends": [
+        "R (>= 4.2.0)"
+      ],
+      "LinkingTo": [
+        "Rcpp",
+        "systemfonts"
+      ],
+      "Imports": [
+        "commonmark",
+        "grDevices",
+        "grid",
+        "Rcpp",
+        "systemfonts",
+        "tools",
+        "utils",
+        "xml2"
+      ],
+      "Suggests": [
+        "ggplot2 (>= 4.0.0)",
+        "grImport2",
+        "jpeg",
+        "knitr",
+        "png",
+        "ragg",
+        "rmarkdown",
+        "rsvg",
+        "S7",
+        "svglite",
+        "testthat (>= 3.0.0)",
+        "textshaping",
+        "vdiffr"
+      ],
+      "VignetteBuilder": "knitr",
+      "Config/testthat/edition": "3",
+      "URL": "https://github.com/adayim/gridmicrotex, https://adayim.github.io/gridmicrotex/",
+      "BugReports": "https://github.com/adayim/gridmicrotex/issues",
+      "RoxygenNote": "7.3.3",
+      "NeedsCompilation": "yes",
+      "Author": "Alim Dayim [aut, cre] (ORCID: <https://orcid.org/0000-0001-9998-7463>), Nano Michael [cph] (Author of included 'MicroTeX' library), Bundled math font authors [cph] (See inst/COPYRIGHTS for the full list of authors of the bundled math fonts.)",
+      "Maintainer": "Alim Dayim <ad938@cam.ac.uk>",
+      "Repository": "CRAN"
+    },
     "gtable": {
       "Package": "gtable",
       "Version": "0.3.6",
@@ -7180,6 +7232,46 @@
       "NeedsCompilation": "yes",
       "Author": "Yihui Xie [aut, cre, cph] (ORCID: <https://orcid.org/0000-0003-0645-5666>, URL: https://yihui.org), Wush Wu [ctb], Daijiang Li [ctb], Xianying Tan [ctb], Salim Brüggemann [ctb] (ORCID: <https://orcid.org/0000-0002-5329-5987>), Christophe Dervieux [ctb]",
       "Maintainer": "Yihui Xie <xie@yihui.name>",
+      "Repository": "CRAN"
+    },
+    "xml2": {
+      "Package": "xml2",
+      "Version": "1.6.0",
+      "Source": "Repository",
+      "Title": "Parse XML",
+      "Authors@R": "c( person(\"Hadley\", \"Wickham\", role = \"aut\"), person(\"Jim\", \"Hester\", role = \"aut\"), person(\"Jeroen\", \"Ooms\", email = \"jeroenooms@gmail.com\", role = c(\"aut\", \"cre\")), person(\"Posit Software, PBC\", role = c(\"cph\", \"fnd\")), person(\"R Foundation\", role = \"ctb\", comment = \"Copy of R-project homepage cached as example\") )",
+      "Description": "Bindings to 'libxml2' for working with XML data using a simple,  consistent interface based on 'XPath' expressions. Also supports XML schema validation; for 'XSLT' transformations see the 'xslt' package.",
+      "License": "MIT + file LICENSE",
+      "URL": "https://xml2.r-lib.org, https://r-lib.r-universe.dev/xml2",
+      "BugReports": "https://github.com/r-lib/xml2/issues",
+      "Depends": [
+        "R (>= 3.6.0)"
+      ],
+      "Imports": [
+        "cli",
+        "methods",
+        "rlang (>= 1.1.0)"
+      ],
+      "Suggests": [
+        "covr",
+        "curl",
+        "httr",
+        "knitr",
+        "mockery",
+        "rmarkdown",
+        "testthat (>= 3.2.0)",
+        "xslt"
+      ],
+      "VignetteBuilder": "knitr",
+      "Config/Needs/website": "tidyverse/tidytemplate",
+      "Encoding": "UTF-8",
+      "RoxygenNote": "7.3.3",
+      "SystemRequirements": "libxml2: libxml2-dev (deb), libxml2-devel (rpm)",
+      "Collate": "'S4.R' 'as_list.R' 'xml_parse.R' 'as_xml_document.R' 'classes.R' 'format.R' 'import-standalone-obj-type.R' 'import-standalone-purrr.R' 'import-standalone-types-check.R' 'init.R' 'nodeset_apply.R' 'paths.R' 'utils.R' 'xml2-package.R' 'xml_attr.R' 'xml_children.R' 'xml_document.R' 'xml_find.R' 'xml_missing.R' 'xml_modify.R' 'xml_name.R' 'xml_namespaces.R' 'xml_node.R' 'xml_nodeset.R' 'xml_path.R' 'xml_schema.R' 'xml_serialize.R' 'xml_structure.R' 'xml_text.R' 'xml_type.R' 'xml_url.R' 'xml_write.R'",
+      "Config/testthat/edition": "3",
+      "NeedsCompilation": "yes",
+      "Author": "Hadley Wickham [aut], Jim Hester [aut], Jeroen Ooms [aut, cre], Posit Software, PBC [cph, fnd], R Foundation [ctb] (Copy of R-project homepage cached as example)",
+      "Maintainer": "Jeroen Ooms <jeroenooms@gmail.com>",
       "Repository": "CRAN"
     },
     "xtable": {

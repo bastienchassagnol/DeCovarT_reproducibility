@@ -1,0 +1,13 @@
+"time_point","estimator","type_a","type_b","hellinger","mixsim_overlap"
+"48h","huge","Epiblast","Epiblast",0,0
+"48h","huge","Epiblast","Exiting naïve pluripotency",0.999999999997768,1
+"48h","huge","Exiting naïve pluripotency","Epiblast",0.999999999997768,1
+"48h","huge","Exiting naïve pluripotency","Exiting naïve pluripotency",0,0
+"72h","huge","Ectopic pluripotency","Ectopic pluripotency",0,0
+"72h","huge","Ectopic pluripotency","Primitive streak",1,1
+"72h","huge","Primitive streak","Ectopic pluripotency",1,1
+"72h","huge","Primitive streak","Primitive streak",0,0
+"96h","huge","Caudal mesoderm","Caudal mesoderm",0,0
+"96h","huge","Caudal mesoderm","Pre-somitic mesoderm",1,1
+"96h","huge","Pre-somitic mesoderm","Caudal mesoderm",1,1
+"96h","huge","Pre-somitic mesoderm","Pre-somitic mesoderm",0,0

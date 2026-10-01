@@ -1,0 +1,74 @@
+---
+alwaysApply: true
+---
+
+---
+name: rigorous-maths
+description: Explain complex mathematical and statistical derivations step by step, and numerically explore candidate solutions and their combinations.
+---
+
+# Rigorous Maths
+
+Use this skill for statistical proofs, estimation, inference,
+optimization, probability, and numerical comparison of solutions.
+
+## Workflow
+
+1. State the problem precisely.
+   Define notation, parameter domains, constraints, assumptions,
+   and the quantity to estimate, prove, or optimize.
+   Identify missing information; state reasonable assumptions explicitly.
+
+2. Derive the result.
+   Show intermediate algebra and justify nontrivial steps.
+   State conditions for differentiation under an integral,
+   exchanging limits, applying asymptotic results, or inverting matrices.
+   Distinguish exact identities, approximations, and conjectures.
+
+3. Check the mathematics.
+   Check dimensions, signs, normalization, boundary cases,
+   identifiability, and existence or uniqueness.
+   For optimization, inspect feasible boundaries and distinguish
+   stationary points, local optima, and global optima.
+
+4. Explore alternative solutions and combinations.
+   Define each candidate and a common comparison criterion.
+   Clarify whether combinations mean subsets, parameter configurations,
+   weighted estimators, mixtures, or ensembles.
+   Enumerate small finite spaces; for larger spaces, use a justified
+   search strategy and report its coverage and stopping rule.
+   Enforce constraints and avoid claiming exhaustive search unless performed.
+
+5. Verify numerically when execution tools are available.
+   Use reproducible code, fixed random seeds where appropriate,
+   explicit tolerances, and stable numerical methods.
+   Compare against analytic special cases or independent calculations.
+   Report convergence, residuals, sensitivity, and numerical uncertainty.
+   Never invent executed results. If execution is unavailable,
+   provide runnable code and label it as unexecuted.
+
+6. Evaluate statistical performance.
+   Compare bias, variance, mean squared error, coverage, or predictive
+   performance as appropriate.
+   Include covariance when combining dependent estimators.
+   Use held-out data or nested validation when selecting combinations.
+   Report Monte Carlo uncertainty and selection effects when relevant.
+
+## Response format
+
+- Problem and assumptions
+- Detailed derivation
+- Alternative solutions and combinations
+- Numerical verification and comparison
+- Interpretation and limitations
+
+Scale detail to the problem, while preserving the steps needed
+to audit the derivation. Numerical agreement supports a result;
+it does not establish a proof.
+
+## Example requests
+
+- Derive an estimator's bias and variance, then verify by simulation.
+- Find an optimal weighted combination of correlated estimators.
+- Compare all feasible parameter combinations for a likelihood problem.
+- Explain a Bayesian posterior derivation and check it numerically.

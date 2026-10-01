@@ -21,7 +21,6 @@ min_cells <- 20L
 n_solves <- 40L
 ebic_gamma <- 0.5
 n_genes_global <- 500L
-seed <- 1L
 estimator <- "huge"
 
 input_rds <- file.path(
@@ -100,27 +99,67 @@ results <- lapply(time_levels, function(time_level) {
       "; lambda_max = ",
       signif(ends$lambda_max, 4)
     )
-    path <- ebic_adaptive_path(
-      fit_precision = make_huge_solver(x),
-      n = n,
-      p = p,
-      S = S,
-      n_solves = n_solves,
-      gamma = ebic_gamma,
-      lambda_min = ends$lambda_min,
-      lambda_max = ends$lambda_max,
-      verbose = TRUE
+    constant <- vapply(
+      seq_len(p),
+      function(j) all(x[, j] == x[1L, j]),
+      logical(1)
     )
+    if (any(constant)) {
+      shown <- colnames(x)[constant]
+      shown <- if (length(shown) > 8L) {
+        paste0(paste(shown[seq_len(8L)], collapse = ", "), ", ...")
+      } else {
+        paste(shown, collapse = ", ")
+      }
+      message(
+        "  ",
+        sum(constant),
+        " genes are constant across these ",
+        n,
+        " cells (one value in every cell: ",
+        shown,
+        "). Sample correlation is undefined. ",
+        "Returning a diagonal covariance of the marginal variances."
+      )
+      path <- diagonal_only_path(
+        n,
+        p,
+        S,
+        ends$lambda_min,
+        ends$lambda_max,
+        ebic_gamma
+      )
+    } else {
+      path <- ebic_adaptive_path(
+        fit_precision = make_huge_solver(x),
+        n = n,
+        p = p,
+        S = S,
+        n_solves = n_solves,
+        gamma = ebic_gamma,
+        lambda_min = ends$lambda_min,
+        lambda_max = ends$lambda_max,
+        verbose = TRUE
+      )
+    }
     sel <- path$selected
     omega <- path$omega[[sel]]
     mu <- colMeans(x)
-    sigma <- tryCatch(
-      solve(omega),
-      error = function(e) {
-        omega_r <- omega + diag(1e-4, p)
-        solve(omega_r)
-      }
-    )
+    variances <- diag(S)
+    sigma <- if (isTRUE(path$fallback[[sel]])) {
+      diag(variances, p)
+    } else {
+      tryCatch(
+        solve(omega),
+        error = function(e) {
+          message(
+            "  selected precision is numerically singular; ",
+            "covariance set to the diagonal of marginal variances."
+          )
+          diag(variances, p)
+        }
+      )
+    }
     sigma_emp <- if (n > p) {
       S
     } else {
@@ -155,8 +194,7 @@ message("Wrote ", out_rds)
 plot_regularisation_paths(
   results,
   file.path(out_dir, "regularisation_paths.pdf"),
-  type_colours,
-  seed = seed
+  type_colours
 )
 plot_ebic_vs_lambda(
   results,
@@ -168,10 +206,9 @@ plot_edge_count_vs_ebic(
   file.path(out_dir, "edge_density_vs_ebic.pdf"),
   type_colours
 )
-plot_priority_score(
+plot_covariance_precision_heatmaps(
   results,
-  file.path(out_dir, "priority_score_vs_lambda.pdf"),
-  type_colours
+  file.path(out_dir, "covariance_precision_heatmaps.pdf")
 )
 
 # ==========================================================================
@@ -184,14 +221,15 @@ utils::write.csv(
   file.path(out_dir, "selected_network_metrics.csv"),
   row.names = FALSE
 )
+results_linked <- lapply(results, drop_diagonal_fits)
 plot_selected_funkyheatmap(
-  metrics,
+  selected_metric_table(results_linked, estimator),
   file.path(out_dir, "selected_network_funkyheatmap.pdf")
 )
 
 pair_rows <- list()
 for (time_level in time_levels) {
-  types <- names(results[[time_level]])
+  types <- names(results_linked[[time_level]])
   if (length(types) < 2L) {
     next
   }

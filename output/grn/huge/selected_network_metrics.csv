@@ -1,0 +1,12 @@
+"time_point","cell_type","estimator","ebic","n_edges","density","mean_degree","hellinger_empirical"
+"48h","Epiblast","huge",-3847389.86365541,0,0,0,0.994396694790707
+"48h","Exiting naïve pluripotency","huge",-70849.7076369763,0,0,0,0
+"48h","Naïve pluripotency","huge",NA,0,0,-0.032,NA
+"72h","Ectopic pluripotency","huge",-79873.3168542639,0,0,0,0
+"72h","Naïve pluripotency","huge",NA,0,0,-0.02,NA
+"72h","Primitive streak","huge",-1891687.04345714,0,0,0,0.99963514968774
+"96h","Caudal mesoderm","huge",-642275.19558751,0,0,0,0
+"96h","Ectopic pluripotency","huge",NA,0,0,-0.016,NA
+"96h","Gut","huge",NA,0,0,-0.03,NA
+"96h","Pre-somitic mesoderm","huge",-3079646.60468255,0,0,0,0.813905520817994
+"96h","Somite differentiation front","huge",NA,0,0,-0.22,NA
