@@ -63,3 +63,6 @@ Thumbs.db
 *.tar.gz
 .httr-oauth
 rsconnect/
+
+# Machine-specific Quarto environment (TIKZ_BIN for scripts/tikz-lualatex.sh)
+docs/_environment.local

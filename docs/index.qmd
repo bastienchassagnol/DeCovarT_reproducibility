@@ -38,7 +38,7 @@ flowchart TD
   C2 --> T
   C3 --> T
   T --> L1["Affine Gaussian aggregation"]
-  T --> L3["scDesign2 copula pseudo-replicates"]
+  T --> L3["scDesign3 copula pseudo-replicates"]
   L1 --> Q{"Stricter NSGA-II panel?"}
   L3 --> Q
   Q -->|yes| P["kappa_2 of mu_G and MixSim overlap"]
