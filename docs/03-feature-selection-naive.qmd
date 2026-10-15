@@ -608,6 +608,248 @@ inference machinery—not rerunning a label permutation on labels that the
 data helped create.
 :::
 
+## Testing the cell-type main effect {#sec-fs-main-effect}
+
+DeCovarT needs genes whose type-$j$ distributions are **well separated
+and non-degenerate**. Three requirements follow, and they are distinct:
+
+1. **Presence.** No retained type may have a constant (worst: all-zero)
+   profile for the gene; otherwise $\boldsymbol{\Sigma}_{j}$ is singular
+   on that coordinate and the convolution of @eq-grn-convolution
+   degenerates (@sec-fs-presence).
+2. **A joint main effect of type.** The $J$ type means are not all equal
+   given library size (@sec-fs-score-lrt).
+3. **Small overlap.** The between-type shift is large relative to the
+   within-type scatter, which is an effect size, not a $p$-value
+   (@sec-fs-effect-size).
+
+### Presence before testing {#sec-fs-presence}
+
+For gene $g$ and type $j$, let
+$\pi_{gj}=C_{j}^{-1}\sum_{c_{j}}\mathbb{1}(y_{c_{j}g}>0)$ be the
+detection rate and $v_{gj}$ the within-type variance of the counts. A
+gene enters the test only if
+
+$$
+\min_{j}\pi_{gj}\ge\pi_{\min}
+\quad\text{and}\quad
+\min_{j}v_{gj}>0,
+$$ {#eq-fs-presence}
+
+with $\pi_{\min}$ a few percent (for instance $0.05$), set before looking
+at the ranks. The rule is a design constraint, not a nuisance filter,
+for three reasons.
+
+- **Generative model.** A type with $v_{gj}=0$ gives a zero row and
+  column in $\boldsymbol{\Sigma}_{j}$. The GGM of that type is then
+  undefined; the `huge` script in @sec-huge returns a diagonal
+  covariance for the **whole** type as soon as one panel gene is
+  constant in it.
+- **Identifiability.** A gene that is absent from one type and present
+  in the others is the perfect marker of reference-based deconvolution.
+  It is also the case where the type mean sits on the boundary
+  $\mu_{gj}=0$ and the variance carries no information.
+- **Testing.** With an all-zero type, the NB maximum-likelihood
+  estimate $\hat\beta_{gj}\to-\infty$. Its standard error diverges
+  faster, and the Wald statistic shrinks towards zero as the effect
+  grows: the Hauck–Donner effect. The
+  likelihood-ratio and score statistics stay finite. That is a reason
+  to avoid Wald tests here, but it does not rescue the gene for
+  DeCovarT.
+
+### Likelihood ratio and score test of the main effect {#sec-fs-score-lrt}
+
+Write the depth-only null of @eq-fs-nb-null as $M_{0}$ and add the type
+main effect,
+
+$$
+M_{1}:\;
+\log\mu_{cg}
+=
+\beta_{0g}+\beta_{g,j(c)}+\operatorname{offset}(\log L_{c}),
+\qquad
+\beta_{g1}=0,
+\qquad
+y_{cg}\sim\mathrm{NB}(\mu_{cg},\theta_{g}).
+$$ {#eq-fs-nb-main}
+
+The joint null is $H_{0g}:\beta_{g2}=\cdots=\beta_{gJ}=0$, with $J-1$
+degrees of freedom. The trinity of tests in
+@agrestiFoundationsLinearGeneralized2015 applies:
+
+- **Likelihood ratio (analysis of deviance).**
+  $\Lambda_{g}=D_{g}(M_{0})-D_{g}(M_{1})$, compared to
+  $\chi^{2}_{J-1}$ when $\theta_{g}$ is known. This answers question
+  (i) directly: yes, the $\chi^{2}$ comparison of the offset-only model
+  with the cell-type model is the natural joint test.
+- **Score (Rao).** Evaluated at the $M_{0}$ fit only, which is the fit
+  `SCTransform` v2 already computes (@eq-fs-v2-offset).
+- **Wald.** Fit $M_{1}$ only; avoid it for the reason given in
+  @sec-fs-presence.
+
+The score test is the one that links the naive ranking to inference.
+Under $M_{0}$, the IRLS weight of cell $c$ is
+$w_{cg}=\hat\mu_{cg}^{2}/V(\hat\mu_{cg})$, with
+$V(\mu)=\mu+\mu^{2}/\theta_{g}$. The score for the type-$j$ indicator is
+a weighted sum of the Pearson residuals of @eq-fs-pearson,
+$U_{gj}=\sum_{c_{j}}\sqrt{w_{c_{j}g}}\,r_{c_{j}g}$. Because the
+intercept is profiled out, $\sum_{j}U_{gj}=0$, and the score statistic
+is
+
+$$
+T_{g}
+=
+\sum_{j=1}^{J}\frac{U_{gj}^{2}}{\sum_{c_{j}}w_{c_{j}g}}
+\;\approx\;
+\sum_{j=1}^{J}C_{j}\,\bar r_{gj}^{2}
+=
+\mathrm{SS}_{\mathrm{between},g},
+$$ {#eq-fs-score}
+
+where the approximation holds when the weights are nearly constant
+within a type (similar library sizes). For a Poisson null
+($\theta_{g}\to\infty$), $U_{gj}$ is observed minus expected counts in
+type $j$, and @eq-fs-score is Pearson's $\chi^{2}$ on the type totals.
+The cell-weighted $\mathrm{SS}_{\mathrm{between}}$ of @eq-fs-ss is
+therefore, up to weight heterogeneity, the **Rao score statistic for
+the cell-type main effect**, referred to $\chi^{2}_{J-1}$.
+
+### Is an $F$ test on Pearson residuals legitimate? {#sec-fs-qlf}
+
+Question (ii) has a precise answer. Divide @eq-fs-score by $J-1$ and
+by the within-type Pearson dispersion
+
+$$
+\hat\phi_{g}
+=
+\frac{\mathrm{SS}_{\mathrm{within},g}}{N-J}.
+$$
+
+The result is the one-way $F_{g}$ of @eq-fs-fanova. In GLM terms it is
+a **quasi-likelihood $F$ test**. It keeps the mean model
+@eq-fs-nb-main and the variance function $V(\mu)$, and lets a scalar
+$\phi_{g}$ absorb a variance that is larger (or smaller) than $V$
+predicts. The reference distribution $F_{J-1,N-J}$ accounts for
+estimating $\phi_{g}$, as in the edgeR quasi-likelihood pipeline
+[@lundDetectingDifferentialExpression2012] and
+`glmGamPoi::test_de()` [@glmGamPoi2020].
+Three consequences follow.
+
+- **Do not discard non-Poisson genes.** If the residuals were built
+  under a Poisson null, an NB gene has $\hat\phi_{g}>1$. The $F$ ratio
+  divides that factor out; it does not invalidate the gene.
+  Overdispersion **within** a type is exactly the within-type scatter
+  the rank already penalises. Dropping such genes would remove, before
+  any test, the genes whose covariance DeCovarT is meant to model.
+- **What a scalar $\phi$ cannot fix.** A scalar $\phi$ corrects a
+  variance $\phi V(\mu)$. Under a Poisson null it cannot absorb the
+  quadratic NB term, whose share grows with the type mean. Two types
+  with very different means then have different residual variances,
+  and the pooled $\hat\phi_{g}$ is wrong for both. Use the NB variance
+  of @eq-fs-pearson (as `SCTransform` does) so that $\phi_{g}\approx1$
+  holds approximately in every type. If between-type
+  heteroscedasticity remains, prefer a Welch-type statistic, or the
+  equal-type mean squares of @eq-fs-equal-type, which weight types
+  equally and are not driven by the dominant population.
+- **Within a time slot, rank by $F$ or by the ratio: same order.** $J$
+  and $N$ are shared by all genes of a slot, so $F_{g}$ is a monotone
+  transform of $\mathrm{SS}_{\mathrm{between}}/\mathrm{SS}_{\mathrm{within}}$.
+  The analytic $F$ adds a threshold, not a different ranking.
+
+Three departures make the nominal $F_{J-1,N-J}$ tail optimistic on
+`SCTransform` output. These are the reasons why
+@sec-fs-permutation calibrates by permutation:
+
+- clipping at $\pm\sqrt{N/30}$;
+- a $\theta_{g}$ regularised across genes, which is misspecified for
+  any one gene;
+- discrete, skewed residuals at low means [@lauseAnalyticPearsonResiduals2021].
+
+### Bootstrap or permutation? {#sec-fs-boot-perm}
+
+The two resampling schemes answer different questions, and the choice
+follows from the question.
+
+| Question | Tool | Resampling unit |
+|---|---|---|
+| Is the type effect zero for gene $g$? (null calibration) | Label permutation (@sec-fs-permutation) or Freedman–Lane with covariates | Labels, one permutation for all genes |
+| Small or rare types: is $\chi^{2}_{J-1}$ accurate? | Parametric bootstrap of $\Lambda_{g}$ under fitted $M_{0}$ | Simulated NB counts |
+| How stable are the ranks and the top-500 list? | Nonparametric bootstrap of cells within type | Cells, stratified by type |
+| Uncertainty of the effect size of @sec-fs-effect-size | Same stratified bootstrap, percentile interval | Cells, stratified by type |
+
+: Resampling by question. A nonparametric bootstrap does not
+generate a null; it tests only after re-centring. {#tbl-fs-boot-perm}
+
+A nonparametric bootstrap resamples under the **observed** type
+effects. It therefore estimates variability, not a null distribution,
+and is the right tool for **selection stability**. In that role it
+measures how often a gene stays in the top 500 across bootstrap
+replicates, in the spirit of stability selection
+[@meinshausenStabilitySelection2010]. For the null, keep the
+permutation of @sec-fs-permutation.
+
+### Rank by effect size, not by $p$ {#sec-fs-effect-size}
+
+With $N$ in the thousands, almost every expressed gene rejects
+$H_{0g}$, and $p$-values only reorder genes by
+$N\times$(effect). Use the test as a **gate** (FDR on permutation or
+quasi-likelihood $F$ $p$-values, after @eq-fs-presence) and rank by an
+effect size:
+
+- the share $\mathrm{SS}_{\mathrm{between}}/\mathrm{SS}_{\mathrm{total}}$
+  already stored as `between_over_total`, which is $\eta^{2}$;
+- the deviance explained $R^{2}_{D,g}=1-D_{g}(M_{1})/D_{g}(M_{0})$ when
+  the NB GLM is fitted;
+- or, closest to what DeCovarT needs, the smallest pairwise overlap
+  between type-specific fits, for example the Bhattacharyya or
+  Hellinger distance between the univariate Gaussian (or NB) laws of
+  types $j$ and $j'$.
+
+The last criterion also sees genes whose types share a mean but differ
+in variance. A mean-only main effect misses those genes. A
+location–scale extension of @eq-fs-nb-main with a type-specific
+$\theta_{gj}$ (a GAMLSS margin, as in scDesign3
+[@songScDesign3GeneratesRealistic2024]) has $2(J-1)$ degrees of freedom
+and tests both.
+
+The pseudoreplication caveat of @nte-pseudoreplication applies to every
+statistic in this section. On a single gastruloid resource, cells are
+technical draws of one specimen. The $p$-values calibrate a **screen**
+inside that specimen, not a population-level claim of differential
+expression.
+
+```{r}
+#| label: fs-main-effect-sketch
+#| eval: false
+# Sketch: presence gate, LRT and quasi-likelihood F per time slot.
+# counts: genes x cells; type: factor over cells; lib: library sizes.
+present <- vapply(
+  split(seq_len(ncol(counts)), type),
+  function(idx) {
+    m <- counts[, idx, drop = FALSE]
+    rowMeans(m > 0) >= 0.05 & apply(m, 1L, stats::var) > 0
+  },
+  logical(nrow(counts))
+)
+keep <- rowSums(!present) == 0L
+
+# glmGamPoi: NB GLM with offset; QL F test of the joint type effect.
+fit <- glmGamPoi::glm_gp(
+  counts[keep, ],
+  design = ~type,
+  col_data = data.frame(type = type),
+  offset = log(lib),
+  size_factors = FALSE
+)
+res <- glmGamPoi::test_de(fit, reduced_design = ~1)
+
+# Single-gene LRT with MASS, for checking one gene:
+y <- counts["T", ]
+m0 <- MASS::glm.nb(y ~ 1 + offset(log(lib)))
+m1 <- MASS::glm.nb(y ~ type + offset(log(lib)))
+anova(m0, m1) # likelihood-ratio chi-squared on J - 1 df
+```
+
 ## Differential expression — only with biological replication {#sec-fs-deg}
 
 `DESeq2`, `edgeR` and `limma`–voom remain the workhorses of

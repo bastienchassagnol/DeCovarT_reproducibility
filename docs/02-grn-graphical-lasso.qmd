@@ -58,10 +58,15 @@ $$ {#eq-grn-convolution}
 
 ## Scope of the core pipeline {#sec-grn-scope}
 
-**In scope:** undirected sparse precisions; single-cell transcriptomics
-only; stationarity; labelled cell types. The three estimators in
-@fig-pipeline are `huge` (graphical lasso), `SILGGM` after a
-nonparanormal map with global FDR, and `PLNnetwork`.
+**In scope:** undirected sparse precisions and dense covariances;
+single-cell transcriptomics only; stationarity; labelled cell types.
+@fig-grn-core shows five strategies:
+
+- the `ppcor` baseline (@sec-ppcor);
+- the graphical lasso, fitted with `glasso` (@sec-huge);
+- `SILGGM` after a nonparanormal map, with global FDR (@sec-silggm);
+- `PLNnetwork` (@sec-pln);
+- a dense shrinkage covariance (@sec-shrinkage).
 
 **Dataset constraint.** GSE229513 is a 10x Chromium 3′ v3 UMI resource
 with **one** technical scRNA-seq experiment, not independent biological
@@ -75,18 +80,22 @@ independently at 48 h, 72 h and 96 h (@sec-geo-design).
 ```{mermaid}
 %%| echo: false
 %%| label: fig-grn-core
-%%| fig-cap: "Three core precision estimators. huge and SILGGM see a Gaussian table; only SILGGM is preceded by a nonparanormal map. PLNnetwork sees raw counts. GmGM and fused or low-rank models are perspectives."
+%%| fig-cap: "Five strategies. The ppcor baseline, the graphical lasso and the shrinkage covariance see a Gaussian table; only SILGGM is preceded by a nonparanormal map. PLNnetwork sees raw counts. The shrinkage covariance is dense and goes to DeCovarT without a graph. GmGM and fused or low-rank models are perspectives."
 %%{init: {"theme": "sandstone"}}%%
 flowchart TD
   A["UMI counts, labels j, time t"] --> B["Gene panel G_0"]
-  B --> H["huge graphical lasso"]
+  B --> Q["ppcor baseline, n > p"]
+  B --> H["glasso, unpenalised diagonal"]
   B --> N["Nonparanormal scores"]
   N --> S["SILGGM, global FDR"]
   B --> P["PLNnetwork on counts"]
-  H --> F["Sparse Omega_j,t"]
+  B --> K["Shrinkage covariance"]
+  Q --> F["Sparse Omega_j,t"]
+  H --> F
   S --> F
   P --> F
   F --> D["DeCovarT population Gaussian"]
+  K -->|"dense Sigma_j,t"| D
 ```
 
 ## How each estimator sees the counts {#sec-grn-observation}
@@ -96,9 +105,11 @@ the other two.
 
 | Estimator | What is passed in | Object exported |
 |-----------|-------------------|-----------------|
-| `huge` | Continuous Gaussian table | Sparse $\widehat{\boldsymbol{\Omega}}_{j}$ |
+| `ppcor` | Continuous Gaussian table, $n>p$ | SPD refit on the BH support |
+| `glasso` | Correlation matrix of a continuous table | Sparse $\widehat{\boldsymbol{\Omega}}_{j}$, rescaled |
 | `SILGGM` | Nonparanormal scores, then global FDR | Support, then an SPD refit |
 | `PLNnetwork` | Raw UMI counts and a library-size offset | Latent Gaussian precision |
+| `corpcor` shrinkage | Continuous Gaussian table | Dense $\widehat{\boldsymbol{\Sigma}}_{j}$ |
 
 `SCTransform` Pearson residuals stay in the HVG ranking of
 @sec-fs-hvg. Do not pass them to `PLNnetwork`: the PLN already has a
@@ -106,16 +117,63 @@ Poisson sampling layer. The nonparanormal map is part of the `SILGGM`
 branch only (@nte-npn-derivation).
 
 
-## Three sparse-precision estimators {#sec-grn-core}
+## Five covariance and precision estimators {#sec-grn-core}
 
-### Graphical lasso in `huge` {#sec-huge}
+### Baseline: partial correlations by inversion (`ppcor`) {#sec-ppcor}
 
-`huge` is the maintained implementation of the graphical lasso of
-Friedman, Hastie and Tibshirani
-[@friedmanSparseInverseCovariance2008; @mazumderGraphicalLassoNew2011;
-@zhaoHugePackageHighdimensional; @R-huge]: a regularisation path,
-EBIC or StARS selection, and sparse-matrix output. The programme is
-the Friedman graphical lasso.
+Before any penalty, invert the sample covariance and read the partial
+correlations off the precision. This is the baseline that every
+penalised estimator should beat. `ppcor` computes
+$\widehat{\boldsymbol{\Omega}}=S^{-1}$, the partial correlations of
+@eq-partial, and a $t$ test per pair,
+$t=\hat\rho\sqrt{(n-2-k)/(1-\hat\rho^{2})}$ with $k=p-2$ controlled
+genes [@R-ppcor].
+Benjamini–Hochberg on the $p(p-1)/2$ tests gives a support $\hat E$.
+
+Going back from $\hat\rho$ to a precision on the scale of the data
+needs **conditional**, not marginal, variances:
+
+$$
+\omega_{gg}=\frac{1}{\operatorname{Var}(x_{g}\mid
+\boldsymbol{x}_{-g})},
+\qquad
+\omega_{gg'}=-\rho_{gg'\mid\mathrm{rest}}\sqrt{\omega_{gg}\,\omega_{g'g'}}.
+$$ {#eq-ppcor-rescale}
+
+Rescaling by the marginal variances $s_{gg}$ understates each
+$\omega_{gg}$ by the factor $1-R^{2}_{g\cdot\mathrm{rest}}$. Once the
+non-significant $\hat\rho$ are set to zero, the matrix is no longer
+guaranteed to be positive definite. Refit an SPD precision under the
+zeros of $\hat E$ instead (@eq-hard-cov-selection-repro below). This is
+Dempster's covariance selection, which exists when $n$ exceeds the
+maximum-likelihood threshold of the selected graph.
+
+The baseline is limited to $n>p$. With $p\ge n$, `ppcor` falls back to
+the Moore–Penrose inverse and returns no test. At $p=500$ panel genes it
+applies only to the largest types, or to a sub-panel. For $p\ge n$ the
+closest unpenalised analogue is the shrinkage estimator of
+@sec-shrinkage [@schäferShrinkageApproachLargescale2005], with a local
+FDR on its partial correlations. It shrinks towards the diagonal, so it
+shares part of the attenuation discussed in the DeCovarT network
+vignette.
+
+$$
+\widehat{\boldsymbol{\Omega}}_{\hat E}
+=
+\arg\max_{\boldsymbol{\Omega}\succ0}
+\log\det\boldsymbol{\Omega}-\operatorname{tr}(S\boldsymbol{\Omega})
+\quad\text{s.t.}\quad
+\omega_{gg'}=0\ \ \forall\,(g,g')\notin\hat E .
+$$ {#eq-hard-cov-selection-repro}
+
+### Graphical lasso with an unpenalised diagonal (`glasso`) {#sec-huge}
+
+The programme is the graphical lasso of Friedman, Hastie and Tibshirani
+[@friedmanSparseInverseCovariance2008; @mazumderGraphicalLassoNew2011].
+`scripts/03_01_grn_huge.R` keeps its historical name. It now calls
+`glasso::glasso()` [@R-glasso] instead of `huge` [@zhaoHugePackageHighdimensional; @R-huge],
+because `huge.glasso()` always penalises the diagonal (see below). The
+penalty is chosen by the EBIC path of @sec-huge-lambda.
 
 #### Generative model
 
@@ -142,21 +200,30 @@ flowchart TB
 
 #### Objective and assumptions
 
-Let $S$ be the sample covariance of the $n$ cells on the gene panel.
-The estimator is
+Let $S$ be the sample covariance of the $n$ cells on the gene panel,
+$D=\operatorname{diag}(S)$, and $R=D^{-1/2}SD^{-1/2}$ the sample
+correlation. The estimator penalises the off-diagonal entries only:
 
 $$
-\widehat{\boldsymbol{\Omega}}
+\widehat{\boldsymbol{\Omega}}_{R}
 =
 \arg\min_{\boldsymbol{\Omega}\succ 0}
 \Bigl[
 -\log\det\boldsymbol{\Omega}
 +
-\operatorname{tr}(S\boldsymbol{\Omega})
+\operatorname{tr}(R\boldsymbol{\Omega})
 +
-\lambda\|\boldsymbol{\Omega}\|_{1}
-\Bigr].
+\lambda\sum_{g\neq g'}|\omega_{gg'}|
+\Bigr],
+\qquad
+\widehat{\boldsymbol{\Omega}}
+=
+D^{-1/2}\,\widehat{\boldsymbol{\Omega}}_{R}\,D^{-1/2}.
 $$ {#eq-glasso}
+
+Working on $R$ puts every gene on the same scale for one $\lambda$, as a
+common penalty requires. Rescaling leaves the zeros and the partial
+correlations unchanged.
 
 Assumptions: multivariate Gaussian observations; conditional
 independence encoded by zeros of $\boldsymbol{\Omega}$; cells independent
@@ -164,18 +231,53 @@ within the type-time subset; $G$ may exceed $n$.
 
 #### Optimisation and the $\ell_{1}$ penalty
 
-`huge(method = "glasso")` solves @eq-glasso by graphical-lasso
-coordinate descent. The $\ell_{1}$ term drives off-diagonal entries to
-zero. The diagonal is left unpenalised, so variances are not shrunk
-toward zero. A path of $\lambda$ values is computed; one $\lambda$ is
-then chosen.
+`glasso::glasso(R, rho = lambda, penalize.diagonal = FALSE)` solves
+@eq-glasso by block coordinate descent. The $\ell_{1}$ term drives
+off-diagonal entries to zero. **`penalize.diagonal` defaults to `TRUE`
+in `glasso` 1.11**, so it must be set explicitly. With `FALSE`, the
+fitted covariance $W=\widehat{\boldsymbol{\Omega}}_{R}^{-1}$ keeps
+$W_{gg}=R_{gg}=1$. Once rescaled, $\widehat{\boldsymbol{\Sigma}}$
+therefore matches the sample variances.
+
+The switch from `huge` follows from two facts, checked in the `huge`
+1.5.1 sources (`huge.glasso()` and `src/huge_core.cpp`):
+
+- **The data are standardised.** Given a data matrix, `huge.glasso()`
+  runs `scale(x)` and works on $R=\operatorname{cor}(x)$. `icov` is the
+  precision of the standardised genes. On the scale of $x$ it is
+  $D^{-1/2}\,\widehat{\boldsymbol{\Omega}}_{R}\,D^{-1/2}$, with
+  $D=\operatorname{diag}(S)$.
+- **The diagonal is penalised.** The solver sets
+  $W_{gg}=R_{gg}+\lambda=1+\lambda$ for $W=\widehat{\boldsymbol{\Omega}}^{-1}$,
+  so an isolated gene has precision $1/(1+\lambda)$. `cov.output = TRUE`
+  returns this $W$, the dual of the same fit: $W_{gg'}=R_{gg'}+\lambda\,
+  \mathrm{sign}(\hat\omega_{gg'})$ on the edges and
+  $|W_{gg'}-R_{gg'}|\le\lambda$ elsewhere. It is not a separate
+  covariance refit on the support. `huge.glasso()` has no switch for
+  the diagonal; `glasso::glasso(penalize.diagonal = FALSE)` is the
+  unpenalised alternative.
+
+Three behaviours of the earlier script are corrected:
+
+1. **Scale.** The $\lambda$ endpoints and the EBIC log-likelihood were
+   computed from $S$, while `huge` fitted $R$. All three now use $R$.
+   The exported $\widehat{\boldsymbol{\Omega}}$ and
+   $\widehat{\boldsymbol{\Sigma}}$ are rescaled to the data
+   (`rescale_correlation_fit()`).
+2. **Constant genes.** One gene constant across the cells of a type used
+   to return a diagonal covariance for all 500 genes. That gene is now
+   left out of the type's graph and recorded in `excluded_genes`.
+   Pairwise Hellinger and overlap scores use the genes both types keep.
+3. **Failed solves.** A failed penalty used to be replaced by a diagonal
+   precision, which EBIC could then select. It is now dropped from the
+   path and listed in `failed_lambda`.
 
 #### Hyperparameters
 
-- $\lambda$ path, and the selection rule in `huge.select()` (`ebic`
-  [@foygelExtendedBayesianInformation2010] or `stars`
-  [@liuStabilityApproachRegularization2010]);
-- whether the diagonal is penalised (default in this design: no);
+- $\lambda$ path and EBIC $\gamma$ (`ebic_adaptive_path()`,
+  [@foygelExtendedBayesianInformation2010]); StARS
+  [@liuStabilityApproachRegularization2010] as a diagnostic only;
+- `penalize.diagonal = FALSE`, on the correlation scale;
 - the gene panel $\mathcal{G}_{0}$ and the type-time subset.
 
 #### Choosing $\lambda$ {#sec-huge-lambda}
@@ -189,7 +291,7 @@ what the path is for.
 %%| fig-cap: "Penalty-path strategies. The endpoints are shared. Only the safeguarded EBIC interval search is implemented; TAV and global-local shrinkage remain alternatives."
 %%{init: {"theme": "sandstone"}}%%
 flowchart TD
-  S["Sample covariance S"] --> Lmax["lambda_max = max off-diagonal |S_ij|"]
+  S["Sample correlation R"] --> Lmax["lambda_max = max off-diagonal |R_ij|"]
   N["n cells, p genes"] --> Lmin["lambda_min of order C sqrt(log p / n)"]
   Lmax --> Branch{"Objective"}
   Lmin --> Branch
@@ -200,7 +302,7 @@ flowchart TD
 ```
 
 1. **Shared endpoints.** At
-   $\lambda_{\max}=\max_{g\neq g'}|S_{gg'}|$ the off-diagonal precision
+   $\lambda_{\max}=\max_{g\neq g'}|R_{gg'}|$ the off-diagonal precision
    is zero. Useful regularisation sits at order
    $\lambda_{\min}\asymp C\sqrt{\log p/n}$, so the search does not
    waste solves near the unregularised MLE.
@@ -775,6 +877,139 @@ sequencing depth, while $\beta_{1}$ is the log ratio of
 library-size-adjusted expression rates.](images/poisson_offset.png){#fig-poisson-offset}
 :::
 
+### Dense shrinkage covariance, judged by held-out likelihood {#sec-shrinkage}
+
+DeCovarT's likelihood uses $\boldsymbol{\Sigma}_{j}$, not the graph of
+$\boldsymbol{\Omega}_{j}$. The bulk covariance
+$\sum_{j}p_{j}^{2}\boldsymbol{\Sigma}_{j}$ of @eq-grn-convolution has
+no sparse precision even when every $\boldsymbol{\Omega}_{j}$ is
+sparse. The fifth strategy estimates $\boldsymbol{\Sigma}_{j}$ directly
+by linear shrinkage, with no penalty path and no graph
+[@schäferShrinkageApproachLargescale2005]. It is the plug-in to use
+when the graphical lasso returns an empty graph, because an empty graph
+discards all covariance.
+
+#### Estimator
+
+The general form shrinks the unbiased sample covariance $S$ towards a
+target $T$,
+$S^{\ast}=\lambda T+(1-\lambda)S$ with $\lambda\in[0,1]$
+[@schäferShrinkageApproachLargescale2005, eq. 3]. Their recommended
+target D, "diagonal, unequal variance", keeps the variances and shrinks
+the correlations towards zero [@schäferShrinkageApproachLargescale2005,
+Table 1 and eq. 10]:
+
+$$
+s^{\ast}_{gg}=s_{gg},
+\qquad
+s^{\ast}_{gg'}=r^{\ast}_{gg'}\sqrt{s_{gg}s_{g'g'}},
+\qquad
+r^{\ast}_{gg'}=r_{gg'}\,\min\bigl(1,\max(0,1-\hat\lambda^{\ast})\bigr),
+\qquad
+\hat\lambda^{\ast}
+=
+\frac{\sum_{g\neq g'}\widehat{\operatorname{Var}}(r_{gg'})}
+     {\sum_{g\neq g'}r_{gg'}^{2}}.
+$$ {#eq-shrink-target-d}
+
+$\widehat{\operatorname{Var}}(r_{gg'})$ is the unbiased variance of the
+empirical correlation, computed on the standardised genes $z$. With
+$w_{cgg'}=z_{cg}z_{cg'}$ and
+$\bar w_{gg'}=n^{-1}\sum_{c}w_{cgg'}$, it is
+$n(n-1)^{-3}\sum_{c}(w_{cgg'}-\bar w_{gg'})^{2}$
+[@schäferShrinkageApproachLargescale2005, Appendix A]. The intensity
+$\hat\lambda^{\ast}$ minimises the Frobenius risk
+$\mathbb{E}\|S^{\ast}-\boldsymbol{\Sigma}\|_{F}^{2}$ in closed form,
+following the Ledoit–Wolf lemma.
+
+Properties that matter here
+[@schäferShrinkageApproachLargescale2005, pp. 2–13]:
+
+- $S^{\ast}$ is positive definite and well conditioned for any $n$ and
+  $p$, including $p>n$. It is a convex combination of a positive
+  definite target and a positive semidefinite $S$.
+- It costs about twice the sample covariance: no penalty path, no
+  cross-validation, no MCMC.
+- Shrinking correlations rather than covariances makes it invariant to
+  the scale of each gene, like @eq-glasso.
+- The precision $\widehat{\boldsymbol{\Omega}}=(S^{\ast})^{-1}$ is
+  dense. Partial correlations and a local-FDR graph can be read off it
+  when a network is also wanted
+  [@schäferShrinkageApproachLargescale2005, eqs. 11–15].
+
+`corpcor::cov.shrink()` implements it [@R-corpcor]. Version 1.6.10
+also shrinks the variances towards their median by default
+(`lambda.var` estimated). Pass `lambda.var = 0` to reproduce target D
+exactly. `corpcor` is not yet in `renv.lock`: run
+`renv::install("corpcor")`, then `renv::snapshot()`, before the
+pipeline uses it.
+
+#### Held-out Gaussian likelihood as the arbiter
+
+$\hat\lambda^{\ast}$ is optimal for Frobenius risk, not for the Gaussian
+likelihood that DeCovarT evaluates. We therefore compare covariance
+estimates by **held-out** log-likelihood. The paper does not do this; it
+is our addition. Chiquet recommends $K$-fold cross-validation when the
+target is prediction rather than the true model
+[@chiquetContributionsSparseMethods2015, p. 78].
+
+For type $j$ at time $t$, split the cells into $K$ folds. Fit
+$(\widehat{\boldsymbol{\mu}}^{(-k)},\widehat{\boldsymbol{\Sigma}}^{(-k)})$
+on the other folds, and score the $n_k$ held-out cells by
+
+$$
+\ell^{(k)}
+=
+-\frac{1}{2}\Bigl[
+\log\det\widehat{\boldsymbol{\Sigma}}^{(-k)}
++
+\operatorname{tr}\bigl\{(\widehat{\boldsymbol{\Sigma}}^{(-k)})^{-1}S_{k}\bigr\}
++
+p\log 2\pi
+\Bigr],
+$$ {#eq-heldout-loglik}
+
+where $S_{k}=n_k^{-1}\sum_{c\in k}(x_{c}-\widehat{\boldsymbol{\mu}}^{(-k)})(x_{c}-\widehat{\boldsymbol{\mu}}^{(-k)})^{\top}$.
+Average $\ell^{(k)}$ over folds and compare four estimates of
+$\boldsymbol{\Sigma}_{j}$:
+
+1. the diagonal of marginal variances (the "empty graph");
+2. the shrinkage estimate at $\hat\lambda^{\ast}$, and on a grid of
+   $\lambda$ as a sensitivity check of the closed-form intensity;
+3. the `glasso` covariance at the EBIC $\lambda$, refit on its support;
+4. the `PLNnetwork` latent covariance, mapped to the scale of $x$.
+
+The folds split cells of **one** specimen, so the score measures
+generalisation to new cells of that gastruloid, not to new specimens
+(@sec-grn-scope).
+
+```{r}
+#| label: shrinkage-heldout-sketch
+#| eval: false
+# Sketch: dense shrinkage covariance per type and held-out likelihood.
+# x: cells x genes, log1p counts of one type at one time.
+heldout_loglik <- function(sigma, mu, x_test) {
+  centred <- sweep(x_test, 2L, mu)
+  s_test <- crossprod(centred) / nrow(x_test)
+  ld <- as.numeric(determinant(sigma, logarithm = TRUE)$modulus)
+  -0.5 * (ld + sum(diag(solve(sigma, s_test))) + ncol(x_test) * log(2 * pi))
+}
+
+fold <- withr::with_seed(1L, sample(rep_len(1:5, nrow(x))))
+scores <- vapply(1:5, function(k) {
+  train <- x[fold != k, , drop = FALSE]
+  test <- x[fold == k, , drop = FALSE]
+  mu <- colMeans(train)
+  shrunk <- corpcor::cov.shrink(train, lambda.var = 0, verbose = FALSE)
+  diagonal <- diag(apply(train, 2L, stats::var))
+  c(
+    shrinkage = heldout_loglik(unclass(shrunk), mu, test),
+    diagonal = heldout_loglik(diagonal, mu, test)
+  )
+}, numeric(2))
+rowMeans(scores)
+```
+
 ## Choosing the penalty {#sec-grn-penalty-path}
 
 Four displays, and only these, are used to pick the penalty for each of
@@ -840,14 +1075,17 @@ density, \ldots) between cell types at a fixed time. This is the rewiring view a
 signed partial-correlation difference heatmaps belong with the
 visualisations in @sec-metrics-viz.
 
-## Three core estimators {#sec-grn-top4}
+## Core estimators {#sec-grn-top4}
 
-This chapter's product is the **three** precision estimators, not the
-full $3\times 2\times 2$ design of @fig-pipeline (lifts and gene
-panels are later chapters).
+This chapter's product is the **three** sparse precision estimators,
+not the full $3\times 2\times 2$ design of @fig-pipeline (lifts and
+gene panels are later chapters). The `ppcor` baseline (@sec-ppcor) and
+the dense shrinkage covariance (@sec-shrinkage) are reference points.
+The first checks the penalties; the second is the DeCovarT plug-in
+when no graph is needed.
 
 $$
-\{\texttt{huge},\;
+\{\texttt{glasso},\;
 \texttt{SILGGM+NPN},\;
 \texttt{PLNnetwork}\}.
 $$ {#eq-grn-product}
@@ -871,14 +1109,14 @@ on the linear scale of @eq-grn-convolution, not on NPN scores.
 
 | Estimator | Reference | What it estimates | Pros | Cons |
 |-----------|-----------|-------------------|------|------|
-| `huge` | @friedmanSparseInverseCovariance2008; @zhaoHugePackageHighdimensional | Sparse Gaussian $\widehat{\boldsymbol{\Omega}}$ | Fast path; EBIC / StARS; maintained | Needs Gaussian rows; no library-size layer |
+| `glasso` | @friedmanSparseInverseCovariance2008; @R-glasso | Sparse Gaussian $\widehat{\boldsymbol{\Omega}}$ | Fast; unpenalised diagonal; EBIC path | Needs Gaussian rows; no library-size layer |
 | `SILGGM` `D-S_GL` | @zhangSILGGMExtensivePackage2018; @liuGaussianGraphicalModel2013 | De-sparsified edges, then an FDR support | Global FDR at $\alpha=0.05$; large $n$ makes modes agree | $\check{\boldsymbol{\Omega}}$ is dense; NPN changes the mean |
 | `PLNnetwork` | @chiquetPoissonLognormalModelVersatile2021 | Latent precision of a PLN | Counts and offset; variational, not MCMC | Heavier than graphical lasso; no edgewise FDR |
 
 : Three core precision estimators. {#tbl-grn-core}
 
 The knobs that @sec-grn-penalty-path is meant to set are $\lambda$
-(`huge`), $\alpha=0.05$ (`SILGGM`), and the PLN penalty grid.
+(`glasso`), $\alpha=0.05$ (`SILGGM`), and the PLN penalty grid.
 
 ::: {#nte-drop-zico .callout-warning}
 ## :warning: Why we drop zero-inflated directed graphs in the core

@@ -105,25 +105,28 @@ interval_priority <- function(
 #' trap the path in a single basin.
 #'
 #' `fit_precision` must accept a single positive `penalty` and return a
-#' list with `omega` (precision) and optionally `loglik`. If `loglik` is
-#' missing it is computed from `S`.
+#' list with `omega` (precision) and optionally `sigma` and `loglik`. If
+#' `loglik` is missing it is computed from `S`, so `omega` and `S` must
+#' be on the same scale. A solve that returns `failed = TRUE` is kept out
+#' of the selection and out of the returned path; its penalty is listed
+#' in `failed_lambda`.
 #'
 #' Toy example (do not use as a real GRN):
 #' ```
 #' set.seed(1)
 #' x <- matrix(rnorm(80 * 12), 80, 12)
-#' S <- stats::cov(x)
-#' fit <- function(penalty) {
-#'   fit <- huge::huge(x, method = "glasso", lambda = penalty, verbose = FALSE)
-#'   list(omega = as.matrix(fit$icov[[1]]))
-#' }
-#' ebic_adaptive_path(fit_precision = fit, n = 80, p = 12, S = S, n_solves = 8)
+#' R <- stats::cor(x)
+#' ebic_adaptive_path(
+#'   fit_precision = make_glasso_solver(R, n = 80),
+#'   n = 80, p = 12, S = R, n_solves = 8
+#' )
 #' ```
 #'
 #' @param fit_precision Function of one penalty.
 #' @param n Number of cells.
 #' @param p Number of genes.
-#' @param S Sample covariance used for the Gaussian likelihood.
+#' @param S Sample covariance (or correlation) used for the endpoints and
+#'   the Gaussian likelihood, on the scale of `omega`.
 #' @param n_solves Maximum number of precision solves. Default `40`.
 #' @param gamma EBIC extra-penalty. Default `0.5`.
 #' @param c_lambda,min_ratio Passed to [lambda_endpoints()].
@@ -131,10 +134,11 @@ interval_priority <- function(
 #' @param w1,w2,w3 Weights in [interval_priority()].
 #' @param eps Numerical zero for edges.
 #' @param verbose Print the penalty being solved.
-#' @return A list with one entry per solve: `lambda`, `ebic`, `n_edges`,
-#'   `density`, `priority`, `omega`, `fallback` (TRUE when that solve
-#'   used a diagonal precision), plus `selected` (index of the EBIC
-#'   minimum) and the endpoints.
+#' @return A list with one entry per successful solve: `lambda`, `ebic`,
+#'   `n_edges`, `density`, `priority`, `loglik`, `omega`, `sigma` (`NULL`
+#'   entries when the solver returns none), plus `selected` (index of the
+#'   EBIC minimum), `failed_lambda`, and the endpoints. Stops when every
+#'   solve fails.
 ebic_adaptive_path <- function(
   fit_precision,
   n,
@@ -174,18 +178,32 @@ ebic_adaptive_path <- function(
       message("  penalty = ", signif(penalty, 4))
     }
     fit <- fit_precision(penalty)
+    if (isTRUE(fit$failed)) {
+      return(list(
+        lambda = penalty,
+        omega = NULL,
+        sigma = NULL,
+        loglik = NA_real_,
+        n_edges = NA_integer_,
+        density = NA_real_,
+        ebic = NA_real_,
+        priority = NA_real_,
+        failed = TRUE
+      ))
+    }
     omega <- as.matrix(fit$omega)
     loglik <- fit$loglik %||% gaussian_precision_loglik(omega, S, n)
     n_edges <- count_undirected_edges(omega, eps)
     list(
       lambda = penalty,
       omega = omega,
+      sigma = fit$sigma,
       loglik = loglik,
       n_edges = n_edges,
       density = n_edges / n_possible,
       ebic = ebic_gaussian_ggm(loglik, n_edges, n, p, gamma),
       priority = NA_real_,
-      fallback = isTRUE(fit$fallback)
+      failed = FALSE
     )
   }
 
@@ -207,6 +225,9 @@ ebic_adaptive_path <- function(
         d_ebic - (path_sorted[[k]]$ebic - path_sorted[[k - 1L]]$ebic)
       } else {
         d_ebic
+      }
+      if (path_sorted[[k]]$failed || path_sorted[[k + 1L]]$failed) {
+        next
       }
       d_edges <- path_sorted[[k + 1L]]$n_edges - path_sorted[[k]]$n_edges
       d_omega <- precision_path_distance(
@@ -240,6 +261,9 @@ ebic_adaptive_path <- function(
     path <- path[ord]
     scores <- score_intervals(path)
     ebic <- vapply(path, `[[`, numeric(1), "ebic")
+    if (all(is.na(ebic)) || all(is.na(scores))) {
+      break
+    }
     i_min <- which.min(ebic)
     eligible <- seq_along(scores)
     if (identical(phase, "basin")) {
@@ -249,6 +273,10 @@ ebic_adaptive_path <- function(
         1L,
         pmin(length(scores), (i_min - 2L):(i_min + 1L))
       ))
+    }
+    eligible <- eligible[!is.na(scores[eligible])]
+    if (length(eligible) == 0L) {
+      eligible <- which(!is.na(scores))
     }
     pick <- eligible[[which.max(scores[eligible])]]
     lambda_new <- sqrt(path[[pick]]$lambda * path[[pick + 1L]]$lambda)
@@ -265,6 +293,15 @@ ebic_adaptive_path <- function(
     path[[length(path) + 1L]] <- added
   }
 
+  failed <- vapply(path, `[[`, logical(1), "failed")
+  failed_lambda <- sort(
+    vapply(path[failed], `[[`, numeric(1), "lambda"),
+    decreasing = TRUE
+  )
+  path <- path[!failed]
+  if (length(path) == 0L) {
+    stop("All ", length(failed), " penalty solves failed.")
+  }
   ord <- order(vapply(path, `[[`, numeric(1), "lambda"), decreasing = TRUE)
   path <- path[ord]
   ebic <- vapply(path, `[[`, numeric(1), "ebic")
@@ -276,7 +313,8 @@ ebic_adaptive_path <- function(
     priority = vapply(path, `[[`, numeric(1), "priority"),
     loglik = vapply(path, `[[`, numeric(1), "loglik"),
     omega = lapply(path, `[[`, "omega"),
-    fallback = vapply(path, function(z) isTRUE(z$fallback), logical(1)),
+    sigma = lapply(path, `[[`, "sigma"),
+    failed_lambda = failed_lambda,
     selected = which.min(ebic),
     lambda_min = lambda_min,
     lambda_max = lambda_max,
@@ -286,118 +324,66 @@ ebic_adaptive_path <- function(
   )
 }
 
-#' Diagonal covariance of marginal variances, and its precision.
+#' Graphical-lasso solver for [ebic_adaptive_path()] via `glasso`.
 #'
-#' Off-diagonal entries are zero. A gene with zero sample variance
-#' stays zero on both diagonals: replacing it by
-#' `1 / .Machine$double.eps` makes `solve()` numerically singular.
+#' Fits the correlation matrix `R`, so the penalty is on the same scale
+#' for every gene and the `lambda` endpoints of [lambda_endpoints()]
+#' apply unchanged. `penalize.diagonal = FALSE` keeps
+#' `sigma[g, g] = R[g, g] = 1`; the `glasso` default (`TRUE`) would add
+#' `lambda` to every variance. The caller rescales `omega` and `sigma`
+#' back to the data scale.
 #'
-#' @param variances Marginal variances, one per gene.
-#' @return A list with `sigma`, `omega`, and `fallback = TRUE`.
-diagonal_marginal_fit <- function(variances) {
-  variances <- as.numeric(variances)
-  variances[!is.finite(variances) | variances < 0] <- 0
-  precision_diag <- rep(0, length(variances))
-  positive <- variances > 0
-  precision_diag[positive] <- 1 / variances[positive]
-  list(
-    sigma = diag(variances, nrow = length(variances)),
-    omega = diag(precision_diag, nrow = length(variances)),
-    fallback = TRUE
-  )
-}
-
-#' Diagonal precision from marginal variances.
+#' A failed solve is reported as `failed = TRUE`, never replaced by a
+#' diagonal precision: a diagonal stand-in would be scored by EBIC as
+#' an empty graph and could be selected.
 #'
-#' @param variances Marginal variances, one per gene.
-#' @return A list with `omega` and `fallback = TRUE`.
-diagonal_precision_fallback <- function(variances) {
-  fit <- diagonal_marginal_fit(variances)
-  list(omega = fit$omega, fallback = TRUE)
-}
-
-#' One-point path when graphical lasso cannot be started.
-#'
-#' Used when at least one gene is constant, so every penalty would
-#' fail with the same `huge` error.
-#'
-#' @param n,p Sample size and number of genes.
-#' @param S Sample covariance.
-#' @param lambda_min,lambda_max Endpoints already reported in the log.
-#' @param gamma EBIC extra-penalty, stored for the same shape as
-#'   [ebic_adaptive_path()].
-#' @return A path list with one diagonal precision.
-diagonal_only_path <- function(
-  n,
-  p,
-  S,
-  lambda_min,
-  lambda_max,
-  gamma = 0.5
-) {
-  fit <- diagonal_marginal_fit(diag(S))
-  list(
-    lambda = lambda_max,
-    ebic = NA_real_,
-    n_edges = 0L,
-    density = 0,
-    priority = NA_real_,
-    loglik = NA_real_,
-    omega = list(fit$omega),
-    fallback = TRUE,
-    selected = 1L,
-    lambda_min = lambda_min,
-    lambda_max = lambda_max,
-    n = n,
-    p = p,
-    gamma = gamma
-  )
-}
-
-#' Graphical-lasso solver for [ebic_adaptive_path()] via `huge`.
-#'
-#' The diagonal is left unpenalised (huge default). `huge` 2.0.1
-#' solves each penalty by column-wise coordinate descent, symmetrises
-#' the precision, and stops when the infinity norm of
-#' `covariance %*% precision - I` stays above `1e-2` after one
-#' refinement at tolerance `1e-8`. That check fails at small penalties
-#' when the two estimates are no longer inverses (dense or
-#' ill-conditioned graphs, often `n < p`). A second start would repeat
-#' the same residual test, so a failed solve returns
-#' [diagonal_precision_fallback()] instead of aborting the path.
-#'
-#' @param x Cells-by-genes numeric matrix.
-#' @return A function of one `lambda`.
-make_huge_solver <- function(x) {
-  marginal_var <- apply(x, 2L, stats::var)
+#' @param R Correlation matrix of the genes, `p` by `p`.
+#' @param n Number of cells used to compute `R`.
+#' @param thr,maxit Passed to [glasso::glasso()].
+#' @return A function of one `penalty` returning `omega`, `sigma`
+#'   (the fitted covariance `W`, the inverse of `omega`), or
+#'   `failed = TRUE`.
+make_glasso_solver <- function(R, n, thr = 1e-4, maxit = 1e4) {
   function(penalty) {
     fit <- tryCatch(
-      huge::huge(
-        x,
-        method = "glasso",
-        lambda = penalty,
-        verbose = FALSE
+      glasso::glasso(
+        R,
+        rho = penalty,
+        nobs = n,
+        thr = thr,
+        maxit = maxit,
+        penalize.diagonal = FALSE
       ),
       error = function(e) e
     )
     if (inherits(fit, "error")) {
-      message(
-        "  glasso failed (",
-        conditionMessage(fit),
-        "); diagonal precision from marginal variances."
-      )
-      return(diagonal_precision_fallback(marginal_var))
+      message("  glasso failed (", conditionMessage(fit), ").")
+      return(list(failed = TRUE))
     }
-    omega <- as.matrix(fit$icov[[1L]])
-    if (!all(is.finite(omega))) {
-      message(
-        "  glasso returned a non-finite precision; ",
-        "diagonal precision from marginal variances."
-      )
-      return(diagonal_precision_fallback(marginal_var))
+    omega <- (fit$wi + t(fit$wi)) / 2
+    sigma <- (fit$w + t(fit$w)) / 2
+    if (fit$errflag != 0L || !all(is.finite(omega)) || !all(is.finite(sigma))) {
+      message("  glasso returned no finite estimate at this penalty.")
+      return(list(failed = TRUE))
     }
-    list(omega = omega, fallback = FALSE)
+    dimnames(omega) <- dimnames(R)
+    dimnames(sigma) <- dimnames(R)
+    list(omega = omega, sigma = sigma, failed = FALSE)
   }
+}
+
+#' Rescale a correlation-scale fit to the scale of the data.
+#'
+#' With `D = diag(sd^2)`, the covariance is `D^{1/2} W D^{1/2}` and the
+#' precision `D^{-1/2} Omega D^{-1/2}`. Zeros of the precision, and
+#' partial correlations, are unchanged.
+#'
+#' @param omega,sigma Precision and covariance of the standardised genes.
+#' @param sd Standard deviations of the genes on the data scale.
+#' @return A list with `omega` and `sigma` on the data scale.
+rescale_correlation_fit <- function(omega, sigma, sd) {
+  scale_outer <- outer(sd, sd)
+  list(omega = omega / scale_outer, sigma = sigma * scale_outer)
 }
 
 #' Stop when a covariance is not a non-degenerate Gaussian scale.

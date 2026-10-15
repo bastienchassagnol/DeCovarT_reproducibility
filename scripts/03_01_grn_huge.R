@@ -5,6 +5,11 @@
 #
 # Independent graphical lasso per labelled type and time, EBIC path
 # without diagonal penalisation. Run from the repository root.
+#
+# The file keeps its historical name; the solver is
+# `glasso::glasso(penalize.diagonal = FALSE)` on the correlation matrix,
+# not `huge`, which always penalises the diagonal. Genes constant within
+# a type are left out of that type's graph instead of emptying it.
 
 # ==========================================================================
 # SECTION 0 · Dependencies, hyperparameters, paths ----
@@ -21,7 +26,7 @@ min_cells <- 20L
 n_solves <- 40L
 ebic_gamma <- 0.5
 n_genes_global <- 500L
-estimator <- "huge"
+estimator <- "glasso"
 
 input_rds <- file.path(
   root,
@@ -81,85 +86,103 @@ results <- lapply(time_levels, function(time_level) {
     x <- t(as.matrix(counts[, cells, drop = FALSE]))
     x <- log1p(x)
     n <- nrow(x)
+    if (ncol(x) != n_genes_global) {
+      stop("Expected ", n_genes_global, " genes, found ", ncol(x), ".")
+    }
+    # A constant gene has no correlation with anything. Fit the graph on
+    # the other genes of this type and record the excluded ones.
+    constant <- vapply(
+      seq_len(ncol(x)),
+      function(j) all(x[, j] == x[1L, j]),
+      logical(1)
+    )
+    excluded <- colnames(x)[constant]
+    if (length(excluded) > 0L) {
+      shown <- if (length(excluded) > 8L) {
+        paste0(paste(excluded[seq_len(8L)], collapse = ", "), ", ...")
+      } else {
+        paste(excluded, collapse = ", ")
+      }
+      message(
+        "  ",
+        time_level,
+        " / ",
+        tp,
+        ": ",
+        length(excluded),
+        " genes constant across these ",
+        n,
+        " cells are left out of this graph (",
+        shown,
+        ")."
+      )
+      x <- x[, !constant, drop = FALSE]
+    }
     p <- ncol(x)
-    if (p != n_genes_global) {
-      stop("Expected ", n_genes_global, " genes, found ", p, ".")
+    if (p < 2L) {
+      message("Skipping ", time_level, " / ", tp, " (fewer than 2 genes vary)")
+      next
     }
     S <- stats::cov(x)
-    ends <- lambda_endpoints(n, p, S)
+    sd_genes <- sqrt(diag(S))
+    # Penalty, endpoints and EBIC all live on the correlation scale.
+    R <- stats::cov2cor(S)
+    ends <- lambda_endpoints(n, p, R)
     message(
-      "Fitting huge glasso: ",
+      "Fitting glasso: ",
       time_level,
       " / ",
       tp,
       " (n = ",
       n,
-      " cells); lambda_min = ",
+      " cells, p = ",
+      p,
+      " genes); lambda_min = ",
       signif(ends$lambda_min, 4),
-      "; lambda_max = ",
+      "; lambda_max = max |R_gg'| = ",
       signif(ends$lambda_max, 4)
     )
-    constant <- vapply(
-      seq_len(p),
-      function(j) all(x[, j] == x[1L, j]),
-      logical(1)
-    )
-    if (any(constant)) {
-      shown <- colnames(x)[constant]
-      shown <- if (length(shown) > 8L) {
-        paste0(paste(shown[seq_len(8L)], collapse = ", "), ", ...")
-      } else {
-        paste(shown, collapse = ", ")
-      }
-      message(
-        "  ",
-        sum(constant),
-        " genes are constant across these ",
-        n,
-        " cells (one value in every cell: ",
-        shown,
-        "). Sample correlation is undefined. ",
-        "Returning a diagonal covariance of the marginal variances."
-      )
-      path <- diagonal_only_path(
-        n,
-        p,
-        S,
-        ends$lambda_min,
-        ends$lambda_max,
-        ebic_gamma
-      )
-    } else {
-      path <- ebic_adaptive_path(
-        fit_precision = make_huge_solver(x),
+    path <- tryCatch(
+      ebic_adaptive_path(
+        fit_precision = make_glasso_solver(R, n),
         n = n,
         p = p,
-        S = S,
+        S = R,
         n_solves = n_solves,
         gamma = ebic_gamma,
         lambda_min = ends$lambda_min,
         lambda_max = ends$lambda_max,
         verbose = TRUE
+      ),
+      error = function(e) e
+    )
+    if (inherits(path, "error")) {
+      message(
+        "Skipping ",
+        time_level,
+        " / ",
+        tp,
+        ": ",
+        conditionMessage(path)
+      )
+      next
+    }
+    if (length(path$failed_lambda) > 0L) {
+      message(
+        "  ",
+        length(path$failed_lambda),
+        " penalties failed and were left out of the EBIC selection."
       )
     }
     sel <- path$selected
-    omega <- path$omega[[sel]]
+    data_scale <- rescale_correlation_fit(
+      path$omega[[sel]],
+      path$sigma[[sel]],
+      sd_genes
+    )
+    omega <- data_scale$omega
+    sigma <- data_scale$sigma
     mu <- colMeans(x)
-    variances <- diag(S)
-    sigma <- if (isTRUE(path$fallback[[sel]])) {
-      diag(variances, p)
-    } else {
-      tryCatch(
-        solve(omega),
-        error = function(e) {
-          message(
-            "  selected precision is numerically singular; ",
-            "covariance set to the diagonal of marginal variances."
-          )
-          diag(variances, p)
-        }
-      )
-    }
     sigma_emp <- if (n > p) {
       S
     } else {
@@ -169,9 +192,12 @@ results <- lapply(time_levels, function(time_level) {
       gaussian_hellinger(mu, sigma, mu, sigma_emp),
       error = function(e) NA_real_
     )
+    # path$omega and path$sigma stay on the correlation scale.
     fits[[tp]] <- list(
       path = path,
       genes = colnames(x),
+      excluded_genes = excluded,
+      sd = sd_genes,
       n = n,
       mu = mu,
       sigma = sigma,
@@ -237,17 +263,24 @@ for (time_level in time_levels) {
     for (b in seq_along(types)) {
       ia <- results[[time_level]][[types[[a]]]]
       ib <- results[[time_level]][[types[[b]]]]
+      # Marginals of each Gaussian on the genes both types kept.
+      shared <- intersect(ia$genes, ib$genes)
       hell <- tryCatch(
-        gaussian_hellinger(ia$mu, ia$sigma, ib$mu, ib$sigma),
+        gaussian_hellinger(
+          ia$mu[shared],
+          ia$sigma[shared, shared],
+          ib$mu[shared],
+          ib$sigma[shared, shared]
+        ),
         error = function(e) NA_real_
       )
       ov <- tryCatch(
         gaussian_mixsim_overlap(
-          ia$mu,
-          ia$sigma,
+          ia$mu[shared],
+          ia$sigma[shared, shared],
           ia$n,
-          ib$mu,
-          ib$sigma,
+          ib$mu[shared],
+          ib$sigma[shared, shared],
           ib$n
         ),
         error = function(e) NA_real_
@@ -257,6 +290,7 @@ for (time_level in time_levels) {
         estimator = estimator,
         type_a = types[[a]],
         type_b = types[[b]],
+        n_shared_genes = length(shared),
         hellinger = hell,
         mixsim_overlap = ov,
         stringsAsFactors = FALSE
