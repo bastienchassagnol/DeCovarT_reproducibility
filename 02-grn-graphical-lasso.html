@@ -26,6 +26,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 /* CSS for citations */
 div.csl-bib-body { }
 div.csl-entry {
@@ -518,9 +553,10 @@ window.Quarto = {
   <ul>
   <li><a href="#sec-grn-scope" id="toc-sec-grn-scope" class="nav-link active" data-scroll-target="#sec-grn-scope"><span class="header-section-number">4.1</span> Scope of the core pipeline</a></li>
   <li><a href="#sec-grn-observation" id="toc-sec-grn-observation" class="nav-link" data-scroll-target="#sec-grn-observation"><span class="header-section-number">4.2</span> How each estimator sees the counts</a></li>
-  <li><a href="#sec-grn-core" id="toc-sec-grn-core" class="nav-link" data-scroll-target="#sec-grn-core"><span class="header-section-number">4.3</span> Three sparse-precision estimators</a>
+  <li><a href="#sec-grn-core" id="toc-sec-grn-core" class="nav-link" data-scroll-target="#sec-grn-core"><span class="header-section-number">4.3</span> Five covariance and precision estimators</a>
   <ul>
-  <li><a href="#sec-huge" id="toc-sec-huge" class="nav-link" data-scroll-target="#sec-huge"><span class="header-section-number">4.3.1</span> Graphical lasso in <code>huge</code></a>
+  <li><a href="#sec-ppcor" id="toc-sec-ppcor" class="nav-link" data-scroll-target="#sec-ppcor"><span class="header-section-number">4.3.1</span> Baseline: partial correlations by inversion (<code>ppcor</code>)</a></li>
+  <li><a href="#sec-huge" id="toc-sec-huge" class="nav-link" data-scroll-target="#sec-huge"><span class="header-section-number">4.3.2</span> Graphical lasso with an unpenalised diagonal (<code>glasso</code>)</a>
   <ul class="collapse">
   <li><a href="#generative-model" id="toc-generative-model" class="nav-link" data-scroll-target="#generative-model">Generative model</a></li>
   <li><a href="#objective-and-assumptions" id="toc-objective-and-assumptions" class="nav-link" data-scroll-target="#objective-and-assumptions">Objective and assumptions</a></li>
@@ -528,19 +564,24 @@ window.Quarto = {
   <li><a href="#hyperparameters" id="toc-hyperparameters" class="nav-link" data-scroll-target="#hyperparameters">Hyperparameters</a></li>
   <li><a href="#sec-huge-lambda" id="toc-sec-huge-lambda" class="nav-link" data-scroll-target="#sec-huge-lambda">Choosing <span class="math inline">\lambda</span></a></li>
   </ul></li>
-  <li><a href="#sec-silggm" id="toc-sec-silggm" class="nav-link" data-scroll-target="#sec-silggm"><span class="header-section-number">4.3.2</span> <code>SILGGM</code> after a nonparanormal map</a>
+  <li><a href="#sec-silggm" id="toc-sec-silggm" class="nav-link" data-scroll-target="#sec-silggm"><span class="header-section-number">4.3.3</span> <code>SILGGM</code> after a nonparanormal map</a>
   <ul class="collapse">
   <li><a href="#generative-model-1" id="toc-generative-model-1" class="nav-link" data-scroll-target="#generative-model-1">Generative model</a></li>
   <li><a href="#objective-and-the-de-sparsified-correction" id="toc-objective-and-the-de-sparsified-correction" class="nav-link" data-scroll-target="#objective-and-the-de-sparsified-correction">Objective and the de-sparsified correction</a></li>
   <li><a href="#optimisation-and-global-fdr" id="toc-optimisation-and-global-fdr" class="nav-link" data-scroll-target="#optimisation-and-global-fdr">Optimisation and global FDR</a></li>
   <li><a href="#hyperparameters-1" id="toc-hyperparameters-1" class="nav-link" data-scroll-target="#hyperparameters-1">Hyperparameters</a></li>
   </ul></li>
-  <li><a href="#sec-pln" id="toc-sec-pln" class="nav-link" data-scroll-target="#sec-pln"><span class="header-section-number">4.3.3</span> Poisson-lognormal network</a>
+  <li><a href="#sec-pln" id="toc-sec-pln" class="nav-link" data-scroll-target="#sec-pln"><span class="header-section-number">4.3.4</span> Poisson-lognormal network</a>
   <ul class="collapse">
   <li><a href="#generative-model-2" id="toc-generative-model-2" class="nav-link" data-scroll-target="#generative-model-2">Generative model</a></li>
   <li><a href="#objective-and-assumptions-1" id="toc-objective-and-assumptions-1" class="nav-link" data-scroll-target="#objective-and-assumptions-1">Objective and assumptions</a></li>
   <li><a href="#optimisation-and-the-ell_1-penalty-1" id="toc-optimisation-and-the-ell_1-penalty-1" class="nav-link" data-scroll-target="#optimisation-and-the-ell_1-penalty-1">Optimisation and the <span class="math inline">\ell_{1}</span> penalty</a></li>
   <li><a href="#hyperparameters-2" id="toc-hyperparameters-2" class="nav-link" data-scroll-target="#hyperparameters-2">Hyperparameters</a></li>
+  </ul></li>
+  <li><a href="#sec-shrinkage" id="toc-sec-shrinkage" class="nav-link" data-scroll-target="#sec-shrinkage"><span class="header-section-number">4.3.5</span> Dense shrinkage covariance, judged by held-out likelihood</a>
+  <ul class="collapse">
+  <li><a href="#estimator" id="toc-estimator" class="nav-link" data-scroll-target="#estimator">Estimator</a></li>
+  <li><a href="#held-out-gaussian-likelihood-as-the-arbiter" id="toc-held-out-gaussian-likelihood-as-the-arbiter" class="nav-link" data-scroll-target="#held-out-gaussian-likelihood-as-the-arbiter">Held-out Gaussian likelihood as the arbiter</a></li>
   </ul></li>
   </ul></li>
   <li><a href="#sec-grn-penalty-path" id="toc-sec-grn-penalty-path" class="nav-link" data-scroll-target="#sec-grn-penalty-path"><span class="header-section-number">4.4</span> Choosing the penalty</a>
@@ -548,7 +589,7 @@ window.Quarto = {
   <li><a href="#sec-grn-penalty-stability" id="toc-sec-grn-penalty-stability" class="nav-link" data-scroll-target="#sec-grn-penalty-stability"><span class="header-section-number">4.4.1</span> Stability criteria</a></li>
   <li><a href="#sec-grn-penalty-describe" id="toc-sec-grn-penalty-describe" class="nav-link" data-scroll-target="#sec-grn-penalty-describe"><span class="header-section-number">4.4.2</span> Descriptive plots per cell type</a></li>
   </ul></li>
-  <li><a href="#sec-grn-top4" id="toc-sec-grn-top4" class="nav-link" data-scroll-target="#sec-grn-top4"><span class="header-section-number">4.5</span> Three core estimators</a></li>
+  <li><a href="#sec-grn-top4" id="toc-sec-grn-top4" class="nav-link" data-scroll-target="#sec-grn-top4"><span class="header-section-number">4.5</span> Core estimators</a></li>
   <li><a href="#sec-grn-appendix" id="toc-sec-grn-appendix" class="nav-link" data-scroll-target="#sec-grn-appendix"><span class="header-section-number">4.6</span> Perspectives</a>
   <ul>
   <li><a href="#sec-gmgm" id="toc-sec-gmgm" class="nav-link" data-scroll-target="#sec-gmgm"><span class="header-section-number">4.6.1</span> Cartesian <code>GmGM</code> cannot separate within-cell edges</a></li>
@@ -613,7 +654,14 @@ window.Quarto = {
 \tag{4.2}</span></span></p>
 <section id="sec-grn-scope" class="level2" data-number="4.1">
 <h2 data-number="4.1" class="anchored" data-anchor-id="sec-grn-scope"><span class="header-section-number">4.1</span> Scope of the core pipeline</h2>
-<p><strong>In scope:</strong> undirected sparse precisions; single-cell transcriptomics only; stationarity; labelled cell types. The three estimators in <a href="index.html#fig-pipeline" class="quarto-xref">Figure&nbsp;<span>1</span></a> are <code>huge</code> (graphical lasso), <code>SILGGM</code> after a nonparanormal map with global FDR, and <code>PLNnetwork</code>.</p>
+<p><strong>In scope:</strong> undirected sparse precisions and dense covariances; single-cell transcriptomics only; stationarity; labelled cell types. <a href="#fig-grn-core" class="quarto-xref">Figure&nbsp;<span>4.1</span></a> shows five strategies:</p>
+<ul>
+<li>the <code>ppcor</code> baseline (<a href="#sec-ppcor" class="quarto-xref"><span>Section 4.3.1</span></a>);</li>
+<li>the graphical lasso, fitted with <code>glasso</code> (<a href="#sec-huge" class="quarto-xref"><span>Section 4.3.2</span></a>);</li>
+<li><code>SILGGM</code> after a nonparanormal map, with global FDR (<a href="#sec-silggm" class="quarto-xref"><span>Section 4.3.3</span></a>);</li>
+<li><code>PLNnetwork</code> (<a href="#sec-pln" class="quarto-xref"><span>Section 4.3.4</span></a>);</li>
+<li>a dense shrinkage covariance (<a href="#sec-shrinkage" class="quarto-xref"><span>Section 4.3.5</span></a>).</li>
+</ul>
 <p><strong>Dataset constraint.</strong> GSE229513 is a 10x Chromium 3′ v3 UMI resource with <strong>one</strong> technical scRNA-seq experiment, not independent biological replicates for GRNs <span class="citation" data-cites="suppingerMultimodalCharacterizationMurine2023">(<a href="#ref-suppingerMultimodalCharacterizationMurine2023" role="doc-biblioref">Suppinger et al. 2023</a>)</span>. GSE250136 is a later stem-embryo dataset; it is external validation, not extra Suppinger replicates. Technical bootstrap of cells is allowed (<a href="06-population-alignment.html#sec-align-bootstrap" class="quarto-xref"><span>Section 5.4</span></a>); biological bootstrap is not. Networks are fit independently at 48 h, 72 h and 96 h (<a href="01-data-suppinger.html#sec-geo-design" class="quarto-xref"><span>Section 2.1</span></a>).</p>
 <div class="cell" data-layout-align="default">
 <div class="cell-output-display">
@@ -624,19 +672,23 @@ window.Quarto = {
 <pre class="mermaid mermaid-js" data-label="fig-grn-core">%%{init: {"theme": "sandstone"}}%%
 flowchart TD
   A["UMI counts, labels j, time t"] --&gt; B["Gene panel G_0"]
-  B --&gt; H["huge graphical lasso"]
+  B --&gt; Q["ppcor baseline, n &gt; p"]
+  B --&gt; H["glasso, unpenalised diagonal"]
   B --&gt; N["Nonparanormal scores"]
   N --&gt; S["SILGGM, global FDR"]
   B --&gt; P["PLNnetwork on counts"]
-  H --&gt; F["Sparse Omega_j,t"]
+  B --&gt; K["Shrinkage covariance"]
+  Q --&gt; F["Sparse Omega_j,t"]
+  H --&gt; F
   S --&gt; F
   P --&gt; F
   F --&gt; D["DeCovarT population Gaussian"]
+  K --&gt;|"dense Sigma_j,t"| D
 </pre>
 </div>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-grn-core-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;4.1: Three core precision estimators. huge and SILGGM see a Gaussian table; only SILGGM is preceded by a nonparanormal map. PLNnetwork sees raw counts. GmGM and fused or low-rank models are perspectives.
+Figure&nbsp;4.1: Five strategies. The ppcor baseline, the graphical lasso and the shrinkage covariance see a Gaussian table; only SILGGM is preceded by a nonparanormal map. PLNnetwork sees raw counts. The shrinkage covariance is dense and goes to DeCovarT without a graph. GmGM and fused or low-rank models are perspectives.
 </figcaption>
 </figure>
 </div>
@@ -661,29 +713,60 @@ Figure&nbsp;4.1: Three core precision estimators. huge and SILGGM see a Gaussian
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>huge</code></td>
-<td>Continuous Gaussian table</td>
-<td>Sparse <span class="math inline">\widehat{\boldsymbol{\Omega}}_{j}</span></td>
+<td><code>ppcor</code></td>
+<td>Continuous Gaussian table, <span class="math inline">n&gt;p</span></td>
+<td>SPD refit on the BH support</td>
 </tr>
 <tr class="even">
+<td><code>glasso</code></td>
+<td>Correlation matrix of a continuous table</td>
+<td>Sparse <span class="math inline">\widehat{\boldsymbol{\Omega}}_{j}</span>, rescaled</td>
+</tr>
+<tr class="odd">
 <td><code>SILGGM</code></td>
 <td>Nonparanormal scores, then global FDR</td>
 <td>Support, then an SPD refit</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>PLNnetwork</code></td>
 <td>Raw UMI counts and a library-size offset</td>
 <td>Latent Gaussian precision</td>
+</tr>
+<tr class="odd">
+<td><code>corpcor</code> shrinkage</td>
+<td>Continuous Gaussian table</td>
+<td>Dense <span class="math inline">\widehat{\boldsymbol{\Sigma}}_{j}</span></td>
 </tr>
 </tbody>
 </table>
 <p><code>SCTransform</code> Pearson residuals stay in the HVG ranking of <a href="03-feature-selection-naive.html#sec-fs-hvg" class="quarto-xref"><span>Section 3.2</span></a>. Do not pass them to <code>PLNnetwork</code>: the PLN already has a Poisson sampling layer. The nonparanormal map is part of the <code>SILGGM</code> branch only (<a href="#nte-npn-derivation" class="quarto-xref">Note&nbsp;<span>4.2</span></a>).</p>
 </section>
 <section id="sec-grn-core" class="level2" data-number="4.3">
-<h2 data-number="4.3" class="anchored" data-anchor-id="sec-grn-core"><span class="header-section-number">4.3</span> Three sparse-precision estimators</h2>
-<section id="sec-huge" class="level3" data-number="4.3.1">
-<h3 data-number="4.3.1" class="anchored" data-anchor-id="sec-huge"><span class="header-section-number">4.3.1</span> Graphical lasso in <code>huge</code></h3>
-<p><code>huge</code> is the maintained implementation of the graphical lasso of Friedman, Hastie and Tibshirani <span class="citation" data-cites="friedmanSparseInverseCovariance2008 mazumderGraphicalLassoNew2011 zhaoHugePackageHighdimensional R-huge">(<a href="#ref-friedmanSparseInverseCovariance2008" role="doc-biblioref">Friedman et al. 2008</a>; <a href="#ref-mazumderGraphicalLassoNew2011" role="doc-biblioref">Mazumder and Hastie 2011</a>; <a href="#ref-zhaoHugePackageHighdimensional" role="doc-biblioref">Zhao et al. 2012</a>, <a href="#ref-R-huge" role="doc-biblioref">2022</a>)</span>: a regularisation path, EBIC or StARS selection, and sparse-matrix output. The programme is the Friedman graphical lasso.</p>
+<h2 data-number="4.3" class="anchored" data-anchor-id="sec-grn-core"><span class="header-section-number">4.3</span> Five covariance and precision estimators</h2>
+<section id="sec-ppcor" class="level3" data-number="4.3.1">
+<h3 data-number="4.3.1" class="anchored" data-anchor-id="sec-ppcor"><span class="header-section-number">4.3.1</span> Baseline: partial correlations by inversion (<code>ppcor</code>)</h3>
+<p>Before any penalty, invert the sample covariance and read the partial correlations off the precision. This is the baseline that every penalised estimator should beat. <code>ppcor</code> computes <span class="math inline">\widehat{\boldsymbol{\Omega}}=S^{-1}</span>, the partial correlations of <a href="#eq-partial" class="quarto-xref">Equation&nbsp;<span>4.11</span></a>, and a <span class="math inline">t</span> test per pair, <span class="math inline">t=\hat\rho\sqrt{(n-2-k)/(1-\hat\rho^{2})}</span> with <span class="math inline">k=p-2</span> controlled genes <span class="citation" data-cites="R-ppcor">(<a href="#ref-R-ppcor" role="doc-biblioref">Kim 2015</a>)</span>. Benjamini–Hochberg on the <span class="math inline">p(p-1)/2</span> tests gives a support <span class="math inline">\hat E</span>.</p>
+<p>Going back from <span class="math inline">\hat\rho</span> to a precision on the scale of the data needs <strong>conditional</strong>, not marginal, variances:</p>
+<p><span id="eq-ppcor-rescale"><span class="math display">
+\omega_{gg}=\frac{1}{\operatorname{Var}(x_{g}\mid
+\boldsymbol{x}_{-g})},
+\qquad
+\omega_{gg'}=-\rho_{gg'\mid\mathrm{rest}}\sqrt{\omega_{gg}\,\omega_{g'g'}}.
+\tag{4.3}</span></span></p>
+<p>Rescaling by the marginal variances <span class="math inline">s_{gg}</span> understates each <span class="math inline">\omega_{gg}</span> by the factor <span class="math inline">1-R^{2}_{g\cdot\mathrm{rest}}</span>. Once the non-significant <span class="math inline">\hat\rho</span> are set to zero, the matrix is no longer guaranteed to be positive definite. Refit an SPD precision under the zeros of <span class="math inline">\hat E</span> instead (<a href="#eq-hard-cov-selection-repro" class="quarto-xref">Equation&nbsp;<span>4.4</span></a> below). This is Dempster’s covariance selection, which exists when <span class="math inline">n</span> exceeds the maximum-likelihood threshold of the selected graph.</p>
+<p>The baseline is limited to <span class="math inline">n&gt;p</span>. With <span class="math inline">p\ge n</span>, <code>ppcor</code> falls back to the Moore–Penrose inverse and returns no test. At <span class="math inline">p=500</span> panel genes it applies only to the largest types, or to a sub-panel. For <span class="math inline">p\ge n</span> the closest unpenalised analogue is the shrinkage estimator of <a href="#sec-shrinkage" class="quarto-xref"><span>Section 4.3.5</span></a>, with a local FDR on its partial correlations. It shrinks towards the diagonal, so it shares part of the attenuation discussed in the DeCovarT network vignette.</p>
+<p><span id="eq-hard-cov-selection-repro"><span class="math display">
+\widehat{\boldsymbol{\Omega}}_{\hat E}
+=
+\arg\max_{\boldsymbol{\Omega}\succ0}
+\log\det\boldsymbol{\Omega}-\operatorname{tr}(S\boldsymbol{\Omega})
+\quad\text{s.t.}\quad
+\omega_{gg'}=0\ \ \forall\,(g,g')\notin\hat E .
+\tag{4.4}</span></span></p>
+</section>
+<section id="sec-huge" class="level3" data-number="4.3.2">
+<h3 data-number="4.3.2" class="anchored" data-anchor-id="sec-huge"><span class="header-section-number">4.3.2</span> Graphical lasso with an unpenalised diagonal (<code>glasso</code>)</h3>
+<p>The programme is the graphical lasso of Friedman, Hastie and Tibshirani <span class="citation" data-cites="friedmanSparseInverseCovariance2008 mazumderGraphicalLassoNew2011">(<a href="#ref-friedmanSparseInverseCovariance2008" role="doc-biblioref">Friedman et al. 2008</a>; <a href="#ref-mazumderGraphicalLassoNew2011" role="doc-biblioref">Mazumder and Hastie 2011</a>)</span>. <code>scripts/03_01_grn_huge.R</code> keeps its historical name. It now calls <code>glasso::glasso()</code> <span class="citation" data-cites="R-glasso">(<a href="#ref-R-glasso" role="doc-biblioref">Friedman et al. 2019</a>)</span> instead of <code>huge</code> <span class="citation" data-cites="zhaoHugePackageHighdimensional R-huge">(<a href="#ref-zhaoHugePackageHighdimensional" role="doc-biblioref">Zhao et al. 2012</a>, <a href="#ref-R-huge" role="doc-biblioref">2022</a>)</span>, because <code>huge.glasso()</code> always penalises the diagonal (see below). The penalty is chosen by the EBIC path of <a href="#sec-huge-lambda" class="quarto-xref"><span>Section 4.3.2.5</span></a>.</p>
 <section id="generative-model" class="level4">
 <h4 class="anchored" data-anchor-id="generative-model">Generative model</h4>
 <p>Cells of one labelled type, at one time, are treated as independent Gaussian replicates. The precision is sparse.</p>
@@ -718,30 +801,47 @@ Figure&nbsp;4.2: Graphical lasso generative model: independent Gaussian cells of
 </section>
 <section id="objective-and-assumptions" class="level4">
 <h4 class="anchored" data-anchor-id="objective-and-assumptions">Objective and assumptions</h4>
-<p>Let <span class="math inline">S</span> be the sample covariance of the <span class="math inline">n</span> cells on the gene panel. The estimator is</p>
+<p>Let <span class="math inline">S</span> be the sample covariance of the <span class="math inline">n</span> cells on the gene panel, <span class="math inline">D=\operatorname{diag}(S)</span>, and <span class="math inline">R=D^{-1/2}SD^{-1/2}</span> the sample correlation. The estimator penalises the off-diagonal entries only:</p>
 <p><span id="eq-glasso"><span class="math display">
-\widehat{\boldsymbol{\Omega}}
+\widehat{\boldsymbol{\Omega}}_{R}
 =
 \arg\min_{\boldsymbol{\Omega}\succ 0}
 \Bigl[
 -\log\det\boldsymbol{\Omega}
 +
-\operatorname{tr}(S\boldsymbol{\Omega})
+\operatorname{tr}(R\boldsymbol{\Omega})
 +
-\lambda\|\boldsymbol{\Omega}\|_{1}
-\Bigr].
-\tag{4.3}</span></span></p>
+\lambda\sum_{g\neq g'}|\omega_{gg'}|
+\Bigr],
+\qquad
+\widehat{\boldsymbol{\Omega}}
+=
+D^{-1/2}\,\widehat{\boldsymbol{\Omega}}_{R}\,D^{-1/2}.
+\tag{4.5}</span></span></p>
+<p>Working on <span class="math inline">R</span> puts every gene on the same scale for one <span class="math inline">\lambda</span>, as a common penalty requires. Rescaling leaves the zeros and the partial correlations unchanged.</p>
 <p>Assumptions: multivariate Gaussian observations; conditional independence encoded by zeros of <span class="math inline">\boldsymbol{\Omega}</span>; cells independent within the type-time subset; <span class="math inline">G</span> may exceed <span class="math inline">n</span>.</p>
 </section>
 <section id="optimisation-and-the-ell_1-penalty" class="level4">
 <h4 class="anchored" data-anchor-id="optimisation-and-the-ell_1-penalty">Optimisation and the <span class="math inline">\ell_{1}</span> penalty</h4>
-<p><code>huge(method = "glasso")</code> solves <a href="#eq-glasso" class="quarto-xref">Equation&nbsp;<span>4.3</span></a> by graphical-lasso coordinate descent. The <span class="math inline">\ell_{1}</span> term drives off-diagonal entries to zero. The diagonal is left unpenalised, so variances are not shrunk toward zero. A path of <span class="math inline">\lambda</span> values is computed; one <span class="math inline">\lambda</span> is then chosen.</p>
+<p><code>glasso::glasso(R, rho = lambda, penalize.diagonal = FALSE)</code> solves <a href="#eq-glasso" class="quarto-xref">Equation&nbsp;<span>4.5</span></a> by block coordinate descent. The <span class="math inline">\ell_{1}</span> term drives off-diagonal entries to zero. <strong><code>penalize.diagonal</code> defaults to <code>TRUE</code> in <code>glasso</code> 1.11</strong>, so it must be set explicitly. With <code>FALSE</code>, the fitted covariance <span class="math inline">W=\widehat{\boldsymbol{\Omega}}_{R}^{-1}</span> keeps <span class="math inline">W_{gg}=R_{gg}=1</span>. Once rescaled, <span class="math inline">\widehat{\boldsymbol{\Sigma}}</span> therefore matches the sample variances.</p>
+<p>The switch from <code>huge</code> follows from two facts, checked in the <code>huge</code> 1.5.1 sources (<code>huge.glasso()</code> and <code>src/huge_core.cpp</code>):</p>
+<ul>
+<li><strong>The data are standardised.</strong> Given a data matrix, <code>huge.glasso()</code> runs <code>scale(x)</code> and works on <span class="math inline">R=\operatorname{cor}(x)</span>. <code>icov</code> is the precision of the standardised genes. On the scale of <span class="math inline">x</span> it is <span class="math inline">D^{-1/2}\,\widehat{\boldsymbol{\Omega}}_{R}\,D^{-1/2}</span>, with <span class="math inline">D=\operatorname{diag}(S)</span>.</li>
+<li><strong>The diagonal is penalised.</strong> The solver sets <span class="math inline">W_{gg}=R_{gg}+\lambda=1+\lambda</span> for <span class="math inline">W=\widehat{\boldsymbol{\Omega}}^{-1}</span>, so an isolated gene has precision <span class="math inline">1/(1+\lambda)</span>. <code>cov.output = TRUE</code> returns this <span class="math inline">W</span>, the dual of the same fit: <span class="math inline">W_{gg'}=R_{gg'}+\lambda\,
+\mathrm{sign}(\hat\omega_{gg'})</span> on the edges and <span class="math inline">|W_{gg'}-R_{gg'}|\le\lambda</span> elsewhere. It is not a separate covariance refit on the support. <code>huge.glasso()</code> has no switch for the diagonal; <code>glasso::glasso(penalize.diagonal = FALSE)</code> is the unpenalised alternative.</li>
+</ul>
+<p>Three behaviours of the earlier script are corrected:</p>
+<ol type="1">
+<li><strong>Scale.</strong> The <span class="math inline">\lambda</span> endpoints and the EBIC log-likelihood were computed from <span class="math inline">S</span>, while <code>huge</code> fitted <span class="math inline">R</span>. All three now use <span class="math inline">R</span>. The exported <span class="math inline">\widehat{\boldsymbol{\Omega}}</span> and <span class="math inline">\widehat{\boldsymbol{\Sigma}}</span> are rescaled to the data (<code>rescale_correlation_fit()</code>).</li>
+<li><strong>Constant genes.</strong> One gene constant across the cells of a type used to return a diagonal covariance for all 500 genes. That gene is now left out of the type’s graph and recorded in <code>excluded_genes</code>. Pairwise Hellinger and overlap scores use the genes both types keep.</li>
+<li><strong>Failed solves.</strong> A failed penalty used to be replaced by a diagonal precision, which EBIC could then select. It is now dropped from the path and listed in <code>failed_lambda</code>.</li>
+</ol>
 </section>
 <section id="hyperparameters" class="level4">
 <h4 class="anchored" data-anchor-id="hyperparameters">Hyperparameters</h4>
 <ul>
-<li><span class="math inline">\lambda</span> path, and the selection rule in <code>huge.select()</code> (<code>ebic</code> <span class="citation" data-cites="foygelExtendedBayesianInformation2010">(<a href="#ref-foygelExtendedBayesianInformation2010" role="doc-biblioref">Foygel and Drton 2010</a>)</span> or <code>stars</code> <span class="citation" data-cites="liuStabilityApproachRegularization2010">(<a href="#ref-liuStabilityApproachRegularization2010" role="doc-biblioref">Liu et al. 2010</a>)</span>);</li>
-<li>whether the diagonal is penalised (default in this design: no);</li>
+<li><span class="math inline">\lambda</span> path and EBIC <span class="math inline">\gamma</span> (<code>ebic_adaptive_path()</code>, <span class="citation" data-cites="foygelExtendedBayesianInformation2010">(<a href="#ref-foygelExtendedBayesianInformation2010" role="doc-biblioref">Foygel and Drton 2010</a>)</span>); StARS <span class="citation" data-cites="liuStabilityApproachRegularization2010">(<a href="#ref-liuStabilityApproachRegularization2010" role="doc-biblioref">Liu et al. 2010</a>)</span> as a diagnostic only;</li>
+<li><code>penalize.diagonal = FALSE</code>, on the correlation scale;</li>
 <li>the gene panel <span class="math inline">\mathcal{G}_{0}</span> and the type-time subset.</li>
 </ul>
 </section>
@@ -756,7 +856,7 @@ Figure&nbsp;4.2: Graphical lasso generative model: independent Gaussian cells of
 <div>
 <pre class="mermaid mermaid-js" data-label="fig-lambda-strategies">%%{init: {"theme": "sandstone"}}%%
 flowchart TD
-  S["Sample covariance S"] --&gt; Lmax["lambda_max = max off-diagonal |S_ij|"]
+  S["Sample correlation R"] --&gt; Lmax["lambda_max = max off-diagonal |R_ij|"]
   N["n cells, p genes"] --&gt; Lmin["lambda_min of order C sqrt(log p / n)"]
   Lmax --&gt; Branch{"Objective"}
   Lmin --&gt; Branch
@@ -775,7 +875,7 @@ Figure&nbsp;4.3: Penalty-path strategies. The endpoints are shared. Only the saf
 </div>
 </div>
 <ol type="1">
-<li><strong>Shared endpoints.</strong> At <span class="math inline">\lambda_{\max}=\max_{g\neq g'}|S_{gg'}|</span> the off-diagonal precision is zero. Useful regularisation sits at order <span class="math inline">\lambda_{\min}\asymp C\sqrt{\log p/n}</span>, so the search does not waste solves near the unregularised MLE.</li>
+<li><strong>Shared endpoints.</strong> At <span class="math inline">\lambda_{\max}=\max_{g\neq g'}|R_{gg'}|</span> the off-diagonal precision is zero. Useful regularisation sits at order <span class="math inline">\lambda_{\min}\asymp C\sqrt{\log p/n}</span>, so the search does not waste solves near the unregularised MLE.</li>
 <li><strong>EBIC interval search (implemented).</strong> The target is <span class="math inline">\lambda^{\star}=\arg\min_{\lambda}\mathrm{EBIC}_{\gamma}(\lambda)</span> <span class="citation" data-cites="foygelExtendedBayesianInformation2010">(<a href="#ref-foygelExtendedBayesianInformation2010" role="doc-biblioref">Foygel and Drton 2010</a>)</span>. Six log-spaced anchors, then geometric midpoints <span class="math inline">\sqrt{\lambda_{L}\lambda_{R}}</span> in the basin of the current minimum, while neighbouring intervals stay alive. That is <strong>not</strong> golden section: EBIC jumps when an edge appears or disappears, so a unimodal search would be the wrong algorithm. The same driver, <code>ebic_adaptive_path()</code>, takes a <code>fit_precision</code> callback, so <code>SILGGM</code> and <code>PLNnetwork</code> can reuse it.</li>
 <li><strong>TAV, if the target is the support.</strong> Thresholded adaptive validation <span class="citation" data-cites="laszkiewiczThresholdedAdaptiveValidation2021">(<a href="#ref-laszkiewiczThresholdedAdaptiveValidation2021" role="doc-biblioref">Laszkiewicz et al. 2021</a>)</span> calibrates graphical lasso for <strong>graph recovery</strong> with at most one line search. We document it here and do not implement it in the core scripts.</li>
 <li><strong>Global-local shrinkage, if there should be no <span class="math inline">\lambda</span> path.</strong> A graphical horseshoe <span class="citation" data-cites="liGraphicalHorseshoeEstimator2019">(<a href="#ref-liGraphicalHorseshoeEstimator2019" role="doc-biblioref">Li et al. 2019</a>)</span> puts a half-Cauchy local scale on each <span class="math inline">\omega_{gg'}</span> and a global scale <span class="math inline">\tau</span>. That replaces the lasso path rather than choosing 40 lasso penalties, and it is heavier than the EBIC search.</li>
@@ -795,8 +895,8 @@ Warning&nbsp;4.1: <span class="emoji" data-emoji="warning">⚠️</span> Why we 
 </div>
 </section>
 </section>
-<section id="sec-silggm" class="level3" data-number="4.3.2">
-<h3 data-number="4.3.2" class="anchored" data-anchor-id="sec-silggm"><span class="header-section-number">4.3.2</span> <code>SILGGM</code> after a nonparanormal map</h3>
+<section id="sec-silggm" class="level3" data-number="4.3.3">
+<h3 data-number="4.3.3" class="anchored" data-anchor-id="sec-silggm"><span class="header-section-number">4.3.3</span> <code>SILGGM</code> after a nonparanormal map</h3>
 <p><code>SILGGM</code> tests entries of a Gaussian precision and controls FDR on the whole graph <span class="citation" data-cites="zhangSILGGMExtensivePackage2018 R-SILGGM">(<a href="#ref-zhangSILGGMExtensivePackage2018" role="doc-biblioref">Zhang et al. 2018a</a>, <a href="#ref-R-SILGGM" role="doc-biblioref">2018b</a>)</span>. The arm used here is: nonparanormal scores, then de-sparsified graphical lasso (<code>D-S_GL</code>) with <code>global = TRUE</code>. With many cells the five <code>SILGGM</code> procedures tend to agree; at a bulk-sample size they need not. The object we keep is the <strong>SPD precision refit on the FDR support</strong>, not the dense de-sparsified matrix.</p>
 <div id="nte-npn-derivation" class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -861,7 +961,7 @@ O\bigl(n^{-1/4}(\log n)^{-1/2}\bigr),
 \max(\delta_{n},R_{ig}/n)\bigr\}
 \right].
 \end{aligned}
-\tag{4.4}</span></span></p>
+\tag{4.6}</span></span></p>
 <p><code>huge.npn()</code> then standardises columns. The output of <code>shrinkage</code> or <code>truncation</code> is an <span class="math inline">n\times G</span> score matrix (<code>skeptic</code> returns a correlation matrix instead). Graphical lasso on those scores targets <span class="math inline">\boldsymbol{\Omega}=R^{-1}</span> of the latent Gaussian <span class="math inline">\boldsymbol{Z}</span>, not the precision of the raw counts. Means on this scale are not <span class="math inline">\boldsymbol{\mu}_{\cdot j}</span>.</p>
 <div id="fig-npn-shrink-trunc" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -912,7 +1012,7 @@ Figure&nbsp;4.5: Nonparanormal generative model: each gene margin is a monotone 
 </section>
 <section id="objective-and-the-de-sparsified-correction" class="level4">
 <h4 class="anchored" data-anchor-id="objective-and-the-de-sparsified-correction">Objective and the de-sparsified correction</h4>
-<p>The first step is still <a href="#eq-glasso" class="quarto-xref">Equation&nbsp;<span>4.3</span></a>, which is <span class="math inline">\ell_{1}</span>-biased. The Janková–van de Geer correction <span class="citation" data-cites="jankovaConfidenceIntervalsHighdimensional2015">(<a href="#ref-jankovaConfidenceIntervalsHighdimensional2015" role="doc-biblioref">Jankova and Geer 2015</a>)</span> is <strong>not</strong> <span class="math inline">2\widehat{\boldsymbol{\Omega}}-S</span>. On the correlation scale it is the one-step Newton update</p>
+<p>The first step is still <a href="#eq-glasso" class="quarto-xref">Equation&nbsp;<span>4.5</span></a>, which is <span class="math inline">\ell_{1}</span>-biased. The Janková–van de Geer correction <span class="citation" data-cites="jankovaConfidenceIntervalsHighdimensional2015">(<a href="#ref-jankovaConfidenceIntervalsHighdimensional2015" role="doc-biblioref">Jankova and Geer 2015</a>)</span> is <strong>not</strong> <span class="math inline">2\widehat{\boldsymbol{\Omega}}-S</span>. On the correlation scale it is the one-step Newton update</p>
 <p><span id="eq-desparsify"><span class="math display">
 \check{\boldsymbol{\Omega}}
 =
@@ -921,7 +1021,7 @@ Figure&nbsp;4.5: Nonparanormal generative model: each gene margin is a monotone 
 \widehat{\boldsymbol{\Omega}}\,
 \widehat{R}\,
 \widehat{\boldsymbol{\Omega}},
-\tag{4.5}</span></span></p>
+\tag{4.7}</span></span></p>
 <p>with <span class="math inline">\widehat{R}</span> the empirical correlation of the NPN scores (replace <span class="math inline">\widehat{R}</span> by <span class="math inline">\widehat{\boldsymbol{\Sigma}}</span> on the covariance scale). <span class="math inline">\check{\boldsymbol{\Omega}}</span> recentres the edges so that they are asymptotically normal under a sparsity condition on the maximum degree. It is deliberately <strong>dense</strong>: it is an inferential object, not a generative precision. Zhang and Zou <span class="citation" data-cites="zhangSparsePrecisionMatrix2014">(<a href="#ref-zhangSparsePrecisionMatrix2014" role="doc-biblioref">Zhang and Zou 2014</a>)</span> note that graphical lasso remains useful for <strong>support</strong> recovery even when the Gaussian assumption fails. That supports edge screening, not export of <span class="math inline">\check{\boldsymbol{\Omega}}</span> itself as <span class="math inline">\widehat{\boldsymbol{\Omega}}_{j}</span>.</p>
 <div id="nte-desparsify" class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -963,7 +1063,7 @@ Note&nbsp;4.3: <span class="emoji" data-emoji="information_source">ℹ️</span>
 \widehat{\boldsymbol{\Omega}},
 \end{aligned}
 </span></p>
-<p>which is <a href="#eq-desparsify" class="quarto-xref">Equation&nbsp;<span>4.5</span></a> on the covariance scale. Equivalently, <span class="math inline">\check{\boldsymbol{\Omega}}=\widehat{\boldsymbol{\Omega}}+\lambda\widehat{\boldsymbol{\Omega}}\widehat{\boldsymbol{Z}}\widehat{\boldsymbol{\Omega}}</span>: the correction adds back the KKT bias term.</p>
+<p>which is <a href="#eq-desparsify" class="quarto-xref">Equation&nbsp;<span>4.7</span></a> on the covariance scale. Equivalently, <span class="math inline">\check{\boldsymbol{\Omega}}=\widehat{\boldsymbol{\Omega}}+\lambda\widehat{\boldsymbol{\Omega}}\widehat{\boldsymbol{Z}}\widehat{\boldsymbol{\Omega}}</span>: the correction adds back the KKT bias term.</p>
 <p>Under the usual sparsity and rate conditions the remainder after this linear expansion is <span class="math inline">o_{p}(n^{-1/2})</span>, so a <strong>single</strong> Newton step is enough for entrywise <span class="math inline">\sqrt{n}</span>-normality <span class="citation" data-cites="jankovaConfidenceIntervalsHighdimensional2015">(<a href="#ref-jankovaConfidenceIntervalsHighdimensional2015" role="doc-biblioref">Jankova and Geer 2015</a>)</span>:</p>
 <p><span class="math display">
 \sqrt{n}\,
@@ -1026,8 +1126,8 @@ Figure&nbsp;4.7: Estimation order for the SILGGM arm: nonparanormal scores, grap
 </ul>
 </section>
 </section>
-<section id="sec-pln" class="level3" data-number="4.3.3">
-<h3 data-number="4.3.3" class="anchored" data-anchor-id="sec-pln"><span class="header-section-number">4.3.3</span> Poisson-lognormal network</h3>
+<section id="sec-pln" class="level3" data-number="4.3.4">
+<h3 data-number="4.3.4" class="anchored" data-anchor-id="sec-pln"><span class="header-section-number">4.3.4</span> Poisson-lognormal network</h3>
 <p><code>PLNnetwork</code> is the sparse-precision member of <code>PLNmodels</code> <span class="citation" data-cites="chiquetPoissonLognormalModelVersatile2021 chiquetVariationalInferenceSparse2018 R-PLNmodels">(<a href="#ref-chiquetPoissonLognormalModelVersatile2021" role="doc-biblioref">Chiquet et al. 2021</a>, <a href="#ref-chiquetVariationalInferenceSparse2018" role="doc-biblioref">2018</a>, <a href="#ref-R-PLNmodels" role="doc-biblioref">2025</a>)</span>. Fused PLN graphical lasso is a perspective (<a href="#sec-grn-appendix" class="quarto-xref"><span>Section 4.6</span></a>), not this arm.</p>
 <section id="generative-model-2" class="level4">
 <h4 class="anchored" data-anchor-id="generative-model-2">Generative model</h4>
@@ -1042,7 +1142,7 @@ Y_{cg}\mid\boldsymbol{Z}_{c}
 \mathcal{N}_{G}(\boldsymbol{\mu},\boldsymbol{\Sigma}),
 \quad
 \boldsymbol{\Omega}=\boldsymbol{\Sigma}^{-1}.
-\tag{4.6}</span></span></p>
+\tag{4.8}</span></span></p>
 <p>Zeros are Poisson sampling zeros <span class="citation" data-cites="svenssonDropletScRNAseqNot2020">(<a href="#ref-svenssonDropletScRNAseqNot2020" role="doc-biblioref">Svensson 2020</a>)</span>. The fit is <strong>independent</strong> for each labelled type at each of 48 h, 72 h and 96 h. A single formula with cell-type and time dummies would estimate <strong>one</strong> shared precision and only shift the mean; that is not the DeCovarT target. The formula interface is used inside each subset, with an offset and no further design.</p>
 <div class="cell" data-layout-align="default">
 <div class="cell-output-display">
@@ -1106,7 +1206,7 @@ Important&nbsp;4.4: <span class="emoji" data-emoji="information_source">ℹ️</
 <h4 class="anchored" data-anchor-id="optimisation-and-the-ell_1-penalty-1">Optimisation and the <span class="math inline">\ell_{1}</span> penalty</h4>
 <p><code>PLNnetwork()</code> runs that variational scheme over a grid of penalties (<a href="https://www.rdocumentation.org/packages/PLNmodels/versions/0.10.6/topics/PLNnetwork">PLNnetwork</a>). The pair-specific graphical-lasso weight is <span class="math inline">\rho_{gg'}=\lambda w_{gg'}</span>. <code>penalize_diagonal</code> stays <code>FALSE</code> in <code>control_main</code>, matching the graphical-lasso convention. The penalty grid is set by <code>penalties</code>, or by <code>nPenalties</code> and <code>min.ratio</code> in <code>control_init</code>.</p>
 <p>The inner continuous problem in <span class="math inline">(B,M,S)</span> at fixed <span class="math inline">\boldsymbol{\Omega}</span> is solved by NLopt. We keep the conservative quadratic solver <strong><code>CCSAQ</code></strong> as the default <code>algorithm</code> <span class="citation" data-cites="chiquetVariationalInferenceSparse2018">(<a href="#ref-chiquetVariationalInferenceSparse2018" role="doc-biblioref">Chiquet et al. 2018</a>)</span>.</p>
-<div id="algo-plnnetwork" class="pseudocode-container quarto-float" data-pseudocode-number="1" data-line-number-punc=":" data-indent-size="1.2em" data-no-end="false" data-caption-prefix="Algorithm" data-line-number="true" data-chapter-level="4" data-comment-delimiter="//" data-indent-lines="false">
+<div id="algo-plnnetwork" class="pseudocode-container quarto-float" data-line-number="true" data-pseudocode-number="1" data-no-end="false" data-comment-delimiter="//" data-line-number-punc=":" data-indent-size="1.2em" data-indent-lines="false" data-caption-prefix="Algorithm" data-chapter-level="4">
 <div class="pseudocode">
 \begin{algorithm} \caption{PLNnetwork alternating variational / graphical-lasso optimisation} \begin{algorithmic} \Require Counts $Y$, covariates $X$, offsets $O$, penalty $\lambda$ \Require penalty weights $W$ \Require inner tolerances $(f_{\mathrm{rel}},f_{\mathrm{abs}}, x_{\mathrm{rel}},x_{\mathrm{abs}})$ and \texttt{maxeval} \Require outer tolerance \texttt{ftol\_out} and \texttt{maxit\_out} \State Initialize $(B,M,S,\Sigma)$ \State $\rho \gets \lambda W$ \For{$h = 1,\ldots,\texttt{maxit\_out}$} \State $\Omega^{(h)} \gets \Call{GraphicalLasso}{\Sigma^{(h-1)},\rho}$ \Comment{precision / sparsity update} \State $(B^{(h)},M^{(h)},S^{(h)}) \gets \Call{NLOPT}{ B^{(h-1)},M^{(h-1)},S^{(h-1)}; \Omega^{(h)} }$ \Comment{inner CCSAQ solve} \Statex \hspace{\algorithmicindent} \Comment{NLOPT stops by ftol\_rel/abs, xtol\_rel/abs or maxeval} \State $\Sigma^{(h)} \gets n^{-1}\left[ {M^{(h)}}^\top M^{(h)} + \sum_i S_i^{(h)} \right]$ \State $F_h \gets -\mathrm{ELBO}(B^{(h)},M^{(h)},S^{(h)},\Omega^{(h)}) + \lambda\|\Omega^{(h)}\|_{1,W}$ \If{$|F_h-F_{h-1}|/|F_h| &lt; \texttt{ftol\_out}$} \State \textbf{break} \EndIf \EndFor \State \Return $(B,M,S,\Omega,\Sigma)$ \end{algorithmic} \end{algorithm}
 </div>
@@ -1216,7 +1316,7 @@ Y_{gc}\sim\mathrm{Poisson}(\mu_{gc}),
 =
 \log(q_{gB}/q_{gA}),
 </span></p>
-<p>not a log ratio of raw read counts. <code>PLNnetwork</code> uses the same device in <a href="#eq-pln" class="quarto-xref">Equation&nbsp;<span>4.6</span></a>: <span class="math inline">S_{c}</span> (library size) multiplies the latent intensity, so the latent Gaussian <span class="math inline">\log\boldsymbol{Z}_{c}</span> is a model for <strong>relative</strong> abundance after sequencing exposure.</p>
+<p>not a log ratio of raw read counts. <code>PLNnetwork</code> uses the same device in <a href="#eq-pln" class="quarto-xref">Equation&nbsp;<span>4.8</span></a>: <span class="math inline">S_{c}</span> (library size) multiplies the latent intensity, so the latent Gaussian <span class="math inline">\log\boldsymbol{Z}_{c}</span> is a model for <strong>relative</strong> abundance after sequencing exposure.</p>
 <p><a href="#fig-poisson-offset" class="quarto-xref">Figure&nbsp;<span>4.9</span></a> shows the two-condition cartoon. Equal rates and a doubled library yield doubled counts but <span class="math inline">\beta_{1}=0</span>. A 1.5-fold rate increase at doubled depth yields <span class="math inline">\beta_{1}=\ln(1.5)\approx0.405</span> (<span class="math inline">\log_{2}</span> fold change <span class="math inline">\approx 0.585</span>).</p>
 <p>McCarthy, Chen and Smyth write the RNA-seq GLM with the (effective) library size as an offset in the linear predictor, so that the condition coefficient is a log ratio of relative abundances after sequencing depth <span class="citation" data-cites="mccarthyDifferentialExpressionAnalysis2012a">(<a href="#ref-mccarthyDifferentialExpressionAnalysis2012a" role="doc-biblioref">McCarthy et al. 2012</a>)</span>. DESeq2 uses the same multiplicative mean <span class="math inline">\mu_{gc}=s_{c}q_{gc}</span>, with <span class="math inline">s_{c}</span> a size factor and <span class="math inline">q_{gc}</span> the abundance that carries the fold change <span class="citation" data-cites="loveModeratedEstimationFold2014">(<a href="#ref-loveModeratedEstimationFold2014" role="doc-biblioref">Love et al. 2014</a>)</span>. In PLN we pass <code>offset(log_library)</code> rather than transforming <span class="math inline">Y</span>. The offset is relative normalisation, not conversion to absolute molecule counts.</p>
 <div id="fig-poisson-offset" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -1230,6 +1330,83 @@ Figure&nbsp;4.9: Library-size offset in a Poisson log-link: raw counts scale wit
 </figure>
 </div>
 </div>
+</div>
+</section>
+</section>
+<section id="sec-shrinkage" class="level3" data-number="4.3.5">
+<h3 data-number="4.3.5" class="anchored" data-anchor-id="sec-shrinkage"><span class="header-section-number">4.3.5</span> Dense shrinkage covariance, judged by held-out likelihood</h3>
+<p>DeCovarT’s likelihood uses <span class="math inline">\boldsymbol{\Sigma}_{j}</span>, not the graph of <span class="math inline">\boldsymbol{\Omega}_{j}</span>. The bulk covariance <span class="math inline">\sum_{j}p_{j}^{2}\boldsymbol{\Sigma}_{j}</span> of <a href="#eq-grn-convolution" class="quarto-xref">Equation&nbsp;<span>4.2</span></a> has no sparse precision even when every <span class="math inline">\boldsymbol{\Omega}_{j}</span> is sparse. The fifth strategy estimates <span class="math inline">\boldsymbol{\Sigma}_{j}</span> directly by linear shrinkage, with no penalty path and no graph <span class="citation" data-cites="schäferShrinkageApproachLargescale2005">(<a href="#ref-schäferShrinkageApproachLargescale2005" role="doc-biblioref">Schäfer and Strimmer 2005</a>)</span>. It is the plug-in to use when the graphical lasso returns an empty graph, because an empty graph discards all covariance.</p>
+<section id="estimator" class="level4">
+<h4 class="anchored" data-anchor-id="estimator">Estimator</h4>
+<p>The general form shrinks the unbiased sample covariance <span class="math inline">S</span> towards a target <span class="math inline">T</span>, <span class="math inline">S^{\ast}=\lambda T+(1-\lambda)S</span> with <span class="math inline">\lambda\in[0,1]</span> <span class="citation" data-cites="schäferShrinkageApproachLargescale2005">(<a href="#ref-schäferShrinkageApproachLargescale2005" role="doc-biblioref">Schäfer and Strimmer 2005</a>, eq. 3)</span>. Their recommended target D, “diagonal, unequal variance”, keeps the variances and shrinks the correlations towards zero <span class="citation" data-cites="schäferShrinkageApproachLargescale2005">(<a href="#ref-schäferShrinkageApproachLargescale2005" role="doc-biblioref">Schäfer and Strimmer 2005</a>, Table 1 and eq. 10)</span>:</p>
+<p><span id="eq-shrink-target-d"><span class="math display">
+s^{\ast}_{gg}=s_{gg},
+\qquad
+s^{\ast}_{gg'}=r^{\ast}_{gg'}\sqrt{s_{gg}s_{g'g'}},
+\qquad
+r^{\ast}_{gg'}=r_{gg'}\,\min\bigl(1,\max(0,1-\hat\lambda^{\ast})\bigr),
+\qquad
+\hat\lambda^{\ast}
+=
+\frac{\sum_{g\neq g'}\widehat{\operatorname{Var}}(r_{gg'})}
+     {\sum_{g\neq g'}r_{gg'}^{2}}.
+\tag{4.9}</span></span></p>
+<p><span class="math inline">\widehat{\operatorname{Var}}(r_{gg'})</span> is the unbiased variance of the empirical correlation, computed on the standardised genes <span class="math inline">z</span>. With <span class="math inline">w_{cgg'}=z_{cg}z_{cg'}</span> and <span class="math inline">\bar w_{gg'}=n^{-1}\sum_{c}w_{cgg'}</span>, it is <span class="math inline">n(n-1)^{-3}\sum_{c}(w_{cgg'}-\bar w_{gg'})^{2}</span> <span class="citation" data-cites="schäferShrinkageApproachLargescale2005">(<a href="#ref-schäferShrinkageApproachLargescale2005" role="doc-biblioref">Schäfer and Strimmer 2005</a>, Appendix A)</span>. The intensity <span class="math inline">\hat\lambda^{\ast}</span> minimises the Frobenius risk <span class="math inline">\mathbb{E}\|S^{\ast}-\boldsymbol{\Sigma}\|_{F}^{2}</span> in closed form, following the Ledoit–Wolf lemma.</p>
+<p>Properties that matter here <span class="citation" data-cites="schäferShrinkageApproachLargescale2005">(<a href="#ref-schäferShrinkageApproachLargescale2005" role="doc-biblioref">Schäfer and Strimmer 2005, 2–13</a>)</span>:</p>
+<ul>
+<li><span class="math inline">S^{\ast}</span> is positive definite and well conditioned for any <span class="math inline">n</span> and <span class="math inline">p</span>, including <span class="math inline">p&gt;n</span>. It is a convex combination of a positive definite target and a positive semidefinite <span class="math inline">S</span>.</li>
+<li>It costs about twice the sample covariance: no penalty path, no cross-validation, no MCMC.</li>
+<li>Shrinking correlations rather than covariances makes it invariant to the scale of each gene, like <a href="#eq-glasso" class="quarto-xref">Equation&nbsp;<span>4.5</span></a>.</li>
+<li>The precision <span class="math inline">\widehat{\boldsymbol{\Omega}}=(S^{\ast})^{-1}</span> is dense. Partial correlations and a local-FDR graph can be read off it when a network is also wanted <span class="citation" data-cites="schäferShrinkageApproachLargescale2005">(<a href="#ref-schäferShrinkageApproachLargescale2005" role="doc-biblioref">Schäfer and Strimmer 2005</a>, eqs. 11–15)</span>.</li>
+</ul>
+<p><code>corpcor::cov.shrink()</code> implements it <span class="citation" data-cites="R-corpcor">(<a href="#ref-R-corpcor" role="doc-biblioref">Schäfer et al. 2021</a>)</span>. Version 1.6.10 also shrinks the variances towards their median by default (<code>lambda.var</code> estimated). Pass <code>lambda.var = 0</code> to reproduce target D exactly. <code>corpcor</code> is not yet in <code>renv.lock</code>: run <code>renv::install("corpcor")</code>, then <code>renv::snapshot()</code>, before the pipeline uses it.</p>
+</section>
+<section id="held-out-gaussian-likelihood-as-the-arbiter" class="level4">
+<h4 class="anchored" data-anchor-id="held-out-gaussian-likelihood-as-the-arbiter">Held-out Gaussian likelihood as the arbiter</h4>
+<p><span class="math inline">\hat\lambda^{\ast}</span> is optimal for Frobenius risk, not for the Gaussian likelihood that DeCovarT evaluates. We therefore compare covariance estimates by <strong>held-out</strong> log-likelihood. The paper does not do this; it is our addition. Chiquet recommends <span class="math inline">K</span>-fold cross-validation when the target is prediction rather than the true model <span class="citation" data-cites="chiquetContributionsSparseMethods2015">(<a href="#ref-chiquetContributionsSparseMethods2015" role="doc-biblioref">Chiquet 2015, 78</a>)</span>.</p>
+<p>For type <span class="math inline">j</span> at time <span class="math inline">t</span>, split the cells into <span class="math inline">K</span> folds. Fit <span class="math inline">(\widehat{\boldsymbol{\mu}}^{(-k)},\widehat{\boldsymbol{\Sigma}}^{(-k)})</span> on the other folds, and score the <span class="math inline">n_k</span> held-out cells by</p>
+<p><span id="eq-heldout-loglik"><span class="math display">
+\ell^{(k)}
+=
+-\frac{1}{2}\Bigl[
+\log\det\widehat{\boldsymbol{\Sigma}}^{(-k)}
++
+\operatorname{tr}\bigl\{(\widehat{\boldsymbol{\Sigma}}^{(-k)})^{-1}S_{k}\bigr\}
++
+p\log 2\pi
+\Bigr],
+\tag{4.10}</span></span></p>
+<p>where <span class="math inline">S_{k}=n_k^{-1}\sum_{c\in k}(x_{c}-\widehat{\boldsymbol{\mu}}^{(-k)})(x_{c}-\widehat{\boldsymbol{\mu}}^{(-k)})^{\top}</span>. Average <span class="math inline">\ell^{(k)}</span> over folds and compare four estimates of <span class="math inline">\boldsymbol{\Sigma}_{j}</span>:</p>
+<ol type="1">
+<li>the diagonal of marginal variances (the “empty graph”);</li>
+<li>the shrinkage estimate at <span class="math inline">\hat\lambda^{\ast}</span>, and on a grid of <span class="math inline">\lambda</span> as a sensitivity check of the closed-form intensity;</li>
+<li>the <code>glasso</code> covariance at the EBIC <span class="math inline">\lambda</span>, refit on its support;</li>
+<li>the <code>PLNnetwork</code> latent covariance, mapped to the scale of <span class="math inline">x</span>.</li>
+</ol>
+<p>The folds split cells of <strong>one</strong> specimen, so the score measures generalisation to new cells of that gastruloid, not to new specimens (<a href="#sec-grn-scope" class="quarto-xref"><span>Section 4.1</span></a>).</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Sketch: dense shrinkage covariance per type and held-out likelihood.</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># x: cells x genes, log1p counts of one type at one time.</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>heldout_loglik <span class="ot">&lt;-</span> <span class="cf">function</span>(sigma, mu, x_test) {</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  centred <span class="ot">&lt;-</span> <span class="fu">sweep</span>(x_test, <span class="dv">2</span>L, mu)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  s_test <span class="ot">&lt;-</span> <span class="fu">crossprod</span>(centred) <span class="sc">/</span> <span class="fu">nrow</span>(x_test)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  ld <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">determinant</span>(sigma, <span class="at">logarithm =</span> <span class="cn">TRUE</span>)<span class="sc">$</span>modulus)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span><span class="fl">0.5</span> <span class="sc">*</span> (ld <span class="sc">+</span> <span class="fu">sum</span>(<span class="fu">diag</span>(<span class="fu">solve</span>(sigma, s_test))) <span class="sc">+</span> <span class="fu">ncol</span>(x_test) <span class="sc">*</span> <span class="fu">log</span>(<span class="dv">2</span> <span class="sc">*</span> pi))</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>fold <span class="ot">&lt;-</span> withr<span class="sc">::</span><span class="fu">with_seed</span>(<span class="dv">1</span>L, <span class="fu">sample</span>(<span class="fu">rep_len</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="fu">nrow</span>(x))))</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>scores <span class="ot">&lt;-</span> <span class="fu">vapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="cf">function</span>(k) {</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  train <span class="ot">&lt;-</span> x[fold <span class="sc">!=</span> k, , drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  test <span class="ot">&lt;-</span> x[fold <span class="sc">==</span> k, , drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  mu <span class="ot">&lt;-</span> <span class="fu">colMeans</span>(train)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  shrunk <span class="ot">&lt;-</span> corpcor<span class="sc">::</span><span class="fu">cov.shrink</span>(train, <span class="at">lambda.var =</span> <span class="dv">0</span>, <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  diagonal <span class="ot">&lt;-</span> <span class="fu">diag</span>(<span class="fu">apply</span>(train, <span class="dv">2</span>L, stats<span class="sc">::</span>var))</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">shrinkage =</span> <span class="fu">heldout_loglik</span>(<span class="fu">unclass</span>(shrunk), mu, test),</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">diagonal =</span> <span class="fu">heldout_loglik</span>(diagonal, mu, test)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>}, <span class="fu">numeric</span>(<span class="dv">2</span>))</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="fu">rowMeans</span>(scores)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 </section>
@@ -1257,19 +1434,19 @@ Figure&nbsp;4.9: Library-size offset in a Poisson log-link: raw counts scale wit
 \rho_{gg'\mid\mathrm{rest}}
 =
 -\frac{\omega_{gg'}}{\sqrt{\omega_{gg}\omega_{g'g'}}}.
-\tag{4.7}</span></span></p>
+\tag{4.11}</span></span></p>
 <p>Blocks that survive a stronger penalty are the stable ones.</p>
 <p><strong>Folder 2 — pairwise type comparisons.</strong> The same global scores, now as pairwise contrasts (difference or ratio of EBIC, Hellinger, density, ) between cell types at a fixed time. This is the rewiring view at the <strong>metric</strong> level; signed partial-correlation difference heatmaps belong with the visualisations in <a href="05-grn-metrics.html#sec-metrics-viz" class="quarto-xref"><span>Section 6.3</span></a>.</p>
 </section>
 </section>
 <section id="sec-grn-top4" class="level2" data-number="4.5">
-<h2 data-number="4.5" class="anchored" data-anchor-id="sec-grn-top4"><span class="header-section-number">4.5</span> Three core estimators</h2>
-<p>This chapter’s product is the <strong>three</strong> precision estimators, not the full <span class="math inline">3\times 2\times 2</span> design of <a href="index.html#fig-pipeline" class="quarto-xref">Figure&nbsp;<span>1</span></a> (lifts and gene panels are later chapters).</p>
+<h2 data-number="4.5" class="anchored" data-anchor-id="sec-grn-top4"><span class="header-section-number">4.5</span> Core estimators</h2>
+<p>This chapter’s product is the <strong>three</strong> sparse precision estimators, not the full <span class="math inline">3\times 2\times 2</span> design of <a href="index.html#fig-pipeline" class="quarto-xref">Figure&nbsp;<span>1</span></a> (lifts and gene panels are later chapters). The <code>ppcor</code> baseline (<a href="#sec-ppcor" class="quarto-xref"><span>Section 4.3.1</span></a>) and the dense shrinkage covariance (<a href="#sec-shrinkage" class="quarto-xref"><span>Section 4.3.5</span></a>) are reference points. The first checks the penalties; the second is the DeCovarT plug-in when no graph is needed.</p>
 <p><span id="eq-grn-product"><span class="math display">
-\{\texttt{huge},\;
+\{\texttt{glasso},\;
 \texttt{SILGGM+NPN},\;
 \texttt{PLNnetwork}\}.
-\tag{4.8}</span></span></p>
+\tag{4.12}</span></span></p>
 <p>Every core method must finally export</p>
 <p><span id="eq-grn-export"><span class="math display">
 \bigl\{
@@ -1282,7 +1459,7 @@ Figure&nbsp;4.9: Library-size offset in a Poisson log-link: raw counts scale wit
 =
 \widehat{\boldsymbol{\Sigma}}_{j}^{-1}
 \succ 0,
-\tag{4.9}</span></span></p>
+\tag{4.13}</span></span></p>
 <p>on the linear scale of <a href="#eq-grn-convolution" class="quarto-xref">Equation&nbsp;<span>4.2</span></a>, not on NPN scores.</p>
 <div id="tbl-grn-core" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -1309,10 +1486,10 @@ Table&nbsp;4.2: Three core precision estimators.
 </thead>
 <tbody>
 <tr class="odd">
-<td><code>huge</code></td>
-<td><span class="citation" data-cites="friedmanSparseInverseCovariance2008">Friedman et al. (<a href="#ref-friedmanSparseInverseCovariance2008" role="doc-biblioref">2008</a>)</span>; <span class="citation" data-cites="zhaoHugePackageHighdimensional">Zhao et al. (<a href="#ref-zhaoHugePackageHighdimensional" role="doc-biblioref">2012</a>)</span></td>
+<td><code>glasso</code></td>
+<td><span class="citation" data-cites="friedmanSparseInverseCovariance2008">Friedman et al. (<a href="#ref-friedmanSparseInverseCovariance2008" role="doc-biblioref">2008</a>)</span>; <span class="citation" data-cites="R-glasso">Friedman et al. (<a href="#ref-R-glasso" role="doc-biblioref">2019</a>)</span></td>
 <td>Sparse Gaussian <span class="math inline">\widehat{\boldsymbol{\Omega}}</span></td>
-<td>Fast path; EBIC / StARS; maintained</td>
+<td>Fast; unpenalised diagonal; EBIC path</td>
 <td>Needs Gaussian rows; no library-size layer</td>
 </tr>
 <tr class="even">
@@ -1334,7 +1511,7 @@ Table&nbsp;4.2: Three core precision estimators.
 </div>
 </figure>
 </div>
-<p>The knobs that <a href="#sec-grn-penalty-path" class="quarto-xref"><span>Section 4.4</span></a> is meant to set are <span class="math inline">\lambda</span> (<code>huge</code>), <span class="math inline">\alpha=0.05</span> (<code>SILGGM</code>), and the PLN penalty grid.</p>
+<p>The knobs that <a href="#sec-grn-penalty-path" class="quarto-xref"><span>Section 4.4</span></a> is meant to set are <span class="math inline">\lambda</span> (<code>glasso</code>), <span class="math inline">\alpha=0.05</span> (<code>SILGGM</code>), and the PLN penalty grid.</p>
 <div id="nte-drop-zico" class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1377,7 +1554,7 @@ Figure&nbsp;4.10: Cartesian GmGM, type-specific fits, and the strong-product ext
 \boldsymbol{L},
 \qquad
 \boldsymbol{L}\succeq 0.
-\tag{4.10}</span></span></p>
+\tag{4.14}</span></span></p>
 <p>A useful reading of <span class="math inline">\boldsymbol{L}</span> is a small set of transcription factors, or of co-regulated pathways, that lower the rank of the residual dependence. <span class="math inline">\boldsymbol{L}</span> is a nuisance for DeCovarT, not a type covariance. This check is not in the <span class="math inline">3\times 2\times 2</span> product.</p>
 </section>
 <section id="fused-graphical-lasso-on-a-pln" class="level3" data-number="4.6.3">
@@ -1395,6 +1572,9 @@ Andrew, Bailey, Erica L Harris, James A Poulter, David R Westhead, and Luisa Cut
 </div>
 <div id="ref-chandrasekaranLatentVariableGraphical2012" class="csl-entry" role="listitem">
 Chandrasekaran, Venkat, Pablo A. Parrilo, and Alan S. Willsky. 2012. <span>“Latent Variable Graphical Model Selection via Convex Optimization.”</span> <em>The Annals of Statistics</em> 40 (4). <a href="https://doi.org/10.1214/11-AOS949">https://doi.org/10.1214/11-AOS949</a>.
+</div>
+<div id="ref-chiquetContributionsSparseMethods2015" class="csl-entry" role="listitem">
+Chiquet, Julien. 2015. <span>“Contributions to <span>Sparse Methods</span> for <span>Complex Data Analysis</span>.”</span> PhD thesis, Université d’Évry-val-d’Essonne.
 </div>
 <div id="ref-chiquetSparsitySigncoherentGroups2012" class="csl-entry" role="listitem">
 Chiquet, Julien, Yves Grandvalet, and Camille Charbonnier. 2012. <span>“Sparsity with Sign-Coherent Groups of Variables via the Cooperative-<span>Lasso</span>.”</span> <em>The Annals of Applied Statistics</em> 6 (2): 795–830. <a href="https://doi.org/10.1214/11-AOAS520">https://doi.org/10.1214/11-AOAS520</a>.
@@ -1414,11 +1594,17 @@ Danaher, Patrick, Pei Wang, and Daniela M. Witten. 2012. <em>The Joint Graphical
 <div id="ref-foygelExtendedBayesianInformation2010" class="csl-entry" role="listitem">
 Foygel, Rina, and Mathias Drton. 2010. <em>Extended <span>Bayesian Information Criteria</span> for <span>Gaussian Graphical Models</span></em>. arXiv:1011.6640. arXiv. <a href="https://doi.org/10.48550/arXiv.1011.6640">https://doi.org/10.48550/arXiv.1011.6640</a>.
 </div>
+<div id="ref-R-glasso" class="csl-entry" role="listitem">
+Friedman, Jerome, Trevor Hastie, and Rob Tibshirani. 2019. <em>Glasso: Graphical Lasso: Estimation of Gaussian Graphical Models</em>. <a href="https://CRAN.R-project.org/package=glasso">https://CRAN.R-project.org/package=glasso</a>.
+</div>
 <div id="ref-friedmanSparseInverseCovariance2008" class="csl-entry" role="listitem">
 Friedman, Jerome, Trevor Hastie, and Robert Tibshirani. 2008. <span>“Sparse Inverse Covariance Estimation with the Graphical Lasso.”</span> <em>Biostatistics (Oxford, England)</em> 9 (3): 432–41. <a href="https://doi.org/10.1093/biostatistics/kxm045">https://doi.org/10.1093/biostatistics/kxm045</a>.
 </div>
 <div id="ref-jankovaConfidenceIntervalsHighdimensional2015" class="csl-entry" role="listitem">
 Jankova, Jana, and Sara van de Geer. 2015. <span>“Confidence Intervals for High-Dimensional Inverse Covariance Estimation.”</span> <em>Electronic Journal of Statistics</em> 9 (1). <a href="https://doi.org/10.1214/15-EJS1031">https://doi.org/10.1214/15-EJS1031</a>.
+</div>
+<div id="ref-R-ppcor" class="csl-entry" role="listitem">
+Kim, Seongho. 2015. <em>Ppcor: Partial and Semi-Partial (Part) Correlation</em>. <a href="https://doi.org/10.32614/CRAN.package.ppcor">https://doi.org/10.32614/CRAN.package.ppcor</a>.
 </div>
 <div id="ref-laszkiewiczThresholdedAdaptiveValidation2021" class="csl-entry" role="listitem">
 Laszkiewicz, Mike, Asja Fischer, and Johannes Lederer. 2021. <span>“Thresholded <span>Adaptive Validation</span>: <span>Tuning</span> the <span>Graphical Lasso</span> for <span>Graph Recovery</span>.”</span> <em>Proceedings of <span>The</span> 24th <span>International Conference</span> on <span>Artificial Intelligence</span> and <span>Statistics</span></em>, 1864–72.
@@ -1443,6 +1629,12 @@ Mazumder, Rahul, and Trevor Hastie. 2011. <span>“The <span>Graphical Lasso</sp
 </div>
 <div id="ref-mccarthyDifferentialExpressionAnalysis2012a" class="csl-entry" role="listitem">
 McCarthy, Davis J., Yunshun Chen, and Gordon K. Smyth. 2012. <span>“Differential Expression Analysis of Multifactor <span>RNA-Seq</span> Experiments with Respect to Biological Variation.”</span> <em>Nucleic Acids Research</em> 40 (10): 4288–97. <a href="https://doi.org/10.1093/nar/gks042">https://doi.org/10.1093/nar/gks042</a>.
+</div>
+<div id="ref-R-corpcor" class="csl-entry" role="listitem">
+Schäfer, Juliane, Rainer Opgen-Rhein, Verena Zuber, Miika Ahdesmäki, A. Pedro Duarte Silva, and Korbinian Strimmer. 2021. <em>Corpcor: Efficient Estimation of Covariance and (Partial) Correlation</em>. <a href="https://CRAN.R-project.org/package=corpcor">https://CRAN.R-project.org/package=corpcor</a>.
+</div>
+<div id="ref-schäferShrinkageApproachLargescale2005" class="csl-entry" role="listitem">
+Schäfer, Juliane, and Korbinian Strimmer. 2005. <span>“A Shrinkage Approach to Large-Scale Covariance Matrix Estimation and Implications for Functional Genomics.”</span> <em>Statistical Applications in Genetics and Molecular Biology</em> 4: Article32. <a href="https://doi.org/10.2202/1544-6115.1175">https://doi.org/10.2202/1544-6115.1175</a>.
 </div>
 <div id="ref-suppingerMultimodalCharacterizationMurine2023" class="csl-entry" role="listitem">
 Suppinger, Simon, Marietta Zinner, Nadim Aizarani, et al. 2023. <span>“Multimodal Characterization of Murine Gastruloid Development.”</span> <em>Cell Stem Cell</em> 30 (6): 867–84. <a href="https://doi.org/10.1016/j.stem.2023.04.018">https://doi.org/10.1016/j.stem.2023.04.018</a>.

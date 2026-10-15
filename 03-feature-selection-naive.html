@@ -560,10 +560,18 @@ window.Quarto = {
   <li><a href="#sec-fs-markers" id="toc-sec-fs-markers" class="nav-link" data-scroll-target="#sec-fs-markers"><span class="header-section-number">3.3</span> Marker genes</a></li>
   <li><a href="#sec-fs-equal-type-table" id="toc-sec-fs-equal-type-table" class="nav-link" data-scroll-target="#sec-fs-equal-type-table"><span class="header-section-number">3.4</span> Equal-type rank table</a></li>
   <li><a href="#sec-fs-permutation" id="toc-sec-fs-permutation" class="nav-link" data-scroll-target="#sec-fs-permutation"><span class="header-section-number">3.5</span> Permutation calibration of between-type signal</a></li>
-  <li><a href="#sec-fs-deg" id="toc-sec-fs-deg" class="nav-link" data-scroll-target="#sec-fs-deg"><span class="header-section-number">3.6</span> Differential expression — only with biological replication</a>
+  <li><a href="#sec-fs-main-effect" id="toc-sec-fs-main-effect" class="nav-link" data-scroll-target="#sec-fs-main-effect"><span class="header-section-number">3.6</span> Testing the cell-type main effect</a>
   <ul>
-  <li><a href="#sec-fs-perspective" id="toc-sec-fs-perspective" class="nav-link" data-scroll-target="#sec-fs-perspective"><span class="header-section-number">3.6.1</span> Differential networks</a></li>
-  <li><a href="#markov-boundaries" id="toc-markov-boundaries" class="nav-link" data-scroll-target="#markov-boundaries"><span class="header-section-number">3.6.2</span> Markov boundaries</a></li>
+  <li><a href="#sec-fs-presence" id="toc-sec-fs-presence" class="nav-link" data-scroll-target="#sec-fs-presence"><span class="header-section-number">3.6.1</span> Presence before testing</a></li>
+  <li><a href="#sec-fs-score-lrt" id="toc-sec-fs-score-lrt" class="nav-link" data-scroll-target="#sec-fs-score-lrt"><span class="header-section-number">3.6.2</span> Likelihood ratio and score test of the main effect</a></li>
+  <li><a href="#sec-fs-qlf" id="toc-sec-fs-qlf" class="nav-link" data-scroll-target="#sec-fs-qlf"><span class="header-section-number">3.6.3</span> Is an <span class="math inline">F</span> test on Pearson residuals legitimate?</a></li>
+  <li><a href="#sec-fs-boot-perm" id="toc-sec-fs-boot-perm" class="nav-link" data-scroll-target="#sec-fs-boot-perm"><span class="header-section-number">3.6.4</span> Bootstrap or permutation?</a></li>
+  <li><a href="#sec-fs-effect-size" id="toc-sec-fs-effect-size" class="nav-link" data-scroll-target="#sec-fs-effect-size"><span class="header-section-number">3.6.5</span> Rank by effect size, not by <span class="math inline">p</span></a></li>
+  </ul></li>
+  <li><a href="#sec-fs-deg" id="toc-sec-fs-deg" class="nav-link" data-scroll-target="#sec-fs-deg"><span class="header-section-number">3.7</span> Differential expression — only with biological replication</a>
+  <ul>
+  <li><a href="#sec-fs-perspective" id="toc-sec-fs-perspective" class="nav-link" data-scroll-target="#sec-fs-perspective"><span class="header-section-number">3.7.1</span> Differential networks</a></li>
+  <li><a href="#markov-boundaries" id="toc-markov-boundaries" class="nav-link" data-scroll-target="#markov-boundaries"><span class="header-section-number">3.7.2</span> Markov boundaries</a></li>
   </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/edit/main/docs/03-feature-selection-naive.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/blob/main/docs/03-feature-selection-naive.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
@@ -906,23 +914,23 @@ Table&nbsp;3.1: Columns of the type-equal global rank table, grouped by role. Th
 
     <script>
       // Create table-specific functions using external factory
-      const tableFns_6f0vkrk9oq77uijm9yib = TinyTable.createTableFunctions("tinytable_6f0vkrk9oq77uijm9yib");
+      const tableFns_flyc6astsdsi652twud3 = TinyTable.createTableFunctions("tinytable_flyc6astsdsi652twud3");
       // tinytable span after
-      window.addEventListener('load', function () { tableFns_6f0vkrk9oq77uijm9yib.spanCell(17, 1, 1, 3) })
-      window.addEventListener('load', function () { tableFns_6f0vkrk9oq77uijm9yib.spanCell(11, 1, 1, 3) })
-      window.addEventListener('load', function () { tableFns_6f0vkrk9oq77uijm9yib.spanCell(5, 1, 1, 3) })
-      window.addEventListener('load', function () { tableFns_6f0vkrk9oq77uijm9yib.spanCell(1, 1, 1, 3) })
+      window.addEventListener('load', function () { tableFns_flyc6astsdsi652twud3.spanCell(17, 1, 1, 3) })
+      window.addEventListener('load', function () { tableFns_flyc6astsdsi652twud3.spanCell(11, 1, 1, 3) })
+      window.addEventListener('load', function () { tableFns_flyc6astsdsi652twud3.spanCell(5, 1, 1, 3) })
+      window.addEventListener('load', function () { tableFns_flyc6astsdsi652twud3.spanCell(1, 1, 1, 3) })
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: '22', j: 1 }, { i: '22', j: 2 }, { i: '22', j: 3 } ], css_id: 'tinytable_css_my2p78qpgt3qe92521c5',}, 
-          { positions: [ { i: '0', j: 1 }, { i: '0', j: 2 }, { i: '0', j: 3 } ], css_id: 'tinytable_css_wrb9kr9h2svrhiivrm7t',}, 
+          { positions: [ { i: '22', j: 1 }, { i: '22', j: 2 }, { i: '22', j: 3 } ], css_id: 'tinytable_css_f3va13hv01v0t6kfeioi',}, 
+          { positions: [ { i: '0', j: 1 }, { i: '0', j: 2 }, { i: '0', j: 3 } ], css_id: 'tinytable_css_zx7m6kb0hfpyweyos18q',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  tableFns_6f0vkrk9oq77uijm9yib.styleCell(cell.i, cell.j, group.css_id);
+                  tableFns_flyc6astsdsi652twud3.styleCell(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -931,11 +939,11 @@ Table&nbsp;3.1: Columns of the type-equal global rank table, grouped by role. Th
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/vincentarelbundock/tinytable@main/inst/tinytable.css">
     <style>
     /* tinytable css entries after */
-    #tinytable_6f0vkrk9oq77uijm9yib td.tinytable_css_my2p78qpgt3qe92521c5, #tinytable_6f0vkrk9oq77uijm9yib th.tinytable_css_my2p78qpgt3qe92521c5 {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.08em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%;  }
-    #tinytable_6f0vkrk9oq77uijm9yib td.tinytable_css_wrb9kr9h2svrhiivrm7t, #tinytable_6f0vkrk9oq77uijm9yib th.tinytable_css_wrb9kr9h2svrhiivrm7t {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.08em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%;  }
+    #tinytable_flyc6astsdsi652twud3 td.tinytable_css_f3va13hv01v0t6kfeioi, #tinytable_flyc6astsdsi652twud3 th.tinytable_css_f3va13hv01v0t6kfeioi {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.08em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%;  }
+    #tinytable_flyc6astsdsi652twud3 td.tinytable_css_zx7m6kb0hfpyweyos18q, #tinytable_flyc6astsdsi652twud3 th.tinytable_css_zx7m6kb0hfpyweyos18q {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.08em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%;  }
     </style>
     <div class="container">
-      <table class="tinytable" id="tinytable_6f0vkrk9oq77uijm9yib" style="table-layout: fixed; width: 100% !important; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="tinytable" id="tinytable_flyc6astsdsi652twud3" style="table-layout: fixed; width: 100% !important; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         
         <thead>
               <tr>
@@ -1153,8 +1161,180 @@ Warning&nbsp;3.5: <span class="emoji" data-emoji="warning">⚠️</span> Double 
 </div>
 </div>
 </section>
-<section id="sec-fs-deg" class="level2" data-number="3.6">
-<h2 data-number="3.6" class="anchored" data-anchor-id="sec-fs-deg"><span class="header-section-number">3.6</span> Differential expression — only with biological replication</h2>
+<section id="sec-fs-main-effect" class="level2" data-number="3.6">
+<h2 data-number="3.6" class="anchored" data-anchor-id="sec-fs-main-effect"><span class="header-section-number">3.6</span> Testing the cell-type main effect</h2>
+<p>DeCovarT needs genes whose type-<span class="math inline">j</span> distributions are <strong>well separated and non-degenerate</strong>. Three requirements follow, and they are distinct:</p>
+<ol type="1">
+<li><strong>Presence.</strong> No retained type may have a constant (worst: all-zero) profile for the gene; otherwise <span class="math inline">\boldsymbol{\Sigma}_{j}</span> is singular on that coordinate and the convolution of <a href="02-grn-graphical-lasso.html#eq-grn-convolution" class="quarto-xref">Equation&nbsp;<span>4.2</span></a> degenerates (1).</li>
+<li><strong>A joint main effect of type.</strong> The <span class="math inline">J</span> type means are not all equal given library size (<a href="#sec-fs-score-lrt" class="quarto-xref"><span>Section 3.6.2</span></a>).</li>
+<li><strong>Small overlap.</strong> The between-type shift is large relative to the within-type scatter, which is an effect size, not a <span class="math inline">p</span>-value (<a href="#sec-fs-effect-size" class="quarto-xref"><span>Section 3.6.5</span></a>).</li>
+</ol>
+<section id="sec-fs-presence" class="level3" data-number="3.6.1">
+<h3 data-number="3.6.1" class="anchored" data-anchor-id="sec-fs-presence"><span class="header-section-number">3.6.1</span> Presence before testing</h3>
+<p>For gene <span class="math inline">g</span> and type <span class="math inline">j</span>, let <span class="math inline">\pi_{gj}=C_{j}^{-1}\sum_{c_{j}}\mathbb{1}(y_{c_{j}g}&gt;0)</span> be the detection rate and <span class="math inline">v_{gj}</span> the within-type variance of the counts. A gene enters the test only if</p>
+<p><span id="eq-fs-presence"><span class="math display">
+\min_{j}\pi_{gj}\ge\pi_{\min}
+\quad\text{and}\quad
+\min_{j}v_{gj}&gt;0,
+\tag{3.7}</span></span></p>
+<p>with <span class="math inline">\pi_{\min}</span> a few percent (for instance <span class="math inline">0.05</span>), set before looking at the ranks. The rule is a design constraint, not a nuisance filter, for three reasons.</p>
+<ul>
+<li><strong>Generative model.</strong> A type with <span class="math inline">v_{gj}=0</span> gives a zero row and column in <span class="math inline">\boldsymbol{\Sigma}_{j}</span>. The GGM of that type is then undefined; the <code>huge</code> script in <a href="02-grn-graphical-lasso.html#sec-huge" class="quarto-xref"><span>Section 4.3.2</span></a> returns a diagonal covariance for the <strong>whole</strong> type as soon as one panel gene is constant in it.</li>
+<li><strong>Identifiability.</strong> A gene that is absent from one type and present in the others is the perfect marker of reference-based deconvolution. It is also the case where the type mean sits on the boundary <span class="math inline">\mu_{gj}=0</span> and the variance carries no information.</li>
+<li><strong>Testing.</strong> With an all-zero type, the NB maximum-likelihood estimate <span class="math inline">\hat\beta_{gj}\to-\infty</span>. Its standard error diverges faster, and the Wald statistic shrinks towards zero as the effect grows: the Hauck–Donner effect. The likelihood-ratio and score statistics stay finite. That is a reason to avoid Wald tests here, but it does not rescue the gene for DeCovarT.</li>
+</ul>
+</section>
+<section id="sec-fs-score-lrt" class="level3" data-number="3.6.2">
+<h3 data-number="3.6.2" class="anchored" data-anchor-id="sec-fs-score-lrt"><span class="header-section-number">3.6.2</span> Likelihood ratio and score test of the main effect</h3>
+<p>Write the depth-only null of <a href="#eq-fs-nb-null" class="quarto-xref">Equation&nbsp;<span>3.1</span></a> as <span class="math inline">M_{0}</span> and add the type main effect,</p>
+<p><span id="eq-fs-nb-main"><span class="math display">
+M_{1}:\;
+\log\mu_{cg}
+=
+\beta_{0g}+\beta_{g,j(c)}+\operatorname{offset}(\log L_{c}),
+\qquad
+\beta_{g1}=0,
+\qquad
+y_{cg}\sim\mathrm{NB}(\mu_{cg},\theta_{g}).
+\tag{3.8}</span></span></p>
+<p>The joint null is <span class="math inline">H_{0g}:\beta_{g2}=\cdots=\beta_{gJ}=0</span>, with <span class="math inline">J-1</span> degrees of freedom. The trinity of tests in <span class="citation" data-cites="agrestiFoundationsLinearGeneralized2015">Agresti (<a href="#ref-agrestiFoundationsLinearGeneralized2015" role="doc-biblioref">2015</a>)</span> applies:</p>
+<ul>
+<li><strong>Likelihood ratio (analysis of deviance).</strong> <span class="math inline">\Lambda_{g}=D_{g}(M_{0})-D_{g}(M_{1})</span>, compared to <span class="math inline">\chi^{2}_{J-1}</span> when <span class="math inline">\theta_{g}</span> is known. This answers question
+<ol type="i">
+<li>directly: yes, the <span class="math inline">\chi^{2}</span> comparison of the offset-only model with the cell-type model is the natural joint test.</li>
+</ol></li>
+<li><strong>Score (Rao).</strong> Evaluated at the <span class="math inline">M_{0}</span> fit only, which is the fit <code>SCTransform</code> v2 already computes (<a href="#eq-fs-v2-offset" class="quarto-xref">Equation&nbsp;<span>3.4</span></a>).</li>
+<li><strong>Wald.</strong> Fit <span class="math inline">M_{1}</span> only; avoid it for the reason given in
+<ol class="example" type="1">
+<li></li>
+</ol></li>
+</ul>
+<p>The score test is the one that links the naive ranking to inference. Under <span class="math inline">M_{0}</span>, the IRLS weight of cell <span class="math inline">c</span> is <span class="math inline">w_{cg}=\hat\mu_{cg}^{2}/V(\hat\mu_{cg})</span>, with <span class="math inline">V(\mu)=\mu+\mu^{2}/\theta_{g}</span>. The score for the type-<span class="math inline">j</span> indicator is a weighted sum of the Pearson residuals of <a href="#eq-fs-pearson" class="quarto-xref">Equation&nbsp;<span>3.2</span></a>, <span class="math inline">U_{gj}=\sum_{c_{j}}\sqrt{w_{c_{j}g}}\,r_{c_{j}g}</span>. Because the intercept is profiled out, <span class="math inline">\sum_{j}U_{gj}=0</span>, and the score statistic is</p>
+<p><span id="eq-fs-score"><span class="math display">
+T_{g}
+=
+\sum_{j=1}^{J}\frac{U_{gj}^{2}}{\sum_{c_{j}}w_{c_{j}g}}
+\;\approx\;
+\sum_{j=1}^{J}C_{j}\,\bar r_{gj}^{2}
+=
+\mathrm{SS}_{\mathrm{between},g},
+\tag{3.9}</span></span></p>
+<p>where the approximation holds when the weights are nearly constant within a type (similar library sizes). For a Poisson null (<span class="math inline">\theta_{g}\to\infty</span>), <span class="math inline">U_{gj}</span> is observed minus expected counts in type <span class="math inline">j</span>, and <a href="#eq-fs-score" class="quarto-xref">Equation&nbsp;<span>3.9</span></a> is Pearson’s <span class="math inline">\chi^{2}</span> on the type totals. The cell-weighted <span class="math inline">\mathrm{SS}_{\mathrm{between}}</span> of <a href="#eq-fs-ss" class="quarto-xref">Equation&nbsp;<span>3.3</span></a> is therefore, up to weight heterogeneity, the <strong>Rao score statistic for the cell-type main effect</strong>, referred to <span class="math inline">\chi^{2}_{J-1}</span>.</p>
+</section>
+<section id="sec-fs-qlf" class="level3" data-number="3.6.3">
+<h3 data-number="3.6.3" class="anchored" data-anchor-id="sec-fs-qlf"><span class="header-section-number">3.6.3</span> Is an <span class="math inline">F</span> test on Pearson residuals legitimate?</h3>
+<p>Question (ii) has a precise answer. Divide <a href="#eq-fs-score" class="quarto-xref">Equation&nbsp;<span>3.9</span></a> by <span class="math inline">J-1</span> and by the within-type Pearson dispersion</p>
+<p><span class="math display">
+\hat\phi_{g}
+=
+\frac{\mathrm{SS}_{\mathrm{within},g}}{N-J}.
+</span></p>
+<p>The result is the one-way <span class="math inline">F_{g}</span> of <a href="#eq-fs-fanova" class="quarto-xref">Equation&nbsp;<span>3.6</span></a>. In GLM terms it is a <strong>quasi-likelihood <span class="math inline">F</span> test</strong>. It keeps the mean model <a href="#eq-fs-nb-main" class="quarto-xref">Equation&nbsp;<span>3.8</span></a> and the variance function <span class="math inline">V(\mu)</span>, and lets a scalar <span class="math inline">\phi_{g}</span> absorb a variance that is larger (or smaller) than <span class="math inline">V</span> predicts. The reference distribution <span class="math inline">F_{J-1,N-J}</span> accounts for estimating <span class="math inline">\phi_{g}</span>, as in the edgeR quasi-likelihood pipeline <span class="citation" data-cites="lundDetectingDifferentialExpression2012">(<a href="#ref-lundDetectingDifferentialExpression2012" role="doc-biblioref">Lund et al. 2012</a>)</span> and <code>glmGamPoi::test_de()</code> <span class="citation" data-cites="glmGamPoi2020">(<a href="#ref-glmGamPoi2020" role="doc-biblioref">Ahlmann-Eltze and Huber 2020</a>)</span>. Three consequences follow.</p>
+<ul>
+<li><strong>Do not discard non-Poisson genes.</strong> If the residuals were built under a Poisson null, an NB gene has <span class="math inline">\hat\phi_{g}&gt;1</span>. The <span class="math inline">F</span> ratio divides that factor out; it does not invalidate the gene. Overdispersion <strong>within</strong> a type is exactly the within-type scatter the rank already penalises. Dropping such genes would remove, before any test, the genes whose covariance DeCovarT is meant to model.</li>
+<li><strong>What a scalar <span class="math inline">\phi</span> cannot fix.</strong> A scalar <span class="math inline">\phi</span> corrects a variance <span class="math inline">\phi V(\mu)</span>. Under a Poisson null it cannot absorb the quadratic NB term, whose share grows with the type mean. Two types with very different means then have different residual variances, and the pooled <span class="math inline">\hat\phi_{g}</span> is wrong for both. Use the NB variance of <a href="#eq-fs-pearson" class="quarto-xref">Equation&nbsp;<span>3.2</span></a> (as <code>SCTransform</code> does) so that <span class="math inline">\phi_{g}\approx1</span> holds approximately in every type. If between-type heteroscedasticity remains, prefer a Welch-type statistic, or the equal-type mean squares of <a href="#eq-fs-equal-type" class="quarto-xref">Equation&nbsp;<span>3.5</span></a>, which weight types equally and are not driven by the dominant population.</li>
+<li><strong>Within a time slot, rank by <span class="math inline">F</span> or by the ratio: same order.</strong> <span class="math inline">J</span> and <span class="math inline">N</span> are shared by all genes of a slot, so <span class="math inline">F_{g}</span> is a monotone transform of <span class="math inline">\mathrm{SS}_{\mathrm{between}}/\mathrm{SS}_{\mathrm{within}}</span>. The analytic <span class="math inline">F</span> adds a threshold, not a different ranking.</li>
+</ul>
+<p>Three departures make the nominal <span class="math inline">F_{J-1,N-J}</span> tail optimistic on <code>SCTransform</code> output. These are the reasons why <a href="#sec-fs-permutation" class="quarto-xref"><span>Section 3.5</span></a> calibrates by permutation:</p>
+<ul>
+<li>clipping at <span class="math inline">\pm\sqrt{N/30}</span>;</li>
+<li>a <span class="math inline">\theta_{g}</span> regularised across genes, which is misspecified for any one gene;</li>
+<li>discrete, skewed residuals at low means <span class="citation" data-cites="lauseAnalyticPearsonResiduals2021">(<a href="#ref-lauseAnalyticPearsonResiduals2021" role="doc-biblioref">Lause et al. 2021</a>)</span>.</li>
+</ul>
+</section>
+<section id="sec-fs-boot-perm" class="level3" data-number="3.6.4">
+<h3 data-number="3.6.4" class="anchored" data-anchor-id="sec-fs-boot-perm"><span class="header-section-number">3.6.4</span> Bootstrap or permutation?</h3>
+<p>The two resampling schemes answer different questions, and the choice follows from the question.</p>
+<div id="tbl-fs-boot-perm" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-fs-boot-perm-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;3.2: Resampling by question. A nonparametric bootstrap does not generate a null; it tests only after re-centring.
+</figcaption>
+<div aria-describedby="tbl-fs-boot-perm-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Question</th>
+<th>Tool</th>
+<th>Resampling unit</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Is the type effect zero for gene <span class="math inline">g</span>? (null calibration)</td>
+<td>Label permutation (<a href="#sec-fs-permutation" class="quarto-xref"><span>Section 3.5</span></a>) or Freedman–Lane with covariates</td>
+<td>Labels, one permutation for all genes</td>
+</tr>
+<tr class="even">
+<td>Small or rare types: is <span class="math inline">\chi^{2}_{J-1}</span> accurate?</td>
+<td>Parametric bootstrap of <span class="math inline">\Lambda_{g}</span> under fitted <span class="math inline">M_{0}</span></td>
+<td>Simulated NB counts</td>
+</tr>
+<tr class="odd">
+<td>How stable are the ranks and the top-500 list?</td>
+<td>Nonparametric bootstrap of cells within type</td>
+<td>Cells, stratified by type</td>
+</tr>
+<tr class="even">
+<td>Uncertainty of the effect size of <a href="#sec-fs-effect-size" class="quarto-xref"><span>Section 3.6.5</span></a></td>
+<td>Same stratified bootstrap, percentile interval</td>
+<td>Cells, stratified by type</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>A nonparametric bootstrap resamples under the <strong>observed</strong> type effects. It therefore estimates variability, not a null distribution, and is the right tool for <strong>selection stability</strong>. In that role it measures how often a gene stays in the top 500 across bootstrap replicates, in the spirit of stability selection <span class="citation" data-cites="meinshausenStabilitySelection2010">(<a href="#ref-meinshausenStabilitySelection2010" role="doc-biblioref">Meinshausen and Bühlmann 2010</a>)</span>. For the null, keep the permutation of <a href="#sec-fs-permutation" class="quarto-xref"><span>Section 3.5</span></a>.</p>
+</section>
+<section id="sec-fs-effect-size" class="level3" data-number="3.6.5">
+<h3 data-number="3.6.5" class="anchored" data-anchor-id="sec-fs-effect-size"><span class="header-section-number">3.6.5</span> Rank by effect size, not by <span class="math inline">p</span></h3>
+<p>With <span class="math inline">N</span> in the thousands, almost every expressed gene rejects <span class="math inline">H_{0g}</span>, and <span class="math inline">p</span>-values only reorder genes by <span class="math inline">N\times</span>(effect). Use the test as a <strong>gate</strong> (FDR on permutation or quasi-likelihood <span class="math inline">F</span> <span class="math inline">p</span>-values, after <a href="#eq-fs-presence" class="quarto-xref">Equation&nbsp;<span>3.7</span></a>) and rank by an effect size:</p>
+<ul>
+<li>the share <span class="math inline">\mathrm{SS}_{\mathrm{between}}/\mathrm{SS}_{\mathrm{total}}</span> already stored as <code>between_over_total</code>, which is <span class="math inline">\eta^{2}</span>;</li>
+<li>the deviance explained <span class="math inline">R^{2}_{D,g}=1-D_{g}(M_{1})/D_{g}(M_{0})</span> when the NB GLM is fitted;</li>
+<li>or, closest to what DeCovarT needs, the smallest pairwise overlap between type-specific fits, for example the Bhattacharyya or Hellinger distance between the univariate Gaussian (or NB) laws of types <span class="math inline">j</span> and <span class="math inline">j'</span>.</li>
+</ul>
+<p>The last criterion also sees genes whose types share a mean but differ in variance. A mean-only main effect misses those genes. A location–scale extension of <a href="#eq-fs-nb-main" class="quarto-xref">Equation&nbsp;<span>3.8</span></a> with a type-specific <span class="math inline">\theta_{gj}</span> (a GAMLSS margin, as in scDesign3 <span class="citation" data-cites="songScDesign3GeneratesRealistic2024">(<a href="#ref-songScDesign3GeneratesRealistic2024" role="doc-biblioref">Song et al. 2024</a>)</span>) has <span class="math inline">2(J-1)</span> degrees of freedom and tests both.</p>
+<p>The pseudoreplication caveat of <a href="#nte-pseudoreplication" class="quarto-xref">Note&nbsp;<span>3.6</span></a> applies to every statistic in this section. On a single gastruloid resource, cells are technical draws of one specimen. The <span class="math inline">p</span>-values calibrate a <strong>screen</strong> inside that specimen, not a population-level claim of differential expression.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Sketch: presence gate, LRT and quasi-likelihood F per time slot.</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># counts: genes x cells; type: factor over cells; lib: library sizes.</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>present <span class="ot">&lt;-</span> <span class="fu">vapply</span>(</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">split</span>(<span class="fu">seq_len</span>(<span class="fu">ncol</span>(counts)), type),</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(idx) {</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    m <span class="ot">&lt;-</span> counts[, idx, drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rowMeans</span>(m <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">&gt;=</span> <span class="fl">0.05</span> <span class="sc">&amp;</span> <span class="fu">apply</span>(m, <span class="dv">1</span>L, stats<span class="sc">::</span>var) <span class="sc">&gt;</span> <span class="dv">0</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">logical</span>(<span class="fu">nrow</span>(counts))</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>keep <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(<span class="sc">!</span>present) <span class="sc">==</span> <span class="dv">0</span>L</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co"># glmGamPoi: NB GLM with offset; QL F test of the joint type effect.</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> glmGamPoi<span class="sc">::</span><span class="fu">glm_gp</span>(</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  counts[keep, ],</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">design =</span> <span class="sc">~</span>type,</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">col_data =</span> <span class="fu">data.frame</span>(<span class="at">type =</span> type),</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">offset =</span> <span class="fu">log</span>(lib),</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">size_factors =</span> <span class="cn">FALSE</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> glmGamPoi<span class="sc">::</span><span class="fu">test_de</span>(fit, <span class="at">reduced_design =</span> <span class="sc">~</span><span class="dv">1</span>)</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Single-gene LRT with MASS, for checking one gene:</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> counts[<span class="st">"T"</span>, ]</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>m0 <span class="ot">&lt;-</span> MASS<span class="sc">::</span><span class="fu">glm.nb</span>(y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> <span class="fu">offset</span>(<span class="fu">log</span>(lib)))</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> MASS<span class="sc">::</span><span class="fu">glm.nb</span>(y <span class="sc">~</span> type <span class="sc">+</span> <span class="fu">offset</span>(<span class="fu">log</span>(lib)))</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(m0, m1) <span class="co"># likelihood-ratio chi-squared on J - 1 df</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+</section>
+<section id="sec-fs-deg" class="level2" data-number="3.7">
+<h2 data-number="3.7" class="anchored" data-anchor-id="sec-fs-deg"><span class="header-section-number">3.7</span> Differential expression — only with biological replication</h2>
 <p><code>DESeq2</code>, <code>edgeR</code> and <code>limma</code>–voom remain the workhorses of one-versus-rest ranking <span class="citation" data-cites="loveModeratedEstimationFold2014">(<a href="#ref-loveModeratedEstimationFold2014" role="doc-biblioref">Love et al. 2014</a>)</span>. That logic <strong>does not transfer</strong> to GSE229513 as a DE experiment.</p>
 <div id="nte-pseudoreplication" class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -1188,19 +1368,19 @@ Note&nbsp;3.7: <span class="emoji" data-emoji="information_source">ℹ️</span>
 </div>
 </div>
 <div class="cell" data-layout-align="default">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>%%{init: {"theme": "sandstone", "flowchart": {"htmlLabels": true}}}%%</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>flowchart TD</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  A["Log-normalised RNA matrix and cell metadata"] --&gt; B["SingleCellAssay; standardise cngeneson"]</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  B --&gt; C["MAST::zlm full model"]</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  C --&gt; D["cell_type plus fixed covariates"]</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  C --&gt; E["(1 | sample_id) when biological replicates exist"]</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  D --&gt; F["MAST::lrTest fit, cell_type"]</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  E --&gt; F</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  F --&gt; G["Reduced model drops cell_type only"]</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  G --&gt; H["Per gene: disc, cont, hurdle LRT"]</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  H --&gt; I["BH FDR on hurdle; check disc and cont"]</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  I --&gt; J["Keep genes detected across a minimal type subset"]</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  J --&gt; K["Post-hoc means or contrasts on significant genes only"]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>%%{init: {"theme": "sandstone", "flowchart": {"htmlLabels": true}}}%%</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>flowchart TD</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  A["Log-normalised RNA matrix and cell metadata"] --&gt; B["SingleCellAssay; standardise cngeneson"]</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  B --&gt; C["MAST::zlm full model"]</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  C --&gt; D["cell_type plus fixed covariates"]</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  C --&gt; E["(1 | sample_id) when biological replicates exist"]</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  D --&gt; F["MAST::lrTest fit, cell_type"]</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  E --&gt; F</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  F --&gt; G["Reduced model drops cell_type only"]</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  G --&gt; H["Per gene: disc, cont, hurdle LRT"]</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  H --&gt; I["BH FDR on hurdle; check disc and cont"]</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  I --&gt; J["Keep genes detected across a minimal type subset"]</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  J --&gt; K["Post-hoc means or contrasts on significant genes only"]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div id="fig-fs-mast-omnibus" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1229,20 +1409,26 @@ Figure&nbsp;3.8: MAST omnibus workflow for cell-type differential expression whe
 </div>
 </div>
 </div>
-<section id="sec-fs-perspective" class="level3" data-number="3.6.1">
-<h3 data-number="3.6.1" class="anchored" data-anchor-id="sec-fs-perspective"><span class="header-section-number">3.6.1</span> Differential networks</h3>
+<section id="sec-fs-perspective" class="level3" data-number="3.7.1">
+<h3 data-number="3.7.1" class="anchored" data-anchor-id="sec-fs-perspective"><span class="header-section-number">3.7.1</span> Differential networks</h3>
 <p>These methods are <strong>not</strong> in the naive screen. They need graphs, so they nominate extras for <span class="math inline">\mathcal{G}_{0}</span> <strong>after</strong> a first GGM pass. Full algebraic detail of <code>INDEED</code> and D-trace lives in DeCovarT <code>vignettes/supp-S6-feature-selection.qmd</code>. Separation language (directed versus undirected) is in <a href="A1-separation-criteria.html#sec-separation" class="quarto-xref"><span>Section A.1</span></a>.</p>
 <p>DeCovarT benefits from <strong>rewiring</strong> between populations. A gene that changes neighbourhood in <span class="math inline">\boldsymbol{\Omega}_{j}</span> is a better candidate than a gene that is merely highly variable.</p>
-<p><strong>Fit every <span class="math inline">\boldsymbol{\Omega}_{j}</span>, then compare supports.</strong> Independent glasso / <code>SILGGM</code> fits (<a href="02-grn-graphical-lasso.html#sec-silggm" class="quarto-xref"><span>Section 4.3.2</span></a>) yield per-type edges; the symmetric difference of supports ranks genes by differential connectivity. The difference of two biased estimators is not a debiased estimator of <span class="math inline">\Delta_{j\ell}=\boldsymbol{\Omega}_{j}-\boldsymbol{\Omega}_{\ell}</span>.</p>
+<p><strong>Fit every <span class="math inline">\boldsymbol{\Omega}_{j}</span>, then compare supports.</strong> Independent glasso / <code>SILGGM</code> fits (<a href="02-grn-graphical-lasso.html#sec-silggm" class="quarto-xref"><span>Section 4.3.3</span></a>) yield per-type edges; the symmetric difference of supports ranks genes by differential connectivity. The difference of two biased estimators is not a debiased estimator of <span class="math inline">\Delta_{j\ell}=\boldsymbol{\Omega}_{j}-\boldsymbol{\Omega}_{\ell}</span>.</p>
 <p><strong>Estimate <span class="math inline">\Delta_{j\ell}</span> directly.</strong> D-trace methods target the difference of precisions without necessarily reconstructing both graphs first. Zhang and Zou <span class="citation" data-cites="zhangSparsePrecisionMatrix2014">(<a href="#ref-zhangSparsePrecisionMatrix2014" role="doc-biblioref">Zhang and Zou 2014</a>)</span> introduced the lasso-penalised D-trace loss for a single sparse precision; the differential-network extension <span class="citation" data-cites="yuanDifferentialNetworkAnalysis2017">(<a href="#ref-yuanDifferentialNetworkAnalysis2017" role="doc-biblioref">Yuan et al. 2017</a>)</span> estimates <span class="math inline">\Delta_{j\ell}</span>. Empirically, D-trace is competitive when the <strong>difference</strong> is sparser than either graph <span class="citation" data-cites="plaksienkoMethodsDifferentialNetwork2025">(<a href="#ref-plaksienkoMethodsDifferentialNetwork2025" role="doc-biblioref">Plaksienko et al. 2025</a>)</span>. It still does <strong>not</strong> produce a pair of SPD precisions. A workable <strong>proposal</strong> is: use D-trace to nominate rewiring genes, then estimate each <span class="math inline">\boldsymbol{\Omega}_{j}</span> on that panel with a method from <a href="02-grn-graphical-lasso.html#sec-grn-top4" class="quarto-xref"><span>Section 4.5</span></a>.</p>
 <p><code>INDEED</code> multiplies a DE <span class="math inline">p</span>-value by a permutation-filtered change in partial correlation <span class="citation" data-cites="zuoINDEEDIntegratedDifferential2016">(<a href="#ref-zuoINDEEDIntegratedDifferential2016" role="doc-biblioref">Zuo et al. 2016</a>)</span>. On this reference the DE <span class="math inline">p</span>-value assumes biological replication (<a href="#nte-pseudoreplication" class="quarto-xref">Note&nbsp;<span>3.6</span></a>), and the permutation null among cells of one gastruloid is a technical null. Use it, if at all, as a ranking heuristic with <span class="math inline">p_{g}^{\mathrm{DE}}</span> replaced by a fold-change or between-type score.</p>
 </section>
-<section id="markov-boundaries" class="level3" data-number="3.6.2">
-<h3 data-number="3.6.2" class="anchored" data-anchor-id="markov-boundaries"><span class="header-section-number">3.6.2</span> Markov boundaries</h3>
+<section id="markov-boundaries" class="level3" data-number="3.7.2">
+<h3 data-number="3.7.2" class="anchored" data-anchor-id="markov-boundaries"><span class="header-section-number">3.7.2</span> Markov boundaries</h3>
 <p>Once a GGM exists, seeds (markers, high signal-to-noise genes, D-trace hits) can be grown by undirected neighbours <span class="math inline">\{g':\omega_{gg'}\neq 0\}</span>. On a minimal undirected I-map that neighbour set is the <strong>Markov boundary</strong>, the smallest Markov blanket <span class="citation" data-cites="pearlProbabilisticReasoningIntelligent1988 kollerProbabilisticGraphicalModels2009">(<a href="#ref-pearlProbabilisticReasoningIntelligent1988" role="doc-biblioref">Pearl 1988</a>; <a href="#ref-kollerProbabilisticGraphicalModels2009" role="doc-biblioref">Koller and Friedman 2009</a>)</span>. That is undirected separation, not DAG <span class="math inline">d</span>-separation (<a href="A1-separation-criteria.html#sec-separation" class="quarto-xref"><span>Section A.1</span></a>, <a href="A1-separation-criteria.html#fig-separation" class="quarto-xref">Figure&nbsp;<span>A.1</span></a>).</p>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-agrestiFoundationsLinearGeneralized2015" class="csl-entry" role="listitem">
+Agresti, Alan. 2015. <em>Foundations of Linear and Generalized Linear Models</em>. Wiley.
+</div>
+<div id="ref-glmGamPoi2020" class="csl-entry" role="listitem">
+Ahlmann-Eltze, Constantin, and Wolfgang Huber. 2020. <span>“glmGamPoi: Fitting Gamma-Poisson Generalized Linear Models on Single Cell Count Data.”</span> <em>Bioinformatics</em>, ahead of print. <a href="https://doi.org/10.1093/bioinformatics/btaa1009">https://doi.org/10.1093/bioinformatics/btaa1009</a>.
+</div>
 <div id="ref-choudharyComparisonEvaluationStatistical2022" class="csl-entry" role="listitem">
 Choudhary, Saket, and Rahul Satija. 2022. <span>“Comparison and Evaluation of Statistical Error Models for <span class="nocase">scRNA-seq</span>.”</span> <em>Genome Biology</em> 23 (1): 27. <a href="https://doi.org/10.1186/s13059-021-02584-9">https://doi.org/10.1186/s13059-021-02584-9</a>.
 </div>
@@ -1282,11 +1468,20 @@ Lause, Jan, Philipp Berens, and Dmitry Kobak. 2021. <span>“Analytic <span>Pear
 <div id="ref-loveModeratedEstimationFold2014" class="csl-entry" role="listitem">
 Love, Michael I., Wolfgang Huber, and Simon Anders. 2014. <span>“Moderated Estimation of Fold Change and Dispersion for <span class="nocase">RNA-seq</span> Data with <span>DESeq2</span>.”</span> <em>Genome Biology</em> 15 (12): 550. <a href="https://doi.org/10.1186/s13059-014-0550-8">https://doi.org/10.1186/s13059-014-0550-8</a>.
 </div>
+<div id="ref-lundDetectingDifferentialExpression2012" class="csl-entry" role="listitem">
+Lund, Steven P., Dan Nettleton, Davis J. McCarthy, and Gordon K. Smyth. 2012. <span>“Detecting <span>Differential Expression</span> in <span>RNA</span>-Sequence <span>Data Using Quasi</span>-Likelihood with <span>Shrunken Dispersion Estimates</span>.”</span> <em>Statistical Applications in Genetics and Molecular Biology</em> 11 (5). <a href="https://doi.org/10.1515/1544-6115.1826">https://doi.org/10.1515/1544-6115.1826</a>.
+</div>
+<div id="ref-meinshausenStabilitySelection2010" class="csl-entry" role="listitem">
+Meinshausen, Nicolai, and Peter Bühlmann. 2010. <span>“Stability Selection.”</span> <em>Journal of the Royal Statistical Society. Series B (Statistical Methodology)</em> 72: 417–73. <a href="https://doi.org/10.1111/j.1467-9868.2010.00740.x">https://doi.org/10.1111/j.1467-9868.2010.00740.x</a>.
+</div>
 <div id="ref-pearlProbabilisticReasoningIntelligent1988" class="csl-entry" role="listitem">
 Pearl, Judea. 1988. <em>Probabilistic <span>Reasoning</span> in <span>Intelligent Systems</span>: <span>Networks</span> of <span>Plausible Inference</span></em>. Morgan Kaufmann.
 </div>
 <div id="ref-plaksienkoMethodsDifferentialNetwork2025" class="csl-entry" role="listitem">
 Plaksienko, Anna, Magne Thoresen, and Vera Djordjilović. 2025. <em>Methods for Differential Network Estimation: An Empirical Comparison</em>. arXiv:2412.17922. arXiv. <a href="https://doi.org/10.48550/arXiv.2412.17922">https://doi.org/10.48550/arXiv.2412.17922</a>.
+</div>
+<div id="ref-songScDesign3GeneratesRealistic2024" class="csl-entry" role="listitem">
+Song, Dongyuan, Qingyang Wang, Guanao Yan, Tianyang Liu, Tianyi Sun, and Jingyi Jessica Li. 2024. <span>“<span class="nocase">scDesign3</span> Generates Realistic in Silico Data for Multimodal Single-Cell and Spatial Omics.”</span> <em>Nature Biotechnology</em> 42 (2): 247–52. <a href="https://doi.org/10.1038/s41587-023-01772-1">https://doi.org/10.1038/s41587-023-01772-1</a>.
 </div>
 <div id="ref-squairConfrontingFalseDiscoveries2021" class="csl-entry" role="listitem">
 Squair, Jordan W., Matthieu Gautier, Claudia Kathe, et al. 2021. <span>“Confronting False Discoveries in Single-Cell Differential Expression.”</span> <em>Nature Communications</em> 12 (1). <a href="https://doi.org/10.1038/s41467-021-25960-2">https://doi.org/10.1038/s41467-021-25960-2</a>.
