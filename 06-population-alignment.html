@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.10.18">
+<meta name="generator" content="quarto-1.10.19">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -63,9 +63,9 @@ div.csl-indent {
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-b626d73c4c936ccc3cb08be7d45d1df6.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="site_libs/bootstrap/bootstrap-fd0503e23dce65854c81c5baaade3bdf.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
@@ -100,9 +100,6 @@ div.csl-indent {
     "search-label": "Search"
   }
 }</script>
-<script src="site_libs/quarto-diagram/mermaid.min.js"></script>
-<script src="site_libs/quarto-diagram/mermaid-init.js"></script>
-<link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
 <script>window.backupDefine = window.define; window.define = undefined;</script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
     <style type="text/css">
@@ -528,10 +525,12 @@ window.Quarto = {
   <li><a href="#mean-and-covariance-that-decovart-actually-wants" id="toc-mean-and-covariance-that-decovart-actually-wants" class="nav-link" data-scroll-target="#mean-and-covariance-that-decovart-actually-wants"><span class="header-section-number">5.3.2</span> Mean and covariance that DeCovarT actually wants</a></li>
   </ul></li>
   <li><a href="#sec-align-bootstrap" id="toc-sec-align-bootstrap" class="nav-link" data-scroll-target="#sec-align-bootstrap"><span class="header-section-number">5.4</span> Bootstrap</a></li>
-  <li><a href="#sec-align-mc" id="toc-sec-align-mc" class="nav-link" data-scroll-target="#sec-align-mc"><span class="header-section-number">5.5</span> <code>scDesign2</code> with a precision-based copula</a>
+  <li><a href="#sec-align-mc" id="toc-sec-align-mc" class="nav-link" data-scroll-target="#sec-align-mc"><span class="header-section-number">5.5</span> <code>scDesign3</code> with a precision-based copula</a>
   <ul>
-  <li><a href="#fit-negative-binomial-margins-and-sklars-decomposition" id="toc-fit-negative-binomial-margins-and-sklars-decomposition" class="nav-link" data-scroll-target="#fit-negative-binomial-margins-and-sklars-decomposition"><span class="header-section-number">5.5.1</span> Fit: negative-binomial margins and Sklar’s decomposition</a></li>
-  <li><a href="#generate-freeze-proportions-and-library-size" id="toc-generate-freeze-proportions-and-library-size" class="nav-link" data-scroll-target="#generate-freeze-proportions-and-library-size"><span class="header-section-number">5.5.2</span> Generate: freeze proportions and library size</a></li>
+  <li><a href="#sec-scd3-margins" id="toc-sec-scd3-margins" class="nav-link" data-scroll-target="#sec-scd3-margins"><span class="header-section-number">5.5.1</span> Margins: a GAMLSS per gene</a></li>
+  <li><a href="#sec-scd3-copula" id="toc-sec-scd3-copula" class="nav-link" data-scroll-target="#sec-scd3-copula"><span class="header-section-number">5.5.2</span> Joint law: copula choices with fixed margins</a></li>
+  <li><a href="#sec-scd3-gof" id="toc-sec-scd3-gof" class="nav-link" data-scroll-target="#sec-scd3-gof"><span class="header-section-number">5.5.3</span> Goodness of fit: marginal and copula AIC and BIC</a></li>
+  <li><a href="#generate-freeze-proportions-and-library-size" id="toc-generate-freeze-proportions-and-library-size" class="nav-link" data-scroll-target="#generate-freeze-proportions-and-library-size"><span class="header-section-number">5.5.4</span> Generate: freeze proportions and library size</a></li>
   </ul></li>
   <li><a href="#sec-align-recommend" id="toc-sec-align-recommend" class="nav-link" data-scroll-target="#sec-align-recommend"><span class="header-section-number">5.6</span> What we would actually run</a></li>
   <li><a href="#sec-align-perspectives" id="toc-sec-align-perspectives" class="nav-link" data-scroll-target="#sec-align-perspectives"><span class="header-section-number">5.7</span> Perspectives</a>
@@ -571,30 +570,27 @@ window.Quarto = {
 <p>Two strategies are in the core. Optimal transport and mechanistic simulators are perspectives (<a href="#sec-align-ot" class="quarto-xref"><span>Section 5.7.1</span></a>).</p>
 <ol type="1">
 <li><strong>Affine invariance.</strong> Closed-form means and covariances when cells of one type are independent Gaussians.</li>
-<li><strong>Resampling.</strong> A technical bootstrap of cells, and Monte Carlo from <code>scDesign2</code>, with negative-binomial margins and a Gaussian copula tied to the sparse precision (<a href="#sec-align-mc" class="quarto-xref"><span>Section 5.5</span></a>).</li>
+<li><strong>Resampling.</strong> A technical bootstrap of cells, and Monte Carlo from <code>scDesign3</code>, with negative-binomial GAMLSS margins and a Gaussian copula tied to the sparse precision (<a href="#sec-align-mc" class="quarto-xref"><span>Section 5.5</span></a>). <a href="#fig-align-layout" class="quarto-xref">Figure&nbsp;<span>5.1</span></a> summarises the two routes.</li>
 </ol>
-<div class="cell" data-layout-align="default">
-<div class="cell-output-display">
 <div id="fig-align-layout" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-align-layout-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div>
-<pre class="mermaid mermaid-js" data-label="fig-align-layout">%%{init: {"theme": "sandstone"}}%%
-flowchart TD
-  A["Cells of type j"] --&gt; B["Affine lift"]
-  A --&gt; D["Bootstrap or scDesign2"]
-  B --&gt; E["mu_j, Sigma_j"]
-  D --&gt; E
-  E --&gt; F["DeCovarT convolution across types"]
-</pre>
-</div>
+<img src="06-population-alignment_files/mediabag/fig-align-layout.svg" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-align-layout-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;5.1: Core lifts from labelled cells of one type to a population Gaussian: an affine aggregation, and resampling (bootstrap or scDesign2). The bulk profile is a later convolution across types.
+<p>Figure&nbsp;5.1: Core lifts from labelled cells of one type to a population Gaussian: an affine aggregation, and resampling (bootstrap or scDesign3). The bulk profile is a later convolution across types.</p>
 </figcaption>
 </figure>
 </div>
+<div id="fig-scdesign2-schematic" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-scdesign2-schematic-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/scdesign2_sparse_copula.png" class="img-fluid figure-img">
 </div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-scdesign2-schematic-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.2: Complementary schematic of the same sparse-copula arm, drawn for the one-cell-type scDesign2 case: negative-binomial margins per labelled type, a Gaussian copula whose correlation comes from the sparse precision, then synthetic counts with the observed cell-type proportions and library sizes. The TikZ diagram above is the reference layout; this figure gives the fitting and generating steps in more detail.
+</figcaption>
+</figure>
 </div>
 <div id="nte-not-y" class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -629,14 +625,14 @@ Warning&nbsp;5.1: <span class="emoji" data-emoji="warning">⚠️</span> A withi
 </section>
 <section id="sec-align-which-model" class="level2" data-number="5.2">
 <h2 data-number="5.2" class="anchored" data-anchor-id="sec-align-which-model"><span class="header-section-number">5.2</span> Which covariance to export</h2>
-<p>DeCovarT today is a Gaussian convolution of one population profile per type. The covariance weight is quadratic in the cell fraction. That object is a <strong>between-replicate</strong> phenotype, not the scatter of cells inside one donor. The three layers are drawn in <a href="#fig-three-variability" class="quarto-xref">Figure&nbsp;<span>5.2</span></a>. <code>MuSiC</code>’s library-size assumptions, including the extra A3<span class="math inline">'</span> hypothesis needed for absolute cell fractions, are in <a href="#fig-music-assumptions" class="quarto-xref">Figure&nbsp;<span>5.3</span></a>.</p>
+<p>DeCovarT today is a Gaussian convolution of one population profile per type. The covariance weight is quadratic in the cell fraction. That object is a <strong>between-replicate</strong> phenotype, not the scatter of cells inside one donor. The three layers are drawn in <a href="#fig-three-variability" class="quarto-xref">Figure&nbsp;<span>5.3</span></a>. <code>MuSiC</code>’s library-size assumptions, including the extra A3<span class="math inline">'</span> hypothesis needed for absolute cell fractions, are in <a href="#fig-music-assumptions" class="quarto-xref">Figure&nbsp;<span>5.4</span></a>.</p>
 <div id="fig-three-variability" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Schematic of three covariance layers: linear within-cell variability, quadratic between-sample variability, and diagonal bulk measurement noise.">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-three-variability-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="images/covariance_three_variability_factors.png" class="img-fluid figure-img" alt="Schematic of three covariance layers: linear within-cell variability, quadratic between-sample variability, and diagonal bulk measurement noise.">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-three-variability-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;5.2: Within-sample cell noise, between-replicate biological covariance, and residual bulk noise.
+Figure&nbsp;5.3: Within-sample cell noise, between-replicate biological covariance, and residual bulk noise.
 </figcaption>
 </figure>
 </div>
@@ -646,12 +642,12 @@ Figure&nbsp;5.2: Within-sample cell noise, between-replicate biological covarian
 <img src="images/music_model_assumptions.png" class="img-fluid figure-img" alt="MuSiC model assumptions A1 same population, A2 conserved cell-size ratios, A3 conserved library-size ratios, and A3-prime for absolute cell-type proportions.">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-music-assumptions-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;5.3: MuSiC assumptions for library-size normalisation: same population, conserved cell-size ratios, conserved library-size ratios, and the stronger A3-prime hypothesis for absolute cell-type fractions.
+Figure&nbsp;5.4: MuSiC assumptions for library-size normalisation: same population, conserved cell-size ratios, conserved library-size ratios, and the stronger A3-prime hypothesis for absolute cell-type fractions.
 </figcaption>
 </figure>
 </div>
 <p>Before droplet scRNA-seq, the reference was a FACS- or MACS-purified bulk library. Szaniszlo et al.&nbsp;showed that mixture expression reflects composition, that a minor subset is recovered only after physical sorting, and that coexpression among genes inside a purified type is already a population-level object <span class="citation" data-cites="szaniszloGettingRightCells">(<a href="#ref-szaniszloGettingRightCells" role="doc-biblioref">Szaniszlo et al. 2004</a>)</span>. Novershtern et al.&nbsp;profiled 38 marker-defined haematopoietic populations and used coexpression modules plus promoter <em>cis</em>-circuits as the gene–gene structure of each state <span class="citation" data-cites="novershternDenselyInterconnectedTranscriptional2011">(<a href="#ref-novershternDenselyInterconnectedTranscriptional2011" role="doc-biblioref">Novershtern et al. 2011</a>)</span>. Those FACS profiles still match DeCovarT’s quadratic convolution.</p>
-<p>Cells from one donor share genetic and environmental background, so they are subsamples rather than independent biological units <span class="citation" data-cites="zimmermanPracticalSolutionPseudoreplication2021">(<a href="#ref-zimmermanPracticalSolutionPseudoreplication2021" role="doc-biblioref">Zimmerman et al. 2021</a>)</span>. Zimmerman, Espeland and Langefeld document that dependence across cell types, contrast within-donor cell variation with between-donor biological variation, and treat donor as the random effect when comparing conditions. That within-versus-between split is the same hierarchy as <span class="math inline">\boldsymbol{\Sigma}_{W,j}</span> versus <span class="math inline">\boldsymbol{\Sigma}_{B,j}</span> when a single-cell reference is aligned with bulk. Technical library-size and platform scale sit in a third, residual layer (<a href="#fig-music-assumptions" class="quarto-xref">Figure&nbsp;<span>5.3</span></a>). <code>Squair</code> et al.&nbsp;make the same point for false discoveries if cells are treated as biological replicates <span class="citation" data-cites="squairConfrontingFalseDiscoveries2021">(<a href="#ref-squairConfrontingFalseDiscoveries2021" role="doc-biblioref">Squair et al. 2021</a>)</span>.</p>
+<p>Cells from one donor share genetic and environmental background, so they are subsamples rather than independent biological units <span class="citation" data-cites="zimmermanPracticalSolutionPseudoreplication2021">(<a href="#ref-zimmermanPracticalSolutionPseudoreplication2021" role="doc-biblioref">Zimmerman et al. 2021</a>)</span>. Zimmerman, Espeland and Langefeld document that dependence across cell types, contrast within-donor cell variation with between-donor biological variation, and treat donor as the random effect when comparing conditions. That within-versus-between split is the same hierarchy as <span class="math inline">\boldsymbol{\Sigma}_{W,j}</span> versus <span class="math inline">\boldsymbol{\Sigma}_{B,j}</span> when a single-cell reference is aligned with bulk. Technical library-size and platform scale sit in a third, residual layer (<a href="#fig-music-assumptions" class="quarto-xref">Figure&nbsp;<span>5.4</span></a>). <code>Squair</code> et al.&nbsp;make the same point for false discoveries if cells are treated as biological replicates <span class="citation" data-cites="squairConfrontingFalseDiscoveries2021">(<a href="#ref-squairConfrontingFalseDiscoveries2021" role="doc-biblioref">Squair et al. 2021</a>)</span>.</p>
 <p>The package outlook <a href="https://bastienchassagnol.github.io/DeCovarT/articles/theory-decovart-statistical-perspectives.html#sec-sc-moments">DeCovarT perspectives</a> derives the moments. The practical fork on this gastruloid is the reference design.</p>
 <section id="one-biological-replicate" class="level3" data-number="5.2.1">
 <h3 data-number="5.2.1" class="anchored" data-anchor-id="one-biological-replicate"><span class="header-section-number">5.2.1</span> One biological replicate</h3>
@@ -663,7 +659,7 @@ Figure&nbsp;5.3: MuSiC assumptions for library-size normalisation: same populati
 \boldsymbol{\Sigma}_{\mathrm{obs},i},
 \tag{5.3}</span></span></p>
 <p>with <span class="math inline">\kappa_i</span> an effective inverse cell count for the bulk, and <span class="math inline">\boldsymbol{\Sigma}_{\mathrm{obs},i}</span> diagonal. Keep a quadratic term only for the Monte Carlo error of the reference mean, <span class="math inline">\boldsymbol{\Sigma}_{W,j}/C_{j1}</span>, and label it as such.</p>
-<p>Report RNA fractions unless the transcriptome sizes <span class="math inline">S_j</span> are measured. If they are measured, insert them in the mean. Do not estimate them jointly with <span class="math inline">\boldsymbol{p}</span>, and do not estimate a gene-wise platform vector on the same bulk sample (<a href="#fig-music-assumptions" class="quarto-xref">Figure&nbsp;<span>5.3</span></a>).</p>
+<p>Report RNA fractions unless the transcriptome sizes <span class="math inline">S_j</span> are measured. If they are measured, insert them in the mean. Do not estimate them jointly with <span class="math inline">\boldsymbol{p}</span>, and do not estimate a gene-wise platform vector on the same bulk sample (<a href="#fig-music-assumptions" class="quarto-xref">Figure&nbsp;<span>5.4</span></a>).</p>
 </section>
 <section id="enough-biological-replicates" class="level3" data-number="5.2.2">
 <h3 data-number="5.2.2" class="anchored" data-anchor-id="enough-biological-replicates"><span class="header-section-number">5.2.2</span> Enough biological replicates</h3>
@@ -780,34 +776,117 @@ a_i\sum_j p_{ji}\,\boldsymbol{\mu}_{\cdot j},\\
 <p>This uncertainty is conditional on this gastruloid experiment. It does not stand in for organoid-to-organoid variability <span class="citation" data-cites="squairConfrontingFalseDiscoveries2021">(<a href="#ref-squairConfrontingFalseDiscoveries2021" role="doc-biblioref">Squair et al. 2021</a>)</span>. Calling technical pseudo-bulks biological replicates is the error flagged in <a href="03-feature-selection-naive.html#nte-pseudoreplication" class="quarto-xref">Note&nbsp;<span>3.6</span></a>. Multiple donors would allow resampling of experimental units. Suppinger does not provide them. External cohorts (for example GSE250136) are for validation.</p>
 </section>
 <section id="sec-align-mc" class="level2" data-number="5.5">
-<h2 data-number="5.5" class="anchored" data-anchor-id="sec-align-mc"><span class="header-section-number">5.5</span> <code>scDesign2</code> with a precision-based copula</h2>
-<p><code>scDesign2</code> fits a joint count model <strong>per labelled cell type</strong>, then draws synthetic cells from it <span class="citation" data-cites="sunScDesign2TransparentSimulator2021">(<a href="#ref-sunScDesign2TransparentSimulator2021" role="doc-biblioref">Sun et al. 2021</a>)</span>. The published fit chooses a count margin gene by gene and estimates a Gaussian copula correlation from the data. The arm used here keeps the two-step layout and changes the dependence: margins are negative binomial, and the copula correlation is the correlation matrix of <span class="math inline">\widehat{\boldsymbol{\Sigma}}_{j}=\widehat{\boldsymbol{\Omega}}_{j}^{-1}</span>.</p>
-<div id="fig-scdesign2" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-scdesign2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="images/scdesign2_sparse_copula.png" class="img-fluid figure-img">
+<h2 data-number="5.5" class="anchored" data-anchor-id="sec-align-mc"><span class="header-section-number">5.5</span> <code>scDesign3</code> with a precision-based copula</h2>
+<p><code>scDesign3</code> fits a joint count model to cells, then draws synthetic cells from it <span class="citation" data-cites="songScDesign3GeneratesRealistic2024">(<a href="#ref-songScDesign3GeneratesRealistic2024" role="doc-biblioref">Song et al. 2024</a>)</span>. Each gene gets its own margin, a generalised additive model for location, scale and shape (GAMLSS) in the cell covariates. A copula then joins the genes, which keeps the margins fixed while modelling pairwise dependence. The likelihood splits into a marginal part and a copula part, so AIC and BIC can score each part separately. With cell type as the only cell covariate, the model reduces to <code>scDesign2</code>, which fits one margin per gene and type and an empirical Gaussian copula per type <span class="citation" data-cites="sunScDesign2TransparentSimulator2021">(<a href="#ref-sunScDesign2TransparentSimulator2021" role="doc-biblioref">Sun et al. 2021</a>)</span>.</p>
+<p>The arm used here keeps that layout and changes the dependence: margins are negative binomial, and the copula correlation is the correlation matrix of <span class="math inline">\widehat{\boldsymbol{\Sigma}}_{j}=\widehat{\boldsymbol{\Omega}}_{j}^{-1}</span> (<a href="#fig-scdesign3" class="quarto-xref">Figure&nbsp;<span>5.5</span></a>). <a href="#fig-scdesign2-schematic" class="quarto-xref">Figure&nbsp;<span>5.2</span></a> shows the same sparse-copula arm in its scDesign2 form, with the fitting and generating steps spelled out.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
 </div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-scdesign2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;5.4: Modified scDesign2 pipeline: negative-binomial margins per labelled type, a Gaussian copula whose correlation comes from the sparse precision, then synthetic counts with the observed cell-type proportions and library sizes.
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span><span class="emoji" data-emoji="information_source">ℹ️</span> Out of scope
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>scDesign3</code> also simulates continuous trajectories (pseudotime smoothers), spatial transcriptomics (Gaussian-process smoothers on coordinates) and multi-omic or multimodal profiles. DeCovarT is a static model of labelled cell types, so this chapter uses only the cell-type covariate, the GAMLSS margins, the copula and the likelihood-based model selection.</p>
+</div>
+</div>
+<div id="fig-scdesign3" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-scdesign3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="06-population-alignment_files/mediabag/fig-scdesign3.svg" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-scdesign3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<p>Figure&nbsp;5.5: The <code>scDesign3</code> arm used here, in plate notation. (a) Negative-binomial GAMLSS margins fitted gene by gene, with mean and dispersion depending on the labelled cell type and the mean offset by the library size. (b) A Gaussian copula whose correlation <span class="math inline">\boldsymbol{R}_j</span> is the correlation matrix of the exported sparse covariance <span class="math inline">\widehat{\boldsymbol{\Omega}}_j^{-1}</span>; the latent normal vector is mapped to uniforms and then through the inverse margins of (a).</p>
 </figcaption>
 </figure>
 </div>
-<section id="fit-negative-binomial-margins-and-sklars-decomposition" class="level3" data-number="5.5.1">
-<h3 data-number="5.5.1" class="anchored" data-anchor-id="fit-negative-binomial-margins-and-sklars-decomposition"><span class="header-section-number">5.5.1</span> Fit: negative-binomial margins and Sklar’s decomposition</h3>
-<p>For cells of type <span class="math inline">j</span> and gene <span class="math inline">g</span>,</p>
-<p><span class="math display">
-X_{cg}\mid j
-\sim
-\mathrm{NB}(\mu_{gj},\psi_{gj}).
-</span></p>
-<p>Zero-inflated margins are not used (<a href="02-grn-graphical-lasso.html#nte-drop-zico" class="quarto-xref">Note&nbsp;<span>4.6</span></a>). The joint distribution factors by Sklar’s theorem (<a href="#thm-sklar" class="quarto-xref">Theorem&nbsp;<span>5.1</span></a>): gene-wise cdfs <span class="math inline">F_{gj}</span> carry the margins, and a copula carries the dependence. The Gaussian copula is the cdf of a standard normal vector with correlation <span class="math inline">R_{j}</span>. On a cell,</p>
-<p><span class="math display">
-u_{cg}=F_{gj}(X_{cg}),
+<section id="sec-scd3-margins" class="level3" data-number="5.5.1">
+<h3 data-number="5.5.1" class="anchored" data-anchor-id="sec-scd3-margins"><span class="header-section-number">5.5.1</span> Margins: a GAMLSS per gene</h3>
+<p>In <code>scDesign3</code> notation, cell <span class="math inline">i</span> has state covariates <span class="math inline">\boldsymbol{x}_i</span> (cell type, pseudotime or coordinates) and design covariates <span class="math inline">\boldsymbol{z}_i=(b_i,c_i)</span> (batch and condition). Feature <span class="math inline">j</span> follows a distribution <span class="math inline">F_j</span> whose mean, scale and zero-inflation parameters each have their own additive predictor (equation 1 of the paper):</p>
+<p><span id="eq-gamlss"><span class="math display">
+\begin{aligned}
+Y_{ij}\mid\boldsymbol{x}_i,\boldsymbol{z}_i
+&amp;\overset{\text{ind}}{\sim}F_j(\cdot\mid\boldsymbol{x}_i,\boldsymbol{z}_i;\mu_{ij},\sigma_{ij},p_{ij}),\\
+\theta_j(\mu_{ij})&amp;=\alpha_{j0}+\alpha_{jb_i}+\alpha_{jc_i}+f_{jc_i}(\boldsymbol{x}_i),\\
+\log\sigma_{ij}&amp;=\beta_{j0}+\beta_{jb_i}+\beta_{jc_i}+g_{jc_i}(\boldsymbol{x}_i),\\
+\operatorname{logit}p_{ij}&amp;=\gamma_{j0}+\gamma_{jb_i}+\gamma_{jc_i}+h_{jc_i}(\boldsymbol{x}_i).
+\end{aligned}
+\tag{5.10}</span></span></p>
+<p><span class="math inline">\theta_j</span> is the link of the mean. <span class="math inline">F_j</span> is one of Gaussian, Bernoulli, Poisson, negative binomial, zero-inflated Poisson or zero-inflated negative binomial. When only <span class="math inline">\mu_{ij}</span> depends on the covariates, <a href="#eq-gamlss" class="quarto-xref">Equation&nbsp;<span>5.10</span></a> is a generalised additive model (GAM); the GAMLSS adds predictors for the scale and the zero-inflation. The fit is <code>gamlss()</code> from <code>gamlss</code> or <code>gam()</code> from <code>mgcv</code> <span class="citation" data-cites="songScDesign3GeneratesRealistic2024">(<a href="#ref-songScDesign3GeneratesRealistic2024" role="doc-biblioref">Song et al. 2024</a>)</span>.</p>
+<p>The smooth terms <span class="math inline">f,g,h</span> are what make the model additive: cubic regression splines along pseudotime, or Gaussian-process smoothers on spatial coordinates. For a categorical cell type <span class="math inline">x_i\in\{1,\ldots,K\}</span> they collapse to one coefficient per type, <span class="math inline">f_{jc_i}(x_i)=\alpha_{jc_ix_i}</span>. In this chapter’s notation (cell <span class="math inline">c</span>, gene <span class="math inline">g</span>, type <span class="math inline">j(c)</span>, library size <span class="math inline">L_c</span>), the arm fits</p>
+<p><span id="eq-nb-gamlss"><span class="math display">
+X_{cg}\sim\mathrm{NB}(\mu_{cg},\psi_{cg}),
 \qquad
-z_{cg}=\Phi^{-1}(u_{cg}),
+\log\mu_{cg}=\alpha_{g0}+\alpha_{g\,j(c)}+\log L_c,
+\qquad
+\log\psi_{cg}=\beta_{g0}+\beta_{g\,j(c)},
+\tag{5.11}</span></span></p>
+<p>which is the per-type negative binomial of <code>scDesign2</code> written as a GAMLSS: <span class="math inline">\mu_{gj}</span> and <span class="math inline">\psi_{gj}</span> are free per type, and the dispersion is allowed to differ between types. The library size enters the mean as an offset; replacing the offset by a covariate with a free slope is an ordinary GAMLSS term and tests whether expression scales proportionally with depth. Zero-inflated margins are not used (<a href="02-grn-graphical-lasso.html#nte-drop-zico" class="quarto-xref">Note&nbsp;<span>4.6</span></a>).</p>
+<p>GAMLSS terms that do matter for DeCovarT, even without trajectories:</p>
+<ul>
+<li><strong>Dispersion by type.</strong> The negative-binomial dispersion is a scale parameter. Letting <span class="math inline">\log\psi</span> depend on the type is the GAMLSS feature that a GAM lacks.</li>
+<li><strong>Design covariates.</strong> Batches or sampling time points enter as <span class="math inline">\alpha_{gb}</span> and <span class="math inline">\beta_{gb}</span>. Setting those coefficients to zero at generation produces synthetic cells without the batch effect.</li>
+<li><strong>Smooth terms.</strong> These are only needed when a continuous covariate is modelled, such as developmental time inside one labelled type. That is a perspective here, because DeCovarT’s reference is static.</li>
+</ul>
+</section>
+<section id="sec-scd3-copula" class="level3" data-number="5.5.2">
+<h3 data-number="5.5.2" class="anchored" data-anchor-id="sec-scd3-copula"><span class="header-section-number">5.5.2</span> Joint law: copula choices with fixed margins</h3>
+<p>The joint distribution factors by Sklar’s theorem (<a href="#thm-sklar" class="quarto-xref">Theorem&nbsp;<span>5.1</span></a>): the gene-wise cdfs <span class="math inline">F_{cg}</span> carry the margins, and a copula <span class="math inline">C</span> carries the dependence,</p>
+<p><span class="math display">
+F(\boldsymbol{x}_{c}\mid j(c))
+=C\bigl(F_{c1}(x_{c1}),\ldots,F_{cG}(x_{cG})\mid j(c)\bigr).
 </span></p>
-<p>with a randomised quantile on the integer margin so that <span class="math inline">u_{cg}</span> is continuous (<a href="#nte-discrete-copula" class="quarto-xref">Note&nbsp;<span>5.2</span></a>).</p>
-<p>That latent map is the same idea as <code>huge.npn()</code> followed by a Gaussian precision (<a href="02-grn-graphical-lasso.html#sec-huge" class="quarto-xref"><span>Section 4.3.1</span></a>, <a href="02-grn-graphical-lasso.html#sec-silggm" class="quarto-xref"><span>Section 4.3.2</span></a>, <a href="02-grn-graphical-lasso.html#nte-npn-derivation" class="quarto-xref">Note&nbsp;<span>4.2</span></a>): monotone margins, then a Gaussian vector. <code>SILGGM</code> estimates the precision of those scores. Here the precision is already the exported <span class="math inline">\widehat{\boldsymbol{\Omega}}_{j}</span>, and the copula is not refit. The correlation that enters the copula is</p>
+<p>Because the margins are fitted first and held fixed, the copula changes only the pairwise dependence. Three copulas are available.</p>
+<div id="tbl-copulas" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-copulas-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;5.1: Copulas that keep negative-binomial margins fixed and model pairwise gene dependence. <span class="math inline">\lvert E_j\rvert</span> is the number of edges of the sparse precision of type <span class="math inline">j</span>.
+</figcaption>
+<div aria-describedby="tbl-copulas-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Copula</th>
+<th>Dependence parameters per type</th>
+<th>High-dimensional likelihood</th>
+<th>What it shows</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Empirical Gaussian (<code>scDesign2</code>; option in <code>scDesign3</code>)</td>
+<td><span class="math inline">G(G-1)/2</span> correlations</td>
+<td>Fails when <span class="math inline">G&gt;n_j</span>: <span class="math inline">\widehat{\boldsymbol{R}}_j</span> is singular</td>
+<td>A correlation matrix</td>
+</tr>
+<tr class="even">
+<td>Vine (<code>scDesign3</code>)</td>
+<td>One bivariate copula per edge of <span class="math inline">G-1</span> trees</td>
+<td>Always defined; slow</td>
+<td>The first tree: genes that act as hubs</td>
+</tr>
+<tr class="odd">
+<td>Precision-based Gaussian (this arm)</td>
+<td><span class="math inline">\lvert E_j\rvert</span> non-zero partial correlations</td>
+<td>Always defined: <span class="math inline">\widehat{\boldsymbol{\Omega}}_j\succ 0</span></td>
+<td>A conditional-independence graph</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p><strong>Empirical Gaussian copula.</strong> <code>scDesign3</code> estimates <span class="math inline">\boldsymbol{R}(\boldsymbol{x}_i,\boldsymbol{z}_i)</span> as the sample correlation of <span class="math inline">\Phi^{-1}(\boldsymbol{u})</span> among cells with the same covariates (<code>cora()</code> in <code>Rfast</code>). The authors note that when the number of genes is large, <span class="math inline">\widehat{\boldsymbol{R}}</span> is not invertible and the likelihood cannot be computed <span class="citation" data-cites="songScDesign3GeneratesRealistic2024">(<a href="#ref-songScDesign3GeneratesRealistic2024" role="doc-biblioref">Song et al. 2024</a>)</span>.</p>
+<p><strong>Vine copula.</strong> A regular vine decomposes the <span class="math inline">G</span>-dimensional copula density into bivariate copulas along a sequence of <span class="math inline">G-1</span> trees, each conditioning on the previous ones (<code>vinecop()</code> in <code>rvinecopulib</code>). The density is always defined. The first tree is interpretable: in peripheral blood cells, it recovered canonical markers such as <em>LYZ</em> for CD14<span class="math inline">^{+}</span> monocytes and <em>CD79A</em> for B cells as hub genes. Fitting is slow in high dimension <span class="citation" data-cites="songScDesign3GeneratesRealistic2024">(<a href="#ref-songScDesign3GeneratesRealistic2024" role="doc-biblioref">Song et al. 2024</a>)</span>.</p>
+<p><strong>Precision-based Gaussian copula.</strong> This arm does not estimate the copula from the counts. The latent map <span class="math inline">z_{cg}=\Phi^{-1}(u_{cg})</span> is the same idea as <code>huge.npn()</code> followed by a Gaussian precision (<a href="02-grn-graphical-lasso.html#sec-huge" class="quarto-xref"><span>Section 4.3.1</span></a>, <a href="02-grn-graphical-lasso.html#sec-silggm" class="quarto-xref"><span>Section 4.3.2</span></a>, <a href="02-grn-graphical-lasso.html#nte-npn-derivation" class="quarto-xref">Note&nbsp;<span>4.2</span></a>): monotone margins, then a Gaussian vector. <code>SILGGM</code> estimates the precision of those scores. Here the precision is the exported <span class="math inline">\widehat{\boldsymbol{\Omega}}_{j}</span>, and the copula is not refit. The correlation that enters the copula is</p>
 <p><span id="eq-copula-r"><span class="math display">
 R_{gg'}
 =
@@ -816,15 +895,15 @@ R_{gg'}
 \boldsymbol{\Sigma}
 =
 \widehat{\boldsymbol{\Omega}}_{j}^{-1}.
-\tag{5.10}</span></span></p>
-<p><span class="math inline">R</span> is the correlation of that covariance. It is not the matrix of partial correlations, and it is not the Pearson correlation of the raw counts.</p>
+\tag{5.12}</span></span></p>
+<p><span class="math inline">R</span> is the correlation of that covariance. It is not the matrix of partial correlations, and it is not the Pearson correlation of the raw counts. Its inverse is <span class="math inline">\boldsymbol{R}^{-1}=\boldsymbol{D}^{1/2}\widehat{\boldsymbol{\Omega}}_j\boldsymbol{D}^{1/2}</span> with <span class="math inline">\boldsymbol{D}=\operatorname{diag}(\boldsymbol{\Sigma})</span>, so the zero pattern of <span class="math inline">\widehat{\boldsymbol{\Omega}}_j</span> survives: two genes with a zero partial correlation are conditionally independent on the latent normal scale. The copula matches the network only if <span class="math inline">\widehat{\boldsymbol{\Omega}}_j</span> was estimated on the normal scores, as <code>SILGGM</code> does after the nonparanormal map; a precision estimated on linear counts gives a correlation on another scale.</p>
 <div id="thm-sklar" class="theorem">
 <p><span class="theorem-title"><strong>Theorem 5.1 (Sklar’s theorem)</strong></span> Let <span class="math inline">F</span> be a <span class="math inline">G</span>-dimensional cdf with margins <span class="math inline">F_{1},\ldots,F_{G}</span>. There exists a copula <span class="math inline">C:[0,1]^{G}\to[0,1]</span> such that</p>
 <p><span id="eq-sklar"><span class="math display">
 F(x_{1},\ldots,x_{G})
 =
 C\bigl(F_{1}(x_{1}),\ldots,F_{G}(x_{G})\bigr).
-\tag{5.11}</span></span></p>
+\tag{5.13}</span></span></p>
 <p>If every <span class="math inline">F_{g}</span> is continuous, <span class="math inline">C</span> is unique. If some margins are discrete, <span class="math inline">C</span> is uniquely determined only on the product of the ranges of those marginal cdfs (<a href="https://en.wikipedia.org/wiki/Copula_(statistics)#Sklar's_theorem">Wikipedia: Sklar’s theorem</a>).</p>
 </div>
 <div id="nte-discrete-copula" class="callout callout-style-default callout-note callout-titled">
@@ -837,16 +916,70 @@ Note&nbsp;5.2: <span class="emoji" data-emoji="information_source">ℹ️</span>
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>UMI counts are discrete, so <a href="#thm-sklar" class="quarto-xref">Theorem&nbsp;<span>5.1</span></a> does not give a unique copula density. The fit draws <span class="math inline">U\sim\mathrm{Unif}(0,1)</span> and spreads each integer before applying <span class="math inline">F_{gj}</span> and <span class="math inline">\Phi^{-1}</span>. The Gaussian copula on that scale is the dependence model in <a href="#fig-scdesign2" class="quarto-xref">Figure&nbsp;<span>5.4</span></a>. Clayton, Gumbel, and <span class="math inline">t</span> copulas are not used.</p>
+<p>UMI counts are discrete, so <a href="#thm-sklar" class="quarto-xref">Theorem&nbsp;<span>5.1</span></a> does not give a unique copula density. <code>scDesign2</code> and <code>scDesign3</code> use the distributional transform</p>
+<p><span id="eq-distributional-transform"><span class="math display">
+u_{cg}=(1-v_{cg})\,F_{cg}(x_{cg}-1)+v_{cg}\,F_{cg}(x_{cg}),
+\qquad
+v_{cg}\overset{\text{iid}}{\sim}\mathrm{Unif}(0,1),
+\tag{5.14}</span></span></p>
+<p>which spreads each integer over its probability mass before applying <span class="math inline">\Phi^{-1}</span>. The Gaussian copula on that scale is the dependence model of <a href="#fig-scdesign3" class="quarto-xref">Figure&nbsp;<span>5.5</span></a>. The draws <span class="math inline">v_{cg}</span> make the copula likelihood of <a href="#sec-scd3-gof" class="quarto-xref"><span>Section 5.5.3</span></a> random as well. Clayton, Gumbel, and <span class="math inline">t</span> copulas are not used.</p>
 </div>
 </div>
 </section>
-<section id="generate-freeze-proportions-and-library-size" class="level3" data-number="5.5.2">
-<h3 data-number="5.5.2" class="anchored" data-anchor-id="generate-freeze-proportions-and-library-size"><span class="header-section-number">5.5.2</span> Generate: freeze proportions and library size</h3>
-<p>Cell types are labelled, so the synthetic sample keeps the observed composition and the observed read depths.</p>
+<section id="sec-scd3-gof" class="level3" data-number="5.5.3">
+<h3 data-number="5.5.3" class="anchored" data-anchor-id="sec-scd3-gof"><span class="header-section-number">5.5.3</span> Goodness of fit: marginal and copula AIC and BIC</h3>
+<p>A parametric margin and a copula give a likelihood, and with it a score for parameters inferred from real cells. For cell <span class="math inline">c</span> of type <span class="math inline">j(c)</span> with covariates fixed, the joint density is the copula density times the marginal densities, so the log-likelihood splits <span class="citation" data-cites="songScDesign3GeneratesRealistic2024">(<a href="#ref-songScDesign3GeneratesRealistic2024" role="doc-biblioref">Song et al. 2024</a>)</span>:</p>
+<p><span id="eq-loglik-split"><span class="math display">
+\ell
+=\underbrace{\sum_{c=1}^{n}\log\hat c\bigl(\hat F_{c1}(x_{c1}),\ldots,\hat F_{cG}(x_{cG})\mid j(c)\bigr)}_{\ell^{\mathrm{copula}}}
++\underbrace{\sum_{c=1}^{n}\sum_{g=1}^{G}\log\hat f_{cg}(x_{cg})}_{\ell^{\mathrm{marginal}}},
+\tag{5.15}</span></span></p>
+<p><span id="eq-aic-bic"><span class="math display">
+\mathrm{AIC}=2k-2\ell,
+\qquad
+\mathrm{BIC}=k\log n-2\ell,
+\qquad
+\mathrm{AIC}=\mathrm{AIC}^{\mathrm{copula}}+\mathrm{AIC}^{\mathrm{marginal}},
+\tag{5.16}</span></span></p>
+<p>and likewise for BIC, with each part counting only its own parameters. Smaller values indicate a better fit. For the Gaussian copula,</p>
+<p><span id="eq-gaussian-copula-density"><span class="math display">
+\log c(\boldsymbol{u}\mid\boldsymbol{R})
+=-\tfrac12\log\det\boldsymbol{R}
+-\tfrac12\,\boldsymbol{z}^{\top}\bigl(\boldsymbol{R}^{-1}-\mathbf{I}_G\bigr)\boldsymbol{z},
+\qquad
+\boldsymbol{z}=\Phi^{-1}(\boldsymbol{u}),
+\tag{5.17}</span></span></p>
+<p>which is finite whenever <span class="math inline">\boldsymbol{R}</span> is positive definite. With <a href="#eq-copula-r" class="quarto-xref">Equation&nbsp;<span>5.12</span></a>, <span class="math inline">\log\det\boldsymbol{R}=-\log\det\widehat{\boldsymbol{\Omega}}_j-\sum_g\log\Sigma_{gg}</span>, so the copula likelihood of the precision-based arm costs one Cholesky factor of <span class="math inline">\widehat{\boldsymbol{\Omega}}_j</span> per type.</p>
+<p>The parameter counts are</p>
+<p><span class="math display">
+k^{\mathrm{marginal}}=2GJ\ \text{(negative binomial, mean and dispersion per gene and type)},
+\qquad
+k^{\mathrm{copula}}=
+\begin{cases}
+J\,G(G-1)/2 &amp; \text{empirical Gaussian},\\
+\sum_j\lvert E_j\rvert &amp; \text{precision-based},\\
+0 &amp; \text{independence}.
+\end{cases}
+</span></p>
+<p>Three comparisons follow, each on the same cells and the same genes.</p>
+<ol type="1">
+<li><strong>Margin family, gene by gene.</strong> Compare the marginal AIC or BIC of Poisson, negative binomial and zero-inflated negative binomial for each gene and type. The Poisson is the boundary <span class="math inline">\psi\to\infty</span> of the negative binomial, where a likelihood-ratio test is not <span class="math inline">\chi^{2}_{1}</span>; an information criterion avoids that test. Genes that the Poisson wins are the low-variability genes of a homogeneous type; a zero-inflated margin should win rarely for UMI counts.</li>
+<li><strong>Dependence model, margins fixed.</strong> With identical margins, <span class="math inline">\ell^{\mathrm{marginal}}</span> cancels and only the copula part compares independence, the precision-based copula along the graphical-lasso path, and a vine. The empirical Gaussian copula drops out when <span class="math inline">G&gt;n_j</span> because its likelihood is not defined. For sparse precisions with <span class="math inline">G</span> comparable to <span class="math inline">n_j</span>, the extended BIC adds <span class="math inline">4\gamma\lvert E_j\rvert\log G</span> to the copula BIC <span class="citation" data-cites="foygelExtendedBayesianInformation2010">(<a href="#ref-foygelExtendedBayesianInformation2010" role="doc-biblioref">Foygel and Drton 2010</a>)</span>, the same criterion used to choose <span class="math inline">\lambda</span> (<a href="./02-grn-graphical-lasso.html#sec-huge-lambda">choosing <span class="math inline">\lambda</span></a>).</li>
+<li><strong>Cell-type partition.</strong> For clusterings of the same cells, <code>scDesign3</code>’s <strong>marginal</strong> BIC tracked the adjusted Rand index with known labels (mean Spearman correlation below <span class="math inline">-0.7</span> across eight datasets). The copula BIC did not, because its <span class="math inline">G^{2}</span> parameter count dominates. Merging two transcriptionally close types and comparing marginal BIC tests whether the data support the split that DeCovarT will have to resolve.</li>
+</ol>
+<p>These scores are relative, and three cautions keep them honest.</p>
+<ul>
+<li><strong>Cells are not independent units.</strong> All cells come from one gastruloid experiment (<a href="03-feature-selection-naive.html#nte-pseudoreplication" class="quarto-xref">Note&nbsp;<span>3.6</span></a>). The <span class="math inline">\log n</span> in BIC then overstates the information, so the ranking of models is more trustworthy than the size of the differences. A held-out log-likelihood on cells left out of the fit is a useful second check.</li>
+<li><strong>The copula likelihood is random for counts.</strong> It depends on the draws <span class="math inline">v_{cg}</span> of <a href="#eq-distributional-transform" class="quarto-xref">Equation&nbsp;<span>5.14</span></a>; average it over several draws, or fix the seed, before comparing models.</li>
+<li><strong>Margins are plugged in.</strong> The copula is fitted on uniforms from estimated margins (inference functions for margins). Its AIC and BIC ignore the uncertainty of the margins, which is another reason to read differences as rankings.</li>
+</ul>
+</section>
+<section id="generate-freeze-proportions-and-library-size" class="level3" data-number="5.5.4">
+<h3 data-number="5.5.4" class="anchored" data-anchor-id="generate-freeze-proportions-and-library-size"><span class="header-section-number">5.5.4</span> Generate: freeze proportions and library size</h3>
+<p>Cell types are labelled, so the synthetic sample keeps the observed composition and the observed read depths. <code>scDesign3</code> draws <span class="math inline">\boldsymbol{U}_{c'}</span> from the fitted copula and sets <span class="math inline">Y_{c'g}=\hat F_{c'g}^{-1}(U_{c'g})</span>; changing the expected depth from <span class="math inline">N</span> to <span class="math inline">N'</span> multiplies the mean parameter by <span class="math inline">N'/N</span> <span class="citation" data-cites="songScDesign3GeneratesRealistic2024">(<a href="#ref-songScDesign3GeneratesRealistic2024" role="doc-biblioref">Song et al. 2024</a>)</span>. The arm uses the per-cell version of that rescaling.</p>
 <ol type="1">
 <li>Cell-type proportions stay <span class="math inline">\pi_{j}=n_{j}/n</span>. They are not redrawn.</li>
-<li>For each synthetic cell of type <span class="math inline">j</span>, the library size <span class="math inline">L</span> is taken from a real cell of that type. Gene means are scaled so that <span class="math inline">\sum_{g}\mathbb{E}[X_{g}]=L</span>.</li>
+<li>For each synthetic cell of type <span class="math inline">j</span>, the library size <span class="math inline">L</span> is taken from a real cell of that type and enters the offset of <a href="#eq-nb-gamlss" class="quarto-xref">Equation&nbsp;<span>5.11</span></a>, so that <span class="math inline">\sum_{g}\mathbb{E}[X_{g}]=L</span>.</li>
 <li>Draw the latent Gaussian <span class="math inline">\boldsymbol{z}\sim\mathcal{N}(0,R_{j})</span>, set <span class="math inline">u_{g}=\Phi(z_{g})</span>, and invert the negative-binomial quantile function at <span class="math inline">(\mu_{gj},\psi_{gj})</span>.</li>
 </ol>
 <p>The synthetic matrix has the same genes, the same type proportions, and matched per-cell depth. Re-fitting <span class="math inline">\boldsymbol{\Omega}_{j}</span> on it is the recovery check for the exported precision.</p>
@@ -860,7 +993,7 @@ Note&nbsp;5.2: <span class="emoji" data-emoji="information_source">ℹ️</span>
 <li>Trust <a href="#eq-theta-scale" class="quarto-xref">Equation&nbsp;<span>5.7</span></a> only for i.i.d. cells that share that covariance.</li>
 </ol></li>
 <li>Technical bootstrap within type (<a href="#sec-align-bootstrap" class="quarto-xref"><span>Section 5.4</span></a>). Do not label those replicates as biological.</li>
-<li><code>scDesign2</code> as above: negative-binomial margins, copula correlation <a href="#eq-copula-r" class="quarto-xref">Equation&nbsp;<span>5.10</span></a>, proportions and library sizes fixed from the labelled profile.</li>
+<li><code>scDesign3</code> as above: negative-binomial GAMLSS margins, copula correlation <a href="#eq-copula-r" class="quarto-xref">Equation&nbsp;<span>5.12</span></a>, proportions and library sizes fixed from the labelled profile. Check the margins and the copula with the marginal and copula AIC and BIC of <a href="#sec-scd3-gof" class="quarto-xref"><span>Section 5.5.3</span></a> before using the synthetic cells.</li>
 </ol>
 </section>
 <section id="sec-align-perspectives" class="level2" data-number="5.7">
@@ -877,7 +1010,7 @@ U_{rk}
 +
 \varepsilon_{rkc},
 </span></p>
-<p><span class="math inline">U_{rk}</span> has covariance <span class="math inline">\Sigma_{\mathrm{pop}}</span> and <span class="math inline">\varepsilon</span> has covariance <span class="math inline">\Sigma_{\mathrm{cell}}</span>. The average of <span class="math inline">n</span> cells then has covariance <span class="math inline">\Sigma_{\mathrm{pop}}+n^{-1}\Sigma_{\mathrm{cell}}</span>, so the two precisions differ even when they share edges. <a href="#fig-ot-scales" class="quarto-xref">Figure&nbsp;<span>5.5</span></a> draws those two networks side by side.</p>
+<p><span class="math inline">U_{rk}</span> has covariance <span class="math inline">\Sigma_{\mathrm{pop}}</span> and <span class="math inline">\varepsilon</span> has covariance <span class="math inline">\Sigma_{\mathrm{cell}}</span>. The average of <span class="math inline">n</span> cells then has covariance <span class="math inline">\Sigma_{\mathrm{pop}}+n^{-1}\Sigma_{\mathrm{cell}}</span>, so the two precisions differ even when they share edges. <a href="#fig-ot-scales" class="quarto-xref">Figure&nbsp;<span>5.6</span></a> draws those two networks side by side.</p>
 <p>The regular case is an <strong>external</strong> population Gaussian <span class="math inline">Q_{R}=\mathcal{N}(\mu_{R},\Sigma_{R})</span>, independent of the single-cell fit. Alignment is the closed-form 2-Wasserstein distance between the estimated population law <span class="math inline">\mathcal{N}(\mu_{P},\Omega_{P}^{-1})</span> and <span class="math inline">Q_{R}</span>,</p>
 <p><span id="eq-bures"><span class="math display">
 W_{2}^{2}
@@ -896,7 +1029,7 @@ W_{2}^{2}
 \Omega_{P}^{-1/2}
 \bigr)^{1/2}
 \Bigr).
-\tag{5.12}</span></span></p>
+\tag{5.18}</span></span></p>
 <p>The optimal map is affine. It moves one population Gaussian onto the other. It does not replace <span class="math inline">\Omega_{\mathrm{cell}}</span>. A separate penalty can encourage shared edges between the cell-level and population-level precisions; that penalty is not the transport. DecOT estimates bulk proportions by an entropic transport loss between count histograms <span class="citation" data-cites="liuDecotBulkDeconvolutionOptimal2022">(<a href="#ref-liuDecotBulkDeconvolutionOptimal2022" role="doc-biblioref">Liu et al. 2022</a>)</span>. That is a deconvolution competitor, not a construction of <span class="math inline">\boldsymbol{\Omega}_{j}</span>.</p>
 <div id="fig-ot-scales" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -904,14 +1037,14 @@ W_{2}^{2}
 <img src="images/multiscale_optimal_transport.png" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ot-scales-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;5.5: Two regulatory scales, and Gaussian Wasserstein alignment of population profiles to an external reference.
+Figure&nbsp;5.6: Two regulatory scales, and Gaussian Wasserstein alignment of population profiles to an external reference.
 </figcaption>
 </figure>
 </div>
 </section>
 <section id="scmultisim" class="level3" data-number="5.7.2">
 <h3 data-number="5.7.2" class="anchored" data-anchor-id="scmultisim"><span class="header-section-number">5.7.2</span> <code>scMultiSim</code></h3>
-<p><code>scMultiSim</code> is a mechanistic multi-omics generator: a user GRN, plus chromatin, RNA velocity, space, and cell–cell interaction <span class="citation" data-cites="liScMultiSimSimulationSinglecell2025a">(<a href="#ref-liScMultiSimSimulationSinglecell2025a" role="doc-biblioref">Li et al. 2025</a>)</span>. The RNA channel can emit counts from a known skeleton for AUPRC (<a href="05-grn-metrics.html#sec-metrics-topo" class="quarto-xref"><span>Section 6.2</span></a>). The other modalities are outside this design. The default synthetic counts are the <code>scDesign2</code> arm above.</p>
+<p><code>scMultiSim</code> is a mechanistic multi-omics generator: a user GRN, plus chromatin, RNA velocity, space, and cell–cell interaction <span class="citation" data-cites="liScMultiSimSimulationSinglecell2025a">(<a href="#ref-liScMultiSimSimulationSinglecell2025a" role="doc-biblioref">Li et al. 2025</a>)</span>. The RNA channel can emit counts from a known skeleton for AUPRC (<a href="05-grn-metrics.html#sec-metrics-topo" class="quarto-xref"><span>Section 6.2</span></a>). The other modalities are outside this design. The default synthetic counts are the <code>scDesign3</code> arm above.</p>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="list">
@@ -926,6 +1059,9 @@ Erdmann-Pham, Dan D., Jonathan Fischer, Justin Hong, and Yun S. Song. 2021. <spa
 </div>
 <div id="ref-fanMusic2CellTypeDeconvolution2022" class="csl-entry" role="listitem">
 Fan, Jiaxin, Yafei Lyu, Qihuang Zhang, Xuran Wang, Mingyao Li, and Rui Xiao. 2022. <span>“<span>MuSiC2</span>: Cell-Type Deconvolution for Multi-Condition Bulk <span class="nocase">RNA-seq</span> Data.”</span> <em>Briefings in Bioinformatics</em> 23 (6). <a href="https://doi.org/10.1093/bib/bbac430">https://doi.org/10.1093/bib/bbac430</a>.
+</div>
+<div id="ref-foygelExtendedBayesianInformation2010" class="csl-entry" role="listitem">
+Foygel, Rina, and Mathias Drton. 2010. <em>Extended <span>Bayesian Information Criteria</span> for <span>Gaussian Graphical Models</span></em>. arXiv:1011.6640. arXiv. <a href="https://doi.org/10.48550/arXiv.1011.6640">https://doi.org/10.48550/arXiv.1011.6640</a>.
 </div>
 <div id="ref-jewAccurateEstimationCell2020" class="csl-entry" role="listitem">
 Jew, Brandon, Marcus Alvarez, Elior Rahmani, et al. 2020. <span>“Accurate Estimation of Cell Composition in Bulk Expression Through Robust Integration of Single-Cell Information.”</span> <em>Nature Communications</em> 11. <a href="https://doi.org/10.1038/s41467-020-15816-6">https://doi.org/10.1038/s41467-020-15816-6</a>.
@@ -944,6 +1080,9 @@ Lu, Songjian, Jiyuan Yang, Lei Yan, et al. 2025. <span>“Transcriptome Size Mat
 </div>
 <div id="ref-novershternDenselyInterconnectedTranscriptional2011" class="csl-entry" role="listitem">
 Novershtern, Noa, Aravind Subramanian, Lee N. Lawton, et al. 2011. <span>“Densely Interconnected Transcriptional Circuits Control Cell States in Human Hematopoiesis.”</span> <em>Cell</em> 144 (2): 296–309. <a href="https://doi.org/10.1016/j.cell.2011.01.004">https://doi.org/10.1016/j.cell.2011.01.004</a>.
+</div>
+<div id="ref-songScDesign3GeneratesRealistic2024" class="csl-entry" role="listitem">
+Song, Dongyuan, Qingyang Wang, Guanao Yan, Tianyang Liu, Tianyi Sun, and Jingyi Jessica Li. 2024. <span>“<span class="nocase">scDesign3</span> Generates Realistic in Silico Data for Multimodal Single-Cell and Spatial Omics.”</span> <em>Nature Biotechnology</em> 42 (2): 247–52. <a href="https://doi.org/10.1038/s41587-023-01772-1">https://doi.org/10.1038/s41587-023-01772-1</a>.
 </div>
 <div id="ref-squairConfrontingFalseDiscoveries2021" class="csl-entry" role="listitem">
 Squair, Jordan W., Matthieu Gautier, Claudia Kathe, et al. 2021. <span>“Confronting False Discoveries in Single-Cell Differential Expression.”</span> <em>Nature Communications</em> 12 (1). <a href="https://doi.org/10.1038/s41467-021-25960-2">https://doi.org/10.1038/s41467-021-25960-2</a>.
