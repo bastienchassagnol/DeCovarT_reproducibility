@@ -48,6 +48,8 @@ data/processed/*
 
 # Run artefacts
 !output/.gitkeep
+# Retired figures and tables. Kept on disk; not part of the book.
+output/archives/
 logs/*
 !logs/.gitkeep
 
