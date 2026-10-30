@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.10.19">
+<meta name="generator" content="quarto-1.10.20">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Bastien Chassagnol">
-<meta name="dcterms.date" content="2026-10-15">
+<meta name="dcterms.date" content="2026-10-30">
 
 <title>DeCovarT reproducibility</title>
 <style>
@@ -45,14 +45,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-b626d73c4c936ccc3cb08be7d45d1df6.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-5196cd1b68de14ed06ea40d9474e787d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-fd0503e23dce65854c81c5baaade3bdf.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-4dc5810a0ca2761c5abee21657872ed5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="site_libs/bootstrap/bootstrap-fd0503e23dce65854c81c5baaade3bdf.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-79bc11b47e8e2c98ca376763b6756942.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script src="site_libs/quarto-contrib/pseudocode-2.4.1/pseudocode.min.js"></script>
 <link href="site_libs/quarto-contrib/pseudocode-2.4.1/pseudocode.min.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
@@ -82,11 +78,8 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script src="site_libs/quarto-diagram/mermaid.min.js"></script>
-<script src="site_libs/quarto-diagram/mermaid-init.js"></script>
-<link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
-<script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
-<script>window.backupDefine = window.define; window.define = undefined;</script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
     <style type="text/css">
     .ps-root .ps-algorithm {
       border-top: 2px solid;
@@ -112,7 +105,7 @@ ul.task-list li input[type="checkbox"] {
       </style>
     
 
-  <script defer="" src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
   <script>document.addEventListener("DOMContentLoaded", function () {
  var mathElements = document.getElementsByClassName("math");
  var macros = [];
@@ -127,7 +120,7 @@ ul.task-list li input[type="checkbox"] {
    });
 }}});
   </script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -158,169 +151,7 @@ window.Quarto = {
 
 </head>
 
-<body class="nav-sidebar floating nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
-    const toggleBodyColorMode = (bsSheetEl) => {
-      const mode = bsSheetEl.getAttribute("data-mode");
-      const bodyEl = window.document.querySelector("body");
-      if (mode === "dark") {
-        bodyEl.classList.add("quarto-dark");
-        bodyEl.classList.remove("quarto-light");
-      } else {
-        bodyEl.classList.add("quarto-light");
-        bodyEl.classList.remove("quarto-dark");
-      }
-    }
-    const toggleBodyColorPrimary = () => {
-      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
-      if (bsSheetEl) {
-        toggleBodyColorMode(bsSheetEl);
-      }
-    }
-    const setColorSchemeToggle = (alternate) => {
-      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
-      for (let i=0; i < toggles.length; i++) {
-        const toggle = toggles[i];
-        if (toggle) {
-          if (alternate) {
-            toggle.classList.add("alternate");
-          } else {
-            toggle.classList.remove("alternate");
-          }
-        }
-      }
-    };
-    const toggleColorMode = (alternate) => {
-      // Switch the stylesheets
-      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
-      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
-      manageTransitions('#quarto-margin-sidebar .nav-link', false);
-      if (alternate) {
-        // note: dark is layered on light, we don't disable primary!
-        enableStylesheet(alternateStylesheets);
-        for (const sheetNode of alternateStylesheets) {
-          if (sheetNode.id === "quarto-bootstrap") {
-            toggleBodyColorMode(sheetNode);
-          }
-        }
-      } else {
-        disableStylesheet(alternateStylesheets);
-        enableStylesheet(primaryStylesheets)
-        toggleBodyColorPrimary();
-      }
-      manageTransitions('#quarto-margin-sidebar .nav-link', true);
-      // Switch the toggles
-      setColorSchemeToggle(alternate)
-      // Hack to workaround the fact that safari doesn't
-      // properly recolor the scrollbar when toggling (#1455)
-      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
-        manageTransitions("body", false);
-        window.scrollTo(0, 1);
-        setTimeout(() => {
-          window.scrollTo(0, 0);
-          manageTransitions("body", true);
-        }, 40);
-      }
-    }
-    const disableStylesheet = (stylesheets) => {
-      for (let i=0; i < stylesheets.length; i++) {
-        const stylesheet = stylesheets[i];
-        stylesheet.rel = 'disabled-stylesheet';
-      }
-    }
-    const enableStylesheet = (stylesheets) => {
-      for (let i=0; i < stylesheets.length; i++) {
-        const stylesheet = stylesheets[i];
-        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
-          stylesheet.rel = 'stylesheet';
-        }
-      }
-    }
-    const manageTransitions = (selector, allowTransitions) => {
-      const els = window.document.querySelectorAll(selector);
-      for (let i=0; i < els.length; i++) {
-        const el = els[i];
-        if (allowTransitions) {
-          el.classList.remove('notransition');
-        } else {
-          el.classList.add('notransition');
-        }
-      }
-    }
-    const isFileUrl = () => {
-      return window.location.protocol === 'file:';
-    }
-    const hasAlternateSentinel = () => {
-      let styleSentinel = getColorSchemeSentinel();
-      if (styleSentinel !== null) {
-        return styleSentinel === "alternate";
-      } else {
-        return false;
-      }
-    }
-    const setStyleSentinel = (alternate) => {
-      const value = alternate ? "alternate" : "default";
-      if (!isFileUrl()) {
-        window.localStorage.setItem("quarto-color-scheme", value);
-      } else {
-        localAlternateSentinel = value;
-      }
-    }
-    const getColorSchemeSentinel = () => {
-      if (!isFileUrl()) {
-        const storageValue = window.localStorage.getItem("quarto-color-scheme");
-        return storageValue != null ? storageValue : localAlternateSentinel;
-      } else {
-        return localAlternateSentinel;
-      }
-    }
-    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
-      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
-      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
-      let newTheme = '';
-      if(authorPrefersDark) {
-        newTheme = isAlternate ? baseTheme : alternateTheme;
-      } else {
-        newTheme = isAlternate ? alternateTheme : baseTheme;
-      }
-      const changeGiscusTheme = () => {
-        // From: https://github.com/giscus/giscus/issues/336
-        const sendMessage = (message) => {
-          const iframe = document.querySelector('iframe.giscus-frame');
-          if (!iframe) return;
-          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
-        }
-        sendMessage({
-          setConfig: {
-            theme: newTheme
-          }
-        });
-      }
-      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
-      if (isGiscussLoaded) {
-        changeGiscusTheme();
-      }
-    };
-    const authorPrefersDark = false;
-    const darkModeDefault = authorPrefersDark;
-      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
-      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
-    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
-    // Dark / light mode switch
-    window.quartoToggleColorScheme = () => {
-      // Read the current dark / light value
-      let toAlternate = !hasAlternateSentinel();
-      toggleColorMode(toAlternate);
-      setStyleSentinel(toAlternate);
-      toggleGiscusIfUsed(toAlternate, darkModeDefault);
-      window.dispatchEvent(new Event('resize'));
-    };
-    // Switch to dark mode if need be
-    if (hasAlternateSentinel()) {
-      toggleColorMode(true);
-    } else {
-      toggleColorMode(false);
-    }
-  </script>
+<body class="nav-sidebar floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -346,7 +177,6 @@ window.Quarto = {
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
     <a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/tree/main/docs/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
-  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -393,7 +223,7 @@ window.Quarto = {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
- <span class="menu-text">Feature selection</span></a>
+ <span class="menu-text">Reference estimation</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -401,8 +231,20 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./03-feature-selection-naive.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Naive gene screen</span></span></a>
+  <a href="./02-feature-selection.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Feature selection</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-covariance-estimation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Covariance estimation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-population-alignment.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">From single cells to type-level Gaussians</span></span></a>
   </div>
 </li>
       </ul>
@@ -410,7 +252,7 @@ window.Quarto = {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
- <span class="menu-text">GRN inference</span></a>
+ <span class="menu-text">Deconvolution benchmark</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -418,72 +260,20 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./02-grn-graphical-lasso.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Undirected GGMs from single-cell transcriptomics</span></span></a>
+  <a href="./05-deconvolution-pipeline.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Mean-based deconvolution comparators</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./06-population-alignment.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">From single cells to type-level Gaussians</span></span></a>
+  <a href="./06-biological-insights.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Early versus standard Wnt</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./05-grn-metrics.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Evaluating undirected cell-type networks</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./07-feature-selection-all-versus-all.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">All-versus-all gene panels</span></span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
- <span class="menu-text">Deconvolution benchmark</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./08-deconvolution-pipeline.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Mean-based deconvolution comparators</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./09-deconvolution-guided-biological-insights.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Early versus standard Wnt</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./04-sensitivity-misspecification.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
- <span class="menu-text">Appendices</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./A1-separation-criteria.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Separation, blankets, and boundaries</span></span></a>
+  <a href="./07-sensitivity-misspecification.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></span></a>
   </div>
 </li>
       </ul>
@@ -493,12 +283,19 @@ window.Quarto = {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#sec-aims" id="toc-sec-aims" class="nav-link active" data-scroll-target="#sec-aims"><span class="header-section-number">0.1</span> Aims</a></li>
+  <li><a href="#sec-pipeline" id="toc-sec-pipeline" class="nav-link" data-scroll-target="#sec-pipeline"><span class="header-section-number">0.2</span> Pipeline</a></li>
+  <li><a href="#sec-reading-guide" id="toc-sec-reading-guide" class="nav-link" data-scroll-target="#sec-reading-guide"><span class="header-section-number">0.3</span> Reading guide</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/edit/main/docs/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/blob/main/docs/index.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
-
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
@@ -520,7 +317,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 15, 2026</p>
+      <p class="date">October 30, 2026</p>
     </div>
   </div>
   
@@ -532,61 +329,97 @@ window.Quarto = {
 </header>
 
 
-<p>This book is the narrative companion to <code>scripts/</code>. Computation stays in the scripts; the chapters are theory, design, and criticism of how those scripts should be run.</p>
-<p>The scientific target is DeCovarT’s cell-type Gaussians: sparse precisions <span class="math inline">\boldsymbol{\Omega}_{j}\equiv\boldsymbol{\Sigma}_{j}^{-1}</span> and means <span class="math inline">\boldsymbol{\mu}_{\cdot j}</span>, estimated from labelled single-cell transcriptomes and plugged into the bulk convolution. Indices follow the article Methods: gene <span class="math inline">g=1,\ldots,G</span>, cell type <span class="math inline">j=1,\ldots,J</span>, sample <span class="math inline">i=1,\ldots,N</span>.</p>
-<p>The planned Suppinger benchmark is a <strong><span class="math inline">3\times 2\times 2</span></strong> product, not a single pipeline. Three sparse-precision estimators (<code>huge</code> graphical lasso, <code>SILGGM</code> after a nonparanormal map, and <code>PLNnetwork</code>), two lifts from cells to a population Gaussian, and two gene-panel strategies (the naive screen alone, or that screen plus an optional stricter Pareto refinement). That is 12 routes. The aim is to see <strong>which steps move deconvolution</strong>, not to retain every cell of the product in the paper. Bures–Wasserstein alignment, <code>GmGM</code>, and sparse-plus-low-rank GGMs stay <strong>perspectives</strong>; they are not factors in <a href="#fig-pipeline" class="quarto-xref">Figure&nbsp;<span>1</span></a>.</p>
-<div class="cell" data-layout-align="default">
-<div class="cell-output-display">
+<p>This book applies DeCovarT to the Suppinger murine gastruloid resource. It records what is run: the data, the algorithms as implemented, the hyperparameters and their values, the code, the outputs, and which outputs are stale. The reasons behind each choice are in the DeCovarT vignettes; each chapter links to the vignette section that states them and does not restate the theory.</p>
+<section id="sec-aims" class="level2" data-number="0.1">
+<h2 data-number="0.1" class="anchored" data-anchor-id="sec-aims"><span class="header-section-number">0.1</span> Aims</h2>
+<ol type="1">
+<li>Estimate, for each labelled cell type <span class="math inline">j</span> at each bulk-matched time, the mean <span class="math inline">\widehat{\boldsymbol{\mu}}_{\cdot j}</span> and the within-type covariance <span class="math inline">\widehat{\boldsymbol{\Sigma}}_{W,j}</span> of a gene panel, on the linear scale that DeCovarT’s convolution needs. The source is one single-specimen scRNA-seq reference (GSE229513, <a href="01-data-suppinger.html#sec-geo-design" class="quarto-xref"><span>Section 2.1</span></a>).</li>
+<li>Choose that panel for the purpose: genes whose moments can be estimated in every type and that carry information about the proportions <span class="math inline">\boldsymbol{p}</span> (<a href="02-feature-selection.html#sec-fs-scope" class="quarto-xref"><span>Section 3.1</span></a>).</li>
+<li>Plug the moments into DeCovarT and deconvolve the bulk series (GSE229386) where a single-cell reference matches it: the 48 h standard-Wnt samples.</li>
+</ol>
+<p>The target is a covariance plug-in for the likelihood, not a biologically interpretable gene regulatory network (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-cov-target">03-2, target</a>). Indices follow the article: gene <span class="math inline">g=1,\ldots,G</span>, type <span class="math inline">j=1,\ldots,J</span>, bulk sample <span class="math inline">i=1,\ldots,N</span>, cell <span class="math inline">c</span>, with <span class="math inline">C_j</span> cells of type <span class="math inline">j</span>.</p>
+</section>
+<section id="sec-pipeline" class="level2" data-number="0.2">
+<h2 data-number="0.2" class="anchored" data-anchor-id="sec-pipeline"><span class="header-section-number">0.2</span> Pipeline</h2>
+<p><a href="#fig-pipeline" class="quarto-xref">Figure&nbsp;<span>1</span></a> lists the nine steps in the order the scripts run them. Steps 2 to 5 are <a href="02-feature-selection.html#sec-fs-scope" class="quarto-xref"><span>Section 3.1</span></a>; step 7 is <a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a>; step 8 is <a href="04-population-alignment.html#sec-align" class="quarto-xref"><span>Section 5.1</span></a>; step 9 is <a href="05-deconvolution-pipeline.html#sec-deconv-models" class="quarto-xref"><span>Section 6.1</span></a>.</p>
 <div id="fig-pipeline" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-pipeline-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div>
-<pre class="mermaid mermaid-js" data-label="fig-pipeline">%%{init: {"theme": "sandstone", "flowchart": {"htmlLabels": true}}}%%
-flowchart TD
-  A["GSE229513 UMI, labels j"] --&gt; B["Naive screen G_0"]
-  B --&gt; C1["huge graphical lasso"]
-  B --&gt; C2["SILGGM after NPN, global FDR"]
-  B --&gt; C3["PLNnetwork"]
-  C1 --&gt; T["Independent Omega_j,t at 48 h, 72 h, 96 h"]
-  C2 --&gt; T
-  C3 --&gt; T
-  T --&gt; L1["Affine Gaussian aggregation"]
-  T --&gt; L3["scDesign3 copula pseudo-replicates"]
-  L1 --&gt; Q{"Stricter NSGA-II panel?"}
-  L3 --&gt; Q
-  Q --&gt;|yes| P["kappa_2 of mu_G and MixSim overlap"]
-  Q --&gt;|no| D["DeCovarT mu_j and Sigma_j"]
-  P --&gt; D
-</pre>
-</div>
+<img src="index_files/mediabag/fig-pipeline.svg" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pipeline-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1: Design product: a naive gene screen, three precision estimators (huge, SILGGM with a nonparanormal map, PLNnetwork), two population lifts, then a yes/no choice of a stricter NSGA-II panel.
+<p>Figure&nbsp;1: “Analysis pipeline, read left to right on each row. Row 1 builds the gene panel from the single-cell counts: quality control, a presence gate in every type, an omnibus count-model screen ranked by effect size, and a cross-platform filter fitted on the only matched pair (single-cell 48 h, standard-Wnt bulk 48 h). Row 2 estimates one covariance per type and time on the linear scale, with the tuning parameter of each estimator chosen by cross-validated held-out Gaussian log-likelihood, lifts the estimates to DeCovarT’s moments and deconvolves the matched bulk. The dashed box is optional; it needs the covariances of step 7.”</p>
 </figcaption>
 </figure>
 </div>
+<p>Branches that were tried and dropped are not drawn: <code>ppcor</code> partial correlations, the <code>huge</code> graphical lasso, penalty selection by EBIC alone, and exports on the <code>log1p</code> scale. <span class="quarto-unresolved-ref">?sec-cov-stale</span> lists the outputs those branches left behind.</p>
+</section>
+<section id="sec-reading-guide" class="level2" data-number="0.3">
+<h2 data-number="0.3" class="anchored" data-anchor-id="sec-reading-guide"><span class="header-section-number">0.3</span> Reading guide</h2>
+<p>Each chapter is the practice half of a vignette chapter. Read the vignette for the model and the reasons; read the chapter for what is run on Suppinger.</p>
+<div id="tbl-reading-guide" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-reading-guide-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1: Book chapters and the vignette chapters that hold their theory.
+</figcaption>
+<div aria-describedby="tbl-reading-guide-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Book chapter</th>
+<th>What it runs</th>
+<th>Theory (DeCovarT vignettes)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="01-data-suppinger.html#sec-geo-design" class="quarto-xref"><span>Section 2.1</span></a>, Suppinger data</td>
+<td>GEO objects, design, Seurat processing</td>
+<td><a href="https://bastienchassagnol.github.io/DeCovarT/articles/01-1-population-generative-optimisation.html">1.1 Generative model</a>; <a href="https://bastienchassagnol.github.io/DeCovarT/articles/02-1-single-cell-generative-optimisation.html#sec-three-regimes">2.1 Three reference regimes</a></td>
+</tr>
+<tr class="even">
+<td><a href="02-feature-selection.html#sec-fs-scope" class="quarto-xref"><span>Section 3.1</span></a>, Feature selection</td>
+<td>QC, presence gate, ranking, bulk filter</td>
+<td><a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-estimand">3.1 Feature selection</a></td>
+</tr>
+<tr class="odd">
+<td><a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a>, Covariance estimation</td>
+<td>four estimators, cross-validated tuning</td>
+<td><a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-cov-target">3.2 Covariance estimation</a></td>
+</tr>
+<tr class="even">
+<td><a href="04-population-alignment.html#sec-align" class="quarto-xref"><span>Section 5.1</span></a>, Population alignment</td>
+<td>affine aggregation, bootstrap, <code>scDesign3</code></td>
+<td><a href="https://bastienchassagnol.github.io/DeCovarT/articles/02-1-single-cell-generative-optimisation.html#sec-reference">2.1 From cells to reference moments</a>; <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-3-precision-networks.html#sec-cov-perspectives">3.3 Perspectives</a></td>
+</tr>
+<tr class="odd">
+<td><a href="05-deconvolution-pipeline.html#sec-deconv-models" class="quarto-xref"><span>Section 6.1</span></a>, Comparators</td>
+<td>mean-based deconvolution baselines</td>
+<td><a href="https://bastienchassagnol.github.io/DeCovarT/articles/05-1-review-distribution-aware.html">5.1 Review</a></td>
+</tr>
+<tr class="even">
+<td><a href="06-biological-insights.html#sec-bio-deconv" class="quarto-xref"><span>Section 7.1</span></a>, Biological reading</td>
+<td>early versus standard Wnt</td>
+<td>none</td>
+</tr>
+<tr class="odd">
+<td><a href="07-sensitivity-misspecification.html#sec-sensitivity" class="quarto-xref"><span>Section 8.1</span></a>, Sensitivity</td>
+<td>misspecification sweep</td>
+<td><a href="https://bastienchassagnol.github.io/DeCovarT/articles/S5-misspecification.html">S5 Misspecification</a></td>
+</tr>
+</tbody>
+</table>
 </div>
+</figure>
 </div>
-<p>Reading order puts the <strong>naive</strong> screen before GRN inference, and the <strong>optional</strong> genetic algorithm after the graphs, because the second objective needs <span class="math inline">\boldsymbol{\Sigma}_{j}</span>. Deconvolution comparators, the early-versus-standard Wnt reading, and sensitivity analyses close the book.</p>
+<p>Code in <code>R/</code> and <code>scripts/</code> is written to be run from the repository root. Chunks marked <code>eval: false</code> show calls that have not been run in the current state of the repository; the outputs they would produce are listed as missing where it matters.</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
-    // Ensure there is a toggle, if there isn't float one in the top right
-    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
-      const a = window.document.createElement('a');
-      a.classList.add('top-right');
-      a.classList.add('quarto-color-scheme-toggle');
-      a.href = "";
-      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
-      const i = window.document.createElement("i");
-      i.classList.add('bi');
-      a.appendChild(i);
-      window.document.body.appendChild(a);
-    }
-    setColorSchemeToggle(hasAlternateSentinel())
     const icon = "";
     const anchorJS = new window.AnchorJS();
     anchorJS.options = {
@@ -995,7 +828,7 @@ Figure&nbsp;1: Design product: a naive gene screen, three precision estimators (
   </div>
 </nav>
 </div> <!-- /content -->
-    <footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions"><ul><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/edit/main/docs/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/blob/main/docs/index.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script type="text/javascript">
+    <footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/edit/main/docs/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/blob/main/docs/index.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script type="text/javascript">
     (function(d) {
       d.querySelectorAll(".pseudocode-container").forEach(function(el) {
         let pseudocodeOptions = {

@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.10.19">
+<meta name="generator" content="quarto-1.10.20">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -55,7 +55,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./03-feature-selection-naive.html" rel="next">
+<link href="./02-feature-selection.html" rel="next">
 <link href="./index.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -63,14 +63,10 @@ div.csl-indent {
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-b626d73c4c936ccc3cb08be7d45d1df6.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-5196cd1b68de14ed06ea40d9474e787d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-fd0503e23dce65854c81c5baaade3bdf.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-4dc5810a0ca2761c5abee21657872ed5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="site_libs/bootstrap/bootstrap-fd0503e23dce65854c81c5baaade3bdf.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-79bc11b47e8e2c98ca376763b6756942.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script src="site_libs/quarto-contrib/pseudocode-2.4.1/pseudocode.min.js"></script>
 <link href="site_libs/quarto-contrib/pseudocode-2.4.1/pseudocode.min.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
@@ -100,11 +96,8 @@ div.csl-indent {
     "search-label": "Search"
   }
 }</script>
-<script src="site_libs/quarto-diagram/mermaid.min.js"></script>
-<script src="site_libs/quarto-diagram/mermaid-init.js"></script>
-<link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
-<script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
-<script>window.backupDefine = window.define; window.define = undefined;</script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
     <style type="text/css">
     .ps-root .ps-algorithm {
       border-top: 2px solid;
@@ -130,7 +123,7 @@ div.csl-indent {
       </style>
     
 
-  <script defer="" src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
   <script>document.addEventListener("DOMContentLoaded", function () {
  var mathElements = document.getElementsByClassName("math");
  var macros = [];
@@ -145,7 +138,7 @@ div.csl-indent {
    });
 }}});
   </script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -176,169 +169,7 @@ window.Quarto = {
 
 </head>
 
-<body class="nav-sidebar floating nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
-    const toggleBodyColorMode = (bsSheetEl) => {
-      const mode = bsSheetEl.getAttribute("data-mode");
-      const bodyEl = window.document.querySelector("body");
-      if (mode === "dark") {
-        bodyEl.classList.add("quarto-dark");
-        bodyEl.classList.remove("quarto-light");
-      } else {
-        bodyEl.classList.add("quarto-light");
-        bodyEl.classList.remove("quarto-dark");
-      }
-    }
-    const toggleBodyColorPrimary = () => {
-      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
-      if (bsSheetEl) {
-        toggleBodyColorMode(bsSheetEl);
-      }
-    }
-    const setColorSchemeToggle = (alternate) => {
-      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
-      for (let i=0; i < toggles.length; i++) {
-        const toggle = toggles[i];
-        if (toggle) {
-          if (alternate) {
-            toggle.classList.add("alternate");
-          } else {
-            toggle.classList.remove("alternate");
-          }
-        }
-      }
-    };
-    const toggleColorMode = (alternate) => {
-      // Switch the stylesheets
-      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
-      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
-      manageTransitions('#quarto-margin-sidebar .nav-link', false);
-      if (alternate) {
-        // note: dark is layered on light, we don't disable primary!
-        enableStylesheet(alternateStylesheets);
-        for (const sheetNode of alternateStylesheets) {
-          if (sheetNode.id === "quarto-bootstrap") {
-            toggleBodyColorMode(sheetNode);
-          }
-        }
-      } else {
-        disableStylesheet(alternateStylesheets);
-        enableStylesheet(primaryStylesheets)
-        toggleBodyColorPrimary();
-      }
-      manageTransitions('#quarto-margin-sidebar .nav-link', true);
-      // Switch the toggles
-      setColorSchemeToggle(alternate)
-      // Hack to workaround the fact that safari doesn't
-      // properly recolor the scrollbar when toggling (#1455)
-      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
-        manageTransitions("body", false);
-        window.scrollTo(0, 1);
-        setTimeout(() => {
-          window.scrollTo(0, 0);
-          manageTransitions("body", true);
-        }, 40);
-      }
-    }
-    const disableStylesheet = (stylesheets) => {
-      for (let i=0; i < stylesheets.length; i++) {
-        const stylesheet = stylesheets[i];
-        stylesheet.rel = 'disabled-stylesheet';
-      }
-    }
-    const enableStylesheet = (stylesheets) => {
-      for (let i=0; i < stylesheets.length; i++) {
-        const stylesheet = stylesheets[i];
-        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
-          stylesheet.rel = 'stylesheet';
-        }
-      }
-    }
-    const manageTransitions = (selector, allowTransitions) => {
-      const els = window.document.querySelectorAll(selector);
-      for (let i=0; i < els.length; i++) {
-        const el = els[i];
-        if (allowTransitions) {
-          el.classList.remove('notransition');
-        } else {
-          el.classList.add('notransition');
-        }
-      }
-    }
-    const isFileUrl = () => {
-      return window.location.protocol === 'file:';
-    }
-    const hasAlternateSentinel = () => {
-      let styleSentinel = getColorSchemeSentinel();
-      if (styleSentinel !== null) {
-        return styleSentinel === "alternate";
-      } else {
-        return false;
-      }
-    }
-    const setStyleSentinel = (alternate) => {
-      const value = alternate ? "alternate" : "default";
-      if (!isFileUrl()) {
-        window.localStorage.setItem("quarto-color-scheme", value);
-      } else {
-        localAlternateSentinel = value;
-      }
-    }
-    const getColorSchemeSentinel = () => {
-      if (!isFileUrl()) {
-        const storageValue = window.localStorage.getItem("quarto-color-scheme");
-        return storageValue != null ? storageValue : localAlternateSentinel;
-      } else {
-        return localAlternateSentinel;
-      }
-    }
-    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
-      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
-      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
-      let newTheme = '';
-      if(authorPrefersDark) {
-        newTheme = isAlternate ? baseTheme : alternateTheme;
-      } else {
-        newTheme = isAlternate ? alternateTheme : baseTheme;
-      }
-      const changeGiscusTheme = () => {
-        // From: https://github.com/giscus/giscus/issues/336
-        const sendMessage = (message) => {
-          const iframe = document.querySelector('iframe.giscus-frame');
-          if (!iframe) return;
-          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
-        }
-        sendMessage({
-          setConfig: {
-            theme: newTheme
-          }
-        });
-      }
-      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
-      if (isGiscussLoaded) {
-        changeGiscusTheme();
-      }
-    };
-    const authorPrefersDark = false;
-    const darkModeDefault = authorPrefersDark;
-      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
-      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
-    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
-    // Dark / light mode switch
-    window.quartoToggleColorScheme = () => {
-      // Read the current dark / light value
-      let toAlternate = !hasAlternateSentinel();
-      toggleColorMode(toAlternate);
-      setStyleSentinel(toAlternate);
-      toggleGiscusIfUsed(toAlternate, darkModeDefault);
-      window.dispatchEvent(new Event('resize'));
-    };
-    // Switch to dark mode if need be
-    if (hasAlternateSentinel()) {
-      toggleColorMode(true);
-    } else {
-      toggleColorMode(false);
-    }
-  </script>
+<body class="nav-sidebar floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -364,7 +195,6 @@ window.Quarto = {
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
     <a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/tree/main/docs/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
-  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -411,7 +241,7 @@ window.Quarto = {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
- <span class="menu-text">Feature selection</span></a>
+ <span class="menu-text">Reference estimation</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -419,8 +249,20 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./03-feature-selection-naive.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Naive gene screen</span></span></a>
+  <a href="./02-feature-selection.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Feature selection</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03-covariance-estimation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Covariance estimation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04-population-alignment.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">From single cells to type-level Gaussians</span></span></a>
   </div>
 </li>
       </ul>
@@ -428,7 +270,7 @@ window.Quarto = {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
- <span class="menu-text">GRN inference</span></a>
+ <span class="menu-text">Deconvolution benchmark</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -436,72 +278,20 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./02-grn-graphical-lasso.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Undirected GGMs from single-cell transcriptomics</span></span></a>
+  <a href="./05-deconvolution-pipeline.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Mean-based deconvolution comparators</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./06-population-alignment.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">From single cells to type-level Gaussians</span></span></a>
+  <a href="./06-biological-insights.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Early versus standard Wnt</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./05-grn-metrics.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Evaluating undirected cell-type networks</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./07-feature-selection-all-versus-all.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">All-versus-all gene panels</span></span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
- <span class="menu-text">Deconvolution benchmark</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./08-deconvolution-pipeline.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Mean-based deconvolution comparators</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./09-deconvolution-guided-biological-insights.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Early versus standard Wnt</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./04-sensitivity-misspecification.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
- <span class="menu-text">Appendices</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./A1-separation-criteria.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Separation, blankets, and boundaries</span></span></a>
+  <a href="./07-sensitivity-misspecification.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></span></a>
   </div>
 </li>
       </ul>
@@ -519,13 +309,11 @@ window.Quarto = {
   <li><a href="#sec-geo-design" id="toc-sec-geo-design" class="nav-link active" data-scroll-target="#sec-geo-design"><span class="header-section-number">2.1</span> Hierarchical design</a></li>
   <li><a href="#sec-seurat" id="toc-sec-seurat" class="nav-link" data-scroll-target="#sec-seurat"><span class="header-section-number">2.2</span> Seurat processing</a></li>
   <li><a href="#sec-bio-sc" id="toc-sec-bio-sc" class="nav-link" data-scroll-target="#sec-bio-sc"><span class="header-section-number">2.3</span> Biological interpretation from single-cell compositions</a></li>
-  <li><a href="#sec-outputs" id="toc-sec-outputs" class="nav-link" data-scroll-target="#sec-outputs"><span class="header-section-number">2.4</span> Outputs</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/edit/main/docs/01-data-suppinger.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/blob/main/docs/01-data-suppinger.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
-
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./01-data-suppinger.html">Biological use case</a></li><li class="breadcrumb-item"><a href="./01-data-suppinger.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Suppinger gastruloids</span></a></li></ol></nav>
 <div class="quarto-title">
@@ -546,88 +334,127 @@ window.Quarto = {
 </header>
 
 
-<p>Single-cell UMI counts and bulk HTSeq tables from the murine gastruloid resource of Suppinger and colleagues (<em>Cell Stem Cell</em>, 2023; GEO <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE229513">GSE229513</a> and <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE229386">GSE229386</a>; <span class="citation" data-cites="suppingerMultimodalCharacterizationMurine2023">(<a href="#ref-suppingerMultimodalCharacterizationMurine2023" role="doc-biblioref">Suppinger et al. 2023</a>)</span>). Download commands belong in <code>data/raw/README.md</code>. Never overwrite <code>data/raw/</code>.</p>
-<p>The scRNA-seq experiment is <strong>one</strong> technical 10x Chromium 3′ v3 resource, not a panel of independent biological replicates for GRNs or for <code>DESeq2</code>. Zeros are molecule-sampling counts until proven otherwise (<a href="02-grn-graphical-lasso.html#nte-drop-zico" class="quarto-xref">Note&nbsp;<span>4.6</span></a>). GSE250136 is a later stem-embryo dataset and must not be conflated with Suppinger.</p>
-<section id="sec-geo-design" class="level2" data-number="2.1">
-<h2 data-number="2.1" class="anchored" data-anchor-id="sec-geo-design"><span class="header-section-number">2.1</span> Hierarchical design</h2>
-<p>The single-cell reference is nested. The first factor is the mESC <strong>cell line</strong> (B-S versus SBR). The second factor is the <strong>time slot</strong> (<a href="#fig-cell-line-time" class="quarto-xref">Figure&nbsp;<span>2.1</span></a>).</p>
-<div id="fig-cell-line-time" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-cell-line-time-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="images/suppinger_cell_line_time_design.png" class="img-fluid figure-img">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-cell-line-time-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2.1: Single-cell hierarchy for GSE229513: cell line first, time slot second. Only 48 h is observed in both lines.
+<p>Single-cell UMI counts and bulk HTSeq tables come from the murine gastruloid resource of Suppinger and colleagues (<em>Cell Stem Cell</em>, 2023; GEO <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE229513">GSE229513</a> and <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE229386">GSE229386</a>; <span class="citation" data-cites="suppingerMultimodalCharacterizationMurine2023">(<a href="#ref-suppingerMultimodalCharacterizationMurine2023" role="doc-biblioref">Suppinger et al. 2023</a>)</span>).</p>
+<div id="tbl-raw-inputs" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-raw-inputs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;2.1: Raw inputs. <code>data/raw/</code> is immutable; download commands are recorded in <code>data/raw/README.md</code>.
 </figcaption>
+<div aria-describedby="tbl-raw-inputs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Object</th>
+<th>GEO</th>
+<th>File in <code>data/raw/</code></th>
+<th>How it is obtained</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Single-cell Seurat object (UMI counts, labels)</td>
+<td>GSE229513</td>
+<td><code>GSE229513_gastruloidsobject.rds</code> (about 14 GB)</td>
+<td><code>dvc pull data/raw/GSE229513_gastruloidsobject.rds.dvc</code></td>
+</tr>
+<tr class="even">
+<td>Bulk HTSeq counts</td>
+<td>GSE229386</td>
+<td><code>GSE229386_AllHTSeqCountsWithGeneNames.txt.gz</code></td>
+<td>GEO supplementary file (<code>data/raw/README.md</code>)</td>
+</tr>
+</tbody>
+</table>
+</div>
 </figure>
 </div>
-<div class="cell" data-layout-align="default">
-<div class="cell-output-display">
+<p>The scRNA-seq experiment is <strong>one</strong> 10x Chromium 3′ v3 resource from one specimen series, not a panel of independent biological replicates. DeCovarT treats it as the one-replicate regime (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/02-1-single-cell-generative-optimisation.html#sec-one-replicate">2.1, one single-cell replicate</a>). Zeros are taken as molecule-sampling counts (<a href="03-covariance-estimation.html#nte-drop-zico" class="quarto-xref">Note&nbsp;<span>4.1</span></a>). GSE250136 is a later stem-embryo dataset and is not part of this resource.</p>
+<section id="sec-geo-design" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="sec-geo-design"><span class="header-section-number">2.1</span> Hierarchical design</h2>
+<p><a href="#fig-suppinger-design" class="quarto-xref">Figure&nbsp;<span>2.1</span></a> draws the two designs side by side.</p>
 <div id="fig-suppinger-design" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-suppinger-design-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div>
-<pre class="mermaid mermaid-js" data-label="fig-suppinger-design">%%{init: {"theme": "sandstone", "flowchart": {"htmlLabels": true}}}%%
-flowchart TD
-  SC["scRNA-seq GSE229513"] --&gt; BS["Cell line B-S"]
-  SC --&gt; SBR["Cell line SBR"]
-  BS --&gt; BS48["48 h"]
-  BS --&gt; BS52["52 h"]
-  BS --&gt; BS56["56 h"]
-  BS --&gt; BS96["96 h"]
-  BS --&gt; BS108["108 h"]
-  BS --&gt; BS120["120 h"]
-  SBR --&gt; S24["24 h"]
-  SBR --&gt; S36["36 h"]
-  SBR --&gt; S48["48 h"]
-  SBR --&gt; S60["60 h"]
-  SBR --&gt; S72["72 h"]
-  SBR --&gt; S84["84 h"]
-  BK["Bulk RNA-seq GSE229386"] --&gt; W1["Standard Wnt pulse at 48 h"]
-  BK --&gt; W2["Early Wnt pulse at 24 h"]
-  W1 --&gt; W148["48 h, 3 replicates"]
-  W1 --&gt; W172["72 h, 3 replicates"]
-  W1 --&gt; W196["96 h, 3 replicates"]
-  W2 --&gt; W248["48 h, 3 replicates"]
-  W2 --&gt; W272["72 h, 3 replicates"]
-  W2 --&gt; W296["96 h, 3 replicates"]
-</pre>
-</div>
+<img src="01-data-suppinger_files/mediabag/fig-suppinger-design.svg" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-suppinger-design-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2.2: Two trees. Single-cell: cell line, then one leaf per time slot (48 h is drawn twice, once under each line). Bulk: Wnt schedule, then one leaf per time, each with three biological replicates.
+<p>Figure&nbsp;2.1: “Design of the two GEO series. Left, single-cell GSE229513: cell line, then time slot; each circle is one slot, coloured by cell line (B-S blue, SBR grey). Right, bulk GSE229386: Wnt schedule, then time point; each rounded square holds three biological replicates. Thick outlines mark the single-cell slots used in this book (48 h, 72 h, 96 h). The dashed link joins the only matched pair, single-cell 48 h (both lines) and standard-Wnt bulk 48 h. The early-Wnt branch has no single-cell counterpart.”</p>
 </figcaption>
 </figure>
 </div>
+<p><strong>Single-cell (GSE229513).</strong> The first factor is the mESC cell line (B-S or SBR), the second the time slot. Each line covers six slots, and only 48 h is profiled in both. At the three times of the bulk series the cell counts are (<code>output/naive_marker_selection/tables/batch_by_time.csv</code>):</p>
+<div id="tbl-cells-by-line" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-cells-by-line-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;2.2: Single-cell counts per line at the bulk times, before the culture-stress labels are removed (<a href="02-feature-selection.html#sec-fs-qc" class="quarto-xref"><span>Section 3.2</span></a>).
+</figcaption>
+<div aria-describedby="tbl-cells-by-line-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Time</th>
+<th>B-S cells</th>
+<th>SBR cells</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>48 h</td>
+<td>5,647</td>
+<td>5,288</td>
+</tr>
+<tr class="even">
+<td>72 h</td>
+<td>0</td>
+<td>4,719</td>
+</tr>
+<tr class="odd">
+<td>96 h</td>
+<td>4,935</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
 </div>
+</figure>
 </div>
-<p><strong>Single-cell (GSE229513).</strong> Cell line is <strong>confounded with time</strong>: only 48 h has both lines; every other slot is a single line. We therefore <strong>do not</strong> put cell line in the GRN design. Developmental trajectories of B-S and SBR are treated as equivalent for type-level Gaussians (<a href="#fig-bio-space" class="quarto-xref">Figure&nbsp;<span>2.5</span></a>). Networks are learned independently per labelled type at the bulk-matched times 48 h, 72 h and 96 h only.</p>
-<p><strong>Bulk RNA-seq (GSE229386).</strong> First factor: the Wnt schedule — standard pulse at 48 h versus a premature pulse at 24 h. Second factor: <strong>three biological replicates</strong> at each of 48 h, 72 h and 96 h, drawn as separate leaves in <a href="#fig-suppinger-design" class="quarto-xref">Figure&nbsp;<span>2.2</span></a>.</p>
+<p>Cell line is therefore confounded with time except at 48 h, and it is not a covariate in any fit of this book. The two lines are treated as one developmental trajectory (<a href="#fig-bio-space" class="quarto-xref">Figure&nbsp;<span>2.4</span></a>). Gene ranking and covariance estimation run independently at 48 h, 72 h and 96 h, the slots with a bulk time point (<a href="02-feature-selection.html#sec-fs-sct" class="quarto-xref"><span>Section 3.4</span></a>, <a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a>). At 48 h the two lines are pooled; <a href="02-feature-selection.html#sec-fs-cell-line" class="quarto-xref"><span>Section 3.8</span></a> measures what pooling changes.</p>
+<p><strong>Bulk RNA-seq (GSE229386).</strong> The first factor is the Wnt schedule: the standard pulse at 48 h, or an early pulse at 24 h. The second factor is the time point, 48 h, 72 h or 96 h, each with three biological replicates. No single-cell slot carries the early schedule, so the early-Wnt bulk has no single-cell counterpart. The cross-platform filter of <a href="02-feature-selection.html#sec-fs-bulk-consistency" class="quarto-xref"><span>Section 3.7</span></a> is fitted on the matched pair only: single-cell 48 h against standard-Wnt bulk 48 h.</p>
+<!-- Open question (book agent, 2026-10-30): the single-cell slots 72 h
+(SBR) and 96 h (B-S) coincide in time with the standard-Wnt bulk at
+72 h and 96 h. The plan treats only 48 h as a matched pair (both lines
+present). Confirm before the bulk filter is extended. -->
 </section>
 <section id="sec-seurat" class="level2" data-number="2.2">
 <h2 data-number="2.2" class="anchored" data-anchor-id="sec-seurat"><span class="header-section-number">2.2</span> Seurat processing</h2>
-<p>Embeddings, QC and clustering follow the Seurat workflow of the Suppinger gastruloid resource <span class="citation" data-cites="suppingerMultimodalCharacterizationMurine2023">(<a href="#ref-suppingerMultimodalCharacterizationMurine2023" role="doc-biblioref">Suppinger et al. 2023</a>)</span> in <a href="#fig-seurat-workflow" class="quarto-xref">Figure&nbsp;<span>2.3</span></a> (Alevin counts, <code>scater</code> QC, <code>SCTransform</code> Pearson residuals <strong>per batch</strong> for integration, CCA, PCA, UMAP, Louvain). That residualisation is for <strong>integration and visualisation</strong>. It is not the observation table of the graphical lasso (<a href="02-grn-graphical-lasso.html#sec-grn-observation" class="quarto-xref"><span>Section 4.2</span></a>, <a href="03-feature-selection-naive.html#sec-fs-hvg" class="quarto-xref"><span>Section 3.2</span></a>).</p>
+<p>Embeddings, QC and clustering follow the Seurat workflow of the Suppinger resource <span class="citation" data-cites="suppingerMultimodalCharacterizationMurine2023">(<a href="#ref-suppingerMultimodalCharacterizationMurine2023" role="doc-biblioref">Suppinger et al. 2023</a>)</span>, drawn in <a href="#fig-seurat-workflow" class="quarto-xref">Figure&nbsp;<span>2.2</span></a>: Alevin counts, <code>scater</code> QC, <code>SCTransform</code> Pearson residuals per batch for integration, CCA, PCA, UMAP and Louvain clustering. Two products of that workflow are used here: the cell-type labels (<code>celltypeannotation</code>), and the gene list of the authors’ <code>SCT</code> counts layer, which serves as the gene allow-list (<a href="02-feature-selection.html#sec-fs-qc" class="quarto-xref"><span>Section 3.2</span></a>). The authors’ residuals themselves are not used: the ranking refits <code>SCTransform</code> v2 per time slot (<a href="02-feature-selection.html#sec-fs-sct" class="quarto-xref"><span>Section 3.4</span></a>), and the covariances are estimated from raw counts (<a href="03-covariance-estimation.html#sec-cov-inputs" class="quarto-xref"><span>Section 4.1.2</span></a>).</p>
 <div id="fig-seurat-workflow" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-seurat-workflow-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="images/suppinger_seurat_workflow_single_cell.png" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-seurat-workflow-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2.3: Seurat workflow used to extract embeddings and downstream analyses on GSE229513.
+Figure&nbsp;2.2: Seurat workflow used to extract embeddings and downstream analyses on GSE229513.
 </figcaption>
 </figure>
 </div>
 </section>
 <section id="sec-bio-sc" class="level2" data-number="2.3">
 <h2 data-number="2.3" class="anchored" data-anchor-id="sec-bio-sc"><span class="header-section-number">2.3</span> Biological interpretation from single-cell compositions</h2>
-<p><a href="#fig-bio-lineage" class="quarto-xref">Figure&nbsp;<span>2.4</span></a> and <a href="#fig-bio-space" class="quarto-xref">Figure&nbsp;<span>2.5</span></a> summarise a <strong>putative</strong> reading of annotated type proportions along gastruloid time. They are not a reconstruction of embryonic lineages. Two annotated states are treated as technical artefacts of culture stress. The working caudal sequence after the Chir/Wnt pulse is pluripotency <span class="math inline">\to</span> epiblast <span class="math inline">\to</span> primitive streak <span class="math inline">\to</span> caudal mesoderm / NMP <span class="math inline">\to</span> pre-somitic mesoderm / somites, with a residual endoderm bias typical of gastruloids.</p>
+<p><a href="#fig-bio-lineage" class="quarto-xref">Figure&nbsp;<span>2.3</span></a> and <a href="#fig-bio-space" class="quarto-xref">Figure&nbsp;<span>2.4</span></a> summarise a <strong>putative</strong> reading of annotated type proportions along gastruloid time. They are not a reconstruction of embryonic lineages. Two annotated states are treated as technical artefacts of culture stress (Cd63+ ectoderm-like artefact and Zscan4+ artefact, <code>data/dictionaries/suppinger_celltype_crosswalk.csv</code>). The working caudal sequence after the Chir/Wnt pulse is pluripotency <span class="math inline">\to</span> epiblast <span class="math inline">\to</span> primitive streak <span class="math inline">\to</span> caudal mesoderm / NMP <span class="math inline">\to</span> pre-somitic mesoderm / somites, with a residual endoderm bias typical of gastruloids.</p>
 <div id="fig-bio-lineage" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-bio-lineage-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="images/suppinger_biological_itepreation.png" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-bio-lineage-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2.4: Putative lineage reading of Suppinger annotations (disclaimer: not a ground-truth DAG).
+Figure&nbsp;2.3: Putative lineage reading of Suppinger annotations (disclaimer: not a ground-truth DAG).
 </figcaption>
 </figure>
 </div>
@@ -637,18 +464,11 @@ Figure&nbsp;2.4: Putative lineage reading of Suppinger annotations (disclaimer: 
 <img src="images/suppinger_biological_itepreation_2.png" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-bio-space-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2.5: Spatial / time-slot sketch of type composition, including the B-S and SBR series.
+Figure&nbsp;2.4: Spatial / time-slot sketch of type composition, including the B-S and SBR series.
 </figcaption>
 </figure>
 </div>
-<p>The early-versus-standard Wnt reading of bulk compositions is in <a href="09-deconvolution-guided-biological-insights.html#sec-bio-deconv" class="quarto-xref"><span>Section 9.1</span></a>, after the mean-based comparators of <a href="08-deconvolution-pipeline.html#sec-deconv-models" class="quarto-xref"><span>Section 8.1</span></a>.</p>
-</section>
-<section id="sec-outputs" class="level2" data-number="2.4">
-<h2 data-number="2.4" class="anchored" data-anchor-id="sec-outputs"><span class="header-section-number">2.4</span> Outputs</h2>
-<ul>
-<li>Intermediate <code>SummarizedExperiment</code> and <code>SingleCellExperiment</code> under <code>data/intermediate/</code></li>
-<li>Knowledge-driven markers: <code>data/dictionaries/mouse_gastruloid_signaling_markers.csv</code></li>
-</ul>
+<p>The early-versus-standard Wnt reading of bulk compositions is in <a href="06-biological-insights.html#sec-bio-deconv" class="quarto-xref"><span>Section 7.1</span></a>, after the mean-based comparators of <a href="05-deconvolution-pipeline.html#sec-deconv-models" class="quarto-xref"><span>Section 6.1</span></a>.</p>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="list">
@@ -661,19 +481,6 @@ Suppinger, Simon, Marietta Zinner, Nadim Aizarani, et al. 2023. <span>“Multimo
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
-    // Ensure there is a toggle, if there isn't float one in the top right
-    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
-      const a = window.document.createElement('a');
-      a.classList.add('top-right');
-      a.classList.add('quarto-color-scheme-toggle');
-      a.href = "";
-      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
-      const i = window.document.createElement("i");
-      i.classList.add('bi');
-      a.appendChild(i);
-      window.document.body.appendChild(a);
-    }
-    setColorSchemeToggle(hasAlternateSentinel())
     const icon = "";
     const anchorJS = new window.AnchorJS();
     anchorJS.options = {
@@ -1079,8 +886,8 @@ Suppinger, Simon, Marietta Zinner, Nadim Aizarani, et al. 2023. <span>“Multimo
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./03-feature-selection-naive.html" class="pagination-link" aria-label="Naive gene screen">
-        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Naive gene screen</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./02-feature-selection.html" class="pagination-link" aria-label="Feature selection">
+        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Feature selection</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
