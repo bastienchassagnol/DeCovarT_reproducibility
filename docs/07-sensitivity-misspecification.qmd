@@ -1,0 +1,26 @@
+---
+title: "Sensitivity analyses"
+---
+
+## Contaminating $\boldsymbol{\Omega}_{j}$ {#sec-sensitivity}
+
+Starting from the fitted sparse precisions (@eq-grn-export), apply the
+misspecification factors described in DeCovarT
+`vignettes/S5-misspecification.qmd`:
+
+1. Observation noise (Gaussian, $t_\nu$, PLN, contaminated Gaussian)
+2. Missing reference component (0%, 2%, 10%)
+3. Copula / PLN dependence across genes
+4. Spillover between types
+5. Outlier genes
+6. Wrong covariance reference (perturb or subsample the glasso / PLN fit)
+
+Zero-inflated or hurdle observation models belong **here**, as a
+contamination of the sampling layer, not as the default GRN
+(@nte-drop-zico).
+
+Template: `scripts/05_01_sensitivity_precision_contamination.R`.
+
+Compare `DeCovarT::deconvolute_ratios()` to mean-only baselines on the
+**same** genes and mixtures. Pre-declare estimands and Monte Carlo error
+as in the package synthetic-scenarios vignette `{#sec-nmeth}`.

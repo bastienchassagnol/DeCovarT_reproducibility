@@ -2,81 +2,131 @@
 title: "Suppinger gastruloids"
 ---
 
-Single-cell UMI counts and bulk HTSeq tables from the murine gastruloid
-resource of Suppinger and colleagues (*Cell Stem Cell*, 2023; GEO
+Single-cell UMI counts and bulk HTSeq tables come from the murine
+gastruloid resource of Suppinger and colleagues (*Cell Stem Cell*,
+2023; GEO
 [GSE229513](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE229513)
 and
 [GSE229386](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE229386);
-[@suppingerMultimodalCharacterizationMurine2023]). Download commands
-belong in `data/raw/README.md`. Never overwrite `data/raw/`.
+[@suppingerMultimodalCharacterizationMurine2023]).
 
-The scRNA-seq experiment is **one** technical 10x Chromium 3′ v3
-resource, not a panel of independent biological replicates for GRNs or
-for `DESeq2`. Zeros are molecule-sampling counts until proven otherwise
-(@nte-drop-zico). GSE250136 is a later stem-embryo dataset and must not
-be conflated with Suppinger.
+| Object | GEO | File in `data/raw/` | How it is obtained |
+|---|---|---|---|
+| Single-cell Seurat object (UMI counts, labels) | GSE229513 | `GSE229513_gastruloidsobject.rds` (about 14 GB) | `dvc pull data/raw/GSE229513_gastruloidsobject.rds.dvc` |
+| Bulk HTSeq counts | GSE229386 | `GSE229386_AllHTSeqCountsWithGeneNames.txt.gz` | GEO supplementary file (`data/raw/README.md`) |
+
+: Raw inputs. `data/raw/` is immutable; download commands are recorded in `data/raw/README.md`. {#tbl-raw-inputs}
+
+The scRNA-seq experiment is **one** 10x Chromium 3′ v3 resource from
+one specimen series, not a panel of independent biological replicates.
+DeCovarT treats it as the one-replicate regime
+([2.1, one single-cell replicate](https://bastienchassagnol.github.io/DeCovarT/articles/02-1-single-cell-generative-optimisation.html#sec-one-replicate)).
+Zeros are taken as molecule-sampling counts (@nte-drop-zico).
+GSE250136 is a later stem-embryo dataset and is not part of this
+resource.
 
 ## Hierarchical design {#sec-geo-design}
 
-The single-cell reference is nested. The first factor is the mESC
-**cell line** (B-S versus SBR). The second factor is the **time slot**
-(@fig-cell-line-time).
+@fig-suppinger-design draws the two designs side by side.
 
-![Single-cell hierarchy for GSE229513: cell line first, time slot
-second. Only 48 h is observed in both lines.](images/suppinger_cell_line_time_design.png){#fig-cell-line-time}
-
-```{mermaid}
-%%| echo: false
+```{.tikz}
 %%| label: fig-suppinger-design
-%%| fig-cap: "Two trees. Single-cell: cell line, then one leaf per time slot (48 h is drawn twice, once under each line). Bulk: Wnt schedule, then one leaf per time, each with three biological replicates."
-%%{init: {"theme": "sandstone", "flowchart": {"htmlLabels": true}}}%%
-flowchart TD
-  SC["scRNA-seq GSE229513"] --> BS["Cell line B-S"]
-  SC --> SBR["Cell line SBR"]
-  BS --> BS48["48 h"]
-  BS --> BS52["52 h"]
-  BS --> BS56["56 h"]
-  BS --> BS96["96 h"]
-  BS --> BS108["108 h"]
-  BS --> BS120["120 h"]
-  SBR --> S24["24 h"]
-  SBR --> S36["36 h"]
-  SBR --> S48["48 h"]
-  SBR --> S60["60 h"]
-  SBR --> S72["72 h"]
-  SBR --> S84["84 h"]
-  BK["Bulk RNA-seq GSE229386"] --> W1["Standard Wnt pulse at 48 h"]
-  BK --> W2["Early Wnt pulse at 24 h"]
-  W1 --> W148["48 h, 3 replicates"]
-  W1 --> W172["72 h, 3 replicates"]
-  W1 --> W196["96 h, 3 replicates"]
-  W2 --> W248["48 h, 3 replicates"]
-  W2 --> W272["72 h, 3 replicates"]
-  W2 --> W296["96 h, 3 replicates"]
+%%| fig-cap: "Design of the two GEO series. Left, single-cell GSE229513: cell line, then time slot; each circle is one slot, coloured by cell line (B-S blue, SBR grey). Right, bulk GSE229386: Wnt schedule, then time point; each rounded square holds three biological replicates. Thick outlines mark the single-cell slots used in this book (48 h, 72 h, 96 h). The dashed link joins the only matched pair, single-cell 48 h (both lines) and standard-Wnt bulk 48 h. The early-Wnt branch has no single-cell counterpart."
+%%| filename: fig-suppinger-design
+%%| alt: Two trees. Left tree, scRNA-seq GSE229513, splits into cell line B-S with time slots 48, 52, 56, 96, 108 and 120 hours, and cell line SBR with time slots 24, 36, 48, 60, 72 and 84 hours; slots are circles, blue for B-S and grey for SBR, with thick outlines at the slots used in this book: 48 hours in both lines, 72 hours in SBR, 96 hours in B-S. Right tree, bulk RNA-seq GSE229386, splits into a standard Wnt pulse at 48 hours and an early Wnt pulse at 24 hours, each with time points 48, 72 and 96 hours drawn as rounded squares with three replicates. A dashed line joins both single-cell 48 hour circles to the standard-Wnt 48 hour square, labelled matched pair. The early-Wnt branch is labelled no single-cell match.
+\begin{tikzpicture}[x=10.5mm, y=10mm]
+% single-cell tree
+\node[box] (sc) at (5.8,3.4) {scRNA-seq\\ GSE229513};
+\node[box, draw=latdraw, fill=latfill] (bs) at (2.5,1.75) {Cell line B-S};
+\node[box, draw=obsdraw, fill=obsfill!60] (sbr) at (9.1,1.75) {Cell line SBR};
+\foreach \t [count=\k from 0] in {48,52,56,96,108,120} {
+  \node[circle, draw=latdraw, fill=latfill, minimum size=8.6mm, inner sep=0pt, font=\footnotesize, line width=0.8pt] (bs\t) at (\k,0) {\t};
+  \draw[draw=ink, line width=0.7pt] (bs.south) -- ++(0,-0.45) -| (bs\t.north);
+}
+\foreach \t [count=\k from 0] in {24,36,48,60,72,84} {
+  \node[circle, draw=obsdraw, fill=obsfill!60, minimum size=8.6mm, inner sep=0pt, font=\footnotesize, line width=0.8pt] (sbr\t) at (6.6+\k,0) {\t};
+  \draw[draw=ink, line width=0.7pt] (sbr.south) -- ++(0,-0.45) -| (sbr\t.north);
+}
+\foreach \n in {bs48,bs96,sbr48,sbr72} {\draw[line width=1.8pt, draw=ink] (\n) circle (4.3mm);}
+\draw[draw=ink, line width=0.7pt] (sc.south) -- ++(0,-0.5) -| (bs.north);
+\draw[draw=ink, line width=0.7pt] (sc.south) -- ++(0,-0.5) -| (sbr.north);
+\node[note, anchor=east] at (-0.6,0) {time (h)};
+% bulk tree
+\node[box] (bk) at (16.8,3.4) {Bulk RNA-seq\\ GSE229386};
+\node[box] (std) at (15,1.75) {Standard Wnt\\ (pulse at 48\,h)};
+\node[box] (early) at (18.6,1.75) {Early Wnt\\ (pulse at 24\,h)};
+\foreach \t [count=\k from 0] in {48,72,96} {
+  \node[rectangle, rounded corners=2.5pt, draw=ink, fill=white, minimum size=8.8mm, inner sep=0.5pt, font=\scriptsize, align=center, line width=0.8pt] (std\t) at (14+\k,0) {\t\\[-1pt]$\times3$};
+  \draw[draw=ink, line width=0.7pt] (std.south) -- ++(0,-0.45) -| (std\t.north);
+  \node[rectangle, rounded corners=2.5pt, draw=ink, fill=white, minimum size=8.8mm, inner sep=0.5pt, font=\scriptsize, align=center, line width=0.8pt] (early\t) at (17.6+\k,0) {\t\\[-1pt]$\times3$};
+  \draw[draw=ink, line width=0.7pt] (early.south) -- ++(0,-0.45) -| (early\t.north);
+}
+\draw[draw=ink, line width=0.7pt] (bk.south) -- ++(0,-0.5) -| (std.north);
+\draw[draw=ink, line width=0.7pt] (bk.south) -- ++(0,-0.5) -| (early.north);
+\node[note, text=ink!80, align=center] at (18.6,-1.15) {no single-cell match};
+% matched pair
+\draw[draw=ink, densely dashed, line width=0.9pt] (bs48.south) -- ++(0,-0.75) -| (std48.south);
+\draw[draw=ink, densely dashed, line width=0.9pt] (sbr48.south) -- ++(0,-0.75);
+\node[elabel] at (11.8,-0.98) {matched pair, 48\,h};
+% legend
+\node[circle, draw=latdraw, fill=latfill, minimum size=4mm, inner sep=0pt, line width=0.8pt] (l1) at (0,-1.9) {};
+\node[note, anchor=west] at (0.3,-1.9) {B-S};
+\node[circle, draw=obsdraw, fill=obsfill!60, minimum size=4mm, inner sep=0pt, line width=0.8pt] (l2) at (1.5,-1.9) {};
+\node[note, anchor=west] at (1.8,-1.9) {SBR};
+\node[circle, draw=ink, minimum size=4mm, inner sep=0pt, line width=0.8pt] (l3) at (3.2,-1.9) {};
+\node[note, anchor=west] at (3.5,-1.9) {single-cell slot};
+\node[rectangle, rounded corners=1.5pt, draw=ink, minimum size=4mm, inner sep=0pt, line width=0.8pt] (l4) at (6.2,-1.9) {};
+\node[note, anchor=west] at (6.5,-1.9) {bulk time point, 3 biological replicates};
+\end{tikzpicture}
 ```
 
-**Single-cell (GSE229513).** Cell line is **confounded with time**: only
-48 h has both lines; every other slot is a single line. We therefore
-**do not** put cell line in the GRN design. Developmental trajectories
-of B-S and SBR are treated as equivalent for type-level Gaussians
-(@fig-bio-space). Networks are learned independently per labelled type
-at the bulk-matched times 48 h, 72 h and 96 h only.
+**Single-cell (GSE229513).** The first factor is the mESC cell line
+(B-S or SBR), the second the time slot. Each line covers six slots,
+and only 48 h is profiled in both. At the three times of the bulk
+series the cell counts are
+(`output/naive_marker_selection/tables/batch_by_time.csv`):
 
-**Bulk RNA-seq (GSE229386).** First factor: the Wnt schedule — standard
-pulse at 48 h versus a premature pulse at 24 h. Second factor: **three
-biological replicates** at each of 48 h, 72 h and 96 h, drawn as
-separate leaves in @fig-suppinger-design.
+| Time | B-S cells | SBR cells |
+|---|---|---|
+| 48 h | 5,647 | 5,288 |
+| 72 h | 0 | 4,719 |
+| 96 h | 4,935 | 0 |
+
+: Single-cell counts per line at the bulk times, before the culture-stress labels are removed (@sec-fs-qc). {#tbl-cells-by-line}
+
+Cell line is therefore confounded with time except at 48 h, and it is
+not a covariate in any fit of this book. The two lines are treated as
+one developmental trajectory (@fig-bio-space). Gene ranking and
+covariance estimation run independently at 48 h, 72 h and 96 h, the
+slots with a bulk time point (@sec-fs-sct, @sec-cov-scope). At 48 h
+the two lines are pooled; @sec-fs-cell-line measures what pooling
+changes.
+
+**Bulk RNA-seq (GSE229386).** The first factor is the Wnt schedule: the
+standard pulse at 48 h, or an early pulse at 24 h. The second factor is
+the time point, 48 h, 72 h or 96 h, each with three biological
+replicates. No single-cell slot carries the early schedule, so the
+early-Wnt bulk has no single-cell counterpart. The
+cross-platform filter of @sec-fs-bulk-consistency is fitted on the
+matched pair only: single-cell 48 h against standard-Wnt bulk 48 h.
+
+<!-- Open question (book agent, 2026-10-30): the single-cell slots 72 h
+(SBR) and 96 h (B-S) coincide in time with the standard-Wnt bulk at
+72 h and 96 h. The plan treats only 48 h as a matched pair (both lines
+present). Confirm before the bulk filter is extended. -->
 
 ## Seurat processing {#sec-seurat}
 
 Embeddings, QC and clustering follow the Seurat workflow of the
-Suppinger gastruloid resource
-[@suppingerMultimodalCharacterizationMurine2023] in
-@fig-seurat-workflow (Alevin counts, `scater` QC, `SCTransform` Pearson
-residuals **per batch** for integration, CCA, PCA, UMAP, Louvain). That
-residualisation is for **integration and visualisation**. It is not the
-observation table of the graphical lasso
-(@sec-grn-observation, @sec-fs-hvg).
+Suppinger resource [@suppingerMultimodalCharacterizationMurine2023],
+drawn in @fig-seurat-workflow: Alevin counts, `scater` QC,
+`SCTransform` Pearson residuals per batch for integration, CCA, PCA,
+UMAP and Louvain clustering. Two products of that workflow are used
+here: the cell-type labels (`celltypeannotation`), and the gene list of
+the authors' `SCT` counts layer, which serves as the gene allow-list
+(@sec-fs-qc). The authors' residuals themselves are not used: the
+ranking refits `SCTransform` v2 per time slot (@sec-fs-sct), and the
+covariances are estimated from raw counts (@sec-cov-inputs).
 
 ![Seurat workflow used to extract embeddings and downstream analyses on
 GSE229513.](images/suppinger_seurat_workflow_single_cell.png){#fig-seurat-workflow}
@@ -86,10 +136,12 @@ GSE229513.](images/suppinger_seurat_workflow_single_cell.png){#fig-seurat-workfl
 @fig-bio-lineage and @fig-bio-space summarise a **putative** reading of
 annotated type proportions along gastruloid time. They are not a
 reconstruction of embryonic lineages. Two annotated states are treated
-as technical artefacts of culture stress. The working caudal sequence
-after the Chir/Wnt pulse is pluripotency $\to$ epiblast $\to$ primitive
-streak $\to$ caudal mesoderm / NMP $\to$ pre-somitic mesoderm / somites,
-with a residual endoderm bias typical of gastruloids.
+as technical artefacts of culture stress (Cd63+ ectoderm-like artefact
+and Zscan4+ artefact, `data/dictionaries/suppinger_celltype_crosswalk.csv`).
+The working caudal sequence after the Chir/Wnt pulse is pluripotency
+$\to$ epiblast $\to$ primitive streak $\to$ caudal mesoderm / NMP
+$\to$ pre-somitic mesoderm / somites, with a residual endoderm bias
+typical of gastruloids.
 
 ![Putative lineage reading of Suppinger annotations (disclaimer: not a
 ground-truth DAG).](images/suppinger_biological_itepreation.png){#fig-bio-lineage}
@@ -100,10 +152,3 @@ SBR series.](images/suppinger_biological_itepreation_2.png){#fig-bio-space}
 The early-versus-standard Wnt reading of bulk compositions is in
 @sec-bio-deconv, after the mean-based comparators of
 @sec-deconv-models.
-
-## Outputs {#sec-outputs}
-
-- Intermediate `SummarizedExperiment` and `SingleCellExperiment` under
-  `data/intermediate/`
-- Knowledge-driven markers:
-  `data/dictionaries/mouse_gastruloid_signaling_markers.csv`

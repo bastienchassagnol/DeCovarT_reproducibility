@@ -30,6 +30,9 @@ graphify-out/
 temp_*/
 temp_*
 
+# Retired book chapters. Theory lives in the DeCovarT vignettes.
+archive/
+
 # Excel working copies (tidy CSV lives in data/dictionaries/)
 data/cell markers/*.xlsx
 

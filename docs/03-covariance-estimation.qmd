@@ -1,0 +1,440 @@
+---
+title: "Covariance estimation"
+---
+
+## Scope and status {#sec-cov-scope}
+
+This chapter estimates, for each scored cell type $j$ at each
+bulk-matched time, the mean $\widehat{\boldsymbol{\mu}}_{\cdot j}$ and
+the within-type covariance $\widehat{\boldsymbol{\Sigma}}_{j}$ of the
+gene panel of @sec-fs-export, and exports them on the linear scale of
+DeCovarT's convolution,
+
+$$
+\bigl\{
+\widehat{\boldsymbol{\mu}}_{\cdot j},\,
+\widehat{\boldsymbol{\Sigma}}_{j},\,
+\widehat{\boldsymbol{\Omega}}_{j}=\widehat{\boldsymbol{\Sigma}}_{j}^{-1}
+\bigr\}_{j=1}^{J},
+\qquad
+\widehat{\boldsymbol{\Sigma}}_{j}\succ 0 .
+$$ {#eq-grn-export}
+
+The target is the covariance that enters the likelihood, not a
+mechanistic gene network; a dense estimate is therefore an acceptable
+plug-in and is the default
+([3.2, target](https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-cov-target)).
+
+| Item | Code | Status |
+|---|---|---|
+| Four estimators, one fit wrapper each | `R/cv_covariance_selection.R`: `fit_cov_shrinkage()`, `fit_cov_glasso()`, `fit_cov_silggm_refit()`, `fit_cov_plnnetwork()` | written, not run |
+| Held-out score, tuning, nested comparison | same file: `heldout_gaussian_logscore()`, `cv_select_tuning()`, `nested_cv_compare()` | written, not run |
+| Driver for the four estimators | `scripts/03_04_cv_covariance.R` | written, not run |
+| Graphical lasso EBIC path (diagnostic) | `scripts/03_01_grn_huge.R`, `R/ebic_regularisation_path.R` | rewritten to export on the linear scale; not re-run |
+| `SILGGM` fit | `scripts/03_02_grn_silggm.R` | never run |
+| `PLNnetwork` fit | `scripts/03_03_grn_plnnetwork.R` | offset fixed to the full library size; never run |
+| Outputs under `output/grn/huge/` | from the earlier `03_01` | **stale** (@sec-cov-stale) |
+
+: Covariance-estimation code and status. {#tbl-cov-status}
+
+Nothing in this chapter has produced a usable covariance yet. The
+outputs that exist are stale and are kept only as a record of what
+went wrong (@sec-cov-stale).
+
+### Units and regimes {#sec-cov-units}
+
+Each fit uses the cells of one type at one time, treated as
+independent draws: eleven type × time units (@tbl-fs-cell-counts).
+Cell line is not a covariate (@sec-geo-design). The panel has
+$G=500$ genes per time before genes constant in a type are removed.
+
+| Time | Cell type | $C_j$ | $C_j$ against $G=500$ |
+|---|---|---:|---|
+| 48 h | Epiblast | 10,590 | $C_j>G$ |
+| 48 h | Exiting naïve pluripotency | 265 | $C_j<G$ |
+| 48 h | Naïve pluripotency | 36 | $C_j<G$ |
+| 72 h | Primitive streak | 4,279 | $C_j>G$ |
+| 72 h | Ectopic pluripotency | 266 | $C_j<G$ |
+| 72 h | Naïve pluripotency | 66 | $C_j<G$ |
+| 96 h | Pre-somitic mesoderm | 3,589 | $C_j>G$ |
+| 96 h | Caudal mesoderm | 1,061 | $C_j>G$ |
+| 96 h | Gut | 140 | $C_j<G$ |
+| 96 h | Ectopic pluripotency | 116 | $C_j<G$ |
+| 96 h | Somite differentiation front | 29 | $C_j<G$ |
+
+: The eleven type × time units. Seven have fewer cells than panel genes, so their sample covariance is singular. {#tbl-cov-units}
+
+In the seven units with $C_j<G$ the sample covariance is singular, and
+only a regularised estimate exists. Which thresholds matter for
+existence, for the maximum-likelihood estimate and for support
+recovery is in
+[3.2, regimes](https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-cov-regimes).
+The cross-validated score of @sec-cov-cv-run is defined in every
+regime because each estimator returns a positive definite matrix.
+
+### Inputs and scales {#sec-cov-inputs}
+
+All four estimators read `data/intermediate/equal_type_top500_by_time.rds`
+(@sec-fs-export). A transformation belongs to one estimator only.
+
+| Estimator | What is passed in | Scale of the export |
+|---|---|---|
+| Shrinkage (`corpcor`) | size-factor-normalised counts | linear |
+| Graphical lasso (`glasso`) | correlation matrix of the same table | linear, after rescaling by the sample standard deviations |
+| `SILGGM` | nonparanormal scores, for the support only | linear, refit under the support |
+| `PLNnetwork` | raw UMI counts, offset $\log s_c$ (full library) | linear, through the moment map of @sec-pln |
+
+: What each estimator sees and what it exports. {#tbl-cov-inputs}
+
+Two earlier choices are reverted, both in code that has not been
+re-run:
+
+- **Scale of the export.** `scripts/03_01_grn_huge.R` used to fit and
+  export on $\log(1+x)$ (`x <- log1p(x)`, then `mu <- colMeans(x)`).
+  The convolution is linear only on an additive scale
+  ([2.1, normalisation](https://bastienchassagnol.github.io/DeCovarT/articles/02-1-single-cell-generative-optimisation.html#sec-norm-linear)),
+  so $\widehat{\boldsymbol{\mu}}_{\cdot j}$ and
+  $\widehat{\boldsymbol{\Sigma}}_{j}$ are now computed on
+  size-factor-normalised counts. A $\log(1+x)$ table may still be used
+  to detect a support, never to export a moment.
+- **Library size in `PLNnetwork`.** `scripts/03_03_grn_plnnetwork.R`
+  used the row sum over the 500 panel genes as offset. It now uses the
+  full RNA library size, recovered from `log_umi` ($s_c=10^{\texttt{log\_umi}}$),
+  as in @eq-fs-v2-offset. `nCount_RNA` in the exported object is the
+  500-gene sum and is not used.
+
+`SCTransform` Pearson residuals are used only for ranking
+(@sec-fs-sct) and are never passed to an estimator.
+
+## Four estimators as run {#sec-cov-estimators}
+
+All four leave the diagonal of the precision unpenalised. Why the
+diagonal must not be penalised is in
+[3.2, diagonal](https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-cov-diagonal).
+Each estimator has exactly one tuning parameter, chosen by
+@sec-cov-cv-run.
+
+| Estimator | Wrapper | Underlying call | Tuning parameter | Grid |
+|---|---|---|---|---|
+| Shrinkage (default) | `fit_cov_shrinkage()` | `corpcor::cov.shrink(x, lambda, lambda.var = 0)` | intensity $\lambda\in[0,1]$ | around the closed-form $\hat\lambda^{\ast}$ |
+| Graphical lasso | `fit_cov_glasso()` | `glasso::glasso(R, rho = lambda, penalize.diagonal = FALSE)` | $\lambda$ | log-spaced between $\lambda_{\min}$ and $\lambda_{\max}$ |
+| `SILGGM` refit | `fit_cov_silggm_refit()` | `SILGGM::SILGGM(npn, method = "D-S_GL", global = TRUE, alpha)`, then `glasso::glasso(..., zero = ...)` | FDR level $\alpha$ | a short grid containing 0.05 |
+| `PLNnetwork` | `fit_cov_plnnetwork()` | `PLNmodels::PLNnetwork(Abundance ~ 1 + offset(log_library), control = PLNnetwork_param(...))` | penalty | the family's own penalty grid |
+
+: The four estimators, their calls and their tuning parameter. The grids are set in `scripts/03_04_cv_covariance.R`. {#tbl-cov-estimators}
+
+### Shrinkage covariance (default) {#sec-shrinkage}
+
+`fit_cov_shrinkage()` calls `corpcor::cov.shrink()` [@R-corpcor] with
+the Schäfer–Strimmer target D: variances kept, correlations shrunk
+towards zero by a common factor
+[@schäferShrinkageApproachLargescale2005]. `corpcor` 1.6.10 also
+shrinks the variances towards their median by default;
+`lambda.var = 0` switches that off, so the target is exactly D. The
+closed-form intensity $\hat\lambda^{\ast}$ (`corpcor::estimate.lambda()`)
+is the centre of the grid, and cross-validation picks the value used.
+The estimate is positive definite for any $C_j$ and $G$, so it is the
+estimator used when the others fail. The theory is in
+[3.2, shrinkage](https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-cov-shrinkage).
+`corpcor` is not in `renv.lock`.
+
+### Graphical lasso with an unpenalised diagonal {#sec-glasso}
+
+`fit_cov_glasso()` standardises the panel, fits
+`glasso::glasso(R, rho = lambda, penalize.diagonal = FALSE)` [@R-glasso]
+on the sample correlation $\boldsymbol{R}_j$ by block coordinate
+descent [@friedmanSparseInverseCovariance2008], and rescales:
+$\widehat{\boldsymbol{\Omega}}_{j}=\Delta_j^{-1/2}\widehat{\boldsymbol{\Omega}}_{R}\Delta_j^{-1/2}$
+with $\Delta_j=\operatorname{diag}(\boldsymbol{V}_j)$
+(`rescale_correlation_fit()`). With the diagonal unpenalised the fitted
+correlation keeps a unit diagonal, so $\widehat{\boldsymbol{\Sigma}}_{j}$
+matches the sample variances.
+
+- `penalize.diagonal` defaults to `TRUE` in `glasso` 1.11; it is set
+  explicitly.
+- `huge` [@R-huge] is not used: `huge.glasso()` always penalises the
+  diagonal and has no switch for it (checked in the `huge` 1.5.1
+  sources). The reasons are in
+  [3.3, graphical lasso](https://bastienchassagnol.github.io/DeCovarT/articles/03-3-precision-networks.html#sec-cov-glasso).
+- Grid endpoints come from `lambda_endpoints()`: at
+  $\lambda_{\max}=\max_{g\neq g'}|R_{gg'}|$ the off-diagonal precision
+  is zero; the lower end is of order $\sqrt{\log G/C_j}$.
+- A gene constant across the cells of a type is left out of that
+  type's fit and listed in `excluded_genes`, instead of forcing a
+  diagonal covariance for all genes.
+- A penalty whose solve fails is dropped from the grid and listed in
+  `failed_lambda`, instead of being replaced by a diagonal precision.
+
+The earlier selector, a safeguarded EBIC interval search
+(`ebic_adaptive_path()`, at most `n_solves = 40` solves,
+$\gamma=0.5$ [@foygelExtendedBayesianInformation2010]), is kept in
+`scripts/03_01_grn_huge.R` as a diagnostic path. It no longer chooses
+$\lambda$.
+
+### `SILGGM` support, then a refit {#sec-silggm}
+
+`fit_cov_silggm_refit()` runs in three steps:
+
+1. Nonparanormal scores with `huge::huge.npn(x, npn.func = "shrinkage")`
+   (rank $R_{gc}$ mapped to $\Phi^{-1}\{R_{gc}/(C_j+1)\}$, then
+   standardised). The choice of shrinkage over truncation is argued in
+   [3.3, nonparanormal](https://bastienchassagnol.github.io/DeCovarT/articles/03-3-precision-networks.html#sec-cov-npn).
+2. `SILGGM::SILGGM(npn, method = "D-S_GL", global = TRUE, alpha)`
+   [@R-SILGGM; @zhangSILGGMExtensivePackage2018]: de-sparsified
+   graphical lasso with the global FDR rule of
+   @liuGaussianGraphicalModel2013. The object kept is the support at
+   level $\alpha$ (`global_decision`), not the dense de-sparsified
+   matrix.
+3. An SPD refit on the linear-scale panel under the zeros of that
+   support, with `glasso::glasso(V, rho = 0, zero = ..., penalize.diagonal = FALSE)`.
+
+The script `scripts/03_02_grn_silggm.R` (seed 1, $\alpha=0.05$) stops
+after step 2 and has never been run; the refit lives in the wrapper.
+
+### `PLNnetwork` {#sec-pln}
+
+`fit_cov_plnnetwork()` fits the Poisson-lognormal network of `PLNmodels`
+[@R-PLNmodels; @chiquetVariationalInferenceSparse2018] to the raw
+counts of one unit, with the full-library offset:
+
+$$
+x_{gc}\mid\boldsymbol{z}_{\cdot c}
+\sim
+\mathrm{Poisson}\bigl(s_{c}\,e^{z_{gc}}\bigr),
+\qquad
+\boldsymbol{z}_{\cdot c}
+\sim
+\mathcal{N}_{G}(\boldsymbol{\mu}_{z},\boldsymbol{\Sigma}_{z}),
+\qquad
+\boldsymbol{\Omega}_{z}=\boldsymbol{\Sigma}_{z}^{-1}\ \text{penalised off the diagonal}.
+$$ {#eq-pln}
+
+| Argument | Value |
+|---|---|
+| formula | `Abundance ~ 1 + offset(log_library)`, one fit per unit, no further design |
+| `log_library` | $\log s_c$, full RNA library (@sec-cov-inputs) |
+| `n_penalties` | 40 |
+| `min_ratio` | 0.1 |
+| `penalize_diagonal` | `FALSE` |
+| optimiser settings | defaults of `PLNnetwork_param()` (`PLNmodels` 1.3.1 in `renv.lock`) |
+
+: `PLNnetwork` settings. Earlier versions of the script passed `control_init` / `control_main`, which `PLNmodels` 1.x no longer accepts; the rewrite uses `control = PLNnetwork_param(...)`. {#tbl-pln-hyperparameters}
+
+```pseudocode
+#| label: algo-plnnetwork
+#| html-line-number: true
+#| pdf-line-number: true
+
+\begin{algorithm}
+\caption{PLNnetwork: alternating graphical lasso and variational updates}
+\begin{algorithmic}
+\Require counts $X$, offsets $O=\log s$, penalty $\lambda$, weights $W$
+\State initialise the variational means $M$, variances $S$ and $\Sigma$
+\For{$h = 1,\ldots,$ maxit\_out}
+  \State $\Omega^{(h)} \gets$ \Call{GraphicalLasso}{$\Sigma^{(h-1)}, \lambda W$}
+  \State $(B^{(h)},M^{(h)},S^{(h)}) \gets$ \Call{NLopt}{$B^{(h-1)},M^{(h-1)},S^{(h-1)};\Omega^{(h)}$}
+  \State $\Sigma^{(h)} \gets C^{-1}\left[{M^{(h)}}^\top M^{(h)} + \sum_c S_c^{(h)}\right]$
+  \State $F_h \gets -\mathrm{ELBO}(B^{(h)},M^{(h)},S^{(h)},\Omega^{(h)}) + \lambda\|\Omega^{(h)}\|_{1,W}$
+  \If{$|F_h-F_{h-1}|/|F_h| <$ ftol\_out}
+    \State \textbf{break}
+  \EndIf
+\EndFor
+\State \Return $(B,M,S,\Omega,\Sigma)$
+\end{algorithmic}
+\end{algorithm}
+```
+
+@algo-plnnetwork is the block-coordinate scheme of
+@chiquetVariationalInferenceSparse2018. The model, the variational
+bound and the role of the offset are in
+[3.3, PLN](https://bastienchassagnol.github.io/DeCovarT/articles/03-3-precision-networks.html#sec-cov-pln).
+
+The latent moments $(\boldsymbol{\mu}_{z},\boldsymbol{\Sigma}_{z})$ are
+not on DeCovarT's scale. `pln_linear_moments()` maps them to the
+moments of the counts, averaged over the size factors $s_c$ of the
+cells being scored:
+
+$$
+\mathbb{E}\,x_{gc}=s_{c}\,e^{\mu_{z,g}+\sigma_{z,gg}/2},
+\qquad
+\operatorname{Cov}\boldsymbol{x}_{\cdot c}
+=
+\operatorname{diag}(\mathbb{E}\,\boldsymbol{x}_{\cdot c})
++
+\bigl(\mathbb{E}\,\boldsymbol{x}_{\cdot c}\,\mathbb{E}\,\boldsymbol{x}_{\cdot c}^{\top}\bigr)
+\circ
+\bigl(e^{\boldsymbol{\Sigma}_{z}}-\mathbf{1}\mathbf{1}^{\top}\bigr),
+$$ {#eq-pln-linear}
+
+with $e^{\boldsymbol{\Sigma}_{z}}$ taken entrywise. The moments are then
+divided by the size factor, so that the four estimators are scored on
+the same size-factor-normalised table. <!-- chk: V3 -->
+
+## Cross-validation and outputs {#sec-cov-cv-run}
+
+The same loss selects the tuning parameter of every estimator and
+compares the four: the held-out Gaussian log-likelihood on the linear
+scale. For held-out cells $\mathcal{T}$ and an estimate
+$(\widehat{\boldsymbol{\mu}},\widehat{\boldsymbol{\Sigma}})$ fitted
+without them,
+
+$$
+\ell(\widehat{\boldsymbol{\mu}},\widehat{\boldsymbol{\Sigma}};\mathcal{T})
+=
+\frac{1}{|\mathcal{T}|}\sum_{c\in\mathcal{T}}
+\log\phi_{G}\bigl(\boldsymbol{x}_{\cdot c};\widehat{\boldsymbol{\mu}},\widehat{\boldsymbol{\Sigma}}\bigr),
+$$ {#eq-heldout-loglik}
+
+computed by `heldout_gaussian_logscore()` through a Cholesky factor of
+$\widehat{\boldsymbol{\Sigma}}$. Why this score is a legitimate loss for
+the covariance even though cells are not Gaussian, and why it replaces
+AIC, BIC and EBIC as the selector, is in
+[3.2, cross-validation](https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-cov-cv).
+
+```pseudocode
+#| label: algo-cv-covariance
+#| html-line-number: true
+#| pdf-line-number: true
+
+\begin{algorithm}
+\caption{Tuning by K-fold cross-validation, and nested comparison of the four estimators}
+\begin{algorithmic}
+\Procedure{CVSelect}{$X, f, \Lambda, K$}
+  \State split the cells of $X$ into $K$ folds at random, with a fixed seed
+  \For{$\lambda \in \Lambda$}
+    \For{$k = 1,\ldots,K$}
+      \State $(\hat\mu,\hat\Sigma) \gets f(X_{-k};\lambda)$
+      \State $\ell_k(\lambda) \gets$ \Call{HeldOutLogScore}{$\hat\mu,\hat\Sigma,X_k$}
+    \EndFor
+    \State $m(\lambda) \gets$ mean of $\ell_k(\lambda)$; $\mathrm{se}(\lambda) \gets$ its standard error
+  \EndFor
+  \State $\lambda_{\min} \gets \arg\max_{\lambda} m(\lambda)$
+  \State $\lambda_{1\mathrm{se}} \gets$ most regularised $\lambda$ with $m(\lambda) \ge m(\lambda_{\min}) - \mathrm{se}(\lambda_{\min})$
+  \State \Return $(m, \mathrm{se}, \lambda_{\min}, \lambda_{1\mathrm{se}})$
+\EndProcedure
+\Procedure{NestedCompare}{$X, \{(f_e,\Lambda_e)\}_{e=1}^{4}, K_{\mathrm{out}}, K_{\mathrm{in}}$}
+  \For{$k = 1,\ldots,K_{\mathrm{out}}$}
+    \For{$e = 1,\ldots,4$}
+      \State $\lambda_e \gets \lambda_{\min}$ of \Call{CVSelect}{$X_{-k}, f_e, \Lambda_e, K_{\mathrm{in}}$}
+      \State $(\hat\mu,\hat\Sigma) \gets f_e(X_{-k};\lambda_e)$
+      \State $s_{ek} \gets$ \Call{HeldOutLogScore}{$\hat\mu,\hat\Sigma,X_k$}
+    \EndFor
+  \EndFor
+  \State \Return $(s_{ek})$, paired by outer fold
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+```
+
+Settings in `scripts/03_04_cv_covariance.R`:
+
+- `cv_select_tuning(X, fit_fun, grid, K = 5, seed)` returns the mean and
+  standard error per grid value and the `min` and `1se` choices. The
+  exported fit uses `min`; `1se` is reported beside it.
+- `nested_cv_compare(X, estimators, K_outer = 5, K_inner = 5, seed)` is
+  run only to compare the four estimators. The inner loop chooses the
+  tuning parameter, the outer loop scores the chosen fit on cells it
+  never saw.
+- Folds split cells of one unit. The score measures generalisation to
+  new cells of this specimen, not to new specimens
+  (@nte-pseudoreplication).
+- In units with very few cells (29 cells for the somite
+  differentiation front) each training fold has about 23 cells; the
+  shrinkage estimate is the only one expected to be stable there.
+
+Diagnostics that are computed but do not select: the EBIC path of the
+graphical lasso (@sec-glasso), and edge stability under subsampling.
+StARS is not run: with 20 subsamples and 40 penalties it costs about
+800 graphical-lasso solves per unit, against 40 for the EBIC path.
+
+
+> For the estimator retained for a unit,
+$\widehat{\boldsymbol{\mu}}_{\cdot j}$ is the mean of the
+size-factor-normalised counts of its cells and
+$\widehat{\boldsymbol{\Sigma}}_{j}$ is the selected covariance, both on
+the scale of @sec-cov-inputs; @eq-grn-export holds by construction.
+For `PLNnetwork` both come from @eq-pln-linear. The lift from these
+cell-level moments to the population Gaussian that the convolution
+uses is @sec-align.
+
+### Displays {#sec-cov-plots}
+
+Plot functions are in `R/plot_grn_regularisation.R`. Each display
+answers one question.
+
+**Choosing the tuning parameter (one unit, one estimator).**
+
+- Cross-validation curve: $m(\lambda)\pm\mathrm{se}(\lambda)$ against
+  the tuning parameter, with the `min` and `1se` choices marked
+  (new; not produced yet).
+- Regularisation path: each off-diagonal entry of
+  $\widehat{\boldsymbol{\Omega}}(\lambda)$ against $\log\lambda$,
+  five edges that survive at the selected $\lambda$ and five that are
+  driven to zero (graphical lasso, `PLNnetwork`).
+- EBIC against $\log\lambda$, and EBIC against edge density
+  $|E|/\{G(G-1)/2\}$ (diagnostic only).
+
+**Comparing estimators (one unit).**
+
+- Outer-fold held-out scores $s_{ek}$ of @algo-cv-covariance, one line
+  per fold across the four estimators, so that the comparison is
+  paired.
+- Partial-correlation heatmaps at the selected tuning parameter, with
+  one gene order frozen across estimators and types,
+  $$
+  \rho_{gg'\mid\mathrm{rest}}
+  =
+  -\frac{\omega_{gg'}}{\sqrt{\omega_{gg}\omega_{g'g'}}},
+  $$ {#eq-partial}
+  on a diverging scale centred at zero.
+- For the three sparse estimators: UpSet plots of edge presence and of
+  signed edges.
+
+**Comparing types (one time).** Pairwise Hellinger distance and
+`MixSim` overlap between the exported Gaussians on the linear scale
+(`gaussian_hellinger()`, `gaussian_mixsim_overlap()` in
+`R/ebic_regularisation_path.R`). Distances computed on another scale
+(nonparanormal scores, $\log(1+x)$) do not describe what DeCovarT has
+to separate.
+
+### Evaluation {#sec-cov-evaluation}
+
+There is no ground-truth network for murine gastruloids, and the
+estimand is a covariance. The scores are therefore relative, in this
+order of weight:
+
+1. **Held-out likelihood**, outer folds of @algo-cv-covariance: the
+   selector, and the only score that compares all four estimators on
+   one scale.
+2. **Downstream deconvolution**: DeCovarT error on the matched 48 h
+   bulk and in the misspecification sweep of @sec-sensitivity, with
+   $\widehat{\boldsymbol{\Sigma}}_{j}$ from each estimator. This is the
+   score tied to the paper's estimand.
+3. **Technical stability**: a bootstrap of cells within type, labels
+   fixed (@sec-align-bootstrap). Edge-inclusion frequencies for the
+   sparse estimators and the Frobenius spread of
+   $\widehat{\boldsymbol{\Sigma}}_{j}$ for all four. Conditional on this
+   specimen.
+4. **Separation of types**: Hellinger and `MixSim` overlap of
+   @sec-cov-plots.
+5. **Concordance of the sparse estimators**: overlap of edge sets
+   (intersection over the smaller set) and Hamming distance between
+   skeletons, raw and divided by $G(G-1)/2$. Agreement is a robustness
+   number, not a validation.
+
+Scores that need a known skeleton, curated transcription-factor
+targets, other assays or perturbations are perspectives
+([3.3, perspectives](https://bastienchassagnol.github.io/DeCovarT/articles/03-3-precision-networks.html#sec-cov-perspectives)).
+
+
+
+
+::: {#nte-drop-zico .callout-note}
+## :information_source: No zero-inflation layer
+
+Suppinger is droplet UMI data. Zeros are modelled as Poisson or
+negative-binomial sampling zeros [@svenssonDropletScRNAseqNot2020];
+no estimator in this book has a zero-inflation or hurdle layer.
+Zero-inflated observation models appear only as a contamination in
+@sec-sensitivity.
+:::

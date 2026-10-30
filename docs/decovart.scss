@@ -1,0 +1,59 @@
+/*-- scss:defaults --*/
+// DeCovarT book theme, light mode. Layered on cosmo in _quarto.yml:
+//   theme: light: [cosmo, decovart.scss]
+// The values mirror `template.bslib` in the DeCovarT package `_pkgdown.yml`,
+// so the book and the pkgdown site share one palette. 
+
+// Fonts: Source Sans 3 for text and headings, Source Code Pro for code
+// (`base_font`, `heading_font`, `code_font` in `_pkgdown.yml`).
+@import url("https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,400;0,600;1,400&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600&display=swap");
+// cosmo imports Source Sans Pro through $web-font-path; the import above
+// replaces it.
+$web-font-path: false;
+$font-family-sans-serif: "Source Sans 3", -apple-system, BlinkMacSystemFont,
+  "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+$font-family-monospace: "Source Code Pro", SFMono-Regular, Menlo, Monaco,
+  Consolas, "Liberation Mono", "Courier New", monospace;
+
+// Body and links (bslib bg, fg, primary, link-color, body-secondary-color).
+$body-bg: #FEFBF2;
+$body-color: #052744;
+$body-secondary-color: #053A42;
+$primary: #3E8EBC;
+$link-color: #3E8EBC;
+
+// Code (bslib code-bg, code-color). $code-bg and $code-color style inline
+// code; $code-block-bg is Quarto's background for code blocks, which
+// pkgdown/extra.scss sets on `pre` with !important.
+$code-bg: #FEFCF9;
+$code-color: #053A42;
+$code-block-bg: #FEFCF9;
+
+// Navbar (bslib navbar-light-*): dark blue bar, cream text, light-blue
+// active item; hover keeps the text colour.
+$navbar-bg: #052744;
+$navbar-fg: #F2E5BD;
+$navbar-hl: #93B0F1;
+$navbar-hover-color: #F2E5BD;
+$navbar-brand: #F2E5BD;
+
+// Book sidebar on the page background (cosmo would use $gray-100).
+$sidebar-bg: #FEFBF2;
+
+// "On this page" column: slightly larger than Quarto's 0.875rem default,
+// as `#toc` in pkgdown/extra.scss.
+$toc-font-size: 0.92rem;
+
+/*-- scss:rules --*/
+// Long section titles wrap in the "On this page" column instead of
+// overflowing it, and deeper levels are slightly smaller so a long table of
+// contents stays scannable (ported from `#toc` in pkgdown/extra.scss).
+.sidebar nav[role="doc-toc"]>ul li a {
+  white-space: normal;
+  overflow-wrap: break-word;
+  line-height: 1.3;
+}
+
+.sidebar nav[role="doc-toc"]>ul ul a {
+  font-size: 0.88rem;
+}

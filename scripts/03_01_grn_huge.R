@@ -10,6 +10,17 @@
 # `glasso::glasso(penalize.diagonal = FALSE)` on the correlation matrix,
 # not `huge`, which always penalises the diagonal. Genes constant within
 # a type are left out of that type's graph instead of emptying it.
+#
+# Scale. The exported mean `mu` and covariance `sigma` are on DeCovarT's
+# linear scale: size-factor-normalised counts `x_cg = y_cg / s_c`, with
+# `s_c = L_c / L_ref`, `L_c` the full RNA library (metadata `log_umi`,
+# log10 of the full column sum, set in 01_01) and `L_ref` its median over
+# the cells of the time point. `log1p(x)` is used only to detect the
+# support (EBIC path on its correlation); the covariance is then refitted
+# on the linear-scale correlation under that zero pattern
+# (`refit_covariance_on_support()`). `path$omega` and `path$sigma` stay on
+# the log1p correlation scale. Outputs written before this change are on
+# the log1p scale and are stale.
 
 # ==========================================================================
 # SECTION 0 · Dependencies, hyperparameters, paths ----
@@ -18,6 +29,7 @@
 root <- getwd()
 source(file.path(root, "R", "utils_general.R"))
 source(file.path(root, "R", "ebic_regularisation_path.R"))
+source(file.path(root, "R", "cv_covariance_selection.R"))
 source(file.path(root, "R", "plot_grn_regularisation.R"))
 
 time_levels <- c("48h", "72h", "96h")
@@ -27,6 +39,7 @@ n_solves <- 40L
 ebic_gamma <- 0.5
 n_genes_global <- 500L
 estimator <- "glasso"
+rho_refit <- 1e-4
 
 input_rds <- file.path(
   root,
@@ -66,6 +79,14 @@ results <- lapply(time_levels, function(time_level) {
   seu <- objects[[time_level]]
   counts <- assay_matrix(seu, "RNA", "counts")
   labels <- seurat_metadata_chr(seu, cell_type_col)
+  # Full RNA library, not the 500-gene column sum (`nCount_RNA` of this
+  # object is recomputed on the panel by CreateSeuratObject).
+  lib_size <- 10^as.numeric(seurat_metadata_chr(seu, "log_umi"))
+  names(lib_size) <- colnames(seu)
+  if (any(!is.finite(lib_size)) || any(lib_size <= 0)) {
+    stop("Metadata log_umi is missing or invalid at ", time_level, ".")
+  }
+  ref_lib <- stats::median(lib_size)
   types <- sort(unique(labels[!is.na(labels) & nzchar(labels)]))
   fits <- list()
   for (tp in types) {
@@ -83,8 +104,11 @@ results <- lapply(time_levels, function(time_level) {
       )
       next
     }
-    x <- t(as.matrix(counts[, cells, drop = FALSE]))
-    x <- log1p(x)
+    y <- t(as.matrix(counts[, cells, drop = FALSE]))
+    size_factor <- lib_size[cells] / ref_lib
+    # Linear scale of the convolution; log1p only for the support.
+    x_lin <- y / size_factor
+    x <- log1p(x_lin)
     n <- nrow(x)
     if (ncol(x) != n_genes_global) {
       stop("Expected ", n_genes_global, " genes, found ", ncol(x), ".")
@@ -117,6 +141,7 @@ results <- lapply(time_levels, function(time_level) {
         ")."
       )
       x <- x[, !constant, drop = FALSE]
+      x_lin <- x_lin[, !constant, drop = FALSE]
     }
     p <- ncol(x)
     if (p < 2L) {
@@ -175,29 +200,49 @@ results <- lapply(time_levels, function(time_level) {
       )
     }
     sel <- path$selected
-    data_scale <- rescale_correlation_fit(
-      path$omega[[sel]],
-      path$sigma[[sel]],
-      sd_genes
+    # Support from the log1p fit, covariance refitted on the linear scale.
+    lin <- standardise_genes(x_lin)
+    refit <- refit_covariance_on_support(
+      lin$R,
+      adjacency = path$omega[[sel]],
+      sd = lin$sd,
+      rho = rho_refit,
+      nobs = n
     )
-    omega <- data_scale$omega
-    sigma <- data_scale$sigma
-    mu <- colMeans(x)
+    if (isTRUE(refit$failed)) {
+      message(
+        "Skipping ",
+        time_level,
+        " / ",
+        tp,
+        ": linear-scale refit on the EBIC support failed."
+      )
+      next
+    }
+    omega <- refit$omega
+    sigma <- refit$sigma
+    mu <- lin$mu
+    S_lin <- stats::cov(x_lin)
     sigma_emp <- if (n > p) {
-      S
+      S_lin
     } else {
-      diag(diag(S), p)
+      diag(diag(S_lin), p)
     }
     hell <- tryCatch(
       gaussian_hellinger(mu, sigma, mu, sigma_emp),
       error = function(e) NA_real_
     )
-    # path$omega and path$sigma stay on the correlation scale.
+    # path$omega and path$sigma stay on the log1p correlation scale;
+    # mu, sigma, omega and sd are on the linear (normalised-count) scale.
     fits[[tp]] <- list(
       path = path,
       genes = colnames(x),
       excluded_genes = excluded,
-      sd = sd_genes,
+      scale = "size-factor-normalised counts (full library / median)",
+      ref_lib = ref_lib,
+      size_factor = size_factor,
+      sd_log1p = sd_genes,
+      sd = lin$sd,
       n = n,
       mu = mu,
       sigma = sigma,

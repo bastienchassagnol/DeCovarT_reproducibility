@@ -5,6 +5,15 @@
 #
 # Independent PLNnetwork fit per labelled type and time, with a
 # library-size offset. Run from the repository root.
+#
+# The offset is log of the full RNA library L_c (metadata `log_umi`,
+# log10 of the full column sum, as in scripts/01_01), not the row sum of
+# the 500 panel genes: a panel sum moves with the panel's own expression
+# and absorbs part of the cell-type signal. `prepare_data(offset =
+# "none")` stops PLNmodels from adding its TSS (panel-sum) offset. The
+# control list uses `PLNnetwork_param()`; the older `control_init` /
+# `control_main` arguments were removed in PLNmodels 1.0.0. Outputs
+# written before this change used the panel-sum offset and are stale.
 
 # ==========================================================================
 # SECTION 0 · Dependencies, hyperparameters, paths ----
@@ -50,6 +59,11 @@ results <- lapply(time_levels, function(time_level) {
   seu <- objects[[time_level]]
   counts <- assay_matrix(seu, "RNA", "counts")
   labels <- seurat_metadata_chr(seu, cell_type_col)
+  lib_size <- 10^as.numeric(seurat_metadata_chr(seu, "log_umi"))
+  names(lib_size) <- colnames(seu)
+  if (any(!is.finite(lib_size)) || any(lib_size <= 0)) {
+    stop("Metadata log_umi is missing or invalid at ", time_level, ".")
+  }
   types <- sort(unique(labels[!is.na(labels) & nzchar(labels)]))
   fits <- list()
   for (tp in types) {
@@ -68,20 +82,30 @@ results <- lapply(time_levels, function(time_level) {
     }
     y <- t(as.matrix(counts[, cells, drop = FALSE]))
     storage.mode(y) <- "integer"
-    lib <- pmax(as.numeric(Matrix::rowSums(y)), 1)
+    lib <- as.numeric(lib_size[cells])
     dat <- PLNmodels::prepare_data(
       counts = y,
-      covariates = data.frame(log_library = log(lib))
+      covariates = data.frame(log_library = log(lib), row.names = cells),
+      offset = "none"
     )
     message("Fitting PLNnetwork: ", time_level, " / ", tp)
-    fits[[tp]] <- PLNmodels::PLNnetwork(
+    family <- PLNmodels::PLNnetwork(
       Abundance ~ 1 + offset(log_library),
       data = dat,
-      control_init = list(nPenalties = n_penalties, min.ratio = min_ratio),
-      control_main = list(penalize_diagonal = penalize_diagonal)
+      control = PLNmodels::PLNnetwork_param(
+        n_penalties = n_penalties,
+        min_ratio = min_ratio,
+        penalize_diagonal = penalize_diagonal
+      )
     )
-    fits[[tp]]$genes <- colnames(y)
-    fits[[tp]]$n <- nrow(y)
+    # The family is an R6 object (possibly locked), so the metadata go
+    # next to it in a plain list rather than into it.
+    fits[[tp]] <- list(
+      family = family,
+      genes = colnames(y),
+      n = nrow(y),
+      lib_size = lib
+    )
   }
   fits
 })

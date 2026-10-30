@@ -5,7 +5,7 @@
 
 # Contaminate sparse precision matrices Omega_j from 03_01_* and re-run
 # DeCovarT deconvolution. Strategies: DeCovarT vignette
-# supp-S5-misspecification.qmd (description-only factors to port):
+# S5-misspecification.qmd (description-only factors to port):
 #   S5a observation noise (Gaussian / t / PLN / contaminated Gaussian)
 #   S5b missing reference component (0 / 2 / 10%)
 #   S5c copula or PLN inter-gene dependence

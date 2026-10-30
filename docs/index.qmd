@@ -2,53 +2,99 @@
 title: "Overview"
 ---
 
-This book is the narrative companion to `scripts/`. Computation stays
-in the scripts; the chapters are theory, design, and criticism of how
-those scripts should be run.
+This book applies DeCovarT to the Suppinger murine gastruloid resource.
+It records what is run: the data, the algorithms as implemented, the
+hyperparameters and their values, the code, the outputs, and which
+outputs are stale. The reasons behind each choice are in the DeCovarT
+vignettes; each chapter links to the vignette section that states them
+and does not restate the theory.
 
-The scientific target is DeCovarT's cell-type Gaussians: sparse
-precisions $\boldsymbol{\Omega}_{j}\equiv\boldsymbol{\Sigma}_{j}^{-1}$ and means
-$\boldsymbol{\mu}_{\cdot j}$, estimated from labelled single-cell
-transcriptomes and plugged into the bulk convolution. Indices follow
-the article Methods: gene $g=1,\ldots,G$, cell type $j=1,\ldots,J$,
-sample $i=1,\ldots,N$.
+## Aims {#sec-aims}
 
-The planned Suppinger benchmark is a **$3\times 2\times 2$** product,
-not a single pipeline. Three sparse-precision estimators (`huge`
-graphical lasso, `SILGGM` after a nonparanormal map, and
-`PLNnetwork`), two lifts from cells to a population Gaussian, and two
-gene-panel strategies (the naive screen alone, or that screen plus an
-optional stricter Pareto refinement). That is 12 routes. The aim is to
-see **which steps move deconvolution**, not to retain every cell of
-the product in the paper. Bures–Wasserstein alignment, `GmGM`, and
-sparse-plus-low-rank GGMs stay **perspectives**; they are not factors
-in @fig-pipeline.
+1. Estimate, for each labelled cell type $j$ at each bulk-matched time,
+   the mean $\widehat{\boldsymbol{\mu}}_{\cdot j}$ and the within-type
+   covariance $\widehat{\boldsymbol{\Sigma}}_{W,j}$ of a gene panel, on
+   the linear scale that DeCovarT's convolution needs. The source is
+   one single-specimen scRNA-seq reference (GSE229513,
+   @sec-geo-design).
+2. Choose that panel for the purpose: genes whose moments can be
+   estimated in every type and that carry information about the
+   proportions $\boldsymbol{p}$ (@sec-fs-scope).
+3. Plug the moments into DeCovarT and deconvolve the bulk series
+   (GSE229386) where a single-cell reference matches it: the 48 h
+   standard-Wnt samples.
 
-```{mermaid}
-%%| echo: false
+The target is a covariance plug-in for the likelihood, not a
+biologically interpretable gene regulatory network
+([03-2, target](https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-cov-target)).
+Indices follow the article: gene $g=1,\ldots,G$, type
+$j=1,\ldots,J$, bulk sample $i=1,\ldots,N$, cell $c$, with $C_j$ cells
+of type $j$.
+
+## Pipeline {#sec-pipeline}
+
+@fig-pipeline lists the nine steps in the order the scripts run them.
+Steps 2 to 5 are @sec-fs-scope; step 7 is @sec-cov-scope; step 8 is
+@sec-align; step 9 is @sec-deconv-models.
+
+```{.tikz}
 %%| label: fig-pipeline
-%%| fig-cap: "Design product: a naive gene screen, three precision estimators (huge, SILGGM with a nonparanormal map, PLNnetwork), two population lifts, then a yes/no choice of a stricter NSGA-II panel."
-%%{init: {"theme": "sandstone", "flowchart": {"htmlLabels": true}}}%%
-flowchart TD
-  A["GSE229513 UMI, labels j"] --> B["Naive screen G_0"]
-  B --> C1["huge graphical lasso"]
-  B --> C2["SILGGM after NPN, global FDR"]
-  B --> C3["PLNnetwork"]
-  C1 --> T["Independent Omega_j,t at 48 h, 72 h, 96 h"]
-  C2 --> T
-  C3 --> T
-  T --> L1["Affine Gaussian aggregation"]
-  T --> L3["scDesign3 copula pseudo-replicates"]
-  L1 --> Q{"Stricter NSGA-II panel?"}
-  L3 --> Q
-  Q -->|yes| P["kappa_2 of mu_G and MixSim overlap"]
-  Q -->|no| D["DeCovarT mu_j and Sigma_j"]
-  P --> D
+%%| fig-cap: "Analysis pipeline, read left to right on each row. Row 1 builds the gene panel from the single-cell counts: quality control, a presence gate in every type, an omnibus count-model screen ranked by effect size, and a cross-platform filter fitted on the only matched pair (single-cell 48 h, standard-Wnt bulk 48 h). Row 2 estimates one covariance per type and time on the linear scale, with the tuning parameter of each estimator chosen by cross-validated held-out Gaussian log-likelihood, lifts the estimates to DeCovarT's moments and deconvolves the matched bulk. The dashed box is optional; it needs the covariances of step 7."
+%%| filename: fig-pipeline
+%%| alt: Two-row flowchart. Row one, left to right: 1 GSE229513 UMI counts and cell-type labels; 2 cell and gene quality control; 3 presence gate in every type; 4 omnibus deviance or quasi-likelihood screen, ranked by effect size; 5 bulk consistency filter at 48 hours, single-cell 48 hours against standard-Wnt bulk 48 hours. An elbow arrow leads from step 5 to row two. Row two, left to right: 6 optional multivariate refinement by Fisher information or NSGA-II, drawn dashed with dashed arrows; 7 per type and time on the linear scale, shrinkage covariance as default, or graphical lasso, SILGGM or PLNnetwork, with lambda chosen by cross-validated held-out log-likelihood and nested cross-validation comparing the four; 8 lift to DeCovarT moments mu hat j and Sigma hat W j; 9 DeCovarT on the 48 hour standard-Wnt bulk, with a note that the 24 hour early-Wnt bulk has no matched single-cell reference.
+\begin{tikzpicture}[
+  node distance=5mm and 5mm,
+  pstep/.style={text width=26mm, minimum height=22mm},
+  num/.style={font=\footnotesize\bfseries, text=ink!70, anchor=south west, inner sep=0.8mm}
+]
+\node[dimbox, pstep] (s1) {GSE229513 UMI counts\\ and cell-type labels};
+\node[box, pstep, right=of s1] (s2) {Cell and gene QC};
+\node[box, pstep, right=of s2] (s3) {Presence gate\\ in every type};
+\node[box, pstep, right=of s3] (s4) {Omnibus deviance /\\ quasi-likelihood screen,\\ ranked by effect size};
+\node[box, pstep, right=of s4] (s5) {Bulk consistency\\ filter, 48\,h only:\\ single-cell 48\,h $\leftrightarrow$\\ standard-Wnt bulk 48\,h};
+\node[box, pstep, dashed, below=16mm of s1] (s6) {Optional refinement:\\ Fisher information /\\ NSGA-II};
+\node[keybox, text width=56mm, minimum height=22mm, right=of s6] (s7) {Per type $\times$ time, linear scale:\\ shrinkage $\widehat{\boldsymbol{\Sigma}}$ (default) $\mid$ glasso $\mid$\\ SILGGM $\mid$ PLNnetwork;\\ $\lambda$ by cross-validated held-out\\ log-likelihood; nested CV compares the four};
+\node[box, pstep, right=of s7] (s8) {Lift to DeCovarT\\ moments\\ $\widehat{\boldsymbol{\mu}}_{\cdot j}$, $\widehat{\boldsymbol{\Sigma}}_{W,j}$};
+\node[keybox, pstep, right=of s8] (s9) {DeCovarT on bulk:\\ 48\,h standard Wnt};
+\node[note, below=1.5mm of s9, text width=30mm, align=center, font=\footnotesize] (n9) {24\,h early Wnt: no matched single-cell reference};
+\foreach \k in {1,...,9} {\node[num] at (s\k.north west) {\k};}
+\draw[edge] (s1) -- (s2);
+\draw[edge] (s2) -- (s3);
+\draw[edge] (s3) -- (s4);
+\draw[edge] (s4) -- (s5);
+\coordinate (turn) at ($(s5.south)!0.5!(s5.south |- s7.north)$);
+\draw[edge] (s5.south) -- (turn) -| (s7.north);
+\draw[dashededge] (turn) -| (s6.north);
+\draw[dashededge] (s6) -- (s7);
+\draw[edge] (s7) -- (s8);
+\draw[edge] (s8) -- (s9);
+\end{tikzpicture}
 ```
 
-Reading order puts the **naive** screen before GRN inference, and the
-**optional** genetic algorithm after the graphs, because the second
-objective needs $\boldsymbol{\Sigma}_{j}$. Deconvolution comparators,
-the early-versus-standard Wnt reading, and sensitivity analyses close
-the book.
+Branches that were tried and dropped are not drawn: `ppcor`
+partial correlations, the `huge` graphical lasso, penalty selection by
+EBIC alone, and exports on the `log1p` scale. @sec-cov-stale lists the
+outputs those branches left behind.
 
+## Reading guide {#sec-reading-guide}
+
+Each chapter is the practice half of a vignette chapter. Read the
+vignette for the model and the reasons; read the chapter for what is
+run on Suppinger.
+
+| Book chapter | What it runs | Theory (DeCovarT vignettes) |
+|---|---|---|
+| @sec-geo-design, Suppinger data | GEO objects, design, Seurat processing | [1.1 Generative model](https://bastienchassagnol.github.io/DeCovarT/articles/01-1-population-generative-optimisation.html); [2.1 Three reference regimes](https://bastienchassagnol.github.io/DeCovarT/articles/02-1-single-cell-generative-optimisation.html#sec-three-regimes) |
+| @sec-fs-scope, Feature selection | QC, presence gate, ranking, bulk filter | [3.1 Feature selection](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-estimand) |
+| @sec-cov-scope, Covariance estimation | four estimators, cross-validated tuning | [3.2 Covariance estimation](https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-cov-target) |
+| @sec-align, Population alignment | affine aggregation, bootstrap, `scDesign3` | [2.1 From cells to reference moments](https://bastienchassagnol.github.io/DeCovarT/articles/02-1-single-cell-generative-optimisation.html#sec-reference); [3.3 Perspectives](https://bastienchassagnol.github.io/DeCovarT/articles/03-3-precision-networks.html#sec-cov-perspectives) |
+| @sec-deconv-models, Comparators | mean-based deconvolution baselines | [5.1 Review](https://bastienchassagnol.github.io/DeCovarT/articles/05-1-review-distribution-aware.html) |
+| @sec-bio-deconv, Biological reading | early versus standard Wnt | none |
+| @sec-sensitivity, Sensitivity | misspecification sweep | [S5 Misspecification](https://bastienchassagnol.github.io/DeCovarT/articles/S5-misspecification.html) |
+
+: Book chapters and the vignette chapters that hold their theory. {#tbl-reading-guide}
+
+Code in `R/` and `scripts/` is written to be run from the repository
+root. Chunks marked `eval: false` show calls that have not been run in
+the current state of the repository; the outputs they would produce are
+listed as missing where it matters.

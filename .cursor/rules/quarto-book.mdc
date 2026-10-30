@@ -1,19 +1,22 @@
 ---
-description: Quarto book source, cross-references, render, and GitHub Pages
-globs: docs/**/*.{qmd,yml},docs/_quarto.yml
+description: Quarto book source, cross-references, diagrams, styling, render, and GitHub Pages
+globs: docs/**/*.{qmd,yml,scss},docs/_quarto.yml
 alwaysApply: false
 ---
 
 # Quarto book
 
-User-facing site is a Quarto **book** (HTML and PDF) under `docs/`. CI publishes with the `gh-pages` branch ([Quarto GitHub Pages](https://quarto.org/docs/publishing/github-pages.html), including Knitr with renv). Do not use pkgdown.
+User-facing site is a Quarto **book** (HTML and PDF) under `docs/`. CI publishes with the `gh-pages` branch ([Quarto GitHub Pages](https://quarto.org/docs/publishing/github-pages.html), including Knitr with renv). Do not use pkgdown. For `docs/`, this rule overrides the Mermaid guidance in `quarto-presentations.mdc` and `documentation-bibliography.mdc`.
 
 - Both bibliographies in book YAML (see the bibliography rule). `link-citations: true`.
 - Cross-references: `{#sec-…}`, `#fig-…`, `see @fig-…`.
 - Lists: only `-` and `1.`. No Pandoc example lists (`(@)`) and no task lists.
-- Package and method names in inline code (`` `DESeq2` ``, `` `huge` ``).
-- Labelled Quarto callouts, not raw blockquotes.
-- Pipelines: `{mermaid}` chunks, theme **sandstone**, with `%%| label:` and `%%| fig-cap:`. Do not use a raw mermaid fence in `.qmd`.
+- Package and method names in inline code (`` `DESeq2` ``, `` `glasso` ``).
+- Labelled Quarto callouts, not raw blockquotes. Theorem-style callouts: enable `callouty-theorem` in the chapter YAML (example in `docs/_quarto.yml`).
+- Diagrams and pipelines: TikZ through the `pandoc-ext/diagram` filter, a `{.tikz}` block with `%%| filename:`, `%%| alt:`, a `#fig-` label and a caption. Use the shared styles in `docs/_quarto.yml` (`diagram.engine.tikz.header-includes`): `const`, `stoch`, `obs`, `det`, `var`, `plate`, `note` for models; `box`, `keybox`, `dimbox`, `choice`, `elabel`, `dashededge` for pipelines. Do not define styles or colours inside a picture. New diagrams need `TIKZ_BIN` in `docs/_environment.local` (`scripts/tikz-lualatex.sh`); delete `docs/_diagram-cache/` after changing the shared styles.
+- Existing `{mermaid}` chunks may stay until their chapter is rewritten; do not add new ones.
+- Styling: `docs/decovart.scss` (light) and `docs/decovart-dark.scss` (dark) copy the palette and fonts of the DeCovarT pkgdown site (`template.bslib` in the package `_pkgdown.yml`). Change a colour in both repositories together.
+- Chapter renames: no `aliases:`; the old URLs are dropped. Remove the old chapter's `docs/_freeze/` folder.
 - Heavy chunks stay `eval: false` until artefacts exist; then `freeze: auto` with `_freeze/` committed, or execute on CI via renv.
 - British English; spell-check before treating a chapter as review-ready.
 - Render with `quarto render docs`. Do not commit `_book/` or `.quarto/`. Commit `_freeze/` only when the project freezes instead of executing on CI.

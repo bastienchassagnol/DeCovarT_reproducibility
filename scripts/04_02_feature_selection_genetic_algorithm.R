@@ -4,7 +4,7 @@
 #   > "logs/04_02_ga_$(date +%F)_panel.log" 2>&1 &
 
 # Advanced panel search after the DESeq2 shortlist.
-# See DeCovarT vignette supp-S6-feature-selection.qmd:
+# See DeCovarT vignette 03-1-feature-selection.qmd:
 # AutoGeneS-style all-vs-all objectives; NSGA-II via mco::nsga2();
 # optional scalar refinement with GA / GenSA.
 # Minimise kappa_2(mu_G) and mean overlap; keep several Pareto panels.

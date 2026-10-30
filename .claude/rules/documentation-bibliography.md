@@ -56,9 +56,21 @@ do not duplicate parent+child.
 without review):
 
 ```bash
-python3 scripts/curate_bibliography/bib_enrich.py PATH.bib --write --backup \
-  --min-score 92 --report .cursor/bib-enrichment.json
+uv run --project scripts/curate_bibliography \
+  python scripts/curate_bibliography/bib_enrich.py PATH.bib --write --backup \
+  --min-score 92 --report scripts/curate_bibliography/bib-enrichment.json
 ```
+
+One-off Zotero Web API inserts (one leaf collection per item) are
+`scripts/curate_bibliography/add_zotero_perspectives.py` (stdlib only;
+credentials in `~/.zotc/`). The enrichment report above is gitignored.
+
+**This repository** has no `scripts/curate_bibliography/`: the scripts above
+live in the sibling package, `../DeCovarT/scripts/curate_bibliography/`.
+`bib_enrich.py` takes the book file as its argument
+(`bibliography/REFERENCES.bib`). `check_bibliography.py` checks only the
+package files (`inst/`, `article/`); `--clean` rewrites those, never this
+repository's `.bib`. Book-specific steps: `.cursor/rules/bibliography.mdc`.
 
 User-level tooling (when no repo script):
 

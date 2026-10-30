@@ -20,22 +20,16 @@ book:
     - part: "Biological use case"
       chapters:
         - 01-data-suppinger.qmd
-    - part: "Feature selection"
+    - part: "Reference estimation"
       chapters:
-        - 03-feature-selection-naive.qmd
-    - part: "GRN inference"
-      chapters:
-        - 02-grn-graphical-lasso.qmd
-        - 06-population-alignment.qmd
-        - 05-grn-metrics.qmd
-        - 07-feature-selection-all-versus-all.qmd
+        - 02-feature-selection.qmd
+        - 03-covariance-estimation.qmd
+        - 04-population-alignment.qmd
     - part: "Deconvolution benchmark"
       chapters:
-        - 08-deconvolution-pipeline.qmd
-        - 09-deconvolution-guided-biological-insights.qmd
-        - 04-sensitivity-misspecification.qmd
-  appendices:
-    - A1-separation-criteria.qmd
+        - 05-deconvolution-pipeline.qmd
+        - 06-biological-insights.qmd
+        - 07-sensitivity-misspecification.qmd
   search: true
   navbar:
     search: true
@@ -54,6 +48,16 @@ filters:
   # pre-ast so Quarto's cross-referencing sees the #fig- labels.
   - at: pre-ast
     path: _extensions/pandoc-ext/diagram/diagram.lua
+  # Theorem-style callouts (_extensions/sun123zxy/callouty-theorem, as in
+  # the package vignettes) are not loaded for the whole book. A chapter
+  # with #thm-, #lem- or #prp- divs enables them in its own YAML header:
+  #   filters:
+  #     - callouty-theorem
+  #   callouty-theorem:
+  #     thm:
+  #       override-title: false
+  #       callout:
+  #         type: important
 
 # TikZ graphical models (pandoc-ext/diagram), RevBayes symbol convention.
 # No `%` comments inside header-includes: the filter re-wraps that block.
@@ -119,22 +123,42 @@ execute:
   echo: true
   eval: true
   warning: false
-  freeze: auto
+  freeze: false
 
 format:
   html:
+    # Palette and fonts of the DeCovarT pkgdown site (`template.bslib` in the
+    # package _pkgdown.yml), layered on the Bootswatch themes.
     theme:
-      light: cosmo
-      dark: darkly
+      light: [cosmo, decovart.scss]
+    # tango / nord, as `theme` / `theme-dark` in the package _pkgdown.yml.
+    # `syntax-highlighting` is the Quarto 1.10 name; `highlight-style` is
+    # its deprecated alias.
+    syntax-highlighting:
+      light: tango
+      dark: nord
+    # Wider page than Quarto's default grid (sidebar 250px, body 800px,
+    # margin 250px), as the wide container of the pkgdown site.
+    grid:
+      sidebar-width: 280px
+      body-width: 960px
+      margin-width: 280px
     toc: true
     toc-depth: 4
     number-sections: true
     number-depth: 3
-    html-math-method: katex
+    # KaTeX 0.16.11, the version the DeCovarT pkgdown site loads. Pandoc
+    # loads the method's script with `defer`, but the pseudocode extension
+    # renders its algorithms at the end of <body> and needs `katex` defined
+    # by then, so the header loads the same version synchronously.
+    # Keep the two URLs on one version.
+    html-math-method:
+      method: katex
+      url: "https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/"
     include-in-header:
       text: |
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css" />
-        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
   # pdf:
   #   documentclass: scrreprt
   #   toc: true
