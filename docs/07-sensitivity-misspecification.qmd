@@ -19,8 +19,270 @@ Zero-inflated or hurdle observation models belong **here**, as a
 contamination of the sampling layer, not as the default GRN
 (@nte-drop-zico).
 
-Template: `scripts/05_01_sensitivity_precision_contamination.R`.
+## `scDesign3` settings for GSE229513 {#sec-sens-scdesign3}
 
-Compare `DeCovarT::deconvolute_ratios()` to mean-only baselines on the
-**same** genes and mixtures. Pre-declare estimands and Monte Carlo error
-as in the package synthetic-scenarios vignette `{#sec-nmeth}`.
+The fitted count simulator of
+[S5, simulator](https://bastienchassagnol.github.io/DeCovarT/articles/S5-misspecification.html#sec-s5-simulator)
+draws reference-like cells whose type-level law is known. On
+Suppinger it is used to calibrate, not to resample: the cells of one
+specimen series are not biological replicates
+(@nte-pseudoreplication).
+
+| Setting | Value |
+|---|---|
+| Fit unit | One model per time slot, 48 h, 72 h and 96 h; the two lines pooled at 48 h, cell line not a covariate (@sec-geo-design) |
+| Cells and genes | Cells after QC, culture-stress labels removed (@sec-fs-qc); the selected panel, raw UMI counts (@sec-cov-inputs) |
+| Margins | Negative binomial, mean and dispersion by cell type, log size factor as mean offset; no zero inflation (@nte-drop-zico) |
+| Copula | Gaussian, one per type, correlation of the plug-in $\widehat{\boldsymbol{\Sigma}}_{j}$ of that type and time (@sec-shrinkage); not refitted |
+| Composition and depth | Type proportions $C_j/\sum_\ell C_\ell$ of the slot, frozen; each synthetic cell takes the size factor of a real cell of its type |
+| Truth for scoring | Count-scale mean and covariance of a large draw (for example $10^{5}$ cells per type), not $\boldsymbol{R}_j$ |
+| Checks before use | Normal QQ plots of randomised quantile residuals per gene and type; marginal and copula AIC and BIC against independence and the empirical copula |
+
+: `scDesign3` settings per type and time for GSE229513. {#tbl-sens-scdesign3}
+
+Factors of the list above that the simulator serves:
+
+- **1, observation noise**: negative-binomial cells replace the
+  Gaussian law; pseudo-bulks are sums of simulated cells at known
+  $\boldsymbol{p}$.
+- **2, missing component**: simulate every type and leave one out of
+  the signature.
+- **3, copula dependence**: swap the plug-in correlation for an
+  equicorrelated or a Clayton copula, margins fixed.
+- **6, wrong covariance reference**: generate with the
+  $\widehat{\boldsymbol{\Sigma}}_{j}$ of one estimator or time, and fit
+  DeCovarT with another.
+
+Spillover (4) and outlier genes (5) are added after generation; the
+simulator plays no part in them.
+
+```{r}
+#| label: sens-scdesign3-call
+#| eval: false
+# Not run. scDesign3 is not in renv.lock. Function and argument names
+# follow the scDesign3 tutorial (modular interface) and must be checked
+# against the installed version before use.
+# sce: SingleCellExperiment of one time slot, raw UMI counts of the
+#   selected panel, culture-stress labels removed; colData holds
+#   cell_type and log_s (log size factor).
+# sigma_plugin: named list, one G x G plug-in covariance per cell type.
+dat <- scDesign3::construct_data(
+  sce = sce, assay_use = "counts", celltype = "cell_type",
+  pseudotime = NULL, spatial = NULL, other_covariates = "log_s",
+  corr_by = "cell_type"
+)
+marginals <- scDesign3::fit_marginal(
+  data = dat, predictor = "gene",
+  mu_formula = "cell_type + offset(log_s)",
+  sigma_formula = "cell_type",
+  family_use = "nb", n_cores = 2, usebam = FALSE
+)
+para <- scDesign3::extract_para(
+  sce = sce, marginal_list = marginals, n_cores = 2,
+  family_use = "nb", new_covariate = dat$newCovariate, data = dat$dat
+)
+# Known dependence: the correlation of each plug-in covariance.
+copula_known <- lapply(sigma_plugin, stats::cov2cor)
+cells_sim <- scDesign3::simu_new(
+  sce = sce, mean_mat = para$mean_mat, sigma_mat = para$sigma_mat,
+  zero_mat = para$zero_mat, copula_list = copula_known,
+  n_cores = 2, family_use = "nb", input_data = dat$dat,
+  new_covariate = dat$newCovariate
+)
+```
+
+## Signature size and selection threshold {#sec-sens-panel-size}
+
+[S5i, signature size](https://bastienchassagnol.github.io/DeCovarT/articles/S5-misspecification.html#sec-s5i)
+states the hypothesis: accuracy rises with the number of genes, reaches
+a plateau, then falls once uninformative genes or genes inconsistent
+between bulk and single-cell libraries enter the panel. Every chapter
+of this book so far uses one panel, the top `n_genes_global = 500` of
+the type-equal ratio (@sec-fs-ms-ratio, @sec-fs-export). This section
+plans the sweep that tests the hypothesis on GSE229513. It has not been
+run.
+
+| Factor | Levels |
+|---|---|
+| Panel size `n_genes_global` | 50; 100; 200; 500; 1000; 2000, the top genes of each rank |
+| Rank | type-equal ratio (`ranks_global_equal_type.csv`, column `rank`); omnibus rank (`deviance_r2_equal_type`, @sec-fs-omnibus) |
+| Omnibus gate | Benjamini–Hochberg level `fdr` of `rank_genes_omnibus()`: 0.001; 0.01; 0.05; 0.2 |
+| Bulk consistency filter | off; on (@sec-fs-bulk-consistency) |
+| Time slot | 48 h, 72 h, 96 h (@sec-geo-design) |
+| Methods | NNLS; DeCovarT, profile Newton (@sec-deconv-models) |
+
+: Factors of the panel-size sweep. The largest panel stays below the size of the allow-list of every slot (@sec-fs-qc). {#tbl-sens-panel-size}
+
+Design choices:
+
+- **Source of genes.** The 500-gene export
+  `data/intermediate/equal_type_top500_by_time.rds` cannot supply
+  panels larger than 500. The sweep reads the allow-list object
+  `data/intermediate/suppinger_sct_allowlist_seurat.rds` and the full
+  rank table, then subsets genes per panel size.
+- **Truth.** Within each type, cells are split at random into a
+  reference half and a pseudo-bulk half. The rank, the mean and the
+  covariance use the reference half only; pseudo-bulks are sums of
+  cells of the other half at known numbers per type. Bulk and reference
+  cells are then disjoint, the condition under which a within-type
+  variance can matter
+  ([S5, ReDeconv](https://bastienchassagnol.github.io/DeCovarT/articles/S5-misspecification.html#sec-s5-review-redeconv)).
+  Both halves come from one specimen series, so the pseudo-bulks carry
+  no platform bias and no between-specimen variation
+  (@nte-pseudoreplication).
+- **Platform-inconsistent genes.** The pseudo-bulks cannot reveal them.
+  The real standard-Wnt bulks of GSE229386 enter through the bulk
+  consistency filter: the sweep is repeated on the panels with the
+  flagged genes removed, and on the real bulks the change of
+  $\hat{\boldsymbol{p}}$ with panel size is reported, since no truth
+  exists there.
+- **Scale.** Means, covariances and pseudo-bulks use raw UMI counts,
+  so a pseudo-bulk is an exact sum of the cell profiles. The
+  size-factor scale of @sec-cov-inputs is a second arm.
+- **Metrics.** `DeCovarT::compute_benchmark_metrics()` with the true
+  cell fractions: total variation and RMSE per bulk
+  (`regression$global`), and per-type correlation and error
+  (`regression$cell_type`). For the real bulks, the total variation
+  between $\hat{\boldsymbol{p}}$ at each size and at 500 genes.
+
+The covariance has $G(G+1)/2$ entries per type. Above the number of
+reference cells of a type the sample covariance is singular, and only
+the shrinkage estimate of @sec-shrinkage is defined; the closed-form
+intensity is used in the sweep rather than cross-validation, to keep the
+cost linear in the number of panels.
+
+```{r}
+#| label: sens-panel-size-sweep
+#| eval: false
+# Not run. Function names and arguments follow R/rank_genes_omnibus.R,
+# R/cv_covariance_selection.R and the DeCovarT reference; corpcor and
+# nnls are not in renv.lock. Culture-stress labels are removed first,
+# as in scripts/01_03_export_equal_type_seurat.R.
+source("R/utils_general.R")
+source("R/rank_genes_omnibus.R")
+source("R/cv_covariance_selection.R")
+
+seu <- readRDS("data/intermediate/suppinger_sct_allowlist_seurat.rds")
+ranks <- utils::read.csv(
+  "output/naive_marker_selection/tables/ranks_global_equal_type.csv"
+)
+panel_sizes <- c(50L, 100L, 200L, 500L, 1000L, 2000L)
+bh_levels <- c(0.001, 0.01, 0.05, 0.2)
+time_level <- "48h"
+n_bulk <- 100L
+n_cells_bulk <- 500L
+
+counts <- assay_matrix(seu, "RNA", "counts")
+in_slot <- seu$time_point == time_level # & !culture-stress label
+x <- as.matrix(counts[, in_slot])
+cell_type <- droplevels(factor(seu$celltypeannotation[in_slot]))
+lib <- 10^seu$log_umi[in_slot]
+types <- levels(cell_type)
+
+# Disjoint halves within each type: 1 = reference, 2 = pseudo-bulk.
+half <- withr::with_seed(20261101, {
+  stats::ave(
+    seq_along(cell_type),
+    cell_type,
+    FUN = function(i) sample(rep_len(1:2, length(i)))
+  )
+})
+ref <- half == 1L
+
+# Rank A: type-equal ratio of the current pipeline (computed on all
+# cells of the slot; rank B below is the leakage-free one).
+rank_a <- ranks[ranks$time_point == time_level & !is.na(ranks$rank), ]
+rank_a <- rank_a$gene[order(rank_a$rank)]
+
+# Rank B: omnibus rank on the reference half; fdr = 1 keeps every gene
+# so that each BH level is a filter of one fit.
+omni <- rank_genes_omnibus(
+  x[, ref],
+  cell_type[ref],
+  size_factors = lib[ref] / stats::median(lib[ref]),
+  fdr = 1,
+  n_select = max(panel_sizes)
+)
+omni <- omni[!is.na(omni$rank), ]
+rank_b <- lapply(bh_levels, function(level) {
+  gated <- omni[omni$adj_pval <= level, ]
+  gated$gene[order(gated$rank)]
+})
+names(rank_b) <- paste0("omnibus_fdr_", bh_levels)
+
+# Pseudo-bulks at known cell numbers, from the pseudo-bulk half.
+pseudo <- withr::with_seed(20261102, {
+  lapply(seq_len(n_bulk), function(b) {
+    w <- stats::rgamma(length(types), shape = 2)
+    m <- stats::rmultinom(1L, n_cells_bulk, prob = w / sum(w))[, 1L]
+    cells <- unlist(lapply(seq_along(types), function(j) {
+      pool <- which(!ref & cell_type == types[j])
+      pool[sample.int(length(pool), m[j], replace = TRUE)]
+    }))
+    list(y = rowSums(x[, cells, drop = FALSE]), p = m / sum(m))
+  })
+})
+
+fit_panel <- function(genes) {
+  mu <- vapply(
+    types,
+    function(j) rowMeans(x[genes, ref & cell_type == j, drop = FALSE]),
+    numeric(length(genes))
+  )
+  sigma <- vapply(
+    types,
+    function(j) {
+      xj <- t(x[genes, ref & cell_type == j, drop = FALSE])
+      fit_cov_shrinkage(xj, lambda = shrinkage_lambda_closed_form(xj))$sigma
+    },
+    matrix(0, length(genes), length(genes))
+  )
+  scores <- lapply(pseudo, function(pb) {
+    y <- pb$y[genes]
+    p_nnls <- DeCovarT::deconvolute_ratios_nnls(y, mu)
+    p_dcv <- DeCovarT::deconvolute_single_cell(y, mu, sigma)$p
+    rbind(
+      cbind(
+        method = "nnls",
+        DeCovarT::compute_benchmark_metrics(
+          y, mu, estimated_p = p_nnls, true_ratios = pb$p
+        )$regression$global
+      ),
+      cbind(
+        method = "decovart_newton",
+        DeCovarT::compute_benchmark_metrics(
+          y, mu, estimated_p = p_dcv, true_ratios = pb$p
+        )$regression$global
+      )
+    )
+  })
+  do.call(rbind, scores)
+}
+
+rank_lists <- c(list(type_equal_ratio = rank_a), rank_b)
+sweep <- do.call(rbind, lapply(names(rank_lists), function(r) {
+  do.call(rbind, lapply(panel_sizes, function(n) {
+    genes <- utils::head(rank_lists[[r]], n)
+    if (length(genes) < n) {
+      return(NULL) # the gate passes fewer genes than requested
+    }
+    cbind(rank = r, n_genes_global = n, fit_panel(genes))
+  }))
+}))
+
+# Bulk consistency filter on the real standard-Wnt bulks of the slot
+# (bulk: genes x 3 replicates, same identifiers). sd and n_cells come
+# from the reference half; flagged genes are removed before the sweep
+# is repeated.
+# flags <- bulk_consistency_filter(bulk, mu = mu_all, sd = sd_all,
+#                                  n_cells = table(cell_type[ref]))
+# rank_lists_clean <- lapply(rank_lists, intersect, flags$gene[flags$keep])
+```
+
+Three outcomes would bear on the hypothesis. A rise and a plateau in
+both methods, with no decline up to 2000 genes, says that the panel of
+500 is not too large for the pseudo-bulks. A decline that disappears
+after the bulk consistency filter points to platform-inconsistent
+genes, which only the real bulks can show. A decline in DeCovarT alone,
+present already on pseudo-bulks, points to the covariance estimate
+rather than to the genes.

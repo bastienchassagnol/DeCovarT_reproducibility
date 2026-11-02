@@ -21,8 +21,8 @@ and does not restate the theory.
    estimated in every type and that carry information about the
    proportions $\boldsymbol{p}$ (@sec-fs-scope).
 3. Plug the moments into DeCovarT and deconvolve the bulk series
-   (GSE229386) where a single-cell reference matches it: the 48 h
-   standard-Wnt samples.
+   (GSE229386) where a single-cell reference matches it: the
+   standard-Wnt samples at 48 h, 72 h and 96 h.
 
 The target is a covariance plug-in for the likelihood, not a
 biologically interpretable gene regulatory network
@@ -35,13 +35,14 @@ of type $j$.
 
 @fig-pipeline lists the nine steps in the order the scripts run them.
 Steps 2 to 5 are @sec-fs-scope; step 7 is @sec-cov-scope; step 8 is
-@sec-align; step 9 is @sec-deconv-models.
+[2.1, three regimes](https://bastienchassagnol.github.io/DeCovarT/articles/02-1-single-cell-generative-optimisation.html#sec-three-regimes);
+step 9 is @sec-deconv-models.
 
 ```{.tikz}
 %%| label: fig-pipeline
-%%| fig-cap: "Analysis pipeline, read left to right on each row. Row 1 builds the gene panel from the single-cell counts: quality control, a presence gate in every type, an omnibus count-model screen ranked by effect size, and a cross-platform filter fitted on the only matched pair (single-cell 48 h, standard-Wnt bulk 48 h). Row 2 estimates one covariance per type and time on the linear scale, with the tuning parameter of each estimator chosen by cross-validated held-out Gaussian log-likelihood, lifts the estimates to DeCovarT's moments and deconvolves the matched bulk. The dashed box is optional; it needs the covariances of step 7."
+%%| fig-cap: "Analysis pipeline, read left to right on each row. Row 1 builds the gene panel from the single-cell counts: quality control, a presence gate in every type, an omnibus count-model screen ranked by effect size, and a cross-platform filter fitted independently at each of the three matched pairs (single-cell 48 h, 72 h and 96 h against the standard-Wnt bulk at the same time). Row 2 estimates one covariance per type and time on the linear scale, with the tuning parameter of each estimator chosen by cross-validated held-out Gaussian log-likelihood, lifts the estimates to DeCovarT's moments and deconvolves the matched bulk at all three times. The dashed box is optional; it needs the covariances of step 7."
 %%| filename: fig-pipeline
-%%| alt: Two-row flowchart. Row one, left to right: 1 GSE229513 UMI counts and cell-type labels; 2 cell and gene quality control; 3 presence gate in every type; 4 omnibus deviance or quasi-likelihood screen, ranked by effect size; 5 bulk consistency filter at 48 hours, single-cell 48 hours against standard-Wnt bulk 48 hours. An elbow arrow leads from step 5 to row two. Row two, left to right: 6 optional multivariate refinement by Fisher information or NSGA-II, drawn dashed with dashed arrows; 7 per type and time on the linear scale, shrinkage covariance as default, or graphical lasso, SILGGM or PLNnetwork, with lambda chosen by cross-validated held-out log-likelihood and nested cross-validation comparing the four; 8 lift to DeCovarT moments mu hat j and Sigma hat W j; 9 DeCovarT on the 48 hour standard-Wnt bulk, with a note that the 24 hour early-Wnt bulk has no matched single-cell reference.
+%%| alt: Two-row flowchart. Row one, left to right: 1 GSE229513 UMI counts and cell-type labels; 2 cell and gene quality control; 3 presence gate in every type; 4 omnibus deviance or quasi-likelihood screen, ranked by effect size; 5 bulk consistency filter fitted independently at 48, 72 and 96 hours, single-cell against standard-Wnt bulk at each matched time. An elbow arrow leads from step 5 to row two. Row two, left to right: 6 optional multivariate refinement by Fisher information or NSGA-II, drawn dashed with dashed arrows; 7 per type and time on the linear scale, shrinkage covariance as default, or graphical lasso, SILGGM or PLNnetwork, with lambda chosen by cross-validated held-out log-likelihood and nested cross-validation comparing the four; 8 lift to DeCovarT moments mu hat j and Sigma hat W j; 9 DeCovarT on the standard-Wnt bulk at 48, 72 and 96 hours, with a note that the early-Wnt bulk has no matched single-cell reference at any time.
 \begin{tikzpicture}[
   node distance=5mm and 5mm,
   pstep/.style={text width=26mm, minimum height=22mm},
@@ -51,12 +52,12 @@ Steps 2 to 5 are @sec-fs-scope; step 7 is @sec-cov-scope; step 8 is
 \node[box, pstep, right=of s1] (s2) {Cell and gene QC};
 \node[box, pstep, right=of s2] (s3) {Presence gate\\ in every type};
 \node[box, pstep, right=of s3] (s4) {Omnibus deviance /\\ quasi-likelihood screen,\\ ranked by effect size};
-\node[box, pstep, right=of s4] (s5) {Bulk consistency\\ filter, 48\,h only:\\ single-cell 48\,h $\leftrightarrow$\\ standard-Wnt bulk 48\,h};
+\node[box, pstep, right=of s4] (s5) {Bulk consistency\\ filter, 48/72/96\,h:\\ single-cell $\leftrightarrow$\\ standard-Wnt bulk,\\ each matched time};
 \node[box, pstep, dashed, below=16mm of s1] (s6) {Optional refinement:\\ Fisher information /\\ NSGA-II};
 \node[keybox, text width=56mm, minimum height=22mm, right=of s6] (s7) {Per type $\times$ time, linear scale:\\ shrinkage $\widehat{\boldsymbol{\Sigma}}$ (default) $\mid$ glasso $\mid$\\ SILGGM $\mid$ PLNnetwork;\\ $\lambda$ by cross-validated held-out\\ log-likelihood; nested CV compares the four};
 \node[box, pstep, right=of s7] (s8) {Lift to DeCovarT\\ moments\\ $\widehat{\boldsymbol{\mu}}_{\cdot j}$, $\widehat{\boldsymbol{\Sigma}}_{W,j}$};
-\node[keybox, pstep, right=of s8] (s9) {DeCovarT on bulk:\\ 48\,h standard Wnt};
-\node[note, below=1.5mm of s9, text width=30mm, align=center, font=\footnotesize] (n9) {24\,h early Wnt: no matched single-cell reference};
+\node[keybox, pstep, right=of s8] (s9) {DeCovarT on bulk:\\ standard Wnt,\\ 48/72/96\,h};
+\node[note, below=1.5mm of s9, text width=30mm, align=center, font=\footnotesize] (n9) {Early Wnt: no matched single-cell reference at any time};
 \foreach \k in {1,...,9} {\node[num] at (s\k.north west) {\k};}
 \draw[edge] (s1) -- (s2);
 \draw[edge] (s2) -- (s3);
@@ -71,8 +72,8 @@ Steps 2 to 5 are @sec-fs-scope; step 7 is @sec-cov-scope; step 8 is
 \end{tikzpicture}
 ```
 
-Branches that were tried and dropped are not drawn: `ppcor`
-partial correlations, the `huge` graphical lasso, penalty selection by
+Branches that were tried and dropped are not drawn: partial
+correlations by matrix inversion, the `huge` graphical lasso, penalty selection by
 EBIC alone, and exports on the `log1p` scale. @sec-cov-stale lists the
 outputs those branches left behind.
 
@@ -85,12 +86,11 @@ run on Suppinger.
 | Book chapter | What it runs | Theory (DeCovarT vignettes) |
 |---|---|---|
 | @sec-geo-design, Suppinger data | GEO objects, design, Seurat processing | [1.1 Generative model](https://bastienchassagnol.github.io/DeCovarT/articles/01-1-population-generative-optimisation.html); [2.1 Three reference regimes](https://bastienchassagnol.github.io/DeCovarT/articles/02-1-single-cell-generative-optimisation.html#sec-three-regimes) |
-| @sec-fs-scope, Feature selection | QC, presence gate, ranking, bulk filter | [3.1 Feature selection](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-estimand) |
+| @sec-fs-scope, Feature selection | QC, presence gate, ranking, bulk filter | [3.1 Feature selection](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#wrn-fs-estimand) |
 | @sec-cov-scope, Covariance estimation | four estimators, cross-validated tuning | [3.2 Covariance estimation](https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-cov-target) |
-| @sec-align, Population alignment | affine aggregation, bootstrap, `scDesign3` | [2.1 From cells to reference moments](https://bastienchassagnol.github.io/DeCovarT/articles/02-1-single-cell-generative-optimisation.html#sec-reference); [3.3 Perspectives](https://bastienchassagnol.github.io/DeCovarT/articles/03-3-precision-networks.html#sec-cov-perspectives) |
-| @sec-deconv-models, Comparators | mean-based deconvolution baselines | [5.1 Review](https://bastienchassagnol.github.io/DeCovarT/articles/05-1-review-distribution-aware.html) |
+| @sec-deconv-models, Comparators | DeCovarT, second-generation methods, NNLS and RLM baselines | [5.1 Review](https://bastienchassagnol.github.io/DeCovarT/articles/05-1-review-distribution-aware.html); [2.1 From cells to reference moments](https://bastienchassagnol.github.io/DeCovarT/articles/02-1-single-cell-generative-optimisation.html#sec-reference) |
 | @sec-bio-deconv, Biological reading | early versus standard Wnt | none |
-| @sec-sensitivity, Sensitivity | misspecification sweep | [S5 Misspecification](https://bastienchassagnol.github.io/DeCovarT/articles/S5-misspecification.html) |
+| @sec-sensitivity, Sensitivity | misspecification sweep, `scDesign3` calibration | [S5 Misspecification](https://bastienchassagnol.github.io/DeCovarT/articles/S5-misspecification.html) |
 
 : Book chapters and the vignette chapters that hold their theory. {#tbl-reading-guide}
 

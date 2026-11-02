@@ -1,0 +1,135 @@
+% Early versus standard Wnt: composite for docs/06-biological-insights.qmd,
+% #fig-bio-early. Replaces images/deconvolution_guided_early_treatment-1.png
+% once the panels exist.
+%
+% Panel a is drawn here: a schematic of the single-cell reference states at
+% each bulk time, with Bezier edges. It carries no quantity. Its routes are
+% the qualitative reading of the current figure; its states are the scored
+% types of docs/02-feature-selection.qmd (#tbl-fs-cell-counts).
+% Panels b to d come from scripts/06_01_plot_early_wnt_compositions.R
+% (ggplot2, cairo_pdf, seed 20261101). Until they exist, a framed
+% placeholder stands in for each, so the layout compiles on its own.
+%
+% Build (not run; from this directory, after the R script):
+%   latexmk -lualatex early_wnt.tex
+%   pdftocairo -svg early_wnt.pdf ../../fig_06_early_wnt.svg
+%   pdftoppm -png -r 300 -singlefile early_wnt.pdf ../../fig_06_early_wnt
+% Then delete any white page rectangle that pdftocairo adds to the SVG.
+\documentclass[tikz,border=4pt]{standalone}
+\usepackage{iftex}
+\ifPDFTeX
+  \PackageError{early_wnt}{Use LuaLaTeX or XeLaTeX}{}
+\fi
+\usepackage{fontspec}
+\usepackage{amsmath,amssymb,amsfonts,bm}
+\usepackage{graphicx}
+\usetikzlibrary{arrows.meta,positioning,fit,backgrounds,calc,shapes.geometric}
+% palette of docs/_quarto.yml, plus the two arm colours of the R panels
+\definecolor{ink}{HTML}{1F2937}
+\definecolor{latfill}{HTML}{DAE9FB}
+\definecolor{latdraw}{HTML}{4477B5}
+\definecolor{obsfill}{HTML}{C9CDD3}
+\definecolor{obsdraw}{HTML}{747B86}
+\definecolor{armstd}{HTML}{1D4E89}
+\definecolor{armearly}{HTML}{C45C26}
+\tikzset{
+  every node/.style={text=ink},
+  state/.style={circle, draw=obsdraw, fill=obsfill!45, minimum size=4mm,
+    inner sep=0pt, line width=0.7pt},
+  slabel/.style={font=\scriptsize, align=left, anchor=west, inner sep=1pt},
+  timehead/.style={font=\footnotesize\bfseries, anchor=south},
+  armhead/.style={font=\small\bfseries, anchor=south west, inner sep=0pt},
+  main/.style={-{Stealth[length=2.2mm]}, line width=1.1pt},
+  reduced/.style={main, line width=0.7pt, densely dashed},
+  panel/.style={inner sep=0pt, anchor=north west},
+  tag/.style={font=\bfseries\small, anchor=south east, inner sep=1pt}
+}
+% \panelfile{file}{width}: the R panel, or a framed placeholder.
+\newcommand{\panelfile}[2]{%
+  \IfFileExists{#1}%
+    {\includegraphics[width=#2]{#1}}%
+    {\fbox{\parbox[c][3cm][c]{#2}{\centering\footnotesize
+      \detokenize{#1} not built yet:\\
+      run scripts/\detokenize{06_01_plot_early_wnt_compositions.R}}}}}
+% \armschematic{prefix}{colour}{title}{0 standard, 1 early}: one schematic, origin at its top left.
+% Columns are the bulk times; rows are the reference states of that time.
+\newcommand{\armschematic}[4]{%
+  \node[armhead, text=#2] at (0,0.95) {#3};
+  \foreach \tm/\x in {48\,h/0, 72\,h/2.5, 96\,h/5.0}
+    \node[timehead] at (\x,0.2) {\tm};
+  % 48 h
+  \node[state] (#1np)  at (0,-0.4) {};
+  \node[state] (#1exn) at (0,-1.5) {};
+  \node[state] (#1epi) at (0,-2.6) {};
+  % 72 h
+  \node[state] (#1ect72) at (2.5,-0.8) {};
+  \node[state] (#1ps)    at (2.5,-2.6) {};
+  % 96 h
+  \node[state] (#1ect96) at (5.0,-0.2) {};
+  \node[state] (#1gut)   at (5.0,-1.2) {};
+  \node[state] (#1cm)    at (5.0,-2.2) {};
+  \node[state] (#1psm)   at (5.0,-3.2) {};
+  \node[state] (#1sdf)   at (5.0,-4.2) {};
+  \node[slabel, right=0.5mm of #1np]  {naïve\\pluripotency};
+  \node[slabel, right=0.5mm of #1exn] {exiting naïve\\pluripotency};
+  \node[slabel, right=0.5mm of #1epi] {epiblast};
+  \node[slabel, right=0.5mm of #1ect72] {ectopic\\pluripotency};
+  \node[slabel, below right=0.5mm and -1mm of #1ps] {primitive streak};
+  \node[slabel, right=0.5mm of #1ect96] {ectopic pluripotency};
+  \node[slabel, right=0.5mm of #1gut] {gut};
+  \node[slabel, right=0.5mm of #1cm]  {caudal mesoderm};
+  \node[slabel, right=0.5mm of #1psm] {pre-somitic mesoderm};
+  \node[slabel, right=0.5mm of #1sdf] {somite differentiation\\front};
+  \draw[main, draw=#2] (#1np) -- (#1exn);
+  \ifnum#4=0
+    % standard Wnt: epiblast, then primitive streak, then caudal branches
+    \draw[main, draw=#2] (#1exn) -- (#1epi);
+    \draw[main, draw=#2] (#1epi) .. controls +(1.2,0) and +(-1.2,0) .. (#1ps);
+    \draw[main, draw=#2] (#1ps) .. controls +(1.3,0) and +(-1.3,0) .. (#1cm);
+    \draw[main, draw=#2] (#1ps) .. controls +(1.3,0) and +(-1.3,0) .. (#1psm);
+    \draw[main, draw=#2] (#1ps) .. controls +(1.0,0.4) and +(-1.4,0) .. (#1gut);
+    \draw[main, draw=#2] (#1psm) -- (#1sdf);
+  \else
+    % early Wnt: diversion to ectopic pluripotency; caudal route reduced
+    \draw[reduced, draw=#2] (#1exn) -- (#1epi);
+    \draw[main, draw=#2, line width=1.6pt]
+      (#1exn) .. controls +(1.3,0) and +(-1.3,0) .. (#1ect72);
+    \draw[main, draw=#2, line width=1.6pt]
+      (#1ect72) .. controls +(1.2,0) and +(-1.2,0) .. (#1ect96);
+    \draw[reduced, draw=#2] (#1epi) .. controls +(1.2,0) and +(-1.2,0) .. (#1ps);
+    \draw[reduced, draw=#2] (#1ps) .. controls +(1.3,0) and +(-1.3,0) .. (#1cm);
+    \draw[reduced, draw=#2] (#1ps) .. controls +(1.3,0) and +(-1.3,0) .. (#1psm);
+    \draw[reduced, draw=#2] (#1ps) .. controls +(1.0,0.4) and +(-1.4,0) .. (#1gut);
+    \draw[reduced, draw=#2] (#1psm) -- (#1sdf);
+  \fi
+}
+\begin{document}
+\begin{tikzpicture}
+  % (a) two schematics, side by side
+  \begin{scope}[shift={(0,0)}]
+    \armschematic{s}{armstd}{Standard Wnt (pulse at 48\,h)}{0}
+  \end{scope}
+  \begin{scope}[shift={(8.6,0)}]
+    \armschematic{e}{armearly}{Early Wnt (pulse at 24\,h)}{1}
+  \end{scope}
+  \node[tag] at (-0.3,1.25) {a};
+  % legend of panel a
+  \begin{scope}[shift={(0,-5.1)}]
+    \draw[main, draw=ink] (0,0) -- (0.9,0);
+    \node[slabel] at (1.0,0) {route of the current figure};
+    \draw[reduced, draw=ink] (4.6,0) -- (5.5,0);
+    \node[slabel] at (5.6,0) {reduced route};
+    \node[slabel, text=ink!75] at (8.6,0)
+      {schematic: no quantity; states are the scored reference types};
+  \end{scope}
+  % (d) sign agreement, to the right of panel a
+  \node[panel] (D) at (17.4,1.25) {\panelfile{panel_d_agreement.pdf}{6.2cm}};
+  \node[tag] at (D.north west) {d};
+  % (b) levels and (c) contrasts, full width below
+  \node[panel] (B) at (0,-5.7) {\panelfile{panel_b_levels.pdf}{23.6cm}};
+  \node[tag] at (B.north west) {b};
+  \node[panel] (C) at ($(B.south west)+(0,-0.5)$)
+    {\panelfile{panel_c_contrasts.pdf}{23.6cm}};
+  \node[tag] at (C.north west) {c};
+\end{tikzpicture}
+\end{document}

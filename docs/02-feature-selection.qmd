@@ -5,15 +5,42 @@ title: "Feature selection"
 ## Scope and status {#sec-fs-scope}
 
 This chapter builds the gene panel on which the covariances of
-@sec-cov-scope are estimated. It runs on the single-cell counts of
-GSE229513 at the three bulk-matched times (@sec-geo-design), one time
-at a time. What the panel must achieve, and why each step is there, is
-stated in the feature-selection vignette
-([3.1, estimand](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-estimand)):
+@sec-cov-scope are estimated. It is the application that the
+feature-selection vignette
+([3.1](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html))
+leaves to this book: filters as applied, settings, rank tables and
+code. It runs on the single-cell counts of GSE229513 at the three
+bulk-matched times (@sec-geo-design), one time at a time. What the
+panel must achieve, and why each step is there, is stated in the
+vignette
+([3.1, what the genes are for](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#wrn-fs-estimand)):
 genes whose type-level moments can be estimated in every type and that
-carry information about $\boldsymbol{p}$. The ranking statistics below
-are computed inside one specimen. They calibrate a screen, not a
-population-level claim of differential expression (@nte-pseudoreplication).
+carry information about $\boldsymbol{p}$.
+
+The Suppinger reference is the one-specimen case of that callout. It is
+one technical scRNA-seq experiment
+[@suppingerMultimodalCharacterizationMurine2023], and its cells are
+draws from one specimen, not biological replicates (@sec-geo-design).
+Every ranking statistic below is therefore computed inside that
+specimen: it calibrates a screen, not a population-level claim of
+differential expression. Steps that need several donors, such as a
+`DESeq2` pseudo-bulk shortlist, do not apply here (@sec-fs-nsga2).
+
+::: {#nte-pseudoreplication .callout-note}
+## :information_source: Cells are not biological replicates
+
+Treating the cells of one specimen as independent replicates of a
+population contrast is pseudoreplication: it inflates the apparent
+sample size and understates the standard error of every statistic
+computed across cells
+[@zimmermanPracticalSolutionPseudoreplication2021;
+@squairConfrontingFalseDiscoveries2021;
+@crowellMuscatDetectsSubpopulationspecific2020]. A score fitted this
+way, or a bootstrap that resamples cells with labels fixed, measures
+generalisation to new cells of this specimen, not to new specimens. It
+is reported as such wherever it is used in this book
+(@sec-cov-scope, @sec-sens-scdesign3).
+:::
 
 Ranks are computed on `SCTransform` Pearson residuals or on a count
 GLM. Neither scale is exported: the moments that enter DeCovarT are on
@@ -27,9 +54,9 @@ the linear scale
 | Between/within ratio rank (current) | @sec-fs-ms-ratio | same | run |
 | Presence gate | @sec-fs-presence | `R/rank_genes_omnibus.R::presence_gate()` | written, not run |
 | Omnibus count-model rank (new) | @sec-fs-omnibus | `R/rank_genes_omnibus.R::rank_genes_omnibus()` | written, not run |
-| 48 h bulk consistency filter | @sec-fs-bulk-consistency | `R/bulk_consistency.R::bulk_consistency_filter()` | written, not run |
+| Bulk consistency filter | @sec-fs-bulk-consistency | `R/bulk_consistency.R::bulk_consistency_filter()` | written, not run |
 | Export of the top 500 per time | @sec-fs-export | `scripts/01_03_export_equal_type_seurat.R` | run on the current rank |
-| Optional NSGA-II refinement | @sec-fs-nsga2 | `scripts/04_02_feature_selection_genetic_algorithm.R` | template only |
+| Optional NSGA-II refinement (post hoc) | @sec-fs-nsga2 | `scripts/04_02_feature_selection_genetic_algorithm.R` | template only |
 
 : Feature-selection steps, code and status. "Written, not run" means the function exists and parses but no output has been produced in this repository. {#tbl-fs-status}
 
@@ -103,9 +130,10 @@ $$
 \min_{j}v_{gj}>0 .
 $$ {#eq-fs-presence}
 
-`presence_gate()` in `R/rank_genes_omnibus.R` returns the logical
-gene vector; $\delta_{\min}$ is an argument fixed before the ranks are
-seen (the sketch below uses 0.05). The reasons for a gate in every
+`presence_gate()` in `R/rank_genes_omnibus.R` returns one row per
+gene with `min_detection` and a logical `pass`; $\delta_{\min}$ is the
+argument `min_frac`, fixed before the ranks are seen (the sketch below
+uses 0.05). The reasons for a gate in every
 type, rather than in at least one, are in
 [3.1, presence](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-presence).
 In the current outputs the gate is absent. Its absence is one cause of
@@ -250,16 +278,27 @@ pass the presence gate:
 # cells; lib: full library sizes (10^log_umi). Thresholds are set
 # before the ranks are seen.
 source("R/rank_genes_omnibus.R")
-keep <- presence_gate(counts, cell_type, min_detection = 0.05)
-ranked <- rank_genes_omnibus(counts[keep, ], cell_type, library_size = lib)
+gate <- presence_gate(counts, cell_type, min_frac = 0.05)
+keep <- gate$gene[gate$pass]
+size_factors <- lib / stats::median(lib)
+# rank_genes_omnibus() applies the same gate internally (min_frac).
+ranked <- rank_genes_omnibus(
+  counts,
+  cell_type,
+  size_factors = size_factors,
+  fdr = 0.05,
+  min_frac = 0.05,
+  n_select = 500L
+)
+panel <- ranked$gene[ranked$selected]
 
-# The two glmGamPoi calls it wraps:
+# The two glmGamPoi calls it wraps (size factors through the offset):
 fit <- glmGamPoi::glm_gp(
   counts[keep, ],
   design = ~cell_type,
   col_data = data.frame(cell_type = cell_type),
-  offset = log(lib),
-  size_factors = FALSE
+  offset = log(size_factors),
+  size_factors = rep(1, ncol(counts))
 )
 qlf <- glmGamPoi::test_de(fit, reduced_design = ~1)
 ```
@@ -284,39 +323,75 @@ computed here. Labels refined on the same counts would make every
 permutation $p$-value anti-conservative
 [@gonzalezDelgadoPostclusteringInference2025].
 
-## 48 h bulk consistency filter {#sec-fs-bulk-consistency}
+## Bulk consistency filter {#sec-fs-bulk-consistency}
 
 `bulk_consistency_filter()` (`R/bulk_consistency.R`) removes genes
 whose bulk expression cannot be produced by the single-cell reference.
-It needs a single-cell slot and a bulk sample of the same condition.
-In Suppinger the only such pair is single-cell 48 h (B-S and SBR
-pooled) against the standard-Wnt bulk at 48 h, three biological
-replicates (@fig-suppinger-design). The early-Wnt bulk has no matched
-reference.
+It needs a single-cell slot and a bulk sample of the same condition
+(@fig-suppinger-design).
 
-- **Fit.** At 48 h only: for each gene, compare the bulk value of each
-  replicate with the range that the 48 h type means allow, and flag
-  median-absolute-deviation outliers. The thresholds follow
-  RNA-Sieve's range bound and outlier rule as described in the
-  vignette.
-- **Apply.** The flagged genes are removed from the panel at every
-  time, including 72 h and 96 h, where no matched pair exists.
+- **Matched pairs.** The single-cell reference matches the standard-Wnt
+  bulk at all three times used in this book: single-cell 48 h (B-S and
+  SBR pooled), 72 h (SBR) and 96 h (B-S), each against three biological
+  replicates of the standard-Wnt bulk at that time.
+- **No match for early Wnt.** The early-Wnt bulk (Wnt pulse at 24 h)
+  has no single-cell counterpart at any time, so no bulk–reference
+  comparison is possible on that arm.
+- **Fit.** At each of the three matched times independently: for each
+  gene, compare the bulk value of each replicate with the range that
+  the type means of that time allow, and flag median-absolute-deviation
+  outliers. The range is the bound of
+  [3.1, cross-platform consistency](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-cross-platform),
+  and the thresholds follow RNA-Sieve's range bound and outlier rule
+  [@erdmann-phamLikelihoodbasedDeconvolutionBulk2021].
+- **Apply.** A gene flagged at any of the three matched times is
+  removed from the panel at every time, including the early-Wnt arm,
+  where no matched pair exists.
+- **Assumption, now testable.** With three matched times the flags can
+  be compared across 48 h, 72 h and 96 h: a gene flagged consistently
+  supports treating the platform effect as a property of the gene, a
+  gene flagged only at one time does not. This comparison has not yet
+  been run.
 - **Status.** A heuristic, labelled as such in the code. No script
   reads the bulk HTSeq table yet (`01_01` does not); the filter has
   not been run.
 
-The model behind the bound, and the alternatives that keep such genes
-and down-weight them, are in
-[3.1, cross-platform](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-cross-platform).
+In the vignette, cross-platform consistency is a perspective, not a
+tier: its review table gives DeCovarT no cross-platform step, because
+the reference is one specimen
+([3.1, comparison of second-generation methods](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-review-table)).
+For Suppinger, the entry of that column is the range bound fitted at
+48 h described here. The model behind the bound, its tail
+([3.1, tail bound](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-range-tail)),
+and the alternatives that keep such genes and down-weight them are in
+the vignette.
 
 ```{r}
 #| label: fs-bulk-consistency-call
 #| eval: false
-# Not run. sc48: counts of the 48 h slot with labels; bulk48: the three
-# standard-Wnt 48 h replicates from GSE229386, same gene identifiers.
+# Not run. sc[[tm]]: raw counts (genes x cells) of the single-cell slot
+# at time tm, with labels cell_type[[tm]] and full library sizes
+# lib[[tm]]; bulk[[tm]]: the three standard-Wnt replicates at tm from
+# GSE229386 (genes x samples), same gene identifiers.
+source("R/utils_general.R")
 source("R/bulk_consistency.R")
-flags <- bulk_consistency_filter(sc48, cell_type48, bulk48)
-panel <- setdiff(panel, flags$gene[flags$flagged])
+flags <- lapply(c("48h", "72h", "96h"), function(tm) {
+  x <- sc[[tm]][panel, , drop = FALSE]
+  ct <- droplevels(factor(cell_type[[tm]]))
+  norm <- sweep(as.matrix(x), 2L, lib[[tm]] / stats::median(lib[[tm]]), "/")
+  mu <- sapply(levels(ct), function(k) rowMeans(norm[, ct == k, drop = FALSE]))
+  sd <- sapply(levels(ct), function(k) apply(norm[, ct == k, drop = FALSE], 1L, stats::sd))
+  out <- bulk_consistency_filter(
+    bulk = bulk[[tm]][panel, , drop = FALSE],
+    mu = mu,
+    sd = sd,
+    n_cells = table(ct)[levels(ct)],
+    z_range = 3,
+    mad_k = 3
+  )
+  out$gene[!out$keep]
+})
+panel <- setdiff(panel, unique(unlist(flags)))
 ```
 
 ## Cell-line sensitivity at 48 h {#sec-fs-cell-line}
@@ -455,9 +530,39 @@ UpSet diagrams of the lists across times and against the marker panel.
 A univariate rank ignores redundancy between genes and the
 covariances DeCovarT models. The optional stage searches subsets of
 the panel with a multi-objective criterion on all types jointly
-([3.1, multivariate](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-multivariate)).
+([3.1, covariance-driven (post hoc) selection](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-multivariate)).
 It needs $\widehat{\boldsymbol{\Sigma}}_{j}$, so it runs after
-@sec-cov-scope, and it is drawn dashed in @fig-pipeline.
+@sec-cov-scope, and it is drawn dashed in @fig-pipeline. Its panels
+fall under the circularity warning of the vignette
+([3.1, circularity](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#wrn-fs-circularity)):
+a comparison with other methods also reports the panel of
+@sec-fs-export, chosen without the model.
+
+**Shortlist.** The multi-donor pipeline of the screening appendix
+([S6, multi-donor pipeline](https://bastienchassagnol.github.io/DeCovarT/articles/S6-feature-screening-scenario.html#sec-recommended))
+feeds NSGA-II with a `DESeq2` pseudo-bulk shortlist. With one
+specimen, as for the Suppinger reference, the `DESeq2` step does not
+apply, and strategy B of that appendix (presence gate, omnibus gate,
+effect-size rank; @sec-fs-presence and @sec-fs-omnibus) replaces the
+shortlist.
+
+**Types with few cells.** A joint test or objective on the panel
+$\mathcal{G}$ uses the within-type covariance, which is
+high-dimensional when $C_j$ is not much larger than $|\mathcal{G}|$
+([3.1, multivariate tests](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-multivariate-tests)).
+With the 500-gene panel of @sec-fs-export, seven of the eleven scored
+type × time cells of @tbl-fs-cell-counts have $C_j<|\mathcal{G}|$, so
+their sample covariance is singular:
+
+- 48 h: exiting naïve pluripotency (265 cells), naïve pluripotency (36);
+- 72 h: ectopic pluripotency (266), naïve pluripotency (66);
+- 96 h: gut (140), ectopic pluripotency (116), somite differentiation
+  front (29).
+
+Caudal mesoderm at 96 h (1,061 cells) is about twice the panel size.
+For these types the objectives below use the regularised
+$\widehat{\boldsymbol{\Sigma}}_{j}$ of @sec-cov-scope, never the
+sample covariance.
 
 Planned settings:
 
@@ -500,30 +605,4 @@ front <- mco::nsga2(fitness, idim = nrow(mu), odim = 2L,
   lower.bounds = rep(0, nrow(mu)), upper.bounds = rep(1, nrow(mu)))
 ```
 
-## What is not run {#sec-fs-not-run}
 
-::: {#nte-pseudoreplication .callout-warning}
-## :warning: Cells of one specimen are not biological replicates
-
-GSE229513 has one specimen series. Cells, or random partitions of
-cells, are technical draws; resampling them measures sampling
-variability inside the specimen, not variability between organoids
-[@squairConfrontingFalseDiscoveries2021;
-@zimmermanPracticalSolutionPseudoreplication2021]. No calibrated
-differential-expression claim is made in this book. The bulk series
-GSE229386 does have three biological replicates per time and schedule;
-they support bulk contrasts, not single-cell ones.
-:::
-
-The following were considered and are not part of the pipeline. Each
-is reviewed in
-[3.1, review](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-review).
-
-- Pseudo-bulk `DESeq2`, `edgeR` or `limma`–voom: no biological
-  replicates at the level of the contrast (@nte-pseudoreplication).
-- `MAST` hurdle tests: droplet UMI counts are modelled without a
-  zero-inflation layer (@nte-drop-zico).
-- Differential-network screens (`INDEED`, D-trace) and Markov-boundary
-  growth of marker seeds: they need fitted graphs and belong to the
-  perspectives of the covariance vignette
-  ([3.3, perspectives](https://bastienchassagnol.github.io/DeCovarT/articles/03-3-precision-networks.html#sec-cov-perspectives)).

@@ -353,9 +353,12 @@ $\widehat{\boldsymbol{\mu}}_{\cdot j}$ is the mean of the
 size-factor-normalised counts of its cells and
 $\widehat{\boldsymbol{\Sigma}}_{j}$ is the selected covariance, both on
 the scale of @sec-cov-inputs; @eq-grn-export holds by construction.
-For `PLNnetwork` both come from @eq-pln-linear. The lift from these
-cell-level moments to the population Gaussian that the convolution
-uses is @sec-align.
+For `PLNnetwork` both come from @eq-pln-linear. Which covariance
+layer these cell-level moments identify, and how the sample scales are
+estimated inside the DeCovarT fit, is in
+[2.1, three regimes](https://bastienchassagnol.github.io/DeCovarT/articles/02-1-single-cell-generative-optimisation.html#sec-three-regimes)
+and
+[2.1, profile Newton](https://bastienchassagnol.github.io/DeCovarT/articles/02-1-single-cell-generative-optimisation.html#sec-profile-newton).
 
 ### Displays {#sec-cov-plots}
 
@@ -411,7 +414,7 @@ order of weight:
    $\widehat{\boldsymbol{\Sigma}}_{j}$ from each estimator. This is the
    score tied to the paper's estimand.
 3. **Technical stability**: a bootstrap of cells within type, labels
-   fixed (@sec-align-bootstrap). Edge-inclusion frequencies for the
+   fixed (@nte-pseudoreplication). Edge-inclusion frequencies for the
    sparse estimators and the Frobenius spread of
    $\widehat{\boldsymbol{\Sigma}}_{j}$ for all four. Conditional on this
    specimen.

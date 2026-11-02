@@ -31,9 +31,9 @@ resource.
 
 ```{.tikz}
 %%| label: fig-suppinger-design
-%%| fig-cap: "Design of the two GEO series. Left, single-cell GSE229513: cell line, then time slot; each circle is one slot, coloured by cell line (B-S blue, SBR grey). Right, bulk GSE229386: Wnt schedule, then time point; each rounded square holds three biological replicates. Thick outlines mark the single-cell slots used in this book (48 h, 72 h, 96 h). The dashed link joins the only matched pair, single-cell 48 h (both lines) and standard-Wnt bulk 48 h. The early-Wnt branch has no single-cell counterpart."
+%%| fig-cap: "Design of the two GEO series. Left, single-cell GSE229513: cell line, then time slot; each circle is one slot, coloured by cell line (B-S blue, SBR grey). Right, bulk GSE229386: Wnt schedule, then time point; each rounded square holds three biological replicates. Thick outlines mark the single-cell slots used in this book (48 h, 72 h, 96 h). Dashed links join each of the three matched pairs: single-cell 48 h (both lines) with standard-Wnt bulk 48 h, single-cell 72 h (SBR) with standard-Wnt bulk 72 h, and single-cell 96 h (B-S) with standard-Wnt bulk 96 h. The early-Wnt branch has no single-cell counterpart at any time."
 %%| filename: fig-suppinger-design
-%%| alt: Two trees. Left tree, scRNA-seq GSE229513, splits into cell line B-S with time slots 48, 52, 56, 96, 108 and 120 hours, and cell line SBR with time slots 24, 36, 48, 60, 72 and 84 hours; slots are circles, blue for B-S and grey for SBR, with thick outlines at the slots used in this book: 48 hours in both lines, 72 hours in SBR, 96 hours in B-S. Right tree, bulk RNA-seq GSE229386, splits into a standard Wnt pulse at 48 hours and an early Wnt pulse at 24 hours, each with time points 48, 72 and 96 hours drawn as rounded squares with three replicates. A dashed line joins both single-cell 48 hour circles to the standard-Wnt 48 hour square, labelled matched pair. The early-Wnt branch is labelled no single-cell match.
+%%| alt: Two trees. Left tree, scRNA-seq GSE229513, splits into cell line B-S with time slots 48, 52, 56, 96, 108 and 120 hours, and cell line SBR with time slots 24, 36, 48, 60, 72 and 84 hours; slots are circles, blue for B-S and grey for SBR, with thick outlines at the slots used in this book: 48 hours in both lines, 72 hours in SBR, 96 hours in B-S. Right tree, bulk RNA-seq GSE229386, splits into a standard Wnt pulse at 48 hours and an early Wnt pulse at 24 hours, each with time points 48, 72 and 96 hours drawn as rounded squares with three replicates. Dashed lines join single-cell 48 hour (both lines) to standard-Wnt bulk 48 hour, single-cell 72 hour (SBR) to standard-Wnt bulk 72 hour, and single-cell 96 hour (B-S) to standard-Wnt bulk 96 hour, each labelled matched pair. The early-Wnt branch is labelled no single-cell match.
 \begin{tikzpicture}[x=10.5mm, y=10mm]
 % single-cell tree
 \node[box] (sc) at (5.8,3.4) {scRNA-seq\\ GSE229513};
@@ -64,10 +64,12 @@ resource.
 \draw[draw=ink, line width=0.7pt] (bk.south) -- ++(0,-0.5) -| (std.north);
 \draw[draw=ink, line width=0.7pt] (bk.south) -- ++(0,-0.5) -| (early.north);
 \node[note, text=ink!80, align=center] at (18.6,-1.15) {no single-cell match};
-% matched pair
+% matched pairs: 48 h (both lines), 72 h (SBR), 96 h (B-S)
 \draw[draw=ink, densely dashed, line width=0.9pt] (bs48.south) -- ++(0,-0.75) -| (std48.south);
 \draw[draw=ink, densely dashed, line width=0.9pt] (sbr48.south) -- ++(0,-0.75);
-\node[elabel] at (11.8,-0.98) {matched pair, 48\,h};
+\draw[draw=ink, densely dashed, line width=0.9pt] (sbr72.south) -- ++(0,-1.1) -| (std72.south);
+\draw[draw=ink, densely dashed, line width=0.9pt] (bs96.south) -- ++(0,-1.45) -| (std96.south);
+\node[elabel] at (11.8,-0.98) {matched pairs, 48/72/96\,h};
 % legend
 \node[circle, draw=latdraw, fill=latfill, minimum size=4mm, inner sep=0pt, line width=0.8pt] (l1) at (0,-1.9) {};
 \node[note, anchor=west] at (0.3,-1.9) {B-S};
@@ -106,14 +108,13 @@ changes.
 standard pulse at 48 h, or an early pulse at 24 h. The second factor is
 the time point, 48 h, 72 h or 96 h, each with three biological
 replicates. No single-cell slot carries the early schedule, so the
-early-Wnt bulk has no single-cell counterpart. The
-cross-platform filter of @sec-fs-bulk-consistency is fitted on the
-matched pair only: single-cell 48 h against standard-Wnt bulk 48 h.
-
-<!-- Open question (book agent, 2026-10-30): the single-cell slots 72 h
-(SBR) and 96 h (B-S) coincide in time with the standard-Wnt bulk at
-72 h and 96 h. The plan treats only 48 h as a matched pair (both lines
-present). Confirm before the bulk filter is extended. -->
+early-Wnt bulk has no single-cell counterpart at any time. The three
+single-cell slots used in this book instead match the three time
+points of the standard-Wnt bulk: single-cell 48 h (B-S and SBR pooled),
+72 h (SBR) and 96 h (B-S), each against three biological replicates of
+the standard-Wnt bulk at that time. The cross-platform filter of
+@sec-fs-bulk-consistency is therefore fitted at all three standard-Wnt
+time points, never on the early-Wnt arm.
 
 ## Seurat processing {#sec-seurat}
 

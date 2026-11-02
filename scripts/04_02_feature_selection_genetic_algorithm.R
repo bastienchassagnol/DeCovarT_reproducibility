@@ -3,7 +3,10 @@
 #   scripts/04_02_feature_selection_genetic_algorithm.R \
 #   > "logs/04_02_ga_$(date +%F)_panel.log" 2>&1 &
 
-# Advanced panel search after the DESeq2 shortlist.
+# Advanced panel search (post hoc, covariance-driven; see
+# 03-1-feature-selection.qmd#wrn-fs-circularity). With a single-cell
+# reference from one specimen (r = 1), there is no DESeq2 shortlist
+# step: this search runs on the omnibus-ranked panel directly.
 # See DeCovarT vignette 03-1-feature-selection.qmd:
 # AutoGeneS-style all-vs-all objectives; NSGA-II via mco::nsga2();
 # optional scalar refinement with GA / GenSA.

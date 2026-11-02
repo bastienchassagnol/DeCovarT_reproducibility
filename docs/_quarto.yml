@@ -24,7 +24,6 @@ book:
       chapters:
         - 02-feature-selection.qmd
         - 03-covariance-estimation.qmd
-        - 04-population-alignment.qmd
     - part: "Deconvolution benchmark"
       chapters:
         - 05-deconvolution-pipeline.qmd
