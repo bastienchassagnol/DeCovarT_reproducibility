@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.10.20">
+<meta name="generator" content="quarto-1.11.9">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>7&nbsp; Early versus standard Wnt – DeCovarT reproducibility</title>
+<title>6&nbsp; Early versus standard Wnt – DeCovarT reproducibility</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -26,7 +26,26 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -40,14 +59,15 @@ ul.task-list li input[type="checkbox"] {
 <link href="./05-deconvolution-pipeline.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/scrollable-regions/scrollable-regions.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-5196cd1b68de14ed06ea40d9474e787d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-304ff12d06e22565c5b6fc5f08b78bcb.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-79bc11b47e8e2c98ca376763b6756942.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-53cdafd631140c608ed51b8021fc9e33.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script src="site_libs/quarto-contrib/pseudocode-2.4.1/pseudocode.min.js"></script>
 <link href="site_libs/quarto-contrib/pseudocode-2.4.1/pseudocode.min.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
@@ -77,8 +97,8 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script>window.backupDefine = window.define; window.define = undefined;</script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
     <style type="text/css">
     .ps-root .ps-algorithm {
       border-top: 2px solid;
@@ -107,19 +127,18 @@ ul.task-list li input[type="checkbox"] {
 
 </head>
 
-<body class="nav-sidebar floating nav-fixed quarto-light">
+<body class="nav-sidebar floating nav-fixed quarto-light"><a id="quarto-skip-link" class="visually-hidden-focusable" href="#quarto-document-content">Skip to main content</a>
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark" aria-label="Site">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
     <a class="navbar-brand" href="./index.html">
     <span class="navbar-title">DeCovarT reproducibility</span>
     </a>
   </div>
-            <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
@@ -134,15 +153,16 @@ ul.task-list li input[type="checkbox"] {
             <div class="quarto-navbar-tools">
     <a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/tree/main/docs/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
 </div>
+            <div id="quarto-search" class="" title="Search"></div>
       </div> <!-- /container-fluid -->
     </nav>
-  <nav class="quarto-secondary-nav">
+  <nav class="quarto-secondary-nav" aria-label="Toolbar">
     <div class="container-fluid d-flex">
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./05-deconvolution-pipeline.html">Deconvolution benchmark</a></li><li class="breadcrumb-item"><a href="./06-biological-insights.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Early versus standard Wnt</span></a></li></ol></nav>
-        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        <nav class="quarto-page-breadcrumbs" aria-label="Breadcrumbs"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./05-deconvolution-pipeline.html">Deconvolution benchmark</a></li><li class="breadcrumb-item"><a href="./06-biological-insights.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Early versus standard Wnt</span></a></li></ol></nav>
+        <a class="flex-grow-1" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
   </nav>
@@ -150,7 +170,7 @@ ul.task-list li input[type="checkbox"] {
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto" aria-label="Section">
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
@@ -161,13 +181,10 @@ ul.task-list li input[type="checkbox"] {
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
- <span class="menu-text">Biological use case</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
+            <button type="button" class="sidebar-item-text sidebar-item-toggle sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-controls="quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text" id="quarto-sidebar-section-1-label">Biological use case</span><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
       </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-1" aria-labelledby="quarto-sidebar-section-1-label" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./01-data-suppinger.html" class="sidebar-item-text sidebar-link">
@@ -178,13 +195,10 @@ ul.task-list li input[type="checkbox"] {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
- <span class="menu-text">Reference estimation</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
+            <button type="button" class="sidebar-item-text sidebar-item-toggle sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-controls="quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text" id="quarto-sidebar-section-2-label">Reference estimation</span><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
       </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-2" aria-labelledby="quarto-sidebar-section-2-label" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./02-feature-selection.html" class="sidebar-item-text sidebar-link">
@@ -197,39 +211,30 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Covariance estimation</span></span></a>
   </div>
 </li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./04-population-alignment.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">From single cells to type-level Gaussians</span></span></a>
-  </div>
-</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
- <span class="menu-text">Deconvolution benchmark</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
+            <button type="button" class="sidebar-item-text sidebar-item-toggle sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-controls="quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text" id="quarto-sidebar-section-3-label">Deconvolution benchmark</span><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
       </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-3" aria-labelledby="quarto-sidebar-section-3-label" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./05-deconvolution-pipeline.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Mean-based deconvolution comparators</span></span></a>
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Applying and comparing deconvolution outputs applied to Suppinger study</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./06-biological-insights.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Early versus standard Wnt</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Early versus standard Wnt</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./07-sensitivity-misspecification.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></span></a>
   </div>
 </li>
       </ul>
@@ -240,20 +245,24 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
+        <nav id="TOC" role="doc-toc" aria-labelledby="toc-title" class="toc-active">
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#sec-bio-deconv" id="toc-sec-bio-deconv" class="nav-link active" data-scroll-target="#sec-bio-deconv"><span class="header-section-number">7.1</span> Compositional reading</a></li>
+  <li><a href="#sec-bio-deconv" id="toc-sec-bio-deconv" class="nav-link active" data-scroll-target="#sec-bio-deconv"><span class="header-section-number">6.1</span> Biological insights from deconvolution algorithms applied to mouse gastruloids</a>
+  <ul>
+  <li><a href="#sec-bio-figure" id="toc-sec-bio-figure" class="nav-link" data-scroll-target="#sec-bio-figure"><span class="header-section-number">6.1.1</span> The figure and its statistical reading</a></li>
+  <li><a href="#sec-bio-interpretation" id="toc-sec-bio-interpretation" class="nav-link" data-scroll-target="#sec-bio-interpretation"><span class="header-section-number">6.1.2</span> Biological interpretation</a></li>
+  </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/edit/main/docs/06-biological-insights.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/blob/main/docs/06-biological-insights.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content" id="quarto-document-content" tabindex="-1">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./05-deconvolution-pipeline.html">Deconvolution benchmark</a></li><li class="breadcrumb-item"><a href="./06-biological-insights.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Early versus standard Wnt</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="Breadcrumbs"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./05-deconvolution-pipeline.html">Deconvolution benchmark</a></li><li class="breadcrumb-item"><a href="./06-biological-insights.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Early versus standard Wnt</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Early versus standard Wnt</span></h1>
+<h1 class="title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Early versus standard Wnt</span></h1>
 </div>
 
 
@@ -270,23 +279,80 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="sec-bio-deconv" class="level2" data-number="7.1">
-<h2 data-number="7.1" class="anchored" data-anchor-id="sec-bio-deconv"><span class="header-section-number">7.1</span> Compositional reading</h2>
-<p>Second-generation mean-based deconvolution (BayesPrism, SCDC, DWLS; <a href="05-deconvolution-pipeline.html#sec-deconv-models" class="quarto-xref"><span>Section 6.1</span></a>) on the bulk series is a <strong>compositional narrative</strong>, not DeCovarT’s covariance model. <a href="#fig-bio-early" class="quarto-xref">Figure&nbsp;<span>7.1</span></a> contrasts a standard Wnt pulse at 48 h with a premature pulse at 24 h, at the three bulk-matched times.</p>
+<section id="sec-bio-deconv" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="sec-bio-deconv"><span class="header-section-number">6.1</span> Biological insights from deconvolution algorithms applied to mouse gastruloids</h2>
+<p><a href="#fig-bio-early" class="quarto-xref">Figure&nbsp;<span>6.1</span></a> contrasts a standard Wnt pulse at 48 h with a premature pulse at 24 h, at three bulk-matched time points: 48 h, 72 h and 96 h. <a href="#sec-bio-figure" class="quarto-xref"><span>Section 6.1.1</span></a> says what the figure can and cannot support; 1 gives the biological reading.</p>
+<section id="sec-bio-figure" class="level3" data-number="6.1.1">
+<h3 data-number="6.1.1" class="anchored" data-anchor-id="sec-bio-figure"><span class="header-section-number">6.1.1</span> The figure and its statistical reading</h3>
 <div id="fig-bio-early" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-bio-early-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="images/deconvolution_guided_early_treatment-1.png" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-bio-early-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;7.1: Deconvolution-guided comparison of standard versus early Wnt gastruloids at 48 h, 72 h and 96 h.
+Figure&nbsp;6.1: Deconvolution-guided comparison of standard versus early Wnt gastruloids at 48 h, 72 h and 96 h.
 </figcaption>
 </figure>
 </div>
-<p>On the <strong>control-like</strong> arm, 72 h is primitive-streak enriched and 96 h shows pre-somitic mesoderm and somite progression. On the <strong>early Wnt</strong> arm, 48 h retains more naïve pluripotency, 72 h is dominated by ectopic pluripotency with a reduced primitive streak, and 96 h nearly loses pre-somitic mesoderm. Absolute abundances disagree across algorithms — weighted least squares is sensitive to collinearity among neighbouring states — so we treat <strong>direction of change</strong> (ectopic pluripotency up, primitive streak and pre-somitic mesoderm down) as the consensus, not the point estimates.</p>
-<p>That reading is why GRNs are fit <strong>per type and per time</strong> at 48 h, 72 h and 96 h (<a href="01-data-suppinger.html#sec-geo-design" class="quarto-xref"><span>Section 2.1</span></a>): those are the slots where a bulk composition exists to confront the Gaussians. Cell line remains out of the precision model.</p>
+<!-- Provenance of the current figure (agent F, 2026-11-01). The PNG is
+2000 x 1500 px, an upscale of the only image in
+images/deconvolution-guided_biological_interpeation_elarly_treatment.pdf
+(a Google Drawings export holding one JPEG of 1491 x 1055 px). No script,
+chunk or table in this repository produces it (grep of scripts/, R/,
+output/, docs/ and git history; first committed in 3b9b2ee as part of
+the retired chapter 09). It may come from an image generator, like the
+companion slides of @fig-bio-lineage ("interpretation guided by RAG Chat
+GPT5"); this is not verified. -->
+<!-- Redrawn figure, ready to switch. Steps (not run):
+1. Write output/deconvolution/proportions_long.csv from the comparator
+   runs of 05-deconvolution-pipeline.qmd (columns listed in the header of
+   scripts/06_01_plot_early_wnt_compositions.R).
+2. Rscript --no-save --no-restore scripts/06_01_plot_early_wnt_compositions.R
+3. In docs/images/src/early_wnt/: latexmk -lualatex early_wnt.tex, then
+   pdftocairo -svg early_wnt.pdf ../../fig_06_early_wnt.svg
+4. Replace the image line above by the block below and delete the old PNG
+   reference.
+
+![Early versus standard Wnt, by deconvolution method. (a) Schematic of
+the scored single-cell reference states at each bulk time; solid edges
+are the main routes and dashed edges the reduced routes of the earlier
+illustration; no quantity is drawn. (b) Estimated proportion of each
+state, one row per method; dots are the three bulk replicates of each
+arm (blue, standard Wnt; orange, early Wnt) and bars their mean. (c)
+Centred log-ratio contrast, early minus standard, per method; grey bars
+span the nine replicate pairs, black lines are bootstrap 95 % percentile
+intervals over replicates (three per arm, so coarse), and fill gives the
+sign. (d) Number of methods with a positive contrast; orange or blue
+when all methods agree, grey otherwise.](images/fig_06_early_wnt.svg){#fig-bio-early}
+-->
+<p><a href="#fig-bio-early" class="quarto-xref">Figure&nbsp;<span>6.1</span></a> is a raster illustration, not a plot of estimates. Panels A and B draw trajectories; the six bar thumbnails of panel C carry no axis, scale or value. No deconvolution output exists in this repository yet: the comparator runs of <a href="05-deconvolution-pipeline.html#sec-deconv-models" class="quarto-xref"><span>Section 5.1</span></a> are planned, not run. What follows reads the figure qualitatively and lists what its claims would need. Readings marked <em>(ours)</em> are not in the figure.</p>
+<ul>
+<li><strong>The consensus is on direction, not on point estimates.</strong> Panel C reports that BayesPrism, SCDC and DWLS agree on the direction of change between arms (ectopic pluripotency up, primitive streak and pre-somitic mesoderm down in the early arm) and not on absolute abundances. Only that direction is carried into
+<ol class="example" type="1">
+<li></li>
+</ol></li>
+<li><strong>Why absolute abundances disagree.</strong> The figure attributes the disagreement to weighted least squares and marker weighting, which are sensitive to collinearity among closely related states. When neighbouring states have close mean profiles on the panel (candidates here, not yet checked: naïve, exiting naïve and epiblast at 48 h; pre-somitic mesoderm and somite differentiation front at 96 h), the signature is ill-conditioned, and a small change of gene weights moves mass between neighbours (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-kappa-limits">3.1, condition number</a>). <em>(Ours.)</em> Collinearity affects every method that inverts the same signature, BayesPrism included; it separates methods only through their weights. Panel C groups SCDC, a weighted least squares, with BayesPrism, a multinomial likelihood, and sets DWLS apart, which points at the dampened weights of DWLS <span class="citation" data-cites="tsoucasAccurateEstimationCelltype2019">(<a href="#ref-tsoucasAccurateEstimationCelltype2019" role="doc-biblioref">Tsoucas et al. 2019</a>)</span> rather than at least squares as such. Testing this needs the condition number of the panel signature at each time and the per-method estimates.</li>
+<li><strong>Why direction can agree when levels do not.</strong> <em>(Ours.)</em> At one time both arms are deconvolved with the same reference and panel. A method bias that multiplies the proportion of a type by a fixed factor cancels in the log-ratio contrast between arms; a bias that moves mass between collinear neighbours depends on the sample and does not cancel. Proportions are also closed: a rise of ectopic pluripotency forces other types down, so “ectopic pluripotency up” and “primitive streak down” are not two independent findings. The redraw therefore reads contrasts on centred log-ratios within each sample.</li>
+<li><strong>Uncertainty the claims need.</strong> <em>(Ours.)</em>
+<ul>
+<li>A per-algorithm interval for every proportion: from the method’s own uncertainty model where it has one (BayesPrism samples a posterior), and from resampling reference cells within type otherwise, which also carries the uncertainty of the one-specimen reference (<a href="01-data-suppinger.html#sec-geo-design" class="quarto-xref"><span>Section 2.1</span></a>).</li>
+<li>A bootstrap over bulk replicates within arm and time, since the replicate is the unit of the arm effect, not the gene or the cell. There are three replicates per arm and time (<span class="quarto-unresolved-ref">?fig-suppinger-design</span>), so a resample takes only 10 distinct values per arm; the redraw shows the nine pairwise early-minus-standard differences beside the percentile interval.</li>
+<li>Panel C also states that control gastruloids vary more. A variance from three replicates has two degrees of freedom, and its 95 % chi-square interval spans a factor of about 150, so that claim needs more replicates or a model that pools across types and times.</li>
+</ul></li>
+<li><strong>How to read agreement across methods.</strong> <em>(Ours.)</em> The methods share the reference, the panel and the bulk, so their errors are correlated, and agreement of three methods is not three independent confirmations. Two failure modes are shared by all of them. The early-Wnt bulk has no single-cell counterpart at any time (<a href="02-feature-selection.html#sec-fs-bulk-consistency" class="quarto-xref"><span>Section 3.7</span></a>), so a state specific to that arm is forced onto the nearest reference types. And several states drawn in panels A and B (caudal epiblast, neuromesodermal progenitors) are not among the scored reference types of <a href="02-feature-selection.html#tbl-fs-cell-counts" class="quarto-xref">Table&nbsp;<span>3.2</span></a>, so no deconvolution against those references can return them. Sign agreement across methods is therefore necessary, not sufficient. A proposed reporting rule for the redraw: call a direction when every method gives the same sign and, for each method, the nine replicate pairs share that sign; report a per-sample goodness of fit on the early arm beside it.</li>
+</ul>
+</section>
+<section id="sec-bio-interpretation" class="level3" data-number="6.1.2">
+<h3 data-number="6.1.2" class="anchored" data-anchor-id="sec-bio-interpretation"><span class="header-section-number">6.1.2</span> Biological interpretation</h3>
+<p>On the <strong>control-like</strong> arm, 72 h is primitive-streak enriched and 96 h shows pre-somitic mesoderm and somite progression. On the <strong>early Wnt</strong> arm, 48 h retains more naïve pluripotency, 72 h is dominated by ectopic pluripotency with a reduced primitive streak, and 96 h nearly loses pre-somitic mesoderm. Absolute abundances disagree across algorithms (<a href="#sec-bio-figure" class="quarto-xref"><span>Section 6.1.1</span></a>), so we treat the <strong>direction of change</strong> (ectopic pluripotency up, primitive streak and pre-somitic mesoderm down) as the consensus, not the point estimates.</p>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-tsoucasAccurateEstimationCelltype2019" class="csl-entry" role="listitem">
+Tsoucas, Daphne, Rui Dong, Haide Chen, Qian Zhu, Guoji Guo, and Guo-Cheng Yuan. 2019. <span>“Accurate Estimation of Cell-Type Composition from Gene Expression Data.”</span> <em>Nature Communications</em> 10. <a href="https://doi.org/10.1038/s41467-019-10802-z">https://doi.org/10.1038/s41467-019-10802-z</a>.
+</div>
+</div>
+</section>
 </section>
 
 </main> <!-- /main -->
@@ -368,7 +434,8 @@ Figure&nbsp;7.1: Deconvolution-guided comparison of standard versus early Wnt ga
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
       // Inspect non-navigation links and adorn them if external
-     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      window.quartoDecorateExternalLinks = function (root) {
+     var links = (root || window.document).querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
       for (var i=0; i<links.length; i++) {
         const link = links[i];
         if (!isInternal(link.href)) {
@@ -377,8 +444,69 @@ Figure&nbsp;7.1: Deconvolution-guided comparison of standard versus early Wnt ga
           if (link.dataset.originalHref !== undefined) {
             link.href = link.dataset.originalHref;
           }
+          if (!link.classList.contains('no-external-icon')) {
+          }
         }
       }
+      };
+      window.quartoDecorateExternalLinks(window.document);
+    // Esc closes the popup (WCAG 1.4.13) and focus leaving both trigger and
+    // popup closes it (WCAG 2.4.11); tippy handles neither for interactive popups.
+    const hideOnEscAndFocusOut = {
+      name: 'hideOnEscAndFocusOut',
+      defaultValue: true,
+      fn(instance) {
+        const dismiss = () => {
+          // A show scheduled by the trigger delay would otherwise reopen it
+          instance.clearDelayTimeouts();
+          instance.hide();
+        };
+        const onKeyDown = (event) => {
+          if (event.key !== 'Escape') {
+            return;
+          }
+          // Keep Esc from also reaching page handlers (e.g. reveal.js overview),
+          // except an open reveal.js slide menu, which Esc should close too.
+          // The menu handles keys only when its keyboard option is on.
+          const menuHandlesEsc = window.Reveal?.getPlugin?.('menu')?.isOpen() &&
+            window.Reveal.getConfig().menu?.keyboard !== false;
+          if (!menuHandlesEsc) {
+            event.stopPropagation();
+          }
+          if (instance.popper.contains(window.document.activeElement)) {
+            // Disabled while refocusing so the focus trigger does not reopen it
+            instance.disable();
+            instance.reference.focus();
+            instance.enable();
+          }
+          dismiss();
+        };
+        const onFocusOut = (event) => {
+          const target = event.relatedTarget;
+          if (target && !instance.reference.contains(target) &&
+              !instance.popper.contains(target)) {
+            dismiss();
+          }
+        };
+        // On the trigger too: a click trigger (code-annotations: select) has no
+        // blur handling. Attached for the instance's lifetime so leaving the
+        // trigger also cancels a show still pending on the trigger delay.
+        instance.reference.addEventListener('focusout', onFocusOut);
+        return {
+          onShow() {
+            window.document.addEventListener('keydown', onKeyDown, true);
+            instance.popper.addEventListener('focusout', onFocusOut);
+          },
+          onHide() {
+            window.document.removeEventListener('keydown', onKeyDown, true);
+            instance.popper.removeEventListener('focusout', onFocusOut);
+          },
+          onDestroy() {
+            instance.reference.removeEventListener('focusout', onFocusOut);
+          },
+        };
+      },
+    };
     function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
       const config = {
         allowHTML: true,
@@ -392,6 +520,7 @@ Figure&nbsp;7.1: Deconvolution-guided comparison of standard versus early Wnt ga
         interactiveBorder: 10,
         theme: 'quarto',
         placement: 'bottom-start',
+        plugins: [hideOnEscAndFocusOut],
       };
       if (contentFn) {
         config.content = contentFn;
@@ -554,44 +683,54 @@ Figure&nbsp;7.1: Deconvolution-guided comparison of standard versus early Wnt ga
           const lineIds = lines.map((line) => {
             return targetCell + "-" + line;
           })
-          let top = null;
-          let height = null;
-          let parent = null;
+          // Each band is positioned against its own containing block, which is
+          // not the offsetParent of the lines, so place it from client rects.
+          const placeBand = (band, firstEl, lastEl, codeBlock) => {
+            const container = band.offsetParent;
+            if (container === null) {
+              return;
+            }
+            const containerRect = container.getBoundingClientRect();
+            // Reveal.js scales slides with a transform, so convert client
+            // pixels back to the CSS pixels of the container.
+            const scale = containerRect.height / container.offsetHeight || 1;
+            const firstRect = firstEl.getBoundingClientRect();
+            const lastRect = lastEl.getBoundingClientRect();
+            const top = (firstRect.top - containerRect.top) / scale - container.clientTop + container.scrollTop;
+            const height = (lastRect.bottom - firstRect.top) / scale;
+            band.style.top = top - 2 + "px";
+            band.style.height = height + 4 + "px";
+            if (codeBlock) {
+              // Without the copy button wrapper, the containing block is wider
+              // than the code block, so span the code block explicitly.
+              const blockRect = codeBlock.getBoundingClientRect();
+              band.style.left = (blockRect.left - containerRect.left) / scale - container.clientLeft + container.scrollLeft + "px";
+              band.style.width = blockRect.width / scale + "px";
+            }
+          };
           if (lineIds.length > 0) {
-              //compute the position of the single el (top and bottom and make a div)
-              const el = window.document.getElementById(lineIds[0]);
-              top = el.offsetTop;
-              height = el.offsetHeight;
-              parent = el.parentElement.parentElement;
-            if (lineIds.length > 1) {
-              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
-              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
-              height = bottom - top;
+            const el = window.document.getElementById(lineIds[0]);
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const parent = el.parentElement.parentElement;
+            // cook up a div (if necessary) and position it
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
             }
-            if (top !== null && height !== null && parent !== null) {
-              // cook up a div (if necessary) and position it 
-              let div = window.document.getElementById("code-annotation-line-highlight");
-              if (div === null) {
-                div = window.document.createElement("div");
-                div.setAttribute("id", "code-annotation-line-highlight");
-                div.style.position = 'absolute';
-                parent.appendChild(div);
-              }
-              div.style.top = top - 2 + "px";
-              div.style.height = height + 4 + "px";
-              div.style.left = 0;
-              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
-              if (gutterDiv === null) {
-                gutterDiv = window.document.createElement("div");
-                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
-                gutterDiv.style.position = 'absolute';
-                const codeCell = window.document.getElementById(targetCell);
-                const gutter = codeCell.querySelector('.code-annotation-gutter');
-                gutter.appendChild(gutterDiv);
-              }
-              gutterDiv.style.top = top - 2 + "px";
-              gutterDiv.style.height = height + 4 + "px";
+            placeBand(div, el, lastEl, parent.closest("div.sourceCode") || parent);
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
             }
+            placeBand(gutterDiv, el, lastEl);
             selectedAnnoteEl = annoteEl;
           }
         };
@@ -690,15 +829,18 @@ Figure&nbsp;7.1: Deconvolution-guided comparison of standard versus early Wnt ga
     }
   });
   </script>
-<nav class="page-navigation">
+  <script type="application/javascript">
+  window.quartoScrollableRegionsLabels = {"code":"Scrollable code","output":"Scrollable output"};
+  </script>
+<nav class="page-navigation" aria-label="Page">
   <div class="nav-page nav-page-previous">
-      <a href="./05-deconvolution-pipeline.html" class="pagination-link" aria-label="Mean-based deconvolution comparators">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Mean-based deconvolution comparators</span></span>
+      <a href="./05-deconvolution-pipeline.html" class="pagination-link" aria-label="Applying and comparing deconvolution outputs applied to Suppinger study">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Applying and comparing deconvolution outputs applied to Suppinger study</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
       <a href="./07-sensitivity-misspecification.html" class="pagination-link" aria-label="Sensitivity analyses">
-        <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

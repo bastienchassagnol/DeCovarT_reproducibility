@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.10.20">
+<meta name="generator" content="quarto-1.11.9">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>8&nbsp; Sensitivity analyses – DeCovarT reproducibility</title>
+<title>7&nbsp; Sensitivity analyses – DeCovarT reproducibility</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -26,6 +26,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -39,14 +74,15 @@ ul.task-list li input[type="checkbox"] {
 <link href="./06-biological-insights.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/scrollable-regions/scrollable-regions.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-5196cd1b68de14ed06ea40d9474e787d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-304ff12d06e22565c5b6fc5f08b78bcb.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-79bc11b47e8e2c98ca376763b6756942.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-53cdafd631140c608ed51b8021fc9e33.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script src="site_libs/quarto-contrib/pseudocode-2.4.1/pseudocode.min.js"></script>
 <link href="site_libs/quarto-contrib/pseudocode-2.4.1/pseudocode.min.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
@@ -76,8 +112,8 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script>window.backupDefine = window.define; window.define = undefined;</script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
     <style type="text/css">
     .ps-root .ps-algorithm {
       border-top: 2px solid;
@@ -149,19 +185,18 @@ window.Quarto = {
 
 </head>
 
-<body class="nav-sidebar floating nav-fixed quarto-light">
+<body class="nav-sidebar floating nav-fixed quarto-light"><a id="quarto-skip-link" class="visually-hidden-focusable" href="#quarto-document-content">Skip to main content</a>
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark" aria-label="Site">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
     <a class="navbar-brand" href="./index.html">
     <span class="navbar-title">DeCovarT reproducibility</span>
     </a>
   </div>
-            <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
@@ -176,15 +211,16 @@ window.Quarto = {
             <div class="quarto-navbar-tools">
     <a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/tree/main/docs/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
 </div>
+            <div id="quarto-search" class="" title="Search"></div>
       </div> <!-- /container-fluid -->
     </nav>
-  <nav class="quarto-secondary-nav">
+  <nav class="quarto-secondary-nav" aria-label="Toolbar">
     <div class="container-fluid d-flex">
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./05-deconvolution-pipeline.html">Deconvolution benchmark</a></li><li class="breadcrumb-item"><a href="./07-sensitivity-misspecification.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></a></li></ol></nav>
-        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        <nav class="quarto-page-breadcrumbs" aria-label="Breadcrumbs"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./05-deconvolution-pipeline.html">Deconvolution benchmark</a></li><li class="breadcrumb-item"><a href="./07-sensitivity-misspecification.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></a></li></ol></nav>
+        <a class="flex-grow-1" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
   </nav>
@@ -192,7 +228,7 @@ window.Quarto = {
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto" aria-label="Section">
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
@@ -203,13 +239,10 @@ window.Quarto = {
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
- <span class="menu-text">Biological use case</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
+            <button type="button" class="sidebar-item-text sidebar-item-toggle sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-controls="quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text" id="quarto-sidebar-section-1-label">Biological use case</span><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
       </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-1" aria-labelledby="quarto-sidebar-section-1-label" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./01-data-suppinger.html" class="sidebar-item-text sidebar-link">
@@ -220,13 +253,10 @@ window.Quarto = {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
- <span class="menu-text">Reference estimation</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
+            <button type="button" class="sidebar-item-text sidebar-item-toggle sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-controls="quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text" id="quarto-sidebar-section-2-label">Reference estimation</span><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
       </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-2" aria-labelledby="quarto-sidebar-section-2-label" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./02-feature-selection.html" class="sidebar-item-text sidebar-link">
@@ -239,39 +269,30 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Covariance estimation</span></span></a>
   </div>
 </li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./04-population-alignment.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">From single cells to type-level Gaussians</span></span></a>
-  </div>
-</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
- <span class="menu-text">Deconvolution benchmark</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
+            <button type="button" class="sidebar-item-text sidebar-item-toggle sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-controls="quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text" id="quarto-sidebar-section-3-label">Deconvolution benchmark</span><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
       </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-3" aria-labelledby="quarto-sidebar-section-3-label" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./05-deconvolution-pipeline.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Mean-based deconvolution comparators</span></span></a>
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Applying and comparing deconvolution outputs applied to Suppinger study</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./06-biological-insights.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Early versus standard Wnt</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Early versus standard Wnt</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./07-sensitivity-misspecification.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></span></a>
   </div>
 </li>
       </ul>
@@ -282,20 +303,22 @@ window.Quarto = {
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
+        <nav id="TOC" role="doc-toc" aria-labelledby="toc-title" class="toc-active">
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#sec-sensitivity" id="toc-sec-sensitivity" class="nav-link active" data-scroll-target="#sec-sensitivity"><span class="header-section-number">8.1</span> Contaminating <span class="math inline">\boldsymbol{\Omega}_{j}</span></a></li>
+  <li><a href="#sec-sensitivity" id="toc-sec-sensitivity" class="nav-link active" data-scroll-target="#sec-sensitivity"><span class="header-section-number">7.1</span> Contaminating <span class="math inline">\boldsymbol{\Omega}_{j}</span></a></li>
+  <li><a href="#sec-sens-scdesign3" id="toc-sec-sens-scdesign3" class="nav-link" data-scroll-target="#sec-sens-scdesign3"><span class="header-section-number">7.2</span> <code>scDesign3</code> settings for GSE229513</a></li>
+  <li><a href="#sec-sens-panel-size" id="toc-sec-sens-panel-size" class="nav-link" data-scroll-target="#sec-sens-panel-size"><span class="header-section-number">7.3</span> Signature size and selection threshold</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/edit/main/docs/07-sensitivity-misspecification.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/blob/main/docs/07-sensitivity-misspecification.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content" id="quarto-document-content" tabindex="-1">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./05-deconvolution-pipeline.html">Deconvolution benchmark</a></li><li class="breadcrumb-item"><a href="./07-sensitivity-misspecification.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="Breadcrumbs"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./05-deconvolution-pipeline.html">Deconvolution benchmark</a></li><li class="breadcrumb-item"><a href="./07-sensitivity-misspecification.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></h1>
+<h1 class="title"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></h1>
 </div>
 
 
@@ -312,8 +335,8 @@ window.Quarto = {
 </header>
 
 
-<section id="sec-sensitivity" class="level2" data-number="8.1">
-<h2 data-number="8.1" class="anchored" data-anchor-id="sec-sensitivity"><span class="header-section-number">8.1</span> Contaminating <span class="math inline">\boldsymbol{\Omega}_{j}</span></h2>
+<section id="sec-sensitivity" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="sec-sensitivity"><span class="header-section-number">7.1</span> Contaminating <span class="math inline">\boldsymbol{\Omega}_{j}</span></h2>
 <p>Starting from the fitted sparse precisions (<a href="03-covariance-estimation.html#eq-grn-export" class="quarto-xref">Equation&nbsp;<span>4.1</span></a>), apply the misspecification factors described in DeCovarT <code>vignettes/S5-misspecification.qmd</code>:</p>
 <ol type="1">
 <li>Observation noise (Gaussian, <span class="math inline">t_\nu</span>, PLN, contaminated Gaussian)</li>
@@ -324,8 +347,287 @@ window.Quarto = {
 <li>Wrong covariance reference (perturb or subsample the glasso / PLN fit)</li>
 </ol>
 <p>Zero-inflated or hurdle observation models belong <strong>here</strong>, as a contamination of the sampling layer, not as the default GRN (<a href="03-covariance-estimation.html#nte-drop-zico" class="quarto-xref">Note&nbsp;<span>4.1</span></a>).</p>
-<p>Template: <code>scripts/05_01_sensitivity_precision_contamination.R</code>.</p>
-<p>Compare <code>DeCovarT::deconvolute_ratios()</code> to mean-only baselines on the <strong>same</strong> genes and mixtures. Pre-declare estimands and Monte Carlo error as in the package synthetic-scenarios vignette <code>{#sec-nmeth}</code>.</p>
+</section>
+<section id="sec-sens-scdesign3" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="sec-sens-scdesign3"><span class="header-section-number">7.2</span> <code>scDesign3</code> settings for GSE229513</h2>
+<p>The fitted count simulator of <a href="https://bastienchassagnol.github.io/DeCovarT/articles/S5-misspecification.html#sec-s5-simulator">S5, simulator</a> draws reference-like cells whose type-level law is known. On Suppinger it is used to calibrate, not to resample: the cells of one specimen series are not biological replicates (<a href="02-feature-selection.html#nte-pseudoreplication" class="quarto-xref">Note&nbsp;<span>3.1</span></a>).</p>
+<div id="tbl-sens-scdesign3" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-sens-scdesign3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;7.1: <code>scDesign3</code> settings per type and time for GSE229513.
+</figcaption>
+<div aria-describedby="tbl-sens-scdesign3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Setting</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Fit unit</td>
+<td>One model per time slot, 48 h, 72 h and 96 h; the two lines pooled at 48 h, cell line not a covariate (<a href="01-data-suppinger.html#sec-geo-design" class="quarto-xref"><span>Section 2.1</span></a>)</td>
+</tr>
+<tr class="even">
+<td>Cells and genes</td>
+<td>Cells after QC, culture-stress labels removed (<a href="02-feature-selection.html#sec-fs-qc" class="quarto-xref"><span>Section 3.2</span></a>); the selected panel, raw UMI counts (<a href="03-covariance-estimation.html#sec-cov-inputs" class="quarto-xref"><span>Section 4.1.2</span></a>)</td>
+</tr>
+<tr class="odd">
+<td>Margins</td>
+<td>Negative binomial, mean and dispersion by cell type, log size factor as mean offset; no zero inflation (<a href="03-covariance-estimation.html#nte-drop-zico" class="quarto-xref">Note&nbsp;<span>4.1</span></a>)</td>
+</tr>
+<tr class="even">
+<td>Copula</td>
+<td>Gaussian, one per type, correlation of the plug-in <span class="math inline">\widehat{\boldsymbol{\Sigma}}_{j}</span> of that type and time (<a href="03-covariance-estimation.html#sec-shrinkage" class="quarto-xref"><span>Section 4.2.1</span></a>); not refitted</td>
+</tr>
+<tr class="odd">
+<td>Composition and depth</td>
+<td>Type proportions <span class="math inline">C_j/\sum_\ell C_\ell</span> of the slot, frozen; each synthetic cell takes the size factor of a real cell of its type</td>
+</tr>
+<tr class="even">
+<td>Truth for scoring</td>
+<td>Count-scale mean and covariance of a large draw (for example <span class="math inline">10^{5}</span> cells per type), not <span class="math inline">\boldsymbol{R}_j</span></td>
+</tr>
+<tr class="odd">
+<td>Checks before use</td>
+<td>Normal QQ plots of randomised quantile residuals per gene and type; marginal and copula AIC and BIC against independence and the empirical copula</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>Factors of the list above that the simulator serves:</p>
+<ul>
+<li><strong>1, observation noise</strong>: negative-binomial cells replace the Gaussian law; pseudo-bulks are sums of simulated cells at known <span class="math inline">\boldsymbol{p}</span>.</li>
+<li><strong>2, missing component</strong>: simulate every type and leave one out of the signature.</li>
+<li><strong>3, copula dependence</strong>: swap the plug-in correlation for an equicorrelated or a Clayton copula, margins fixed.</li>
+<li><strong>6, wrong covariance reference</strong>: generate with the <span class="math inline">\widehat{\boldsymbol{\Sigma}}_{j}</span> of one estimator or time, and fit DeCovarT with another.</li>
+</ul>
+<p>Spillover (4) and outlier genes (5) are added after generation; the simulator plays no part in them.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Not run. scDesign3 is not in renv.lock. Function and argument names</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># follow the scDesign3 tutorial (modular interface) and must be checked</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># against the installed version before use.</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># sce: SingleCellExperiment of one time slot, raw UMI counts of the</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">#   selected panel, culture-stress labels removed; colData holds</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">#   cell_type and log_s (log size factor).</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># sigma_plugin: named list, one G x G plug-in covariance per cell type.</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> scDesign3<span class="sc">::</span><span class="fu">construct_data</span>(</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">sce =</span> sce, <span class="at">assay_use =</span> <span class="st">"counts"</span>, <span class="at">celltype =</span> <span class="st">"cell_type"</span>,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">pseudotime =</span> <span class="cn">NULL</span>, <span class="at">spatial =</span> <span class="cn">NULL</span>, <span class="at">other_covariates =</span> <span class="st">"log_s"</span>,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">corr_by =</span> <span class="st">"cell_type"</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>marginals <span class="ot">&lt;-</span> scDesign3<span class="sc">::</span><span class="fu">fit_marginal</span>(</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> dat, <span class="at">predictor =</span> <span class="st">"gene"</span>,</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">mu_formula =</span> <span class="st">"cell_type + offset(log_s)"</span>,</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">sigma_formula =</span> <span class="st">"cell_type"</span>,</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">family_use =</span> <span class="st">"nb"</span>, <span class="at">n_cores =</span> <span class="dv">2</span>, <span class="at">usebam =</span> <span class="cn">FALSE</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>para <span class="ot">&lt;-</span> scDesign3<span class="sc">::</span><span class="fu">extract_para</span>(</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">sce =</span> sce, <span class="at">marginal_list =</span> marginals, <span class="at">n_cores =</span> <span class="dv">2</span>,</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">family_use =</span> <span class="st">"nb"</span>, <span class="at">new_covariate =</span> dat<span class="sc">$</span>newCovariate, <span class="at">data =</span> dat<span class="sc">$</span>dat</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Known dependence: the correlation of each plug-in covariance.</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>copula_known <span class="ot">&lt;-</span> <span class="fu">lapply</span>(sigma_plugin, stats<span class="sc">::</span>cov2cor)</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>cells_sim <span class="ot">&lt;-</span> scDesign3<span class="sc">::</span><span class="fu">simu_new</span>(</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">sce =</span> sce, <span class="at">mean_mat =</span> para<span class="sc">$</span>mean_mat, <span class="at">sigma_mat =</span> para<span class="sc">$</span>sigma_mat,</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">zero_mat =</span> para<span class="sc">$</span>zero_mat, <span class="at">copula_list =</span> copula_known,</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">n_cores =</span> <span class="dv">2</span>, <span class="at">family_use =</span> <span class="st">"nb"</span>, <span class="at">input_data =</span> dat<span class="sc">$</span>dat,</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">new_covariate =</span> dat<span class="sc">$</span>newCovariate</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="sec-sens-panel-size" class="level2" data-number="7.3">
+<h2 data-number="7.3" class="anchored" data-anchor-id="sec-sens-panel-size"><span class="header-section-number">7.3</span> Signature size and selection threshold</h2>
+<p><a href="https://bastienchassagnol.github.io/DeCovarT/articles/S5-misspecification.html#sec-s5i">S5i, signature size</a> states the hypothesis: accuracy rises with the number of genes, reaches a plateau, then falls once uninformative genes or genes inconsistent between bulk and single-cell libraries enter the panel. Every chapter of this book so far uses one panel, the top <code>n_genes_global = 500</code> of the type-equal ratio (<a href="02-feature-selection.html#sec-fs-ms-ratio" class="quarto-xref"><span>Section 3.5</span></a>, <a href="02-feature-selection.html#sec-fs-export" class="quarto-xref"><span>Section 3.10</span></a>). This section plans the sweep that tests the hypothesis on GSE229513. It has not been run.</p>
+<div id="tbl-sens-panel-size" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-sens-panel-size-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;7.2: Factors of the panel-size sweep. The largest panel stays below the size of the allow-list of every slot (<a href="02-feature-selection.html#sec-fs-qc" class="quarto-xref"><span>Section 3.2</span></a>).
+</figcaption>
+<div aria-describedby="tbl-sens-panel-size-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Factor</th>
+<th>Levels</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Panel size <code>n_genes_global</code></td>
+<td>50; 100; 200; 500; 1000; 2000, the top genes of each rank</td>
+</tr>
+<tr class="even">
+<td>Rank</td>
+<td>type-equal ratio (<code>ranks_global_equal_type.csv</code>, column <code>rank</code>); omnibus rank (<code>deviance_r2_equal_type</code>, <a href="02-feature-selection.html#sec-fs-omnibus" class="quarto-xref"><span>Section 3.6</span></a>)</td>
+</tr>
+<tr class="odd">
+<td>Omnibus gate</td>
+<td>Benjamini–Hochberg level <code>fdr</code> of <code>rank_genes_omnibus()</code>: 0.001; 0.01; 0.05; 0.2</td>
+</tr>
+<tr class="even">
+<td>Bulk consistency filter</td>
+<td>off; on (<a href="02-feature-selection.html#sec-fs-bulk-consistency" class="quarto-xref"><span>Section 3.7</span></a>)</td>
+</tr>
+<tr class="odd">
+<td>Time slot</td>
+<td>48 h, 72 h, 96 h (<a href="01-data-suppinger.html#sec-geo-design" class="quarto-xref"><span>Section 2.1</span></a>)</td>
+</tr>
+<tr class="even">
+<td>Methods</td>
+<td>NNLS; DeCovarT, profile Newton (<a href="05-deconvolution-pipeline.html#sec-deconv-models" class="quarto-xref"><span>Section 5.1</span></a>)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>Design choices:</p>
+<ul>
+<li><strong>Source of genes.</strong> The 500-gene export <code>data/intermediate/equal_type_top500_by_time.rds</code> cannot supply panels larger than 500. The sweep reads the allow-list object <code>data/intermediate/suppinger_sct_allowlist_seurat.rds</code> and the full rank table, then subsets genes per panel size.</li>
+<li><strong>Truth.</strong> Within each type, cells are split at random into a reference half and a pseudo-bulk half. The rank, the mean and the covariance use the reference half only; pseudo-bulks are sums of cells of the other half at known numbers per type. Bulk and reference cells are then disjoint, the condition under which a within-type variance can matter (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/S5-misspecification.html#sec-s5-review-redeconv">S5, ReDeconv</a>). Both halves come from one specimen series, so the pseudo-bulks carry no platform bias and no between-specimen variation (<a href="02-feature-selection.html#nte-pseudoreplication" class="quarto-xref">Note&nbsp;<span>3.1</span></a>).</li>
+<li><strong>Platform-inconsistent genes.</strong> The pseudo-bulks cannot reveal them. The real standard-Wnt bulks of GSE229386 enter through the bulk consistency filter: the sweep is repeated on the panels with the flagged genes removed, and on the real bulks the change of <span class="math inline">\hat{\boldsymbol{p}}</span> with panel size is reported, since no truth exists there.</li>
+<li><strong>Scale.</strong> Means, covariances and pseudo-bulks use raw UMI counts, so a pseudo-bulk is an exact sum of the cell profiles. The size-factor scale of <a href="03-covariance-estimation.html#sec-cov-inputs" class="quarto-xref"><span>Section 4.1.2</span></a> is a second arm.</li>
+<li><strong>Metrics.</strong> <code>DeCovarT::compute_benchmark_metrics()</code> with the true cell fractions: total variation and RMSE per bulk (<code>regression$global</code>), and per-type correlation and error (<code>regression$cell_type</code>). For the real bulks, the total variation between <span class="math inline">\hat{\boldsymbol{p}}</span> at each size and at 500 genes.</li>
+</ul>
+<p>The covariance has <span class="math inline">G(G+1)/2</span> entries per type. Above the number of reference cells of a type the sample covariance is singular, and only the shrinkage estimate of <a href="03-covariance-estimation.html#sec-shrinkage" class="quarto-xref"><span>Section 4.2.1</span></a> is defined; the closed-form intensity is used in the sweep rather than cross-validation, to keep the cost linear in the number of panels.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Not run. Function names and arguments follow R/rank_genes_omnibus.R,</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># R/cv_covariance_selection.R and the DeCovarT reference; corpcor and</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># nnls are not in renv.lock. Culture-stress labels are removed first,</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># as in scripts/01_03_export_equal_type_seurat.R.</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/utils_general.R"</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/rank_genes_omnibus.R"</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/cv_covariance_selection.R"</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>seu <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"data/intermediate/suppinger_sct_allowlist_seurat.rds"</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>ranks <span class="ot">&lt;-</span> utils<span class="sc">::</span><span class="fu">read.csv</span>(</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">"output/naive_marker_selection/tables/ranks_global_equal_type.csv"</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>panel_sizes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">50</span>L, <span class="dv">100</span>L, <span class="dv">200</span>L, <span class="dv">500</span>L, <span class="dv">1000</span>L, <span class="dv">2000</span>L)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>bh_levels <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.001</span>, <span class="fl">0.01</span>, <span class="fl">0.05</span>, <span class="fl">0.2</span>)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>time_level <span class="ot">&lt;-</span> <span class="st">"48h"</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>n_bulk <span class="ot">&lt;-</span> <span class="dv">100</span>L</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>n_cells_bulk <span class="ot">&lt;-</span> <span class="dv">500</span>L</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>counts <span class="ot">&lt;-</span> <span class="fu">assay_matrix</span>(seu, <span class="st">"RNA"</span>, <span class="st">"counts"</span>)</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>in_slot <span class="ot">&lt;-</span> seu<span class="sc">$</span>time_point <span class="sc">==</span> time_level <span class="co"># &amp; !culture-stress label</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(counts[, in_slot])</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>cell_type <span class="ot">&lt;-</span> <span class="fu">droplevels</span>(<span class="fu">factor</span>(seu<span class="sc">$</span>celltypeannotation[in_slot]))</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>lib <span class="ot">&lt;-</span> <span class="dv">10</span><span class="sc">^</span>seu<span class="sc">$</span>log_umi[in_slot]</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>types <span class="ot">&lt;-</span> <span class="fu">levels</span>(cell_type)</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Disjoint halves within each type: 1 = reference, 2 = pseudo-bulk.</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>half <span class="ot">&lt;-</span> withr<span class="sc">::</span><span class="fu">with_seed</span>(<span class="dv">20261101</span>, {</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>  stats<span class="sc">::</span><span class="fu">ave</span>(</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">seq_along</span>(cell_type),</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>    cell_type,</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">FUN =</span> <span class="cf">function</span>(i) <span class="fu">sample</span>(<span class="fu">rep_len</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="fu">length</span>(i)))</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>ref <span class="ot">&lt;-</span> half <span class="sc">==</span> <span class="dv">1</span>L</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a><span class="co"># Rank A: type-equal ratio of the current pipeline (computed on all</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a><span class="co"># cells of the slot; rank B below is the leakage-free one).</span></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>rank_a <span class="ot">&lt;-</span> ranks[ranks<span class="sc">$</span>time_point <span class="sc">==</span> time_level <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(ranks<span class="sc">$</span>rank), ]</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>rank_a <span class="ot">&lt;-</span> rank_a<span class="sc">$</span>gene[<span class="fu">order</span>(rank_a<span class="sc">$</span>rank)]</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a><span class="co"># Rank B: omnibus rank on the reference half; fdr = 1 keeps every gene</span></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a><span class="co"># so that each BH level is a filter of one fit.</span></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>omni <span class="ot">&lt;-</span> <span class="fu">rank_genes_omnibus</span>(</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>  x[, ref],</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>  cell_type[ref],</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>  <span class="at">size_factors =</span> lib[ref] <span class="sc">/</span> stats<span class="sc">::</span><span class="fu">median</span>(lib[ref]),</span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>  <span class="at">fdr =</span> <span class="dv">1</span>,</span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>  <span class="at">n_select =</span> <span class="fu">max</span>(panel_sizes)</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>omni <span class="ot">&lt;-</span> omni[<span class="sc">!</span><span class="fu">is.na</span>(omni<span class="sc">$</span>rank), ]</span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>rank_b <span class="ot">&lt;-</span> <span class="fu">lapply</span>(bh_levels, <span class="cf">function</span>(level) {</span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>  gated <span class="ot">&lt;-</span> omni[omni<span class="sc">$</span>adj_pval <span class="sc">&lt;=</span> level, ]</span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>  gated<span class="sc">$</span>gene[<span class="fu">order</span>(gated<span class="sc">$</span>rank)]</span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(rank_b) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"omnibus_fdr_"</span>, bh_levels)</span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a><span class="co"># Pseudo-bulks at known cell numbers, from the pseudo-bulk half.</span></span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>pseudo <span class="ot">&lt;-</span> withr<span class="sc">::</span><span class="fu">with_seed</span>(<span class="dv">20261102</span>, {</span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lapply</span>(<span class="fu">seq_len</span>(n_bulk), <span class="cf">function</span>(b) {</span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>    w <span class="ot">&lt;-</span> stats<span class="sc">::</span><span class="fu">rgamma</span>(<span class="fu">length</span>(types), <span class="at">shape =</span> <span class="dv">2</span>)</span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>    m <span class="ot">&lt;-</span> stats<span class="sc">::</span><span class="fu">rmultinom</span>(<span class="dv">1</span>L, n_cells_bulk, <span class="at">prob =</span> w <span class="sc">/</span> <span class="fu">sum</span>(w))[, <span class="dv">1</span>L]</span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>    cells <span class="ot">&lt;-</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(<span class="fu">seq_along</span>(types), <span class="cf">function</span>(j) {</span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>      pool <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="sc">!</span>ref <span class="sc">&amp;</span> cell_type <span class="sc">==</span> types[j])</span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>      pool[<span class="fu">sample.int</span>(<span class="fu">length</span>(pool), m[j], <span class="at">replace =</span> <span class="cn">TRUE</span>)]</span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>    }))</span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>    <span class="fu">list</span>(<span class="at">y =</span> <span class="fu">rowSums</span>(x[, cells, <span class="at">drop =</span> <span class="cn">FALSE</span>]), <span class="at">p =</span> m <span class="sc">/</span> <span class="fu">sum</span>(m))</span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a>fit_panel <span class="ot">&lt;-</span> <span class="cf">function</span>(genes) {</span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a>  mu <span class="ot">&lt;-</span> <span class="fu">vapply</span>(</span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>    types,</span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a>    <span class="cf">function</span>(j) <span class="fu">rowMeans</span>(x[genes, ref <span class="sc">&amp;</span> cell_type <span class="sc">==</span> j, <span class="at">drop =</span> <span class="cn">FALSE</span>]),</span>
+<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a>    <span class="fu">numeric</span>(<span class="fu">length</span>(genes))</span>
+<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a>  sigma <span class="ot">&lt;-</span> <span class="fu">vapply</span>(</span>
+<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a>    types,</span>
+<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a>    <span class="cf">function</span>(j) {</span>
+<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a>      xj <span class="ot">&lt;-</span> <span class="fu">t</span>(x[genes, ref <span class="sc">&amp;</span> cell_type <span class="sc">==</span> j, <span class="at">drop =</span> <span class="cn">FALSE</span>])</span>
+<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a>      <span class="fu">fit_cov_shrinkage</span>(xj, <span class="at">lambda =</span> <span class="fu">shrinkage_lambda_closed_form</span>(xj))<span class="sc">$</span>sigma</span>
+<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a>    <span class="fu">matrix</span>(<span class="dv">0</span>, <span class="fu">length</span>(genes), <span class="fu">length</span>(genes))</span>
+<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a>  scores <span class="ot">&lt;-</span> <span class="fu">lapply</span>(pseudo, <span class="cf">function</span>(pb) {</span>
+<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a>    y <span class="ot">&lt;-</span> pb<span class="sc">$</span>y[genes]</span>
+<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a>    p_nnls <span class="ot">&lt;-</span> DeCovarT<span class="sc">::</span><span class="fu">deconvolute_ratios_nnls</span>(y, mu)</span>
+<span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a>    p_dcv <span class="ot">&lt;-</span> DeCovarT<span class="sc">::</span><span class="fu">deconvolute_single_cell</span>(y, mu, sigma)<span class="sc">$</span>p</span>
+<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rbind</span>(</span>
+<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cbind</span>(</span>
+<span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a>        <span class="at">method =</span> <span class="st">"nnls"</span>,</span>
+<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a>        DeCovarT<span class="sc">::</span><span class="fu">compute_benchmark_metrics</span>(</span>
+<span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a>          y, mu, <span class="at">estimated_p =</span> p_nnls, <span class="at">true_ratios =</span> pb<span class="sc">$</span>p</span>
+<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a>        )<span class="sc">$</span>regression<span class="sc">$</span>global</span>
+<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cbind</span>(</span>
+<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a>        <span class="at">method =</span> <span class="st">"decovart_newton"</span>,</span>
+<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a>        DeCovarT<span class="sc">::</span><span class="fu">compute_benchmark_metrics</span>(</span>
+<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a>          y, mu, <span class="at">estimated_p =</span> p_dcv, <span class="at">true_ratios =</span> pb<span class="sc">$</span>p</span>
+<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a>        )<span class="sc">$</span>regression<span class="sc">$</span>global</span>
+<span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb2-101"><a href="#cb2-101" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-102"><a href="#cb2-102" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb2-103"><a href="#cb2-103" aria-hidden="true" tabindex="-1"></a>  <span class="fu">do.call</span>(rbind, scores)</span>
+<span id="cb2-104"><a href="#cb2-104" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-105"><a href="#cb2-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-106"><a href="#cb2-106" aria-hidden="true" tabindex="-1"></a>rank_lists <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">list</span>(<span class="at">type_equal_ratio =</span> rank_a), rank_b)</span>
+<span id="cb2-107"><a href="#cb2-107" aria-hidden="true" tabindex="-1"></a>sweep <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, <span class="fu">lapply</span>(<span class="fu">names</span>(rank_lists), <span class="cf">function</span>(r) {</span>
+<span id="cb2-108"><a href="#cb2-108" aria-hidden="true" tabindex="-1"></a>  <span class="fu">do.call</span>(rbind, <span class="fu">lapply</span>(panel_sizes, <span class="cf">function</span>(n) {</span>
+<span id="cb2-109"><a href="#cb2-109" aria-hidden="true" tabindex="-1"></a>    genes <span class="ot">&lt;-</span> utils<span class="sc">::</span><span class="fu">head</span>(rank_lists[[r]], n)</span>
+<span id="cb2-110"><a href="#cb2-110" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(genes) <span class="sc">&lt;</span> n) {</span>
+<span id="cb2-111"><a href="#cb2-111" aria-hidden="true" tabindex="-1"></a>      <span class="fu">return</span>(<span class="cn">NULL</span>) <span class="co"># the gate passes fewer genes than requested</span></span>
+<span id="cb2-112"><a href="#cb2-112" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-113"><a href="#cb2-113" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cbind</span>(<span class="at">rank =</span> r, <span class="at">n_genes_global =</span> n, <span class="fu">fit_panel</span>(genes))</span>
+<span id="cb2-114"><a href="#cb2-114" aria-hidden="true" tabindex="-1"></a>  }))</span>
+<span id="cb2-115"><a href="#cb2-115" aria-hidden="true" tabindex="-1"></a>}))</span>
+<span id="cb2-116"><a href="#cb2-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-117"><a href="#cb2-117" aria-hidden="true" tabindex="-1"></a><span class="co"># Bulk consistency filter on the real standard-Wnt bulks of the slot</span></span>
+<span id="cb2-118"><a href="#cb2-118" aria-hidden="true" tabindex="-1"></a><span class="co"># (bulk: genes x 3 replicates, same identifiers). sd and n_cells come</span></span>
+<span id="cb2-119"><a href="#cb2-119" aria-hidden="true" tabindex="-1"></a><span class="co"># from the reference half; flagged genes are removed before the sweep</span></span>
+<span id="cb2-120"><a href="#cb2-120" aria-hidden="true" tabindex="-1"></a><span class="co"># is repeated.</span></span>
+<span id="cb2-121"><a href="#cb2-121" aria-hidden="true" tabindex="-1"></a><span class="co"># flags &lt;- bulk_consistency_filter(bulk, mu = mu_all, sd = sd_all,</span></span>
+<span id="cb2-122"><a href="#cb2-122" aria-hidden="true" tabindex="-1"></a><span class="co">#                                  n_cells = table(cell_type[ref]))</span></span>
+<span id="cb2-123"><a href="#cb2-123" aria-hidden="true" tabindex="-1"></a><span class="co"># rank_lists_clean &lt;- lapply(rank_lists, intersect, flags$gene[flags$keep])</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Three outcomes would bear on the hypothesis. A rise and a plateau in both methods, with no decline up to 2000 genes, says that the panel of 500 is not too large for the pseudo-bulks. A decline that disappears after the bulk consistency filter points to platform-inconsistent genes, which only the real bulks can show. A decline in DeCovarT alone, present already on pseudo-bulks, points to the covariance estimate rather than to the genes.</p>
 
 
 </section>
@@ -409,7 +711,8 @@ window.Quarto = {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
       // Inspect non-navigation links and adorn them if external
-     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      window.quartoDecorateExternalLinks = function (root) {
+     var links = (root || window.document).querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
       for (var i=0; i<links.length; i++) {
         const link = links[i];
         if (!isInternal(link.href)) {
@@ -418,8 +721,69 @@ window.Quarto = {
           if (link.dataset.originalHref !== undefined) {
             link.href = link.dataset.originalHref;
           }
+          if (!link.classList.contains('no-external-icon')) {
+          }
         }
       }
+      };
+      window.quartoDecorateExternalLinks(window.document);
+    // Esc closes the popup (WCAG 1.4.13) and focus leaving both trigger and
+    // popup closes it (WCAG 2.4.11); tippy handles neither for interactive popups.
+    const hideOnEscAndFocusOut = {
+      name: 'hideOnEscAndFocusOut',
+      defaultValue: true,
+      fn(instance) {
+        const dismiss = () => {
+          // A show scheduled by the trigger delay would otherwise reopen it
+          instance.clearDelayTimeouts();
+          instance.hide();
+        };
+        const onKeyDown = (event) => {
+          if (event.key !== 'Escape') {
+            return;
+          }
+          // Keep Esc from also reaching page handlers (e.g. reveal.js overview),
+          // except an open reveal.js slide menu, which Esc should close too.
+          // The menu handles keys only when its keyboard option is on.
+          const menuHandlesEsc = window.Reveal?.getPlugin?.('menu')?.isOpen() &&
+            window.Reveal.getConfig().menu?.keyboard !== false;
+          if (!menuHandlesEsc) {
+            event.stopPropagation();
+          }
+          if (instance.popper.contains(window.document.activeElement)) {
+            // Disabled while refocusing so the focus trigger does not reopen it
+            instance.disable();
+            instance.reference.focus();
+            instance.enable();
+          }
+          dismiss();
+        };
+        const onFocusOut = (event) => {
+          const target = event.relatedTarget;
+          if (target && !instance.reference.contains(target) &&
+              !instance.popper.contains(target)) {
+            dismiss();
+          }
+        };
+        // On the trigger too: a click trigger (code-annotations: select) has no
+        // blur handling. Attached for the instance's lifetime so leaving the
+        // trigger also cancels a show still pending on the trigger delay.
+        instance.reference.addEventListener('focusout', onFocusOut);
+        return {
+          onShow() {
+            window.document.addEventListener('keydown', onKeyDown, true);
+            instance.popper.addEventListener('focusout', onFocusOut);
+          },
+          onHide() {
+            window.document.removeEventListener('keydown', onKeyDown, true);
+            instance.popper.removeEventListener('focusout', onFocusOut);
+          },
+          onDestroy() {
+            instance.reference.removeEventListener('focusout', onFocusOut);
+          },
+        };
+      },
+    };
     function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
       const config = {
         allowHTML: true,
@@ -433,6 +797,7 @@ window.Quarto = {
         interactiveBorder: 10,
         theme: 'quarto',
         placement: 'bottom-start',
+        plugins: [hideOnEscAndFocusOut],
       };
       if (contentFn) {
         config.content = contentFn;
@@ -595,44 +960,54 @@ window.Quarto = {
           const lineIds = lines.map((line) => {
             return targetCell + "-" + line;
           })
-          let top = null;
-          let height = null;
-          let parent = null;
+          // Each band is positioned against its own containing block, which is
+          // not the offsetParent of the lines, so place it from client rects.
+          const placeBand = (band, firstEl, lastEl, codeBlock) => {
+            const container = band.offsetParent;
+            if (container === null) {
+              return;
+            }
+            const containerRect = container.getBoundingClientRect();
+            // Reveal.js scales slides with a transform, so convert client
+            // pixels back to the CSS pixels of the container.
+            const scale = containerRect.height / container.offsetHeight || 1;
+            const firstRect = firstEl.getBoundingClientRect();
+            const lastRect = lastEl.getBoundingClientRect();
+            const top = (firstRect.top - containerRect.top) / scale - container.clientTop + container.scrollTop;
+            const height = (lastRect.bottom - firstRect.top) / scale;
+            band.style.top = top - 2 + "px";
+            band.style.height = height + 4 + "px";
+            if (codeBlock) {
+              // Without the copy button wrapper, the containing block is wider
+              // than the code block, so span the code block explicitly.
+              const blockRect = codeBlock.getBoundingClientRect();
+              band.style.left = (blockRect.left - containerRect.left) / scale - container.clientLeft + container.scrollLeft + "px";
+              band.style.width = blockRect.width / scale + "px";
+            }
+          };
           if (lineIds.length > 0) {
-              //compute the position of the single el (top and bottom and make a div)
-              const el = window.document.getElementById(lineIds[0]);
-              top = el.offsetTop;
-              height = el.offsetHeight;
-              parent = el.parentElement.parentElement;
-            if (lineIds.length > 1) {
-              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
-              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
-              height = bottom - top;
+            const el = window.document.getElementById(lineIds[0]);
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const parent = el.parentElement.parentElement;
+            // cook up a div (if necessary) and position it
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
             }
-            if (top !== null && height !== null && parent !== null) {
-              // cook up a div (if necessary) and position it 
-              let div = window.document.getElementById("code-annotation-line-highlight");
-              if (div === null) {
-                div = window.document.createElement("div");
-                div.setAttribute("id", "code-annotation-line-highlight");
-                div.style.position = 'absolute';
-                parent.appendChild(div);
-              }
-              div.style.top = top - 2 + "px";
-              div.style.height = height + 4 + "px";
-              div.style.left = 0;
-              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
-              if (gutterDiv === null) {
-                gutterDiv = window.document.createElement("div");
-                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
-                gutterDiv.style.position = 'absolute';
-                const codeCell = window.document.getElementById(targetCell);
-                const gutter = codeCell.querySelector('.code-annotation-gutter');
-                gutter.appendChild(gutterDiv);
-              }
-              gutterDiv.style.top = top - 2 + "px";
-              gutterDiv.style.height = height + 4 + "px";
+            placeBand(div, el, lastEl, parent.closest("div.sourceCode") || parent);
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
             }
+            placeBand(gutterDiv, el, lastEl);
             selectedAnnoteEl = annoteEl;
           }
         };
@@ -731,10 +1106,13 @@ window.Quarto = {
     }
   });
   </script>
-<nav class="page-navigation">
+  <script type="application/javascript">
+  window.quartoScrollableRegionsLabels = {"code":"Scrollable code","output":"Scrollable output"};
+  </script>
+<nav class="page-navigation" aria-label="Page">
   <div class="nav-page nav-page-previous">
       <a href="./06-biological-insights.html" class="pagination-link" aria-label="Early versus standard Wnt">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Early versus standard Wnt</span></span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Early versus standard Wnt</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">

@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.10.20">
+<meta name="generator" content="quarto-1.11.9">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -94,14 +94,15 @@ div.csl-indent {
 <link href="./01-data-suppinger.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/scrollable-regions/scrollable-regions.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-5196cd1b68de14ed06ea40d9474e787d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-304ff12d06e22565c5b6fc5f08b78bcb.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-79bc11b47e8e2c98ca376763b6756942.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-53cdafd631140c608ed51b8021fc9e33.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script src="site_libs/quarto-contrib/pseudocode-2.4.1/pseudocode.min.js"></script>
 <link href="site_libs/quarto-contrib/pseudocode-2.4.1/pseudocode.min.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
@@ -131,8 +132,8 @@ div.csl-indent {
     "search-label": "Search"
   }
 }</script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script>window.backupDefine = window.define; window.define = undefined;</script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
     <style type="text/css">
     .ps-root .ps-algorithm {
       border-top: 2px solid;
@@ -204,19 +205,18 @@ window.Quarto = {
 
 </head>
 
-<body class="nav-sidebar floating nav-fixed quarto-light">
+<body class="nav-sidebar floating nav-fixed quarto-light"><a id="quarto-skip-link" class="visually-hidden-focusable" href="#quarto-document-content">Skip to main content</a>
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark" aria-label="Site">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
     <a class="navbar-brand" href="./index.html">
     <span class="navbar-title">DeCovarT reproducibility</span>
     </a>
   </div>
-            <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
@@ -231,15 +231,16 @@ window.Quarto = {
             <div class="quarto-navbar-tools">
     <a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/tree/main/docs/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
 </div>
+            <div id="quarto-search" class="" title="Search"></div>
       </div> <!-- /container-fluid -->
     </nav>
-  <nav class="quarto-secondary-nav">
+  <nav class="quarto-secondary-nav" aria-label="Toolbar">
     <div class="container-fluid d-flex">
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./02-feature-selection.html">Reference estimation</a></li><li class="breadcrumb-item"><a href="./02-feature-selection.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Feature selection</span></a></li></ol></nav>
-        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        <nav class="quarto-page-breadcrumbs" aria-label="Breadcrumbs"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./02-feature-selection.html">Reference estimation</a></li><li class="breadcrumb-item"><a href="./02-feature-selection.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Feature selection</span></a></li></ol></nav>
+        <a class="flex-grow-1" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
   </nav>
@@ -247,7 +248,7 @@ window.Quarto = {
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto" aria-label="Section">
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
@@ -258,13 +259,10 @@ window.Quarto = {
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
- <span class="menu-text">Biological use case</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
+            <button type="button" class="sidebar-item-text sidebar-item-toggle sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-controls="quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text" id="quarto-sidebar-section-1-label">Biological use case</span><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
       </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-1" aria-labelledby="quarto-sidebar-section-1-label" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./01-data-suppinger.html" class="sidebar-item-text sidebar-link">
@@ -275,13 +273,10 @@ window.Quarto = {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
- <span class="menu-text">Reference estimation</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
+            <button type="button" class="sidebar-item-text sidebar-item-toggle sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-controls="quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text" id="quarto-sidebar-section-2-label">Reference estimation</span><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
       </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-2" aria-labelledby="quarto-sidebar-section-2-label" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./02-feature-selection.html" class="sidebar-item-text sidebar-link active">
@@ -294,39 +289,30 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Covariance estimation</span></span></a>
   </div>
 </li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./04-population-alignment.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">From single cells to type-level Gaussians</span></span></a>
-  </div>
-</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
- <span class="menu-text">Deconvolution benchmark</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
+            <button type="button" class="sidebar-item-text sidebar-item-toggle sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-controls="quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text" id="quarto-sidebar-section-3-label">Deconvolution benchmark</span><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
       </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-3" aria-labelledby="quarto-sidebar-section-3-label" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./05-deconvolution-pipeline.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Mean-based deconvolution comparators</span></span></a>
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Applying and comparing deconvolution outputs applied to Suppinger study</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./06-biological-insights.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Early versus standard Wnt</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Early versus standard Wnt</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./07-sensitivity-misspecification.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></span></a>
   </div>
 </li>
       </ul>
@@ -337,7 +323,7 @@ window.Quarto = {
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
+        <nav id="TOC" role="doc-toc" aria-labelledby="toc-title" class="toc-active">
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
@@ -347,19 +333,18 @@ window.Quarto = {
   <li><a href="#sec-fs-sct" id="toc-sec-fs-sct" class="nav-link" data-scroll-target="#sec-fs-sct"><span class="header-section-number">3.4</span> <code>SCTransform</code> v2 fit per time</a></li>
   <li><a href="#sec-fs-ms-ratio" id="toc-sec-fs-ms-ratio" class="nav-link" data-scroll-target="#sec-fs-ms-ratio"><span class="header-section-number">3.5</span> Current rank: between/within ratio</a></li>
   <li><a href="#sec-fs-omnibus" id="toc-sec-fs-omnibus" class="nav-link" data-scroll-target="#sec-fs-omnibus"><span class="header-section-number">3.6</span> Omnibus count-model rank</a></li>
-  <li><a href="#sec-fs-bulk-consistency" id="toc-sec-fs-bulk-consistency" class="nav-link" data-scroll-target="#sec-fs-bulk-consistency"><span class="header-section-number">3.7</span> 48 h bulk consistency filter</a></li>
+  <li><a href="#sec-fs-bulk-consistency" id="toc-sec-fs-bulk-consistency" class="nav-link" data-scroll-target="#sec-fs-bulk-consistency"><span class="header-section-number">3.7</span> Bulk consistency filter</a></li>
   <li><a href="#sec-fs-cell-line" id="toc-sec-fs-cell-line" class="nav-link" data-scroll-target="#sec-fs-cell-line"><span class="header-section-number">3.8</span> Cell-line sensitivity at 48 h</a></li>
   <li><a href="#sec-fs-markers" id="toc-sec-fs-markers" class="nav-link" data-scroll-target="#sec-fs-markers"><span class="header-section-number">3.9</span> Knowledge-driven markers</a></li>
   <li><a href="#sec-fs-export" id="toc-sec-fs-export" class="nav-link" data-scroll-target="#sec-fs-export"><span class="header-section-number">3.10</span> Rank tables and export</a></li>
   <li><a href="#sec-fs-nsga2" id="toc-sec-fs-nsga2" class="nav-link" data-scroll-target="#sec-fs-nsga2"><span class="header-section-number">3.11</span> Optional multivariate refinement</a></li>
-  <li><a href="#sec-fs-not-run" id="toc-sec-fs-not-run" class="nav-link" data-scroll-target="#sec-fs-not-run"><span class="header-section-number">3.12</span> What is not run</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/edit/main/docs/02-feature-selection.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/blob/main/docs/02-feature-selection.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content" id="quarto-document-content" tabindex="-1">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./02-feature-selection.html">Reference estimation</a></li><li class="breadcrumb-item"><a href="./02-feature-selection.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Feature selection</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="Breadcrumbs"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./02-feature-selection.html">Reference estimation</a></li><li class="breadcrumb-item"><a href="./02-feature-selection.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Feature selection</span></a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Feature selection</span></h1>
 </div>
@@ -380,7 +365,21 @@ window.Quarto = {
 
 <section id="sec-fs-scope" class="level2" data-number="3.1">
 <h2 data-number="3.1" class="anchored" data-anchor-id="sec-fs-scope"><span class="header-section-number">3.1</span> Scope and status</h2>
-<p>This chapter builds the gene panel on which the covariances of <a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a> are estimated. It runs on the single-cell counts of GSE229513 at the three bulk-matched times (<a href="01-data-suppinger.html#sec-geo-design" class="quarto-xref"><span>Section 2.1</span></a>), one time at a time. What the panel must achieve, and why each step is there, is stated in the feature-selection vignette (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-estimand">3.1, estimand</a>): genes whose type-level moments can be estimated in every type and that carry information about <span class="math inline">\boldsymbol{p}</span>. The ranking statistics below are computed inside one specimen. They calibrate a screen, not a population-level claim of differential expression (<a href="#nte-pseudoreplication" class="quarto-xref">Note&nbsp;<span>3.1</span></a>).</p>
+<p>This chapter builds the gene panel on which the covariances of <a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a> are estimated. It is the application that the feature-selection vignette (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html">3.1</a>) leaves to this book: filters as applied, settings, rank tables and code. It runs on the single-cell counts of GSE229513 at the three bulk-matched times (<a href="01-data-suppinger.html#sec-geo-design" class="quarto-xref"><span>Section 2.1</span></a>), one time at a time. What the panel must achieve, and why each step is there, is stated in the vignette (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#wrn-fs-estimand">3.1, what the genes are for</a>): genes whose type-level moments can be estimated in every type and that carry information about <span class="math inline">\boldsymbol{p}</span>.</p>
+<p>The Suppinger reference is the one-specimen case of that callout. It is one technical scRNA-seq experiment <span class="citation" data-cites="suppingerMultimodalCharacterizationMurine2023">(<a href="#ref-suppingerMultimodalCharacterizationMurine2023" role="doc-biblioref">Suppinger et al. 2023</a>)</span>, and its cells are draws from one specimen, not biological replicates (<a href="01-data-suppinger.html#sec-geo-design" class="quarto-xref"><span>Section 2.1</span></a>). Every ranking statistic below is therefore computed inside that specimen: it calibrates a screen, not a population-level claim of differential expression. Steps that need several donors, such as a <code>DESeq2</code> pseudo-bulk shortlist, do not apply here (<a href="#sec-fs-nsga2" class="quarto-xref"><span>Section 3.11</span></a>).</p>
+<div id="nte-pseudoreplication" class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note&nbsp;3.1: <span class="emoji" data-emoji="information_source">ℹ️</span> Cells are not biological replicates
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Treating the cells of one specimen as independent replicates of a population contrast is pseudoreplication: it inflates the apparent sample size and understates the standard error of every statistic computed across cells <span class="citation" data-cites="zimmermanPracticalSolutionPseudoreplication2021 squairConfrontingFalseDiscoveries2021 crowellMuscatDetectsSubpopulationspecific2020">(<a href="#ref-zimmermanPracticalSolutionPseudoreplication2021" role="doc-biblioref">Zimmerman et al. 2021</a>; <a href="#ref-squairConfrontingFalseDiscoveries2021" role="doc-biblioref">Squair et al. 2021</a>; <a href="#ref-crowellMuscatDetectsSubpopulationspecific2020" role="doc-biblioref">Crowell et al. 2020</a>)</span>. A score fitted this way, or a bootstrap that resamples cells with labels fixed, measures generalisation to new cells of this specimen, not to new specimens. It is reported as such wherever it is used in this book (<a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a>, <a href="07-sensitivity-misspecification.html#sec-sens-scdesign3" class="quarto-xref"><span>Section 7.2</span></a>).</p>
+</div>
+</div>
 <p>Ranks are computed on <code>SCTransform</code> Pearson residuals or on a count GLM. Neither scale is exported: the moments that enter DeCovarT are on the linear scale (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/02-1-single-cell-generative-optimisation.html#sec-norm-linear">2.1, normalisation</a>).</p>
 <div id="tbl-fs-status" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -435,7 +434,7 @@ Table&nbsp;3.1: Feature-selection steps, code and status. “Written, not run”
 <td>written, not run</td>
 </tr>
 <tr class="even">
-<td>48 h bulk consistency filter</td>
+<td>Bulk consistency filter</td>
 <td><a href="#sec-fs-bulk-consistency" class="quarto-xref"><span>Section 3.7</span></a></td>
 <td><code>R/bulk_consistency.R::bulk_consistency_filter()</code></td>
 <td>written, not run</td>
@@ -447,7 +446,7 @@ Table&nbsp;3.1: Feature-selection steps, code and status. “Written, not run”
 <td>run on the current rank</td>
 </tr>
 <tr class="even">
-<td>Optional NSGA-II refinement</td>
+<td>Optional NSGA-II refinement (post hoc)</td>
 <td><a href="#sec-fs-nsga2" class="quarto-xref"><span>Section 3.11</span></a></td>
 <td><code>scripts/04_02_feature_selection_genetic_algorithm.R</code></td>
 <td>template only</td>
@@ -457,7 +456,7 @@ Table&nbsp;3.1: Feature-selection steps, code and status. “Written, not run”
 </div>
 </figure>
 </div>
-<p>The current panel (top 500 per time, 1) comes from the between/within ratio. Once the presence gate, the omnibus rank and the bulk filter have been run, they replace that rank as steps 3 to 5 of <a href="index.html#fig-pipeline" class="quarto-xref">Figure&nbsp;<span>1</span></a>, and every output of <a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a> has to be refitted.</p>
+<p>The current panel (top 500 per time, 1) comes from the between/within ratio. Once the presence gate, the omnibus rank and the bulk filter have been run, they replace that rank as steps 3 to 5 of <span class="quarto-unresolved-ref">?fig-pipeline</span>, and every output of <a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a> has to be refitted.</p>
 </section>
 <section id="sec-fs-qc" class="level2" data-number="3.2">
 <h2 data-number="3.2" class="anchored" data-anchor-id="sec-fs-qc"><span class="header-section-number">3.2</span> Cell and gene QC as applied</h2>
@@ -590,7 +589,7 @@ Table&nbsp;3.2: Cells per type and time after the slot filter (<code>output/naiv
 \quad\text{and}\quad
 \min_{j}v_{gj}&gt;0 .
 \tag{3.1}</span></span></p>
-<p><code>presence_gate()</code> in <code>R/rank_genes_omnibus.R</code> returns the logical gene vector; <span class="math inline">\delta_{\min}</span> is an argument fixed before the ranks are seen (the sketch below uses 0.05). The reasons for a gate in every type, rather than in at least one, are in <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-presence">3.1, presence</a>. In the current outputs the gate is absent. Its absence is one cause of the constant-gene fallback described in <span class="quarto-unresolved-ref">?sec-cov-stale</span>.</p>
+<p><code>presence_gate()</code> in <code>R/rank_genes_omnibus.R</code> returns one row per gene with <code>min_detection</code> and a logical <code>pass</code>; <span class="math inline">\delta_{\min}</span> is the argument <code>min_frac</code>, fixed before the ranks are seen (the sketch below uses 0.05). The reasons for a gate in every type, rather than in at least one, are in <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-presence">3.1, presence</a>. In the current outputs the gate is absent. Its absence is one cause of the constant-gene fallback described in <span class="quarto-unresolved-ref">?sec-cov-stale</span>.</p>
 </section>
 <section id="sec-fs-sct" class="level2" data-number="3.4">
 <h2 data-number="3.4" class="anchored" data-anchor-id="sec-fs-sct"><span class="header-section-number">3.4</span> <code>SCTransform</code> v2 fit per time</h2>
@@ -749,18 +748,29 @@ Table&nbsp;3.4: Overlap of the equal-cell and equal-type top 500 (<code>global_w
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># cells; lib: full library sizes (10^log_umi). Thresholds are set</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># before the ranks are seen.</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/rank_genes_omnibus.R"</span>)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>keep <span class="ot">&lt;-</span> <span class="fu">presence_gate</span>(counts, cell_type, <span class="at">min_detection =</span> <span class="fl">0.05</span>)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>ranked <span class="ot">&lt;-</span> <span class="fu">rank_genes_omnibus</span>(counts[keep, ], cell_type, <span class="at">library_size =</span> lib)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># The two glmGamPoi calls it wraps:</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> glmGamPoi<span class="sc">::</span><span class="fu">glm_gp</span>(</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  counts[keep, ],</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">design =</span> <span class="sc">~</span>cell_type,</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">col_data =</span> <span class="fu">data.frame</span>(<span class="at">cell_type =</span> cell_type),</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">offset =</span> <span class="fu">log</span>(lib),</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">size_factors =</span> <span class="cn">FALSE</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>qlf <span class="ot">&lt;-</span> glmGamPoi<span class="sc">::</span><span class="fu">test_de</span>(fit, <span class="at">reduced_design =</span> <span class="sc">~</span><span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>gate <span class="ot">&lt;-</span> <span class="fu">presence_gate</span>(counts, cell_type, <span class="at">min_frac =</span> <span class="fl">0.05</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>keep <span class="ot">&lt;-</span> gate<span class="sc">$</span>gene[gate<span class="sc">$</span>pass]</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>size_factors <span class="ot">&lt;-</span> lib <span class="sc">/</span> stats<span class="sc">::</span><span class="fu">median</span>(lib)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># rank_genes_omnibus() applies the same gate internally (min_frac).</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>ranked <span class="ot">&lt;-</span> <span class="fu">rank_genes_omnibus</span>(</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  counts,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  cell_type,</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">size_factors =</span> size_factors,</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">fdr =</span> <span class="fl">0.05</span>,</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">min_frac =</span> <span class="fl">0.05</span>,</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">n_select =</span> <span class="dv">500</span>L</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>panel <span class="ot">&lt;-</span> ranked<span class="sc">$</span>gene[ranked<span class="sc">$</span>selected]</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co"># The two glmGamPoi calls it wraps (size factors through the offset):</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> glmGamPoi<span class="sc">::</span><span class="fu">glm_gp</span>(</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  counts[keep, ],</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">design =</span> <span class="sc">~</span>cell_type,</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">col_data =</span> <span class="fu">data.frame</span>(<span class="at">cell_type =</span> cell_type),</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">offset =</span> <span class="fu">log</span>(size_factors),</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">size_factors =</span> <span class="fu">rep</span>(<span class="dv">1</span>, <span class="fu">ncol</span>(counts))</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>qlf <span class="ot">&lt;-</span> glmGamPoi<span class="sc">::</span><span class="fu">test_de</span>(fit, <span class="at">reduced_design =</span> <span class="sc">~</span><span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>The wrapper arguments in the chunk are illustrative; the definitive signatures are those of <code>R/rank_genes_omnibus.R</code>. Why a gate followed by an effect size, rather than a rank by <span class="math inline">p</span>-value, is in <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-omnibus">3.1, omnibus</a>.</p>
 <p><strong>Calibration and stability (planned, not run).</strong></p>
@@ -807,20 +817,41 @@ Table&nbsp;3.5: Resampling plan for the omnibus rank. The number of replicates i
 <p>Cell types are the authors’ annotations, fixed before any statistic is computed here. Labels refined on the same counts would make every permutation <span class="math inline">p</span>-value anti-conservative <span class="citation" data-cites="gonzalezDelgadoPostclusteringInference2025">(<a href="#ref-gonzalezDelgadoPostclusteringInference2025" role="doc-biblioref">González-Delgado et al. 2025</a>)</span>.</p>
 </section>
 <section id="sec-fs-bulk-consistency" class="level2" data-number="3.7">
-<h2 data-number="3.7" class="anchored" data-anchor-id="sec-fs-bulk-consistency"><span class="header-section-number">3.7</span> 48 h bulk consistency filter</h2>
-<p><code>bulk_consistency_filter()</code> (<code>R/bulk_consistency.R</code>) removes genes whose bulk expression cannot be produced by the single-cell reference. It needs a single-cell slot and a bulk sample of the same condition. In Suppinger the only such pair is single-cell 48 h (B-S and SBR pooled) against the standard-Wnt bulk at 48 h, three biological replicates (<a href="01-data-suppinger.html#fig-suppinger-design" class="quarto-xref">Figure&nbsp;<span>2.1</span></a>). The early-Wnt bulk has no matched reference.</p>
+<h2 data-number="3.7" class="anchored" data-anchor-id="sec-fs-bulk-consistency"><span class="header-section-number">3.7</span> Bulk consistency filter</h2>
+<p><code>bulk_consistency_filter()</code> (<code>R/bulk_consistency.R</code>) removes genes whose bulk expression cannot be produced by the single-cell reference. It needs a single-cell slot and a bulk sample of the same condition (<span class="quarto-unresolved-ref">?fig-suppinger-design</span>).</p>
 <ul>
-<li><strong>Fit.</strong> At 48 h only: for each gene, compare the bulk value of each replicate with the range that the 48 h type means allow, and flag median-absolute-deviation outliers. The thresholds follow RNA-Sieve’s range bound and outlier rule as described in the vignette.</li>
-<li><strong>Apply.</strong> The flagged genes are removed from the panel at every time, including 72 h and 96 h, where no matched pair exists.</li>
+<li><strong>Matched pairs.</strong> The single-cell reference matches the standard-Wnt bulk at all three times used in this book: single-cell 48 h (B-S and SBR pooled), 72 h (SBR) and 96 h (B-S), each against three biological replicates of the standard-Wnt bulk at that time.</li>
+<li><strong>No match for early Wnt.</strong> The early-Wnt bulk (Wnt pulse at 24 h) has no single-cell counterpart at any time, so no bulk–reference comparison is possible on that arm.</li>
+<li><strong>Fit.</strong> At each of the three matched times independently: for each gene, compare the bulk value of each replicate with the range that the type means of that time allow, and flag median-absolute-deviation outliers. The range is the bound of <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-cross-platform">3.1, cross-platform consistency</a>, and the thresholds follow RNA-Sieve’s range bound and outlier rule <span class="citation" data-cites="erdmann-phamLikelihoodbasedDeconvolutionBulk2021">(<a href="#ref-erdmann-phamLikelihoodbasedDeconvolutionBulk2021" role="doc-biblioref">Erdmann-Pham et al. 2021</a>)</span>.</li>
+<li><strong>Apply.</strong> A gene flagged at any of the three matched times is removed from the panel at every time, including the early-Wnt arm, where no matched pair exists.</li>
+<li><strong>Assumption, now testable.</strong> With three matched times the flags can be compared across 48 h, 72 h and 96 h: a gene flagged consistently supports treating the platform effect as a property of the gene, a gene flagged only at one time does not. This comparison has not yet been run.</li>
 <li><strong>Status.</strong> A heuristic, labelled as such in the code. No script reads the bulk HTSeq table yet (<code>01_01</code> does not); the filter has not been run.</li>
 </ul>
-<p>The model behind the bound, and the alternatives that keep such genes and down-weight them, are in <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-cross-platform">3.1, cross-platform</a>.</p>
+<p>In the vignette, cross-platform consistency is a perspective, not a tier: its review table gives DeCovarT no cross-platform step, because the reference is one specimen (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-review-table">3.1, comparison of second-generation methods</a>). For Suppinger, the entry of that column is the range bound fitted at 48 h described here. The model behind the bound, its tail (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-range-tail">3.1, tail bound</a>), and the alternatives that keep such genes and down-weight them are in the vignette.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Not run. sc48: counts of the 48 h slot with labels; bulk48: the three</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># standard-Wnt 48 h replicates from GSE229386, same gene identifiers.</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/bulk_consistency.R"</span>)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>flags <span class="ot">&lt;-</span> <span class="fu">bulk_consistency_filter</span>(sc48, cell_type48, bulk48)</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>panel <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(panel, flags<span class="sc">$</span>gene[flags<span class="sc">$</span>flagged])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Not run. sc[[tm]]: raw counts (genes x cells) of the single-cell slot</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># at time tm, with labels cell_type[[tm]] and full library sizes</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># lib[[tm]]; bulk[[tm]]: the three standard-Wnt replicates at tm from</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># GSE229386 (genes x samples), same gene identifiers.</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/utils_general.R"</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/bulk_consistency.R"</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>flags <span class="ot">&lt;-</span> <span class="fu">lapply</span>(<span class="fu">c</span>(<span class="st">"48h"</span>, <span class="st">"72h"</span>, <span class="st">"96h"</span>), <span class="cf">function</span>(tm) {</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> sc[[tm]][panel, , drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  ct <span class="ot">&lt;-</span> <span class="fu">droplevels</span>(<span class="fu">factor</span>(cell_type[[tm]]))</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  norm <span class="ot">&lt;-</span> <span class="fu">sweep</span>(<span class="fu">as.matrix</span>(x), <span class="dv">2</span>L, lib[[tm]] <span class="sc">/</span> stats<span class="sc">::</span><span class="fu">median</span>(lib[[tm]]), <span class="st">"/"</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  mu <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="fu">levels</span>(ct), <span class="cf">function</span>(k) <span class="fu">rowMeans</span>(norm[, ct <span class="sc">==</span> k, <span class="at">drop =</span> <span class="cn">FALSE</span>]))</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  sd <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="fu">levels</span>(ct), <span class="cf">function</span>(k) <span class="fu">apply</span>(norm[, ct <span class="sc">==</span> k, <span class="at">drop =</span> <span class="cn">FALSE</span>], <span class="dv">1</span>L, stats<span class="sc">::</span>sd))</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">bulk_consistency_filter</span>(</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">bulk =</span> bulk[[tm]][panel, , <span class="at">drop =</span> <span class="cn">FALSE</span>],</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">mu =</span> mu,</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd =</span> sd,</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_cells =</span> <span class="fu">table</span>(ct)[<span class="fu">levels</span>(ct)],</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">z_range =</span> <span class="dv">3</span>,</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">mad_k =</span> <span class="dv">3</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  out<span class="sc">$</span>gene[<span class="sc">!</span>out<span class="sc">$</span>keep]</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>panel <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(panel, <span class="fu">unique</span>(<span class="fu">unlist</span>(flags)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="sec-fs-cell-line" class="level2" data-number="3.8">
@@ -854,23 +885,23 @@ Table&nbsp;3.6: Columns of the type-equal global rank table, grouped by role. Th
 
     <script>
       // Create table-specific functions using external factory
-      const tableFns_b6d3gr6lxgr4qptfqhpn = TinyTable.createTableFunctions("tinytable_b6d3gr6lxgr4qptfqhpn");
+      const tableFns_8pacj7e3ndqkc8zxsj7b = TinyTable.createTableFunctions("tinytable_8pacj7e3ndqkc8zxsj7b");
       // tinytable span after
-      window.addEventListener('load', function () { tableFns_b6d3gr6lxgr4qptfqhpn.spanCell(17, 1, 1, 3) })
-      window.addEventListener('load', function () { tableFns_b6d3gr6lxgr4qptfqhpn.spanCell(11, 1, 1, 3) })
-      window.addEventListener('load', function () { tableFns_b6d3gr6lxgr4qptfqhpn.spanCell(5, 1, 1, 3) })
-      window.addEventListener('load', function () { tableFns_b6d3gr6lxgr4qptfqhpn.spanCell(1, 1, 1, 3) })
+      window.addEventListener('load', function () { tableFns_8pacj7e3ndqkc8zxsj7b.spanCell(17, 1, 1, 3) })
+      window.addEventListener('load', function () { tableFns_8pacj7e3ndqkc8zxsj7b.spanCell(11, 1, 1, 3) })
+      window.addEventListener('load', function () { tableFns_8pacj7e3ndqkc8zxsj7b.spanCell(5, 1, 1, 3) })
+      window.addEventListener('load', function () { tableFns_8pacj7e3ndqkc8zxsj7b.spanCell(1, 1, 1, 3) })
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: '22', j: 1 }, { i: '22', j: 2 }, { i: '22', j: 3 } ], css_id: 'tinytable_css_r5c3mzgaxi9yn8i8oayv',}, 
-          { positions: [ { i: '0', j: 1 }, { i: '0', j: 2 }, { i: '0', j: 3 } ], css_id: 'tinytable_css_j92hdxvx8260yni0v8mf',}, 
+          { positions: [ { i: '22', j: 1 }, { i: '22', j: 2 }, { i: '22', j: 3 } ], css_id: 'tinytable_css_1kgealhc3iq5vnplsdth',}, 
+          { positions: [ { i: '0', j: 1 }, { i: '0', j: 2 }, { i: '0', j: 3 } ], css_id: 'tinytable_css_ysu1uxt3ouub0enr7ag0',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  tableFns_b6d3gr6lxgr4qptfqhpn.styleCell(cell.i, cell.j, group.css_id);
+                  tableFns_8pacj7e3ndqkc8zxsj7b.styleCell(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -879,11 +910,11 @@ Table&nbsp;3.6: Columns of the type-equal global rank table, grouped by role. Th
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/vincentarelbundock/tinytable@main/inst/tinytable.css">
     <style>
     /* tinytable css entries after */
-    #tinytable_b6d3gr6lxgr4qptfqhpn td.tinytable_css_r5c3mzgaxi9yn8i8oayv, #tinytable_b6d3gr6lxgr4qptfqhpn th.tinytable_css_r5c3mzgaxi9yn8i8oayv {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.08em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%;  }
-    #tinytable_b6d3gr6lxgr4qptfqhpn td.tinytable_css_j92hdxvx8260yni0v8mf, #tinytable_b6d3gr6lxgr4qptfqhpn th.tinytable_css_j92hdxvx8260yni0v8mf {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.08em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%;  }
+    #tinytable_8pacj7e3ndqkc8zxsj7b td.tinytable_css_1kgealhc3iq5vnplsdth, #tinytable_8pacj7e3ndqkc8zxsj7b th.tinytable_css_1kgealhc3iq5vnplsdth {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.08em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%;  }
+    #tinytable_8pacj7e3ndqkc8zxsj7b td.tinytable_css_ysu1uxt3ouub0enr7ag0, #tinytable_8pacj7e3ndqkc8zxsj7b th.tinytable_css_ysu1uxt3ouub0enr7ag0 {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.08em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%;  }
     </style>
     <div class="container">
-      <table class="tinytable" id="tinytable_b6d3gr6lxgr4qptfqhpn" style="table-layout: fixed; width: 100% !important; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="tinytable" id="tinytable_8pacj7e3ndqkc8zxsj7b" style="table-layout: fixed; width: 100% !important; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         
         <thead>
               <tr>
@@ -1018,7 +1049,15 @@ Table&nbsp;3.6: Columns of the type-equal global rank table, grouped by role. Th
 </section>
 <section id="sec-fs-nsga2" class="level2" data-number="3.11">
 <h2 data-number="3.11" class="anchored" data-anchor-id="sec-fs-nsga2"><span class="header-section-number">3.11</span> Optional multivariate refinement</h2>
-<p>A univariate rank ignores redundancy between genes and the covariances DeCovarT models. The optional stage searches subsets of the panel with a multi-objective criterion on all types jointly (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-multivariate">3.1, multivariate</a>). It needs <span class="math inline">\widehat{\boldsymbol{\Sigma}}_{j}</span>, so it runs after <a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a>, and it is drawn dashed in <a href="index.html#fig-pipeline" class="quarto-xref">Figure&nbsp;<span>1</span></a>.</p>
+<p>A univariate rank ignores redundancy between genes and the covariances DeCovarT models. The optional stage searches subsets of the panel with a multi-objective criterion on all types jointly (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-multivariate">3.1, covariance-driven (post hoc) selection</a>). It needs <span class="math inline">\widehat{\boldsymbol{\Sigma}}_{j}</span>, so it runs after <a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a>, and it is drawn dashed in <span class="quarto-unresolved-ref">?fig-pipeline</span>. Its panels fall under the circularity warning of the vignette (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#wrn-fs-circularity">3.1, circularity</a>): a comparison with other methods also reports the panel of 1, chosen without the model.</p>
+<p><strong>Shortlist.</strong> The multi-donor pipeline of the screening appendix (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/S6-feature-screening-scenario.html#sec-recommended">S6, multi-donor pipeline</a>) feeds NSGA-II with a <code>DESeq2</code> pseudo-bulk shortlist. With one specimen, as for the Suppinger reference, the <code>DESeq2</code> step does not apply, and strategy B of that appendix (presence gate, omnibus gate, effect-size rank; <a href="#sec-fs-presence" class="quarto-xref"><span>Section 3.3</span></a> and <a href="#sec-fs-omnibus" class="quarto-xref"><span>Section 3.6</span></a>) replaces the shortlist.</p>
+<p><strong>Types with few cells.</strong> A joint test or objective on the panel <span class="math inline">\mathcal{G}</span> uses the within-type covariance, which is high-dimensional when <span class="math inline">C_j</span> is not much larger than <span class="math inline">|\mathcal{G}|</span> (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-multivariate-tests">3.1, multivariate tests</a>). With the 500-gene panel of 1, seven of the eleven scored type × time cells of <a href="#tbl-fs-cell-counts" class="quarto-xref">Table&nbsp;<span>3.2</span></a> have <span class="math inline">C_j&lt;|\mathcal{G}|</span>, so their sample covariance is singular:</p>
+<ul>
+<li>48 h: exiting naïve pluripotency (265 cells), naïve pluripotency (36);</li>
+<li>72 h: ectopic pluripotency (266), naïve pluripotency (66);</li>
+<li>96 h: gut (140), ectopic pluripotency (116), somite differentiation front (29).</li>
+</ul>
+<p>Caudal mesoderm at 96 h (1,061 cells) is about twice the panel size. For these types the objectives below use the regularised <span class="math inline">\widehat{\boldsymbol{\Sigma}}_{j}</span> of <a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a>, never the sample covariance.</p>
 <p>Planned settings:</p>
 <ul>
 <li><strong>Optimiser.</strong> NSGA-II through <code>mco::nsga2()</code> <span class="citation" data-cites="R-mco">(<a href="#ref-R-mco" role="doc-biblioref">Mersmann et al. 2020</a>)</span>. Genes are encoded as a mask in <span class="math inline">[0,1]^{G}</span>, thresholded to a target panel size.</li>
@@ -1048,33 +1087,17 @@ Table&nbsp;3.6: Columns of the type-equal global rank table, grouped by role. Th
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>front <span class="ot">&lt;-</span> mco<span class="sc">::</span><span class="fu">nsga2</span>(fitness, <span class="at">idim =</span> <span class="fu">nrow</span>(mu), <span class="at">odim =</span> <span class="dv">2</span>L,</span>
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower.bounds =</span> <span class="fu">rep</span>(<span class="dv">0</span>, <span class="fu">nrow</span>(mu)), <span class="at">upper.bounds =</span> <span class="fu">rep</span>(<span class="dv">1</span>, <span class="fu">nrow</span>(mu)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-</section>
-<section id="sec-fs-not-run" class="level2" data-number="3.12">
-<h2 data-number="3.12" class="anchored" data-anchor-id="sec-fs-not-run"><span class="header-section-number">3.12</span> What is not run</h2>
-<div id="nte-pseudoreplication" class="callout callout-style-default callout-warning callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Warning&nbsp;3.1: <span class="emoji" data-emoji="warning">⚠️</span> Cells of one specimen are not biological replicates
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>GSE229513 has one specimen series. Cells, or random partitions of cells, are technical draws; resampling them measures sampling variability inside the specimen, not variability between organoids <span class="citation" data-cites="squairConfrontingFalseDiscoveries2021 zimmermanPracticalSolutionPseudoreplication2021">(<a href="#ref-squairConfrontingFalseDiscoveries2021" role="doc-biblioref">Squair et al. 2021</a>; <a href="#ref-zimmermanPracticalSolutionPseudoreplication2021" role="doc-biblioref">Zimmerman et al. 2021</a>)</span>. No calibrated differential-expression claim is made in this book. The bulk series GSE229386 does have three biological replicates per time and schedule; they support bulk contrasts, not single-cell ones.</p>
-</div>
-</div>
-<p>The following were considered and are not part of the pipeline. Each is reviewed in <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-review">3.1, review</a>.</p>
-<ul>
-<li>Pseudo-bulk <code>DESeq2</code>, <code>edgeR</code> or <code>limma</code>–voom: no biological replicates at the level of the contrast (<a href="#nte-pseudoreplication" class="quarto-xref">Note&nbsp;<span>3.1</span></a>).</li>
-<li><code>MAST</code> hurdle tests: droplet UMI counts are modelled without a zero-inflation layer (<a href="03-covariance-estimation.html#nte-drop-zico" class="quarto-xref">Note&nbsp;<span>4.1</span></a>).</li>
-<li>Differential-network screens (<code>INDEED</code>, D-trace) and Markov-boundary growth of marker seeds: they need fitted graphs and belong to the perspectives of the covariance vignette (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-3-precision-networks.html#sec-cov-perspectives">3.3, perspectives</a>).</li>
-</ul>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="list">
 <div id="ref-glmGamPoi2020" class="csl-entry" role="listitem">
 Ahlmann-Eltze, Constantin, and Wolfgang Huber. 2020. <span>“glmGamPoi: Fitting Gamma-Poisson Generalized Linear Models on Single Cell Count Data.”</span> <em>Bioinformatics</em>, ahead of print. <a href="https://doi.org/10.1093/bioinformatics/btaa1009">https://doi.org/10.1093/bioinformatics/btaa1009</a>.
+</div>
+<div id="ref-crowellMuscatDetectsSubpopulationspecific2020" class="csl-entry" role="listitem">
+Crowell, Helena L., Charlotte Soneson, Pierre-Luc Germain, et al. 2020. <span>“Muscat Detects Subpopulation-Specific State Transitions from Multi-Sample Multi-Condition Single-Cell Transcriptomics Data.”</span> <em>Nature Communications</em> 11: 6077. <a href="https://doi.org/10.1038/s41467-020-19894-4">https://doi.org/10.1038/s41467-020-19894-4</a>.
+</div>
+<div id="ref-erdmann-phamLikelihoodbasedDeconvolutionBulk2021" class="csl-entry" role="listitem">
+Erdmann-Pham, Dan D., Jonathan Fischer, Justin Hong, and Yun S. Song. 2021. <span>“Likelihood-Based Deconvolution of Bulk Gene Expression Data Using Single-Cell References.”</span> <em>Genome Research</em> 31 (10): 1794–806. <a href="https://doi.org/10.1101/gr.272344.120">https://doi.org/10.1101/gr.272344.120</a>.
 </div>
 <div id="ref-gonzalezDelgadoPostclusteringInference2025" class="csl-entry" role="listitem">
 González-Delgado, Javier, Mathis Deronzier, Juan Cortés, and Pierre Neuvial. 2025. <span>“Post-Clustering Inference Under Dependence.”</span> <em>arXiv</em>, ahead of print. <a href="https://doi.org/10.48550/arXiv.2310.11822">https://doi.org/10.48550/arXiv.2310.11822</a>.
@@ -1093,6 +1116,9 @@ Mersmann, Olaf, Heike Trautmann, Detlef Steuer, and Bernd Bischl. 2020. <em>Mco:
 </div>
 <div id="ref-squairConfrontingFalseDiscoveries2021" class="csl-entry" role="listitem">
 Squair, Jordan W., Matthieu Gautier, Claudia Kathe, et al. 2021. <span>“Confronting False Discoveries in Single-Cell Differential Expression.”</span> <em>Nature Communications</em> 12 (1). <a href="https://doi.org/10.1038/s41467-021-25960-2">https://doi.org/10.1038/s41467-021-25960-2</a>.
+</div>
+<div id="ref-suppingerMultimodalCharacterizationMurine2023" class="csl-entry" role="listitem">
+Suppinger, Simon, Marietta Zinner, Nadim Aizarani, et al. 2023. <span>“Multimodal Characterization of Murine Gastruloid Development.”</span> <em>Cell Stem Cell</em> 30 (6): 867–84. <a href="https://doi.org/10.1016/j.stem.2023.04.018">https://doi.org/10.1016/j.stem.2023.04.018</a>.
 </div>
 <div id="ref-zimmermanPracticalSolutionPseudoreplication2021" class="csl-entry" role="listitem">
 Zimmerman, Kip D., Mark A. Espeland, and Carl D. Langefeld. 2021. <span>“A Practical Solution to Pseudoreplication Bias in Single-Cell Studies.”</span> <em>Nature Communications</em> 12 (1): 738. <a href="https://doi.org/10.1038/s41467-021-21038-1">https://doi.org/10.1038/s41467-021-21038-1</a>.
@@ -1179,7 +1205,8 @@ Zimmerman, Kip D., Mark A. Espeland, and Carl D. Langefeld. 2021. <span>“A Pra
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
       // Inspect non-navigation links and adorn them if external
-     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      window.quartoDecorateExternalLinks = function (root) {
+     var links = (root || window.document).querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
       for (var i=0; i<links.length; i++) {
         const link = links[i];
         if (!isInternal(link.href)) {
@@ -1188,8 +1215,69 @@ Zimmerman, Kip D., Mark A. Espeland, and Carl D. Langefeld. 2021. <span>“A Pra
           if (link.dataset.originalHref !== undefined) {
             link.href = link.dataset.originalHref;
           }
+          if (!link.classList.contains('no-external-icon')) {
+          }
         }
       }
+      };
+      window.quartoDecorateExternalLinks(window.document);
+    // Esc closes the popup (WCAG 1.4.13) and focus leaving both trigger and
+    // popup closes it (WCAG 2.4.11); tippy handles neither for interactive popups.
+    const hideOnEscAndFocusOut = {
+      name: 'hideOnEscAndFocusOut',
+      defaultValue: true,
+      fn(instance) {
+        const dismiss = () => {
+          // A show scheduled by the trigger delay would otherwise reopen it
+          instance.clearDelayTimeouts();
+          instance.hide();
+        };
+        const onKeyDown = (event) => {
+          if (event.key !== 'Escape') {
+            return;
+          }
+          // Keep Esc from also reaching page handlers (e.g. reveal.js overview),
+          // except an open reveal.js slide menu, which Esc should close too.
+          // The menu handles keys only when its keyboard option is on.
+          const menuHandlesEsc = window.Reveal?.getPlugin?.('menu')?.isOpen() &&
+            window.Reveal.getConfig().menu?.keyboard !== false;
+          if (!menuHandlesEsc) {
+            event.stopPropagation();
+          }
+          if (instance.popper.contains(window.document.activeElement)) {
+            // Disabled while refocusing so the focus trigger does not reopen it
+            instance.disable();
+            instance.reference.focus();
+            instance.enable();
+          }
+          dismiss();
+        };
+        const onFocusOut = (event) => {
+          const target = event.relatedTarget;
+          if (target && !instance.reference.contains(target) &&
+              !instance.popper.contains(target)) {
+            dismiss();
+          }
+        };
+        // On the trigger too: a click trigger (code-annotations: select) has no
+        // blur handling. Attached for the instance's lifetime so leaving the
+        // trigger also cancels a show still pending on the trigger delay.
+        instance.reference.addEventListener('focusout', onFocusOut);
+        return {
+          onShow() {
+            window.document.addEventListener('keydown', onKeyDown, true);
+            instance.popper.addEventListener('focusout', onFocusOut);
+          },
+          onHide() {
+            window.document.removeEventListener('keydown', onKeyDown, true);
+            instance.popper.removeEventListener('focusout', onFocusOut);
+          },
+          onDestroy() {
+            instance.reference.removeEventListener('focusout', onFocusOut);
+          },
+        };
+      },
+    };
     function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
       const config = {
         allowHTML: true,
@@ -1203,6 +1291,7 @@ Zimmerman, Kip D., Mark A. Espeland, and Carl D. Langefeld. 2021. <span>“A Pra
         interactiveBorder: 10,
         theme: 'quarto',
         placement: 'bottom-start',
+        plugins: [hideOnEscAndFocusOut],
       };
       if (contentFn) {
         config.content = contentFn;
@@ -1365,44 +1454,54 @@ Zimmerman, Kip D., Mark A. Espeland, and Carl D. Langefeld. 2021. <span>“A Pra
           const lineIds = lines.map((line) => {
             return targetCell + "-" + line;
           })
-          let top = null;
-          let height = null;
-          let parent = null;
+          // Each band is positioned against its own containing block, which is
+          // not the offsetParent of the lines, so place it from client rects.
+          const placeBand = (band, firstEl, lastEl, codeBlock) => {
+            const container = band.offsetParent;
+            if (container === null) {
+              return;
+            }
+            const containerRect = container.getBoundingClientRect();
+            // Reveal.js scales slides with a transform, so convert client
+            // pixels back to the CSS pixels of the container.
+            const scale = containerRect.height / container.offsetHeight || 1;
+            const firstRect = firstEl.getBoundingClientRect();
+            const lastRect = lastEl.getBoundingClientRect();
+            const top = (firstRect.top - containerRect.top) / scale - container.clientTop + container.scrollTop;
+            const height = (lastRect.bottom - firstRect.top) / scale;
+            band.style.top = top - 2 + "px";
+            band.style.height = height + 4 + "px";
+            if (codeBlock) {
+              // Without the copy button wrapper, the containing block is wider
+              // than the code block, so span the code block explicitly.
+              const blockRect = codeBlock.getBoundingClientRect();
+              band.style.left = (blockRect.left - containerRect.left) / scale - container.clientLeft + container.scrollLeft + "px";
+              band.style.width = blockRect.width / scale + "px";
+            }
+          };
           if (lineIds.length > 0) {
-              //compute the position of the single el (top and bottom and make a div)
-              const el = window.document.getElementById(lineIds[0]);
-              top = el.offsetTop;
-              height = el.offsetHeight;
-              parent = el.parentElement.parentElement;
-            if (lineIds.length > 1) {
-              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
-              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
-              height = bottom - top;
+            const el = window.document.getElementById(lineIds[0]);
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const parent = el.parentElement.parentElement;
+            // cook up a div (if necessary) and position it
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
             }
-            if (top !== null && height !== null && parent !== null) {
-              // cook up a div (if necessary) and position it 
-              let div = window.document.getElementById("code-annotation-line-highlight");
-              if (div === null) {
-                div = window.document.createElement("div");
-                div.setAttribute("id", "code-annotation-line-highlight");
-                div.style.position = 'absolute';
-                parent.appendChild(div);
-              }
-              div.style.top = top - 2 + "px";
-              div.style.height = height + 4 + "px";
-              div.style.left = 0;
-              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
-              if (gutterDiv === null) {
-                gutterDiv = window.document.createElement("div");
-                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
-                gutterDiv.style.position = 'absolute';
-                const codeCell = window.document.getElementById(targetCell);
-                const gutter = codeCell.querySelector('.code-annotation-gutter');
-                gutter.appendChild(gutterDiv);
-              }
-              gutterDiv.style.top = top - 2 + "px";
-              gutterDiv.style.height = height + 4 + "px";
+            placeBand(div, el, lastEl, parent.closest("div.sourceCode") || parent);
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
             }
+            placeBand(gutterDiv, el, lastEl);
             selectedAnnoteEl = annoteEl;
           }
         };
@@ -1501,7 +1600,10 @@ Zimmerman, Kip D., Mark A. Espeland, and Carl D. Langefeld. 2021. <span>“A Pra
     }
   });
   </script>
-<nav class="page-navigation">
+  <script type="application/javascript">
+  window.quartoScrollableRegionsLabels = {"code":"Scrollable code","output":"Scrollable output"};
+  </script>
+<nav class="page-navigation" aria-label="Page">
   <div class="nav-page nav-page-previous">
       <a href="./01-data-suppinger.html" class="pagination-link" aria-label="Suppinger gastruloids">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Suppinger gastruloids</span></span>

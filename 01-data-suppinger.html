@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.10.20">
+<meta name="generator" content="quarto-1.11.9">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -25,6 +25,41 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 /* CSS for citations */
 div.csl-bib-body { }
@@ -59,14 +94,15 @@ div.csl-indent {
 <link href="./index.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/scrollable-regions/scrollable-regions.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-5196cd1b68de14ed06ea40d9474e787d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-304ff12d06e22565c5b6fc5f08b78bcb.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-79bc11b47e8e2c98ca376763b6756942.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-53cdafd631140c608ed51b8021fc9e33.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script src="site_libs/quarto-contrib/pseudocode-2.4.1/pseudocode.min.js"></script>
 <link href="site_libs/quarto-contrib/pseudocode-2.4.1/pseudocode.min.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
@@ -96,8 +132,8 @@ div.csl-indent {
     "search-label": "Search"
   }
 }</script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script>window.backupDefine = window.define; window.define = undefined;</script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
     <style type="text/css">
     .ps-root .ps-algorithm {
       border-top: 2px solid;
@@ -169,19 +205,18 @@ window.Quarto = {
 
 </head>
 
-<body class="nav-sidebar floating nav-fixed quarto-light">
+<body class="nav-sidebar floating nav-fixed quarto-light"><a id="quarto-skip-link" class="visually-hidden-focusable" href="#quarto-document-content">Skip to main content</a>
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark" aria-label="Site">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
     <a class="navbar-brand" href="./index.html">
     <span class="navbar-title">DeCovarT reproducibility</span>
     </a>
   </div>
-            <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
@@ -196,15 +231,16 @@ window.Quarto = {
             <div class="quarto-navbar-tools">
     <a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/tree/main/docs/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
 </div>
+            <div id="quarto-search" class="" title="Search"></div>
       </div> <!-- /container-fluid -->
     </nav>
-  <nav class="quarto-secondary-nav">
+  <nav class="quarto-secondary-nav" aria-label="Toolbar">
     <div class="container-fluid d-flex">
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./01-data-suppinger.html">Biological use case</a></li><li class="breadcrumb-item"><a href="./01-data-suppinger.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Suppinger gastruloids</span></a></li></ol></nav>
-        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        <nav class="quarto-page-breadcrumbs" aria-label="Breadcrumbs"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./01-data-suppinger.html">Biological use case</a></li><li class="breadcrumb-item"><a href="./01-data-suppinger.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Suppinger gastruloids</span></a></li></ol></nav>
+        <a class="flex-grow-1" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
   </nav>
@@ -212,7 +248,7 @@ window.Quarto = {
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto" aria-label="Section">
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
@@ -223,13 +259,10 @@ window.Quarto = {
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
- <span class="menu-text">Biological use case</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
+            <button type="button" class="sidebar-item-text sidebar-item-toggle sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-controls="quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text" id="quarto-sidebar-section-1-label">Biological use case</span><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
       </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-1" aria-labelledby="quarto-sidebar-section-1-label" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./01-data-suppinger.html" class="sidebar-item-text sidebar-link active">
@@ -240,13 +273,10 @@ window.Quarto = {
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
- <span class="menu-text">Reference estimation</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
+            <button type="button" class="sidebar-item-text sidebar-item-toggle sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-controls="quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text" id="quarto-sidebar-section-2-label">Reference estimation</span><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
       </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-2" aria-labelledby="quarto-sidebar-section-2-label" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./02-feature-selection.html" class="sidebar-item-text sidebar-link">
@@ -259,39 +289,30 @@ window.Quarto = {
  <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Covariance estimation</span></span></a>
   </div>
 </li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./04-population-alignment.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">From single cells to type-level Gaussians</span></span></a>
-  </div>
-</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
- <span class="menu-text">Deconvolution benchmark</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
+            <button type="button" class="sidebar-item-text sidebar-item-toggle sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-controls="quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text" id="quarto-sidebar-section-3-label">Deconvolution benchmark</span><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
       </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+      <ul id="quarto-sidebar-section-3" aria-labelledby="quarto-sidebar-section-3-label" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./05-deconvolution-pipeline.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Mean-based deconvolution comparators</span></span></a>
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Applying and comparing deconvolution outputs applied to Suppinger study</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./06-biological-insights.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Early versus standard Wnt</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Early versus standard Wnt</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./07-sensitivity-misspecification.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></span></a>
   </div>
 </li>
       </ul>
@@ -302,7 +323,7 @@ window.Quarto = {
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
+        <nav id="TOC" role="doc-toc" aria-labelledby="toc-title" class="toc-active">
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
@@ -313,9 +334,9 @@ window.Quarto = {
 <div class="toc-actions"><ul><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/edit/main/docs/01-data-suppinger.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/blob/main/docs/01-data-suppinger.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content" id="quarto-document-content" tabindex="-1">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./01-data-suppinger.html">Biological use case</a></li><li class="breadcrumb-item"><a href="./01-data-suppinger.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Suppinger gastruloids</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="Breadcrumbs"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./01-data-suppinger.html">Biological use case</a></li><li class="breadcrumb-item"><a href="./01-data-suppinger.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Suppinger gastruloids</span></a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Suppinger gastruloids</span></h1>
 </div>
@@ -377,17 +398,57 @@ Table&nbsp;2.1: Raw inputs. <code>data/raw/</code> is immutable; download comman
 <p>The scRNA-seq experiment is <strong>one</strong> 10x Chromium 3′ v3 resource from one specimen series, not a panel of independent biological replicates. DeCovarT treats it as the one-replicate regime (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/02-1-single-cell-generative-optimisation.html#sec-one-replicate">2.1, one single-cell replicate</a>). Zeros are taken as molecule-sampling counts (<a href="03-covariance-estimation.html#nte-drop-zico" class="quarto-xref">Note&nbsp;<span>4.1</span></a>). GSE250136 is a later stem-embryo dataset and is not part of this resource.</p>
 <section id="sec-geo-design" class="level2" data-number="2.1">
 <h2 data-number="2.1" class="anchored" data-anchor-id="sec-geo-design"><span class="header-section-number">2.1</span> Hierarchical design</h2>
-<p><a href="#fig-suppinger-design" class="quarto-xref">Figure&nbsp;<span>2.1</span></a> draws the two designs side by side.</p>
-<div id="fig-suppinger-design" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-suppinger-design-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="01-data-suppinger_files/mediabag/fig-suppinger-design.svg" class="img-fluid figure-img">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-suppinger-design-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<p>Figure&nbsp;2.1: “Design of the two GEO series. Left, single-cell GSE229513: cell line, then time slot; each circle is one slot, coloured by cell line (B-S blue, SBR grey). Right, bulk GSE229386: Wnt schedule, then time point; each rounded square holds three biological replicates. Thick outlines mark the single-cell slots used in this book (48 h, 72 h, 96 h). The dashed link joins the only matched pair, single-cell 48 h (both lines) and standard-Wnt bulk 48 h. The early-Wnt branch has no single-cell counterpart.”</p>
-</figcaption>
-</figure>
-</div>
+<p><span class="quarto-unresolved-ref">?fig-suppinger-design</span> draws the two designs side by side.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode tikz code-with-copy"><code class="sourceCode latex"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">%%| label: fig-suppinger-design</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">%%| fig-cap: "Design of the two GEO series. Left, single-cell GSE229513: cell line, then time slot; each circle is one slot, coloured by cell line (B-S blue, SBR grey). Right, bulk GSE229386: Wnt schedule, then time point; each rounded square holds three biological replicates. Thick outlines mark the single-cell slots used in this book (48 h, 72 h, 96 h). Dashed links join each of the three matched pairs: single-cell 48 h (both lines) with standard-Wnt bulk 48 h, single-cell 72 h (SBR) with standard-Wnt bulk 72 h, and single-cell 96 h (B-S) with standard-Wnt bulk 96 h. The early-Wnt branch has no single-cell counterpart at any time."</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">%%| filename: fig-suppinger-design</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">%%| alt: Two trees. Left tree, scRNA-seq GSE229513, splits into cell line B-S with time slots 48, 52, 56, 96, 108 and 120 hours, and cell line SBR with time slots 24, 36, 48, 60, 72 and 84 hours; slots are circles, blue for B-S and grey for SBR, with thick outlines at the slots used in this book: 48 hours in both lines, 72 hours in SBR, 96 hours in B-S. Right tree, bulk RNA-seq GSE229386, splits into a standard Wnt pulse at 48 hours and an early Wnt pulse at 24 hours, each with time points 48, 72 and 96 hours drawn as rounded squares with three replicates. Dashed lines join single-cell 48 hour (both lines) to standard-Wnt bulk 48 hour, single-cell 72 hour (SBR) to standard-Wnt bulk 72 hour, and single-cell 96 hour (B-S) to standard-Wnt bulk 96 hour, each labelled matched pair. The early-Wnt branch is labelled no single-cell match.</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">\begin</span>{<span class="ex">tikzpicture</span>}[x=10.5mm, y=10mm]</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">% single-cell tree</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">\node</span>[box] (sc) at (5.8,3.4) {scRNA-seq<span class="fu">\\</span> GSE229513};</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">\node</span>[box, draw=latdraw, fill=latfill] (bs) at (2.5,1.75) {Cell line B-S};</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">\node</span>[box, draw=obsdraw, fill=obsfill!60] (sbr) at (9.1,1.75) {Cell line SBR};</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">\foreach</span> <span class="fu">\t</span> [count=<span class="fu">\k</span> from 0] in {48,52,56,96,108,120} {</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">\node</span>[circle, draw=latdraw, fill=latfill, minimum size=8.6mm, inner sep=0pt, font=<span class="fu">\footnotesize</span>, line width=0.8pt] (bs<span class="fu">\t</span>) at (<span class="fu">\k</span>,0) {<span class="fu">\t</span>};</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">\draw</span>[draw=ink, line width=0.7pt] (bs.south) -- ++(0,-0.45) -| (bs<span class="fu">\t</span>.north);</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">\foreach</span> <span class="fu">\t</span> [count=<span class="fu">\k</span> from 0] in {24,36,48,60,72,84} {</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">\node</span>[circle, draw=obsdraw, fill=obsfill!60, minimum size=8.6mm, inner sep=0pt, font=<span class="fu">\footnotesize</span>, line width=0.8pt] (sbr<span class="fu">\t</span>) at (6.6+<span class="fu">\k</span>,0) {<span class="fu">\t</span>};</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">\draw</span>[draw=ink, line width=0.7pt] (sbr.south) -- ++(0,-0.45) -| (sbr<span class="fu">\t</span>.north);</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="fu">\foreach</span> <span class="fu">\n</span> in {bs48,bs96,sbr48,sbr72} {<span class="fu">\draw</span>[line width=1.8pt, draw=ink] (<span class="fu">\n</span>) circle (4.3mm);}</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="fu">\draw</span>[draw=ink, line width=0.7pt] (sc.south) -- ++(0,-0.5) -| (bs.north);</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="fu">\draw</span>[draw=ink, line width=0.7pt] (sc.south) -- ++(0,-0.5) -| (sbr.north);</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="fu">\node</span>[note, anchor=east] at (-0.6,0) {time (h)};</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co">% bulk tree</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="fu">\node</span>[box] (bk) at (16.8,3.4) {Bulk RNA-seq<span class="fu">\\</span> GSE229386};</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="fu">\node</span>[box] (std) at (15,1.75) {Standard Wnt<span class="fu">\\</span> (pulse at 48<span class="fu">\,</span>h)};</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="fu">\node</span>[box] (early) at (18.6,1.75) {Early Wnt<span class="fu">\\</span> (pulse at 24<span class="fu">\,</span>h)};</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="fu">\foreach</span> <span class="fu">\t</span> [count=<span class="fu">\k</span> from 0] in {48,72,96} {</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">\node</span>[rectangle, rounded corners=2.5pt, draw=ink, fill=white, minimum size=8.8mm, inner sep=0.5pt, font=<span class="fu">\scriptsize</span>, align=center, line width=0.8pt] (std<span class="fu">\t</span>) at (14+<span class="fu">\k</span>,0) {<span class="fu">\t\\</span>[-1pt]<span class="ss">$</span><span class="sc">\times</span><span class="ss">3$</span>};</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">\draw</span>[draw=ink, line width=0.7pt] (std.south) -- ++(0,-0.45) -| (std<span class="fu">\t</span>.north);</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">\node</span>[rectangle, rounded corners=2.5pt, draw=ink, fill=white, minimum size=8.8mm, inner sep=0.5pt, font=<span class="fu">\scriptsize</span>, align=center, line width=0.8pt] (early<span class="fu">\t</span>) at (17.6+<span class="fu">\k</span>,0) {<span class="fu">\t\\</span>[-1pt]<span class="ss">$</span><span class="sc">\times</span><span class="ss">3$</span>};</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">\draw</span>[draw=ink, line width=0.7pt] (early.south) -- ++(0,-0.45) -| (early<span class="fu">\t</span>.north);</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="fu">\draw</span>[draw=ink, line width=0.7pt] (bk.south) -- ++(0,-0.5) -| (std.north);</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="fu">\draw</span>[draw=ink, line width=0.7pt] (bk.south) -- ++(0,-0.5) -| (early.north);</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="fu">\node</span>[note, text=ink!80, align=center] at (18.6,-1.15) {no single-cell match};</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="co">% matched pairs: 48 h (both lines), 72 h (SBR), 96 h (B-S)</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="fu">\draw</span>[draw=ink, densely dashed, line width=0.9pt] (bs48.south) -- ++(0,-0.75) -| (std48.south);</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="fu">\draw</span>[draw=ink, densely dashed, line width=0.9pt] (sbr48.south) -- ++(0,-0.75);</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="fu">\draw</span>[draw=ink, densely dashed, line width=0.9pt] (sbr72.south) -- ++(0,-1.1) -| (std72.south);</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="fu">\draw</span>[draw=ink, densely dashed, line width=0.9pt] (bs96.south) -- ++(0,-1.45) -| (std96.south);</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="fu">\node</span>[elabel] at (11.8,-0.98) {matched pairs, 48/72/96<span class="fu">\,</span>h};</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="co">% legend</span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="fu">\node</span>[circle, draw=latdraw, fill=latfill, minimum size=4mm, inner sep=0pt, line width=0.8pt] (l1) at (0,-1.9) {};</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a><span class="fu">\node</span>[note, anchor=west] at (0.3,-1.9) {B-S};</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="fu">\node</span>[circle, draw=obsdraw, fill=obsfill!60, minimum size=4mm, inner sep=0pt, line width=0.8pt] (l2) at (1.5,-1.9) {};</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="fu">\node</span>[note, anchor=west] at (1.8,-1.9) {SBR};</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="fu">\node</span>[circle, draw=ink, minimum size=4mm, inner sep=0pt, line width=0.8pt] (l3) at (3.2,-1.9) {};</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a><span class="fu">\node</span>[note, anchor=west] at (3.5,-1.9) {single-cell slot};</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a><span class="fu">\node</span>[rectangle, rounded corners=1.5pt, draw=ink, minimum size=4mm, inner sep=0pt, line width=0.8pt] (l4) at (6.2,-1.9) {};</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a><span class="fu">\node</span>[note, anchor=west] at (6.5,-1.9) {bulk time point, 3 biological replicates};</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a><span class="kw">\end</span>{<span class="ex">tikzpicture</span>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><strong>Single-cell (GSE229513).</strong> The first factor is the mESC cell line (B-S or SBR), the second the time slot. Each line covers six slots, and only 48 h is profiled in both. At the three times of the bulk series the cell counts are (<code>output/naive_marker_selection/tables/batch_by_time.csv</code>):</p>
 <div id="tbl-cells-by-line" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -424,37 +485,33 @@ Table&nbsp;2.2: Single-cell counts per line at the bulk times, before the cultur
 </div>
 </figure>
 </div>
-<p>Cell line is therefore confounded with time except at 48 h, and it is not a covariate in any fit of this book. The two lines are treated as one developmental trajectory (<a href="#fig-bio-space" class="quarto-xref">Figure&nbsp;<span>2.4</span></a>). Gene ranking and covariance estimation run independently at 48 h, 72 h and 96 h, the slots with a bulk time point (<a href="02-feature-selection.html#sec-fs-sct" class="quarto-xref"><span>Section 3.4</span></a>, <a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a>). At 48 h the two lines are pooled; <a href="02-feature-selection.html#sec-fs-cell-line" class="quarto-xref"><span>Section 3.8</span></a> measures what pooling changes.</p>
-<p><strong>Bulk RNA-seq (GSE229386).</strong> The first factor is the Wnt schedule: the standard pulse at 48 h, or an early pulse at 24 h. The second factor is the time point, 48 h, 72 h or 96 h, each with three biological replicates. No single-cell slot carries the early schedule, so the early-Wnt bulk has no single-cell counterpart. The cross-platform filter of <a href="02-feature-selection.html#sec-fs-bulk-consistency" class="quarto-xref"><span>Section 3.7</span></a> is fitted on the matched pair only: single-cell 48 h against standard-Wnt bulk 48 h.</p>
-<!-- Open question (book agent, 2026-10-30): the single-cell slots 72 h
-(SBR) and 96 h (B-S) coincide in time with the standard-Wnt bulk at
-72 h and 96 h. The plan treats only 48 h as a matched pair (both lines
-present). Confirm before the bulk filter is extended. -->
+<p>Cell line is therefore confounded with time except at 48 h, and it is not a covariate in any fit of this book. The two lines are treated as one developmental trajectory (<a href="#fig-bio-space" class="quarto-xref">Figure&nbsp;<span>2.3</span></a>). Gene ranking and covariance estimation run independently at 48 h, 72 h and 96 h, the slots with a bulk time point (<a href="02-feature-selection.html#sec-fs-sct" class="quarto-xref"><span>Section 3.4</span></a>, <a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a>). At 48 h the two lines are pooled; <a href="02-feature-selection.html#sec-fs-cell-line" class="quarto-xref"><span>Section 3.8</span></a> measures what pooling changes.</p>
+<p><strong>Bulk RNA-seq (GSE229386).</strong> The first factor is the Wnt schedule: the standard pulse at 48 h, or an early pulse at 24 h. The second factor is the time point, 48 h, 72 h or 96 h, each with three biological replicates. No single-cell slot carries the early schedule, so the early-Wnt bulk has no single-cell counterpart at any time. The three single-cell slots used in this book instead match the three time points of the standard-Wnt bulk: single-cell 48 h (B-S and SBR pooled), 72 h (SBR) and 96 h (B-S), each against three biological replicates of the standard-Wnt bulk at that time. The cross-platform filter of <a href="02-feature-selection.html#sec-fs-bulk-consistency" class="quarto-xref"><span>Section 3.7</span></a> is therefore fitted at all three standard-Wnt time points, never on the early-Wnt arm.</p>
 </section>
 <section id="sec-seurat" class="level2" data-number="2.2">
 <h2 data-number="2.2" class="anchored" data-anchor-id="sec-seurat"><span class="header-section-number">2.2</span> Seurat processing</h2>
-<p>Embeddings, QC and clustering follow the Seurat workflow of the Suppinger resource <span class="citation" data-cites="suppingerMultimodalCharacterizationMurine2023">(<a href="#ref-suppingerMultimodalCharacterizationMurine2023" role="doc-biblioref">Suppinger et al. 2023</a>)</span>, drawn in <a href="#fig-seurat-workflow" class="quarto-xref">Figure&nbsp;<span>2.2</span></a>: Alevin counts, <code>scater</code> QC, <code>SCTransform</code> Pearson residuals per batch for integration, CCA, PCA, UMAP and Louvain clustering. Two products of that workflow are used here: the cell-type labels (<code>celltypeannotation</code>), and the gene list of the authors’ <code>SCT</code> counts layer, which serves as the gene allow-list (<a href="02-feature-selection.html#sec-fs-qc" class="quarto-xref"><span>Section 3.2</span></a>). The authors’ residuals themselves are not used: the ranking refits <code>SCTransform</code> v2 per time slot (<a href="02-feature-selection.html#sec-fs-sct" class="quarto-xref"><span>Section 3.4</span></a>), and the covariances are estimated from raw counts (<a href="03-covariance-estimation.html#sec-cov-inputs" class="quarto-xref"><span>Section 4.1.2</span></a>).</p>
+<p>Embeddings, QC and clustering follow the Seurat workflow of the Suppinger resource <span class="citation" data-cites="suppingerMultimodalCharacterizationMurine2023">(<a href="#ref-suppingerMultimodalCharacterizationMurine2023" role="doc-biblioref">Suppinger et al. 2023</a>)</span>, drawn in <a href="#fig-seurat-workflow" class="quarto-xref">Figure&nbsp;<span>2.1</span></a>: Alevin counts, <code>scater</code> QC, <code>SCTransform</code> Pearson residuals per batch for integration, CCA, PCA, UMAP and Louvain clustering. Two products of that workflow are used here: the cell-type labels (<code>celltypeannotation</code>), and the gene list of the authors’ <code>SCT</code> counts layer, which serves as the gene allow-list (<a href="02-feature-selection.html#sec-fs-qc" class="quarto-xref"><span>Section 3.2</span></a>). The authors’ residuals themselves are not used: the ranking refits <code>SCTransform</code> v2 per time slot (<a href="02-feature-selection.html#sec-fs-sct" class="quarto-xref"><span>Section 3.4</span></a>), and the covariances are estimated from raw counts (<a href="03-covariance-estimation.html#sec-cov-inputs" class="quarto-xref"><span>Section 4.1.2</span></a>).</p>
 <div id="fig-seurat-workflow" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-seurat-workflow-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="images/suppinger_seurat_workflow_single_cell.png" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-seurat-workflow-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2.2: Seurat workflow used to extract embeddings and downstream analyses on GSE229513.
+Figure&nbsp;2.1: Seurat workflow used to extract embeddings and downstream analyses on GSE229513.
 </figcaption>
 </figure>
 </div>
 </section>
 <section id="sec-bio-sc" class="level2" data-number="2.3">
 <h2 data-number="2.3" class="anchored" data-anchor-id="sec-bio-sc"><span class="header-section-number">2.3</span> Biological interpretation from single-cell compositions</h2>
-<p><a href="#fig-bio-lineage" class="quarto-xref">Figure&nbsp;<span>2.3</span></a> and <a href="#fig-bio-space" class="quarto-xref">Figure&nbsp;<span>2.4</span></a> summarise a <strong>putative</strong> reading of annotated type proportions along gastruloid time. They are not a reconstruction of embryonic lineages. Two annotated states are treated as technical artefacts of culture stress (Cd63+ ectoderm-like artefact and Zscan4+ artefact, <code>data/dictionaries/suppinger_celltype_crosswalk.csv</code>). The working caudal sequence after the Chir/Wnt pulse is pluripotency <span class="math inline">\to</span> epiblast <span class="math inline">\to</span> primitive streak <span class="math inline">\to</span> caudal mesoderm / NMP <span class="math inline">\to</span> pre-somitic mesoderm / somites, with a residual endoderm bias typical of gastruloids.</p>
+<p><a href="#fig-bio-lineage" class="quarto-xref">Figure&nbsp;<span>2.2</span></a> and <a href="#fig-bio-space" class="quarto-xref">Figure&nbsp;<span>2.3</span></a> summarise a <strong>putative</strong> reading of annotated type proportions along gastruloid time. They are not a reconstruction of embryonic lineages. Two annotated states are treated as technical artefacts of culture stress (Cd63+ ectoderm-like artefact and Zscan4+ artefact, <code>data/dictionaries/suppinger_celltype_crosswalk.csv</code>). The working caudal sequence after the Chir/Wnt pulse is pluripotency <span class="math inline">\to</span> epiblast <span class="math inline">\to</span> primitive streak <span class="math inline">\to</span> caudal mesoderm / NMP <span class="math inline">\to</span> pre-somitic mesoderm / somites, with a residual endoderm bias typical of gastruloids.</p>
 <div id="fig-bio-lineage" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-bio-lineage-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="images/suppinger_biological_itepreation.png" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-bio-lineage-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2.3: Putative lineage reading of Suppinger annotations (disclaimer: not a ground-truth DAG).
+Figure&nbsp;2.2: Putative lineage reading of Suppinger annotations (disclaimer: not a ground-truth DAG).
 </figcaption>
 </figure>
 </div>
@@ -464,11 +521,11 @@ Figure&nbsp;2.3: Putative lineage reading of Suppinger annotations (disclaimer: 
 <img src="images/suppinger_biological_itepreation_2.png" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-bio-space-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2.4: Spatial / time-slot sketch of type composition, including the B-S and SBR series.
+Figure&nbsp;2.3: Spatial / time-slot sketch of type composition, including the B-S and SBR series.
 </figcaption>
 </figure>
 </div>
-<p>The early-versus-standard Wnt reading of bulk compositions is in <a href="06-biological-insights.html#sec-bio-deconv" class="quarto-xref"><span>Section 7.1</span></a>, after the mean-based comparators of <a href="05-deconvolution-pipeline.html#sec-deconv-models" class="quarto-xref"><span>Section 6.1</span></a>.</p>
+<p>The early-versus-standard Wnt reading of bulk compositions is in <a href="06-biological-insights.html#sec-bio-deconv" class="quarto-xref"><span>Section 6.1</span></a>, after the mean-based comparators of <a href="05-deconvolution-pipeline.html#sec-deconv-models" class="quarto-xref"><span>Section 5.1</span></a>.</p>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="list">
@@ -557,7 +614,8 @@ Suppinger, Simon, Marietta Zinner, Nadim Aizarani, et al. 2023. <span>“Multimo
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
       // Inspect non-navigation links and adorn them if external
-     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      window.quartoDecorateExternalLinks = function (root) {
+     var links = (root || window.document).querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
       for (var i=0; i<links.length; i++) {
         const link = links[i];
         if (!isInternal(link.href)) {
@@ -566,8 +624,69 @@ Suppinger, Simon, Marietta Zinner, Nadim Aizarani, et al. 2023. <span>“Multimo
           if (link.dataset.originalHref !== undefined) {
             link.href = link.dataset.originalHref;
           }
+          if (!link.classList.contains('no-external-icon')) {
+          }
         }
       }
+      };
+      window.quartoDecorateExternalLinks(window.document);
+    // Esc closes the popup (WCAG 1.4.13) and focus leaving both trigger and
+    // popup closes it (WCAG 2.4.11); tippy handles neither for interactive popups.
+    const hideOnEscAndFocusOut = {
+      name: 'hideOnEscAndFocusOut',
+      defaultValue: true,
+      fn(instance) {
+        const dismiss = () => {
+          // A show scheduled by the trigger delay would otherwise reopen it
+          instance.clearDelayTimeouts();
+          instance.hide();
+        };
+        const onKeyDown = (event) => {
+          if (event.key !== 'Escape') {
+            return;
+          }
+          // Keep Esc from also reaching page handlers (e.g. reveal.js overview),
+          // except an open reveal.js slide menu, which Esc should close too.
+          // The menu handles keys only when its keyboard option is on.
+          const menuHandlesEsc = window.Reveal?.getPlugin?.('menu')?.isOpen() &&
+            window.Reveal.getConfig().menu?.keyboard !== false;
+          if (!menuHandlesEsc) {
+            event.stopPropagation();
+          }
+          if (instance.popper.contains(window.document.activeElement)) {
+            // Disabled while refocusing so the focus trigger does not reopen it
+            instance.disable();
+            instance.reference.focus();
+            instance.enable();
+          }
+          dismiss();
+        };
+        const onFocusOut = (event) => {
+          const target = event.relatedTarget;
+          if (target && !instance.reference.contains(target) &&
+              !instance.popper.contains(target)) {
+            dismiss();
+          }
+        };
+        // On the trigger too: a click trigger (code-annotations: select) has no
+        // blur handling. Attached for the instance's lifetime so leaving the
+        // trigger also cancels a show still pending on the trigger delay.
+        instance.reference.addEventListener('focusout', onFocusOut);
+        return {
+          onShow() {
+            window.document.addEventListener('keydown', onKeyDown, true);
+            instance.popper.addEventListener('focusout', onFocusOut);
+          },
+          onHide() {
+            window.document.removeEventListener('keydown', onKeyDown, true);
+            instance.popper.removeEventListener('focusout', onFocusOut);
+          },
+          onDestroy() {
+            instance.reference.removeEventListener('focusout', onFocusOut);
+          },
+        };
+      },
+    };
     function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
       const config = {
         allowHTML: true,
@@ -581,6 +700,7 @@ Suppinger, Simon, Marietta Zinner, Nadim Aizarani, et al. 2023. <span>“Multimo
         interactiveBorder: 10,
         theme: 'quarto',
         placement: 'bottom-start',
+        plugins: [hideOnEscAndFocusOut],
       };
       if (contentFn) {
         config.content = contentFn;
@@ -743,44 +863,54 @@ Suppinger, Simon, Marietta Zinner, Nadim Aizarani, et al. 2023. <span>“Multimo
           const lineIds = lines.map((line) => {
             return targetCell + "-" + line;
           })
-          let top = null;
-          let height = null;
-          let parent = null;
+          // Each band is positioned against its own containing block, which is
+          // not the offsetParent of the lines, so place it from client rects.
+          const placeBand = (band, firstEl, lastEl, codeBlock) => {
+            const container = band.offsetParent;
+            if (container === null) {
+              return;
+            }
+            const containerRect = container.getBoundingClientRect();
+            // Reveal.js scales slides with a transform, so convert client
+            // pixels back to the CSS pixels of the container.
+            const scale = containerRect.height / container.offsetHeight || 1;
+            const firstRect = firstEl.getBoundingClientRect();
+            const lastRect = lastEl.getBoundingClientRect();
+            const top = (firstRect.top - containerRect.top) / scale - container.clientTop + container.scrollTop;
+            const height = (lastRect.bottom - firstRect.top) / scale;
+            band.style.top = top - 2 + "px";
+            band.style.height = height + 4 + "px";
+            if (codeBlock) {
+              // Without the copy button wrapper, the containing block is wider
+              // than the code block, so span the code block explicitly.
+              const blockRect = codeBlock.getBoundingClientRect();
+              band.style.left = (blockRect.left - containerRect.left) / scale - container.clientLeft + container.scrollLeft + "px";
+              band.style.width = blockRect.width / scale + "px";
+            }
+          };
           if (lineIds.length > 0) {
-              //compute the position of the single el (top and bottom and make a div)
-              const el = window.document.getElementById(lineIds[0]);
-              top = el.offsetTop;
-              height = el.offsetHeight;
-              parent = el.parentElement.parentElement;
-            if (lineIds.length > 1) {
-              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
-              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
-              height = bottom - top;
+            const el = window.document.getElementById(lineIds[0]);
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const parent = el.parentElement.parentElement;
+            // cook up a div (if necessary) and position it
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
             }
-            if (top !== null && height !== null && parent !== null) {
-              // cook up a div (if necessary) and position it 
-              let div = window.document.getElementById("code-annotation-line-highlight");
-              if (div === null) {
-                div = window.document.createElement("div");
-                div.setAttribute("id", "code-annotation-line-highlight");
-                div.style.position = 'absolute';
-                parent.appendChild(div);
-              }
-              div.style.top = top - 2 + "px";
-              div.style.height = height + 4 + "px";
-              div.style.left = 0;
-              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
-              if (gutterDiv === null) {
-                gutterDiv = window.document.createElement("div");
-                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
-                gutterDiv.style.position = 'absolute';
-                const codeCell = window.document.getElementById(targetCell);
-                const gutter = codeCell.querySelector('.code-annotation-gutter');
-                gutter.appendChild(gutterDiv);
-              }
-              gutterDiv.style.top = top - 2 + "px";
-              gutterDiv.style.height = height + 4 + "px";
+            placeBand(div, el, lastEl, parent.closest("div.sourceCode") || parent);
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
             }
+            placeBand(gutterDiv, el, lastEl);
             selectedAnnoteEl = annoteEl;
           }
         };
@@ -879,7 +1009,10 @@ Suppinger, Simon, Marietta Zinner, Nadim Aizarani, et al. 2023. <span>“Multimo
     }
   });
   </script>
-<nav class="page-navigation">
+  <script type="application/javascript">
+  window.quartoScrollableRegionsLabels = {"code":"Scrollable code","output":"Scrollable output"};
+  </script>
+<nav class="page-navigation" aria-label="Page">
   <div class="nav-page nav-page-previous">
       <a href="./index.html" class="pagination-link" aria-label="Overview">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Overview</span></span>
