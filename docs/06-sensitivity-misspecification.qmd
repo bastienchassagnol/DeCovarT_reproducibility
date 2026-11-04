@@ -98,14 +98,15 @@ states the hypothesis: accuracy rises with the number of genes, reaches
 a plateau, then falls once uninformative genes or genes inconsistent
 between bulk and single-cell libraries enter the panel. Every chapter
 of this book so far uses one panel, the top `n_genes_global = 500` of
-the type-equal ratio (@sec-fs-ms-ratio, @sec-fs-export). This section
+the legacy type-equal `SCTransform` ratio (@sec-fs-ms-ratio,
+@sec-fs-export). This section
 plans the sweep that tests the hypothesis on GSE229513. It has not been
 run.
 
 | Factor | Levels |
 |---|---|
 | Panel size `n_genes_global` | 50; 100; 200; 500; 1000; 2000, the top genes of each rank |
-| Rank | type-equal ratio (`ranks_global_equal_type.csv`, column `rank`); omnibus rank (`deviance_r2_equal_type`, @sec-fs-omnibus) |
+| Rank | legacy type-equal ratio (`ranks_global_equal_type.csv`, column `rank`); omnibus rank, cell-weighted deviance $R^2_D$ (column `deviance_r2`, @sec-fs-omnibus) |
 | Omnibus gate | Benjamini–Hochberg level `fdr` of `rank_genes_omnibus()`: 0.001; 0.01; 0.05; 0.2 |
 | Bulk consistency filter | off; on (@sec-fs-bulk-consistency) |
 | Time slot | 48 h, 72 h, 96 h (@sec-geo-design) |
@@ -189,7 +190,7 @@ half <- withr::with_seed(20261101, {
 })
 ref <- half == 1L
 
-# Rank A: type-equal ratio of the current pipeline (computed on all
+# Rank A: legacy type-equal ratio of the current panel (computed on all
 # cells of the slot; rank B below is the leakage-free one).
 rank_a <- ranks[ranks$time_point == time_level & !is.na(ranks$rank), ]
 rank_a <- rank_a$gene[order(rank_a$rank)]

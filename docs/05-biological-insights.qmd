@@ -26,7 +26,7 @@ GPT5"); this is not verified. -->
 
 <!-- Redrawn figure, ready to switch. Steps (not run):
 1. Write output/deconvolution/proportions_long.csv from the comparator
-   runs of 05-deconvolution-pipeline.qmd (columns listed in the header of
+   runs of 04-deconvolution-pipeline.qmd (columns listed in the header of
    scripts/06_01_plot_early_wnt_compositions.R).
 2. Rscript --no-save --no-restore scripts/06_01_plot_early_wnt_compositions.R
 3. In docs/images/src/early_wnt/: latexmk -lualatex early_wnt.tex, then

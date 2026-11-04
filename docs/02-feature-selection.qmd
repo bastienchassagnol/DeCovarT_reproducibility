@@ -15,7 +15,10 @@ panel must achieve, and why each step is there, is stated in the
 vignette
 ([3.1, what the genes are for](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#wrn-fs-estimand)):
 genes whose type-level moments can be estimated in every type and that
-carry information about $\boldsymbol{p}$.
+carry information about $\boldsymbol{p}$. The sections follow the four
+tiers of the vignette: (i) quality control and prior knowledge, (ii)
+cross-cell consistency, (iii) cross-platform consistency, (iv)
+down-weighting by the model.
 
 The Suppinger reference is the one-specimen case of that callout. It is
 one technical scRNA-seq experiment
@@ -42,34 +45,56 @@ is reported as such wherever it is used in this book
 (@sec-cov-scope, @sec-sens-scdesign3).
 :::
 
-Ranks are computed on `SCTransform` Pearson residuals or on a count
-GLM. Neither scale is exported: the moments that enter DeCovarT are on
-the linear scale
+Ranks are computed on a negative-binomial count GLM (@sec-fs-glm); the
+legacy panel was ranked on `SCTransform` Pearson residuals
+(@sec-fs-legacy). Neither scale is exported: the moments that enter
+DeCovarT are on the linear scale
 ([2.1, normalisation](https://bastienchassagnol.github.io/DeCovarT/articles/02-1-single-cell-generative-optimisation.html#sec-norm-linear)).
 
-| Step | Section | Code | Status |
-|---|---|---|---|
-| Cell and gene QC | @sec-fs-qc | `scripts/01_01_prepare_and_filter_genes_sctransform.R`, section 1 | run; outputs dated 2026-09-28 to 2026-10-01 |
-| `SCTransform` v2 fit per time | @sec-fs-sct | `R/rank_sctransform_naive.R::rank_genes_sctransform()` | run |
-| Between/within ratio rank (current) | @sec-fs-ms-ratio | same | run |
-| Presence gate | @sec-fs-presence | `R/rank_genes_omnibus.R::presence_gate()` | written, not run |
-| Omnibus count-model rank (new) | @sec-fs-omnibus | `R/rank_genes_omnibus.R::rank_genes_omnibus()` | written, not run |
-| Bulk consistency filter | @sec-fs-bulk-consistency | `R/bulk_consistency.R::bulk_consistency_filter()` | written, not run |
-| Export of the top 500 per time | @sec-fs-export | `scripts/01_03_export_equal_type_seurat.R` | run on the current rank |
-| Optional NSGA-II refinement (post hoc) | @sec-fs-nsga2 | `scripts/04_02_feature_selection_genetic_algorithm.R` | template only |
+| Tier | Step | Section | Code | Status |
+|---|---|---|---|---|
+| (i) | Cell and gene QC | @sec-fs-qc-applied | `scripts/01_01_prepare_and_filter_genes_sctransform.R`, section 1 | run; outputs dated 2026-09-28 to 2026-10-01 |
+| (i) | Knowledge-driven markers | @sec-fs-markers | `R/map_marker_symbols.R::map_marker_symbols()` | run |
+| (i) | Presence gate | @sec-fs-presence | `R/rank_genes_omnibus.R::presence_gate()` | written, not run |
+| (ii) | Count-model fits M0 and M1 per time | @sec-fs-glm | `R/rank_genes_omnibus.R::compare_type_effect_tests()` | written, not run |
+| (ii) | Four tests, gate, deviance $R^2$ rank | @sec-fs-omnibus | same file: `compare_type_effect_tests()`, `type_test_kendall()`, `type_test_calibration()`, `rank_genes_omnibus()` | written, not run |
+| (iii) | Cook's distance for cells and genes | @sec-fs-outliers | `R/influence_diagnostics.R::cook_cells()`, `cook_genes()` | written, not run |
+| (iii) | $\boldsymbol{p}$-free range check | @sec-fs-bulk-filter | `R/bulk_consistency.R::bulk_consistency_filter()` | written, not run |
+| (iii) | Plug-in composition (deMixSC-style W-NNLS) | @sec-fs-bulk-filter | `R/plugin_composition.R::plugin_composition_demixsc()` | written, not run |
+| (iii) | Tail statements per gene and module, quantile band | @sec-fs-bulk-filter | `R/bulk_tail_bounds.R::bulk_tail_filter()`, `tail_threshold()`, `tail_flag_overlap()` | written, not run |
+| (iv) | Down-weighting by the model | @sec-fs-weighting-pointer | covariance chapter | not a selection step |
+| perspective | Classifier-based markers | @sec-fs-classifiers | `R/classifier_markers.R::classifier_markers()` | written, not run |
+| legacy | `SCTransform` v2 fit per time | @sec-fs-sct | `R/rank_sctransform_naive.R::rank_genes_sctransform()` | run |
+| legacy | Between/within ratio rank (current panel) | @sec-fs-ms-ratio | same | run |
+| appendix | Optional NSGA-II refinement (post hoc) | @sec-fs-nsga2 | `scripts/04_02_feature_selection_genetic_algorithm.R` | template only |
 
-: Feature-selection steps, code and status. "Written, not run" means the function exists and parses but no output has been produced in this repository. {#tbl-fs-status}
+: Feature-selection steps by tier, code and status. "Written, not run" means the function exists and parses but no output has been produced in this repository. {#tbl-fs-status}
+
+Packages needed by the new code and absent from `renv.lock`:
+`glmGamPoi` (tier ii, already used by the legacy fit through
+`Seurat`, but not recorded), `quantreg` (quantile band, tier iii),
+`glmnet`, `mixOmics` and `ranger` (classifier perspective). Each is
+checked with `requireNamespace()`. `permuco` (Freedman–Lane for linear
+models) and `flipscores` (sign-flip score tests for GLMs) are optional
+cross-checks of the hand-written permutation of @sec-fs-omnibus; the
+code does not call them. None is installed yet.
 
 The current panel (top 500 per time, @sec-fs-export) comes from the
-between/within ratio. Once the presence gate, the omnibus rank and the
-bulk filter have been run, they replace that rank as steps 3 to 5 of
+legacy between/within ratio (@sec-fs-ms-ratio). Once tiers (i) to (iii)
+have been run, their rank replaces it as steps 3 to 5 of
 @fig-pipeline, and every output of @sec-cov-scope has to be refitted.
 
-## Cell and gene QC as applied {#sec-fs-qc}
+## Tier (i): quality control and prior knowledge {#sec-fs-qc}
 
 The tiers of quality control recommended in the vignette
 ([3.1, QC](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-qc))
-are applied only in part. What runs today is listed here.
+are applied only in part. This tier also holds what is decided without
+the counts: the curated markers, forced into the panel, and the
+presence gate.
+
+### Cell and gene QC as applied {#sec-fs-qc-applied}
+
+What runs today is listed here.
 
 **Cells.**
 
@@ -80,9 +105,11 @@ are applied only in part. What runs today is listed here.
   `data/dictionaries/suppinger_celltype_crosswalk.csv` (Cd63+
   ectoderm-like artefact, Zscan4+ artefact) are dropped before the
   fit.
-- A type with fewer than `min_cells = 20` cells in a slot stays in the
-  `SCTransform` fit and is left out of the scores. Exiting naïve
-  pluripotency at 72 h (8 cells) is the only such case.
+- A type with fewer than `min_cells = 20` cells in a slot is left out
+  of the scores. Exiting naïve pluripotency at 72 h (8 cells) is the
+  only such case. In the legacy `SCTransform` fit it stays in the fit;
+  the count models of tier (ii) drop it before the fit, since it is not
+  a unit of @sec-cov-scope.
 - No library-size MAD filter, detected-gene filter or mitochondrial
   filter is applied by this repository. This is the gap with tier (i)
   of the vignette.
@@ -92,8 +119,8 @@ are applied only in part. What runs today is listed here.
 - The allow-list is the gene set of the authors' `SCT` counts layer:
   2,944 of the 27,027 genes of the RNA assay. Genes outside it never
   enter a fit.
-- After the per-time fit, `SCTransform` returns residuals for 2,892
-  (48 h), 2,769 (72 h) and 2,811 (96 h) genes (`model_card.csv`).
+- After the legacy per-time fit, `SCTransform` returns residuals for
+  2,892 (48 h), 2,769 (72 h) and 2,811 (96 h) genes (`model_card.csv`).
 - Ribosomal, mitochondrial and sex-chromosome genes are not removed
   explicitly; whether the authors' allow-list already excludes them has
   not been checked.
@@ -117,7 +144,27 @@ are applied only in part. What runs today is listed here.
 
 : Cells per type and time after the slot filter (`output/naive_marker_selection/tables/cell_counts.csv`). The eleven scored type × time cells are the units of @sec-cov-scope. {#tbl-fs-cell-counts}
 
-## Presence gate {#sec-fs-presence}
+### Knowledge-driven markers {#sec-fs-markers}
+
+Curated markers are hard prior knowledge: they are united with the
+ranked panel at each time whatever their score, so they are chosen
+without the counts and cannot be a product of the rank. The list is
+short: `data/dictionaries/mouse_gastruloid_signaling_markers.csv`, with
+columns `cell_type_excel` (lineage on the signalling map),
+`cell_type_suppinger` (the matching Suppinger label, or `NA`) and
+`gene_marker`. Symbols are mapped offline with `org.Mm.eg.db`
+(`R/map_marker_symbols.R`), not `biomaRt`. The lineage groups of the
+same file are the gene modules of the tier (iii) filter
+(@sec-fs-bulk-filter).
+
+Fifteen of the 19 mouse symbols are in the 2,944-gene allow-list.
+Under a uniform draw of 19 genes from the 27,027 RNA symbols the
+expected overlap is about 2.1; the hypergeometric upper tail is
+$P(X\ge 15)=8.8\times10^{-12}$ (`marker_sct_hypergeometric.csv`). The
+four absent markers are *Myod1*, *Pax6*, *Sox1* and *Tfap2a*
+(`venn_markers_vs_counts.pdf`).
+
+### Presence gate {#sec-fs-presence}
 
 A gene enters the ranking at a given time only if it is detected, and
 varies, in **every** scored type at that time. With $\delta_{gj}$ the
@@ -131,204 +178,267 @@ $$
 $$ {#eq-fs-presence}
 
 `presence_gate()` in `R/rank_genes_omnibus.R` returns one row per
-gene with `min_detection` and a logical `pass`; $\delta_{\min}$ is the
-argument `min_frac`, fixed before the ranks are seen (the sketch below
-uses 0.05). The reasons for a gate in every
-type, rather than in at least one, are in
+gene with `min_detection`, `min_variance` and a logical `pass` that
+applies both conditions; $\delta_{\min}$ is the argument `min_frac`,
+fixed before the ranks are seen (0.05 in the calls below). The reasons
+for a gate in every type, rather than in at least one, are in
 [3.1, presence](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-presence).
 In the current outputs the gate is absent. Its absence is one cause of
-the constant-gene fallback described in @sec-cov-stale.
+the constant-gene fallback of the covariance estimates
+(@sec-cov-scope).
 
-## `SCTransform` v2 fit per time {#sec-fs-sct}
+## Tier (ii): cross-cell consistency {#sec-fs-consistency}
 
-`rank_genes_sctransform()` refits `Seurat::SCTransform()` separately at
-48 h, 72 h and 96 h (`split_by = "time_point"`) on the allow-list
-genes. Cells of every non-artefact type at that time are fitted
-together. The fitted mean is an intercept plus a library-size offset,
+A gene is kept when its counts separate the scored types consistently
+across the cells of one slot. The theory, and the comparison of the
+four tests, are in
+[3.1, cross-cell consistency](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-consistency).
 
-$$
-\log\mu_{gc}
-=
-\beta_{0g}
-+
-\log s_{c},
-\qquad
-x_{gc}\sim\mathrm{NB}(\mu_{gc},\psi_{g}),
-$$ {#eq-fs-v2-offset}
+### Count-model fit per time {#sec-fs-glm}
 
-with $s_{c}$ the full RNA library size of cell $c$ (column sum of the
-unfiltered count matrix, stored as `log_umi` $=\log_{10}s_{c}$), not the
-sum over the allow-list. The Pearson residual is
-$r_{gc}=(x_{gc}-\hat\mu_{gc})/\sqrt{\hat\mu_{gc}+\hat\mu_{gc}^{2}/\hat\psi_{g}}$.
-
-| Setting | Value |
-|---|---|
-| `vst.flavor` | `"v2"` (depth slope fixed at $\ln 10$ on $\log_{10}s_c$, i.e. an offset) |
-| `method` | `"glmGamPoi"`; fitter recorded as `glmGamPoi_offset` |
-| `vars.to.regress` | none |
-| Cell type, cell line in the fit | no, no |
-| `ncells` | all retained cells of the slot (10,891 at 48 h, 4,619 at 72 h, 4,935 at 96 h) |
-| `residual.features` | all allow-list genes; `return.only.var.genes = FALSE` |
-| `do.correct.umi`, `do.scale`, `do.center` | `FALSE`, `FALSE`, `TRUE` |
-| `seed.use` | 1 |
-| Residual clip | $\pm\sqrt{n/30}$: $\pm 19.05$ (48 h), $\pm 12.41$ (72 h), $\pm 12.83$ (96 h) |
-
-: `SCTransform` settings as run (`model_card.csv`, `R/rank_sctransform_naive.R`). {#tbl-fs-sct-settings}
-
-Cell type is left out of the fit on purpose; the vignette discusses
-the alternative of fitting `~ cell_type`
-([3.1, consistency](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-consistency)).
-The omnibus rank of @sec-fs-omnibus tests the cell-type effect
-directly on the counts instead.
-
-## Current rank: between/within ratio {#sec-fs-ms-ratio}
-
-The residual matrix of one slot is split by type. With $C_j$ cells of
-type $j$, $\bar r_{gj}$ the mean residual of gene $g$ in type $j$, and
-$v_{gj}$ its within-type variance, the two decompositions are
+At each of 48 h, 72 h and 96 h, on the genes that pass the presence
+gate and the cells of the scored types, two negative-binomial GLMs are
+fitted gene by gene with `glmGamPoi::glm_gp()` [@glmGamPoi2020]:
 
 $$
-\mathrm{SS}_{\mathrm{between},g}
-=
-\sum_{j=1}^{J}C_{j}\bigl(\bar r_{gj}-\bar r_{g}\bigr)^{2},
+\begin{aligned}
+M_0:\quad \log m_{gc} &= \beta_{0g}+\log s_{c},\\
+M_1:\quad \log m_{gc} &= \beta_{0g}+\beta_{g,j(c)}+\log s_{c},
+\end{aligned}
 \qquad
-\mathrm{SS}_{\mathrm{within},g}
-=
-\sum_{j=1}^{J}\sum_{c\in j}\bigl(r_{gc}-\bar r_{gj}\bigr)^{2}
-$$ {#eq-fs-ss}
+x_{gc}\sim\mathrm{NB}(m_{gc},\psi_{g}),\quad
+\operatorname{Var}x_{gc}=m_{gc}+m_{gc}^{2}/\psi_{g},
+$$ {#eq-fs-glm}
 
-(every cell has weight one), and
+with $s_c$ the size factor of cell $c$ (full RNA library size
+$10^{\texttt{log\_umi}}$ divided by its median), passed as
+`offset = log(s_c)` with `size_factors = 1` so that it is not applied
+twice. `glmGamPoi` reports the overdispersion $1/\psi_g$. For the
+likelihood-ratio statistic $\psi_g$ is the gene-wise maximum-likelihood
+estimate under $M_1$ and $M_0$ is refitted at the same $\psi_g$; for
+the quasi-likelihood test it is shrunk across genes
+(@sec-fs-omnibus). Cell type and nothing else is a covariate; cell line
+is not (@sec-geo-design).
+
+The ranking statistic is the cell-weighted deviance explained,
 
 $$
-\bar r_{g}^{\mathrm{eq}}
-=
-J^{-1}\sum_{j=1}^{J}\bar r_{gj},
+R^{2}_{D,g}=1-\frac{\mathcal{D}_g(M_1)}{\mathcal{D}_g(M_0)},
 \qquad
-\mathrm{MS}_{\mathrm{between},g}
-=
-J^{-1}\sum_{j=1}^{J}(\bar r_{gj}-\bar r_{g}^{\mathrm{eq}})^{2},
-\qquad
-\mathrm{MS}_{\mathrm{within},g}
-=
-J^{-1}\sum_{j=1}^{J}v_{gj}
-$$ {#eq-fs-equal-type}
+\Lambda_g=\mathcal{D}_g(M_0)-\mathcal{D}_g(M_1),
+$$ {#eq-fs-deviance-r2}
 
-(every type has weight $1/J$). The score is the ratio of the between
-term to the within term. What this ratio estimates, and how it relates
-to a score test of the type effect, is in
-[3.1, consistency](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-consistency).
+with both deviances summed over every cell at the same $\psi_g$, so
+that $\Lambda_g$ is the likelihood-ratio statistic of the type effect.
+Each cell has weight one, which is the weighting of the likelihood
+itself; the type-equal weighting of the legacy rank
+(@eq-fs-equal-type) is not carried over.
 
-Three lists are built per slot (`anova_ss()`, `anova_ms_equal_type()`,
-`rank_ratio()`):
+**Why `SCTransform` is not needed.** `SCTransform` fits the same $M_0$
+[@hafemeisterNormalizationVarianceStabilization2019;
+@choudharyComparisonEvaluationStatistical2022], but with two
+departures that matter for a screen of the type effect:
 
-1. **Global, equal cell weight.** Top `n_genes_global = 500` genes by
-   $\mathrm{SS}_{\mathrm{between}}/\mathrm{SS}_{\mathrm{within}}$
-   (`ranks_global.csv`). The largest type dominates.
-2. **Global, equal type weight.** Top 500 by
-   $\mathrm{MS}_{\mathrm{between}}/\mathrm{MS}_{\mathrm{within}}$
-   (`ranks_global_equal_type.csv`). This list feeds the export of
-   @sec-fs-export.
-3. **Per cell type.** One-versus-rest split, top
-   `n_genes_celltype = 50` genes by the equal-cell ratio
-   (`ranks_per_cell_type.csv`). The flag
-   $\mathrm{SS}_{\mathrm{between}}>\mathrm{SS}_{\mathrm{within}}$ is
-   stored and not used as a gate: on unit-variance residuals it is an
-   $R^{2}>1/2$ cut, which almost no gene meets when one type dominates
-   the slot.
+- its overdispersion is regularised across genes, as a smooth function
+  of the mean, so a gene whose spread departs from the trend (for
+  example a marker that is bimodal across types) gets the wrong
+  residual scale;
+- its Pearson residuals are clipped at $\pm\sqrt{n/30}$, $n$ the cells
+  of the fit (@tbl-fs-sct-settings). Under $M_0$, which has no type
+  term, the cells of a rare type that expresses a marker, and the cells
+  of a highly expressed gene, have the largest residuals: they carry
+  the type signal. Clipping shrinks exactly these high-leverage cells.
 
-Each list is then united with the signalling markers of the types
-scored in that slot (@sec-fs-markers).
+Here $\psi_g$ is estimated gene by gene and nothing is clipped. The
+`SCTransform` Pearson residual $r^{P}_{gc}=(x_{gc}-\hat m_{gc})/\sqrt{V(\hat m_{gc})}$
+is also not standardised. The standardised residual divides it by
+$\sqrt{\hat\varphi(1-h_{gc})}$, with $\hat\varphi$ the dispersion
+scale (1 for the NB likelihood) and $h_{gc}$ the leverage of cell $c$
+(@sec-fs-outliers). The vignette states the model and the residuals
+([3.1, count null model and Pearson residuals](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-sctransform)).
 
-| Time | Shared by lists 1 and 2 (of 500) |
-|---|---:|
-| 48 h | 313 |
-| 72 h | 326 |
-| 96 h | 372 |
+### Four tests of the type effect {#sec-fs-omnibus}
 
-: Overlap of the equal-cell and equal-type top 500 (`global_weighting_overlap.csv`). {#tbl-fs-weighting-overlap}
+`compare_type_effect_tests()` (`R/rank_genes_omnibus.R`) computes four
+tests of the joint type effect ($J-1$ degrees of freedom) per gene, on
+the fits of @eq-fs-glm. They answer one question with different
+reference laws; the vignette compares their assumptions
+([3.1, four tests](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-omnibus)).
 
-At 48 h the leading equal-cell ratios land on naïve-pluripotency
-markers; at 96 h the top gene is the endoderm marker *Sox17*. The
-residual clip changes only the far tail of these ratios.
+| Column prefix | Statistic | Reference law | Implementation |
+|---|---|---|---|
+| `lr` | $\Lambda_g$, analysis of deviance (@eq-fs-deviance-r2) | $\chi^{2}_{J-1}$ | own deviances from the `glm_gp()` fits |
+| `anova_vst` | one-way ANOVA $F$ on $\log(x_{gc}/s_c+y_0)$, $y_0=1/(4\alpha)$, $\alpha=0.05$ | $F_{J-1,\,C-J}$ | matrix sums by type |
+| `ql_f` | quasi-likelihood $F$ [@lundDetectingDifferentialExpression2012] | $F$ with empirical-Bayes denominator df | `glmGamPoi::test_de(fit, reduced_design = ~1)` |
+| `welch_perm` | Welch's $G$ on the Pearson residuals of $M_0$ | label permutation | Freedman–Lane, $B$ shared permutations |
 
-## Omnibus count-model rank {#sec-fs-omnibus}
+: The four tests of the type effect as implemented. $C$ is the number of cells of the slot. {#tbl-fs-type-tests}
 
-`rank_genes_omnibus()` (`R/rank_genes_omnibus.R`) replaces the residual
-ratio by a test of the cell-type main effect on the counts, then ranks
-the genes that pass by effect size. Per time slot, on the genes that
-pass the presence gate:
+<!-- TODO-cite: Ahlmann-Eltze & Huber (2023), shifted logarithm -->
+<!-- TODO-cite: Winkler et al. (2014), Permutation inference for the general linear model, NeuroImage; Freedman-Lane recommended, G statistic Eqs 6-7 -->
+<!-- TODO-cite: Welch (1951), On the comparison of several mean values -->
 
-1. Fit the negative-binomial GLM $\log\mu_{gc}=\beta_{0g}+\beta_{g,j(c)}+\log s_{c}$
-   with `glmGamPoi::glm_gp(design = ~ cell_type, offset = log(s_c))`
-   [@glmGamPoi2020]. The offset is the full library size;
-   `size_factors` is switched off so that it is not applied twice.
-2. Test the joint type effect with `glmGamPoi::test_de(fit, reduced_design = ~ 1)`:
-   the quasi-likelihood $F$ test of
-   @lundDetectingDifferentialExpression2012 as implemented in
-   `glmGamPoi`. The gate is a
-   Benjamini–Hochberg threshold on `adj_pval`.
-3. Rank the genes that pass by an effect size, the deviance explained
-   $R^{2}_{D,g}=1-\mathcal{D}_g(M_1)/\mathcal{D}_g(M_0)$, with the types
-   weighted equally as in @eq-fs-equal-type.
+The permutation follows Freedman and Lane
+[@freedmanNonstochasticInterpretation1983]: the reduced model is $M_0$,
+whose fitted part carries no type information, so permuting its
+residuals against fixed labels is the same as permuting the labels.
+Welch's $G$ is used because it stays pivotal when the within-type
+variances differ, as recommended by Winkler et al. (2014). One
+permutation of the $C$ labels is drawn and applied to every gene, $B$
+times, and $p_g=(1+\#\{G^{*}_g\ge G_g\})/(B+1)$. $B$ is fixed before
+the run (the code default is 2,000). Its floor $1/(B+1)\approx5\times10^{-4}$
+limits both the resolution of a gate on this test and Kendall's $\tau$,
+since genes at the floor are tied
+([3.1, calibration](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-calibration)).
+
+**Gate and rank.** One test is chosen before the ranks are seen and
+used as a Benjamini–Hochberg gate over the genes that pass the presence
+gate; `rank_genes_omnibus()` uses `gate_test = "ql_f"` by default. The
+genes that pass are ranked by $R^{2}_{D,g}$ (@eq-fs-deviance-r2), ties
+broken by $\Lambda_g$. Why a gate followed by an effect size, rather
+than a rank by $p$-value, is in the vignette (link above).
 
 ```{r}
 #| label: fs-omnibus-call
 #| eval: false
-# Not run. counts: genes x cells of one slot; cell_type: factor over
-# cells; lib: full library sizes (10^log_umi). Thresholds are set
-# before the ranks are seen.
+# Not run. sc[[tm]]: raw counts (genes x cells) of the scored cells of
+# slot tm; cell_type[[tm]]: their labels; lib[[tm]]: full library sizes
+# (10^log_umi). B, the seeds and the thresholds are fixed before the run.
+source("R/utils_general.R")
 source("R/rank_genes_omnibus.R")
-gate <- presence_gate(counts, cell_type, min_frac = 0.05)
-keep <- gate$gene[gate$pass]
-size_factors <- lib / stats::median(lib)
-# rank_genes_omnibus() applies the same gate internally (min_frac).
-ranked <- rank_genes_omnibus(
-  counts,
-  cell_type,
-  size_factors = size_factors,
-  fdr = 0.05,
-  min_frac = 0.05,
-  n_select = 500L
-)
-panel <- ranked$gene[ranked$selected]
+times <- c("48h", "72h", "96h")
+sf <- lapply(lib, function(l) l / stats::median(l))
 
-# The two glmGamPoi calls it wraps (size factors through the offset):
-fit <- glmGamPoi::glm_gp(
-  counts[keep, ],
-  design = ~cell_type,
-  col_data = data.frame(cell_type = cell_type),
-  offset = log(size_factors),
-  size_factors = rep(1, ncol(counts))
-)
-qlf <- glmGamPoi::test_de(fit, reduced_design = ~1)
+tests <- lapply(times, function(tm) {
+  compare_type_effect_tests(
+    sc[[tm]],
+    cell_type[[tm]],
+    size_factors = sf[[tm]],
+    n_perm = 2000L,
+    seed = 20261101L,
+    fdr = 0.05,
+    min_frac = 0.05
+  )
+})
+names(tests) <- times
+
+# Agreement of the gene orders: all gated genes, then those passing QL F.
+tau_all <- lapply(tests, type_test_kendall)
+tau_gated <- lapply(tests, function(r) type_test_kendall(r, genes = r$ql_f_pass))
+
+# Conservativeness: rerun on one permutation of the labels (null by
+# construction) and compare the share of p-values below 0.01 and 0.05.
+calibration <- lapply(times, function(tm) {
+  null_labels <- withr::with_seed(20261102L, sample(cell_type[[tm]]))
+  res_null <- compare_type_effect_tests(
+    sc[[tm]],
+    null_labels,
+    size_factors = sf[[tm]],
+    n_perm = 2000L,
+    seed = 20261103L
+  )
+  type_test_calibration(res_null)
+})
+
+# Gate on the chosen test, rank by the deviance R^2.
+ranked <- lapply(times, function(tm) {
+  rank_genes_omnibus(
+    sc[[tm]],
+    cell_type[[tm]],
+    size_factors = sf[[tm]],
+    fdr = 0.05,
+    min_frac = 0.05,
+    n_select = 500L,
+    gate_test = "ql_f"
+  )
+})
+names(ranked) <- times
+# Panel passed to tier (iii): genes selected at any time (the tier (i)
+# markers are united with it before export).
+panel <- unique(unlist(lapply(ranked, function(r) r$gene[r$selected])))
 ```
 
-The wrapper arguments in the chunk are illustrative; the definitive
-signatures are those of `R/rank_genes_omnibus.R`. Why a gate followed
-by an effect size, rather than a rank by $p$-value, is in
-[3.1, omnibus](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-omnibus).
-
-**Calibration and stability (planned, not run).**
+**Expected outputs (not produced yet).** For each time slot, the
+Kendall $\tau$ matrix between the gene orders of the four tests, over
+all gated genes and over the genes that pass the gate; for each test,
+the share of $p$-values below 0.01 and 0.05 under permuted labels,
+which orders the tests from the most to the least conservative; and
+the number of genes passing BH 0.05 under each test. Gene orders are
+expected to agree; these outputs measure how far they do.
 
 | Question | Resampling | Unit |
 |---|---|---|
-| Is the nominal $F$ tail accurate? | label permutation, one permutation applied to all genes | labels within the slot |
-| How stable is the top 500? | nonparametric bootstrap, stratified by type | cells within type |
-| Uncertainty of $R^{2}_{D,g}$ | same bootstrap, percentile interval | cells within type |
+| Is the nominal tail of each test accurate? | label permutation, one permutation applied to all genes | labels within the slot |
 
-: Resampling plan for the omnibus rank. The number of replicates is not fixed yet. {#tbl-fs-boot-perm}
+: Resampling plan of tier (ii). $B$ is fixed before the run; bootstrap rows of the earlier plan are dropped. {#tbl-fs-boot-perm}
 
 Cell types are the authors' annotations, fixed before any statistic is
 computed here. Labels refined on the same counts would make every
 permutation $p$-value anti-conservative
 [@gonzalezDelgadoPostclusteringInference2025].
 
-## Bulk consistency filter {#sec-fs-bulk-consistency}
+## Tier (iii): cross-platform consistency {#sec-fs-bulk-consistency}
 
-`bulk_consistency_filter()` (`R/bulk_consistency.R`) removes genes
-whose bulk expression cannot be produced by the single-cell reference.
-It needs a single-cell slot and a bulk sample of the same condition
-(@fig-suppinger-design).
+This tier compares the bulk with the single-cell reference, so it needs
+a matched bulk (@fig-suppinger-design). It removes genes whose bulk
+expression the reference cannot produce. The approaches reviewed, the
+model behind the statistic and its identifiability are in
+[3.1, cross-platform consistency](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-cross-platform);
+the comparison table of second-generation methods is in
+[3.1, review table](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-review-table).
+
+### Outlier cells and genes {#sec-fs-outliers}
+
+Two fits are diagnosed with Cook's distance, which combines leverage
+and residual
+([3.1, leverage and influence](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-leverage)).
+
+- **Cells**, in the $M_1$ fit of each gene (@eq-fs-glm).
+  `cook_cells()` uses the IRLS weight $w_{gc}=m_{gc}^{2}/V(m_{gc})$; in
+  a one-way design the leverage is
+  $h_{gc}=w_{gc}/\sum_{c'\in j(c)}w_{gc'}$, so a cell of the 29-cell
+  somite differentiation front has a leverage near $1/29$ and an
+  epiblast cell near $1/10{,}590$. Cook's distance is
+  $r^{P\,2}_{gc}h_{gc}/\{J(1-h_{gc})^{2}\}$ with dispersion scale 1.
+- **Genes**, in the weighted regression of each bulk replicate on the
+  reference signature, across genes. `cook_genes()` takes the
+  composition and the final weights of the plug-in fit
+  (@sec-fs-bulk-filter) and computes the hat values on the types with a
+  positive coefficient.
+
+A cell or a gene is **flagged only when its leverage and its
+standardised residual are both large** (defaults: leverage above three
+times its mean, $J/C$ for cells and $J/G$ for genes, and
+$|r^{SP}|>3$). High leverage alone marks a rare type or a highly
+expressed marker, which carries information; a large residual alone
+marks an ordinary tail count. Nothing is clipped or down-weighted:
+flagged cells and genes are listed with their type and counts, and
+whether to drop one is decided by reading that list.
+
+```{r}
+#| label: fs-outliers-call
+#| eval: false
+# Not run. After fs-omnibus-call and fs-bulk-consistency-call: panel
+# genes, reference counts, labels, size factors and the tier (iii) plug-in.
+source("R/influence_diagnostics.R")
+outlier_cells <- lapply(times, function(tm) {
+  cook_cells(sc[[tm]][panel, ], cell_type[[tm]], size_factors = sf[[tm]])
+})
+outlier_genes <- lapply(times, function(tm) {
+  r <- tail_res[[tm]]
+  cook_genes(
+    bulk[[tm]][rownames(r$moments$mu), , drop = FALSE],
+    r$moments$mu,
+    coef = matrix(r$plugin$composition$coef, nrow = ncol(r$moments$mu)),
+    weights = r$plugin$weights
+  )
+})
+```
+
+### Bulk consistency filter {#sec-fs-bulk-filter}
+
+The filter needs a single-cell slot and a bulk sample of the same
+condition.
 
 - **Matched pairs.** The single-cell reference matches the standard-Wnt
   bulk at all three times used in this book: single-cell 48 h (B-S and
@@ -337,13 +447,13 @@ It needs a single-cell slot and a bulk sample of the same condition
 - **No match for early Wnt.** The early-Wnt bulk (Wnt pulse at 24 h)
   has no single-cell counterpart at any time, so no bulk–reference
   comparison is possible on that arm.
-- **Fit.** At each of the three matched times independently: for each
-  gene, compare the bulk value of each replicate with the range that
-  the type means of that time allow, and flag median-absolute-deviation
-  outliers. The range is the bound of
-  [3.1, cross-platform consistency](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-cross-platform),
-  and the thresholds follow RNA-Sieve's range bound and outlier rule
-  [@erdmann-phamLikelihoodbasedDeconvolutionBulk2021].
+- **Fit.** At each of the three matched times independently, in two
+  steps. First, a $\boldsymbol{p}$-free check: the distance of each
+  normalised bulk value to the range of the type means, with
+  RNA-Sieve's range bound and median-absolute-deviation outlier rule
+  [@erdmann-phamLikelihoodbasedDeconvolutionBulk2021]
+  (`bulk_consistency_filter()`, a heuristic). Second, the tail
+  statements below, on a statistic that uses a plug-in composition.
 - **Apply.** A gene flagged at any of the three matched times is
   removed from the panel at every time, including the early-Wnt arm,
   where no matched pair exists.
@@ -352,33 +462,111 @@ It needs a single-cell slot and a bulk sample of the same condition
   supports treating the platform effect as a property of the gene, a
   gene flagged only at one time does not. This comparison has not yet
   been run.
-- **Status.** A heuristic, labelled as such in the code. No script
-  reads the bulk HTSeq table yet (`01_01` does not); the filter has
-  not been run.
+- **Status.** No script reads the bulk HTSeq table yet (`01_01` does
+  not); the filter has not been run.
 
-In the vignette, cross-platform consistency is a perspective, not a
-tier: its review table gives DeCovarT no cross-platform step, because
-the reference is one specimen
-([3.1, comparison of second-generation methods](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-review-table)).
-For Suppinger, the entry of that column is the range bound fitted at
-48 h described here. The model behind the bound, its tail
-([3.1, tail bound](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-range-tail)),
-and the alternatives that keep such genes and down-weight them are in
-the vignette.
+**Plug-in composition.** For each bulk replicate $i$,
+`plugin_composition_demixsc()` fits the bulk counts $y_{gi}$ on the
+per-cell type means of the reference by iterated weighted non-negative
+least squares, in the style of deMixSC: weights
+$1/(\hat y_{gi}^{2}+(y_{gi}-\hat y_{gi})^{2}+c)$ with $c=2$. deMixSC
+also calibrates a gene set G2 on a same-aliquot benchmark; none exists
+for Suppinger, so G2 is empty. $a_i$ is the sum of the NNLS
+coefficients and $\hat p_{ji}$ the coefficients divided by $a_i$; the
+extra overdispersion between platforms is fixed at 1. MuSiC
+[@wangBulkTissueCell2019] is not used, because its weights need at
+least two donors. `nnls` is not in `renv.lock`, so the Lawson–Hanson
+algorithm is written inline. Why this plug-in, and what it costs, is in
+[3.1, plug-in](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-plugin).
+
+<!-- TODO-cite: deMixSC (Eq. 4, PDF p. 12), iterated W-NNLS weights -->
+<!-- TODO-cite: Lawson & Hanson (1974), Solving Least Squares Problems, ch. 23 -->
+
+**Statistic.** With $\hat{\tilde\mu}_{gj}$ the mean raw count per cell
+of type $j$ over its $C_j$ reference cells, and $\hat\psi_{gj}$ the
+negative-binomial size matched to their mean and variance
+(`type_moments_nb()`; raw counts, because a bulk is a sum of raw cell
+profiles),
+
+$$
+D_{gi}=\frac{y_{gi}}{a_i}-\sum_{j=1}^{J}\hat p_{ji}\,\hat{\tilde\mu}_{gj},
+\qquad
+S_{Mi}=\sum_{g\in M}\frac{D_{gi}}{\operatorname{sd}D_{gi}},
+$$ {#eq-fs-bulk-stat}
+
+for a gene $g$ and a module $M$; $\operatorname{sd}D_{gi}$ is the
+negative-binomial standard deviation with $n_i=a_i$ bulk cells.
+
+**Statements.** Each is applied at $\alpha/2=0.01$ per tail, with the
+plug-in values treated as known
+([3.1, five bounds](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-five-bounds)).
+`tail_threshold()` returns the threshold $t_{0.01}$ of each, from the
+exact cumulant generating functions and their Legendre transforms for
+the Chernoff statements.
+
+| Statement | `method` | Gene | Module | Kind |
+|---|---|---|---|---|
+| T1, Gaussian (Lindeberg–Feller) | `clt` | yes | yes, independent genes | approximation |
+| T1-log, log-normal ratio (delta method) | `clt_log` | yes | no | approximation |
+| T2, dependency-graph CLT | `clt_dep` | no | yes | approximation |
+| T3, Chernoff with Poisson CGFs | `poisson` | yes | yes, independent genes | bound for Poisson counts only |
+| T4, Chernoff with the NB CGF | `nb` | yes | yes, independent genes | finite-sample bound |
+| T5, NB Chernoff after a proper colouring | `nb_dep` | no | yes | finite-sample bound |
+| Quantile band, `quantreg::rq()` at $\tau=0.01, 0.99$ | — | yes | no | model-free reference |
+
+: Tail statements of the bulk filter as implemented in `R/bulk_tail_bounds.R`. {#tbl-fs-tail-statements}
+
+<!-- TODO-cite: Janson (2004), Large deviations for sums of partly dependent random variables -->
+<!-- TODO-cite: Chen & Shao (2004), Normal approximation under local dependence -->
+<!-- TODO-cite: Koenker & Bassett (1978), Regression quantiles -->
+
+- **Modules.** The lineage groups (`cell_type_excel`) of the signalling
+  dictionary of @sec-fs-markers. They were written before any count was
+  seen, so the module flags are not circular. Each group has at most
+  four genes, and a module with fewer than two panel genes is skipped.
+- **Dependency graph.** Inside a module, `module_dependency_graph()`
+  joins the gene pairs with the largest within-type correlations, with
+  maximum degree $\le10$ and mean degree $\le3$. With at most four genes
+  both caps are met by construction. Genes without an edge are assumed
+  independent; T2 uses the within-type correlations on the edges, T5
+  only the colouring of the graph (`greedy_colouring()`).
+- **Quantile band.** `quantile_band_flags()` regresses $y_{gi}/a_i$ on
+  $\sum_j\hat p_{ji}\hat{\tilde\mu}_{gj}$ across the genes of one
+  replicate, at $\tau=0.01$ and $0.99$, without a count model. Each
+  bound above bounds a quantile of $D_{gi}$ under a model; the band
+  estimates it from the genes, assuming they are exchangeable given
+  the fitted value
+  ([3.1, comparison of the bounds](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-bounds-compare)).
+- **Multiplicity.** 0.01 per tail is a per-gene level. Over a 500-gene
+  panel and three replicates it gives about ten flags per tail and
+  statement under the model, so a flag is a candidate for removal, not
+  a proven platform artefact.
+
+**Planned outputs.** At each time: the genes and modules flagged by
+each statement; their overlap (pairwise Jaccard indices and an
+UpSet-style table of membership patterns, `tail_flag_overlap()`); and
+the order of the statements from the most to the least conservative,
+read from the number of flags and the median thresholds, not assumed.
 
 ```{r}
 #| label: fs-bulk-consistency-call
 #| eval: false
-# Not run. sc[[tm]]: raw counts (genes x cells) of the single-cell slot
-# at time tm, with labels cell_type[[tm]] and full library sizes
-# lib[[tm]]; bulk[[tm]]: the three standard-Wnt replicates at tm from
-# GSE229386 (genes x samples), same gene identifiers.
+# Not run. sc[[tm]]: raw counts (genes x cells) of the scored cells of
+# slot tm, with labels cell_type[[tm]] and full library sizes lib[[tm]];
+# bulk[[tm]]: the three standard-Wnt replicates at tm from GSE229386
+# (raw counts, genes x samples), same gene identifiers; panel: genes
+# selected by tier (ii) and the markers of tier (i).
 source("R/utils_general.R")
 source("R/bulk_consistency.R")
-flags <- lapply(c("48h", "72h", "96h"), function(tm) {
+source("R/plugin_composition.R")
+source("R/bulk_tail_bounds.R")
+source("R/map_marker_symbols.R")
+
+# Step 1: p-free range check (RNA-Sieve range bound and MAD rule).
+range_flags <- lapply(times, function(tm) {
   x <- sc[[tm]][panel, , drop = FALSE]
   ct <- droplevels(factor(cell_type[[tm]]))
-  norm <- sweep(as.matrix(x), 2L, lib[[tm]] / stats::median(lib[[tm]]), "/")
+  norm <- sweep(as.matrix(x), 2L, sf[[tm]], "/")
   mu <- sapply(levels(ct), function(k) rowMeans(norm[, ct == k, drop = FALSE]))
   sd <- sapply(levels(ct), function(k) apply(norm[, ct == k, drop = FALSE], 1L, stats::sd))
   out <- bulk_consistency_filter(
@@ -391,14 +579,80 @@ flags <- lapply(c("48h", "72h", "96h"), function(tm) {
   )
   out$gene[!out$keep]
 })
-panel <- setdiff(panel, unique(unlist(flags)))
+
+# Step 2: tail statements per gene and per module, and the quantile band.
+dict <- utils::read.csv("data/dictionaries/mouse_gastruloid_signaling_markers.csv")
+map <- map_marker_symbols(dict$gene_marker, universe = rownames(sc[["48h"]]))
+dict$gene <- map$mouse_symbol[match(dict$gene_marker, map$gene_marker)]
+modules <- lapply(
+  split(dict$gene, dict$cell_type_excel),
+  function(g) unique(stats::na.omit(g))
+)
+tail_res <- lapply(times, function(tm) {
+  bulk_tail_filter(
+    bulk = bulk[[tm]][panel, , drop = FALSE],
+    counts = sc[[tm]][panel, , drop = FALSE],
+    cell_type = cell_type[[tm]],
+    modules = modules,
+    level = 0.01,
+    c_reg = 2,
+    max_degree = 10L,
+    mean_degree = 3
+  )
+})
+names(tail_res) <- times
+overlap <- lapply(tail_res, function(r) tail_flag_overlap(r$gene, band = r$quantile_band))
 ```
 
-## Cell-line sensitivity at 48 h {#sec-fs-cell-line}
+## Tier (iv): down-weighting by the model {#sec-fs-weighting-pointer}
 
-48 h is the only slot that contains both cell lines. The script
+Tiers (i) to (iii) keep or drop a gene. Tier (iv) keeps every gene of
+the panel and lets the model weight it: genes with a large or poorly
+estimated within-type covariance count less in the generalised least
+squares of DeCovarT. Nothing is selected at this tier, so it has no
+code in this chapter. The covariances that carry the weights are
+estimated in @sec-cov-scope and enter the deconvolution of
+@sec-deconv-models; why weighting can replace a hard filter is in
+[3.1, down-weighting](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-weighting).
+
+## Panel export {#sec-fs-export}
+
+The current export is the legacy one:
+`scripts/01_03_export_equal_type_seurat.R` subsets the allow-list
+Seurat object to the 500 genes of the type-equal ratio
+(@sec-fs-ms-ratio) at each time and writes
+`data/intermediate/equal_type_top500_by_time.rds`, the input of every
+script of @sec-cov-scope. Its `nCount_RNA` is recomputed on the 500
+genes and is not a library size. That file stays the input until the
+new rank has been run.
+
+The new rank table will have one row per gene and time, with the
+columns of @tbl-fs-new-rank-columns.
+
+| Block | Columns | Source |
+|---|---|---|
+| Identifiers | `time_point`, `gene` | slot |
+| Presence gate | `min_detection`, `weakest_type`, `pass_presence` | `presence_gate()` |
+| Fits and effect size | `overdispersion`, `deviance_m0`, `deviance_m1`, `deviance_r2` | `compare_type_effect_tests()` |
+| Four tests | `<test>_stat`, `<test>_pval`, `<test>_padj`, `<test>_pass` for `lr`, `anova_vst`, `ql_f`, `welch_perm` | same |
+| Gate and rank | `gate_test`, `adj_pval`, `pass_fdr`, `rank`, `selected` | `rank_genes_omnibus()` |
+| Tier (i) markers | `in_marker_panel`, `in_union` | signalling dictionary |
+| Tier (iii) outliers | largest cell Cook's distance, number of flagged cells, gene Cook flag per replicate | `cook_cells()`, `cook_genes()` |
+| Tier (iii) bulk flags | range flag; one flag per statement (T1, T1-log, T3, T4, quantile band), any replicate; module flags | `bulk_consistency_filter()`, `bulk_tail_filter()` |
+
+: Planned columns of the new rank table. Not written yet. {#tbl-fs-new-rank-columns}
+
+## Perspectives {#sec-fs-perspectives}
+
+### Cell-line sensitivity at 48 h {#sec-fs-cell-line}
+
+The reference has one specimen per slot, so cross-sample consistency
+([3.1, cross-sample](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-cross-sample))
+cannot be tested. The closest available analogue is the two cell lines
+at 48 h, the only slot that contains both. It is not part of the main
+results. The script
 `output/naive_marker_selection/cell_line_48h/01_03_sensitivity_48h_cell_line.R`
-refits the same v2 model inside B-S and inside SBR and compares the
+refits the legacy v2 model inside B-S and inside SBR and compares the
 equal-cell top 500 and the per-type top 50. (It lives under `output/`
 next to its results; `scripts/01_03_export_equal_type_seurat.R` is a
 different script.)
@@ -411,121 +665,57 @@ different script.)
 Outputs: `overlap_48h_cell_line.csv`, `ranks_global_48h_by_line.csv`,
 `ranks_per_cell_type_48h_by_line.csv`, `venn_48h_cell_line.pdf`.
 
-## Knowledge-driven markers {#sec-fs-markers}
+### Comparison with classifier-based marker selection {#sec-fs-classifiers}
 
-The marker list is curated and short:
-`data/dictionaries/mouse_gastruloid_signaling_markers.csv`, with
-columns `cell_type_excel` (lineage on the signalling map),
-`cell_type_suppinger` (the matching Suppinger label, or `NA`) and
-`gene_marker`. Symbols are mapped offline with `org.Mm.eg.db`
-(`R/map_marker_symbols.R`), not `biomaRt`.
+A second check of the panel uses classifiers of the cell type, each
+inside stability selection [@meinshausenStabilitySelection2010], as in
+[S6, sparse classifiers](https://bastienchassagnol.github.io/DeCovarT/articles/S6-feature-screening-scenario.html#sec-sparse-classifiers):
 
-Fifteen of the 19 mouse symbols are in the 2,944-gene allow-list.
-Under a uniform draw of 19 genes from the 27,027 RNA symbols the
-expected overlap is about 2.1; the hypergeometric upper tail is
-$P(X\ge 15)=8.8\times10^{-12}$ (`marker_sct_hypergeometric.csv`). The
-four absent markers are *Myod1*, *Pax6*, *Sox1* and *Tfap2a*
-(`venn_markers_vs_counts.pdf`).
+- penalised multinomial logistic regression (`glmnet`, grouped lasso
+  across types);
+- sparse PLS discriminant analysis (`mixOmics::splsda()`);
+- random forest (`ranger`, impurity importance).
 
-## Rank tables and export {#sec-fs-export}
+<!-- TODO-cite: glmnet (Friedman, Hastie & Tibshirani 2010); mixOmics (Rohart et al. 2017); ranger (Wright & Ziegler 2017) -->
 
-`scripts/01_03_export_equal_type_seurat.R` subsets the allow-list
-Seurat object to the 500 genes of list 2 at each time and writes
-`data/intermediate/equal_type_top500_by_time.rds`, the input of every
-script of @sec-cov-scope. The object keeps `log_umi` from the full
-library; its `nCount_RNA` is recomputed on the 500 genes and must not
-be used as a library size.
-
-`ranks_global_equal_type.csv` has one row per gene and time. Its
-columns are in @tbl-fs-equal-type-columns.
+`classifier_markers()` (`R/classifier_markers.R`) subsamples half of
+the cells of each type 100 times, keeps the top 50 genes of each fit,
+and reports each gene's selection frequency; the stable set is the
+genes selected in at least 60 % of the subsamples. The cells come from
+one specimen, so the resampling unit is the cell and the frequencies
+measure generalisation to new cells of this specimen
+(@nte-pseudoreplication). The purpose is to check that the panel is
+biologically meaningful, robust and able to discriminate the types, not
+to replace it: the stable sets are compared with the omnibus panel
+through their overlaps (`set_overlap()` in `R/utils_general.R`).
 
 ```{r}
-#| label: tbl-fs-equal-type-columns
-#| tbl-cap: "Columns of the type-equal global rank table, grouped by role. The middle block is what `ranks_global_equal_type.csv` stores. The cell-weighted block is the same names in `ranks_global.csv`. `cell_type` is omitted because it is unused in both global files."
-#| echo: false
-codebook <- data.frame(
-  Column = c(
-    "time_point",
-    "gene",
-    "top_cell_type",
-    "ss_between",
-    "ss_within",
-    "between_over_within",
-    "between_over_total",
-    "passes_between_gt_within",
-    "ss_between",
-    "ss_within",
-    "between_over_within",
-    "between_over_total",
-    "passes_between_gt_within",
-    "rank",
-    "selected",
-    "in_marker_panel",
-    "in_union",
-    "source"
-  ),
-  File = c(
-    rep("both global tables", 3L),
-    rep("ranks_global_equal_type.csv", 5L),
-    rep("ranks_global.csv", 5L),
-    rep("both global tables", 5L)
-  ),
-  Meaning = c(
-    "Bulk-matched slot of the v2 fit (48h, 72h, 96h).",
-    "Mouse symbol on the author SCT allow-list.",
-    "Type with the largest mean Pearson residual.",
-    paste(
-      "Unweighted variance of the J type means",
-      "(type-equal MS_between)."
-    ),
-    paste(
-      "Mean of the J within-type residual variances",
-      "(type-equal MS_within)."
-    ),
-    "MS_between / MS_within; ranking score.",
-    "MS_between / (MS_between + MS_within).",
-    "TRUE when MS_between > MS_within (not a selection gate).",
-    paste(
-      "Cell-weighted between-type sum of squares;",
-      "each barcode has weight one."
-    ),
-    "Cell-weighted within-type sum of squares.",
-    "SS_between / SS_within; ranking score in ranks_global.csv.",
-    "SS_between / (SS_between + SS_within).",
-    "TRUE when SS_between > SS_within (not a selection gate).",
-    "Order by between_over_within, then ss_between, then gene name.",
-    "TRUE for the top 500 finite ratios in that slot.",
-    "Signalling-dictionary marker for a type scored in that slot.",
-    "selected or in_marker_panel.",
-    paste(
-      "sctransform (top 500 only), marker (panel only),",
-      "both, or screened (allow-list, neither)."
-    )
-  ),
-  stringsAsFactors = FALSE
-)
-tinytable::tt(codebook, width = 1) |>
-  tinytable::group_tt(
-    i = list(
-      "Identifiers" = 1,
-      "Unweighted type-equal mean squares" = 4,
-      "Cell-weighted sums of squares" = 9,
-      "Ranking and marker union" = 14
-    )
+#| label: fs-classifiers-call
+#| eval: false
+# Not run. glmnet, mixOmics and ranger are not in renv.lock.
+source("R/utils_general.R")
+source("R/classifier_markers.R")
+clf <- lapply(times, function(tm) {
+  g <- ranked[[tm]]$gene[ranked[[tm]]$pass_presence]
+  classifier_markers(
+    sc[[tm]][g, ],
+    cell_type[[tm]],
+    size_factors = sf[[tm]],
+    n_subsample = 100L,
+    frac = 0.5,
+    n_top = 50L,
+    threshold = 0.6,
+    seed = 20261104L
   )
+})
+names(clf) <- times
+clf_overlap <- lapply(times, function(tm) {
+  stable <- split(clf[[tm]]$gene[clf[[tm]]$stable], clf[[tm]]$method[clf[[tm]]$stable])
+  set_overlap(c(stable, omnibus = list(ranked[[tm]]$gene[ranked[[tm]]$selected])))
+})
 ```
 
-The omnibus rank of @sec-fs-omnibus writes its own table; its columns
-are documented in `R/rank_genes_omnibus.R` and will be added here once
-it has been run.
-
-Figures of the current rank are produced by
-`scripts/01_02_plot_naively_selected_genes.R` under
-`output/naive_marker_selection/`: between/within bar plots (equal cell,
-equal type), log-CPM densities before and after selection, Venn and
-UpSet diagrams of the lists across times and against the marker panel.
-
-## Optional multivariate refinement {#sec-fs-nsga2}
+## Optional multivariate refinement {#sec-fs-nsga2 .appendix}
 
 A univariate rank ignores redundancy between genes and the
 covariances DeCovarT models. The optional stage searches subsets of
@@ -605,4 +795,181 @@ front <- mco::nsga2(fitness, idim = nrow(mu), odim = 2L,
   lower.bounds = rep(0, nrow(mu)), upper.bounds = rep(1, nrow(mu)))
 ```
 
+## Legacy panel: SCTransform ratio {#sec-fs-legacy .appendix}
 
+The current 500-gene panel, and every covariance output of
+@sec-cov-scope, come from the rank described here. It stays the source
+of `data/intermediate/equal_type_top500_by_time.rds` until the rank of
+tiers (ii) and (iii) has been run; it is kept as provenance of the
+existing files.
+
+### `SCTransform` v2 fit per time {#sec-fs-sct}
+
+`rank_genes_sctransform()` refits `Seurat::SCTransform()` separately at
+48 h, 72 h and 96 h (`split_by = "time_point"`) on the allow-list
+genes. Cells of every non-artefact type at that time are fitted
+together. The fitted mean is an intercept plus a library-size offset,
+
+$$
+\log\mu_{gc}
+=
+\beta_{0g}
++
+\log s_{c},
+\qquad
+x_{gc}\sim\mathrm{NB}(\mu_{gc},\psi_{g}),
+$$ {#eq-fs-v2-offset}
+
+with $s_{c}$ the full RNA library size of cell $c$ (column sum of the
+unfiltered count matrix, stored as `log_umi` $=\log_{10}s_{c}$), not the
+sum over the allow-list. The Pearson residual is
+$r_{gc}=(x_{gc}-\hat\mu_{gc})/\sqrt{\hat\mu_{gc}+\hat\mu_{gc}^{2}/\hat\psi_{g}}$.
+
+| Setting | Value |
+|---|---|
+| `vst.flavor` | `"v2"` (depth slope fixed at $\ln 10$ on $\log_{10}s_c$, i.e. an offset) |
+| `method` | `"glmGamPoi"`; fitter recorded as `glmGamPoi_offset` |
+| `vars.to.regress` | none |
+| Cell type, cell line in the fit | no, no |
+| `ncells` | all retained cells of the slot (10,891 at 48 h, 4,619 at 72 h, 4,935 at 96 h) |
+| `residual.features` | all allow-list genes; `return.only.var.genes = FALSE` |
+| `do.correct.umi`, `do.scale`, `do.center` | `FALSE`, `FALSE`, `TRUE` |
+| `seed.use` | 1 |
+| Residual clip | $\pm\sqrt{n/30}$: $\pm 19.05$ (48 h), $\pm 12.41$ (72 h), $\pm 12.83$ (96 h) |
+
+: `SCTransform` settings as run (`model_card.csv`, `R/rank_sctransform_naive.R`). {#tbl-fs-sct-settings}
+
+Cell type is left out of the fit on purpose. The count models of
+@sec-fs-glm fit the type effect directly, without regularising the
+overdispersion and without the clip.
+
+### Between/within ratio rank {#sec-fs-ms-ratio}
+
+The residual matrix of one slot is split by type. With $C_j$ cells of
+type $j$, $\bar r_{gj}$ the mean residual of gene $g$ in type $j$, and
+$v_{gj}$ its within-type variance, the two decompositions are
+
+$$
+\mathrm{SS}_{\mathrm{between},g}
+=
+\sum_{j=1}^{J}C_{j}\bigl(\bar r_{gj}-\bar r_{g}\bigr)^{2},
+\qquad
+\mathrm{SS}_{\mathrm{within},g}
+=
+\sum_{j=1}^{J}\sum_{c\in j}\bigl(r_{gc}-\bar r_{gj}\bigr)^{2}
+$$ {#eq-fs-ss}
+
+(every cell has weight one), and
+
+$$
+\bar r_{g}^{\mathrm{eq}}
+=
+J^{-1}\sum_{j=1}^{J}\bar r_{gj},
+\qquad
+\mathrm{MS}_{\mathrm{between},g}
+=
+J^{-1}\sum_{j=1}^{J}(\bar r_{gj}-\bar r_{g}^{\mathrm{eq}})^{2},
+\qquad
+\mathrm{MS}_{\mathrm{within},g}
+=
+J^{-1}\sum_{j=1}^{J}v_{gj}
+$$ {#eq-fs-equal-type}
+
+(every type has weight $1/J$). The score is the ratio of the between
+term to the within term.
+
+Two global lists are built per slot (`anova_ss()`,
+`anova_ms_equal_type()`, `rank_ratio()`):
+
+1. **Global, equal cell weight.** Top `n_genes_global = 500` genes by
+   $\mathrm{SS}_{\mathrm{between}}/\mathrm{SS}_{\mathrm{within}}$
+   (`ranks_global.csv`). The largest type dominates.
+2. **Global, equal type weight.** Top 500 by
+   $\mathrm{MS}_{\mathrm{between}}/\mathrm{MS}_{\mathrm{within}}$
+   (`ranks_global_equal_type.csv`). This list feeds the export of
+   @sec-fs-export.
+
+Each list is then united with the signalling markers of the types
+scored in that slot (@sec-fs-markers). At 48 h the leading equal-cell
+ratios land on naïve-pluripotency markers; at 96 h the top gene is the
+endoderm marker *Sox17*. The residual clip changes only the far tail of
+these ratios.
+
+`ranks_global_equal_type.csv` has one row per gene and time. Its
+columns are in @tbl-fs-equal-type-columns.
+
+```{r}
+#| label: tbl-fs-equal-type-columns
+#| tbl-cap: "Columns of the type-equal global rank table, grouped by role. The middle block is what `ranks_global_equal_type.csv` stores. The cell-weighted block is the same names in `ranks_global.csv`. `cell_type` is omitted because it is unused in both global files."
+#| echo: false
+codebook <- data.frame(
+  Column = c(
+    "time_point",
+    "gene",
+    "top_cell_type",
+    "ss_between",
+    "ss_within",
+    "between_over_within",
+    "between_over_total",
+    "passes_between_gt_within",
+    "ss_between",
+    "ss_within",
+    "between_over_within",
+    "between_over_total",
+    "passes_between_gt_within",
+    "rank",
+    "selected",
+    "in_marker_panel",
+    "in_union",
+    "source"
+  ),
+  File = c(
+    rep("both global tables", 3L),
+    rep("ranks_global_equal_type.csv", 5L),
+    rep("ranks_global.csv", 5L),
+    rep("both global tables", 5L)
+  ),
+  Meaning = c(
+    "Bulk-matched slot of the v2 fit (48h, 72h, 96h).",
+    "Mouse symbol on the author SCT allow-list.",
+    "Type with the largest mean Pearson residual.",
+    paste(
+      "Unweighted variance of the J type means",
+      "(type-equal MS_between)."
+    ),
+    paste(
+      "Mean of the J within-type residual variances",
+      "(type-equal MS_within)."
+    ),
+    "MS_between / MS_within; ranking score.",
+    "MS_between / (MS_between + MS_within).",
+    "TRUE when MS_between > MS_within (not a selection gate).",
+    paste(
+      "Cell-weighted between-type sum of squares;",
+      "each barcode has weight one."
+    ),
+    "Cell-weighted within-type sum of squares.",
+    "SS_between / SS_within; ranking score in ranks_global.csv.",
+    "SS_between / (SS_between + SS_within).",
+    "TRUE when SS_between > SS_within (not a selection gate).",
+    "Order by between_over_within, then ss_between, then gene name.",
+    "TRUE for the top 500 finite ratios in that slot.",
+    "Signalling-dictionary marker for a type scored in that slot.",
+    "selected or in_marker_panel.",
+    paste(
+      "sctransform (top 500 only), marker (panel only),",
+      "both, or screened (allow-list, neither)."
+    )
+  ),
+  stringsAsFactors = FALSE
+)
+tinytable::tt(codebook, width = 1) |>
+  tinytable::group_tt(
+    i = list(
+      "Identifiers" = 1,
+      "Unweighted type-equal mean squares" = 4,
+      "Cell-weighted sums of squares" = 9,
+      "Ranking and marker union" = 14
+    )
+  )
+```

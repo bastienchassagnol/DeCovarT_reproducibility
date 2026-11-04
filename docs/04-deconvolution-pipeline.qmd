@@ -92,10 +92,10 @@ fit_rlm <- DeCovarT::deconvolute_ratios_rlm(y, mu)
 # MEAD::MEAD()
 ```
 
-```python
-# Not run. RNA-Sieve (https://github.com/songlab-cal/rna-sieve);
-# names follow the repository README and must be checked.
-from rnasieve.preprocessing import model_from_raw_counts
-model, cleaned_bulks = model_from_raw_counts(reference_counts, bulks)
-proportions = model.predict(cleaned_bulks)
-```
+## Statistical interpretation of the results {#sec-deconv-interpretation}
+
+Second-generation methods differ in how they build the cell-type reference from the same labelled cells. Those that keep a gene only when it lowers the condition number of the mean signature select for separation of the means.
+
+That rule is a poor match to the gastruloid reference. Labelled states at 48 h, 72 h and 96 h lie on a continuum, so neighbouring types have nearly collinear mean profiles and the condition number of the mean matrix is large (@fig-kappa-gastruloid). Minimising that number retains genes that separate a few dominant lineages and drops genes that distinguish closely related types through their covariance. Mean-only pruning therefore under-represents adjacent embryonic states.
+
+![Condition-number pruning on correlated developmental cell types (gastruloid continuum). Mean-only $\kappa$ filtering can concentrate signal in dominant collinear lineages and shrink closely related states.](images/condition_number_poor_performance_correlated_cell_types.png){#fig-kappa-gastruloid}

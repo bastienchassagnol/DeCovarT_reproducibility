@@ -8,11 +8,12 @@
 #' guided by empirical considerations"). A flagged gene is a candidate
 #' for removal, to be reported, not a proven platform artefact.
 #'
-#' In Suppinger, the single-cell reference matches the standard bulk
-#' only at 48 h. The filter is therefore fitted on the 48 h bulk and
-#' the 48 h reference, and the resulting gene list is applied at every
-#' time. That transfer is an assumption: platform effects are taken to
-#' be gene-specific and constant over time.
+#' In Suppinger, the single-cell reference matches the standard-Wnt bulk
+#' at 48 h, 72 h and 96 h. The filter is fitted at each matched time,
+#' and a gene flagged at any of them is removed at every time, including
+#' the early-Wnt arm, which has no matched pair. That transfer is an
+#' assumption: platform effects are taken to be gene-specific and
+#' constant over time; flags that agree across the three times support it.
 #'
 #' Scale. Each type profile and each bulk sample is normalised to sum
 #' one over the panel genes. If the bulk is a mixture of the types,
@@ -45,7 +46,7 @@
 #' right-skewed; RNA-Sieve does not state the scale.
 #'
 #' @param bulk Bulk expression of the panel genes: a vector, or a genes by
-#'   samples matrix of replicates at the matched time (48 h). Row names
+#'   samples matrix of replicates at one matched time (48, 72 or 96 h). Row names
 #'   (or names) must be gene names.
 #' @param mu Genes by types matrix of reference means on the linear
 #'   scale (size-factor-normalised counts).
@@ -173,7 +174,7 @@ bulk_consistency_filter <- function(
   )
   rownames(out) <- NULL
   attr(out, "heuristic") <- paste(
-    "RNA-Sieve range bound and MAD outlier flags, fitted at 48 h only;",
+    "RNA-Sieve range bound and MAD outlier flags, fitted per matched time;",
     "not derived from the DeCovarT likelihood."
   )
   out

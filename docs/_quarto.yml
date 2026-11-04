@@ -26,9 +26,9 @@ book:
         - 03-covariance-estimation.qmd
     - part: "Deconvolution benchmark"
       chapters:
-        - 05-deconvolution-pipeline.qmd
-        - 06-biological-insights.qmd
-        - 07-sensitivity-misspecification.qmd
+        - 04-deconvolution-pipeline.qmd
+        - 05-biological-insights.qmd
+        - 06-sensitivity-misspecification.qmd
   search: true
   navbar:
     search: true

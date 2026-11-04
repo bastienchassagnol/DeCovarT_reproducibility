@@ -4,11 +4,11 @@
 #   > "logs/06_01_early_wnt_$(date +%F).log" 2>&1
 #
 # Written, not run. The input table does not exist yet: it is the output
-# of the comparator runs planned in docs/05-deconvolution-pipeline.qmd
+# of the comparator runs planned in docs/04-deconvolution-pipeline.qmd
 # (#sec-deconv-models). Once it exists, this script writes three vector
 # panels for the TikZ composite docs/images/src/early_wnt/early_wnt.tex,
 # which replaces docs/images/deconvolution_guided_early_treatment-1.png
-# in docs/06-biological-insights.qmd (#fig-bio-early).
+# in docs/05-biological-insights.qmd (#fig-bio-early).
 #
 # Input: output/deconvolution/proportions_long.csv, UTF-8, one row per
 # method x bulk sample x cell type.
@@ -139,7 +139,7 @@ read_proportions <- function(path) {
     stop(
       "Missing ",
       path,
-      ". Run the comparator calls of docs/05-deconvolution-pipeline.qmd ",
+      ". Run the comparator calls of docs/04-deconvolution-pipeline.qmd ",
       "and write one row per method x bulk sample x cell type.",
       call. = FALSE
     )

@@ -33,13 +33,8 @@ plug-in and is the default
 | Graphical lasso EBIC path (diagnostic) | `scripts/03_01_grn_huge.R`, `R/ebic_regularisation_path.R` | rewritten to export on the linear scale; not re-run |
 | `SILGGM` fit | `scripts/03_02_grn_silggm.R` | never run |
 | `PLNnetwork` fit | `scripts/03_03_grn_plnnetwork.R` | offset fixed to the full library size; never run |
-| Outputs under `output/grn/huge/` | from the earlier `03_01` | **stale** (@sec-cov-stale) |
 
 : Covariance-estimation code and status. {#tbl-cov-status}
-
-Nothing in this chapter has produced a usable covariance yet. The
-outputs that exist are stale and are kept only as a record of what
-went wrong (@sec-cov-stale).
 
 ### Units and regimes {#sec-cov-units}
 
@@ -103,8 +98,9 @@ re-run:
   as in @eq-fs-v2-offset. `nCount_RNA` in the exported object is the
   500-gene sum and is not used.
 
-`SCTransform` Pearson residuals are used only for ranking
-(@sec-fs-sct) and are never passed to an estimator.
+Pearson residuals, of the legacy `SCTransform` fit (@sec-fs-sct) or
+of the count GLMs of the new rank (@sec-fs-glm), are used only for
+ranking and are never passed to an estimator.
 
 ## Four estimators as run {#sec-cov-estimators}
 
