@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>5&nbsp; Applying and comparing deconvolution outputs applied to Suppinger study – DeCovarT reproducibility</title>
+<title>6&nbsp; Early versus standard Wnt – DeCovarT reproducibility</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -25,41 +25,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 /* CSS for citations */
 div.csl-bib-body { }
@@ -90,8 +55,8 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./06-biological-insights.html" rel="next">
-<link href="./03-covariance-estimation.html" rel="prev">
+<link href="./06-sensitivity-misspecification.html" rel="next">
+<link href="./04-deconvolution-pipeline.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/scrollable-regions/scrollable-regions.js" type="module"></script>
@@ -159,49 +124,6 @@ div.csl-indent {
       </style>
     
 
-  <script defer="" src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
-  <script>document.addEventListener("DOMContentLoaded", function () {
- var mathElements = document.getElementsByClassName("math");
- var macros = [];
- for (var i = 0; i < mathElements.length; i++) {
-  var texText = mathElements[i].firstChild;
-  if (mathElements[i].tagName == "SPAN") {
-   katex.render(texText.data, mathElements[i], {
-    displayMode: mathElements[i].classList.contains('display'),
-    throwOnError: false,
-    macros: macros,
-    fleqn: false
-   });
-}}});
-  </script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 </head>
 
@@ -239,7 +161,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="Breadcrumbs"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./05-deconvolution-pipeline.html">Deconvolution benchmark</a></li><li class="breadcrumb-item"><a href="./05-deconvolution-pipeline.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Applying and comparing deconvolution outputs applied to Suppinger study</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="Breadcrumbs"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./04-deconvolution-pipeline.html">Deconvolution benchmark</a></li><li class="breadcrumb-item"><a href="./05-biological-insights.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Early versus standard Wnt</span></a></li></ol></nav>
         <a class="flex-grow-1" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -299,19 +221,19 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-3" aria-labelledby="quarto-sidebar-section-3-label" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./05-deconvolution-pipeline.html" class="sidebar-item-text sidebar-link active">
+  <a href="./04-deconvolution-pipeline.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Applying and comparing deconvolution outputs applied to Suppinger study</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./06-biological-insights.html" class="sidebar-item-text sidebar-link">
+  <a href="./05-biological-insights.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Early versus standard Wnt</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./07-sensitivity-misspecification.html" class="sidebar-item-text sidebar-link">
+  <a href="./06-sensitivity-misspecification.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></span></a>
   </div>
 </li>
@@ -327,21 +249,20 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#sec-deconv-models" id="toc-sec-deconv-models" class="nav-link active" data-scroll-target="#sec-deconv-models"><span class="header-section-number">5.1</span> What is being compared</a>
+  <li><a href="#sec-bio-deconv" id="toc-sec-bio-deconv" class="nav-link active" data-scroll-target="#sec-bio-deconv"><span class="header-section-number">6.1</span> Biological insights from deconvolution algorithms applied to mouse gastruloids</a>
   <ul>
-  <li><a href="#sec-deconv-second-generation" id="toc-sec-deconv-second-generation" class="nav-link" data-scroll-target="#sec-deconv-second-generation"><span class="header-section-number">5.1.1</span> Second-generation, mean-based</a></li>
-  <li><a href="#sec-deconv-single-cell" id="toc-sec-deconv-single-cell" class="nav-link" data-scroll-target="#sec-deconv-single-cell"><span class="header-section-number">5.1.2</span> Single-cell likelihood strategy</a></li>
-  <li><a href="#sec-deconv-baselines" id="toc-sec-deconv-baselines" class="nav-link" data-scroll-target="#sec-deconv-baselines"><span class="header-section-number">5.1.3</span> Gold-standard baselines</a></li>
+  <li><a href="#sec-bio-figure" id="toc-sec-bio-figure" class="nav-link" data-scroll-target="#sec-bio-figure"><span class="header-section-number">6.1.1</span> The figure and its statistical reading</a></li>
+  <li><a href="#sec-bio-interpretation" id="toc-sec-bio-interpretation" class="nav-link" data-scroll-target="#sec-bio-interpretation"><span class="header-section-number">6.1.2</span> Biological interpretation</a></li>
   </ul></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/edit/main/docs/05-deconvolution-pipeline.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/blob/main/docs/05-deconvolution-pipeline.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/edit/main/docs/05-biological-insights.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/blob/main/docs/05-biological-insights.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content" tabindex="-1">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="Breadcrumbs"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./05-deconvolution-pipeline.html">Deconvolution benchmark</a></li><li class="breadcrumb-item"><a href="./05-deconvolution-pipeline.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Applying and comparing deconvolution outputs applied to Suppinger study</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="Breadcrumbs"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./04-deconvolution-pipeline.html">Deconvolution benchmark</a></li><li class="breadcrumb-item"><a href="./05-biological-insights.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Early versus standard Wnt</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Applying and comparing deconvolution outputs applied to Suppinger study</span></h1>
+<h1 class="title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Early versus standard Wnt</span></h1>
 </div>
 
 
@@ -358,72 +279,77 @@ window.Quarto = {
 </header>
 
 
-<section id="sec-deconv-models" class="level2" data-number="5.1">
-<h2 data-number="5.1" class="anchored" data-anchor-id="sec-deconv-models"><span class="header-section-number">5.1</span> What is being compared</h2>
-<p>DeCovarT deconvolves bulk profiles with both a mean signature and a per-type covariance. Every method below uses the same gene panel and the same labelled single-cell reference; they differ in what they model beyond the mean. All runs are planned on GSE229386, at 48 h, 72 h and 96 h, for the standard Wnt pulse and the early pulse (<a href="01-data-suppinger.html#sec-geo-design" class="quarto-xref"><span>Section 2.1</span></a>). Each model is reviewed in <a href="https://bastienchassagnol.github.io/DeCovarT/articles/05-1-review-distribution-aware.html">5.1, review</a>; one line here says what it models and how it is called.</p>
-<section id="sec-deconv-second-generation" class="level3" data-number="5.1.1">
-<h3 data-number="5.1.1" class="anchored" data-anchor-id="sec-deconv-second-generation"><span class="header-section-number">5.1.1</span> Second-generation, mean-based</h3>
-<ol type="1">
-<li><strong>BayesPrism</strong> (Chu et al.&nbsp;2022) — a multinomial likelihood on bulk counts with the single-cell reference as a prior on cell-type expression, updated by Gibbs sampling. R, <code>BayesPrism</code>: <code>new.prism()</code>, <code>run.prism()</code>, <code>get.fraction()</code>.</li>
-<li><strong>SCDC</strong> (Dong et al.&nbsp;2021) — weighted non-negative least squares with clipped gene weights, and an ensemble over several references. With one reference the ensemble step does nothing. R, <code>SCDC</code>: <code>SCDC_prop()</code>, or <code>SCDC_prop_ONE()</code> for a one-subject reference.</li>
-<li><strong>DWLS</strong> <span class="citation" data-cites="tsoucasAccurateEstimationCelltype2019">(<a href="#ref-tsoucasAccurateEstimationCelltype2019" role="doc-biblioref">Tsoucas et al. 2019</a>)</span> — dampened weighted least squares, weights the inverse squared fitted mean, capped by a dampening constant. R, <code>DWLS</code>: <code>solveDampenedWLS()</code>.</li>
-</ol>
-<!-- TODO-cite: Chu et al. 2022 (BayesPrism, key chuCellTypeGeneExpression2022) and Dong et al. 2021 (SCDC, key dongSCDCBulkGene2021) are in DeCovarT inst/REFERENCES.bib, not in bibliography/REFERENCES.bib. -->
-</section>
-<section id="sec-deconv-single-cell" class="level3" data-number="5.1.2">
-<h3 data-number="5.1.2" class="anchored" data-anchor-id="sec-deconv-single-cell"><span class="header-section-number">5.1.2</span> Single-cell likelihood strategy</h3>
-<ol start="4" type="1">
-<li><strong>DeCovarT, profile Newton</strong> — the linear single-cell layer, with <span class="math inline">\boldsymbol{\Sigma}_{W,j}</span> weighted by <span class="math inline">p_{ji}</span> and both sample scales profiled out, maximised by trust-region Newton in ILR coordinates (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/02-1-single-cell-generative-optimisation.html#sec-profile-newton">2.1, profile Newton</a>). R: <code>DeCovarT::deconvolute_single_cell(optimiser = "newton")</code>.</li>
-<li><strong>DeCovarT, Levenberg–Marquardt</strong> — the released population convolution, covariance <span class="math inline">\sum_j p_{ji}^{2}\boldsymbol{\Sigma}_j</span>, maximised by <code>marqLevAlg</code> in ILR coordinates. With a one-specimen reference the quadratic slot is the wrong one (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/02-1-single-cell-generative-optimisation.html#sec-one-replicate">2.1, one replicate</a>); the fit is the reference point for the released model. R: <code>DeCovarT::deconvolute_ratios_Marquardt_Levenberg()</code>.</li>
-<li><strong>RNA-Sieve</strong> <span class="citation" data-cites="erdmann-phamLikelihoodbasedDeconvolutionBulk2021">(<a href="#ref-erdmann-phamLikelihoodbasedDeconvolutionBulk2021" role="doc-biblioref">Erdmann-Pham et al. 2021</a>)</span> — genes independent; a central-limit Gaussian bulk whose variance is linear in the cell count, with the reference means as noisy regressors and sandwich intervals. Python, <code>rnasieve</code> (<code>songlab-cal/rna-sieve</code>): <code>model_from_raw_counts()</code>, then <code>predict()</code>.</li>
-<li><strong>MEAD</strong> <span class="citation" data-cites="xieRobustStatisticalInference2023">(<a href="#ref-xieRobustStatisticalInference2023" role="doc-biblioref">Xie and Wang 2023</a>)</span> — an estimating equation corrected for reference measurement error, with gene–gene dependence in the sandwich variance and intervals for <span class="math inline">\boldsymbol{p}</span>. R, <code>MEAD</code> (<code>DongyueXie/MEAD</code>): <code>MEAD()</code>.</li>
-<li><strong>ReDeconv</strong> <span class="citation" data-cites="luTranscriptomeSizeMatters2025">(<a href="#ref-luTranscriptomeSizeMatters2025" role="doc-biblioref">Lu et al. 2025</a>)</span> — keeps the transcriptome size <span class="math inline">S_j</span> in the reference, corrects gene length on the bulk side only, and models the within-type variance through a central-limit law over cells. Code <code>jyyulab/redeconv</code>; entry point to be taken from its tutorial.</li>
-</ol>
-</section>
-<section id="sec-deconv-baselines" class="level3" data-number="5.1.3">
-<h3 data-number="5.1.3" class="anchored" data-anchor-id="sec-deconv-baselines"><span class="header-section-number">5.1.3</span> Gold-standard baselines</h3>
-<ol start="9" type="1">
-<li><strong>NNLS</strong> — non-negative least squares on the mean signature, then projection on the simplex; homoscedastic, mean only. R: <code>DeCovarT::deconvolute_ratios_nnls()</code>, which calls <code>nnls::nnls()</code>.</li>
-<li><strong>Robust linear regression (RLM)</strong> — Huber M-estimation of <span class="math inline">\boldsymbol{y}\approx\boldsymbol{\mu}\boldsymbol{p}</span>, which down-weights outlying genes. R: <code>DeCovarT::deconvolute_ratios_rlm()</code>, which calls <code>MASS::rlm(method = "M")</code>.</li>
-</ol>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Not run. y: one bulk sample (G genes, raw counts); mu: G x J mean</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># signature; sigma_w: G x G x J within-type covariances; sigma_pop:</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># G x G x J covariances for the population convolution. Same panel and</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># reference for every method.</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>fit_newton <span class="ot">&lt;-</span> DeCovarT<span class="sc">::</span><span class="fu">deconvolute_single_cell</span>(</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  y, mu, sigma_w, <span class="at">optimiser =</span> <span class="st">"newton"</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>fit_ml <span class="ot">&lt;-</span> DeCovarT<span class="sc">::</span><span class="fu">deconvolute_ratios_Marquardt_Levenberg</span>(</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  y, mu, sigma_pop</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>fit_nnls <span class="ot">&lt;-</span> DeCovarT<span class="sc">::</span><span class="fu">deconvolute_ratios_nnls</span>(y, mu)</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>fit_rlm <span class="ot">&lt;-</span> DeCovarT<span class="sc">::</span><span class="fu">deconvolute_ratios_rlm</span>(y, mu)</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Third-party packages (not in renv.lock); check signatures first.</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># BayesPrism::new.prism(); BayesPrism::run.prism(); BayesPrism::get.fraction()</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># SCDC::SCDC_prop_ONE()</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co"># DWLS::solveDampenedWLS(S, B)</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co"># MEAD::MEAD()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="sec-bio-deconv" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="sec-bio-deconv"><span class="header-section-number">6.1</span> Biological insights from deconvolution algorithms applied to mouse gastruloids</h2>
+<p><a href="#fig-bio-early" class="quarto-xref">Figure&nbsp;<span>6.1</span></a> contrasts a standard Wnt pulse at 48 h with a premature pulse at 24 h, at three bulk-matched time points: 48 h, 72 h and 96 h. <a href="#sec-bio-figure" class="quarto-xref"><span>Section 6.1.1</span></a> says what the figure can and cannot support; 1 gives the biological reading.</p>
+<section id="sec-bio-figure" class="level3" data-number="6.1.1">
+<h3 data-number="6.1.1" class="anchored" data-anchor-id="sec-bio-figure"><span class="header-section-number">6.1.1</span> The figure and its statistical reading</h3>
+<div id="fig-bio-early" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-bio-early-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/deconvolution_guided_early_treatment-1.png" class="img-fluid figure-img">
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Not run. RNA-Sieve (https://github.com/songlab-cal/rna-sieve);</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># names follow the repository README and must be checked.</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> rnasieve.preprocessing <span class="im">import</span> model_from_raw_counts</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>model, cleaned_bulks <span class="op">=</span> model_from_raw_counts(reference_counts, bulks)</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>proportions <span class="op">=</span> model.predict(cleaned_bulks)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-bio-early-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6.1: Deconvolution-guided comparison of standard versus early Wnt gastruloids at 48 h, 72 h and 96 h.
+</figcaption>
+</figure>
+</div>
+<!-- Provenance of the current figure (agent F, 2026-11-01). The PNG is
+2000 x 1500 px, an upscale of the only image in
+images/deconvolution-guided_biological_interpeation_elarly_treatment.pdf
+(a Google Drawings export holding one JPEG of 1491 x 1055 px). No script,
+chunk or table in this repository produces it (grep of scripts/, R/,
+output/, docs/ and git history; first committed in 3b9b2ee as part of
+the retired chapter 09). It may come from an image generator, like the
+companion slides of @fig-bio-lineage ("interpretation guided by RAG Chat
+GPT5"); this is not verified. -->
+<!-- Redrawn figure, ready to switch. Steps (not run):
+1. Write output/deconvolution/proportions_long.csv from the comparator
+   runs of 04-deconvolution-pipeline.qmd (columns listed in the header of
+   scripts/06_01_plot_early_wnt_compositions.R).
+2. Rscript --no-save --no-restore scripts/06_01_plot_early_wnt_compositions.R
+3. In docs/images/src/early_wnt/: latexmk -lualatex early_wnt.tex, then
+   pdftocairo -svg early_wnt.pdf ../../fig_06_early_wnt.svg
+4. Replace the image line above by the block below and delete the old PNG
+   reference.
+
+![Early versus standard Wnt, by deconvolution method. (a) Schematic of
+the scored single-cell reference states at each bulk time; solid edges
+are the main routes and dashed edges the reduced routes of the earlier
+illustration; no quantity is drawn. (b) Estimated proportion of each
+state, one row per method; dots are the three bulk replicates of each
+arm (blue, standard Wnt; orange, early Wnt) and bars their mean. (c)
+Centred log-ratio contrast, early minus standard, per method; grey bars
+span the nine replicate pairs, black lines are bootstrap 95 % percentile
+intervals over replicates (three per arm, so coarse), and fill gives the
+sign. (d) Number of methods with a positive contrast; orange or blue
+when all methods agree, grey otherwise.](images/fig_06_early_wnt.svg){#fig-bio-early}
+-->
+<p><a href="#fig-bio-early" class="quarto-xref">Figure&nbsp;<span>6.1</span></a> is a raster illustration, not a plot of estimates. Panels A and B draw trajectories; the six bar thumbnails of panel C carry no axis, scale or value. No deconvolution output exists in this repository yet: the comparator runs of <a href="04-deconvolution-pipeline.html#sec-deconv-models" class="quarto-xref"><span>Section 5.1</span></a> are planned, not run. What follows reads the figure qualitatively and lists what its claims would need. Readings marked <em>(ours)</em> are not in the figure.</p>
+<ul>
+<li><strong>The consensus is on direction, not on point estimates.</strong> Panel C reports that BayesPrism, SCDC and DWLS agree on the direction of change between arms (ectopic pluripotency up, primitive streak and pre-somitic mesoderm down in the early arm) and not on absolute abundances. Only that direction is carried into
+<ol class="example" type="1">
+<li></li>
+</ol></li>
+<li><strong>Why absolute abundances disagree.</strong> The figure attributes the disagreement to weighted least squares and marker weighting, which are sensitive to collinearity among closely related states. When neighbouring states have close mean profiles on the panel (candidates here, not yet checked: naïve, exiting naïve and epiblast at 48 h; pre-somitic mesoderm and somite differentiation front at 96 h), the signature is ill-conditioned, and a small change of gene weights moves mass between neighbours (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-kappa-limits">3.1, condition number</a>). <em>(Ours.)</em> Collinearity affects every method that inverts the same signature, BayesPrism included; it separates methods only through their weights. Panel C groups SCDC, a weighted least squares, with BayesPrism, a multinomial likelihood, and sets DWLS apart, which points at the dampened weights of DWLS <span class="citation" data-cites="tsoucasAccurateEstimationCelltype2019">(<a href="#ref-tsoucasAccurateEstimationCelltype2019" role="doc-biblioref">Tsoucas et al. 2019</a>)</span> rather than at least squares as such. Testing this needs the condition number of the panel signature at each time and the per-method estimates.</li>
+<li><strong>Why direction can agree when levels do not.</strong> <em>(Ours.)</em> At one time both arms are deconvolved with the same reference and panel. A method bias that multiplies the proportion of a type by a fixed factor cancels in the log-ratio contrast between arms; a bias that moves mass between collinear neighbours depends on the sample and does not cancel. Proportions are also closed: a rise of ectopic pluripotency forces other types down, so “ectopic pluripotency up” and “primitive streak down” are not two independent findings. The redraw therefore reads contrasts on centred log-ratios within each sample.</li>
+<li><strong>Uncertainty the claims need.</strong> <em>(Ours.)</em>
+<ul>
+<li>A per-algorithm interval for every proportion: from the method’s own uncertainty model where it has one (BayesPrism samples a posterior), and from resampling reference cells within type otherwise, which also carries the uncertainty of the one-specimen reference (<a href="01-data-suppinger.html#sec-geo-design" class="quarto-xref"><span>Section 2.1</span></a>).</li>
+<li>A bootstrap over bulk replicates within arm and time, since the replicate is the unit of the arm effect, not the gene or the cell. There are three replicates per arm and time (<a href="01-data-suppinger.html#fig-suppinger-design" class="quarto-xref">Figure&nbsp;<span>2.1</span></a>), so a resample takes only 10 distinct values per arm; the redraw shows the nine pairwise early-minus-standard differences beside the percentile interval.</li>
+<li>Panel C also states that control gastruloids vary more. A variance from three replicates has two degrees of freedom, and its 95 % chi-square interval spans a factor of about 150, so that claim needs more replicates or a model that pools across types and times.</li>
+</ul></li>
+<li><strong>How to read agreement across methods.</strong> <em>(Ours.)</em> The methods share the reference, the panel and the bulk, so their errors are correlated, and agreement of three methods is not three independent confirmations. Two failure modes are shared by all of them. The early-Wnt bulk has no single-cell counterpart at any time (<a href="02-feature-selection.html#sec-fs-bulk-consistency" class="quarto-xref"><span>Section 3.4</span></a>), so a state specific to that arm is forced onto the nearest reference types. And several states drawn in panels A and B (caudal epiblast, neuromesodermal progenitors) are not among the scored reference types of <a href="02-feature-selection.html#tbl-fs-cell-counts" class="quarto-xref">Table&nbsp;<span>3.2</span></a>, so no deconvolution against those references can return them. Sign agreement across methods is therefore necessary, not sufficient. A proposed reporting rule for the redraw: call a direction when every method gives the same sign and, for each method, the nine replicate pairs share that sign; report a per-sample goodness of fit on the early arm beside it.</li>
+</ul>
+</section>
+<section id="sec-bio-interpretation" class="level3" data-number="6.1.2">
+<h3 data-number="6.1.2" class="anchored" data-anchor-id="sec-bio-interpretation"><span class="header-section-number">6.1.2</span> Biological interpretation</h3>
+<p>On the <strong>control-like</strong> arm, 72 h is primitive-streak enriched and 96 h shows pre-somitic mesoderm and somite progression. On the <strong>early Wnt</strong> arm, 48 h retains more naïve pluripotency, 72 h is dominated by ectopic pluripotency with a reduced primitive streak, and 96 h nearly loses pre-somitic mesoderm. Absolute abundances disagree across algorithms (<a href="#sec-bio-figure" class="quarto-xref"><span>Section 6.1.1</span></a>), so we treat the <strong>direction of change</strong> (ectopic pluripotency up, primitive streak and pre-somitic mesoderm down) as the consensus, not the point estimates.</p>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="list">
-<div id="ref-erdmann-phamLikelihoodbasedDeconvolutionBulk2021" class="csl-entry" role="listitem">
-Erdmann-Pham, Dan D., Jonathan Fischer, Justin Hong, and Yun S. Song. 2021. <span>“Likelihood-Based Deconvolution of Bulk Gene Expression Data Using Single-Cell References.”</span> <em>Genome Research</em> 31 (10): 1794–806. <a href="https://doi.org/10.1101/gr.272344.120">https://doi.org/10.1101/gr.272344.120</a>.
-</div>
-<div id="ref-luTranscriptomeSizeMatters2025" class="csl-entry" role="listitem">
-Lu, Songjian, Jiyuan Yang, Lei Yan, et al. 2025. <span>“Transcriptome Size Matters for Single-Cell <span class="nocase">RNA-seq</span> Normalization and Bulk Deconvolution.”</span> <em>Nature Communications</em> 16 (1). <a href="https://doi.org/10.1038/s41467-025-56623-1">https://doi.org/10.1038/s41467-025-56623-1</a>.
-</div>
 <div id="ref-tsoucasAccurateEstimationCelltype2019" class="csl-entry" role="listitem">
 Tsoucas, Daphne, Rui Dong, Haide Chen, Qian Zhu, Guoji Guo, and Guo-Cheng Yuan. 2019. <span>“Accurate Estimation of Cell-Type Composition from Gene Expression Data.”</span> <em>Nature Communications</em> 10. <a href="https://doi.org/10.1038/s41467-019-10802-z">https://doi.org/10.1038/s41467-019-10802-z</a>.
-</div>
-<div id="ref-xieRobustStatisticalInference2023" class="csl-entry" role="listitem">
-Xie, Dongyue, and Jingshu Wang. 2023. <em>Robust Statistical Inference for Cell Type Deconvolution</em>. arXiv. <a href="https://doi.org/10.48550/arxiv.2202.06420">https://doi.org/10.48550/arxiv.2202.06420</a>.
 </div>
 </div>
 </section>
@@ -908,18 +834,18 @@ Xie, Dongyue, and Jingshu Wang. 2023. <em>Robust Statistical Inference for Cell 
   </script>
 <nav class="page-navigation" aria-label="Page">
   <div class="nav-page nav-page-previous">
-      <a href="./03-covariance-estimation.html" class="pagination-link" aria-label="Covariance estimation">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Covariance estimation</span></span>
+      <a href="./04-deconvolution-pipeline.html" class="pagination-link" aria-label="Applying and comparing deconvolution outputs applied to Suppinger study">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Applying and comparing deconvolution outputs applied to Suppinger study</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./06-biological-insights.html" class="pagination-link" aria-label="Early versus standard Wnt">
-        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Early versus standard Wnt</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./06-sensitivity-misspecification.html" class="pagination-link" aria-label="Sensitivity analyses">
+        <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
 </div> <!-- /content -->
-    <footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/edit/main/docs/05-deconvolution-pipeline.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/blob/main/docs/05-deconvolution-pipeline.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script type="text/javascript">
+    <footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/edit/main/docs/05-biological-insights.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/blob/main/docs/05-biological-insights.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script type="text/javascript">
     (function(d) {
       d.querySelectorAll(".pseudocode-container").forEach(function(el) {
         let pseudocodeOptions = {

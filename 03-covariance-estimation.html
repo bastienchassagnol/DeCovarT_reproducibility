@@ -55,7 +55,7 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./05-deconvolution-pipeline.html" rel="next">
+<link href="./04-deconvolution-pipeline.html" rel="next">
 <link href="./02-feature-selection.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -264,19 +264,19 @@ window.Quarto = {
       <ul id="quarto-sidebar-section-3" aria-labelledby="quarto-sidebar-section-3-label" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./05-deconvolution-pipeline.html" class="sidebar-item-text sidebar-link">
+  <a href="./04-deconvolution-pipeline.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Applying and comparing deconvolution outputs applied to Suppinger study</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./06-biological-insights.html" class="sidebar-item-text sidebar-link">
+  <a href="./05-biological-insights.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Early versus standard Wnt</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./07-sensitivity-misspecification.html" class="sidebar-item-text sidebar-link">
+  <a href="./06-sensitivity-misspecification.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Sensitivity analyses</span></span></a>
   </div>
 </li>
@@ -336,7 +336,7 @@ window.Quarto = {
 
 <section id="sec-cov-scope" class="level2" data-number="4.1">
 <h2 data-number="4.1" class="anchored" data-anchor-id="sec-cov-scope"><span class="header-section-number">4.1</span> Scope and status</h2>
-<p>This chapter estimates, for each scored cell type <span class="math inline">j</span> at each bulk-matched time, the mean <span class="math inline">\widehat{\boldsymbol{\mu}}_{\cdot j}</span> and the within-type covariance <span class="math inline">\widehat{\boldsymbol{\Sigma}}_{j}</span> of the gene panel of <a href="02-feature-selection.html#sec-fs-export" class="quarto-xref"><span>Section 3.10</span></a>, and exports them on the linear scale of DeCovarT’s convolution,</p>
+<p>This chapter estimates, for each scored cell type <span class="math inline">j</span> at each bulk-matched time, the mean <span class="math inline">\widehat{\boldsymbol{\mu}}_{\cdot j}</span> and the within-type covariance <span class="math inline">\widehat{\boldsymbol{\Sigma}}_{j}</span> of the gene panel of <a href="02-feature-selection.html#sec-fs-export" class="quarto-xref"><span>Section 3.6</span></a>, and exports them on the linear scale of DeCovarT’s convolution,</p>
 <p><span id="eq-grn-export"><span class="math display">
 \bigl\{
 \widehat{\boldsymbol{\mu}}_{\cdot j},\,
@@ -397,17 +397,11 @@ Table&nbsp;4.1: Covariance-estimation code and status.
 <td><code>scripts/03_03_grn_plnnetwork.R</code></td>
 <td>offset fixed to the full library size; never run</td>
 </tr>
-<tr class="odd">
-<td>Outputs under <code>output/grn/huge/</code></td>
-<td>from the earlier <code>03_01</code></td>
-<td><strong>stale</strong> (<span class="quarto-unresolved-ref">?sec-cov-stale</span>)</td>
-</tr>
 </tbody>
 </table>
 </div>
 </figure>
 </div>
-<p>Nothing in this chapter has produced a usable covariance yet. The outputs that exist are stale and are kept only as a record of what went wrong (<span class="quarto-unresolved-ref">?sec-cov-stale</span>).</p>
 <section id="sec-cov-units" class="level3" data-number="4.1.1">
 <h3 data-number="4.1.1" class="anchored" data-anchor-id="sec-cov-units"><span class="header-section-number">4.1.1</span> Units and regimes</h3>
 <p>Each fit uses the cells of one type at one time, treated as independent draws: eleven type × time units (<a href="02-feature-selection.html#tbl-fs-cell-counts" class="quarto-xref">Table&nbsp;<span>3.2</span></a>). Cell line is not a covariate (<a href="01-data-suppinger.html#sec-geo-design" class="quarto-xref"><span>Section 2.1</span></a>). The panel has <span class="math inline">G=500</span> genes per time before genes constant in a type are removed.</p>
@@ -502,7 +496,7 @@ Table&nbsp;4.2: The eleven type × time units. Seven have fewer cells than panel
 </section>
 <section id="sec-cov-inputs" class="level3" data-number="4.1.2">
 <h3 data-number="4.1.2" class="anchored" data-anchor-id="sec-cov-inputs"><span class="header-section-number">4.1.2</span> Inputs and scales</h3>
-<p>All four estimators read <code>data/intermediate/equal_type_top500_by_time.rds</code> (<a href="02-feature-selection.html#sec-fs-export" class="quarto-xref"><span>Section 3.10</span></a>). A transformation belongs to one estimator only.</p>
+<p>All four estimators read <code>data/intermediate/equal_type_top500_by_time.rds</code> (<a href="02-feature-selection.html#sec-fs-export" class="quarto-xref"><span>Section 3.6</span></a>). A transformation belongs to one estimator only.</p>
 <div id="tbl-cov-inputs" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-cov-inputs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -551,9 +545,9 @@ Table&nbsp;4.3: What each estimator sees and what it exports.
 <p>Two earlier choices are reverted, both in code that has not been re-run:</p>
 <ul>
 <li><strong>Scale of the export.</strong> <code>scripts/03_01_grn_huge.R</code> used to fit and export on <span class="math inline">\log(1+x)</span> (<code>x &lt;- log1p(x)</code>, then <code>mu &lt;- colMeans(x)</code>). The convolution is linear only on an additive scale (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/02-1-single-cell-generative-optimisation.html#sec-norm-linear">2.1, normalisation</a>), so <span class="math inline">\widehat{\boldsymbol{\mu}}_{\cdot j}</span> and <span class="math inline">\widehat{\boldsymbol{\Sigma}}_{j}</span> are now computed on size-factor-normalised counts. A <span class="math inline">\log(1+x)</span> table may still be used to detect a support, never to export a moment.</li>
-<li><strong>Library size in <code>PLNnetwork</code>.</strong> <code>scripts/03_03_grn_plnnetwork.R</code> used the row sum over the 500 panel genes as offset. It now uses the full RNA library size, recovered from <code>log_umi</code> (<span class="math inline">s_c=10^{\texttt{log\_umi}}</span>), as in <a href="02-feature-selection.html#eq-fs-v2-offset" class="quarto-xref">Equation&nbsp;<span>3.2</span></a>. <code>nCount_RNA</code> in the exported object is the 500-gene sum and is not used.</li>
+<li><strong>Library size in <code>PLNnetwork</code>.</strong> <code>scripts/03_03_grn_plnnetwork.R</code> used the row sum over the 500 panel genes as offset. It now uses the full RNA library size, recovered from <code>log_umi</code> (<span class="math inline">s_c=10^{\texttt{log\_umi}}</span>), as in <a href="02-feature-selection.html#eq-fs-v2-offset" class="quarto-xref">Equation&nbsp;<span>3.5</span></a>. <code>nCount_RNA</code> in the exported object is the 500-gene sum and is not used.</li>
 </ul>
-<p><code>SCTransform</code> Pearson residuals are used only for ranking (<a href="02-feature-selection.html#sec-fs-sct" class="quarto-xref"><span>Section 3.4</span></a>) and are never passed to an estimator.</p>
+<p>Pearson residuals, of the legacy <code>SCTransform</code> fit (<a href="02-feature-selection.html#sec-fs-sct" class="quarto-xref"><span>Section 3.9.1</span></a>) or of the count GLMs of the new rank (<a href="02-feature-selection.html#sec-fs-glm" class="quarto-xref"><span>Section 3.3.1</span></a>), are used only for ranking and are never passed to an estimator.</p>
 </section>
 </section>
 <section id="sec-cov-estimators" class="level2" data-number="4.2">
@@ -706,7 +700,7 @@ Table&nbsp;4.5: <code>PLNnetwork</code> settings. Earlier versions of the script
 </div>
 </figure>
 </div>
-<div id="algo-plnnetwork" class="pseudocode-container quarto-float" data-pseudocode-number="1" data-line-number="true" data-indent-size="1.2em" data-comment-delimiter="//" data-chapter-level="4" data-no-end="false" data-indent-lines="false" data-line-number-punc=":" data-caption-prefix="Algorithm">
+<div id="algo-plnnetwork" class="pseudocode-container quarto-float" data-chapter-level="4" data-pseudocode-number="1" data-indent-lines="false" data-comment-delimiter="//" data-no-end="false" data-line-number="true" data-indent-size="1.2em" data-caption-prefix="Algorithm" data-line-number-punc=":">
 <div class="pseudocode">
 \begin{algorithm} \caption{PLNnetwork: alternating graphical lasso and variational updates} \begin{algorithmic} \Require counts $X$, offsets $O=\log s$, penalty $\lambda$, weights $W$ \State initialise the variational means $M$, variances $S$ and $\Sigma$ \For{$h = 1,\ldots,$ maxit\_out} \State $\Omega^{(h)} \gets$ \Call{GraphicalLasso}{$\Sigma^{(h-1)}, \lambda W$} \State $(B^{(h)},M^{(h)},S^{(h)}) \gets$ \Call{NLopt}{$B^{(h-1)},M^{(h-1)},S^{(h-1)};\Omega^{(h)}$} \State $\Sigma^{(h)} \gets C^{-1}\left[{M^{(h)}}^\top M^{(h)} + \sum_c S_c^{(h)}\right]$ \State $F_h \gets -\mathrm{ELBO}(B^{(h)},M^{(h)},S^{(h)},\Omega^{(h)}) + \lambda\|\Omega^{(h)}\|_{1,W}$ \If{$|F_h-F_{h-1}|/|F_h| &lt;$ ftol\_out} \State \textbf{break} \EndIf \EndFor \State \Return $(B,M,S,\Omega,\Sigma)$ \end{algorithmic} \end{algorithm}
 </div>
@@ -737,7 +731,7 @@ Table&nbsp;4.5: <code>PLNnetwork</code> settings. Earlier versions of the script
 \log\phi_{G}\bigl(\boldsymbol{x}_{\cdot c};\widehat{\boldsymbol{\mu}},\widehat{\boldsymbol{\Sigma}}\bigr),
 \tag{4.4}</span></span></p>
 <p>computed by <code>heldout_gaussian_logscore()</code> through a Cholesky factor of <span class="math inline">\widehat{\boldsymbol{\Sigma}}</span>. Why this score is a legitimate loss for the covariance even though cells are not Gaussian, and why it replaces AIC, BIC and EBIC as the selector, is in <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-cov-cv">3.2, cross-validation</a>.</p>
-<div id="algo-cv-covariance" class="pseudocode-container quarto-float" data-pseudocode-number="2" data-line-number="true" data-indent-size="1.2em" data-comment-delimiter="//" data-chapter-level="4" data-no-end="false" data-indent-lines="false" data-line-number-punc=":" data-caption-prefix="Algorithm">
+<div id="algo-cv-covariance" class="pseudocode-container quarto-float" data-chapter-level="4" data-pseudocode-number="2" data-indent-lines="false" data-comment-delimiter="//" data-no-end="false" data-line-number="true" data-indent-size="1.2em" data-caption-prefix="Algorithm" data-line-number-punc=":">
 <div class="pseudocode">
 \begin{algorithm} \caption{Tuning by K-fold cross-validation, and nested comparison of the four estimators} \begin{algorithmic} \Procedure{CVSelect}{$X, f, \Lambda, K$} \State split the cells of $X$ into $K$ folds at random, with a fixed seed \For{$\lambda \in \Lambda$} \For{$k = 1,\ldots,K$} \State $(\hat\mu,\hat\Sigma) \gets f(X_{-k};\lambda)$ \State $\ell_k(\lambda) \gets$ \Call{HeldOutLogScore}{$\hat\mu,\hat\Sigma,X_k$} \EndFor \State $m(\lambda) \gets$ mean of $\ell_k(\lambda)$; $\mathrm{se}(\lambda) \gets$ its standard error \EndFor \State $\lambda_{\min} \gets \arg\max_{\lambda} m(\lambda)$ \State $\lambda_{1\mathrm{se}} \gets$ most regularised $\lambda$ with $m(\lambda) \ge m(\lambda_{\min}) - \mathrm{se}(\lambda_{\min})$ \State \Return $(m, \mathrm{se}, \lambda_{\min}, \lambda_{1\mathrm{se}})$ \EndProcedure \Procedure{NestedCompare}{$X, \{(f_e,\Lambda_e)\}_{e=1}^{4}, K_{\mathrm{out}}, K_{\mathrm{in}}$} \For{$k = 1,\ldots,K_{\mathrm{out}}$} \For{$e = 1,\ldots,4$} \State $\lambda_e \gets \lambda_{\min}$ of \Call{CVSelect}{$X_{-k}, f_e, \Lambda_e, K_{\mathrm{in}}$} \State $(\hat\mu,\hat\Sigma) \gets f_e(X_{-k};\lambda_e)$ \State $s_{ek} \gets$ \Call{HeldOutLogScore}{$\hat\mu,\hat\Sigma,X_k$} \EndFor \EndFor \State \Return $(s_{ek})$, paired by outer fold \EndProcedure \end{algorithmic} \end{algorithm}
 </div>
@@ -779,7 +773,7 @@ Table&nbsp;4.5: <code>PLNnetwork</code> settings. Earlier versions of the script
 <p>There is no ground-truth network for murine gastruloids, and the estimand is a covariance. The scores are therefore relative, in this order of weight:</p>
 <ol type="1">
 <li><strong>Held-out likelihood</strong>, outer folds of <a href="#algo-cv-covariance" class="quarto-xref">Algorithm 4.2</a>: the selector, and the only score that compares all four estimators on one scale.</li>
-<li><strong>Downstream deconvolution</strong>: DeCovarT error on the matched 48 h bulk and in the misspecification sweep of <a href="07-sensitivity-misspecification.html#sec-sensitivity" class="quarto-xref"><span>Section 7.1</span></a>, with <span class="math inline">\widehat{\boldsymbol{\Sigma}}_{j}</span> from each estimator. This is the score tied to the paper’s estimand.</li>
+<li><strong>Downstream deconvolution</strong>: DeCovarT error on the matched 48 h bulk and in the misspecification sweep of <a href="06-sensitivity-misspecification.html#sec-sensitivity" class="quarto-xref"><span>Section 7.1</span></a>, with <span class="math inline">\widehat{\boldsymbol{\Sigma}}_{j}</span> from each estimator. This is the score tied to the paper’s estimand.</li>
 <li><strong>Technical stability</strong>: a bootstrap of cells within type, labels fixed (<a href="02-feature-selection.html#nte-pseudoreplication" class="quarto-xref">Note&nbsp;<span>3.1</span></a>). Edge-inclusion frequencies for the sparse estimators and the Frobenius spread of <span class="math inline">\widehat{\boldsymbol{\Sigma}}_{j}</span> for all four. Conditional on this specimen.</li>
 <li><strong>Separation of types</strong>: Hellinger and <code>MixSim</code> overlap of
 <ol start="2" class="example" type="1">
@@ -798,7 +792,7 @@ Note&nbsp;4.1: <span class="emoji" data-emoji="information_source">ℹ️</span>
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Suppinger is droplet UMI data. Zeros are modelled as Poisson or negative-binomial sampling zeros <span class="citation" data-cites="svenssonDropletScRNAseqNot2020">(<a href="#ref-svenssonDropletScRNAseqNot2020" role="doc-biblioref">Svensson 2020</a>)</span>; no estimator in this book has a zero-inflation or hurdle layer. Zero-inflated observation models appear only as a contamination in <a href="07-sensitivity-misspecification.html#sec-sensitivity" class="quarto-xref"><span>Section 7.1</span></a>.</p>
+<p>Suppinger is droplet UMI data. Zeros are modelled as Poisson or negative-binomial sampling zeros <span class="citation" data-cites="svenssonDropletScRNAseqNot2020">(<a href="#ref-svenssonDropletScRNAseqNot2020" role="doc-biblioref">Svensson 2020</a>)</span>; no estimator in this book has a zero-inflation or hurdle layer. Zero-inflated observation models appear only as a contamination in <a href="06-sensitivity-misspecification.html#sec-sensitivity" class="quarto-xref"><span>Section 7.1</span></a>.</p>
 </div>
 </div>
 
@@ -1325,7 +1319,7 @@ Zhao, Tuo, Han Liu, Kathryn Roeder, John Lafferty, and Larry Wasserman. 2022. <e
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./05-deconvolution-pipeline.html" class="pagination-link" aria-label="Applying and comparing deconvolution outputs applied to Suppinger study">
+      <a href="./04-deconvolution-pipeline.html" class="pagination-link" aria-label="Applying and comparing deconvolution outputs applied to Suppinger study">
         <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Applying and comparing deconvolution outputs applied to Suppinger study</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
