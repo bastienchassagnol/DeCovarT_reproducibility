@@ -1,10 +1,10 @@
 # mkdir -p logs
 # nohup Rscript --no-save --no-restore \
-#   scripts/01_02_plot_naively_selected_genes.R \
-#   > "logs/01_02_naive_plots_$(date +%F).log" 2>&1 &
+#   scripts/legacy/02_90_vis_legacy_panel.R \
+#   > "logs/02_90_vis_legacy_panel_$(date +%F).log" 2>&1 &
 #
-# Reads tables written by
-# scripts/01_01_prepare_and_filter_genes_sctransform.R
+# Archived plots of the SCTransform panel. Reads tables written by
+# scripts/legacy/02_90_stats_prepare_panel.R
 # and writes figures under output/naive_marker_selection/.
 
 # ==========================================================================
@@ -19,7 +19,10 @@ dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
 read_table <- function(name) {
   path <- file.path(table_dir, name)
   if (!file.exists(path)) {
-    stop("Missing table ", path, ". Run 01_01 first.")
+    stop(
+      "Missing table ", path,
+      ". Run scripts/legacy/02_90_stats_prepare_panel.R first."
+    )
   }
   utils::read.csv(path, stringsAsFactors = FALSE, fileEncoding = "UTF-8")
 }

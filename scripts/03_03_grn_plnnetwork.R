@@ -7,7 +7,8 @@
 # library-size offset. Run from the repository root.
 #
 # The offset is log of the full RNA library L_c (metadata `log_umi`,
-# log10 of the full column sum, as in scripts/01_01), not the row sum of
+# log10 of the full column sum, as in
+# scripts/legacy/02_90_stats_prepare_panel.R), not the row sum of
 # the 500 panel genes: a panel sum moves with the panel's own expression
 # and absorbs part of the cell-type signal. `prepare_data(offset =
 # "none")` stops PLNmodels from adding its TSS (panel-sum) offset. The
@@ -20,7 +21,7 @@
 # ==========================================================================
 
 root <- getwd()
-source(file.path(root, "R", "utils_general.R"))
+source(file.path(root, "R", "02_00_utils.R"))
 
 time_levels <- c("48h", "72h", "96h")
 cell_type_col <- "celltypeannotation"

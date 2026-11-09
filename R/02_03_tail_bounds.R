@@ -43,7 +43,7 @@
 #' Port of `scripts/figures/fig_03_1_tail_bounds.R` of the DeCovarT
 #' repository, generalised to type-specific `psi_gj` and to a Poisson
 #' limit `psi = Inf`; deliberately duplicated, no cross-repository
-#' dependency. Requires `R/utils_general.R`, `R/plugin_composition.R`.
+#' dependency. Requires `R/02_00_utils.R`, `R/02_03_plugin_composition.R`.
 #' `quantreg` (quantile band) is not in `renv.lock`. Written, not run.
 
 #' Method-of-moments NB parameters per gene and type.
@@ -305,7 +305,373 @@ chernoff_threshold <- function(cgf, side, t0, level) {
   )$root
 }
 
+#' Shared checks for one gene or one module tail statement.
+#'
+#' @return A list with the validated arguments, `z`, and either `s` and
+#'   `mbar` (gene) or `sd_g` (module). `zero` is TRUE when a gene has
+#'   no positive variance of `D`.
+.tail_context <- function(mu, p, n_bulk, n_ref, psi, level) {
+  if (
+    !is.numeric(level) || length(level) != 1L || level <= 0 || level >= 0.5
+  ) {
+    stop(
+      "`level` must be one number in (0, 0.5), ",
+      "the tail probability per side."
+    )
+  }
+  is_module <- is.matrix(mu) && nrow(mu) > 1L
+  n_types <- if (is.matrix(mu)) ncol(mu) else length(mu)
+  if (length(p) != n_types || length(n_ref) != n_types) {
+    stop("`p` and `n_ref` must have one value per type (column of `mu`).")
+  }
+  if (any(p < 0) || abs(sum(p) - 1) > 1e-6) {
+    stop("`p` must be non-negative and sum to one.")
+  }
+  if (!is.numeric(n_bulk) || length(n_bulk) != 1L || n_bulk <= 0) {
+    stop("`n_bulk` must be one positive number (cells, or the plug-in a_i).")
+  }
+  if (any(n_ref[p > 0] <= 0)) {
+    stop("`n_ref` must be positive for every type with p_j > 0.")
+  }
+  z <- stats::qnorm(1 - level)
+  if (!is_module) {
+    mu <- as.numeric(mu)
+    psi <- rep_len(as.numeric(psi), n_types)
+    s <- sqrt(consistency_variance(mu, p, n_bulk, n_ref, psi))
+    return(list(
+      is_module = FALSE,
+      n_types = n_types,
+      n_genes = 1L,
+      mu = mu,
+      psi = psi,
+      p = p,
+      n_bulk = n_bulk,
+      n_ref = n_ref,
+      level = level,
+      z = z,
+      s = s,
+      mbar = sum(p * mu),
+      zero = !is.finite(s) || s <= 0
+    ))
+  }
+  n_genes <- nrow(mu)
+  psi <- matrix(as.numeric(psi), n_genes, n_types)
+  sd_g <- vapply(
+    seq_len(n_genes),
+    function(g) {
+      sqrt(consistency_variance(mu[g, ], p, n_bulk, n_ref, psi[g, ]))
+    },
+    numeric(1)
+  )
+  if (any(!is.finite(sd_g)) || any(sd_g <= 0)) {
+    stop("Every module gene needs a positive variance of D; drop the others.")
+  }
+  list(
+    is_module = TRUE,
+    n_types = n_types,
+    n_genes = n_genes,
+    mu = mu,
+    psi = psi,
+    p = p,
+    n_bulk = n_bulk,
+    n_ref = n_ref,
+    level = level,
+    z = z,
+    sd_g = sd_g,
+    zero = FALSE
+  )
+}
+
+.tail_rows <- function(method, statement, lower, upper) {
+  data.frame(
+    method = method,
+    statement = statement,
+    side = c("lower", "upper"),
+    threshold = c(lower, upper),
+    stringsAsFactors = FALSE
+  )
+}
+
+.tail_na <- function(method) {
+  warning("Zero variance of D: thresholds are NA.", call. = FALSE)
+  .tail_rows(method, NA_character_, NA_real_, NA_real_)
+}
+
+.tail_chernoff_rows <- function(method, statement, cgf, scale, level) {
+  .tail_rows(
+    method,
+    statement,
+    chernoff_threshold(cgf, -1, scale, level),
+    chernoff_threshold(cgf, 1, scale, level)
+  )
+}
+
+.module_gene_cgfs <- function(ctx, family) {
+  n_genes <- ctx$n_genes
+  lapply(seq_len(n_genes), function(g) {
+    consistency_cgf(
+      ctx$mu[g, ],
+      ctx$p,
+      ctx$n_bulk,
+      ctx$n_ref,
+      ctx$psi[g, ],
+      family
+    )
+  })
+}
+
+.module_cgf_indep <- function(cl, sd_g) {
+  n_genes <- length(sd_g)
+  list(
+    K = function(u) {
+      sum(vapply(seq_len(n_genes), function(g) cl[[g]]$K(u / sd_g[g]), 0))
+    },
+    dK = function(u) {
+      sum(vapply(
+        seq_len(n_genes),
+        function(g) cl[[g]]$dK(u / sd_g[g]) / sd_g[g],
+        0
+      ))
+    },
+    lo = max(vapply(seq_len(n_genes), function(g) cl[[g]]$lo * sd_g[g], 0)),
+    hi = min(vapply(seq_len(n_genes), function(g) cl[[g]]$hi * sd_g[g], 0))
+  )
+}
+
+# T5: L(u) = log(k^-1 sum_c exp(sum_{g in I_c} K_{Z_g}(k u))) >= log E e^{uS}.
+.module_cgf_colour <- function(cl, sd_g, adjacency) {
+  n_genes <- length(sd_g)
+  colour <- greedy_colouring(adjacency)
+  k <- max(colour)
+  classes <- split(seq_len(n_genes), colour)
+  a_c <- function(u) {
+    vapply(
+      classes,
+      function(idx) {
+        sum(vapply(idx, function(g) cl[[g]]$K(k * u / sd_g[g]), 0))
+      },
+      0
+    )
+  }
+  da_c <- function(u) {
+    vapply(
+      classes,
+      function(idx) {
+        sum(vapply(
+          idx,
+          function(g) k * cl[[g]]$dK(k * u / sd_g[g]) / sd_g[g],
+          0
+        ))
+      },
+      0
+    )
+  }
+  list(
+    K = function(u) {
+      a <- a_c(u)
+      max(a) + log(mean(exp(a - max(a))))
+    },
+    dK = function(u) {
+      a <- a_c(u)
+      w <- exp(a - max(a))
+      sum(w * da_c(u)) / sum(w)
+    },
+    lo = max(vapply(seq_len(n_genes), function(g) cl[[g]]$lo * sd_g[g], 0)) / k,
+    hi = min(vapply(seq_len(n_genes), function(g) cl[[g]]$hi * sd_g[g], 0)) / k
+  )
+}
+
+.require_module_graph <- function(mu, adjacency) {
+  if (!(is.matrix(mu) && nrow(mu) > 1L)) {
+    stop("This statement applies to a module (N by J, N >= 2).")
+  }
+  if (is.null(adjacency)) {
+    stop("`adjacency` is required for clt_dep and nb_dep.")
+  }
+  adjacency <- as.matrix(adjacency) != 0
+  if (!all(dim(adjacency) == nrow(mu))) {
+    stop("`adjacency` must be N by N, N = nrow(mu).")
+  }
+  adjacency
+}
+
+#' T1, Gaussian approximation (Lindeberg-Feller).
+#'
+#' Gene: threshold `z * sd(D)` on both tails. Module of independent
+#' genes: threshold `z * sqrt(N)` for `S = sum_g D_g / sd(D_g)`.
+#' Arguments are those of [tail_threshold()].
+tail_t1_clt <- function(
+  mu,
+  p,
+  n_bulk,
+  n_ref,
+  psi = Inf,
+  level = 0.01
+) {
+  ctx <- .tail_context(mu, p, n_bulk, n_ref, psi, level)
+  if (ctx$zero) {
+    return(.tail_na("clt"))
+  }
+  thr <- if (ctx$is_module) ctx$z * sqrt(ctx$n_genes) else ctx$z * ctx$s
+  .tail_rows("clt", "T1", thr, thr)
+}
+
+#' T1-log, log-normal ratio, one gene only.
+#'
+#' Upper threshold `mbar * expm1(z * s / mbar)`, lower threshold
+#' `-mbar * expm1(-z * s / mbar)`, with `mbar = sum_j p_j mu_j` and
+#' `s = sd(D)`. Both stored values are the positive distances from
+#' `mbar`; a lower flag is `D <= -threshold`.
+tail_t1_log <- function(
+  mu,
+  p,
+  n_bulk,
+  n_ref,
+  psi = Inf,
+  level = 0.01
+) {
+  if (is.matrix(mu) && nrow(mu) > 1L) {
+    stop("Method clt_log applies to one gene only.")
+  }
+  ctx <- .tail_context(mu, p, n_bulk, n_ref, psi, level)
+  if (ctx$zero) {
+    return(.tail_na("clt_log"))
+  }
+  upper <- ctx$mbar * expm1(ctx$z * ctx$s / ctx$mbar)
+  lower <- -ctx$mbar * expm1(-ctx$z * ctx$s / ctx$mbar)
+  .tail_rows("clt_log", "T1-log", lower, upper)
+}
+
+#' T2, dependency-graph normal approximation, module only.
+#'
+#' `Var S = sum(cov2cor(Cov D))` after within-cell correlations off the
+#' edges of `adjacency` are set to zero. Threshold `z * sqrt(Var S)`.
+tail_t2_clt_dep <- function(
+  mu,
+  p,
+  n_bulk,
+  n_ref,
+  psi = Inf,
+  level = 0.01,
+  adjacency = NULL,
+  cell_cor = NULL
+) {
+  if (!(is.matrix(mu) && nrow(mu) > 1L)) {
+    stop("Methods clt_dep apply to modules only.")
+  }
+  adjacency <- .require_module_graph(mu, adjacency)
+  if (is.null(cell_cor)) {
+    stop("`cell_cor` is required for clt_dep.")
+  }
+  ctx <- .tail_context(mu, p, n_bulk, n_ref, psi, level)
+  n_types <- ctx$n_types
+  n_genes <- ctx$n_genes
+  if (is.matrix(cell_cor)) {
+    cell_cor <- rep(list(cell_cor), n_types)
+  }
+  if (length(cell_cor) != n_types) {
+    stop("`cell_cor` must be one matrix or a list with one matrix per type.")
+  }
+  w_j <- ctx$p / ctx$n_bulk + ctx$p^2 / ctx$n_ref
+  sigma <- sqrt(ctx$mu + ifelse(is.finite(ctx$psi), ctx$mu^2 / ctx$psi, 0))
+  cov_d <- matrix(0, n_genes, n_genes)
+  for (j in seq_len(n_types)) {
+    r_j <- as.matrix(cell_cor[[j]])
+    r_j[!adjacency] <- 0
+    r_j[!is.finite(r_j)] <- 0
+    diag(r_j) <- 1
+    cov_d <- cov_d + w_j[j] * tcrossprod(sigma[, j]) * r_j
+  }
+  var_s_dep <- sum(stats::cov2cor(cov_d))
+  thr <- ctx$z * sqrt(var_s_dep)
+  .tail_rows("clt_dep", "T2", thr, thr)
+}
+
+#' T3, Poisson Chernoff bound.
+#'
+#' Gene: cumulant generating function of one gene with `psi` ignored
+#' (`family = "poisson"`). Module: sum of standardised gene CGFs,
+#' independent genes. The threshold scale is `sd(D)` for a gene and
+#' `sqrt(N)` for a module.
+tail_t3_poisson <- function(
+  mu,
+  p,
+  n_bulk,
+  n_ref,
+  psi = Inf,
+  level = 0.01
+) {
+  ctx <- .tail_context(mu, p, n_bulk, n_ref, psi, level)
+  if (ctx$zero) {
+    return(.tail_na("poisson"))
+  }
+  if (!ctx$is_module) {
+    cgf <- consistency_cgf(
+      ctx$mu, ctx$p, ctx$n_bulk, ctx$n_ref, ctx$psi, "poisson"
+    )
+    return(.tail_chernoff_rows("poisson", "T3", cgf, ctx$s, ctx$level))
+  }
+  cgf <- .module_cgf_indep(.module_gene_cgfs(ctx, "poisson"), ctx$sd_g)
+  .tail_chernoff_rows("poisson", "T3", cgf, sqrt(ctx$n_genes), ctx$level)
+}
+
+#' T4, negative-binomial Chernoff bound.
+#'
+#' Same construction as [tail_t3_poisson()] with `family = "nb"`.
+tail_t4_nb <- function(
+  mu,
+  p,
+  n_bulk,
+  n_ref,
+  psi = Inf,
+  level = 0.01
+) {
+  ctx <- .tail_context(mu, p, n_bulk, n_ref, psi, level)
+  if (ctx$zero) {
+    return(.tail_na("nb"))
+  }
+  if (!ctx$is_module) {
+    cgf <- consistency_cgf(
+      ctx$mu, ctx$p, ctx$n_bulk, ctx$n_ref, ctx$psi, "nb"
+    )
+    return(.tail_chernoff_rows("nb", "T4", cgf, ctx$s, ctx$level))
+  }
+  cgf <- .module_cgf_indep(.module_gene_cgfs(ctx, "nb"), ctx$sd_g)
+  .tail_chernoff_rows("nb", "T4", cgf, sqrt(ctx$n_genes), ctx$level)
+}
+
+#' T5, negative-binomial Chernoff bound after a proper colouring.
+#'
+#' Module only. The bound is the colour-class mixture of Janson (2004)
+#' implemented by [greedy_colouring()].
+tail_t5_nb_dep <- function(
+  mu,
+  p,
+  n_bulk,
+  n_ref,
+  psi = Inf,
+  level = 0.01,
+  adjacency = NULL
+) {
+  if (!(is.matrix(mu) && nrow(mu) > 1L)) {
+    stop("Methods nb_dep apply to modules only.")
+  }
+  adjacency <- .require_module_graph(mu, adjacency)
+  ctx <- .tail_context(mu, p, n_bulk, n_ref, psi, level)
+  cgf <- .module_cgf_colour(
+    .module_gene_cgfs(ctx, "nb"),
+    ctx$sd_g,
+    adjacency
+  )
+  .tail_chernoff_rows("nb_dep", "T5", cgf, sqrt(ctx$n_genes), ctx$level)
+}
+
 #' Thresholds of the tail statements for one gene or one module.
+#'
+#' Dispatches to [tail_t1_clt()], [tail_t1_log()], [tail_t2_clt_dep()],
+#' [tail_t3_poisson()], [tail_t4_nb()] and [tail_t5_nb_dep()].
+#' [quantile_band_flags()] is the model-free band and is not a method
+#' here.
 #'
 #' For a gene (`mu` a vector of length `J`, or a one-row matrix) the
 #' statistic is `D`; for a module (`mu` an `N` by `J` matrix, `N >= 2`)
@@ -352,225 +718,48 @@ tail_threshold <- function(
   } else {
     match.arg(method, all_methods, several.ok = TRUE)
   }
-  if (!is.numeric(level) || length(level) != 1L || level <= 0 || level >= 0.5) {
-    stop(
-      "`level` must be one number in (0, 0.5), the tail probability per side."
-    )
-  }
-  n_types <- if (is.matrix(mu)) ncol(mu) else length(mu)
-  if (length(p) != n_types || length(n_ref) != n_types) {
-    stop("`p` and `n_ref` must have one value per type (column of `mu`).")
-  }
-  if (any(p < 0) || abs(sum(p) - 1) > 1e-6) {
-    stop("`p` must be non-negative and sum to one.")
-  }
-  if (!is.numeric(n_bulk) || length(n_bulk) != 1L || n_bulk <= 0) {
-    stop("`n_bulk` must be one positive number (cells, or the plug-in a_i).")
-  }
-  if (any(n_ref[p > 0] <= 0)) {
-    stop("`n_ref` must be positive for every type with p_j > 0.")
-  }
-  z <- stats::qnorm(1 - level)
-  sides <- c(lower = -1, upper = 1)
-  rows <- list()
-  add <- function(m, stat, side, thr) {
-    rows[[length(rows) + 1L]] <<- data.frame(
-      method = m,
-      statement = stat,
-      side = side,
-      threshold = thr,
-      stringsAsFactors = FALSE
-    )
-  }
-
   if (!is_module) {
-    mu <- as.numeric(mu)
-    psi <- rep_len(as.numeric(psi), n_types)
     bad <- intersect(method, c("clt_dep", "nb_dep"))
     if (length(bad) > 0L) {
-      stop("Methods ", paste(bad, collapse = ", "), " apply to modules only.")
+      stop(
+        "Methods ", paste(bad, collapse = ", "),
+        " apply to modules only."
+      )
     }
-    s <- sqrt(consistency_variance(mu, p, n_bulk, n_ref, psi))
-    mbar <- sum(p * mu)
-    if (!is.finite(s) || s <= 0) {
-      for (m in method) {
-        for (sd_name in names(sides)) {
-          add(m, NA_character_, sd_name, NA_real_)
-        }
-      }
-      warning("Zero variance of D: thresholds are NA.", call. = FALSE)
-      return(do.call(rbind, rows))
-    }
-    label <- c(clt = "T1", clt_log = "T1-log", poisson = "T3", nb = "T4")
-    for (m in method) {
-      for (sd_name in names(sides)) {
-        side <- sides[[sd_name]]
-        thr <- switch(
-          m,
-          clt = z * s,
-          clt_log = if (side > 0) {
-            mbar * expm1(z * s / mbar)
-          } else {
-            -mbar * expm1(-z * s / mbar)
-          },
-          poisson = chernoff_threshold(
-            consistency_cgf(mu, p, n_bulk, n_ref, psi, "poisson"),
-            side,
-            s,
-            level
-          ),
-          nb = chernoff_threshold(
-            consistency_cgf(mu, p, n_bulk, n_ref, psi, "nb"),
-            side,
-            s,
-            level
-          )
-        )
-        add(m, label[[m]], sd_name, thr)
-      }
-    }
-    return(do.call(rbind, rows))
-  }
-
-  # Module of N genes.
-  if ("clt_log" %in% method) {
+  } else if ("clt_log" %in% method) {
     stop("Method clt_log applies to one gene only.")
   }
-  n_genes <- nrow(mu)
-  psi <- matrix(psi, n_genes, n_types)
   if (any(c("clt_dep", "nb_dep") %in% method)) {
-    if (is.null(adjacency)) {
-      stop("`adjacency` is required for clt_dep and nb_dep.")
-    }
-    adjacency <- as.matrix(adjacency) != 0
-    if (!all(dim(adjacency) == n_genes)) {
-      stop("`adjacency` must be N by N, N = nrow(mu).")
+    adjacency <- .require_module_graph(mu, adjacency)
+  }
+  if (!is_module) {
+    ctx <- .tail_context(mu, p, n_bulk, n_ref, psi, level)
+    if (ctx$zero) {
+      warning("Zero variance of D: thresholds are NA.", call. = FALSE)
+      rows <- lapply(method, function(m) {
+        .tail_rows(m, NA_character_, NA_real_, NA_real_)
+      })
+      return(do.call(rbind, rows))
     }
   }
-  sd_g <- vapply(
-    seq_len(n_genes),
-    function(g) sqrt(consistency_variance(mu[g, ], p, n_bulk, n_ref, psi[g, ])),
-    numeric(1)
-  )
-  if (any(!is.finite(sd_g)) || any(sd_g <= 0)) {
-    stop("Every module gene needs a positive variance of D; drop the others.")
-  }
-  cgf_genes <- function(family) {
-    lapply(
-      seq_len(n_genes),
-      function(g) consistency_cgf(mu[g, ], p, n_bulk, n_ref, psi[g, ], family)
-    )
-  }
-  cgf_indep <- function(cl) {
-    list(
-      K = function(u) {
-        sum(vapply(seq_len(n_genes), function(g) cl[[g]]$K(u / sd_g[g]), 0))
-      },
-      dK = function(u) {
-        sum(vapply(
-          seq_len(n_genes),
-          function(g) cl[[g]]$dK(u / sd_g[g]) / sd_g[g],
-          0
-        ))
-      },
-      lo = max(vapply(seq_len(n_genes), function(g) cl[[g]]$lo * sd_g[g], 0)),
-      hi = min(vapply(seq_len(n_genes), function(g) cl[[g]]$hi * sd_g[g], 0))
-    )
-  }
-  # T5: L(u) = log(k^-1 sum_c exp(sum_{g in I_c} K_{Z_g}(k u))) >= log E e^{uS}.
-  cgf_colour <- function(cl) {
-    colour <- greedy_colouring(adjacency)
-    k <- max(colour)
-    classes <- split(seq_len(n_genes), colour)
-    a_c <- function(u) {
-      vapply(
-        classes,
-        function(idx) {
-          sum(vapply(idx, function(g) cl[[g]]$K(k * u / sd_g[g]), 0))
-        },
-        0
-      )
-    }
-    da_c <- function(u) {
-      vapply(
-        classes,
-        function(idx) {
-          sum(vapply(
-            idx,
-            function(g) k * cl[[g]]$dK(k * u / sd_g[g]) / sd_g[g],
-            0
-          ))
-        },
-        0
-      )
-    }
-    list(
-      K = function(u) {
-        a <- a_c(u)
-        max(a) + log(mean(exp(a - max(a))))
-      },
-      dK = function(u) {
-        a <- a_c(u)
-        w <- exp(a - max(a))
-        sum(w * da_c(u)) / sum(w)
-      },
-      lo = max(vapply(seq_len(n_genes), function(g) cl[[g]]$lo * sd_g[g], 0)) /
-        k,
-      hi = min(vapply(seq_len(n_genes), function(g) cl[[g]]$hi * sd_g[g], 0)) /
-        k
-    )
-  }
-  var_s_dep <- NA_real_
-  if ("clt_dep" %in% method) {
-    if (is.null(cell_cor)) {
-      stop("`cell_cor` is required for clt_dep.")
-    }
-    if (is.matrix(cell_cor)) {
-      cell_cor <- rep(list(cell_cor), n_types)
-    }
-    if (length(cell_cor) != n_types) {
-      stop("`cell_cor` must be one matrix or a list with one matrix per type.")
-    }
-    w_j <- p / n_bulk + p^2 / n_ref
-    sigma <- sqrt(mu + ifelse(is.finite(psi), mu^2 / psi, 0))
-    cov_d <- matrix(0, n_genes, n_genes)
-    for (j in seq_len(n_types)) {
-      r_j <- as.matrix(cell_cor[[j]])
-      r_j[!adjacency] <- 0
-      r_j[!is.finite(r_j)] <- 0
-      diag(r_j) <- 1
-      cov_d <- cov_d + w_j[j] * tcrossprod(sigma[, j]) * r_j
-    }
-    var_s_dep <- sum(stats::cov2cor(cov_d))
-  }
-  label <- c(
-    clt = "T1",
-    clt_dep = "T2",
-    poisson = "T3",
-    nb = "T4",
-    nb_dep = "T5"
-  )
-  for (m in method) {
-    cgf <- switch(
+  call_one <- function(m) {
+    switch(
       m,
-      poisson = cgf_indep(cgf_genes("poisson")),
-      nb = cgf_indep(cgf_genes("nb")),
-      nb_dep = cgf_colour(cgf_genes("nb")),
-      NULL
-    )
-    for (sd_name in names(sides)) {
-      side <- sides[[sd_name]]
-      thr <- switch(
-        m,
-        clt = z * sqrt(n_genes),
-        clt_dep = z * sqrt(var_s_dep),
-        chernoff_threshold(cgf, side, sqrt(n_genes), level)
+      clt = tail_t1_clt(mu, p, n_bulk, n_ref, psi, level),
+      clt_log = tail_t1_log(mu, p, n_bulk, n_ref, psi, level),
+      clt_dep = tail_t2_clt_dep(
+        mu, p, n_bulk, n_ref, psi, level, adjacency, cell_cor
+      ),
+      poisson = tail_t3_poisson(mu, p, n_bulk, n_ref, psi, level),
+      nb = tail_t4_nb(mu, p, n_bulk, n_ref, psi, level),
+      nb_dep = tail_t5_nb_dep(
+        mu, p, n_bulk, n_ref, psi, level, adjacency
       )
-      add(m, label[[m]], sd_name, thr)
-    }
+    )
   }
-  do.call(rbind, rows)
+  do.call(rbind, lapply(method, call_one))
 }
+
 
 #' Consistency statistic of every gene of one bulk sample.
 #'

@@ -21,69 +21,9 @@
 #' size**, the cell-weighted deviance explained `1 - D(M1) / D(M0)`.
 #'
 #' `glmGamPoi` is not in `renv.lock`; it is checked with
-#' `requireNamespace()`. Requires `R/utils_general.R` to be sourced
+#' `requireNamespace()`. Requires `R/02_00_utils.R` and
+#' `R/02_01_stats_quality_control.R` (`presence_gate()`) to be sourced
 #' first. Written, not run.
-
-#' Detection in every cell type.
-#'
-#' DeCovarT needs a non-singular within-type covariance for every type,
-#' so a gene must be detected in a minimum fraction of the cells of
-#' **every** type, not only in one, and must vary in every type. The gate
-#' also removes perfect markers (zero in some type), which break
-#' identifiability once gene-wise platform ratios are allowed.
-#'
-#' @param counts Genes by cells (dense or sparse `Matrix`).
-#' @param cell_type Cell-type label per column of `counts`.
-#' @param min_frac Minimum fraction of cells with a non-zero count, in
-#'   each type. Default `0.1`; a tuning choice, report it.
-#' @return A data frame with `gene`, `min_detection` (smallest fraction
-#'   over types), `weakest_type`, `min_variance` (smallest within-type
-#'   variance of the counts), and `pass` (`min_detection >= min_frac` and
-#'   `min_variance > 0`), plus the attribute `detection` (genes by types
-#'   matrix of fractions).
-presence_gate <- function(counts, cell_type, min_frac = 0.1) {
-  cell_type <- droplevels(factor(cell_type))
-  if (length(cell_type) != ncol(counts)) {
-    stop("`cell_type` must have one label per column of `counts`.")
-  }
-  if (anyNA(cell_type)) {
-    stop("`cell_type` has missing labels; drop those cells first.")
-  }
-  types <- levels(cell_type)
-  detection <- matrix(
-    NA_real_,
-    nrow = nrow(counts),
-    ncol = length(types),
-    dimnames = list(rownames(counts), types)
-  )
-  variance <- detection
-  for (tp in types) {
-    idx <- which(cell_type == tp)
-    x_j <- counts[, idx, drop = FALSE]
-    detection[, tp] <- Matrix::rowSums(x_j > 0) / length(idx)
-    m1 <- Matrix::rowMeans(x_j)
-    m2 <- Matrix::rowMeans(x_j * x_j)
-    n_j <- length(idx)
-    variance[, tp] <- if (n_j > 1L) {
-      pmax(m2 - m1^2, 0) * n_j / (n_j - 1)
-    } else {
-      0
-    }
-  }
-  min_detection <- apply(detection, 1L, min)
-  min_variance <- apply(variance, 1L, min)
-  out <- data.frame(
-    gene = rownames(counts) %||% as.character(seq_len(nrow(counts))),
-    min_detection = min_detection,
-    weakest_type = types[max.col(-detection, ties.method = "first")],
-    min_variance = min_variance,
-    pass = min_detection >= min_frac & min_variance > 0,
-    stringsAsFactors = FALSE
-  )
-  rownames(out) <- NULL
-  attr(out, "detection") <- detection
-  out
-}
 
 #' Negative-binomial unit deviances.
 #'

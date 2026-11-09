@@ -19,7 +19,7 @@
 #' Port of the formulas of `scripts/figures/fig_03_1_influence.R` in the
 #' DeCovarT repository (checked there against `hatvalues()`,
 #' `rstandard()` and `cooks.distance()`); deliberately duplicated, no
-#' cross-repository dependency. Requires `R/utils_general.R`. Written,
+#' cross-repository dependency. Requires `R/02_00_utils.R`. Written,
 #' not run.
 
 #' Cell-level influence in the one-way NB GLM M1.

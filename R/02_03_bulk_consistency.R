@@ -23,7 +23,7 @@
 #' `[min_k m_gk, max_k m_gk]` up to sampling error, whatever the
 #' proportions and whatever a global platform scale.
 #'
-#' Requires `R/utils_general.R` to be sourced first.
+#' Requires `R/02_00_utils.R` to be sourced first.
 
 #' Flag genes whose bulk expression is inconsistent with the reference.
 #'

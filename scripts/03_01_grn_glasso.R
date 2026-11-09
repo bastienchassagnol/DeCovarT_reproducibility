@@ -27,7 +27,7 @@
 # ==========================================================================
 
 root <- getwd()
-source(file.path(root, "R", "utils_general.R"))
+source(file.path(root, "R", "02_00_utils.R"))
 source(file.path(root, "R", "ebic_regularisation_path.R"))
 source(file.path(root, "R", "cv_covariance_selection.R"))
 source(file.path(root, "R", "plot_grn_regularisation.R"))

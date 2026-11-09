@@ -1,7 +1,10 @@
 # mkdir -p logs
 # nohup Rscript --vanilla \
-#   scripts/01_01_prepare_and_filter_genes_sctransform.R \
-#   > "logs/01_01_sctransform_$(date +%F)_naive.log" 2>&1 &
+#   scripts/legacy/02_90_stats_prepare_panel.R \
+#   > "logs/02_90_sctransform_$(date +%F)_naive.log" 2>&1 &
+#
+# Archived SCTransform driver. The live selection calls glmGamPoi::glm_gp()
+# from scripts/02_02_cross_cell_consistency.R and does not source this file.
 #
 # Place GSE229513_gastruloidsobject.rds under data/raw/
 # (dvc pull data/raw/GSE229513_gastruloidsobject.rds.dvc).
@@ -12,10 +15,9 @@
 # ==========================================================================
 
 root <- getwd()
-r_dir <- file.path(root, "R")
-source(file.path(r_dir, "utils_general.R"))
-source(file.path(r_dir, "rank_sctransform_naive.R"))
-source(file.path(r_dir, "map_marker_symbols.R"))
+source(file.path(root, "R", "02_00_utils.R"))
+source(file.path(root, "scripts", "legacy", "02_90_stats_rank_sctransform.R"))
+source(file.path(root, "R", "02_01_stats_quality_control.R"))
 
 n_genes_global <- 500L
 n_genes_celltype <- 50L

@@ -24,7 +24,7 @@
 #' not to replace it.
 #'
 #' `glmnet`, `mixOmics` and `ranger` are not in `renv.lock`; each is
-#' checked with `requireNamespace()`. Requires `R/utils_general.R`.
+#' checked with `requireNamespace()`. Requires `R/02_00_utils.R`.
 #' Written, not run.
 
 #' Selection frequencies of three classifiers under subsampling.

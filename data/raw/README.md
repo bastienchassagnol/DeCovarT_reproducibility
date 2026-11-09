@@ -22,15 +22,3 @@ dvc pull data/raw/GSE229513_gastruloidsobject.rds.dvc
 The file is about 14 GB. Pull it on a machine whose `data/raw` is not
 cloud-synced. `GSE229386_AllHTSeqCountsWithGeneNames.txt.gz` is the
 bulk HTSeq table, not the single-cell counts.
-
-Example GEO download (adjust names to the supplementary file list):
-
-```bash
-# cd data/raw
-# curl -L -C - -o GSE229513_gastruloidsobject.rds \
-#   "https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE229513&format=file&file=..."
-# curl -L -C - -o GSE229386_AllHTSeqCountsWithGeneNames.txt.gz \
-#   "https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE229386&format=file&file=GSE229386_AllHTSeqCountsWithGeneNames.txt.gz"
-```
-
-Confirm filenames on the GEO landing pages before running `curl`.

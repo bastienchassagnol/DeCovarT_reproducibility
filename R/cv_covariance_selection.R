@@ -17,7 +17,7 @@
 #' DeCovarT's bulk model uses only these two moments, so the score ranks
 #' covariance estimators by the quantity the deconvolution needs.
 #'
-#' Requires `R/utils_general.R` (`%||%`) and
+#' Requires `R/02_00_utils.R` (`%||%`) and
 #' `R/ebic_regularisation_path.R` (`make_glasso_solver()`,
 #' `rescale_correlation_fit()`, `count_undirected_edges()`) to be
 #' sourced first.
@@ -770,7 +770,8 @@ pln_linear_moments <- function(
 #' PLNnetwork fits along a penalty path, one per requested penalty.
 #'
 #' The offset is the log of the full RNA library `L_c` (as in
-#' `scripts/01_01`), not the row sum of the panel genes. `prepare_data()`
+#' `scripts/legacy/02_90_stats_prepare_panel.R`), not the row sum of
+#' the panel genes. `prepare_data()`
 #' is called with `offset = "none"` so that it does not add its own TSS
 #' offset.
 #'
