@@ -6,6 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="description" content="Per-type means and covariances estimated on the Suppinger reference.">
 
 <title>4&nbsp; Covariance estimation – DeCovarT reproducibility</title>
 <style>
@@ -67,7 +68,7 @@ div.csl-indent {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-304ff12d06e22565c5b6fc5f08b78bcb.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-53cdafd631140c608ed51b8021fc9e33.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-a903bae9b3a45c44f790115c5f160fd8.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script src="site_libs/quarto-contrib/pseudocode-2.4.1/pseudocode.min.js"></script>
 <link href="site_libs/quarto-contrib/pseudocode-2.4.1/pseudocode.min.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
@@ -97,6 +98,13 @@ div.csl-indent {
     "search-label": "Search"
   }
 }</script>
+<style>
+
+      .quarto-title-block .quarto-title-banner {
+        background-image: url(images/logo.svg);
+background-size: cover;
+      }
+</style>
 <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <script>window.backupDefine = window.define; window.define = undefined;</script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
     <style type="text/css">
@@ -173,7 +181,7 @@ window.Quarto = {
 <body class="nav-sidebar floating nav-fixed quarto-light"><a id="quarto-skip-link" class="visually-hidden-focusable" href="#quarto-document-content">Skip to main content</a>
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top">
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark" aria-label="Site">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
@@ -211,7 +219,34 @@ window.Quarto = {
   </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="Breadcrumbs"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./02-feature-selection.html">Reference estimation</a></li><li class="breadcrumb-item"><a href="./03-covariance-estimation.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Covariance estimation</span></a></li></ol></nav>
+      <h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Covariance estimation</span></h1>
+                  <div>
+        <div class="description">
+          Per-type means and covariances estimated on the Suppinger reference.
+        </div>
+      </div>
+                </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">9 Nov 2026</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto" aria-label="Section">
     <div class="sidebar-menu-container"> 
@@ -313,25 +348,10 @@ window.Quarto = {
 <div class="toc-actions"><ul><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/edit/main/docs/03-covariance-estimation.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/blob/main/docs/03-covariance-estimation.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content" tabindex="-1">
-
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="Breadcrumbs"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./02-feature-selection.html">Reference estimation</a></li><li class="breadcrumb-item"><a href="./03-covariance-estimation.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Covariance estimation</span></a></li></ol></nav>
-<div class="quarto-title">
-<h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Covariance estimation</span></h1>
-</div>
+<main class="content quarto-banner-title-block" id="quarto-document-content" tabindex="-1">
 
 
 
-<div class="quarto-title-meta">
-
-    
-  
-    
-  </div>
-  
-
-
-</header>
 
 
 <section id="sec-cov-scope" class="level2" data-number="4.1">
@@ -547,7 +567,7 @@ Table&nbsp;4.3: What each estimator sees and what it exports.
 <li><strong>Scale of the export.</strong> <code>scripts/03_01_grn_huge.R</code> used to fit and export on <span class="math inline">\log(1+x)</span> (<code>x &lt;- log1p(x)</code>, then <code>mu &lt;- colMeans(x)</code>). The convolution is linear only on an additive scale (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/02-1-single-cell-generative-optimisation.html#sec-norm-linear">2.1, normalisation</a>), so <span class="math inline">\widehat{\boldsymbol{\mu}}_{\cdot j}</span> and <span class="math inline">\widehat{\boldsymbol{\Sigma}}_{j}</span> are now computed on size-factor-normalised counts. A <span class="math inline">\log(1+x)</span> table may still be used to detect a support, never to export a moment.</li>
 <li><strong>Library size in <code>PLNnetwork</code>.</strong> <code>scripts/03_03_grn_plnnetwork.R</code> used the row sum over the 500 panel genes as offset. It now uses the full RNA library size, recovered from <code>log_umi</code> (<span class="math inline">s_c=10^{\texttt{log\_umi}}</span>), as in <a href="02-feature-selection.html#eq-fs-v2-offset" class="quarto-xref">Equation&nbsp;<span>3.5</span></a>. <code>nCount_RNA</code> in the exported object is the 500-gene sum and is not used.</li>
 </ul>
-<p>Pearson residuals, of the legacy <code>SCTransform</code> fit (<a href="02-feature-selection.html#sec-fs-sct" class="quarto-xref"><span>Section 3.9.1</span></a>) or of the count GLMs of the new rank (<a href="02-feature-selection.html#sec-fs-glm" class="quarto-xref"><span>Section 3.3.1</span></a>), are used only for ranking and are never passed to an estimator.</p>
+<p>Pearson residuals, of the legacy <code>SCTransform</code> fit (<a href="./02-feature-selection.html#sec-fs-sct">legacy SCTransform fit</a>) or of the count GLMs of the new rank (<a href="02-feature-selection.html#sec-fs-glm" class="quarto-xref"><span>Section 3.3.1</span></a>), are used only for ranking and are never passed to an estimator.</p>
 </section>
 </section>
 <section id="sec-cov-estimators" class="level2" data-number="4.2">
@@ -700,7 +720,7 @@ Table&nbsp;4.5: <code>PLNnetwork</code> settings. Earlier versions of the script
 </div>
 </figure>
 </div>
-<div id="algo-plnnetwork" class="pseudocode-container quarto-float" data-chapter-level="4" data-pseudocode-number="1" data-indent-lines="false" data-comment-delimiter="//" data-no-end="false" data-line-number="true" data-indent-size="1.2em" data-caption-prefix="Algorithm" data-line-number-punc=":">
+<div id="algo-plnnetwork" class="pseudocode-container quarto-float" data-comment-delimiter="//" data-chapter-level="4" data-indent-size="1.2em" data-no-end="false" data-line-number="true" data-indent-lines="false" data-pseudocode-number="1" data-line-number-punc=":" data-caption-prefix="Algorithm">
 <div class="pseudocode">
 \begin{algorithm} \caption{PLNnetwork: alternating graphical lasso and variational updates} \begin{algorithmic} \Require counts $X$, offsets $O=\log s$, penalty $\lambda$, weights $W$ \State initialise the variational means $M$, variances $S$ and $\Sigma$ \For{$h = 1,\ldots,$ maxit\_out} \State $\Omega^{(h)} \gets$ \Call{GraphicalLasso}{$\Sigma^{(h-1)}, \lambda W$} \State $(B^{(h)},M^{(h)},S^{(h)}) \gets$ \Call{NLopt}{$B^{(h-1)},M^{(h-1)},S^{(h-1)};\Omega^{(h)}$} \State $\Sigma^{(h)} \gets C^{-1}\left[{M^{(h)}}^\top M^{(h)} + \sum_c S_c^{(h)}\right]$ \State $F_h \gets -\mathrm{ELBO}(B^{(h)},M^{(h)},S^{(h)},\Omega^{(h)}) + \lambda\|\Omega^{(h)}\|_{1,W}$ \If{$|F_h-F_{h-1}|/|F_h| &lt;$ ftol\_out} \State \textbf{break} \EndIf \EndFor \State \Return $(B,M,S,\Omega,\Sigma)$ \end{algorithmic} \end{algorithm}
 </div>
@@ -731,7 +751,7 @@ Table&nbsp;4.5: <code>PLNnetwork</code> settings. Earlier versions of the script
 \log\phi_{G}\bigl(\boldsymbol{x}_{\cdot c};\widehat{\boldsymbol{\mu}},\widehat{\boldsymbol{\Sigma}}\bigr),
 \tag{4.4}</span></span></p>
 <p>computed by <code>heldout_gaussian_logscore()</code> through a Cholesky factor of <span class="math inline">\widehat{\boldsymbol{\Sigma}}</span>. Why this score is a legitimate loss for the covariance even though cells are not Gaussian, and why it replaces AIC, BIC and EBIC as the selector, is in <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-cov-cv">3.2, cross-validation</a>.</p>
-<div id="algo-cv-covariance" class="pseudocode-container quarto-float" data-chapter-level="4" data-pseudocode-number="2" data-indent-lines="false" data-comment-delimiter="//" data-no-end="false" data-line-number="true" data-indent-size="1.2em" data-caption-prefix="Algorithm" data-line-number-punc=":">
+<div id="algo-cv-covariance" class="pseudocode-container quarto-float" data-comment-delimiter="//" data-chapter-level="4" data-indent-size="1.2em" data-no-end="false" data-line-number="true" data-indent-lines="false" data-pseudocode-number="2" data-line-number-punc=":" data-caption-prefix="Algorithm">
 <div class="pseudocode">
 \begin{algorithm} \caption{Tuning by K-fold cross-validation, and nested comparison of the four estimators} \begin{algorithmic} \Procedure{CVSelect}{$X, f, \Lambda, K$} \State split the cells of $X$ into $K$ folds at random, with a fixed seed \For{$\lambda \in \Lambda$} \For{$k = 1,\ldots,K$} \State $(\hat\mu,\hat\Sigma) \gets f(X_{-k};\lambda)$ \State $\ell_k(\lambda) \gets$ \Call{HeldOutLogScore}{$\hat\mu,\hat\Sigma,X_k$} \EndFor \State $m(\lambda) \gets$ mean of $\ell_k(\lambda)$; $\mathrm{se}(\lambda) \gets$ its standard error \EndFor \State $\lambda_{\min} \gets \arg\max_{\lambda} m(\lambda)$ \State $\lambda_{1\mathrm{se}} \gets$ most regularised $\lambda$ with $m(\lambda) \ge m(\lambda_{\min}) - \mathrm{se}(\lambda_{\min})$ \State \Return $(m, \mathrm{se}, \lambda_{\min}, \lambda_{1\mathrm{se}})$ \EndProcedure \Procedure{NestedCompare}{$X, \{(f_e,\Lambda_e)\}_{e=1}^{4}, K_{\mathrm{out}}, K_{\mathrm{in}}$} \For{$k = 1,\ldots,K_{\mathrm{out}}$} \For{$e = 1,\ldots,4$} \State $\lambda_e \gets \lambda_{\min}$ of \Call{CVSelect}{$X_{-k}, f_e, \Lambda_e, K_{\mathrm{in}}$} \State $(\hat\mu,\hat\Sigma) \gets f_e(X_{-k};\lambda_e)$ \State $s_{ek} \gets$ \Call{HeldOutLogScore}{$\hat\mu,\hat\Sigma,X_k$} \EndFor \EndFor \State \Return $(s_{ek})$, paired by outer fold \EndProcedure \end{algorithmic} \end{algorithm}
 </div>

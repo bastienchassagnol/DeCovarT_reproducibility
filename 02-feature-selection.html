@@ -6,6 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="description" content="The gene panel built for the Suppinger reference, with the code.">
 
 <title>3&nbsp; Feature selection – DeCovarT reproducibility</title>
 <style>
@@ -102,7 +103,7 @@ div.csl-indent {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-304ff12d06e22565c5b6fc5f08b78bcb.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-53cdafd631140c608ed51b8021fc9e33.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-a903bae9b3a45c44f790115c5f160fd8.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script src="site_libs/quarto-contrib/pseudocode-2.4.1/pseudocode.min.js"></script>
 <link href="site_libs/quarto-contrib/pseudocode-2.4.1/pseudocode.min.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
@@ -132,6 +133,13 @@ div.csl-indent {
     "search-label": "Search"
   }
 }</script>
+<style>
+
+      .quarto-title-block .quarto-title-banner {
+        background-image: url(images/logo.svg);
+background-size: cover;
+      }
+</style>
 <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <script>window.backupDefine = window.define; window.define = undefined;</script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
     <style type="text/css">
@@ -208,7 +216,7 @@ window.Quarto = {
 <body class="nav-sidebar floating nav-fixed quarto-light"><a id="quarto-skip-link" class="visually-hidden-focusable" href="#quarto-document-content">Skip to main content</a>
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top">
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark" aria-label="Site">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
@@ -246,7 +254,34 @@ window.Quarto = {
   </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="Breadcrumbs"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./02-feature-selection.html">Reference estimation</a></li><li class="breadcrumb-item"><a href="./02-feature-selection.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Feature selection</span></a></li></ol></nav>
+      <h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Feature selection</span></h1>
+                  <div>
+        <div class="description">
+          The gene panel built for the Suppinger reference, with the code.
+        </div>
+      </div>
+                </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">9 Nov 2026</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto" aria-label="Section">
     <div class="sidebar-menu-container"> 
@@ -350,42 +385,22 @@ window.Quarto = {
   <ul>
   <li><a href="#sec-fs-cell-line" id="toc-sec-fs-cell-line" class="nav-link" data-scroll-target="#sec-fs-cell-line"><span class="header-section-number">3.7.1</span> Cell-line sensitivity at 48 h</a></li>
   <li><a href="#sec-fs-classifiers" id="toc-sec-fs-classifiers" class="nav-link" data-scroll-target="#sec-fs-classifiers"><span class="header-section-number">3.7.2</span> Comparison with classifier-based marker selection</a></li>
-  </ul></li>
-  <li><a href="#sec-fs-nsga2" id="toc-sec-fs-nsga2" class="nav-link" data-scroll-target="#sec-fs-nsga2"><span class="header-section-number">3.8</span> Optional multivariate refinement</a></li>
-  <li><a href="#sec-fs-legacy" id="toc-sec-fs-legacy" class="nav-link" data-scroll-target="#sec-fs-legacy"><span class="header-section-number">3.9</span> Legacy panel: SCTransform ratio</a>
-  <ul>
-  <li><a href="#sec-fs-sct" id="toc-sec-fs-sct" class="nav-link" data-scroll-target="#sec-fs-sct"><span class="header-section-number">3.9.1</span> <code>SCTransform</code> v2 fit per time</a></li>
-  <li><a href="#sec-fs-ms-ratio" id="toc-sec-fs-ms-ratio" class="nav-link" data-scroll-target="#sec-fs-ms-ratio"><span class="header-section-number">3.9.2</span> Between/within ratio rank</a></li>
+  <li><a href="#sec-fs-nsga2" id="toc-sec-fs-nsga2" class="nav-link" data-scroll-target="#sec-fs-nsga2"><span class="header-section-number">3.7.3</span> Optional multivariate refinement</a></li>
   </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/edit/main/docs/02-feature-selection.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/blob/main/docs/02-feature-selection.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content" tabindex="-1">
-
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="Breadcrumbs"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./02-feature-selection.html">Reference estimation</a></li><li class="breadcrumb-item"><a href="./02-feature-selection.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Feature selection</span></a></li></ol></nav>
-<div class="quarto-title">
-<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Feature selection</span></h1>
-</div>
+<main class="content quarto-banner-title-block" id="quarto-document-content" tabindex="-1">
 
 
 
-<div class="quarto-title-meta">
-
-    
-  
-    
-  </div>
-  
-
-
-</header>
 
 
 <section id="sec-fs-scope" class="level2" data-number="3.1">
 <h2 data-number="3.1" class="anchored" data-anchor-id="sec-fs-scope"><span class="header-section-number">3.1</span> Scope and status</h2>
 <p>This chapter builds the gene panel on which the covariances of <a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a> are estimated. It is the application that the feature-selection vignette (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html">3.1</a>) leaves to this book: filters as applied, settings, rank tables and code. It runs on the single-cell counts of GSE229513 at the three bulk-matched times (<a href="01-data-suppinger.html#sec-geo-design" class="quarto-xref"><span>Section 2.1</span></a>), one time at a time. What the panel must achieve, and why each step is there, is stated in the vignette (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#wrn-fs-estimand">3.1, what the genes are for</a>): genes whose type-level moments can be estimated in every type and that carry information about <span class="math inline">\boldsymbol{p}</span>. The sections follow the four tiers of the vignette: (i) quality control and prior knowledge, (ii) cross-cell consistency, (iii) cross-platform consistency, (iv) down-weighting by the model.</p>
-<p>The Suppinger reference is the one-specimen case of that callout. It is one technical scRNA-seq experiment <span class="citation" data-cites="suppingerMultimodalCharacterizationMurine2023">(<a href="#ref-suppingerMultimodalCharacterizationMurine2023" role="doc-biblioref">Suppinger et al. 2023</a>)</span>, and its cells are draws from one specimen, not biological replicates (<a href="01-data-suppinger.html#sec-geo-design" class="quarto-xref"><span>Section 2.1</span></a>). Every ranking statistic below is therefore computed inside that specimen: it calibrates a screen, not a population-level claim of differential expression. Steps that need several donors, such as a <code>DESeq2</code> pseudo-bulk shortlist, do not apply here (<a href="#sec-fs-nsga2" class="quarto-xref"><span>Section 3.8</span></a>).</p>
+<p>The Suppinger reference is the one-specimen case of that callout. It is one technical scRNA-seq experiment <span class="citation" data-cites="suppingerMultimodalCharacterizationMurine2023">(<a href="#ref-suppingerMultimodalCharacterizationMurine2023" role="doc-biblioref">Suppinger et al. 2023</a>)</span>, and its cells are draws from one specimen, not biological replicates (<a href="01-data-suppinger.html#sec-geo-design" class="quarto-xref"><span>Section 2.1</span></a>). Every ranking statistic below is therefore computed inside that specimen: it calibrates a screen, not a population-level claim of differential expression. Steps that need several donors, such as a <code>DESeq2</code> pseudo-bulk shortlist, do not apply here (<a href="#sec-fs-nsga2" class="quarto-xref"><span>Section 3.7.3</span></a>).</p>
 <div id="nte-pseudoreplication" class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -399,7 +414,7 @@ Note&nbsp;3.1: <span class="emoji" data-emoji="information_source">ℹ️</span>
 <p>Treating the cells of one specimen as independent replicates of a population contrast is pseudoreplication: it inflates the apparent sample size and understates the standard error of every statistic computed across cells <span class="citation" data-cites="zimmermanPracticalSolutionPseudoreplication2021 squairConfrontingFalseDiscoveries2021 crowellMuscatDetectsSubpopulationspecific2020">(<a href="#ref-zimmermanPracticalSolutionPseudoreplication2021" role="doc-biblioref">Zimmerman et al. 2021</a>; <a href="#ref-squairConfrontingFalseDiscoveries2021" role="doc-biblioref">Squair et al. 2021</a>; <a href="#ref-crowellMuscatDetectsSubpopulationspecific2020" role="doc-biblioref">Crowell et al. 2020</a>)</span>. A score fitted this way, or a bootstrap that resamples cells with labels fixed, measures generalisation to new cells of this specimen, not to new specimens. It is reported as such wherever it is used in this book (<a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a>, <a href="06-sensitivity-misspecification.html#sec-sens-scdesign3" class="quarto-xref"><span>Section 7.2</span></a>).</p>
 </div>
 </div>
-<p>Ranks are computed on a negative-binomial count GLM (<a href="#sec-fs-glm" class="quarto-xref"><span>Section 3.3.1</span></a>); the legacy panel was ranked on <code>SCTransform</code> Pearson residuals (<a href="#sec-fs-legacy" class="quarto-xref"><span>Section 3.9</span></a>). Neither scale is exported: the moments that enter DeCovarT are on the linear scale (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/02-1-single-cell-generative-optimisation.html#sec-norm-linear">2.1, normalisation</a>).</p>
+<p>Ranks are computed on a negative-binomial count GLM (<a href="#sec-fs-glm" class="quarto-xref"><span>Section 3.3.1</span></a>); the legacy panel was ranked on <code>SCTransform</code> Pearson residuals (<a href="#sec-fs-legacy">legacy panel</a>). Neither scale is exported: the moments that enter DeCovarT are on the linear scale (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/02-1-single-cell-generative-optimisation.html#sec-norm-linear">2.1, normalisation</a>).</p>
 <div id="tbl-fs-status" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-fs-status-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -407,13 +422,6 @@ Table&nbsp;3.1: Feature-selection steps by tier, code and status. “Written, no
 </figcaption>
 <div aria-describedby="tbl-fs-status-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <table class="caption-top table">
-<colgroup>
-<col style="width: 20%">
-<col style="width: 20%">
-<col style="width: 20%">
-<col style="width: 20%">
-<col style="width: 20%">
-</colgroup>
 <thead>
 <tr class="header">
 <th>Tier</th>
@@ -426,30 +434,44 @@ Table&nbsp;3.1: Feature-selection steps by tier, code and status. “Written, no
 <tbody>
 <tr class="odd">
 <td>(i)</td>
-<td>Cell and gene QC</td>
+<td>Cell slot filter (historical)</td>
 <td><a href="#sec-fs-qc-applied" class="quarto-xref"><span>Section 3.2.1</span></a></td>
-<td><code>scripts/01_01_prepare_and_filter_genes_sctransform.R</code>, section 1</td>
+<td><code>scripts/legacy/02_90_stats_prepare_panel.R</code>, section 1</td>
 <td>run; outputs dated 2026-09-28 to 2026-10-01</td>
+</tr>
+<tr class="even">
+<td>(i)</td>
+<td>Shared genes, mitochondrial symbols</td>
+<td><a href="#sec-fs-qc-applied" class="quarto-xref"><span>Section 3.2.1</span></a></td>
+<td><code>scripts/02_01_stats_quality_control.R</code>; <code>R/02_01_stats_quality_control.R</code></td>
+<td>written, not run</td>
+</tr>
+<tr class="odd">
+<td>(i)</td>
+<td>PCA and PLS-DA</td>
+<td><a href="#sec-fs-qc-applied" class="quarto-xref"><span>Section 3.2.1</span></a></td>
+<td><code>scripts/02_01_vis_projections.R</code>; <code>R/02_01_vis_projections.R::plot_type_pca_plsda()</code></td>
+<td>written, not run</td>
 </tr>
 <tr class="even">
 <td>(i)</td>
 <td>Knowledge-driven markers</td>
 <td><a href="#sec-fs-markers" class="quarto-xref"><span>Section 3.2.2</span></a></td>
-<td><code>R/map_marker_symbols.R::map_marker_symbols()</code></td>
+<td><code>R/02_01_stats_quality_control.R::map_marker_symbols()</code></td>
 <td>run</td>
 </tr>
 <tr class="odd">
 <td>(i)</td>
 <td>Presence gate</td>
 <td><a href="#sec-fs-presence" class="quarto-xref"><span>Section 3.2.3</span></a></td>
-<td><code>R/rank_genes_omnibus.R::presence_gate()</code></td>
+<td><code>R/02_01_stats_quality_control.R::presence_gate()</code></td>
 <td>written, not run</td>
 </tr>
 <tr class="even">
 <td>(ii)</td>
 <td>Count-model fits M0 and M1 per time</td>
 <td><a href="#sec-fs-glm" class="quarto-xref"><span>Section 3.3.1</span></a></td>
-<td><code>R/rank_genes_omnibus.R::compare_type_effect_tests()</code></td>
+<td><code>scripts/02_02_cross_cell_consistency.R</code>; <code>R/02_02_cross_cell.R::compare_type_effect_tests()</code></td>
 <td>written, not run</td>
 </tr>
 <tr class="odd">
@@ -463,28 +485,28 @@ Table&nbsp;3.1: Feature-selection steps by tier, code and status. “Written, no
 <td>(iii)</td>
 <td>Cook’s distance for cells and genes</td>
 <td><a href="#sec-fs-outliers" class="quarto-xref"><span>Section 3.4.1</span></a></td>
-<td><code>R/influence_diagnostics.R::cook_cells()</code>, <code>cook_genes()</code></td>
+<td><code>R/02_03_influence.R::cook_cells()</code>, <code>cook_genes()</code></td>
 <td>written, not run</td>
 </tr>
 <tr class="odd">
 <td>(iii)</td>
 <td><span class="math inline">\boldsymbol{p}</span>-free range check</td>
 <td>1</td>
-<td><code>R/bulk_consistency.R::bulk_consistency_filter()</code></td>
+<td><code>R/02_03_bulk_consistency.R::bulk_consistency_filter()</code></td>
 <td>written, not run</td>
 </tr>
 <tr class="even">
 <td>(iii)</td>
 <td>Plug-in composition (deMixSC-style W-NNLS)</td>
 <td>1</td>
-<td><code>R/plugin_composition.R::plugin_composition_demixsc()</code></td>
+<td><code>R/02_03_plugin_composition.R::plugin_composition_demixsc()</code></td>
 <td>written, not run</td>
 </tr>
 <tr class="odd">
 <td>(iii)</td>
 <td>Tail statements per gene and module, quantile band</td>
 <td>1</td>
-<td><code>R/bulk_tail_bounds.R::bulk_tail_filter()</code>, <code>tail_threshold()</code>, <code>tail_flag_overlap()</code></td>
+<td><code>scripts/02_03_cross_platform_consistency.R</code>; <code>R/02_03_tail_bounds.R::tail_threshold()</code> dispatching <code>tail_t1_clt()</code>, <code>tail_t1_log()</code>, <code>tail_t2_clt_dep()</code>, <code>tail_t3_poisson()</code>, <code>tail_t4_nb()</code>, <code>tail_t5_nb_dep()</code>, plus <code>quantile_band_flags()</code></td>
 <td>written, not run</td>
 </tr>
 <tr class="even">
@@ -498,27 +520,27 @@ Table&nbsp;3.1: Feature-selection steps by tier, code and status. “Written, no
 <td>perspective</td>
 <td>Classifier-based markers</td>
 <td><a href="#sec-fs-classifiers" class="quarto-xref"><span>Section 3.7.2</span></a></td>
-<td><code>R/classifier_markers.R::classifier_markers()</code></td>
+<td><code>R/02_05_classifiers.R::classifier_markers()</code></td>
 <td>written, not run</td>
 </tr>
 <tr class="even">
 <td>legacy</td>
 <td><code>SCTransform</code> v2 fit per time</td>
-<td><a href="#sec-fs-sct" class="quarto-xref"><span>Section 3.9.1</span></a></td>
-<td><code>R/rank_sctransform_naive.R::rank_genes_sctransform()</code></td>
+<td><a href="#sec-fs-sct">SCTransform fit</a></td>
+<td><code>scripts/legacy/02_90_stats_rank_sctransform.R::rank_genes_sctransform()</code></td>
 <td>run</td>
 </tr>
 <tr class="odd">
 <td>legacy</td>
 <td>Between/within ratio rank (current panel)</td>
-<td><a href="#sec-fs-ms-ratio" class="quarto-xref"><span>Section 3.9.2</span></a></td>
+<td><a href="#sec-fs-ms-ratio">between/within ratio</a></td>
 <td>same</td>
 <td>run</td>
 </tr>
 <tr class="even">
 <td>appendix</td>
 <td>Optional NSGA-II refinement (post hoc)</td>
-<td><a href="#sec-fs-nsga2" class="quarto-xref"><span>Section 3.8</span></a></td>
+<td><a href="#sec-fs-nsga2" class="quarto-xref"><span>Section 3.7.3</span></a></td>
 <td><code>scripts/04_02_feature_selection_genetic_algorithm.R</code></td>
 <td>template only</td>
 </tr>
@@ -528,7 +550,8 @@ Table&nbsp;3.1: Feature-selection steps by tier, code and status. “Written, no
 </figure>
 </div>
 <p>Packages needed by the new code and absent from <code>renv.lock</code>: <code>glmGamPoi</code> (tier ii, already used by the legacy fit through <code>Seurat</code>, but not recorded), <code>quantreg</code> (quantile band, tier iii), <code>glmnet</code>, <code>mixOmics</code> and <code>ranger</code> (classifier perspective). Each is checked with <code>requireNamespace()</code>. <code>permuco</code> (Freedman–Lane for linear models) and <code>flipscores</code> (sign-flip score tests for GLMs) are optional cross-checks of the hand-written permutation of <a href="#sec-fs-omnibus" class="quarto-xref"><span>Section 3.3.2</span></a>; the code does not call them. None is installed yet.</p>
-<p>The current panel (top 500 per time, 2) comes from the legacy between/within ratio (<a href="#sec-fs-ms-ratio" class="quarto-xref"><span>Section 3.9.2</span></a>). Once tiers (i) to (iii) have been run, their rank replaces it as steps 3 to 5 of <a href="index.html#fig-pipeline" class="quarto-xref">Figure&nbsp;<span>1</span></a>, and every output of <a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a> has to be refitted.</p>
+<p>The current panel (top 500 per time, 2) comes from the legacy between/within ratio (<a href="#sec-fs-ms-ratio">between/within ratio</a>). Once tiers (i) to (iii) have been run, their rank replaces it as steps 3 to 5 of <a href="index.html#fig-pipeline" class="quarto-xref">Figure&nbsp;<span>1</span></a>, and every output of <a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a> has to be refitted.</p>
+<div style="page-break-after: always;"></div>
 </section>
 <section id="sec-fs-qc" class="level2" data-number="3.2">
 <h2 data-number="3.2" class="anchored" data-anchor-id="sec-fs-qc"><span class="header-section-number">3.2</span> Tier (i): quality control and prior knowledge</h2>
@@ -539,16 +562,17 @@ Table&nbsp;3.1: Feature-selection steps by tier, code and status. “Written, no
 <p><strong>Cells.</strong></p>
 <ul>
 <li>The authors’ Seurat QC (<code>scater</code>, <a href="01-data-suppinger.html#sec-seurat" class="quarto-xref"><span>Section 2.2</span></a>) is taken as given.</li>
-<li><code>01_01</code> keeps cells with a time slot in {48 h, 72 h, 96 h}, a non-missing <code>celltypeannotation</code>, and a library size above zero.</li>
+<li><code>scripts/legacy/02_90_stats_prepare_panel.R</code> keeps cells with a time slot in {48 h, 72 h, 96 h}, a non-missing <code>celltypeannotation</code>, and a library size above zero.</li>
 <li>The culture-stress labels flagged <code>include_in_ranking = FALSE</code> in <code>data/dictionaries/suppinger_celltype_crosswalk.csv</code> (Cd63+ ectoderm-like artefact, Zscan4+ artefact) are dropped before the fit.</li>
 <li>A type with fewer than <code>min_cells = 20</code> cells in a slot is left out of the scores. Exiting naïve pluripotency at 72 h (8 cells) is the only such case. In the legacy <code>SCTransform</code> fit it stays in the fit; the count models of tier (ii) drop it before the fit, since it is not a unit of <a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a>.</li>
-<li>No library-size MAD filter, detected-gene filter or mitochondrial filter is applied by this repository. This is the gap with tier (i) of the vignette.</li>
+<li>No library-size MAD filter and no detected-gene filter is applied. That remains the gap with tier (i) of the vignette.</li>
+<li><code>cell_mitochondrial_fraction()</code> records the share of counts on <code>mt-</code> symbols and does not threshold it. The Suppinger alignment this follows does not fix a cutoff. The function has not been run.</li>
 </ul>
 <p><strong>Genes.</strong></p>
 <ul>
-<li>The allow-list is the gene set of the authors’ <code>SCT</code> counts layer: 2,944 of the 27,027 genes of the RNA assay. Genes outside it never enter a fit.</li>
+<li>The panel on disk uses the authors’ <code>SCT</code> allow-list: 2,944 of the 27,027 genes of the RNA assay. The new tier (i) code starts from the RNA symbols instead, then applies the shared-gene and mitochondrial filters below.</li>
 <li>After the legacy per-time fit, <code>SCTransform</code> returns residuals for 2,892 (48 h), 2,769 (72 h) and 2,811 (96 h) genes (<code>model_card.csv</code>).</li>
-<li>Ribosomal, mitochondrial and sex-chromosome genes are not removed explicitly; whether the authors’ allow-list already excludes them has not been checked.</li>
+<li><code>shared_bulk_single_cell_genes()</code> intersects RNA symbols with the bulk HTSeq <code>gene_name</code> column and drops a symbol whose rows carry more than one Ensembl id after the version suffix is removed. <code>drop_mitochondrial_genes()</code> then removes symbols matching <code>^mt-</code>, either case. Ribosomal and sex-chromosome symbols stay. Neither function has been run. The authors’ SCT allow-list is the gene set of the legacy panel only.</li>
 </ul>
 <div id="tbl-fs-cell-counts" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -658,7 +682,7 @@ Table&nbsp;3.2: Cells per type and time after the slot filter (<code>output/naiv
 </section>
 <section id="sec-fs-markers" class="level3" data-number="3.2.2">
 <h3 data-number="3.2.2" class="anchored" data-anchor-id="sec-fs-markers"><span class="header-section-number">3.2.2</span> Knowledge-driven markers</h3>
-<p>Curated markers are hard prior knowledge: they are united with the ranked panel at each time whatever their score, so they are chosen without the counts and cannot be a product of the rank. The list is short: <code>data/dictionaries/mouse_gastruloid_signaling_markers.csv</code>, with columns <code>cell_type_excel</code> (lineage on the signalling map), <code>cell_type_suppinger</code> (the matching Suppinger label, or <code>NA</code>) and <code>gene_marker</code>. Symbols are mapped offline with <code>org.Mm.eg.db</code> (<code>R/map_marker_symbols.R</code>), not <code>biomaRt</code>. The lineage groups of the same file are the gene modules of the tier (iii) filter (1).</p>
+<p>Curated markers are hard prior knowledge: they are united with the ranked panel at each time whatever their score, so they are chosen without the counts and cannot be a product of the rank. The list is short: <code>data/dictionaries/mouse_gastruloid_signaling_markers.csv</code>, with columns <code>cell_type_excel</code> (lineage on the signalling map), <code>cell_type_suppinger</code> (the matching Suppinger label, or <code>NA</code>) and <code>gene_marker</code>. Symbols are mapped offline with <code>org.Mm.eg.db</code> (<code>R/02_01_stats_quality_control.R</code>), not <code>biomaRt</code>. The lineage groups of the same file are the gene modules of the tier (iii) filter (1).</p>
 <p>Fifteen of the 19 mouse symbols are in the 2,944-gene allow-list. Under a uniform draw of 19 genes from the 27,027 RNA symbols the expected overlap is about 2.1; the hypergeometric upper tail is <span class="math inline">P(X\ge 15)=8.8\times10^{-12}</span> (<code>marker_sct_hypergeometric.csv</code>). The four absent markers are <em>Myod1</em>, <em>Pax6</em>, <em>Sox1</em> and <em>Tfap2a</em> (<code>venn_markers_vs_counts.pdf</code>).</p>
 </section>
 <section id="sec-fs-presence" class="level3" data-number="3.2.3">
@@ -669,7 +693,8 @@ Table&nbsp;3.2: Cells per type and time after the slot filter (<code>output/naiv
 \quad\text{and}\quad
 \min_{j}v_{gj}&gt;0 .
 \tag{3.1}</span></span></p>
-<p><code>presence_gate()</code> in <code>R/rank_genes_omnibus.R</code> returns one row per gene with <code>min_detection</code>, <code>min_variance</code> and a logical <code>pass</code> that applies both conditions; <span class="math inline">\delta_{\min}</span> is the argument <code>min_frac</code>, fixed before the ranks are seen (0.05 in the calls below). The reasons for a gate in every type, rather than in at least one, are in <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-presence">3.1, presence</a>. In the current outputs the gate is absent. Its absence is one cause of the constant-gene fallback of the covariance estimates (<a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a>).</p>
+<p><code>presence_gate()</code> in <code>R/02_01_stats_quality_control.R</code> returns one row per gene with <code>min_detection</code>, <code>min_variance</code> and a logical <code>pass</code> that applies both conditions; <span class="math inline">\delta_{\min}</span> is the argument <code>min_frac</code>, fixed before the ranks are seen (0.05 in the calls below). The reasons for a gate in every type, rather than in at least one, are in <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-presence">3.1, presence</a>. In the current outputs the gate is absent. Its absence is one cause of the constant-gene fallback of the covariance estimates (<a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a>).</p>
+<div style="page-break-after: always;"></div>
 </section>
 </section>
 <section id="sec-fs-consistency" class="level2" data-number="3.3">
@@ -704,7 +729,7 @@ R^{2}_{D,g}=1-\frac{\mathcal{D}_g(M_1)}{\mathcal{D}_g(M_0)},
 </section>
 <section id="sec-fs-omnibus" class="level3" data-number="3.3.2">
 <h3 data-number="3.3.2" class="anchored" data-anchor-id="sec-fs-omnibus"><span class="header-section-number">3.3.2</span> Four tests of the type effect</h3>
-<p><code>compare_type_effect_tests()</code> (<code>R/rank_genes_omnibus.R</code>) computes four tests of the joint type effect (<span class="math inline">J-1</span> degrees of freedom) per gene, on the fits of <a href="#eq-fs-glm" class="quarto-xref">Equation&nbsp;<span>3.2</span></a>. They answer one question with different reference laws; the vignette compares their assumptions (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-omnibus">3.1, four tests</a>).</p>
+<p><code>compare_type_effect_tests()</code> (<code>R/02_02_cross_cell.R</code>) computes four tests of the joint type effect (<span class="math inline">J-1</span> degrees of freedom) per gene, on the fits of <a href="#eq-fs-glm" class="quarto-xref">Equation&nbsp;<span>3.2</span></a>. They answer one question with different reference laws; the vignette compares their assumptions (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-omnibus">3.1, four tests</a>).</p>
 <div id="tbl-fs-type-tests" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-fs-type-tests-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -756,67 +781,66 @@ Table&nbsp;3.3: The four tests of the type effect as implemented. <span class="m
 </div>
 </figure>
 </div>
-<!-- TODO-cite: Ahlmann-Eltze & Huber (2023), shifted logarithm -->
-<!-- TODO-cite: Winkler et al. (2014), Permutation inference for the general linear model, NeuroImage; Freedman-Lane recommended, G statistic Eqs 6-7 -->
-<!-- TODO-cite: Welch (1951), On the comparison of several mean values -->
+<p><span class="light-content" style="color: #7a1f1f;border-radius: 0.2rem; padding: 0 0.2rem 0 0.2rem;background-color: #f4c7c3;">TODO-cite: Ahlmann-Eltze &amp; Huber (2023), shifted logarithm</span> <span class="light-content" style="color: #7a1f1f;border-radius: 0.2rem; padding: 0 0.2rem 0 0.2rem;background-color: #f4c7c3;">TODO-cite: Winkler et al.&nbsp;(2014), Permutation inference for the general linear model, NeuroImage; Freedman-Lane recommended, G statistic Eqs 6-7</span> <span class="light-content" style="color: #7a1f1f;border-radius: 0.2rem; padding: 0 0.2rem 0 0.2rem;background-color: #f4c7c3;">TODO-cite: Welch (1951), On the comparison of several mean values</span></p>
 <p>The permutation follows Freedman and Lane <span class="citation" data-cites="freedmanNonstochasticInterpretation1983">(<a href="#ref-freedmanNonstochasticInterpretation1983" role="doc-biblioref">Freedman and Lane 1983</a>)</span>: the reduced model is <span class="math inline">M_0</span>, whose fitted part carries no type information, so permuting its residuals against fixed labels is the same as permuting the labels. Welch’s <span class="math inline">G</span> is used because it stays pivotal when the within-type variances differ, as recommended by Winkler et al.&nbsp;(2014). One permutation of the <span class="math inline">C</span> labels is drawn and applied to every gene, <span class="math inline">B</span> times, and <span class="math inline">p_g=(1+\#\{G^{*}_g\ge G_g\})/(B+1)</span>. <span class="math inline">B</span> is fixed before the run (the code default is 2,000). Its floor <span class="math inline">1/(B+1)\approx5\times10^{-4}</span> limits both the resolution of a gate on this test and Kendall’s <span class="math inline">\tau</span>, since genes at the floor are tied (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-calibration">3.1, calibration</a>).</p>
 <p><strong>Gate and rank.</strong> One test is chosen before the ranks are seen and used as a Benjamini–Hochberg gate over the genes that pass the presence gate; <code>rank_genes_omnibus()</code> uses <code>gate_test = "ql_f"</code> by default. The genes that pass are ranked by <span class="math inline">R^{2}_{D,g}</span> (<a href="#eq-fs-deviance-r2" class="quarto-xref">Equation&nbsp;<span>3.3</span></a>), ties broken by <span class="math inline">\Lambda_g</span>. Why a gate followed by an effect size, rather than a rank by <span class="math inline">p</span>-value, is in the vignette (link above).</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Not run. sc[[tm]]: raw counts (genes x cells) of the scored cells of</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># slot tm; cell_type[[tm]]: their labels; lib[[tm]]: full library sizes</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># (10^log_umi). B, the seeds and the thresholds are fixed before the run.</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/utils_general.R"</span>)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/rank_genes_omnibus.R"</span>)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>times <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"48h"</span>, <span class="st">"72h"</span>, <span class="st">"96h"</span>)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>sf <span class="ot">&lt;-</span> <span class="fu">lapply</span>(lib, <span class="cf">function</span>(l) l <span class="sc">/</span> stats<span class="sc">::</span><span class="fu">median</span>(l))</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>tests <span class="ot">&lt;-</span> <span class="fu">lapply</span>(times, <span class="cf">function</span>(tm) {</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">compare_type_effect_tests</span>(</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    sc[[tm]],</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    cell_type[[tm]],</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">size_factors =</span> sf[[tm]],</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_perm =</span> <span class="dv">2000</span>L,</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">seed =</span> <span class="dv">20261101</span>L,</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">fdr =</span> <span class="fl">0.05</span>,</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_frac =</span> <span class="fl">0.05</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(tests) <span class="ot">&lt;-</span> times</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Agreement of the gene orders: all gated genes, then those passing QL F.</span></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>tau_all <span class="ot">&lt;-</span> <span class="fu">lapply</span>(tests, type_test_kendall)</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>tau_gated <span class="ot">&lt;-</span> <span class="fu">lapply</span>(tests, <span class="cf">function</span>(r) <span class="fu">type_test_kendall</span>(r, <span class="at">genes =</span> r<span class="sc">$</span>ql_f_pass))</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Conservativeness: rerun on one permutation of the labels (null by</span></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co"># construction) and compare the share of p-values below 0.01 and 0.05.</span></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>calibration <span class="ot">&lt;-</span> <span class="fu">lapply</span>(times, <span class="cf">function</span>(tm) {</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  null_labels <span class="ot">&lt;-</span> withr<span class="sc">::</span><span class="fu">with_seed</span>(<span class="dv">20261102</span>L, <span class="fu">sample</span>(cell_type[[tm]]))</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  res_null <span class="ot">&lt;-</span> <span class="fu">compare_type_effect_tests</span>(</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>    sc[[tm]],</span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    null_labels,</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">size_factors =</span> sf[[tm]],</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_perm =</span> <span class="dv">2000</span>L,</span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">seed =</span> <span class="dv">20261103</span>L</span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">type_test_calibration</span>(res_null)</span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="co"># Gate on the chosen test, rank by the deviance R^2.</span></span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>ranked <span class="ot">&lt;-</span> <span class="fu">lapply</span>(times, <span class="cf">function</span>(tm) {</span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rank_genes_omnibus</span>(</span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>    sc[[tm]],</span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>    cell_type[[tm]],</span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>    <span class="at">size_factors =</span> sf[[tm]],</span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">fdr =</span> <span class="fl">0.05</span>,</span>
-<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_frac =</span> <span class="fl">0.05</span>,</span>
-<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_select =</span> <span class="dv">500</span>L,</span>
-<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>    <span class="at">gate_test =</span> <span class="st">"ql_f"</span></span>
-<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(ranked) <span class="ot">&lt;-</span> times</span>
-<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel passed to tier (iii): genes selected at any time (the tier (i)</span></span>
-<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a><span class="co"># markers are united with it before export).</span></span>
-<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>panel <span class="ot">&lt;-</span> <span class="fu">unique</span>(<span class="fu">unlist</span>(<span class="fu">lapply</span>(ranked, <span class="cf">function</span>(r) r<span class="sc">$</span>gene[r<span class="sc">$</span>selected])))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/02_00_utils.R"</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/02_01_stats_quality_control.R"</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/02_02_cross_cell.R"</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>times <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"48h"</span>, <span class="st">"72h"</span>, <span class="st">"96h"</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>sf <span class="ot">&lt;-</span> <span class="fu">lapply</span>(lib, <span class="cf">function</span>(l) l <span class="sc">/</span> stats<span class="sc">::</span><span class="fu">median</span>(l))</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>tests <span class="ot">&lt;-</span> <span class="fu">lapply</span>(times, <span class="cf">function</span>(tm) {</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">compare_type_effect_tests</span>(</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    sc[[tm]],</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    cell_type[[tm]],</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">size_factors =</span> sf[[tm]],</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_perm =</span> <span class="dv">2000</span>L,</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">seed =</span> <span class="dv">20261101</span>L,</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">fdr =</span> <span class="fl">0.05</span>,</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_frac =</span> <span class="fl">0.05</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(tests) <span class="ot">&lt;-</span> times</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Agreement of the gene orders: all gated genes, then those passing QL F.</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>tau_all <span class="ot">&lt;-</span> <span class="fu">lapply</span>(tests, type_test_kendall)</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>tau_gated <span class="ot">&lt;-</span> <span class="fu">lapply</span>(tests, <span class="cf">function</span>(r) <span class="fu">type_test_kendall</span>(r, <span class="at">genes =</span> r<span class="sc">$</span>ql_f_pass))</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Conservativeness: rerun on one permutation of the labels (null by</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="co"># construction) and compare the share of p-values below 0.01 and 0.05.</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>calibration <span class="ot">&lt;-</span> <span class="fu">lapply</span>(times, <span class="cf">function</span>(tm) {</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  null_labels <span class="ot">&lt;-</span> withr<span class="sc">::</span><span class="fu">with_seed</span>(<span class="dv">20261102</span>L, <span class="fu">sample</span>(cell_type[[tm]]))</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  res_null <span class="ot">&lt;-</span> <span class="fu">compare_type_effect_tests</span>(</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    sc[[tm]],</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>    null_labels,</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">size_factors =</span> sf[[tm]],</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_perm =</span> <span class="dv">2000</span>L,</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">seed =</span> <span class="dv">20261103</span>L</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">type_test_calibration</span>(res_null)</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="co"># Gate on the chosen test, rank by the deviance R^2.</span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>ranked <span class="ot">&lt;-</span> <span class="fu">lapply</span>(times, <span class="cf">function</span>(tm) {</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rank_genes_omnibus</span>(</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>    sc[[tm]],</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>    cell_type[[tm]],</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">size_factors =</span> sf[[tm]],</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">fdr =</span> <span class="fl">0.05</span>,</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_frac =</span> <span class="fl">0.05</span>,</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_select =</span> <span class="dv">500</span>L,</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>    <span class="at">gate_test =</span> <span class="st">"ql_f"</span></span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(ranked) <span class="ot">&lt;-</span> times</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel passed to tier (iii): genes selected at any time (the tier (i)</span></span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a><span class="co"># markers are united with it before export).</span></span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>panel <span class="ot">&lt;-</span> <span class="fu">unique</span>(<span class="fu">unlist</span>(<span class="fu">lapply</span>(ranked, <span class="cf">function</span>(r) r<span class="sc">$</span>gene[r<span class="sc">$</span>selected])))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><strong>Expected outputs (not produced yet).</strong> For each time slot, the Kendall <span class="math inline">\tau</span> matrix between the gene orders of the four tests, over all gated genes and over the genes that pass the gate; for each test, the share of <span class="math inline">p</span>-values below 0.01 and 0.05 under permuted labels, which orders the tests from the most to the least conservative; and the number of genes passing BH 0.05 under each test. Gene orders are expected to agree; these outputs measure how far they do.</p>
 <div id="tbl-fs-boot-perm" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -850,6 +874,7 @@ Table&nbsp;3.4: Resampling plan of tier (ii). <span class="math inline">B</span>
 </figure>
 </div>
 <p>Cell types are the authors’ annotations, fixed before any statistic is computed here. Labels refined on the same counts would make every permutation <span class="math inline">p</span>-value anti-conservative <span class="citation" data-cites="gonzalezDelgadoPostclusteringInference2025">(<a href="#ref-gonzalezDelgadoPostclusteringInference2025" role="doc-biblioref">González-Delgado et al. 2025</a>)</span>.</p>
+<div style="page-break-after: always;"></div>
 </section>
 </section>
 <section id="sec-fs-bulk-consistency" class="level2" data-number="3.4">
@@ -869,7 +894,7 @@ Table&nbsp;3.4: Resampling plan of tier (ii). <span class="math inline">B</span>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Not run. After fs-omnibus-call and fs-bulk-consistency-call: panel</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># genes, reference counts, labels, size factors and the tier (iii) plug-in.</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/influence_diagnostics.R"</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/02_03_influence.R"</span>)</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>outlier_cells <span class="ot">&lt;-</span> <span class="fu">lapply</span>(times, <span class="cf">function</span>(tm) {</span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cook_cells</span>(sc[[tm]][panel, ], cell_type[[tm]], <span class="at">size_factors =</span> sf[[tm]])</span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>})</span>
@@ -893,11 +918,10 @@ Table&nbsp;3.4: Resampling plan of tier (ii). <span class="math inline">B</span>
 <li><strong>Fit.</strong> At each of the three matched times independently, in two steps. First, a <span class="math inline">\boldsymbol{p}</span>-free check: the distance of each normalised bulk value to the range of the type means, with RNA-Sieve’s range bound and median-absolute-deviation outlier rule <span class="citation" data-cites="erdmann-phamLikelihoodbasedDeconvolutionBulk2021">(<a href="#ref-erdmann-phamLikelihoodbasedDeconvolutionBulk2021" role="doc-biblioref">Erdmann-Pham et al. 2021</a>)</span> (<code>bulk_consistency_filter()</code>, a heuristic). Second, the tail statements below, on a statistic that uses a plug-in composition.</li>
 <li><strong>Apply.</strong> A gene flagged at any of the three matched times is removed from the panel at every time, including the early-Wnt arm, where no matched pair exists.</li>
 <li><strong>Assumption, now testable.</strong> With three matched times the flags can be compared across 48 h, 72 h and 96 h: a gene flagged consistently supports treating the platform effect as a property of the gene, a gene flagged only at one time does not. This comparison has not yet been run.</li>
-<li><strong>Status.</strong> No script reads the bulk HTSeq table yet (<code>01_01</code> does not); the filter has not been run.</li>
+<li><strong>Status.</strong> <code>scripts/02_01_stats_quality_control.R</code> reads the HTSeq table for the symbol intersection, and <code>scripts/02_03_cross_platform_consistency.R</code> reads it for the filter. Neither script has been run.</li>
 </ul>
 <p><strong>Plug-in composition.</strong> For each bulk replicate <span class="math inline">i</span>, <code>plugin_composition_demixsc()</code> fits the bulk counts <span class="math inline">y_{gi}</span> on the per-cell type means of the reference by iterated weighted non-negative least squares, in the style of deMixSC: weights <span class="math inline">1/(\hat y_{gi}^{2}+(y_{gi}-\hat y_{gi})^{2}+c)</span> with <span class="math inline">c=2</span>. deMixSC also calibrates a gene set G2 on a same-aliquot benchmark; none exists for Suppinger, so G2 is empty. <span class="math inline">a_i</span> is the sum of the NNLS coefficients and <span class="math inline">\hat p_{ji}</span> the coefficients divided by <span class="math inline">a_i</span>; the extra overdispersion between platforms is fixed at 1. MuSiC <span class="citation" data-cites="wangBulkTissueCell2019">(<a href="#ref-wangBulkTissueCell2019" role="doc-biblioref">Wang et al. 2019</a>)</span> is not used, because its weights need at least two donors. <code>nnls</code> is not in <code>renv.lock</code>, so the Lawson–Hanson algorithm is written inline. Why this plug-in, and what it costs, is in <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-plugin">3.1, plug-in</a>.</p>
-<!-- TODO-cite: deMixSC (Eq. 4, PDF p. 12), iterated W-NNLS weights -->
-<!-- TODO-cite: Lawson & Hanson (1974), Solving Least Squares Problems, ch. 23 -->
+<p><span class="light-content" style="color: #7a1f1f;border-radius: 0.2rem; padding: 0 0.2rem 0 0.2rem;background-color: #f4c7c3;">TODO-cite: deMixSC (Eq. 4, PDF p.&nbsp;12), iterated W-NNLS weights</span> <span class="light-content" style="color: #7a1f1f;border-radius: 0.2rem; padding: 0 0.2rem 0 0.2rem;background-color: #f4c7c3;">TODO-cite: Lawson &amp; Hanson (1974), Solving Least Squares Problems, ch.&nbsp;23</span></p>
 <p><strong>Statistic.</strong> With <span class="math inline">\hat{\tilde\mu}_{gj}</span> the mean raw count per cell of type <span class="math inline">j</span> over its <span class="math inline">C_j</span> reference cells, and <span class="math inline">\hat\psi_{gj}</span> the negative-binomial size matched to their mean and variance (<code>type_moments_nb()</code>; raw counts, because a bulk is a sum of raw cell profiles),</p>
 <p><span id="eq-fs-bulk-stat"><span class="math display">
 D_{gi}=\frac{y_{gi}}{a_i}-\sum_{j=1}^{J}\hat p_{ji}\,\hat{\tilde\mu}_{gj},
@@ -909,7 +933,7 @@ S_{Mi}=\sum_{g\in M}\frac{D_{gi}}{\operatorname{sd}D_{gi}},
 <div id="tbl-fs-tail-statements" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-fs-tail-statements-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;3.5: Tail statements of the bulk filter as implemented in <code>R/bulk_tail_bounds.R</code>.
+Table&nbsp;3.5: Tail statements of the bulk filter as implemented in <code>R/02_03_tail_bounds.R</code>. <code>tail_threshold()</code> dispatches one function per statement.
 </figcaption>
 <div aria-describedby="tbl-fs-tail-statements-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <table class="caption-top table">
@@ -984,14 +1008,13 @@ Table&nbsp;3.5: Tail statements of the bulk filter as implemented in <code>R/bul
 </div>
 </figure>
 </div>
-<!-- TODO-cite: Janson (2004), Large deviations for sums of partly dependent random variables -->
-<!-- TODO-cite: Chen & Shao (2004), Normal approximation under local dependence -->
-<!-- TODO-cite: Koenker & Bassett (1978), Regression quantiles -->
+<p><span class="light-content" style="color: #7a1f1f;border-radius: 0.2rem; padding: 0 0.2rem 0 0.2rem;background-color: #f4c7c3;">TODO-cite: Janson (2004), Large deviations for sums of partly dependent random variables</span> <span class="light-content" style="color: #7a1f1f;border-radius: 0.2rem; padding: 0 0.2rem 0 0.2rem;background-color: #f4c7c3;">TODO-cite: Chen &amp; Shao (2004), Normal approximation under local dependence</span> <span class="light-content" style="color: #7a1f1f;border-radius: 0.2rem; padding: 0 0.2rem 0 0.2rem;background-color: #f4c7c3;">TODO-cite: Koenker &amp; Bassett (1978), Regression quantiles</span></p>
 <ul>
 <li><strong>Modules.</strong> The lineage groups (<code>cell_type_excel</code>) of the signalling dictionary of <a href="#sec-fs-markers" class="quarto-xref"><span>Section 3.2.2</span></a>. They were written before any count was seen, so the module flags are not circular. Each group has at most four genes, and a module with fewer than two panel genes is skipped.</li>
 <li><strong>Dependency graph.</strong> Inside a module, <code>module_dependency_graph()</code> joins the gene pairs with the largest within-type correlations, with maximum degree <span class="math inline">\le10</span> and mean degree <span class="math inline">\le3</span>. With at most four genes both caps are met by construction. Genes without an edge are assumed independent; T2 uses the within-type correlations on the edges, T5 only the colouring of the graph (<code>greedy_colouring()</code>).</li>
 <li><strong>Quantile band.</strong> <code>quantile_band_flags()</code> regresses <span class="math inline">y_{gi}/a_i</span> on <span class="math inline">\sum_j\hat p_{ji}\hat{\tilde\mu}_{gj}</span> across the genes of one replicate, at <span class="math inline">\tau=0.01</span> and <span class="math inline">0.99</span>, without a count model. Each bound above bounds a quantile of <span class="math inline">D_{gi}</span> under a model; the band estimates it from the genes, assuming they are exchangeable given the fitted value (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-bounds-compare">3.1, comparison of the bounds</a>).</li>
-<li><strong>Multiplicity.</strong> 0.01 per tail is a per-gene level. Over a 500-gene panel and three replicates it gives about ten flags per tail and statement under the model, so a flag is a candidate for removal, not a proven platform artefact.</li>
+<li><strong>Ranking on the simulated tails.</strong> The vignette compares the statements on one gene and one module, which is not a Suppinger result (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#tbl-fs-thresholds">3.1, thresholds</a>; <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#fig-fs-bounds-gene">gene tails</a>; <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#fig-fs-bounds-module">module tails</a>). Per gene, T4 has the largest threshold and does not under-cover. Per module, T5 has the largest threshold and does not under-cover. T3 is far too small for a high-expression gene.</li>
+<li><strong>Multiplicity, two counts.</strong> The level 0.01 per tail is per gene. In the vignette, that level flags about 60 consistent genes out of about 3,000: that count is the vignette’s one comparison. Here, the planned Suppinger panel is about 500 genes times three replicates, which would flag about ten genes per tail and statement. The filter has not been run, so a flag would be a candidate for removal, not a proven platform artefact.</li>
 </ul>
 <p><strong>Planned outputs.</strong> At each time: the genes and modules flagged by each statement; their overlap (pairwise Jaccard indices and an UpSet-style table of membership patterns, <code>tail_flag_overlap()</code>); and the order of the statements from the most to the least conservative, read from the number of flags and the median thresholds, not assumed.</p>
 <div class="cell">
@@ -1000,11 +1023,11 @@ Table&nbsp;3.5: Tail statements of the bulk filter as implemented in <code>R/bul
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># bulk[[tm]]: the three standard-Wnt replicates at tm from GSE229386</span></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># (raw counts, genes x samples), same gene identifiers; panel: genes</span></span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># selected by tier (ii) and the markers of tier (i).</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/utils_general.R"</span>)</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/bulk_consistency.R"</span>)</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/plugin_composition.R"</span>)</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/bulk_tail_bounds.R"</span>)</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/map_marker_symbols.R"</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/02_00_utils.R"</span>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/02_01_stats_quality_control.R"</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/02_03_bulk_consistency.R"</span>)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/02_03_plugin_composition.R"</span>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/02_03_tail_bounds.R"</span>)</span>
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 1: p-free range check (RNA-Sieve range bound and MAD rule).</span></span>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>range_flags <span class="ot">&lt;-</span> <span class="fu">lapply</span>(times, <span class="cf">function</span>(tm) {</span>
@@ -1047,6 +1070,7 @@ Table&nbsp;3.5: Tail statements of the bulk filter as implemented in <code>R/bul
 <span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(tail_res) <span class="ot">&lt;-</span> times</span>
 <span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>overlap <span class="ot">&lt;-</span> <span class="fu">lapply</span>(tail_res, <span class="cf">function</span>(r) <span class="fu">tail_flag_overlap</span>(r<span class="sc">$</span>gene, <span class="at">band =</span> r<span class="sc">$</span>quantile_band))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+<div style="page-break-after: always;"></div>
 </section>
 </section>
 <section id="sec-fs-weighting-pointer" class="level2" data-number="3.5">
@@ -1055,7 +1079,7 @@ Table&nbsp;3.5: Tail statements of the bulk filter as implemented in <code>R/bul
 </section>
 <section id="sec-fs-export" class="level2" data-number="3.6">
 <h2 data-number="3.6" class="anchored" data-anchor-id="sec-fs-export"><span class="header-section-number">3.6</span> Panel export</h2>
-<p>The current export is the legacy one: <code>scripts/01_03_export_equal_type_seurat.R</code> subsets the allow-list Seurat object to the 500 genes of the type-equal ratio (<a href="#sec-fs-ms-ratio" class="quarto-xref"><span>Section 3.9.2</span></a>) at each time and writes <code>data/intermediate/equal_type_top500_by_time.rds</code>, the input of every script of <a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a>. Its <code>nCount_RNA</code> is recomputed on the 500 genes and is not a library size. That file stays the input until the new rank has been run.</p>
+<p>The current export is the legacy one: <code>scripts/01_03_export_equal_type_seurat.R</code> subsets the allow-list Seurat object to the 500 genes of the type-equal ratio (<a href="#sec-fs-ms-ratio">type-equal ratio</a>) at each time and writes <code>data/intermediate/equal_type_top500_by_time.rds</code>, the input of every script of <a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a>. Its <code>nCount_RNA</code> is recomputed on the 500 genes and is not a library size. That file stays the input until the new rank has been run.</p>
 <p>The new rank table will have one row per gene and time, with the columns of <a href="#tbl-fs-new-rank-columns" class="quarto-xref">Table&nbsp;<span>3.6</span></a>.</p>
 <div id="tbl-fs-new-rank-columns" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -1143,12 +1167,12 @@ Table&nbsp;3.6: Planned columns of the new rank table. Not written yet.
 <li>sparse PLS discriminant analysis (<code>mixOmics::splsda()</code>);</li>
 <li>random forest (<code>ranger</code>, impurity importance).</li>
 </ul>
-<!-- TODO-cite: glmnet (Friedman, Hastie & Tibshirani 2010); mixOmics (Rohart et al. 2017); ranger (Wright & Ziegler 2017) -->
-<p><code>classifier_markers()</code> (<code>R/classifier_markers.R</code>) subsamples half of the cells of each type 100 times, keeps the top 50 genes of each fit, and reports each gene’s selection frequency; the stable set is the genes selected in at least 60 % of the subsamples. The cells come from one specimen, so the resampling unit is the cell and the frequencies measure generalisation to new cells of this specimen (<a href="#nte-pseudoreplication" class="quarto-xref">Note&nbsp;<span>3.1</span></a>). The purpose is to check that the panel is biologically meaningful, robust and able to discriminate the types, not to replace it: the stable sets are compared with the omnibus panel through their overlaps (<code>set_overlap()</code> in <code>R/utils_general.R</code>).</p>
+<p><span class="light-content" style="color: #7a1f1f;border-radius: 0.2rem; padding: 0 0.2rem 0 0.2rem;background-color: #f4c7c3;">TODO-cite: glmnet (Friedman, Hastie &amp; Tibshirani 2010); mixOmics (Rohart et al.&nbsp;2017); ranger (Wright &amp; Ziegler 2017)</span></p>
+<p><code>classifier_markers()</code> (<code>R/02_05_classifiers.R</code>) subsamples half of the cells of each type 100 times, keeps the top 50 genes of each fit, and reports each gene’s selection frequency; the stable set is the genes selected in at least 60 % of the subsamples. The cells come from one specimen, so the resampling unit is the cell and the frequencies measure generalisation to new cells of this specimen (<a href="#nte-pseudoreplication" class="quarto-xref">Note&nbsp;<span>3.1</span></a>). The purpose is to check that the panel is biologically meaningful, robust and able to discriminate the types, not to replace it: the stable sets are compared with the omnibus panel through their overlaps (<code>set_overlap()</code> in <code>R/02_00_utils.R</code>).</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Not run. glmnet, mixOmics and ranger are not in renv.lock.</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/utils_general.R"</span>)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/classifier_markers.R"</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/02_00_utils.R"</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/02_05_classifiers.R"</span>)</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>clf <span class="ot">&lt;-</span> <span class="fu">lapply</span>(times, <span class="cf">function</span>(tm) {</span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  g <span class="ot">&lt;-</span> ranked[[tm]]<span class="sc">$</span>gene[ranked[[tm]]<span class="sc">$</span>pass_presence]</span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">classifier_markers</span>(</span>
@@ -1169,9 +1193,8 @@ Table&nbsp;3.6: Planned columns of the new rank table. Not written yet.
 <span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-</section>
-<section id="sec-fs-nsga2" class="level2 appendix" data-number="3.8">
-<h2 class="appendix anchored" data-number="3.8" data-anchor-id="sec-fs-nsga2"><span class="header-section-number">3.8</span> Optional multivariate refinement</h2>
+<section id="sec-fs-nsga2" class="level3 appendix" data-number="3.7.3">
+<h3 class="appendix anchored" data-number="3.7.3" data-anchor-id="sec-fs-nsga2"><span class="header-section-number">3.7.3</span> Optional multivariate refinement</h3>
 <p>A univariate rank ignores redundancy between genes and the covariances DeCovarT models. The optional stage searches subsets of the panel with a multi-objective criterion on all types jointly (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-multivariate">3.1, covariance-driven (post hoc) selection</a>). It needs <span class="math inline">\widehat{\boldsymbol{\Sigma}}_{j}</span>, so it runs after <a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a>, and it is drawn dashed in <a href="index.html#fig-pipeline" class="quarto-xref">Figure&nbsp;<span>1</span></a>. Its panels fall under the circularity warning of the vignette (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#wrn-fs-circularity">3.1, circularity</a>): a comparison with other methods also reports the panel of 2, chosen without the model.</p>
 <p><strong>Shortlist.</strong> The multi-donor pipeline of the screening appendix (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/S6-feature-screening-scenario.html#sec-recommended">S6, multi-donor pipeline</a>) feeds NSGA-II with a <code>DESeq2</code> pseudo-bulk shortlist. With one specimen, as for the Suppinger reference, the <code>DESeq2</code> step does not apply, and strategy B of that appendix (presence gate, omnibus gate, effect-size rank; <a href="#sec-fs-presence" class="quarto-xref"><span>Section 3.2.3</span></a> and <a href="#sec-fs-omnibus" class="quarto-xref"><span>Section 3.3.2</span></a>) replaces the shortlist.</p>
 <p><strong>Types with few cells.</strong> A joint test or objective on the panel <span class="math inline">\mathcal{G}</span> uses the within-type covariance, which is high-dimensional when <span class="math inline">C_j</span> is not much larger than <span class="math inline">|\mathcal{G}|</span> (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-multivariate-tests">3.1, multivariate tests</a>). With the 500-gene panel of 2, seven of the eleven scored type × time cells of <a href="#tbl-fs-cell-counts" class="quarto-xref">Table&nbsp;<span>3.2</span></a> have <span class="math inline">C_j&lt;|\mathcal{G}|</span>, so their sample covariance is singular:</p>
@@ -1211,11 +1234,12 @@ Table&nbsp;3.6: Planned columns of the new rank table. Not written yet.
 <span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower.bounds =</span> <span class="fu">rep</span>(<span class="dv">0</span>, <span class="fu">nrow</span>(mu)), <span class="at">upper.bounds =</span> <span class="fu">rep</span>(<span class="dv">1</span>, <span class="fu">nrow</span>(mu)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="sec-fs-legacy" class="level2 appendix" data-number="3.9">
-<h2 class="appendix anchored" data-number="3.9" data-anchor-id="sec-fs-legacy"><span class="header-section-number">3.9</span> Legacy panel: SCTransform ratio</h2>
+</section>
+<section id="sec-fs-legacy" class="level2 appendix unnumbered unlisted">
+<h2 class="appendix unnumbered unlisted anchored" data-anchor-id="sec-fs-legacy">Legacy panel: SCTransform ratio</h2>
 <p>The current 500-gene panel, and every covariance output of <a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a>, come from the rank described here. It stays the source of <code>data/intermediate/equal_type_top500_by_time.rds</code> until the rank of tiers (ii) and (iii) has been run; it is kept as provenance of the existing files.</p>
-<section id="sec-fs-sct" class="level3" data-number="3.9.1">
-<h3 data-number="3.9.1" class="anchored" data-anchor-id="sec-fs-sct"><span class="header-section-number">3.9.1</span> <code>SCTransform</code> v2 fit per time</h3>
+<section id="sec-fs-sct" class="level3 unnumbered unlisted">
+<h3 class="unnumbered unlisted anchored" data-anchor-id="sec-fs-sct"><code>SCTransform</code> v2 fit per time</h3>
 <p><code>rank_genes_sctransform()</code> refits <code>Seurat::SCTransform()</code> separately at 48 h, 72 h and 96 h (<code>split_by = "time_point"</code>) on the allow-list genes. Cells of every non-artefact type at that time are fitted together. The fitted mean is an intercept plus a library-size offset,</p>
 <p><span id="eq-fs-v2-offset"><span class="math display">
 \log\mu_{gc}
@@ -1230,7 +1254,7 @@ x_{gc}\sim\mathrm{NB}(\mu_{gc},\psi_{g}),
 <div id="tbl-fs-sct-settings" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-fs-sct-settings-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;3.7: <code>SCTransform</code> settings as run (<code>model_card.csv</code>, <code>R/rank_sctransform_naive.R</code>).
+Table&nbsp;3.7: <code>SCTransform</code> settings as run (<code>model_card.csv</code>, <code>scripts/legacy/02_90_stats_rank_sctransform.R</code>).
 </figcaption>
 <div aria-describedby="tbl-fs-sct-settings-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <table class="caption-top table">
@@ -1288,8 +1312,8 @@ Table&nbsp;3.7: <code>SCTransform</code> settings as run (<code>model_card.csv</
 </div>
 <p>Cell type is left out of the fit on purpose. The count models of <a href="#sec-fs-glm" class="quarto-xref"><span>Section 3.3.1</span></a> fit the type effect directly, without regularising the overdispersion and without the clip.</p>
 </section>
-<section id="sec-fs-ms-ratio" class="level3" data-number="3.9.2">
-<h3 data-number="3.9.2" class="anchored" data-anchor-id="sec-fs-ms-ratio"><span class="header-section-number">3.9.2</span> Between/within ratio rank</h3>
+<section id="sec-fs-ms-ratio" class="level3 unnumbered unlisted">
+<h3 class="unnumbered unlisted anchored" data-anchor-id="sec-fs-ms-ratio">Between/within ratio rank</h3>
 <p>The residual matrix of one slot is split by type. With <span class="math inline">C_j</span> cells of type <span class="math inline">j</span>, <span class="math inline">\bar r_{gj}</span> the mean residual of gene <span class="math inline">g</span> in type <span class="math inline">j</span>, and <span class="math inline">v_{gj}</span> its within-type variance, the two decompositions are</p>
 <p><span id="eq-fs-ss"><span class="math display">
 \mathrm{SS}_{\mathrm{between},g}
@@ -1337,23 +1361,23 @@ Table&nbsp;3.8: Columns of the type-equal global rank table, grouped by role. Th
 
     <script>
       // Create table-specific functions using external factory
-      const tableFns_0g2z7jc1d90s6f6sqyr9 = TinyTable.createTableFunctions("tinytable_0g2z7jc1d90s6f6sqyr9");
+      const tableFns_q1fod8ndenhwrnspqhz5 = TinyTable.createTableFunctions("tinytable_q1fod8ndenhwrnspqhz5");
       // tinytable span after
-      window.addEventListener('load', function () { tableFns_0g2z7jc1d90s6f6sqyr9.spanCell(17, 1, 1, 3) })
-      window.addEventListener('load', function () { tableFns_0g2z7jc1d90s6f6sqyr9.spanCell(11, 1, 1, 3) })
-      window.addEventListener('load', function () { tableFns_0g2z7jc1d90s6f6sqyr9.spanCell(5, 1, 1, 3) })
-      window.addEventListener('load', function () { tableFns_0g2z7jc1d90s6f6sqyr9.spanCell(1, 1, 1, 3) })
+      window.addEventListener('load', function () { tableFns_q1fod8ndenhwrnspqhz5.spanCell(17, 1, 1, 3) })
+      window.addEventListener('load', function () { tableFns_q1fod8ndenhwrnspqhz5.spanCell(11, 1, 1, 3) })
+      window.addEventListener('load', function () { tableFns_q1fod8ndenhwrnspqhz5.spanCell(5, 1, 1, 3) })
+      window.addEventListener('load', function () { tableFns_q1fod8ndenhwrnspqhz5.spanCell(1, 1, 1, 3) })
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: '22', j: 1 }, { i: '22', j: 2 }, { i: '22', j: 3 } ], css_id: 'tinytable_css_gcr6mqh8l7eukq5f5r9v',}, 
-          { positions: [ { i: '0', j: 1 }, { i: '0', j: 2 }, { i: '0', j: 3 } ], css_id: 'tinytable_css_mg0t8d0mn30aiv6pgkmo',}, 
+          { positions: [ { i: '22', j: 1 }, { i: '22', j: 2 }, { i: '22', j: 3 } ], css_id: 'tinytable_css_qm1cx91ezfxfghr52lf7',}, 
+          { positions: [ { i: '0', j: 1 }, { i: '0', j: 2 }, { i: '0', j: 3 } ], css_id: 'tinytable_css_x04rxprtv0z7l5pa24rm',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  tableFns_0g2z7jc1d90s6f6sqyr9.styleCell(cell.i, cell.j, group.css_id);
+                  tableFns_q1fod8ndenhwrnspqhz5.styleCell(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -1362,11 +1386,11 @@ Table&nbsp;3.8: Columns of the type-equal global rank table, grouped by role. Th
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/vincentarelbundock/tinytable@main/inst/tinytable.css">
     <style>
     /* tinytable css entries after */
-    #tinytable_0g2z7jc1d90s6f6sqyr9 td.tinytable_css_gcr6mqh8l7eukq5f5r9v, #tinytable_0g2z7jc1d90s6f6sqyr9 th.tinytable_css_gcr6mqh8l7eukq5f5r9v {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.08em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%;  }
-    #tinytable_0g2z7jc1d90s6f6sqyr9 td.tinytable_css_mg0t8d0mn30aiv6pgkmo, #tinytable_0g2z7jc1d90s6f6sqyr9 th.tinytable_css_mg0t8d0mn30aiv6pgkmo {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.08em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%;  }
+    #tinytable_q1fod8ndenhwrnspqhz5 td.tinytable_css_qm1cx91ezfxfghr52lf7, #tinytable_q1fod8ndenhwrnspqhz5 th.tinytable_css_qm1cx91ezfxfghr52lf7 {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.08em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%;  }
+    #tinytable_q1fod8ndenhwrnspqhz5 td.tinytable_css_x04rxprtv0z7l5pa24rm, #tinytable_q1fod8ndenhwrnspqhz5 th.tinytable_css_x04rxprtv0z7l5pa24rm {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.08em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%;  }
     </style>
     <div class="container">
-      <table class="tinytable" id="tinytable_0g2z7jc1d90s6f6sqyr9" style="table-layout: fixed; width: 100% !important; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="tinytable" id="tinytable_q1fod8ndenhwrnspqhz5" style="table-layout: fixed; width: 100% !important; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         
         <thead>
               <tr>
