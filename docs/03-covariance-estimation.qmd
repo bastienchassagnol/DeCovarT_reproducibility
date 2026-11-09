@@ -1,5 +1,7 @@
 ---
 title: "Covariance estimation"
+date: last-modified
+description: "Per-type means and covariances estimated on the Suppinger reference."
 ---
 
 ## Scope and status {#sec-cov-scope}

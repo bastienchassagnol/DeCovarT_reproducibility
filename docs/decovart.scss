@@ -57,3 +57,25 @@ $toc-font-size: 0.92rem;
 .sidebar nav[role="doc-toc"]>ul ul a {
   font-size: 0.88rem;
 }
+
+// The pagebreak shortcode is invisible in HTML unless it is drawn.
+// Print still breaks on the shortcode itself.
+.page-break {
+  break-before: page;
+  border-top: 1px solid #e6e1d8;
+  margin: 2.5rem 0 1.5rem;
+  height: 0;
+}
+
+// The banner image is the package logo. Keep it a mark on the right,
+// rather than a full-bleed photograph.
+.quarto-title-block.banner {
+  padding-right: 11rem;
+}
+
+.quarto-title-block .quarto-title-banner {
+  background-color: #f7f4ef !important;
+  background-size: 148px auto !important;
+  background-repeat: no-repeat !important;
+  background-position: right 1.75rem center !important;
+}

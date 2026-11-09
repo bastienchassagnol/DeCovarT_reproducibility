@@ -1,5 +1,7 @@
 ---
 title: "Feature selection"
+date: last-modified
+description: "The gene panel built for the Suppinger reference, with the code."
 ---
 
 ## Scope and status {#sec-fs-scope}
@@ -83,6 +85,8 @@ The current panel (top 500 per time, @sec-fs-export) comes from the
 legacy between/within ratio (@sec-fs-ms-ratio). Once tiers (i) to (iii)
 have been run, their rank replaces it as steps 3 to 5 of
 @fig-pipeline, and every output of @sec-cov-scope has to be refitted.
+
+{{< pagebreak >}}
 
 ## Tier (i): quality control and prior knowledge {#sec-fs-qc}
 
@@ -187,6 +191,8 @@ In the current outputs the gate is absent. Its absence is one cause of
 the constant-gene fallback of the covariance estimates
 (@sec-cov-scope).
 
+{{< pagebreak >}}
+
 ## Tier (ii): cross-cell consistency {#sec-fs-consistency}
 
 A gene is kept when its counts separate the scored types consistently
@@ -274,9 +280,9 @@ reference laws; the vignette compares their assumptions
 
 : The four tests of the type effect as implemented. $C$ is the number of cells of the slot. {#tbl-fs-type-tests}
 
-<!-- TODO-cite: Ahlmann-Eltze & Huber (2023), shifted logarithm -->
-<!-- TODO-cite: Winkler et al. (2014), Permutation inference for the general linear model, NeuroImage; Freedman-Lane recommended, G statistic Eqs 6-7 -->
-<!-- TODO-cite: Welch (1951), On the comparison of several mean values -->
+[TODO-cite: Ahlmann-Eltze & Huber (2023), shifted logarithm]{.highlight}
+[TODO-cite: Winkler et al. (2014), Permutation inference for the general linear model, NeuroImage; Freedman-Lane recommended, G statistic Eqs 6-7]{.highlight}
+[TODO-cite: Welch (1951), On the comparison of several mean values]{.highlight}
 
 The permutation follows Freedman and Lane
 [@freedmanNonstochasticInterpretation1983]: the reduced model is $M_0$,
@@ -376,6 +382,8 @@ Cell types are the authors' annotations, fixed before any statistic is
 computed here. Labels refined on the same counts would make every
 permutation $p$-value anti-conservative
 [@gonzalezDelgadoPostclusteringInference2025].
+
+{{< pagebreak >}}
 
 ## Tier (iii): cross-platform consistency {#sec-fs-bulk-consistency}
 
@@ -479,8 +487,8 @@ least two donors. `nnls` is not in `renv.lock`, so the Lawson–Hanson
 algorithm is written inline. Why this plug-in, and what it costs, is in
 [3.1, plug-in](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-plugin).
 
-<!-- TODO-cite: deMixSC (Eq. 4, PDF p. 12), iterated W-NNLS weights -->
-<!-- TODO-cite: Lawson & Hanson (1974), Solving Least Squares Problems, ch. 23 -->
+[TODO-cite: deMixSC (Eq. 4, PDF p. 12), iterated W-NNLS weights]{.highlight}
+[TODO-cite: Lawson & Hanson (1974), Solving Least Squares Problems, ch. 23]{.highlight}
 
 **Statistic.** With $\hat{\tilde\mu}_{gj}$ the mean raw count per cell
 of type $j$ over its $C_j$ reference cells, and $\hat\psi_{gj}$ the
@@ -516,9 +524,9 @@ the Chernoff statements.
 
 : Tail statements of the bulk filter as implemented in `R/bulk_tail_bounds.R`. {#tbl-fs-tail-statements}
 
-<!-- TODO-cite: Janson (2004), Large deviations for sums of partly dependent random variables -->
-<!-- TODO-cite: Chen & Shao (2004), Normal approximation under local dependence -->
-<!-- TODO-cite: Koenker & Bassett (1978), Regression quantiles -->
+[TODO-cite: Janson (2004), Large deviations for sums of partly dependent random variables]{.highlight}
+[TODO-cite: Chen & Shao (2004), Normal approximation under local dependence]{.highlight}
+[TODO-cite: Koenker & Bassett (1978), Regression quantiles]{.highlight}
 
 - **Modules.** The lineage groups (`cell_type_excel`) of the signalling
   dictionary of @sec-fs-markers. They were written before any count was
@@ -537,10 +545,22 @@ the Chernoff statements.
   estimates it from the genes, assuming they are exchangeable given
   the fitted value
   ([3.1, comparison of the bounds](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-bounds-compare)).
-- **Multiplicity.** 0.01 per tail is a per-gene level. Over a 500-gene
-  panel and three replicates it gives about ten flags per tail and
-  statement under the model, so a flag is a candidate for removal, not
-  a proven platform artefact.
+- **Ranking on the simulated tails.** The vignette compares the
+  statements on one gene and one module, which is not a Suppinger
+  result
+  ([3.1, thresholds](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#tbl-fs-thresholds);
+  [gene tails](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#fig-fs-bounds-gene);
+  [module tails](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#fig-fs-bounds-module)).
+  Per gene, T4 has the largest threshold and does not under-cover.
+  Per module, T5 has the largest threshold and does not under-cover.
+  T3 is far too small for a high-expression gene.
+- **Multiplicity, two counts.** The level 0.01 per tail is per gene.
+  In the vignette, that level flags about 60 consistent genes out of
+  about 3,000: that count is the vignette's one comparison. Here, the
+  planned Suppinger panel is about 500 genes times three replicates,
+  which would flag about ten genes per tail and statement. The filter
+  has not been run, so a flag would be a candidate for removal, not a
+  proven platform artefact.
 
 **Planned outputs.** At each time: the genes and modules flagged by
 each statement; their overlap (pairwise Jaccard indices and an
@@ -603,6 +623,8 @@ tail_res <- lapply(times, function(tm) {
 names(tail_res) <- times
 overlap <- lapply(tail_res, function(r) tail_flag_overlap(r$gene, band = r$quantile_band))
 ```
+
+{{< pagebreak >}}
 
 ## Tier (iv): down-weighting by the model {#sec-fs-weighting-pointer}
 
@@ -676,7 +698,7 @@ inside stability selection [@meinshausenStabilitySelection2010], as in
 - sparse PLS discriminant analysis (`mixOmics::splsda()`);
 - random forest (`ranger`, impurity importance).
 
-<!-- TODO-cite: glmnet (Friedman, Hastie & Tibshirani 2010); mixOmics (Rohart et al. 2017); ranger (Wright & Ziegler 2017) -->
+[TODO-cite: glmnet (Friedman, Hastie & Tibshirani 2010); mixOmics (Rohart et al. 2017); ranger (Wright & Ziegler 2017)]{.highlight}
 
 `classifier_markers()` (`R/classifier_markers.R`) subsamples half of
 the cells of each type 100 times, keeps the top 50 genes of each fit,

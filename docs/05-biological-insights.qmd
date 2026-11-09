@@ -1,5 +1,7 @@
 ---
 title: "Early versus standard Wnt"
+date: last-modified
+description: "Early and standard Wnt compared at the three bulk-matched times."
 ---
 
 ## Biological insights from deconvolution algorithms applied to mouse gastruloids {#sec-bio-deconv}

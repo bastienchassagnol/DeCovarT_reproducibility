@@ -1,5 +1,7 @@
 ---
 title: "Applying and comparing deconvolution outputs applied to Suppinger study"
+date: last-modified
+description: "Deconvolution methods compared on the same Suppinger gene panel."
 ---
 
 ## What is being compared {#sec-deconv-models}
@@ -27,7 +29,7 @@ one line here says what it models and how it is called.
     weighted least squares, weights the inverse squared fitted mean,
     capped by a dampening constant. R, `DWLS`: `solveDampenedWLS()`.
 
-<!-- TODO-cite: Chu et al. 2022 (BayesPrism, key chuCellTypeGeneExpression2022) and Dong et al. 2021 (SCDC, key dongSCDCBulkGene2021) are in DeCovarT inst/REFERENCES.bib, not in bibliography/REFERENCES.bib. -->
+[TODO-cite: Chu et al. 2022 (BayesPrism, key chuCellTypeGeneExpression2022) and Dong et al. 2021 (SCDC, key dongSCDCBulkGene2021) are in DeCovarT inst/REFERENCES.bib, not in bibliography/REFERENCES.bib.]{.highlight}
 
 ### Single-cell likelihood strategy {#sec-deconv-single-cell}
 

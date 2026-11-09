@@ -1,5 +1,7 @@
 ---
 title: "Overview"
+date: last-modified
+description: "What this book runs on the Suppinger gastruloids, and where the theory lives."
 ---
 
 This book applies DeCovarT to the Suppinger murine gastruloid resource.

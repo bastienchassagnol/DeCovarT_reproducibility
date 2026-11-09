@@ -1,5 +1,7 @@
 ---
 title: "Sensitivity analyses"
+date: last-modified
+description: "How the fit moves when the precision matrices are misspecified."
 ---
 
 ## Contaminating $\boldsymbol{\Omega}_{j}$ {#sec-sensitivity}

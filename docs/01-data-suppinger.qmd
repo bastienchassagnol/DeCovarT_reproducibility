@@ -1,5 +1,7 @@
 ---
 title: "Suppinger gastruloids"
+date: last-modified
+description: "Single-cell and bulk counts from the Suppinger gastruloid resource."
 ---
 
 Single-cell UMI counts and bulk HTSeq tables come from the murine

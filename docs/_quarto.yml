@@ -9,7 +9,7 @@ book:
   title: "DeCovarT reproducibility"
   subtitle: "Gastruloid GRNs, feature panels, and sensitivity analyses"
   author: "Bastien Chassagnol"
-  date: today
+  date: last-modified
   page-navigation: true
   repo-url: https://github.com/bastienchassagnol/DeCovarT_reproducibility
   repo-branch: main
@@ -41,8 +41,10 @@ bibliography:
   - ../bibliography/packages.bib
   - ../bibliography/REFERENCES.bib
 link-citations: true
+date-format: "D MMM YYYY"
 
 filters:
+  - highlight-text
   - pseudocode
   # pre-ast so Quarto's cross-referencing sees the #fig- labels.
   - at: pre-ast
@@ -124,8 +126,16 @@ execute:
   warning: false
   freeze: false
 
+extensions:
+  highlight-text:
+    styles:
+      highlight:
+        colour: "#7a1f1f"
+        bg-colour: "#f4c7c3"
+
 format:
   html:
+    title-block-banner: images/logo.svg
     # Palette and fonts of the DeCovarT pkgdown site (`template.bslib` in the
     # package _pkgdown.yml), layered on the Bootswatch themes.
     theme:
