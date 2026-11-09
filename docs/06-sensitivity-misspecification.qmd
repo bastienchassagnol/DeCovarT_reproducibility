@@ -100,7 +100,8 @@ states the hypothesis: accuracy rises with the number of genes, reaches
 a plateau, then falls once uninformative genes or genes inconsistent
 between bulk and single-cell libraries enter the panel. Every chapter
 of this book so far uses one panel, the top `n_genes_global = 500` of
-the legacy type-equal `SCTransform` ratio (@sec-fs-ms-ratio,
+the legacy type-equal `SCTransform` ratio
+([legacy type-equal ratio](02-feature-selection.qmd#sec-fs-ms-ratio),
 @sec-fs-export). This section
 plans the sweep that tests the hypothesis on GSE229513. It has not been
 run.

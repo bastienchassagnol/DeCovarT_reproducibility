@@ -130,7 +130,8 @@ the authors' `SCT` counts layer, which serves as the gene allow-list
 (@sec-fs-qc). The authors' residuals themselves are not used: the
 ranking fits its own negative-binomial GLMs per time slot
 (@sec-fs-glm), the legacy panel refitted `SCTransform` v2 per slot
-(@sec-fs-sct), and the covariances are estimated from raw counts
+([legacy SCTransform fit](02-feature-selection.qmd#sec-fs-sct)),
+and the covariances are estimated from raw counts
 (@sec-cov-inputs).
 
 ![Seurat workflow used to extract embeddings and downstream analyses on

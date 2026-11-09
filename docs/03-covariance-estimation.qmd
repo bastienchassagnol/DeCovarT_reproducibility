@@ -100,7 +100,8 @@ re-run:
   as in @eq-fs-v2-offset. `nCount_RNA` in the exported object is the
   500-gene sum and is not used.
 
-Pearson residuals, of the legacy `SCTransform` fit (@sec-fs-sct) or
+Pearson residuals, of the legacy `SCTransform` fit
+([legacy SCTransform fit](02-feature-selection.qmd#sec-fs-sct)) or
 of the count GLMs of the new rank (@sec-fs-glm), are used only for
 ranking and are never passed to an estimator.
 

@@ -49,7 +49,7 @@ is reported as such wherever it is used in this book
 
 Ranks are computed on a negative-binomial count GLM (@sec-fs-glm); the
 legacy panel was ranked on `SCTransform` Pearson residuals
-(@sec-fs-legacy). Neither scale is exported: the moments that enter
+([legacy panel](#sec-fs-legacy)). Neither scale is exported: the moments that enter
 DeCovarT are on the linear scale
 ([2.1, normalisation](https://bastienchassagnol.github.io/DeCovarT/articles/02-1-single-cell-generative-optimisation.html#sec-norm-linear)).
 
@@ -68,8 +68,8 @@ DeCovarT are on the linear scale
 | (iii) | Tail statements per gene and module, quantile band | @sec-fs-bulk-filter | `scripts/02_03_cross_platform_consistency.R`; `R/02_03_tail_bounds.R::tail_threshold()` dispatching `tail_t1_clt()`, `tail_t1_log()`, `tail_t2_clt_dep()`, `tail_t3_poisson()`, `tail_t4_nb()`, `tail_t5_nb_dep()`, plus `quantile_band_flags()` | written, not run |
 | (iv) | Down-weighting by the model | @sec-fs-weighting-pointer | covariance chapter | not a selection step |
 | perspective | Classifier-based markers | @sec-fs-classifiers | `R/02_05_classifiers.R::classifier_markers()` | written, not run |
-| legacy | `SCTransform` v2 fit per time | @sec-fs-sct | `scripts/legacy/02_90_stats_rank_sctransform.R::rank_genes_sctransform()` | run |
-| legacy | Between/within ratio rank (current panel) | @sec-fs-ms-ratio | same | run |
+| legacy | `SCTransform` v2 fit per time | [SCTransform fit](#sec-fs-sct) | `scripts/legacy/02_90_stats_rank_sctransform.R::rank_genes_sctransform()` | run |
+| legacy | Between/within ratio rank (current panel) | [between/within ratio](#sec-fs-ms-ratio) | same | run |
 | appendix | Optional NSGA-II refinement (post hoc) | @sec-fs-nsga2 | `scripts/04_02_feature_selection_genetic_algorithm.R` | template only |
 
 : Feature-selection steps by tier, code and status. "Written, not run" means the function exists and parses but no output has been produced in this repository. {#tbl-fs-status}
@@ -84,7 +84,8 @@ cross-checks of the hand-written permutation of @sec-fs-omnibus; the
 code does not call them. None is installed yet.
 
 The current panel (top 500 per time, @sec-fs-export) comes from the
-legacy between/within ratio (@sec-fs-ms-ratio). Once tiers (i) to (iii)
+legacy between/within ratio
+([between/within ratio](#sec-fs-ms-ratio)). Once tiers (i) to (iii)
 have been run, their rank replaces it as steps 3 to 5 of
 @fig-pipeline, and every output of @sec-cov-scope has to be refitted.
 
@@ -655,7 +656,7 @@ estimated in @sec-cov-scope and enter the deconvolution of
 The current export is the legacy one:
 `scripts/01_03_export_equal_type_seurat.R` subsets the allow-list
 Seurat object to the 500 genes of the type-equal ratio
-(@sec-fs-ms-ratio) at each time and writes
+([type-equal ratio](#sec-fs-ms-ratio)) at each time and writes
 `data/intermediate/equal_type_top500_by_time.rds`, the input of every
 script of @sec-cov-scope. Its `nCount_RNA` is recomputed on the 500
 genes and is not a library size. That file stays the input until the
