@@ -17,10 +17,11 @@ panel must achieve, and why each step is there, is stated in the
 vignette
 ([3.1, what the genes are for](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#wrn-fs-estimand)):
 genes whose type-level moments can be estimated in every type and that
-carry information about $\boldsymbol{p}$. The sections follow the four
-tiers of the vignette: (i) quality control and prior knowledge, (ii)
-cross-cell consistency, (iii) cross-platform consistency, (iv)
-down-weighting by the model.
+carry information about $\boldsymbol{p}$. The sections follow the tiers
+of the vignette: (i) quality control and prior knowledge, (ii)
+cross-cell consistency and (iii) cross-platform consistency are
+implemented here; (iv), down-weighting by the model, is a remark: it
+takes place when DeCovarT itself is fitted (@sec-fs-weighting-pointer).
 
 The Suppinger reference is the one-specimen case of that callout. It is
 one technical scRNA-seq experiment
@@ -28,8 +29,7 @@ one technical scRNA-seq experiment
 draws from one specimen, not biological replicates (@sec-geo-design).
 Every ranking statistic below is therefore computed inside that
 specimen: it calibrates a screen, not a population-level claim of
-differential expression. Steps that need several donors, such as a
-`DESeq2` pseudo-bulk shortlist, do not apply here (@sec-fs-nsga2).
+differential expression. 
 
 ::: {#nte-pseudoreplication .callout-note}
 ## :information_source: Cells are not biological replicates
@@ -47,42 +47,6 @@ is reported as such wherever it is used in this book
 (@sec-cov-scope, @sec-sens-scdesign3).
 :::
 
-Ranks are computed on a negative-binomial count GLM (@sec-fs-glm); the
-legacy panel was ranked on `SCTransform` Pearson residuals
-([legacy panel](#sec-fs-legacy)). Neither scale is exported: the moments that enter
-DeCovarT are on the linear scale
-([2.1, normalisation](https://bastienchassagnol.github.io/DeCovarT/articles/02-1-single-cell-generative-optimisation.html#sec-norm-linear)).
-
-| Tier | Step | Section | Code | Status |
-|---|---|---|---|---|
-| (i) | Cell slot filter (historical) | @sec-fs-qc-applied | `scripts/legacy/02_90_stats_prepare_panel.R`, section 1 | run; outputs dated 2026-09-28 to 2026-10-01 |
-| (i) | Shared genes, mitochondrial symbols | @sec-fs-qc-applied | `scripts/02_01_stats_quality_control.R`; `R/02_01_stats_quality_control.R` | written, not run |
-| (i) | PCA and PLS-DA | @sec-fs-qc-applied | `scripts/02_01_vis_projections.R`; `R/02_01_vis_projections.R::plot_type_pca_plsda()` | written, not run |
-| (i) | Knowledge-driven markers | @sec-fs-markers | `R/02_01_stats_quality_control.R::map_marker_symbols()` | run |
-| (i) | Presence gate | @sec-fs-presence | `R/02_01_stats_quality_control.R::presence_gate()` | written, not run |
-| (ii) | Count-model fits M0 and M1 per time | @sec-fs-glm | `scripts/02_02_cross_cell_consistency.R`; `R/02_02_cross_cell.R::compare_type_effect_tests()` | written, not run |
-| (ii) | Four tests, gate, deviance $R^2$ rank | @sec-fs-omnibus | same file: `compare_type_effect_tests()`, `type_test_kendall()`, `type_test_calibration()`, `rank_genes_omnibus()` | written, not run |
-| (iii) | Cook's distance for cells and genes | @sec-fs-outliers | `R/02_03_influence.R::cook_cells()`, `cook_genes()` | written, not run |
-| (iii) | $\boldsymbol{p}$-free range check | @sec-fs-bulk-filter | `R/02_03_bulk_consistency.R::bulk_consistency_filter()` | written, not run |
-| (iii) | Plug-in composition (deMixSC-style W-NNLS) | @sec-fs-bulk-filter | `R/02_03_plugin_composition.R::plugin_composition_demixsc()` | written, not run |
-| (iii) | Tail statements per gene and module, quantile band | @sec-fs-bulk-filter | `scripts/02_03_cross_platform_consistency.R`; `R/02_03_tail_bounds.R::tail_threshold()` dispatching `tail_t1_clt()`, `tail_t1_log()`, `tail_t2_clt_dep()`, `tail_t3_poisson()`, `tail_t4_nb()`, `tail_t5_nb_dep()`, plus `quantile_band_flags()` | written, not run |
-| (iv) | Down-weighting by the model | @sec-fs-weighting-pointer | covariance chapter | not a selection step |
-| perspective | Classifier-based markers | @sec-fs-classifiers | `R/02_05_classifiers.R::classifier_markers()` | written, not run |
-| legacy | `SCTransform` v2 fit per time | [SCTransform fit](#sec-fs-sct) | `scripts/legacy/02_90_stats_rank_sctransform.R::rank_genes_sctransform()` | run |
-| legacy | Between/within ratio rank (current panel) | [between/within ratio](#sec-fs-ms-ratio) | same | run |
-| appendix | Optional NSGA-II refinement (post hoc) | @sec-fs-nsga2 | `scripts/04_02_feature_selection_genetic_algorithm.R` | template only |
-
-: Feature-selection steps by tier, code and status. "Written, not run" means the function exists and parses but no output has been produced in this repository. {#tbl-fs-status}
-
-Packages needed by the new code and absent from `renv.lock`:
-`glmGamPoi` (tier ii, already used by the legacy fit through
-`Seurat`, but not recorded), `quantreg` (quantile band, tier iii),
-`glmnet`, `mixOmics` and `ranger` (classifier perspective). Each is
-checked with `requireNamespace()`. `permuco` (Freedman–Lane for linear
-models) and `flipscores` (sign-flip score tests for GLMs) are optional
-cross-checks of the hand-written permutation of @sec-fs-omnibus; the
-code does not call them. None is installed yet.
-
 The current panel (top 500 per time, @sec-fs-export) comes from the
 legacy between/within ratio
 ([between/within ratio](#sec-fs-ms-ratio)). Once tiers (i) to (iii)
@@ -93,52 +57,125 @@ have been run, their rank replaces it as steps 3 to 5 of
 
 ## Tier (i): quality control and prior knowledge {#sec-fs-qc}
 
-The tiers of quality control recommended in the vignette
-([3.1, QC](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-qc))
-are applied only in part. This tier also holds what is decided without
-the counts: the curated markers, forced into the panel, and the
-presence gate.
+The vignette lists the quality-control rules of the reviewed methods
+as examples
+([3.1, QC](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-qc)).
+Here the authors' quality control is taken as given, and those rules
+are recorded against it rather than applied again. This tier also
+holds what is decided without the counts: the curated markers, forced
+into the panel, and the presence gate.
 
 ### Cell and gene QC as applied {#sec-fs-qc-applied}
 
-What runs today is listed here.
+The deposited object is the authors' filtered matrix: 27,027 genes and
+71,005 cells, with the same cells in the raw counts and in the `SCT`
+layer (@sec-seurat). `scripts/02_01_stats_quality_control.R` has been
+run on it. Its outputs in `output/feature_selection/tier_01/` are three
+summary tables (`cell_counts.csv`, `author_qc_audit.csv`,
+`gene_filter_summary.csv`) and `scored_slots.rds`, which holds every
+per-gene and per-cell table and is tracked with DVC
+(`dvc pull output/feature_selection/tier_01/scored_slots.rds.dvc`).
+The figures are drawn by `scripts/02_01_vis_quality_control.R`.
+@tbl-fs-qc-compare sets the authors' choices, the deposited counts,
+the examples of the vignette and this book side by side.
+
+| Item | Suppinger et al. | Deposited counts (scored cells) | Examples in the vignette | This book |
+|---|---|---|---|---|
+| Detected genes per cell | kept if > 1,800 | minimum 1,548; 65 of 20,437 cells at ≤ 1,800 | deMixSC: removed if < 200 | no new filter |
+| Mitochondrial counts | kept if < 10 % | not computable: no `mt-` gene deposited | deMixSC: removed if > 50 % | no new filter |
+| Library size | not reported | minimum 1,443; no cell below 500; 417 cells beyond 3 MAD of their type | deMixSC: removed if < 500; RNA-Sieve: 3 MAD from the type median (optional) | recorded, not applied |
+| Doublets, ambient RNA | not reported | — | — | none |
+| Mitochondrial, ribosomal, Gm genes | removed after the cell QC | no `mt-`, `Rpl` or `Rps` symbol | BayesPrism: ribosomal and mitochondrial genes removed | already absent |
+| Sex-chromosome genes | kept | present (*Xist*, *Ddx3y*, *Kdm5d*, *Uty*) | BayesPrism: removed | kept |
+| Low-detection genes | none on the raw counts (3,599 genes are zero in every cell); `SCTransform` models genes detected in ≥ 5 cells of a batch | 19,275 genes detected in ≥ 5 cells of both batches | RNA-Sieve: ≥ 20 % of the cells of one type; deMixSC: ≥ 5 % of all cells | presence gate: ≥ 5 % of the cells of every scored type, variance > 0 |
+| Variable genes | 3,000 integration features, 2,944 left in `SCT` | — | — | recorded, not a filter |
+| Multi-mapping UMIs | Salmon/Alevin 1.1.0 splits them | 12.8 % of non-zero entries fractional | — | genes > 90 % fractional dropped |
+
+: Quality control of the Suppinger reference: the authors' choices (STAR Methods, "Quality control and filtering", and the settings stored in the object), what the deposited counts show on the 20,437 scored cells of the three slots (`author_qc_audit.csv`; element `gene_rules` of `scored_slots.rds`), the examples of the [review table of 3.1](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#tbl-fs-review), and what this book applies. {#tbl-fs-qc-compare}
 
 **Cells.**
 
-- The authors' Seurat QC (`scater`, @sec-seurat) is taken as given.
-- `scripts/legacy/02_90_stats_prepare_panel.R` keeps cells with a
-  time slot in {48 h, 72 h, 96 h}, a non-missing
-  `celltypeannotation`, and a library size above zero.
-- The culture-stress labels flagged `include_in_ranking = FALSE` in
+- **The authors' thresholds stand.** They kept cells with more than
+  1,800 detected genes and less than 10 % mitochondrial counts
+  [@suppingerMultimodalCharacterizationMurine2023]. Both cut-offs are
+  stricter than the deMixSC examples (200 genes, 50 %), so no fixed
+  rule of the vignette removes a cell they kept. They were computed
+  before the mitochondrial, ribosomal and Gm genes were removed: the
+  mitochondrial fraction needs the chrM genes. That order is an
+  inference, not a statement of the paper. It explains why 65 scored
+  cells fall at or below 1,800 genes on the deposited genes, and why
+  the mitochondrial fraction cannot be recomputed:
+  `cell_mitochondrial_fraction()` returns `NA`, not 0, when no `mt-`
+  symbol is present.
+- **Library-size outliers are recorded, not removed.** 417 scored cells
+  (239 at 48 h, 69 at 72 h, 109 at 96 h) lie beyond 3 scaled MADs of
+  the log library size of their type (`cell_qc_rules()`). They pass
+  the authors' QC, which is taken as given.
+- **Slot filter.** `keep_bulk_matched_cells()` keeps cells with a time
+  slot in {48 h, 72 h, 96 h}, a non-missing `celltypeannotation` and a
+  library size above zero. The library size is the column sum of the
+  deposited counts over all 27,027 genes; it equals $10^{\texttt{log\_umi}}$
+  of the authors' `SCTransform` models, whereas the metadata column
+  `nCount_RNA` does not, and is not used.
+- **Artefacts and small types.** The culture-stress labels flagged
+  `include_in_ranking = FALSE` in
   `data/dictionaries/suppinger_celltype_crosswalk.csv` (Cd63+
-  ectoderm-like artefact, Zscan4+ artefact) are dropped before the
-  fit.
-- A type with fewer than `min_cells = 20` cells in a slot is left out
-  of the scores. Exiting naïve pluripotency at 72 h (8 cells) is the
-  only such case. In the legacy `SCTransform` fit it stays in the fit;
-  the count models of tier (ii) drop it before the fit, since it is not
-  a unit of @sec-cov-scope.
-- No library-size MAD filter and no detected-gene filter is applied.
-  That remains the gap with tier (i) of the vignette.
-- `cell_mitochondrial_fraction()` records the share of counts on
-  `mt-` symbols and does not threshold it. The Suppinger alignment
-  this follows does not fix a cutoff. The function has not been run.
+  ectoderm-like artefact, Zscan4+ artefact) are dropped. A type with
+  fewer than `min_cells = 20` cells in a slot is left out of the
+  scores; exiting naïve pluripotency at 72 h (8 cells) is the only such
+  case.
+
+![Cells kept by the authors at the three bulk-matched times, artefact labels included. (a) Detected genes against library size, both on log scales, one point per cell coloured by cell type; dashed lines mark the Suppinger cut-off (1,800 detected genes) and the deMixSC cut-offs (200 genes, 500 counts); circled cells lie beyond 3 scaled MADs of the log library size of their type. (b) Distribution of the log10 library size per type, types ranked by median, with the median (point), the ±3 MAD interval (bar) and the number of cells in the label. Source: `scored_slots.rds`, element `cell_values`; `scripts/02_01_vis_quality_control.R`.](images/feature_selection/fs_tier1_low_quality_cells.png){#fig-fs-low-quality}
+
+@fig-fs-low-quality shows the authors' cells against the cut-offs. Every
+cell sits far above the deMixSC lines. The cells below the 1,800-gene
+line are the low tail of a single library-size–gene trend, not a
+separate population, and the 3-MAD flags fall at both ends of that
+trend.
 
 **Genes.**
 
-- The panel on disk uses the authors' `SCT` allow-list: 2,944 of the
-  27,027 genes of the RNA assay. The new tier (i) code starts from the
-  RNA symbols instead, then applies the shared-gene and mitochondrial
-  filters below.
-- After the legacy per-time fit, `SCTransform` returns residuals for
-  2,892 (48 h), 2,769 (72 h) and 2,811 (96 h) genes (`model_card.csv`).
-- `shared_bulk_single_cell_genes()` intersects RNA symbols with the
-  bulk HTSeq `gene_name` column and drops a symbol whose rows carry
-  more than one Ensembl id after the version suffix is removed.
-  `drop_mitochondrial_genes()` then removes symbols matching `^mt-`,
-  either case. Ribosomal and sex-chromosome symbols stay. Neither
-  function has been run. The authors' SCT allow-list is the gene set
-  of the legacy panel only.
+- **Bulk symbols.** Every one of the 27,027 symbols appears in the bulk
+  HTSeq `gene_name` column; `shared_bulk_single_cell_genes()` drops the
+  49 whose rows carry more than one Ensembl id once the version suffix
+  is removed (element `shared` of `scored_slots.rds`). `drop_mitochondrial_genes()` is kept
+  as a guard and removes nothing here.
+- **Fractional counts.** The deposited counts are Salmon/Alevin
+  estimates. A UMI compatible with several genes is divided among them,
+  equally when no read tells them apart, so 12.8 % of the non-zero
+  entries are fractions such as 1/2, 1/3 or 1/4. The share is not tied
+  to expression level; it concentrates in multi-copy loci (the
+  protocadherin-γ cluster, processed pseudogenes, histone genes), whose
+  counts are shares of the same UMIs as their paralogues. Their
+  within-type correlations are then fixed by the split, not measured,
+  which matters for the covariances of @sec-cov-scope. The 2,178 genes
+  whose non-zero entries are more than 90 % fractional are dropped
+  (495 of them detected in at least 500 cells), the share being
+  computed on all 71,005 cells without labels
+  (`fractional_count_share()`; elements `fractional` and `dropped_fractional` of `scored_slots.rds`). The
+  counts are not rounded: rounding would turn every 0.5 into 0.
+  `glmGamPoi` accepts non-integer counts, and the negative-binomial
+  likelihood is then a quasi-likelihood.
+- **Presence gate.** After these filters 24,816 genes enter the
+  presence gate of @sec-fs-presence at each time; 8,643 (48 h), 8,636
+  (72 h) and 8,788 (96 h) pass it (element `presence` of `scored_slots.rds`).
+- **Authors' gene list.** The 2,944 genes of the `SCT` layer are the
+  CCA integration features: 3,000 anchor features, of which 56 (histone
+  genes, MHC `H2-` genes, *Nme2*, *4930537H20Rik*) are absent from the
+  layer (element `anchor_missing` of `scored_slots.rds`). They are variable
+  over all twelve time points and both batches, not a quality filter.
+  Of them, 1,622 (48 h), 1,589 (72 h) and 1,562 (96 h) also pass the
+  filters above, which pass 7,021, 7,047 and 7,226 genes outside the
+  list. The list was the gene set of the legacy panel only
+  ([legacy panel](#sec-fs-legacy)).
+
+![Gene filters at the three bulk-matched times. (a) Number of the 27,027 deposited genes failing each recorded rule; only the last two rows (fractional share, one-to-one bulk symbol) and the presence gate are applied. (b) Share of fractional non-zero entries per gene, for the genes detected in at least 50 cells; the dashed line is the 0.9 cut (count above it in the label; 2,178 genes in all). (c) Genes entering tier (ii) and in the authors' `SCT` layer (2,944 genes), in tier (ii) only, and in the `SCT` layer only. Source: `gene_filter_summary.csv` and `scored_slots.rds`; `scripts/02_01_vis_quality_control.R`.](images/feature_selection/fs_tier1_gene_filters.png){#fig-fs-gene-filters}
+
+@fig-fs-gene-filters compares the gene rules. The presence gate, which
+asks for detection in every scored type, removes about as many genes as
+the RNA-Sieve rule and more than deMixSC's, but it keeps a different
+set: most genes that enter tier (ii) are outside the authors' `SCT`
+list (panel c).
 
 | Time | Cell type | Cells | Scored |
 |---|---|---:|---|
@@ -157,7 +194,7 @@ What runs today is listed here.
 | 96 h | Ectopic pluripotency | 116 | yes |
 | 96 h | Somite differentiation front | 29 | yes |
 
-: Cells per type and time after the slot filter (`output/naive_marker_selection/tables/cell_counts.csv`). The eleven scored type × time cells are the units of @sec-cov-scope. {#tbl-fs-cell-counts}
+: Cells per type and time after the slot filter (`output/feature_selection/tier_01/cell_counts.csv` for the scored rows, `author_qc_audit.csv` for all rows). The eleven scored type × time cells are the units of @sec-cov-scope. {#tbl-fs-cell-counts}
 
 ### Knowledge-driven markers {#sec-fs-markers}
 
@@ -195,12 +232,46 @@ $$ {#eq-fs-presence}
 `presence_gate()` in `R/02_01_stats_quality_control.R` returns one row per
 gene with `min_detection`, `min_variance` and a logical `pass` that
 applies both conditions; $\delta_{\min}$ is the argument `min_frac`,
-fixed before the ranks are seen (0.05 in the calls below). The reasons
+fixed at 0.05 before the ranks are seen (the default and the value of
+every call below). The reasons
 for a gate in every type, rather than in at least one, are in
 [3.1, presence](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-presence).
 In the current outputs the gate is absent. Its absence is one cause of
 the constant-gene fallback of the covariance estimates
 (@sec-cov-scope).
+
+**Projections of the gated genes.** @fig-fs-pca-plsda projects the
+scored cells of each slot on the genes that pass the gate. They are
+descriptive, not a selection rule.
+
+- **Input.** The analytic Pearson residuals of the null model $M_0$ of
+  @eq-fs-glm (intercept and library-size offset, gene-wise
+  negative-binomial overdispersion, `pearson_residuals_m0()`), the
+  variance-stabilised scale of the tier (ii) count model, without
+  `SCTransform` and without clipping. Genes are centred, not scaled:
+  the residuals are already on a common scale, and scaling would
+  up-weight genes that carry mostly noise. PLS-DA
+  (`mixOmics::plsda()`, two components, cell type as response) uses the
+  same matrix. The shifted logarithm $\log(1+x/s_c)$, centred and
+  scaled, remains available (`input = "shifted_log"`).
+- **Small first axes.** The first two principal components explain
+  together 1.3 % (72 h) to 3.1 % (48 h) of the variance: the type
+  structure is spread over many genes.
+- **Cell line at 48 h.** The epiblast, the large type at 48 h, splits
+  into two clouds, and the panels coloured by cell line show that the
+  split is the cell line. The sign of the first principal component
+  puts 5,301 of the 5,470 B-S (batch 1) epiblast cells on one side and
+  5,081 of the 5,120 SBR (batch 2) cells on the other
+  (`projection_pc1_by_batch.csv`). Even the PLS-DA, fitted to separate
+  the types, separates the two lines on its second component. Cell
+  line is therefore the main source of variation within that type,
+  which is why the labels of tier (ii) are permuted within batch
+  (@sec-fs-omnibus).
+
+The PLS-DA components put the rare types (naïve and ectopic
+pluripotency, gut) at the ends of the axes.
+
+![PCA (left) and PLS-DA (right) of the scored cells at 48 h, 72 h and 96 h, on the genes that pass the presence gate (8,643, 8,636 and 8,788 genes). Input: Pearson residuals of $M_0$, centred, not scaled, not clipped; PLS-DA with two components and the cell type as response (`mixOmics::plsda()`). One point per cell, coloured by cell type (largest type drawn first); the PCA panel of each row shares the legend of its PLS-DA panel; the second row repeats the 48 h projections coloured by cell line (B-S, batch 1; SBR, batch 2). Both axes are scores in the same units, so the panels keep a 1:1 aspect. Axis labels give the share of variance explained. Source: `scored_slots.rds`; `scripts/02_01_vis_quality_control.R`.](images/feature_selection/fs_tier1_pca_plsda.png){#fig-fs-pca-plsda}
 
 {{< pagebreak >}}
 
@@ -227,8 +298,8 @@ x_{gc}\sim\mathrm{NB}(m_{gc},\psi_{g}),\quad
 \operatorname{Var}x_{gc}=m_{gc}+m_{gc}^{2}/\psi_{g},
 $$ {#eq-fs-glm}
 
-with $s_c$ the size factor of cell $c$ (full RNA library size
-$10^{\texttt{log\_umi}}$ divided by its median), passed as
+with $s_c$ the size factor of cell $c$ (full RNA library size, the
+column sum of the deposited counts, divided by its median), passed as
 `offset = log(s_c)` with `size_factors = 1` so that it is not applied
 twice. `glmGamPoi` reports the overdispersion $1/\psi_g$. For the
 likelihood-ratio statistic $\psi_g$ is the gene-wise maximum-likelihood
@@ -276,7 +347,7 @@ scale (1 for the NB likelihood) and $h_{gc}$ the leverage of cell $c$
 
 ### Four tests of the type effect {#sec-fs-omnibus}
 
-`compare_type_effect_tests()` (`R/02_02_cross_cell.R`) computes four
+`compare_type_effect_tests()` (`R/02_02_stats_cross_cell.R`) computes four
 tests of the joint type effect ($J-1$ degrees of freedom) per gene, on
 the fits of @eq-fs-glm. They answer one question with different
 reference laws; the vignette compares their assumptions
@@ -308,22 +379,69 @@ limits both the resolution of a gate on this test and Kendall's $\tau$,
 since genes at the floor are tied
 ([3.1, calibration](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-calibration)).
 
+**Permutations within batch.** At 48 h the slot pools the two cell
+lines, which are the two batches of the object (B-S in batch 1, SBR in
+batch 2), and the type mix differs between them. An unrestricted
+permutation would then read a cell-line shift as a type effect.
+Labels are therefore permuted within batch (`strata = batch`), which
+keeps the type counts of each batch; at 72 h and 96 h each slot holds
+one batch, so the restriction changes nothing there. Cell line is
+still not a covariate of $M_0$ or $M_1$.
+
 **Gate and rank.** One test is chosen before the ranks are seen and
 used as a Benjamini–Hochberg gate over the genes that pass the presence
-gate; `rank_genes_omnibus()` uses `gate_test = "ql_f"` by default. The
-genes that pass are ranked by $R^{2}_{D,g}$ (@eq-fs-deviance-r2), ties
-broken by $\Lambda_g$. Why a gate followed by an effect size, rather
-than a rank by $p$-value, is in the vignette (link above).
+gate. The gate is the permuted Welch $G$ (`gate_test = "welch_perm"`,
+the default of `rank_genes_omnibus()`): in the simulation of the
+vignette it is the only test that keeps the false discovery rate at
+its nominal level when the within-type variances differ (0.05, against
+0.16 to 0.21 for the other tests compared there), at the cost of power
+(0.41, against
+0.76 to 0.85)
+([3.1, four tests](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-omnibus)).
+Every gene that passes the gate enters the panel; no cap is imposed
+(`n_select = Inf`). The cap of 500 genes per time was inherited from the
+legacy panel and had no data-driven justification. The genes that pass
+are still ranked by $R^{2}_{D,g}$ (@eq-fs-deviance-r2), ties broken by
+$\Lambda_g$, to order and report them. Why a gate followed by an effect
+size, rather than a rank by $p$-value, is in the vignette (link above).
+
+The gate controls false discoveries, not relevance. With thousands of
+cells, a type effect of any size passes Benjamini–Hochberg, so the panel
+contains genes whose effect is real but small. No effect-size floor is
+added: their weight is left to the model, through the covariances that
+DeCovarT estimates and inverts (tier (iv), @sec-fs-weighting-pointer).
+
+**Multiplicity.** A permutation $p$-value is marginal: one per gene.
+The gate is applied to every gene that passes the presence gate, so a
+correction across genes is still needed, and Benjamini–Hochberg at
+0.05 is applied to the permutation $p$-values of each slot. A false
+discovery rate suits a screen whose output is then ranked by an effect
+size; a family-wise rate (for example a max-$T$ adjustment from the
+same permutations) would discard genes that the rank needs. Three
+consequences of the permutation scale are reported with the outputs
+(`permutation_floor.csv`):
+
+- with $m$ genes tested, all the genes at the floor $1/(B+1)$ pass
+  only when there are at least $m/\{0.05\,(B+1)\}$ of them, about
+  $m/100$ for $B=2{,}000$;
+- near the Benjamini–Hochberg cut, the Monte Carlo standard error of a
+  $p$-value is $\sqrt{p(1-p)/B}$, so a gene close to the cut can move
+  across it with another seed;
+- each slot is gated at 0.05 on its own. The union over the three
+  slots, which feeds tier (iii), has no single false discovery rate;
+  a Benjamini–Hochberg over the pooled (gene, slot) $p$-values would
+  give one.
 
 ```{r}
 #| label: fs-omnibus-call
 #| eval: false
 # Not run. sc[[tm]]: raw counts (genes x cells) of the scored cells of
-# slot tm; cell_type[[tm]]: their labels; lib[[tm]]: full library sizes
-# (10^log_umi). B, the seeds and the thresholds are fixed before the run.
+# slot tm; cell_type[[tm]]: their labels; batch[[tm]]: their batch;
+# lib[[tm]]: full library sizes (column sums of the deposited counts).
+# B, the seeds and the thresholds are fixed before the run.
 source("R/02_00_utils.R")
 source("R/02_01_stats_quality_control.R")
-source("R/02_02_cross_cell.R")
+source("R/02_02_stats_cross_cell.R")
 times <- c("48h", "72h", "96h")
 sf <- lapply(lib, function(l) l / stats::median(l))
 
@@ -334,40 +452,48 @@ tests <- lapply(times, function(tm) {
     size_factors = sf[[tm]],
     n_perm = 2000L,
     seed = 20261101L,
+    strata = batch[[tm]],
     fdr = 0.05,
     min_frac = 0.05
   )
 })
 names(tests) <- times
 
-# Agreement of the gene orders: all gated genes, then those passing QL F.
+# Agreement of the gene orders: all tested genes, then those passing
+# the gate (permuted Welch G).
 tau_all <- lapply(tests, type_test_kendall)
-tau_gated <- lapply(tests, function(r) type_test_kendall(r, genes = r$ql_f_pass))
+tau_gated <- lapply(tests, function(r) type_test_kendall(r, genes = r$welch_perm_pass))
 
-# Conservativeness: rerun on one permutation of the labels (null by
-# construction) and compare the share of p-values below 0.01 and 0.05.
+# Conservativeness: rerun on one within-batch permutation of the labels
+# (null by construction) and compare the share of p-values below 0.01
+# and 0.05.
 calibration <- lapply(times, function(tm) {
-  null_labels <- withr::with_seed(20261102L, sample(cell_type[[tm]]))
+  null_labels <- withr::with_seed(20261102L, {
+    lab <- cell_type[[tm]]
+    for (idx in split(seq_along(lab), batch[[tm]])) {
+      lab[idx] <- lab[idx][sample.int(length(idx))]
+    }
+    lab
+  })
   res_null <- compare_type_effect_tests(
     sc[[tm]],
     null_labels,
     size_factors = sf[[tm]],
     n_perm = 2000L,
-    seed = 20261103L
+    seed = 20261103L,
+    strata = batch[[tm]]
   )
   type_test_calibration(res_null)
 })
 
-# Gate on the chosen test, rank by the deviance R^2.
+# Gate on the permuted Welch G, rank by the deviance R^2; the fits and
+# permutations of `tests` are reused, not redrawn.
 ranked <- lapply(times, function(tm) {
   rank_genes_omnibus(
-    sc[[tm]],
-    cell_type[[tm]],
-    size_factors = sf[[tm]],
     fdr = 0.05,
-    min_frac = 0.05,
-    n_select = 500L,
-    gate_test = "ql_f"
+    n_select = Inf,
+    gate_test = "welch_perm",
+    results = tests[[tm]]
   )
 })
 names(ranked) <- times
@@ -376,17 +502,56 @@ names(ranked) <- times
 panel <- unique(unlist(lapply(ranked, function(r) r$gene[r$selected])))
 ```
 
-**Expected outputs (not produced yet).** For each time slot, the
-Kendall $\tau$ matrix between the gene orders of the four tests, over
-all gated genes and over the genes that pass the gate; for each test,
-the share of $p$-values below 0.01 and 0.05 under permuted labels,
-which orders the tests from the most to the least conservative; and
-the number of genes passing BH 0.05 under each test. Gene orders are
-expected to agree; these outputs measure how far they do.
+**Results.** `scripts/02_02_stats_cross_cell_consistency.R` has been
+run (21 min, 23 GB peak memory). Its outputs in
+`output/feature_selection/tier_02/` are `calibration.csv`,
+`permutation_floor.csv`, `kendall_<time>.csv`, `selected_<time>.csv`
+and `cross_cell.rds` (every test table, tracked with DVC); the figures
+are drawn by `scripts/02_02_vis_cross_cell.R`.
+
+- **Calibration.** Under one within-batch permutation of the labels
+  (@fig-fs-null-calibration), the analytic tests are anti-conservative
+  at 48 h: at the 0.01 level the likelihood ratio rejects 2.9 times the
+  nominal rate, the quasi-likelihood $F$ 2.8 times and the
+  shifted-log ANOVA 3.4 times. A within-batch permutation keeps the
+  association between type and cell line, and these tests do not
+  model the cell line, so its effect reads as a type effect. The
+  permuted Welch $G$ rejects 0.63 times the nominal rate there. At
+  72 h and 96 h, one batch each, every test is at or below its
+  nominal rate except the ANOVA (1.2 to 1.4 times at 0.01).
+- **Gate.** The permuted Welch $G$ passes 1,417 (48 h), 3,420 (72 h)
+  and 5,821 (96 h) of the 8,643, 8,636 and 8,788 tested genes at BH
+  0.05. The genes at the floor $1/(B+1)$ (635, 1,686 and 2,869) far
+  exceed the about 87 needed for all of them to pass
+  (`permutation_floor.csv`), so the floor does not limit the gate.
+- **Agreement.** Kendall's $\tau$ between the likelihood ratio and the
+  quasi-likelihood $F$ is 0.98 at every time; between the permuted
+  Welch $G$ and the other three it is 0.68 to 0.80
+  (@fig-fs-test-agreement).
+- **Panel.** Every gated gene enters the panel (@fig-fs-gate-rank):
+  1,417, 3,420 and 5,821 genes at 48, 72 and 96 h, 6,604 across the
+  three times (`selected_<time>.csv`, ordered by $R^{2}_{D}$). The
+  largest $R^{2}_{D}$ is 0.60 (*Slc2a3* at 96 h), but 99 % (48 h),
+  96 % (72 h) and 89 % (96 h) of the gated genes explain less than 5 %
+  of the deviance (median $R^{2}_{D}$ 0.003, 0.005 and 0.010): real but
+  small effects, whose weight is the relevance question left to the
+  model (tier (iv)).
+- **Overdispersion.** The gene-wise $1/\psi_g$ decreases with the mean
+  (@fig-fs-overdispersion); a group of genes sits near zero, the
+  Poisson limit of the fit.
+
+![Null calibration of the four tests. Observed against expected $-\log_{10}p$ on the genes of each slot after one within-batch permutation of the labels, one panel per test, one line per time (labelled at its end); the grey band is the pointwise 95 % interval of uniform order statistics (48 h genes); square panels, common range. Source: `cross_cell.rds`, element `null_tests`; `scripts/02_02_vis_cross_cell.R`.](images/feature_selection/fs_tier2_null_calibration.png){#fig-fs-null-calibration}
+
+![Kendall's $\tau_b$ between the $p$-value rankings of the four tests over all tested genes, per time; lower triangle only (the matrix is symmetric). LR: likelihood ratio; ANOVA: on the shifted log; QL F: quasi-likelihood $F$; Welch G: permuted Welch $G$. Source: `kendall_<time>.csv`.](images/feature_selection/fs_tier2_test_agreement.png){#fig-fs-test-agreement}
+
+![Gate and rank per time. Deviance explained $R^{2}_{D}$ (square-root scale) against $-\log_{10}p$ of the permuted Welch $G$ (jittered, since $p$ takes discrete values), one point per tested gene; grey: fails BH 0.05; orange: passes and enters the panel (no cap). Dashed line: largest $p$ that passes BH; dotted line: permutation floor $1/(B+1)$. Source: `cross_cell.rds`, element `ranked`.](images/feature_selection/fs_tier2_gate_rank.png){#fig-fs-gate-rank}
+
+![Gene-wise overdispersion $1/\psi_g$ of $M_1$ (maximum likelihood) against the mean size-normalised count, both on log scales, with a loess trend (orange); dotted line at $10^{-4}$, below which a gene is counted at the Poisson limit of the fit. Source: `cross_cell.rds`, element `tests`, and `scored_slots.rds`.](images/feature_selection/fs_tier2_overdispersion.png){#fig-fs-overdispersion}
 
 | Question | Resampling | Unit |
 |---|---|---|
-| Is the nominal tail of each test accurate? | label permutation, one permutation applied to all genes | labels within the slot |
+| Is the nominal tail of each test accurate? | label permutation, one permutation applied to all genes | labels within batch, within the slot |
+| Which genes pass the gate? | $B$ shared label permutations (Freedman–Lane, Welch's $G$) | labels within batch, within the slot |
 
 : Resampling plan of tier (ii). $B$ is fixed before the run; bootstrap rows of the earlier plan are dropped. {#tbl-fs-boot-perm}
 
@@ -394,6 +559,21 @@ Cell types are the authors' annotations, fixed before any statistic is
 computed here. Labels refined on the same counts would make every
 permutation $p$-value anti-conservative
 [@gonzalezDelgadoPostclusteringInference2025].
+
+**Conclusion of tier (ii).** [Decision: the panel has no cap and no
+effect-size floor. The earlier rule kept the 500 genes with the largest
+$R^{2}_{D}$ per time; it came from the legacy panel and had no
+data-driven basis, so it is removed, and no threshold on $R^{2}_{D}$
+replaces it. The panel is every gene that passes the calibrated gate
+(permuted Welch $G$, BH at 0.05): 1,417, 3,420 and 5,821 genes at 48,
+72 and 96 h, 6,604 across the three times. The gate controls false
+discoveries, not relevance: with thousands of cells per slot, 99 %
+(48 h), 96 % (72 h) and 89 % (96 h) of the gated genes explain less
+than 5 % of the deviance. Weighting these small effects is left to the
+model (tier (iv), @sec-fs-weighting-pointer). Open question: if the
+fit of tier (iv) cannot absorb them, an effect-size floor chosen from
+the data (for example from the null distribution of $R^{2}_{D}$ under
+within-batch permutations) is the next step.]{.highlight}
 
 {{< pagebreak >}}
 
@@ -440,7 +620,7 @@ whether to drop one is decided by reading that list.
 #| eval: false
 # Not run. After fs-omnibus-call and fs-bulk-consistency-call: panel
 # genes, reference counts, labels, size factors and the tier (iii) plug-in.
-source("R/02_03_influence.R")
+source("R/02_03_stats_influence.R")
 outlier_cells <- lapply(times, function(tm) {
   cook_cells(sc[[tm]][panel, ], cell_type[[tm]], size_factors = sf[[tm]])
 })
@@ -474,31 +654,62 @@ condition.
   [@erdmann-phamLikelihoodbasedDeconvolutionBulk2021]
   (`bulk_consistency_filter()`, a heuristic). Second, the tail
   statements below, on a statistic that uses a plug-in composition.
-- **Apply.** A gene flagged at any of the three matched times is
-  removed from the panel at every time, including the early-Wnt arm,
-  where no matched pair exists.
-- **Assumption, now testable.** With three matched times the flags can
-  be compared across 48 h, 72 h and 96 h: a gene flagged consistently
-  supports treating the platform effect as a property of the gene, a
-  gene flagged only at one time does not. This comparison has not yet
-  been run.
-- **Status.** `scripts/02_01_stats_quality_control.R` reads the HTSeq
-  table for the symbol intersection, and
-  `scripts/02_03_cross_platform_consistency.R` reads it for the
-  filter. Neither script has been run.
+- **Apply (planned, not applied).** The rule was to remove a gene
+  flagged at any of the three matched times from the panel at every
+  time, including the early-Wnt arm. The run below shows that the
+  model-based statements flag 93 to 95 % of the panel under A3, and
+  still 70 to 72 % after a cross-fitted gene-wise platform ratio, so
+  the rule is not applied (see **Results**).
+- **Drift across times.** With three matched times the flags can be
+  compared across 48 h, 72 h and 96 h. `platform_drift_summary()`
+  classifies each gene by the times at which it is flagged (T4 by
+  default) and by the sign of its standardised discrepancy
+  $D_{gi}/\operatorname{sd}D_{gi}$: flagged at several times with one
+  sign supports treating the platform effect as a property of the
+  gene; flagged at one time only does not.
+- **Code.** Tier (iii) has two files: `R/02_03_stats_influence.R` (Cook's
+  distance for cells and genes, @sec-fs-outliers) and
+  `R/02_03_stats_tail_bounds.R` (range check, plug-in, tail statements,
+  quantile band, drift, transcript length and the gene-wise platform
+  ratio). `scripts/02_03_stats_cross_platform_consistency.R` runs both.
+  It has been run; its outputs in `output/feature_selection/tier_03/`
+  are `tail_order_<time>.csv` (A3), `platform_drift.csv` (flagged genes
+  only), `platform_log_ratio.csv`, `platform_length.csv`,
+  `platform_ratio.csv` (cross-fitted $\log_2\hat b_g$ and its standard
+  error, per held-out time and method), `a3_shift_summary.csv` (one row
+  per time and variant), `settings.csv` and `cross_platform.rds` (every
+  table, tracked with DVC). The figures are
+  drawn by `scripts/02_03_vis_cross_platform.R`.
 
-**Plug-in composition.** For each bulk replicate $i$,
-`plugin_composition_demixsc()` fits the bulk counts $y_{gi}$ on the
-per-cell type means of the reference by iterated weighted non-negative
-least squares, in the style of deMixSC: weights
-$1/(\hat y_{gi}^{2}+(y_{gi}-\hat y_{gi})^{2}+c)$ with $c=2$. deMixSC
-also calibrates a gene set G2 on a same-aliquot benchmark; none exists
-for Suppinger, so G2 is empty. $a_i$ is the sum of the NNLS
-coefficients and $\hat p_{ji}$ the coefficients divided by $a_i$; the
-extra overdispersion between platforms is fixed at 1. MuSiC
+**Plug-in composition: deMixSC, not plain NNLS.** For each bulk
+replicate $i$, `plugin_composition_demixsc()` fits the bulk counts
+$y_{gi}$ on the per-cell type means of the reference by iterated
+weighted non-negative least squares, as deMixSC does: weights
+$1/(\hat y_{gi}^{2}+(y_{gi}-\hat y_{gi})^{2}+c)$ with $c=2$. Plain NNLS
+is not used as a plug-in, for two reasons.
+
+- **Weights of the model.** Under DeCovarT the variance of a bulk count
+  is gene-specific and depends on $\boldsymbol{p}$ and on the type
+  means. Unweighted NNLS gives every gene the same weight, so the most
+  expressed genes decide $\hat{\boldsymbol{p}}$. The deMixSC weights
+  are inverse-variance weights that follow the current fit: the
+  diagonal, plug-in counterpart of the generalised least squares that
+  DeCovarT solves (@sec-deconv-models). Of the two, it is the closer
+  to the final model.
+- **Robustness to the genes under test.** The residual term
+  $(y_{gi}-\hat y_{gi})^{2}$ down-weights the genes that the bulk
+  expresses far from the reference, which are the genes this filter
+  must find, so that they do not bias $\hat{\boldsymbol{p}}$ and, in
+  turn, their own statistic.
+
+Non-negative least squares remains only the solver of each reweighting
+step (`nnls::nnls()`, the Lawson–Hanson algorithm). deMixSC also
+calibrates a gene set G2 on a same-aliquot benchmark; none exists for
+Suppinger, so G2 is empty. $a_i$ is the sum of the coefficients and
+$\hat p_{ji}$ the coefficients divided by $a_i$; the extra
+overdispersion between platforms is fixed at 1. MuSiC
 [@wangBulkTissueCell2019] is not used, because its weights need at
-least two donors. `nnls` is not in `renv.lock`, so the Lawson–Hanson
-algorithm is written inline. Why this plug-in, and what it costs, is in
+least two donors. What the plug-in costs is in
 [3.1, plug-in](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-plugin).
 
 [TODO-cite: deMixSC (Eq. 4, PDF p. 12), iterated W-NNLS weights]{.highlight}
@@ -536,7 +747,7 @@ the Chernoff statements.
 | T5, NB Chernoff after a proper colouring | `nb_dep` | no | yes | finite-sample bound |
 | Quantile band, `quantreg::rq()` at $\tau=0.01, 0.99$ | — | yes | no | model-free reference |
 
-: Tail statements of the bulk filter as implemented in `R/02_03_tail_bounds.R`. `tail_threshold()` dispatches one function per statement. {#tbl-fs-tail-statements}
+: Tail statements of the bulk filter as implemented in `R/02_03_stats_tail_bounds.R`. `tail_threshold()` dispatches one function per statement. {#tbl-fs-tail-statements}
 
 [TODO-cite: Janson (2004), Large deviations for sums of partly dependent random variables]{.highlight}
 [TODO-cite: Chen & Shao (2004), Normal approximation under local dependence]{.highlight}
@@ -571,16 +782,181 @@ the Chernoff statements.
 - **Multiplicity, two counts.** The level 0.01 per tail is per gene.
   In the vignette, that level flags about 60 consistent genes out of
   about 3,000: that count is the vignette's one comparison. Here, the
-  planned Suppinger panel is about 500 genes times three replicates,
-  which would flag about ten genes per tail and statement. The filter
-  has not been run, so a flag would be a candidate for removal, not a
-  proven platform artefact.
+  Suppinger panel is 6,615 genes times three replicates, which would
+  give about 200 (gene, replicate) flags per tail and statement if the
+  model held. The run flags about 6,200 genes (below).
 
-**Planned outputs.** At each time: the genes and modules flagged by
+**Results.** The panel is the 6,604 genes that pass the tier (ii)
+gate at any time, united with the mapped markers: 6,616 genes, of which
+6,615 are in each slot. All three variants below run on that panel.
+
+- **What the tail statements assume.** Every statement T1 to T5 tests
+  $D_{gi}$ against its spread under assumption A3: each gene has the
+  same mean count per cell in the bulk as in the reference, so the bulk
+  differs from $a_i\sum_j\hat p_{ji}\hat{\tilde\mu}_{gj}$ only by the
+  negative-binomial sampling of $a_i$ cells. With $a_i\approx1{,}200$
+  to $1{,}900$ cells that sampling averages out, so
+  $\operatorname{sd}D_{gi}$ is small, and a gene is flagged when $D_{gi}$
+  is more than about 2.3 of these standard deviations from 0 (T1; the
+  Chernoff statements are somewhat wider).
+- **What the data show under A3.** The median $|D_{gi}|/\operatorname{sd}D_{gi}$
+  is 17 at every time: the discrepancies are about 17 times larger, and
+  their variance about 300 times larger, than A3 allows; 91 to 92 % of
+  the (gene, replicate) values lie beyond $\pm2.33$, where 2 % are
+  expected (@fig-fs-a3-shift). T4, the most conservative per gene,
+  flags 6,147 (48 h), 6,220 (72 h) and 6,274 (96 h) of the 6,615 genes
+  (`a3_shift_summary.csv`, @fig-fs-tail-flags). These flags measure the
+  failure of A3, not a defect of individual genes.
+- **The discrepancy is a gene-wise ratio.** For each gene and time,
+  the mean over replicates of $\log_2\{(y_{gi}/a_i)/\sum_j\hat
+  p_{ji}\hat{\tilde\mu}_{gj}\}$ (`platform_log_ratio()`) has an
+  interquartile range of 2.0 to 2.2 across genes: half the genes are
+  more than 2-fold away from the reference (`platform_log_ratio.csv`).
+  The same genes are off in the same direction at every time: the
+  Spearman correlation of the ratios is 0.97 (48 h–72 h), 0.95
+  (72 h–96 h) and 0.94 (48 h–96 h) (@fig-fs-drift). 5,890 genes are
+  flagged by T4 at two or three times with one sign; the 466 flagged
+  with a sign change and the 226 flagged at one time only sit near a
+  ratio of 0, where a small difference flips the sign or the flag.
+- **The ratio follows transcript length.** The bulk is a full-length
+  library and the reference a 3′ UMI library (protocols below), so a
+  gene's bulk reads grow with its transcript length and its reference
+  counts do not. The prediction is a slope of 1 of the log2 ratio on
+  log2 length. The median-regression slope is 1.06 (48 h, 95 %
+  gene-bootstrap interval 1.02 to 1.10), 1.18 (72 h, 1.13 to 1.22) and
+  1.06 (96 h, 1.01 to 1.10); Spearman's correlation is 0.55 to 0.59, and
+  a loess on length explains 31 to 34 % of the variance of the ratio
+  (`platform_length.csv`, @fig-fs-length). Length is a large part of
+  the platform effect, but two thirds of the gene-to-gene variation
+  remain. The bootstrap treats genes as independent, so the intervals
+  are too narrow if genes are correlated.
+- **Dividing by a cross-fitted ratio.** With the free gene-wise ratio
+  (estimated on the two other times), the interquartile range of the
+  residual log2 ratio falls from 2.0–2.2 to 0.38–0.42, the share of
+  genes more than 2-fold off from 51–54 % to 2–4 %, and the range rule
+  flags 79, 309 and 82 genes instead of 3,179, 3,802 and 2,859
+  (@fig-fs-bulk-fit, @fig-fs-tail-flags). The ratio learnt at 72 and
+  96 h (primitive streak, mesoderm) transfers to the epiblast bulk at
+  48 h, and conversely, so for most genes the effect belongs to the
+  gene, not to a type. The length-only ratio removes less: residual
+  interquartile range 1.5 to 1.6, range flags 2,007 to 2,940.
+- **A residual remains.** With the gene-wise ratio the median
+  $|z|$ is 2.0 to 2.2, and 44 to 48 % of the values lie beyond $\pm2.33$
+  instead of 2 %; T4 still flags 4,628, 4,751 and 4,722 genes
+  (@fig-fs-a3-shift). The residual log ratio (interquartile range about
+  0.4 in log2 units, a 30 % spread) is far larger than both the
+  negative-binomial sampling of the bulk and the uncertainty of the
+  ratio itself (median standard error of $\log_2\hat b_g$ 0.06 to 0.07,
+  `platform_ratio.csv`). Three sources are possible, none tested here:
+  a ratio that depends on the type as well as the gene, which is not
+  identified without paired measurements; biological differences
+  between the gastruloids profiled in bulk and in single cell, which
+  are different specimens; and errors of the plug-in composition. Our
+  reading is that the tail statements need an extra between-platform
+  overdispersion, fixed at 1 (none) here, before their flags can single
+  out genes.
+- **Two side effects.** The MAD rules flag more genes with the ratio
+  (587 to 720 against 299 to 463), because one of their summaries is a
+  bulk-to-reference ratio. The model-free quantile band flags 191 to
+  203 genes with the ratio and 154 to 161 under A3, 2.3 to 3.1 % of the
+  panel, near the 2 % it is fitted for.
+  The residual log ratios are negatively correlated between times
+  (Spearman −0.25 to −0.45): this is built in by cross-fitting, since
+  each time's ratio is the average of the two others, and is not a
+  drift.
+- **Plug-in composition.** Under A3, epiblast takes all of the 48 h
+  bulk and the primitive streak all of the 72 h bulk (shares of at least
+  0.999), the types that dominate the reference (97 % and 93 % of the
+  scored cells); at 96 h pre-somitic mesoderm takes 0.73 and caudal
+  mesoderm 0.26. With the gene-wise ratio, the 48 h bulk becomes 0.91
+  epiblast and 0.08 exiting naïve pluripotency, 72 h is unchanged
+  (0.99 primitive streak), and the 96 h composition inverts: caudal
+  mesoderm 0.72, pre-somitic mesoderm 0.25 (@fig-fs-plugin). The ratio
+  used at 96 h was learnt at 48 and 72 h, where neither mesoderm type
+  exists, so the genes that separate the two types carry ratios
+  estimated from other cell states. No ground truth exists for these
+  bulk samples: the inversion shows that the plug-in composition is not
+  robust to the platform model, not which composition is right.
+- **Cook's distance.** No gene is flagged in the weighted bulk fit at
+  any time. This is a property of the deMixSC weights, not a finding:
+  with $w_g=1/(\hat y_g^{2}+e_g^{2}+c)$, $\sqrt{w_g}\,|e_g|<1$, so the
+  standardised residual is bounded (it stays within $\pm1.7$) and never
+  reaches 3. Among cells, 21,686 to 27,679 (gene, cell) pairs are
+  flagged per time, all in the small types, where a cell's leverage can
+  exceed $3J/C$ (@fig-fs-cook).
+
+**Gene-wise platform ratio: method.** The two libraries differ by
+design. The bulk (GSE229386) is an Illumina Stranded mRNA Ligation
+library of poly(A) RNA, aligned with STAR and counted with HTSeq on
+GENCODE vM24 (mm10); the reference (GSE229513) is 10x Genomics Single
+Cell 3′ v3, quantified with Salmon/Alevin on GENCODE M24 (GRCm38) (GEO
+series records). Full-length single-cell protocols show the length bias
+of bulk RNA-seq and UMI protocols do not
+[TODO-cite: Phipson, Zappia & Oshlack 2017, Gene length and detection bias in single cell RNA sequencing protocols, F1000Research 6:595, doi:10.12688/f1000research.11290.1]{.highlight};
+the bulk side is the transcript-length bias of RNA-seq counts
+[TODO-cite: Oshlack & Wakefield 2009, Transcript length bias in RNA-seq data confounds systems biology, Biology Direct 4:14, doi:10.1186/1745-6150-4-14]{.highlight}.
+The model, its identifiability conditions and the tail statements with
+a plug-in ratio are in
+[3.1, plug-in platform ratio](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-platform-ratio).
+As applied here:
+
+- **Length.** `gene_transcript_length()` averages the exonic length of
+  the UCSC knownGene transcripts of each gene
+  (`TxDb.Mmusculus.UCSC.mm10.knownGene` 3.10.0,
+  `GenomicFeatures::transcriptLengths()`), matched by Ensembl id through
+  `org.Mm.eg.db`, then by symbol: 6,564 genes by Ensembl id, 24 by
+  symbol, 28 without a length. That annotation is based on GENCODE
+  VM23, one release before the authors' vM24. Adapted from
+  `annotate_genes_local()` of GastroDeconv2FateMap, which uses the
+  genomic span instead (introns included).
+- **Three variants, no filtering.** (i) A3, no ratio. (ii) A ratio from
+  length: a robust loess of the per-gene median log ratio on log2
+  length. (iii) A free gene-wise ratio: the deMixSC plug-in on
+  $y_{gi}/\hat b_g$ alternates with $\log\hat b_g=$ median over the
+  pooled replicates of the log ratio, until the largest change is below
+  $10^{-3}$ (18 to 21 rounds; `estimate_platform_ratio()`). In (ii) and
+  (iii) $\operatorname{median}_g\log\hat b_g=0$, since $a_i$ absorbs a
+  common factor.
+- **Cross-fitting.** The ratio used at one time is estimated on the six
+  replicates of the two other times (`cross_fit_platform_ratio()`), so
+  it cannot absorb the residual it is meant to test, and its transfer
+  across compositions is what is tested.
+- **Statistic.** `bulk_tail_filter(platform_ratio, platform_var)`
+  divides the bulk by $\hat b_g$ before the plug-in fit, and adds the
+  delta-method term $(\sum_j\hat p_{ji}\hat{\tilde\mu}_{gj})^{2}\operatorname{Var}\log\hat b_g$
+  to the variance of $D_{gi}$ in $z$ and in T1; T1-log, T3, T4 and the
+  module statements treat $\hat b_g$ as known. The RNA-Sieve range and
+  MAD rules need no composition and run on $y_{gi}/\hat b_g$ as well.
+
+What this changes: no gene is removed at this tier. A cross-fitted
+gene-wise ratio removes most of the platform shift, so it belongs in
+the model of tier (iv) rather than in a filter; the tail statements
+become usable as a filter only once a between-platform overdispersion
+is added for what the ratio leaves.
+
+![Platform ratio against transcript length. Per time, the log2 ratio of bulk per cell to the fitted reference under A3, one value per panel gene (mean over three replicates), against the log2 mean transcript length (exonic, UCSC knownGene mm10, averaged over isoforms), as 2D bins with counts on a log scale. Orange: median regression; dashed: line of slope 1 through the medians, the prediction for a full-length bulk against 3′ UMI counts. The label gives the slope with its gene-bootstrap 95 % interval (1,000 resamples), Spearman's correlation and the share of variance explained by a loess. Source: `cross_platform.rds`, elements `log_ratio`, `lengths` and `length_test`; `scripts/02_03_vis_cross_platform.R`.](images/feature_selection/fs_tier3_length.png){#fig-fs-length}
+
+![Distribution of the standardised discrepancy $z=D/\operatorname{sd}D$ over panel genes and the three replicates, per time, under three models: A3 (grey), a cross-fitted ratio from transcript length (blue) and a cross-fitted gene-wise ratio (orange), with N(0, 1) draws (dark) as the law of $z$ when the model holds. Signed $\log_{10}(1+|z|)$ axis; grey band: $|z|\le2.33$, the T1 threshold at 0.01 per tail. The label gives the share of values beyond the band. Source: `cross_platform.rds`, element `variants`.](images/feature_selection/fs_tier3_a3_shift.png){#fig-fs-a3-shift}
+
+![Observed bulk per cell $y/(a\hat b)$ against the fitted $\sum_j\hat p_j\hat\mu_{gj}$, both as $\log_{10}(1+x)$, under A3 ($\hat b=1$, top row) and with the cross-fitted gene-wise ratio (bottom row); 2D bins over genes and the three replicates, counts on a log scale; dashed line: identity. The label gives the median absolute $\log_{10}$ ratio. Source: `cross_platform.rds`, element `variants`.](images/feature_selection/fs_tier3_bulk_fit.png){#fig-fs-bulk-fit}
+
+![Genes flagged in at least one replicate by each statement, per time, under the three models: tail statements T1, T1-log, T3 and T4 of @tbl-fs-tail-statements, the quantile band and the two RNA-Sieve rules; statements ranked by their count under A3. Source: `cross_platform.rds`, element `variants`; `a3_shift_summary.csv`.](images/feature_selection/fs_tier3_tail_flags.png){#fig-fs-tail-flags}
+
+![Gene-wise bulk-to-reference ratio under A3, one matched time against another: mean over the three replicates of $\log_2\{(y/a)/\sum_j\hat p_j\hat\mu_{gj}\}$ (pseudo-count 0.01 per cell), one point per panel gene; orange: genes flagged by T4 at two or three times with one sign; grey: other genes. Dashed line: identity; under A3 the points would gather at (0, 0). Panel titles give the Spearman correlation. Source: `cross_platform.rds`, elements `log_ratio` and `drift`.](images/feature_selection/fs_tier3_drift.png){#fig-fs-drift}
+
+![Plug-in composition $\hat p$ of each standard-Wnt bulk replicate (deMixSC weights, $c=2$), per time, under A3 (grey) and with the cross-fitted gene-wise ratio (orange), one point per replicate; types ranked by mean share. Source: `cross_platform.rds`, element `variants`.](images/feature_selection/fs_tier3_plugin_composition.png){#fig-fs-plugin}
+
+![Cook diagnostics. (a) Leverage (log scale) against standardised residual of each panel gene in the weighted bulk-on-reference fit under A3, three replicates per time; dashed lines at $\pm3$; no gene is flagged. (b) (Gene, cell) pairs flagged in the $M_1$ fits (leverage above three times its mean and $|r|>3$) per cell of each type and time, types ranked; labels give the number of pairs, axis labels the number of cells. Source: `cross_platform.rds`, elements `outlier_genes` and `outlier_cells`.](images/feature_selection/fs_tier3_cook.png){#fig-fs-cook}
+
+**Outputs.** At each time: the genes and modules flagged by
 each statement; their overlap (pairwise Jaccard indices and an
 UpSet-style table of membership patterns, `tail_flag_overlap()`); and
 the order of the statements from the most to the least conservative,
 read from the number of flags and the median thresholds, not assumed.
+Across times: the drift class of each gene (`platform_drift.csv`), and
+the settings of the run, including the smallest within-type correlation
+for an edge of the dependency graph (`min_abs_cor = 0.1`,
+`settings.csv`).
 
 ```{r}
 #| label: fs-bulk-consistency-call
@@ -592,9 +968,7 @@ read from the number of flags and the median thresholds, not assumed.
 # selected by tier (ii) and the markers of tier (i).
 source("R/02_00_utils.R")
 source("R/02_01_stats_quality_control.R")
-source("R/02_03_bulk_consistency.R")
-source("R/02_03_plugin_composition.R")
-source("R/02_03_tail_bounds.R")
+source("R/02_03_stats_tail_bounds.R")
 
 # Step 1: p-free range check (RNA-Sieve range bound and MAD rule).
 range_flags <- lapply(times, function(tm) {
@@ -631,24 +1005,56 @@ tail_res <- lapply(times, function(tm) {
     level = 0.01,
     c_reg = 2,
     max_degree = 10L,
-    mean_degree = 3
+    mean_degree = 3,
+    min_abs_cor = 0.1
   )
 })
 names(tail_res) <- times
 overlap <- lapply(tail_res, function(r) tail_flag_overlap(r$gene, band = r$quantile_band))
+
+# Step 3: drift of the discrepancy across the three matched times.
+drift <- platform_drift_summary(lapply(tail_res, function(r) r$gene), statement = "T4")
+
+# Step 4: does the bulk / reference ratio follow transcript length?
+# ensembl[panel]: Ensembl ids of the panel genes (bulk row names).
+log_ratio <- platform_log_ratio(tail_res)
+lengths <- gene_transcript_length(panel, ensembl[panel])
+log2_length <- setNames(log2(lengths$mean_tx_length), lengths$gene)
+length_test <- platform_length_test(log_ratio$log_ratio, log2_length, seed = 20261109L)
+
+# Step 5: cross-fitted platform ratio (each time from the two others),
+# then the same statements on bulk / b. No gene is removed.
+mu_list <- lapply(tail_res, function(r) r$moments$mu)
+ratio_gene <- cross_fit_platform_ratio(bulk, mu_list, method = "gene", n_iter = 30L)
+ratio_length <- cross_fit_platform_ratio(
+  bulk, mu_list, method = "length", log2_length = log2_length, n_iter = 30L
+)
+tail_gene <- lapply(times, function(tm) {
+  r <- ratio_gene[[tm]]
+  bulk_tail_filter(
+    bulk = bulk[[tm]][panel, , drop = FALSE],
+    counts = sc[[tm]][panel, , drop = FALSE],
+    cell_type = cell_type[[tm]],
+    modules = modules,
+    platform_ratio = setNames(exp(r$log_b), r$gene),
+    platform_var = setNames(r$var_log_b, r$gene)
+  )
+})
 ```
 
 {{< pagebreak >}}
 
 ## Tier (iv): down-weighting by the model {#sec-fs-weighting-pointer}
 
-Tiers (i) to (iii) keep or drop a gene. Tier (iv) keeps every gene of
-the panel and lets the model weight it: genes with a large or poorly
+Tier (iv) is a remark, not a step of this chapter. Tiers (i) to (iii)
+keep or drop a gene; tier (iv) keeps every gene of the exported panel
+and lets the model weight it, so that genes with a large or poorly
 estimated within-type covariance count less in the generalised least
-squares of DeCovarT. Nothing is selected at this tier, so it has no
-code in this chapter. The covariances that carry the weights are
-estimated in @sec-cov-scope and enter the deconvolution of
-@sec-deconv-models; why weighting can replace a hard filter is in
+squares of DeCovarT. That weighting happens only when DeCovarT itself
+is fitted on the panel of @sec-fs-export, with the covariances
+estimated in @sec-cov-scope, in the deconvolution of
+@sec-deconv-models. No gene is selected and no code runs here. Why
+weighting can replace a hard filter is in
 [3.1, down-weighting](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-weighting).
 
 ## Panel export {#sec-fs-export}
@@ -668,13 +1074,14 @@ columns of @tbl-fs-new-rank-columns.
 | Block | Columns | Source |
 |---|---|---|
 | Identifiers | `time_point`, `gene` | slot |
+| Tier (i) gene rules | `fractional_share`, `in_sct_layer`, `shared_with_bulk` | `fractional_count_share()`, `gene_filter_rules()` |
 | Presence gate | `min_detection`, `weakest_type`, `pass_presence` | `presence_gate()` |
 | Fits and effect size | `overdispersion`, `deviance_m0`, `deviance_m1`, `deviance_r2` | `compare_type_effect_tests()` |
 | Four tests | `<test>_stat`, `<test>_pval`, `<test>_padj`, `<test>_pass` for `lr`, `anova_vst`, `ql_f`, `welch_perm` | same |
 | Gate and rank | `gate_test`, `adj_pval`, `pass_fdr`, `rank`, `selected` | `rank_genes_omnibus()` |
 | Tier (i) markers | `in_marker_panel`, `in_union` | signalling dictionary |
 | Tier (iii) outliers | largest cell Cook's distance, number of flagged cells, gene Cook flag per replicate | `cook_cells()`, `cook_genes()` |
-| Tier (iii) bulk flags | range flag; one flag per statement (T1, T1-log, T3, T4, quantile band), any replicate; module flags | `bulk_consistency_filter()`, `bulk_tail_filter()` |
+| Tier (iii) bulk flags | range flag; one flag per statement (T1, T1-log, T3, T4, quantile band), any replicate, under A3 and with the cross-fitted gene-wise ratio; module flags; drift class across times; mean transcript length; $\log_2\hat b_g$ and its standard error | `bulk_consistency_filter()`, `bulk_tail_filter()`, `platform_drift_summary()`, `gene_transcript_length()`, `cross_fit_platform_ratio()` |
 
 : Planned columns of the new rank table. Not written yet. {#tbl-fs-new-rank-columns}
 
@@ -728,7 +1135,7 @@ through their overlaps (`set_overlap()` in `R/02_00_utils.R`).
 ```{r}
 #| label: fs-classifiers-call
 #| eval: false
-# Not run. glmnet, mixOmics and ranger are not in renv.lock.
+# Not run.
 source("R/02_00_utils.R")
 source("R/02_05_classifiers.R")
 clf <- lapply(times, function(tm) {
@@ -930,82 +1337,3 @@ scored in that slot (@sec-fs-markers). At 48 h the leading equal-cell
 ratios land on naïve-pluripotency markers; at 96 h the top gene is the
 endoderm marker *Sox17*. The residual clip changes only the far tail of
 these ratios.
-
-`ranks_global_equal_type.csv` has one row per gene and time. Its
-columns are in @tbl-fs-equal-type-columns.
-
-```{r}
-#| label: tbl-fs-equal-type-columns
-#| tbl-cap: "Columns of the type-equal global rank table, grouped by role. The middle block is what `ranks_global_equal_type.csv` stores. The cell-weighted block is the same names in `ranks_global.csv`. `cell_type` is omitted because it is unused in both global files."
-#| echo: false
-codebook <- data.frame(
-  Column = c(
-    "time_point",
-    "gene",
-    "top_cell_type",
-    "ss_between",
-    "ss_within",
-    "between_over_within",
-    "between_over_total",
-    "passes_between_gt_within",
-    "ss_between",
-    "ss_within",
-    "between_over_within",
-    "between_over_total",
-    "passes_between_gt_within",
-    "rank",
-    "selected",
-    "in_marker_panel",
-    "in_union",
-    "source"
-  ),
-  File = c(
-    rep("both global tables", 3L),
-    rep("ranks_global_equal_type.csv", 5L),
-    rep("ranks_global.csv", 5L),
-    rep("both global tables", 5L)
-  ),
-  Meaning = c(
-    "Bulk-matched slot of the v2 fit (48h, 72h, 96h).",
-    "Mouse symbol on the author SCT allow-list.",
-    "Type with the largest mean Pearson residual.",
-    paste(
-      "Unweighted variance of the J type means",
-      "(type-equal MS_between)."
-    ),
-    paste(
-      "Mean of the J within-type residual variances",
-      "(type-equal MS_within)."
-    ),
-    "MS_between / MS_within; ranking score.",
-    "MS_between / (MS_between + MS_within).",
-    "TRUE when MS_between > MS_within (not a selection gate).",
-    paste(
-      "Cell-weighted between-type sum of squares;",
-      "each barcode has weight one."
-    ),
-    "Cell-weighted within-type sum of squares.",
-    "SS_between / SS_within; ranking score in ranks_global.csv.",
-    "SS_between / (SS_between + SS_within).",
-    "TRUE when SS_between > SS_within (not a selection gate).",
-    "Order by between_over_within, then ss_between, then gene name.",
-    "TRUE for the top 500 finite ratios in that slot.",
-    "Signalling-dictionary marker for a type scored in that slot.",
-    "selected or in_marker_panel.",
-    paste(
-      "sctransform (top 500 only), marker (panel only),",
-      "both, or screened (allow-list, neither)."
-    )
-  ),
-  stringsAsFactors = FALSE
-)
-tinytable::tt(codebook, width = 1) |>
-  tinytable::group_tt(
-    i = list(
-      "Identifiers" = 1,
-      "Unweighted type-equal mean squares" = 4,
-      "Cell-weighted sums of squares" = 9,
-      "Ranking and marker union" = 14
-    )
-  )
-```

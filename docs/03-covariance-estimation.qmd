@@ -135,7 +135,6 @@ is the centre of the grid, and cross-validation picks the value used.
 The estimate is positive definite for any $C_j$ and $G$, so it is the
 estimator used when the others fail. The theory is in
 [3.2, shrinkage](https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-cov-shrinkage).
-`corpcor` is not in `renv.lock`.
 
 ### Graphical lasso with an unpenalised diagonal {#sec-glasso}
 

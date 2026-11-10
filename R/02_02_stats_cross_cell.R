@@ -17,13 +17,24 @@
 #' al. 2014). With one specimen, cells are not independent replicates,
 #' so every p-value describes a screen inside that specimen, not
 #' population differential expression. One test is used as a
-#' Benjamini-Hochberg **gate**; genes that pass are **ranked by an effect
-#' size**, the cell-weighted deviance explained `1 - D(M1) / D(M0)`.
+#' Benjamini-Hochberg **gate** (default: the permuted Welch G); genes
+#' that pass are **ranked by an effect size**, the cell-weighted
+#' deviance explained `1 - D(M1) / D(M0)`.
 #'
-#' `glmGamPoi` is not in `renv.lock`; it is checked with
-#' `requireNamespace()`. Requires `R/02_00_utils.R` and
+#' The permutation p-values are marginal, one per gene, so the gate
+#' still needs a correction across genes: BH over the genes that pass
+#' the presence gate, slot by slot. With `B` permutations the smallest
+#' p-value is `1 / (B + 1)`, and BH rejects every gene at that floor
+#' only when their number is at least `m / (fdr (B + 1))`, `m` the genes
+#' tested. Labels can be permuted within strata (`strata`, the batch at
+#' 48 h, where the two cell lines are pooled), so that a cell-line shift
+#' is never read as a type effect.
+#'
+#' The deposited counts are Salmon/Alevin estimates with some fractional
+#' entries; `glm_gp()` accepts them, and the NB likelihood is then used
+#' as a quasi-likelihood. Requires `R/02_00_utils.R` and
 #' `R/02_01_stats_quality_control.R` (`presence_gate()`) to be sourced
-#' first. Written, not run.
+#' first.
 
 #' Negative-binomial unit deviances.
 #'
@@ -135,8 +146,8 @@ welch_g_stat <- function(s1, s2, n_j, tot, tot2) {
 #'    carry no type information, so permuting the residuals against fixed
 #'    labels equals permuting the labels. Welch's G is the statistic
 #'    (pivotal under unequal variances); `n_perm` permutations of the
-#'    labels are drawn once and shared by every gene;
-#'    `p = (1 + #{G* >= G}) / (n_perm + 1)`.
+#'    labels are drawn once and shared by every gene, within `strata`
+#'    when given; `p = (1 + #{G* >= G}) / (n_perm + 1)`.
 #'
 #' Size factors enter through `offset = log(size_factors)` with
 #' `size_factors = 1` in `glm_gp()`, because `glm_gp()` adds `offset` to
@@ -152,6 +163,9 @@ welch_g_stat <- function(s1, s2, n_j, tot, tot2) {
 #' @param n_perm Number of shared label permutations. Default `2000`.
 #' @param seed Integer seed for the permutations, or `NULL` to use the
 #'   current RNG state. Applied with `withr::with_seed()`.
+#' @param strata Optional stratum per column (for example the batch).
+#'   Labels are permuted within each stratum, so the type counts of
+#'   every stratum are kept. Default `NULL`: one stratum.
 #' @param fdr BH level used for the `<test>_pass` columns. Default `0.05`.
 #' @param min_frac Passed to [presence_gate()]. Default `0.05`.
 #' @param tests Tests to compute; any of `"lr"`, `"anova_vst"`, `"ql_f"`,
@@ -164,14 +178,16 @@ welch_g_stat <- function(s1, s2, n_j, tot, tot2) {
 #'   `min_detection`, `weakest_type`, `pass_presence`, `overdispersion`
 #'   (M1, gene-wise), `deviance_m0`, `deviance_m1`, `deviance_r2`, then
 #'   for each test `<test>_stat`, `<test>_pval`, `<test>_padj` and
-#'   `<test>_pass`. Attributes: `n_perm`, `seed`, `vst_alpha`, `df1`
-#'   (`J - 1`) and `df2` (`C - J`).
+#'   `<test>_pass`. Attributes: `n_perm`, `seed`, `n_strata`, `fdr`,
+#'   `min_frac`, `tests`, `vst_alpha`, `df1` (`J - 1`) and `df2`
+#'   (`C - J`).
 compare_type_effect_tests <- function(
   counts,
   cell_type,
   size_factors,
   n_perm = 2000L,
   seed = NULL,
+  strata = NULL,
   fdr = 0.05,
   min_frac = 0.05,
   tests = c("lr", "anova_vst", "ql_f", "welch_perm"),
@@ -180,10 +196,7 @@ compare_type_effect_tests <- function(
   verbose = FALSE
 ) {
   if (!requireNamespace("glmGamPoi", quietly = TRUE)) {
-    stop(
-      "Package glmGamPoi is required (not in renv.lock). Install it with ",
-      "BiocManager::install(\"glmGamPoi\") and record it with renv::snapshot()."
-    )
+    stop("Package glmGamPoi is required for the count-model fits.")
   }
   tests <- match.arg(tests, several.ok = TRUE)
   cell_type <- droplevels(factor(cell_type))
@@ -192,6 +205,12 @@ compare_type_effect_tests <- function(
   }
   if (length(cell_type) != ncol(counts)) {
     stop("`cell_type` must have one label per column of `counts`.")
+  }
+  if (is.null(strata)) {
+    strata <- rep(1L, ncol(counts))
+  }
+  if (length(strata) != ncol(counts) || anyNA(strata)) {
+    stop("`strata` must give one non-missing value per column of `counts`.")
   }
   if (
     length(size_factors) != ncol(counts) ||
@@ -236,6 +255,10 @@ compare_type_effect_tests <- function(
   df2 <- n_cells - n_types
   attr(out, "n_perm") <- if ("welch_perm" %in% tests) n_perm else NA_integer_
   attr(out, "seed") <- seed
+  attr(out, "n_strata") <- length(unique(strata))
+  attr(out, "fdr") <- fdr
+  attr(out, "min_frac") <- min_frac
+  attr(out, "tests") <- tests
   attr(out, "vst_alpha") <- vst_alpha
   attr(out, "df1") <- df1
   attr(out, "df2") <- df2
@@ -375,7 +398,15 @@ compare_type_effect_tests <- function(
       tot2
     )[, "G"]
     labels <- as.integer(cell_type)
-    draw <- function() replicate(n_perm, sample(labels))
+    by_stratum <- split(seq_len(n_cells), strata)
+    permute_once <- function() {
+      out_lab <- labels
+      for (idx in by_stratum) {
+        out_lab[idx] <- labels[idx][sample.int(length(idx))]
+      }
+      out_lab
+    }
+    draw <- function() replicate(n_perm, permute_once())
     perm_lab <- if (is.null(seed)) draw() else withr::with_seed(seed, draw())
     perm_lab <- matrix(perm_lab, nrow = n_cells)
     exceed <- numeric(length(keep))
@@ -500,19 +531,24 @@ type_test_calibration <- function(
 #'
 #' Steps, per time slot:
 #' 1. [compare_type_effect_tests()] with the gate test only (plus the M0
-#'    and M1 fits it always runs).
+#'    and M1 fits it always runs), unless `results` already holds a run
+#'    of it on the same slot; the permutations are then not redrawn.
 #' 2. Genes with `<gate_test>_padj <= fdr` are ranked by `deviance_r2`,
 #'    the cell-weighted `1 - D(M1) / D(M0)` (ties by the LR statistic
 #'    `deviance_m0 - deviance_m1`, then by gene name); the first
 #'    `n_select` are selected.
 #'
 #' @inheritParams compare_type_effect_tests
-#' @param gate_test The test behind the BH gate: `"ql_f"` (default),
-#'   `"lr"`, `"anova_vst"` or `"welch_perm"`. Choose it before the ranks
-#'   are seen.
+#' @param gate_test The test behind the BH gate: `"welch_perm"`
+#'   (default, the Freedman-Lane permutation of Welch's G), `"ql_f"`,
+#'   `"lr"` or `"anova_vst"`. Choose it before the ranks are seen.
 #' @param n_select Number of genes to flag as selected. Default `500`.
+#' @param results Optional output of [compare_type_effect_tests()] on the
+#'   same counts and labels, with `gate_test` among its tests and the
+#'   same `fdr`. When given, `counts`, `cell_type` and `size_factors` are
+#'   not used and nothing is refitted.
 #' @param ... Further arguments to [compare_type_effect_tests()]
-#'   (`n_perm`, `seed`, `vst_alpha`, `verbose`).
+#'   (`n_perm`, `seed`, `strata`, `vst_alpha`, `verbose`).
 #' @return The data frame of [compare_type_effect_tests()] with, in
 #'   addition, `gate_test`, `pval`, `adj_pval`, `pass_fdr` (copies of the
 #'   gate test's columns), `rank` (`NA` outside the gate) and `selected`.
@@ -523,19 +559,31 @@ rank_genes_omnibus <- function(
   fdr = 0.05,
   min_frac = 0.05,
   n_select = 500L,
-  gate_test = c("ql_f", "lr", "anova_vst", "welch_perm"),
+  gate_test = c("welch_perm", "ql_f", "lr", "anova_vst"),
+  results = NULL,
   ...
 ) {
   gate_test <- match.arg(gate_test)
-  out <- compare_type_effect_tests(
-    counts,
-    cell_type,
-    size_factors,
-    fdr = fdr,
-    min_frac = min_frac,
-    tests = gate_test,
-    ...
-  )
+  out <- if (is.null(results)) {
+    compare_type_effect_tests(
+      counts,
+      cell_type,
+      size_factors,
+      fdr = fdr,
+      min_frac = min_frac,
+      tests = gate_test,
+      ...
+    )
+  } else {
+    if (!paste0(gate_test, "_padj") %in% names(results)) {
+      stop("`results` has no column ", gate_test, "_padj.")
+    }
+    res_fdr <- attr(results, "fdr")
+    if (!is.null(res_fdr) && !isTRUE(all.equal(res_fdr, fdr))) {
+      stop("`results` was computed with fdr = ", res_fdr, ", not ", fdr, ".")
+    }
+    results
+  }
   out$gate_test <- gate_test
   out$pval <- out[[paste0(gate_test, "_pval")]]
   out$adj_pval <- out[[paste0(gate_test, "_padj")]]

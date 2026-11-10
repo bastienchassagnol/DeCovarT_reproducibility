@@ -16,11 +16,13 @@
 #' Nothing is clipped or down-weighted here: flags are reported, and the
 #' decision is taken in the chapter.
 #'
+#' This file and `R/02_03_stats_tail_bounds.R` (discrepancy and drift between
+#' the reference and the bulk) are the two files of tier (iii).
+#'
 #' Port of the formulas of `scripts/figures/fig_03_1_influence.R` in the
 #' DeCovarT repository (checked there against `hatvalues()`,
 #' `rstandard()` and `cooks.distance()`); deliberately duplicated, no
-#' cross-repository dependency. Requires `R/02_00_utils.R`. Written,
-#' not run.
+#' cross-repository dependency. Requires `R/02_00_utils.R`.
 
 #' Cell-level influence in the one-way NB GLM M1.
 #'
@@ -83,7 +85,7 @@ cook_cells <- function(
   if (is.null(mu)) {
     if (!requireNamespace("glmGamPoi", quietly = TRUE)) {
       stop(
-        "Package glmGamPoi is required to fit M1 (not in renv.lock); ",
+        "Package glmGamPoi is required to fit M1, ",
         "or pass `mu` and `overdispersion` from an existing fit."
       )
     }

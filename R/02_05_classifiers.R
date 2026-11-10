@@ -23,9 +23,8 @@
 #' is biologically meaningful, robust and able to discriminate the types,
 #' not to replace it.
 #'
-#' `glmnet`, `mixOmics` and `ranger` are not in `renv.lock`; each is
-#' checked with `requireNamespace()`. Requires `R/02_00_utils.R`.
-#' Written, not run.
+#' `glmnet`, `mixOmics` and `ranger` are checked with
+#' `requireNamespace()`. Requires `R/02_00_utils.R`. Written, not run.
 
 #' Selection frequencies of three classifiers under subsampling.
 #'
@@ -60,7 +59,7 @@ classifier_markers <- function(
   missing_pkg <- pkg[!vapply(pkg, requireNamespace, logical(1), quietly = TRUE)]
   if (length(missing_pkg) > 0L) {
     stop(
-      "Packages not installed (not in renv.lock): ",
+      "Packages not installed: ",
       paste(unique(missing_pkg), collapse = ", "),
       ". Install them, or drop the matching `method`."
     )

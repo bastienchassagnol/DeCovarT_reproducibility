@@ -124,10 +124,16 @@ Embeddings, QC and clustering follow the Seurat workflow of the
 Suppinger resource [@suppingerMultimodalCharacterizationMurine2023],
 drawn in @fig-seurat-workflow: Alevin counts, `scater` QC,
 `SCTransform` Pearson residuals per batch for integration, CCA, PCA,
-UMAP and Louvain clustering. Two products of that workflow are used
-here: the cell-type labels (`celltypeannotation`), and the gene list of
-the authors' `SCT` counts layer, which serves as the gene allow-list
-(@sec-fs-qc). The authors' residuals themselves are not used: the
+UMAP and Louvain clustering. The deposited object (Seurat 4.1.0) holds
+the raw counts (`RNA`, 27,027 genes, 71,005 cells), the `SCT` layer
+and the `integrated` assay. The `SCT` and `integrated` layers keep the
+same 71,005 cells and only 2,944 genes: the variable features of the
+CCA integration, chosen over all twelve time points and both batches.
+Two products of that workflow are used here: the cell-type labels
+(`celltypeannotation`), and that 2,944-gene list, which was the gene
+allow-list of the legacy panel only; the current tier (i) starts from
+the raw counts and records the list for comparison (@sec-fs-qc). The
+authors' residuals themselves are not used: the
 ranking fits its own negative-binomial GLMs per time slot
 (@sec-fs-glm), the legacy panel refitted `SCTransform` v2 per slot
 ([legacy SCTransform fit](02-feature-selection.qmd#sec-fs-sct)),

@@ -1,0 +1,5 @@
+outs:
+- md5: 9b1b1bf40efa4c5bedc15e04706e7d41
+  size: 196755252
+  hash: md5
+  path: scored_slots.rds

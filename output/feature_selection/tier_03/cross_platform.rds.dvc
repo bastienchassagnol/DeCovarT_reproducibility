@@ -1,0 +1,5 @@
+outs:
+- md5: 7ff3c655745a7151d58471fa65a79b29
+  size: 53977123
+  hash: md5
+  path: cross_platform.rds

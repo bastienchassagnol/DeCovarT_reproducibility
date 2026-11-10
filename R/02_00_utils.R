@@ -109,3 +109,109 @@ set_overlap <- function(sets) {
   }
   list(jaccard = jac, intersection = inter, patterns = patterns)
 }
+
+#' Plot theme of the feature-selection figures.
+#'
+#' `theme_minimal()` with the grid, type and white background of the
+#' book's other figures (`scripts/06_01_plot_early_wnt_compositions.R`).
+#'
+#' @param base_size Base font size. Default `11` (multi-panel figures).
+#' @return A ggplot2 theme.
+theme_slide <- function(base_size = 11) {
+  ggplot2::theme_minimal(base_size = base_size) +
+    ggplot2::theme(
+      panel.grid.minor = ggplot2::element_blank(),
+      panel.grid.major = ggplot2::element_line(colour = "#e6e1d8"),
+      plot.title = ggplot2::element_text(face = "bold", colour = "#0e4d3a"),
+      plot.subtitle = ggplot2::element_text(colour = "#3d4a42"),
+      axis.title = ggplot2::element_text(colour = "#1c2b24"),
+      strip.text = ggplot2::element_text(face = "bold", colour = "#0e4d3a"),
+      legend.position = "bottom",
+      plot.title.position = "plot",
+      panel.spacing = ggplot2::unit(1.2, "lines"),
+      plot.background = ggplot2::element_rect(fill = "white", colour = NA),
+      panel.background = ggplot2::element_rect(fill = "white", colour = NA)
+    )
+}
+
+#' Spread direct labels so that they do not overlap.
+#'
+#' Moves the positions `y` apart, keeping their order, so that two
+#' neighbours are at least `min_gap` apart; used to place the labels of
+#' several lines at their right end (data-visualisation rule #41).
+#'
+#' @param y Numeric positions (same scale as the axis).
+#' @param min_gap Smallest distance between two labels.
+#' @return The adjusted positions, in the input order.
+spread_labels <- function(y, min_gap) {
+  o <- order(y)
+  z <- y[o]
+  for (k in seq_along(z)[-1L]) {
+    z[k] <- max(z[k], z[k - 1L] + min_gap)
+  }
+  # Re-centre so the block keeps the mean position of the input.
+  z <- z - (mean(z) - mean(y[o]))
+  out <- y
+  out[o] <- z
+  out
+}
+
+#' Format a count with a thousands separator.
+#'
+#' @param x Numbers.
+#' @return Character vector, for example `"6,604"`.
+fmt_n <- function(x) format(round(x), big.mark = ",", trim = TRUE)
+
+#' Cell-type colours of the Suppinger annotation.
+#'
+#' @param path CSV with columns `celltypeannotation` and `colour`.
+#' @return Named character vector of colours.
+celltype_colours <- function(
+  path = file.path("data", "dictionaries", "suppinger_celltype_colours.csv")
+) {
+  tab <- utils::read.csv(path, stringsAsFactors = FALSE, fileEncoding = "UTF-8")
+  stats::setNames(tab$colour, tab$celltypeannotation)
+}
+
+#' Save one figure as PDF (archive) and PNG (book).
+#'
+#' The PDF goes to `pdf_dir`, the PNG (`ragg`, white background) to
+#' `png_dir`, both named `name`.
+#'
+#' @param plot A ggplot or patchwork object.
+#' @param name File name without extension.
+#' @param pdf_dir,png_dir Output folders, created when missing.
+#' @param width,height Size in inches.
+#' @param dpi PNG resolution. Default `300`.
+#' @return The two paths, invisibly.
+save_figure <- function(
+  plot,
+  name,
+  pdf_dir,
+  png_dir = file.path("docs", "images", "feature_selection"),
+  width = 8,
+  height = 6,
+  dpi = 300
+) {
+  dir.create(pdf_dir, recursive = TRUE, showWarnings = FALSE)
+  dir.create(png_dir, recursive = TRUE, showWarnings = FALSE)
+  pdf_path <- file.path(pdf_dir, paste0(name, ".pdf"))
+  png_path <- file.path(png_dir, paste0(name, ".png"))
+  ggplot2::ggsave(
+    pdf_path,
+    plot,
+    width = width,
+    height = height,
+    device = grDevices::cairo_pdf
+  )
+  ggplot2::ggsave(
+    png_path,
+    plot,
+    width = width,
+    height = height,
+    dpi = dpi,
+    device = ragg::agg_png,
+    bg = "white"
+  )
+  invisible(c(pdf = pdf_path, png = png_path))
+}
