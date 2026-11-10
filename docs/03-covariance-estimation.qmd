@@ -223,6 +223,125 @@ implemented default, assumes $a_i=1$. $n_i$ is
 [TODO: cells per gastruloid × gastruloids per bulk sample, from the Suppinger et al. 2023 methods]{.highlight}
 [@suppingerMultimodalCharacterizationMurine2023].
 
+::: {.highlight}
+**TODO: number of cells per bulk sample, $n_i$.**
+
+What the paper gives (STAR Methods, p. 25): each bulk sample is one
+batch of 96 gastruloids, each seeded from 300 mESCs (EmbryoMax
+129/SvEv). RNA was extracted on RNeasy columns, and 1,000 ng
+entered the Illumina stranded mRNA library. The 18 runs of
+PRJNA954338 hold 19–32 million read pairs (2 × 74 bp). Neither the
+number of cells per gastruloid at 48, 72 and 96 h nor the total RNA
+yield per sample is reported.
+
+Two definitions of $n_i$ must not be confused. The cells whose RNA
+entered the library are $n_i=1{,}000\ \mathrm{ng}/m_{\mathrm{RNA}}$,
+with $m_{\mathrm{RNA}}$ the total RNA per gastruloid cell. That is at
+most $96\,N_t$, with $N_t$ the cells per gastruloid at time $t$, and
+equals it only if the whole extract went into the library.
+
+Candidate sources for $N_t$:
+
+- Frenster et al. (2026), *Nat. Cell Biol.* 28:875–889,
+  doi:10.1038/s41556-026-01923-x. They give absolute cell counts per
+  gastruloid by flow cytometry, with growth curves (Fig. 2m–n, Extended
+  Data Fig. 4e–f) for gastruloids seeded from 300 mESCs. The values
+  appear only in the figures (or in the source data), which are still
+  to be read.
+- "A fluctuation test for gastruloid heterogeneity", *Cell* (2026),
+  S0092-8674(26)01203-1. A search snippet attributes to it reference
+  values of about 15,000–20,000 cells per gastruloid at 120 h and about
+  30,000 at 144 h. Unverified: the page was not readable, and the
+  primary source of those numbers is unknown.
+- Fiuza et al., bioRxiv 10.1101/2024.12.12.628151 (seeding from 20 to
+  600 cells). It gives no counts against time in the text read so far.
+
+Neither key is in Zotero.
+[TODO-cite: Frenster et al. 2026; fluctuation-test paper, Cell 2026]
+
+Proxies until a count is found:
+
+- **Single-cell counterpart.** The multiome samples give a lower bound:
+  384 gastruloids collected at 48 h, frozen at 180,000 cells per vial
+  (p. 24). So $N_{48}\ge180{,}000/384\approx470$ cells, at one vial.
+  The scRNA-seq time course sorted 12,000 live cells per sample, which
+  says nothing about $N_t$ unless the number of pooled gastruloids is
+  known. Ask the authors.
+- **Exponential interpolation (an assumption, for illustration only).**
+  From 300 cells at 0 h to about 15,000–20,000 at 120 h, the doubling
+  time is about 20 h. That gives $N_t$ of roughly 1,400–1,600 at 48 h,
+  3,100–3,700 at 72 h and 6,900–8,600 at 96 h.
+- **No external value.** With $c_i=a_in_i$ and $\phi_i=a_i^{2}n_i$
+  fitted, $\hat n_i=c_i^{2}/\phi_i$ and $\hat a_i=\phi_i/c_i$. An
+  external $n_i$ then checks the fitted within-type covariance rather
+  than entering the fit.
+:::
+
+::: {.highlight}
+**TODO: ambient RNA in the single-cell reference (PRJNA954812, GSE229513).**
+
+The deposited data are enough to find ambient RNA, but only after
+reprocessing the FASTQs. I read the ENA run reports and searched the
+Suppinger PDF; NCBI's GEO and SRA pages blocked automated access, so the
+GEO supplementary file lists were not seen.
+
+*What is deposited.* Each single-cell run has two FASTQ files, and the
+reads are 84 bp in total: 28 bp of Read 1 plus 56 bp of Read 2, the
+read lengths the methods give (p. 24). So Read 1, which holds the cell
+barcode and UMI, was kept. Those are the original 10x reads, not just a
+filtered matrix.
+
+| Run | Sample | Reads | Bases |
+|---|---|---:|---:|
+| SRR24173997 | S2_48h | 253 M | 21.3 Gb |
+| SRR24564347 | SBR-48h | 163 M | 13.7 Gb |
+| SRR24564345 | SBR-72h | 165 M | 13.8 Gb |
+| SRR24173994 | S6_96h | 252 M | 21.2 Gb |
+
+Each time point we use has one or two libraries: 48 h has two (S2 and
+SBR), 72 h and 96 h one each.
+
+*Why the matrix we use cannot show it.* The object we read from GEO is
+the authors' processed Seurat object. It holds only called cells, so
+the empty droplets are already gone.
+
+*How to recover it.*
+
+- Re-run STARsolo (or Cell Ranger ≥ 3, or kallisto|bustools) on the
+  FASTQs with the 10x v3 barcode whitelist, keeping the unfiltered
+  barcode matrix.
+- Droplets with very few UMIs give the ambient ("soup") profile, as used
+  by `DropletUtils::emptyDrops`.
+- SoupX, CellBender or DecontX then estimate the contamination of each
+  called cell.
+
+The methods name Cell Ranger 1.3.0 with v3 chemistry, which looks
+inconsistent. Reprocessing removes that doubt.
+
+*Ambient RNA as a stand-in for spike-ins.* Ambient RNA could act as a
+spike-in for the technical size factor. Every droplet captures the same
+soup, so in a cell-containing droplet the ambient counts scale with that
+droplet's capture efficiency. Take genes that are abundant in the soup
+but not expressed by type $j$, for example markers of other types;
+SoupX already uses such genes to estimate contamination. Across the
+cells of type $j$:
+
+- their ambient counts, after removing the Poisson variance, give an
+  estimate of $\nu^{\mathrm{tech}}$;
+- that collapses the $\kappa$ bracket to a single value.
+
+Two caveats:
+
+- **Use counts, not contamination fractions.** The fraction also depends
+  on how much RNA the cell itself contributes, so it would bring the
+  biological size back in.
+- **The soup must be shared.** Each library has its own soup, so
+  estimate it per library.
+
+Live-cell FACS sorting with DRAQ7 (12,000 live cells per sample, p. 24)
+reduces ambient RNA but does not remove it.
+:::
+
 ```{r}
 #| label: cov-bulk-depth-call
 #| eval: false
