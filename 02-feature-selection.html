@@ -6,6 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="dcterms.date" content="2026-11-10">
 <meta name="description" content="The gene panel built for the Suppinger reference, with the code.">
 
 <title>3&nbsp; Feature selection – DeCovarT reproducibility</title>
@@ -273,7 +274,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">9 Nov 2026</p>
+        <p class="date">10 Nov 2026</p>
       </div>
     </div>
     
@@ -399,8 +400,8 @@ window.Quarto = {
 
 <section id="sec-fs-scope" class="level2" data-number="3.1">
 <h2 data-number="3.1" class="anchored" data-anchor-id="sec-fs-scope"><span class="header-section-number">3.1</span> Scope and status</h2>
-<p>This chapter builds the gene panel on which the covariances of <a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a> are estimated. It is the application that the feature-selection vignette (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html">3.1</a>) leaves to this book: filters as applied, settings, rank tables and code. It runs on the single-cell counts of GSE229513 at the three bulk-matched times (<a href="01-data-suppinger.html#sec-geo-design" class="quarto-xref"><span>Section 2.1</span></a>), one time at a time. What the panel must achieve, and why each step is there, is stated in the vignette (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#wrn-fs-estimand">3.1, what the genes are for</a>): genes whose type-level moments can be estimated in every type and that carry information about <span class="math inline">\boldsymbol{p}</span>. The sections follow the four tiers of the vignette: (i) quality control and prior knowledge, (ii) cross-cell consistency, (iii) cross-platform consistency, (iv) down-weighting by the model.</p>
-<p>The Suppinger reference is the one-specimen case of that callout. It is one technical scRNA-seq experiment <span class="citation" data-cites="suppingerMultimodalCharacterizationMurine2023">(<a href="#ref-suppingerMultimodalCharacterizationMurine2023" role="doc-biblioref">Suppinger et al. 2023</a>)</span>, and its cells are draws from one specimen, not biological replicates (<a href="01-data-suppinger.html#sec-geo-design" class="quarto-xref"><span>Section 2.1</span></a>). Every ranking statistic below is therefore computed inside that specimen: it calibrates a screen, not a population-level claim of differential expression. Steps that need several donors, such as a <code>DESeq2</code> pseudo-bulk shortlist, do not apply here (<a href="#sec-fs-nsga2" class="quarto-xref"><span>Section 3.7.3</span></a>).</p>
+<p>This chapter builds the gene panel on which the covariances of <a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a> are estimated. It is the application that the feature-selection vignette (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html">3.1</a>) leaves to this book: filters as applied, settings, rank tables and code. It runs on the single-cell counts of GSE229513 at the three bulk-matched times (<a href="01-data-suppinger.html#sec-geo-design" class="quarto-xref"><span>Section 2.1</span></a>), one time at a time. What the panel must achieve, and why each step is there, is stated in the vignette (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#wrn-fs-estimand">3.1, what the genes are for</a>): genes whose type-level moments can be estimated in every type and that carry information about <span class="math inline">\boldsymbol{p}</span>. The sections follow the tiers of the vignette: (i) quality control and prior knowledge, (ii) cross-cell consistency and (iii) cross-platform consistency are implemented here; (iv), down-weighting by the model, is a remark: it takes place when DeCovarT itself is fitted (<a href="#sec-fs-weighting-pointer" class="quarto-xref"><span>Section 3.5</span></a>).</p>
+<p>The Suppinger reference is the one-specimen case of that callout. It is one technical scRNA-seq experiment <span class="citation" data-cites="suppingerMultimodalCharacterizationMurine2023">(<a href="#ref-suppingerMultimodalCharacterizationMurine2023" role="doc-biblioref">Suppinger et al. 2023</a>)</span>, and its cells are draws from one specimen, not biological replicates (<a href="01-data-suppinger.html#sec-geo-design" class="quarto-xref"><span>Section 2.1</span></a>). Every ranking statistic below is therefore computed inside that specimen: it calibrates a screen, not a population-level claim of differential expression.</p>
 <div id="nte-pseudoreplication" class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -414,170 +415,147 @@ Note&nbsp;3.1: <span class="emoji" data-emoji="information_source">ℹ️</span>
 <p>Treating the cells of one specimen as independent replicates of a population contrast is pseudoreplication: it inflates the apparent sample size and understates the standard error of every statistic computed across cells <span class="citation" data-cites="zimmermanPracticalSolutionPseudoreplication2021 squairConfrontingFalseDiscoveries2021 crowellMuscatDetectsSubpopulationspecific2020">(<a href="#ref-zimmermanPracticalSolutionPseudoreplication2021" role="doc-biblioref">Zimmerman et al. 2021</a>; <a href="#ref-squairConfrontingFalseDiscoveries2021" role="doc-biblioref">Squair et al. 2021</a>; <a href="#ref-crowellMuscatDetectsSubpopulationspecific2020" role="doc-biblioref">Crowell et al. 2020</a>)</span>. A score fitted this way, or a bootstrap that resamples cells with labels fixed, measures generalisation to new cells of this specimen, not to new specimens. It is reported as such wherever it is used in this book (<a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a>, <a href="06-sensitivity-misspecification.html#sec-sens-scdesign3" class="quarto-xref"><span>Section 7.2</span></a>).</p>
 </div>
 </div>
-<p>Ranks are computed on a negative-binomial count GLM (<a href="#sec-fs-glm" class="quarto-xref"><span>Section 3.3.1</span></a>); the legacy panel was ranked on <code>SCTransform</code> Pearson residuals (<a href="#sec-fs-legacy">legacy panel</a>). Neither scale is exported: the moments that enter DeCovarT are on the linear scale (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/02-1-single-cell-generative-optimisation.html#sec-norm-linear">2.1, normalisation</a>).</p>
-<div id="tbl-fs-status" class="quarto-float quarto-figure quarto-figure-center anchored">
+<p>The current panel (top 500 per time, 2) comes from the legacy between/within ratio (<a href="#sec-fs-ms-ratio">between/within ratio</a>). Once tiers (i) to (iii) have been run, their rank replaces it as steps 3 to 5 of <a href="index.html#fig-pipeline" class="quarto-xref">Figure&nbsp;<span>1</span></a>, and every output of <a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a> has to be refitted.</p>
+<div style="page-break-after: always;"></div>
+</section>
+<section id="sec-fs-qc" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="sec-fs-qc"><span class="header-section-number">3.2</span> Tier (i): quality control and prior knowledge</h2>
+<p>The vignette lists the quality-control rules of the reviewed methods as examples (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-qc">3.1, QC</a>). Here the authors’ quality control is taken as given, and those rules are recorded against it rather than applied again. This tier also holds what is decided without the counts: the curated markers, forced into the panel, and the presence gate.</p>
+<section id="sec-fs-qc-applied" class="level3" data-number="3.2.1">
+<h3 data-number="3.2.1" class="anchored" data-anchor-id="sec-fs-qc-applied"><span class="header-section-number">3.2.1</span> Cell and gene QC as applied</h3>
+<p>The deposited object is the authors’ filtered matrix: 27,027 genes and 71,005 cells, with the same cells in the raw counts and in the <code>SCT</code> layer (<a href="01-data-suppinger.html#sec-seurat" class="quarto-xref"><span>Section 2.2</span></a>). <code>scripts/02_01_stats_quality_control.R</code> has been run on it. Its outputs in <code>output/feature_selection/tier_01/</code> are three summary tables (<code>cell_counts.csv</code>, <code>author_qc_audit.csv</code>, <code>gene_filter_summary.csv</code>) and <code>scored_slots.rds</code>, which holds every per-gene and per-cell table and is tracked with DVC (<code>dvc pull output/feature_selection/tier_01/scored_slots.rds.dvc</code>). The figures are drawn by <code>scripts/02_01_vis_quality_control.R</code>. <a href="#tbl-fs-qc-compare" class="quarto-xref">Table&nbsp;<span>3.1</span></a> sets the authors’ choices, the deposited counts, the examples of the vignette and this book side by side.</p>
+<div id="tbl-fs-qc-compare" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-fs-status-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;3.1: Feature-selection steps by tier, code and status. “Written, not run” means the function exists and parses but no output has been produced in this repository.
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-fs-qc-compare-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;3.1: Quality control of the Suppinger reference: the authors’ choices (STAR Methods, “Quality control and filtering”, and the settings stored in the object), what the deposited counts show on the 20,437 scored cells of the three slots (<code>author_qc_audit.csv</code>; element <code>gene_rules</code> of <code>scored_slots.rds</code>), the examples of the <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#tbl-fs-review">review table of 3.1</a>, and what this book applies.
 </figcaption>
-<div aria-describedby="tbl-fs-status-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div aria-describedby="tbl-fs-qc-compare-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
 <thead>
 <tr class="header">
-<th>Tier</th>
-<th>Step</th>
-<th>Section</th>
-<th>Code</th>
-<th>Status</th>
+<th>Item</th>
+<th>Suppinger et al.</th>
+<th>Deposited counts (scored cells)</th>
+<th>Examples in the vignette</th>
+<th>This book</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>(i)</td>
-<td>Cell slot filter (historical)</td>
-<td><a href="#sec-fs-qc-applied" class="quarto-xref"><span>Section 3.2.1</span></a></td>
-<td><code>scripts/legacy/02_90_stats_prepare_panel.R</code>, section 1</td>
-<td>run; outputs dated 2026-09-28 to 2026-10-01</td>
+<td>Detected genes per cell</td>
+<td>kept if &gt; 1,800</td>
+<td>minimum 1,548; 65 of 20,437 cells at ≤ 1,800</td>
+<td>deMixSC: removed if &lt; 200</td>
+<td>no new filter</td>
 </tr>
 <tr class="even">
-<td>(i)</td>
-<td>Shared genes, mitochondrial symbols</td>
-<td><a href="#sec-fs-qc-applied" class="quarto-xref"><span>Section 3.2.1</span></a></td>
-<td><code>scripts/02_01_stats_quality_control.R</code>; <code>R/02_01_stats_quality_control.R</code></td>
-<td>written, not run</td>
+<td>Mitochondrial counts</td>
+<td>kept if &lt; 10 %</td>
+<td>not computable: no <code>mt-</code> gene deposited</td>
+<td>deMixSC: removed if &gt; 50 %</td>
+<td>no new filter</td>
 </tr>
 <tr class="odd">
-<td>(i)</td>
-<td>PCA and PLS-DA</td>
-<td><a href="#sec-fs-qc-applied" class="quarto-xref"><span>Section 3.2.1</span></a></td>
-<td><code>scripts/02_01_vis_projections.R</code>; <code>R/02_01_vis_projections.R::plot_type_pca_plsda()</code></td>
-<td>written, not run</td>
+<td>Library size</td>
+<td>not reported</td>
+<td>minimum 1,443; no cell below 500; 417 cells beyond 3 MAD of their type</td>
+<td>deMixSC: removed if &lt; 500; RNA-Sieve: 3 MAD from the type median (optional)</td>
+<td>recorded, not applied</td>
 </tr>
 <tr class="even">
-<td>(i)</td>
-<td>Knowledge-driven markers</td>
-<td><a href="#sec-fs-markers" class="quarto-xref"><span>Section 3.2.2</span></a></td>
-<td><code>R/02_01_stats_quality_control.R::map_marker_symbols()</code></td>
-<td>run</td>
+<td>Doublets, ambient RNA</td>
+<td>not reported</td>
+<td>—</td>
+<td>—</td>
+<td>none</td>
 </tr>
 <tr class="odd">
-<td>(i)</td>
-<td>Presence gate</td>
-<td><a href="#sec-fs-presence" class="quarto-xref"><span>Section 3.2.3</span></a></td>
-<td><code>R/02_01_stats_quality_control.R::presence_gate()</code></td>
-<td>written, not run</td>
+<td>Mitochondrial, ribosomal, Gm genes</td>
+<td>removed after the cell QC</td>
+<td>no <code>mt-</code>, <code>Rpl</code> or <code>Rps</code> symbol</td>
+<td>BayesPrism: ribosomal and mitochondrial genes removed</td>
+<td>already absent</td>
 </tr>
 <tr class="even">
-<td>(ii)</td>
-<td>Count-model fits M0 and M1 per time</td>
-<td><a href="#sec-fs-glm" class="quarto-xref"><span>Section 3.3.1</span></a></td>
-<td><code>scripts/02_02_cross_cell_consistency.R</code>; <code>R/02_02_cross_cell.R::compare_type_effect_tests()</code></td>
-<td>written, not run</td>
+<td>Sex-chromosome genes</td>
+<td>kept</td>
+<td>present (<em>Xist</em>, <em>Ddx3y</em>, <em>Kdm5d</em>, <em>Uty</em>)</td>
+<td>BayesPrism: removed</td>
+<td>kept</td>
 </tr>
 <tr class="odd">
-<td>(ii)</td>
-<td>Four tests, gate, deviance <span class="math inline">R^2</span> rank</td>
-<td><a href="#sec-fs-omnibus" class="quarto-xref"><span>Section 3.3.2</span></a></td>
-<td>same file: <code>compare_type_effect_tests()</code>, <code>type_test_kendall()</code>, <code>type_test_calibration()</code>, <code>rank_genes_omnibus()</code></td>
-<td>written, not run</td>
+<td>Low-detection genes</td>
+<td>none on the raw counts (3,599 genes are zero in every cell); <code>SCTransform</code> models genes detected in ≥ 5 cells of a batch</td>
+<td>19,275 genes detected in ≥ 5 cells of both batches</td>
+<td>RNA-Sieve: ≥ 20 % of the cells of one type; deMixSC: ≥ 5 % of all cells</td>
+<td>presence gate: ≥ 5 % of the cells of every scored type, variance &gt; 0</td>
 </tr>
 <tr class="even">
-<td>(iii)</td>
-<td>Cook’s distance for cells and genes</td>
-<td><a href="#sec-fs-outliers" class="quarto-xref"><span>Section 3.4.1</span></a></td>
-<td><code>R/02_03_influence.R::cook_cells()</code>, <code>cook_genes()</code></td>
-<td>written, not run</td>
+<td>Variable genes</td>
+<td>3,000 integration features, 2,944 left in <code>SCT</code></td>
+<td>—</td>
+<td>—</td>
+<td>recorded, not a filter</td>
 </tr>
 <tr class="odd">
-<td>(iii)</td>
-<td><span class="math inline">\boldsymbol{p}</span>-free range check</td>
-<td>1</td>
-<td><code>R/02_03_bulk_consistency.R::bulk_consistency_filter()</code></td>
-<td>written, not run</td>
-</tr>
-<tr class="even">
-<td>(iii)</td>
-<td>Plug-in composition (deMixSC-style W-NNLS)</td>
-<td>1</td>
-<td><code>R/02_03_plugin_composition.R::plugin_composition_demixsc()</code></td>
-<td>written, not run</td>
-</tr>
-<tr class="odd">
-<td>(iii)</td>
-<td>Tail statements per gene and module, quantile band</td>
-<td>1</td>
-<td><code>scripts/02_03_cross_platform_consistency.R</code>; <code>R/02_03_tail_bounds.R::tail_threshold()</code> dispatching <code>tail_t1_clt()</code>, <code>tail_t1_log()</code>, <code>tail_t2_clt_dep()</code>, <code>tail_t3_poisson()</code>, <code>tail_t4_nb()</code>, <code>tail_t5_nb_dep()</code>, plus <code>quantile_band_flags()</code></td>
-<td>written, not run</td>
-</tr>
-<tr class="even">
-<td>(iv)</td>
-<td>Down-weighting by the model</td>
-<td><a href="#sec-fs-weighting-pointer" class="quarto-xref"><span>Section 3.5</span></a></td>
-<td>covariance chapter</td>
-<td>not a selection step</td>
-</tr>
-<tr class="odd">
-<td>perspective</td>
-<td>Classifier-based markers</td>
-<td><a href="#sec-fs-classifiers" class="quarto-xref"><span>Section 3.7.2</span></a></td>
-<td><code>R/02_05_classifiers.R::classifier_markers()</code></td>
-<td>written, not run</td>
-</tr>
-<tr class="even">
-<td>legacy</td>
-<td><code>SCTransform</code> v2 fit per time</td>
-<td><a href="#sec-fs-sct">SCTransform fit</a></td>
-<td><code>scripts/legacy/02_90_stats_rank_sctransform.R::rank_genes_sctransform()</code></td>
-<td>run</td>
-</tr>
-<tr class="odd">
-<td>legacy</td>
-<td>Between/within ratio rank (current panel)</td>
-<td><a href="#sec-fs-ms-ratio">between/within ratio</a></td>
-<td>same</td>
-<td>run</td>
-</tr>
-<tr class="even">
-<td>appendix</td>
-<td>Optional NSGA-II refinement (post hoc)</td>
-<td><a href="#sec-fs-nsga2" class="quarto-xref"><span>Section 3.7.3</span></a></td>
-<td><code>scripts/04_02_feature_selection_genetic_algorithm.R</code></td>
-<td>template only</td>
+<td>Multi-mapping UMIs</td>
+<td>Salmon/Alevin 1.1.0 splits them</td>
+<td>12.8 % of non-zero entries fractional</td>
+<td>—</td>
+<td>genes &gt; 90 % fractional dropped</td>
 </tr>
 </tbody>
 </table>
 </div>
 </figure>
 </div>
-<p>Packages needed by the new code and absent from <code>renv.lock</code>: <code>glmGamPoi</code> (tier ii, already used by the legacy fit through <code>Seurat</code>, but not recorded), <code>quantreg</code> (quantile band, tier iii), <code>glmnet</code>, <code>mixOmics</code> and <code>ranger</code> (classifier perspective). Each is checked with <code>requireNamespace()</code>. <code>permuco</code> (Freedman–Lane for linear models) and <code>flipscores</code> (sign-flip score tests for GLMs) are optional cross-checks of the hand-written permutation of <a href="#sec-fs-omnibus" class="quarto-xref"><span>Section 3.3.2</span></a>; the code does not call them. None is installed yet.</p>
-<p>The current panel (top 500 per time, 2) comes from the legacy between/within ratio (<a href="#sec-fs-ms-ratio">between/within ratio</a>). Once tiers (i) to (iii) have been run, their rank replaces it as steps 3 to 5 of <a href="index.html#fig-pipeline" class="quarto-xref">Figure&nbsp;<span>1</span></a>, and every output of <a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a> has to be refitted.</p>
-<div style="page-break-after: always;"></div>
-</section>
-<section id="sec-fs-qc" class="level2" data-number="3.2">
-<h2 data-number="3.2" class="anchored" data-anchor-id="sec-fs-qc"><span class="header-section-number">3.2</span> Tier (i): quality control and prior knowledge</h2>
-<p>The tiers of quality control recommended in the vignette (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-qc">3.1, QC</a>) are applied only in part. This tier also holds what is decided without the counts: the curated markers, forced into the panel, and the presence gate.</p>
-<section id="sec-fs-qc-applied" class="level3" data-number="3.2.1">
-<h3 data-number="3.2.1" class="anchored" data-anchor-id="sec-fs-qc-applied"><span class="header-section-number">3.2.1</span> Cell and gene QC as applied</h3>
-<p>What runs today is listed here.</p>
 <p><strong>Cells.</strong></p>
 <ul>
-<li>The authors’ Seurat QC (<code>scater</code>, <a href="01-data-suppinger.html#sec-seurat" class="quarto-xref"><span>Section 2.2</span></a>) is taken as given.</li>
-<li><code>scripts/legacy/02_90_stats_prepare_panel.R</code> keeps cells with a time slot in {48 h, 72 h, 96 h}, a non-missing <code>celltypeannotation</code>, and a library size above zero.</li>
-<li>The culture-stress labels flagged <code>include_in_ranking = FALSE</code> in <code>data/dictionaries/suppinger_celltype_crosswalk.csv</code> (Cd63+ ectoderm-like artefact, Zscan4+ artefact) are dropped before the fit.</li>
-<li>A type with fewer than <code>min_cells = 20</code> cells in a slot is left out of the scores. Exiting naïve pluripotency at 72 h (8 cells) is the only such case. In the legacy <code>SCTransform</code> fit it stays in the fit; the count models of tier (ii) drop it before the fit, since it is not a unit of <a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a>.</li>
-<li>No library-size MAD filter and no detected-gene filter is applied. That remains the gap with tier (i) of the vignette.</li>
-<li><code>cell_mitochondrial_fraction()</code> records the share of counts on <code>mt-</code> symbols and does not threshold it. The Suppinger alignment this follows does not fix a cutoff. The function has not been run.</li>
+<li><strong>The authors’ thresholds stand.</strong> They kept cells with more than 1,800 detected genes and less than 10 % mitochondrial counts <span class="citation" data-cites="suppingerMultimodalCharacterizationMurine2023">(<a href="#ref-suppingerMultimodalCharacterizationMurine2023" role="doc-biblioref">Suppinger et al. 2023</a>)</span>. Both cut-offs are stricter than the deMixSC examples (200 genes, 50 %), so no fixed rule of the vignette removes a cell they kept. They were computed before the mitochondrial, ribosomal and Gm genes were removed: the mitochondrial fraction needs the chrM genes. That order is an inference, not a statement of the paper. It explains why 65 scored cells fall at or below 1,800 genes on the deposited genes, and why the mitochondrial fraction cannot be recomputed: <code>cell_mitochondrial_fraction()</code> returns <code>NA</code>, not 0, when no <code>mt-</code> symbol is present.</li>
+<li><strong>Library-size outliers are recorded, not removed.</strong> 417 scored cells (239 at 48 h, 69 at 72 h, 109 at 96 h) lie beyond 3 scaled MADs of the log library size of their type (<code>cell_qc_rules()</code>). They pass the authors’ QC, which is taken as given.</li>
+<li><strong>Slot filter.</strong> <code>keep_bulk_matched_cells()</code> keeps cells with a time slot in {48 h, 72 h, 96 h}, a non-missing <code>celltypeannotation</code> and a library size above zero. The library size is the column sum of the deposited counts over all 27,027 genes; it equals <span class="math inline">10^{\texttt{log\_umi}}</span> of the authors’ <code>SCTransform</code> models, whereas the metadata column <code>nCount_RNA</code> does not, and is not used.</li>
+<li><strong>Artefacts and small types.</strong> The culture-stress labels flagged <code>include_in_ranking = FALSE</code> in <code>data/dictionaries/suppinger_celltype_crosswalk.csv</code> (Cd63+ ectoderm-like artefact, Zscan4+ artefact) are dropped. A type with fewer than <code>min_cells = 20</code> cells in a slot is left out of the scores; exiting naïve pluripotency at 72 h (8 cells) is the only such case.</li>
 </ul>
+<div id="fig-fs-low-quality" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-fs-low-quality-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/feature_selection/fs_tier1_low_quality_cells.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-fs-low-quality-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.1: Cells kept by the authors at the three bulk-matched times, artefact labels included. (a) Detected genes against library size, both on log scales, one point per cell coloured by cell type; dashed lines mark the Suppinger cut-off (1,800 detected genes) and the deMixSC cut-offs (200 genes, 500 counts); circled cells lie beyond 3 scaled MADs of the log library size of their type. (b) Distribution of the log10 library size per type, types ranked by median, with the median (point), the ±3 MAD interval (bar) and the number of cells in the label. Source: <code>scored_slots.rds</code>, element <code>cell_values</code>; <code>scripts/02_01_vis_quality_control.R</code>.
+</figcaption>
+</figure>
+</div>
+<p><a href="#fig-fs-low-quality" class="quarto-xref">Figure&nbsp;<span>3.1</span></a> shows the authors’ cells against the cut-offs. Every cell sits far above the deMixSC lines. The cells below the 1,800-gene line are the low tail of a single library-size–gene trend, not a separate population, and the 3-MAD flags fall at both ends of that trend.</p>
 <p><strong>Genes.</strong></p>
 <ul>
-<li>The panel on disk uses the authors’ <code>SCT</code> allow-list: 2,944 of the 27,027 genes of the RNA assay. The new tier (i) code starts from the RNA symbols instead, then applies the shared-gene and mitochondrial filters below.</li>
-<li>After the legacy per-time fit, <code>SCTransform</code> returns residuals for 2,892 (48 h), 2,769 (72 h) and 2,811 (96 h) genes (<code>model_card.csv</code>).</li>
-<li><code>shared_bulk_single_cell_genes()</code> intersects RNA symbols with the bulk HTSeq <code>gene_name</code> column and drops a symbol whose rows carry more than one Ensembl id after the version suffix is removed. <code>drop_mitochondrial_genes()</code> then removes symbols matching <code>^mt-</code>, either case. Ribosomal and sex-chromosome symbols stay. Neither function has been run. The authors’ SCT allow-list is the gene set of the legacy panel only.</li>
+<li><strong>Bulk symbols.</strong> Every one of the 27,027 symbols appears in the bulk HTSeq <code>gene_name</code> column; <code>shared_bulk_single_cell_genes()</code> drops the 49 whose rows carry more than one Ensembl id once the version suffix is removed (element <code>shared</code> of <code>scored_slots.rds</code>). <code>drop_mitochondrial_genes()</code> is kept as a guard and removes nothing here.</li>
+<li><strong>Fractional counts.</strong> The deposited counts are Salmon/Alevin estimates. A UMI compatible with several genes is divided among them, equally when no read tells them apart, so 12.8 % of the non-zero entries are fractions such as 1/2, 1/3 or 1/4. The share is not tied to expression level; it concentrates in multi-copy loci (the protocadherin-γ cluster, processed pseudogenes, histone genes), whose counts are shares of the same UMIs as their paralogues. Their within-type correlations are then fixed by the split, not measured, which matters for the covariances of <a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a>. The 2,178 genes whose non-zero entries are more than 90 % fractional are dropped (495 of them detected in at least 500 cells), the share being computed on all 71,005 cells without labels (<code>fractional_count_share()</code>; elements <code>fractional</code> and <code>dropped_fractional</code> of <code>scored_slots.rds</code>). The counts are not rounded: rounding would turn every 0.5 into 0. <code>glmGamPoi</code> accepts non-integer counts, and the negative-binomial likelihood is then a quasi-likelihood.</li>
+<li><strong>Presence gate.</strong> After these filters 24,816 genes enter the presence gate of <a href="#sec-fs-presence" class="quarto-xref"><span>Section 3.2.3</span></a> at each time; 8,643 (48 h), 8,636 (72 h) and 8,788 (96 h) pass it (element <code>presence</code> of <code>scored_slots.rds</code>).</li>
+<li><strong>Authors’ gene list.</strong> The 2,944 genes of the <code>SCT</code> layer are the CCA integration features: 3,000 anchor features, of which 56 (histone genes, MHC <code>H2-</code> genes, <em>Nme2</em>, <em>4930537H20Rik</em>) are absent from the layer (element <code>anchor_missing</code> of <code>scored_slots.rds</code>). They are variable over all twelve time points and both batches, not a quality filter. Of them, 1,622 (48 h), 1,589 (72 h) and 1,562 (96 h) also pass the filters above, which pass 7,021, 7,047 and 7,226 genes outside the list. The list was the gene set of the legacy panel only (<a href="#sec-fs-legacy">legacy panel</a>).</li>
 </ul>
+<div id="fig-fs-gene-filters" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-fs-gene-filters-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/feature_selection/fs_tier1_gene_filters.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-fs-gene-filters-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.2: Gene filters at the three bulk-matched times. (a) Number of the 27,027 deposited genes failing each recorded rule; only the last two rows (fractional share, one-to-one bulk symbol) and the presence gate are applied. (b) Share of fractional non-zero entries per gene, for the genes detected in at least 50 cells; the dashed line is the 0.9 cut (count above it in the label; 2,178 genes in all). (c) Genes entering tier (ii) and in the authors’ <code>SCT</code> layer (2,944 genes), in tier (ii) only, and in the <code>SCT</code> layer only. Source: <code>gene_filter_summary.csv</code> and <code>scored_slots.rds</code>; <code>scripts/02_01_vis_quality_control.R</code>.
+</figcaption>
+</figure>
+</div>
+<p><a href="#fig-fs-gene-filters" class="quarto-xref">Figure&nbsp;<span>3.2</span></a> compares the gene rules. The presence gate, which asks for detection in every scored type, removes about as many genes as the RNA-Sieve rule and more than deMixSC’s, but it keeps a different set: most genes that enter tier (ii) are outside the authors’ <code>SCT</code> list (panel c).</p>
 <div id="tbl-fs-cell-counts" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-fs-cell-counts-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;3.2: Cells per type and time after the slot filter (<code>output/naive_marker_selection/tables/cell_counts.csv</code>). The eleven scored type × time cells are the units of <a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a>.
+Table&nbsp;3.2: Cells per type and time after the slot filter (<code>output/feature_selection/tier_01/cell_counts.csv</code> for the scored rows, <code>author_qc_audit.csv</code> for all rows). The eleven scored type × time cells are the units of <a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a>.
 </figcaption>
 <div aria-describedby="tbl-fs-cell-counts-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <table class="caption-top table">
@@ -693,7 +671,24 @@ Table&nbsp;3.2: Cells per type and time after the slot filter (<code>output/naiv
 \quad\text{and}\quad
 \min_{j}v_{gj}&gt;0 .
 \tag{3.1}</span></span></p>
-<p><code>presence_gate()</code> in <code>R/02_01_stats_quality_control.R</code> returns one row per gene with <code>min_detection</code>, <code>min_variance</code> and a logical <code>pass</code> that applies both conditions; <span class="math inline">\delta_{\min}</span> is the argument <code>min_frac</code>, fixed before the ranks are seen (0.05 in the calls below). The reasons for a gate in every type, rather than in at least one, are in <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-presence">3.1, presence</a>. In the current outputs the gate is absent. Its absence is one cause of the constant-gene fallback of the covariance estimates (<a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a>).</p>
+<p><code>presence_gate()</code> in <code>R/02_01_stats_quality_control.R</code> returns one row per gene with <code>min_detection</code>, <code>min_variance</code> and a logical <code>pass</code> that applies both conditions; <span class="math inline">\delta_{\min}</span> is the argument <code>min_frac</code>, fixed at 0.05 before the ranks are seen (the default and the value of every call below). The reasons for a gate in every type, rather than in at least one, are in <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-presence">3.1, presence</a>. In the current outputs the gate is absent. Its absence is one cause of the constant-gene fallback of the covariance estimates (<a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a>).</p>
+<p><strong>Projections of the gated genes.</strong> <a href="#fig-fs-pca-plsda" class="quarto-xref">Figure&nbsp;<span>3.3</span></a> projects the scored cells of each slot on the genes that pass the gate. They are descriptive, not a selection rule.</p>
+<ul>
+<li><strong>Input.</strong> The analytic Pearson residuals of the null model <span class="math inline">M_0</span> of <a href="#eq-fs-glm" class="quarto-xref">Equation&nbsp;<span>3.2</span></a> (intercept and library-size offset, gene-wise negative-binomial overdispersion, <code>pearson_residuals_m0()</code>), the variance-stabilised scale of the tier (ii) count model, without <code>SCTransform</code> and without clipping. Genes are centred, not scaled: the residuals are already on a common scale, and scaling would up-weight genes that carry mostly noise. PLS-DA (<code>mixOmics::plsda()</code>, two components, cell type as response) uses the same matrix. The shifted logarithm <span class="math inline">\log(1+x/s_c)</span>, centred and scaled, remains available (<code>input = "shifted_log"</code>).</li>
+<li><strong>Small first axes.</strong> The first two principal components explain together 1.3 % (72 h) to 3.1 % (48 h) of the variance: the type structure is spread over many genes.</li>
+<li><strong>Cell line at 48 h.</strong> The epiblast, the large type at 48 h, splits into two clouds, and the panels coloured by cell line show that the split is the cell line. The sign of the first principal component puts 5,301 of the 5,470 B-S (batch 1) epiblast cells on one side and 5,081 of the 5,120 SBR (batch 2) cells on the other (<code>projection_pc1_by_batch.csv</code>). Even the PLS-DA, fitted to separate the types, separates the two lines on its second component. Cell line is therefore the main source of variation within that type, which is why the labels of tier (ii) are permuted within batch (<a href="#sec-fs-omnibus" class="quarto-xref"><span>Section 3.3.2</span></a>).</li>
+</ul>
+<p>The PLS-DA components put the rare types (naïve and ectopic pluripotency, gut) at the ends of the axes.</p>
+<div id="fig-fs-pca-plsda" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-fs-pca-plsda-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/feature_selection/fs_tier1_pca_plsda.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-fs-pca-plsda-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.3: PCA (left) and PLS-DA (right) of the scored cells at 48 h, 72 h and 96 h, on the genes that pass the presence gate (8,643, 8,636 and 8,788 genes). Input: Pearson residuals of <span class="math inline">M_0</span>, centred, not scaled, not clipped; PLS-DA with two components and the cell type as response (<code>mixOmics::plsda()</code>). One point per cell, coloured by cell type (largest type drawn first); the PCA panel of each row shares the legend of its PLS-DA panel; the second row repeats the 48 h projections coloured by cell line (B-S, batch 1; SBR, batch 2). Both axes are scores in the same units, so the panels keep a 1:1 aspect. Axis labels give the share of variance explained. Source: <code>scored_slots.rds</code>; <code>scripts/02_01_vis_quality_control.R</code>.
+</figcaption>
+</figure>
+</div>
 <div style="page-break-after: always;"></div>
 </section>
 </section>
@@ -712,7 +707,7 @@ M_1:\quad \log m_{gc} &amp;= \beta_{0g}+\beta_{g,j(c)}+\log s_{c},
 x_{gc}\sim\mathrm{NB}(m_{gc},\psi_{g}),\quad
 \operatorname{Var}x_{gc}=m_{gc}+m_{gc}^{2}/\psi_{g},
 \tag{3.2}</span></span></p>
-<p>with <span class="math inline">s_c</span> the size factor of cell <span class="math inline">c</span> (full RNA library size <span class="math inline">10^{\texttt{log\_umi}}</span> divided by its median), passed as <code>offset = log(s_c)</code> with <code>size_factors = 1</code> so that it is not applied twice. <code>glmGamPoi</code> reports the overdispersion <span class="math inline">1/\psi_g</span>. For the likelihood-ratio statistic <span class="math inline">\psi_g</span> is the gene-wise maximum-likelihood estimate under <span class="math inline">M_1</span> and <span class="math inline">M_0</span> is refitted at the same <span class="math inline">\psi_g</span>; for the quasi-likelihood test it is shrunk across genes (<a href="#sec-fs-omnibus" class="quarto-xref"><span>Section 3.3.2</span></a>). Cell type and nothing else is a covariate; cell line is not (<a href="01-data-suppinger.html#sec-geo-design" class="quarto-xref"><span>Section 2.1</span></a>).</p>
+<p>with <span class="math inline">s_c</span> the size factor of cell <span class="math inline">c</span> (full RNA library size, the column sum of the deposited counts, divided by its median), passed as <code>offset = log(s_c)</code> with <code>size_factors = 1</code> so that it is not applied twice. <code>glmGamPoi</code> reports the overdispersion <span class="math inline">1/\psi_g</span>. For the likelihood-ratio statistic <span class="math inline">\psi_g</span> is the gene-wise maximum-likelihood estimate under <span class="math inline">M_1</span> and <span class="math inline">M_0</span> is refitted at the same <span class="math inline">\psi_g</span>; for the quasi-likelihood test it is shrunk across genes (<a href="#sec-fs-omnibus" class="quarto-xref"><span>Section 3.3.2</span></a>). Cell type and nothing else is a covariate; cell line is not (<a href="01-data-suppinger.html#sec-geo-design" class="quarto-xref"><span>Section 2.1</span></a>).</p>
 <p>The ranking statistic is the cell-weighted deviance explained,</p>
 <p><span id="eq-fs-deviance-r2"><span class="math display">
 R^{2}_{D,g}=1-\frac{\mathcal{D}_g(M_1)}{\mathcal{D}_g(M_0)},
@@ -729,7 +724,7 @@ R^{2}_{D,g}=1-\frac{\mathcal{D}_g(M_1)}{\mathcal{D}_g(M_0)},
 </section>
 <section id="sec-fs-omnibus" class="level3" data-number="3.3.2">
 <h3 data-number="3.3.2" class="anchored" data-anchor-id="sec-fs-omnibus"><span class="header-section-number">3.3.2</span> Four tests of the type effect</h3>
-<p><code>compare_type_effect_tests()</code> (<code>R/02_02_cross_cell.R</code>) computes four tests of the joint type effect (<span class="math inline">J-1</span> degrees of freedom) per gene, on the fits of <a href="#eq-fs-glm" class="quarto-xref">Equation&nbsp;<span>3.2</span></a>. They answer one question with different reference laws; the vignette compares their assumptions (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-omnibus">3.1, four tests</a>).</p>
+<p><code>compare_type_effect_tests()</code> (<code>R/02_02_stats_cross_cell.R</code>) computes four tests of the joint type effect (<span class="math inline">J-1</span> degrees of freedom) per gene, on the fits of <a href="#eq-fs-glm" class="quarto-xref">Equation&nbsp;<span>3.2</span></a>. They answer one question with different reference laws; the vignette compares their assumptions (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-omnibus">3.1, four tests</a>).</p>
 <div id="tbl-fs-type-tests" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-fs-type-tests-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -783,66 +778,130 @@ Table&nbsp;3.3: The four tests of the type effect as implemented. <span class="m
 </div>
 <p><span class="light-content" style="color: #7a1f1f;border-radius: 0.2rem; padding: 0 0.2rem 0 0.2rem;background-color: #f4c7c3;">TODO-cite: Ahlmann-Eltze &amp; Huber (2023), shifted logarithm</span> <span class="light-content" style="color: #7a1f1f;border-radius: 0.2rem; padding: 0 0.2rem 0 0.2rem;background-color: #f4c7c3;">TODO-cite: Winkler et al.&nbsp;(2014), Permutation inference for the general linear model, NeuroImage; Freedman-Lane recommended, G statistic Eqs 6-7</span> <span class="light-content" style="color: #7a1f1f;border-radius: 0.2rem; padding: 0 0.2rem 0 0.2rem;background-color: #f4c7c3;">TODO-cite: Welch (1951), On the comparison of several mean values</span></p>
 <p>The permutation follows Freedman and Lane <span class="citation" data-cites="freedmanNonstochasticInterpretation1983">(<a href="#ref-freedmanNonstochasticInterpretation1983" role="doc-biblioref">Freedman and Lane 1983</a>)</span>: the reduced model is <span class="math inline">M_0</span>, whose fitted part carries no type information, so permuting its residuals against fixed labels is the same as permuting the labels. Welch’s <span class="math inline">G</span> is used because it stays pivotal when the within-type variances differ, as recommended by Winkler et al.&nbsp;(2014). One permutation of the <span class="math inline">C</span> labels is drawn and applied to every gene, <span class="math inline">B</span> times, and <span class="math inline">p_g=(1+\#\{G^{*}_g\ge G_g\})/(B+1)</span>. <span class="math inline">B</span> is fixed before the run (the code default is 2,000). Its floor <span class="math inline">1/(B+1)\approx5\times10^{-4}</span> limits both the resolution of a gate on this test and Kendall’s <span class="math inline">\tau</span>, since genes at the floor are tied (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-calibration">3.1, calibration</a>).</p>
-<p><strong>Gate and rank.</strong> One test is chosen before the ranks are seen and used as a Benjamini–Hochberg gate over the genes that pass the presence gate; <code>rank_genes_omnibus()</code> uses <code>gate_test = "ql_f"</code> by default. The genes that pass are ranked by <span class="math inline">R^{2}_{D,g}</span> (<a href="#eq-fs-deviance-r2" class="quarto-xref">Equation&nbsp;<span>3.3</span></a>), ties broken by <span class="math inline">\Lambda_g</span>. Why a gate followed by an effect size, rather than a rank by <span class="math inline">p</span>-value, is in the vignette (link above).</p>
+<p><strong>Permutations within batch.</strong> At 48 h the slot pools the two cell lines, which are the two batches of the object (B-S in batch 1, SBR in batch 2), and the type mix differs between them. An unrestricted permutation would then read a cell-line shift as a type effect. Labels are therefore permuted within batch (<code>strata = batch</code>), which keeps the type counts of each batch; at 72 h and 96 h each slot holds one batch, so the restriction changes nothing there. Cell line is still not a covariate of <span class="math inline">M_0</span> or <span class="math inline">M_1</span>.</p>
+<p><strong>Gate and rank.</strong> One test is chosen before the ranks are seen and used as a Benjamini–Hochberg gate over the genes that pass the presence gate. The gate is the permuted Welch <span class="math inline">G</span> (<code>gate_test = "welch_perm"</code>, the default of <code>rank_genes_omnibus()</code>): in the simulation of the vignette it is the only test that keeps the false discovery rate at its nominal level when the within-type variances differ (0.05, against 0.16 to 0.21 for the other tests compared there), at the cost of power (0.41, against 0.76 to 0.85) (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-omnibus">3.1, four tests</a>). Every gene that passes the gate enters the panel; no cap is imposed (<code>n_select = Inf</code>). The cap of 500 genes per time was inherited from the legacy panel and had no data-driven justification. The genes that pass are still ranked by <span class="math inline">R^{2}_{D,g}</span> (<a href="#eq-fs-deviance-r2" class="quarto-xref">Equation&nbsp;<span>3.3</span></a>), ties broken by <span class="math inline">\Lambda_g</span>, to order and report them. Why a gate followed by an effect size, rather than a rank by <span class="math inline">p</span>-value, is in the vignette (link above).</p>
+<p>The gate controls false discoveries, not relevance. With thousands of cells, a type effect of any size passes Benjamini–Hochberg, so the panel contains genes whose effect is real but small. No effect-size floor is added: their weight is left to the model, through the covariances that DeCovarT estimates and inverts (tier (iv), <a href="#sec-fs-weighting-pointer" class="quarto-xref"><span>Section 3.5</span></a>).</p>
+<p><strong>Multiplicity.</strong> A permutation <span class="math inline">p</span>-value is marginal: one per gene. The gate is applied to every gene that passes the presence gate, so a correction across genes is still needed, and Benjamini–Hochberg at 0.05 is applied to the permutation <span class="math inline">p</span>-values of each slot. A false discovery rate suits a screen whose output is then ranked by an effect size; a family-wise rate (for example a max-<span class="math inline">T</span> adjustment from the same permutations) would discard genes that the rank needs. Three consequences of the permutation scale are reported with the outputs (<code>permutation_floor.csv</code>):</p>
+<ul>
+<li>with <span class="math inline">m</span> genes tested, all the genes at the floor <span class="math inline">1/(B+1)</span> pass only when there are at least <span class="math inline">m/\{0.05\,(B+1)\}</span> of them, about <span class="math inline">m/100</span> for <span class="math inline">B=2{,}000</span>;</li>
+<li>near the Benjamini–Hochberg cut, the Monte Carlo standard error of a <span class="math inline">p</span>-value is <span class="math inline">\sqrt{p(1-p)/B}</span>, so a gene close to the cut can move across it with another seed;</li>
+<li>each slot is gated at 0.05 on its own. The union over the three slots, which feeds tier (iii), has no single false discovery rate; a Benjamini–Hochberg over the pooled (gene, slot) <span class="math inline">p</span>-values would give one.</li>
+</ul>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Not run. sc[[tm]]: raw counts (genes x cells) of the scored cells of</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># slot tm; cell_type[[tm]]: their labels; lib[[tm]]: full library sizes</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># (10^log_umi). B, the seeds and the thresholds are fixed before the run.</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/02_00_utils.R"</span>)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/02_01_stats_quality_control.R"</span>)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/02_02_cross_cell.R"</span>)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>times <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"48h"</span>, <span class="st">"72h"</span>, <span class="st">"96h"</span>)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>sf <span class="ot">&lt;-</span> <span class="fu">lapply</span>(lib, <span class="cf">function</span>(l) l <span class="sc">/</span> stats<span class="sc">::</span><span class="fu">median</span>(l))</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>tests <span class="ot">&lt;-</span> <span class="fu">lapply</span>(times, <span class="cf">function</span>(tm) {</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">compare_type_effect_tests</span>(</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    sc[[tm]],</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    cell_type[[tm]],</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">size_factors =</span> sf[[tm]],</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_perm =</span> <span class="dv">2000</span>L,</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">seed =</span> <span class="dv">20261101</span>L,</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">fdr =</span> <span class="fl">0.05</span>,</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_frac =</span> <span class="fl">0.05</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(tests) <span class="ot">&lt;-</span> times</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Agreement of the gene orders: all gated genes, then those passing QL F.</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>tau_all <span class="ot">&lt;-</span> <span class="fu">lapply</span>(tests, type_test_kendall)</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>tau_gated <span class="ot">&lt;-</span> <span class="fu">lapply</span>(tests, <span class="cf">function</span>(r) <span class="fu">type_test_kendall</span>(r, <span class="at">genes =</span> r<span class="sc">$</span>ql_f_pass))</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Conservativeness: rerun on one permutation of the labels (null by</span></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="co"># construction) and compare the share of p-values below 0.01 and 0.05.</span></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>calibration <span class="ot">&lt;-</span> <span class="fu">lapply</span>(times, <span class="cf">function</span>(tm) {</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  null_labels <span class="ot">&lt;-</span> withr<span class="sc">::</span><span class="fu">with_seed</span>(<span class="dv">20261102</span>L, <span class="fu">sample</span>(cell_type[[tm]]))</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  res_null <span class="ot">&lt;-</span> <span class="fu">compare_type_effect_tests</span>(</span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    sc[[tm]],</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>    null_labels,</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">size_factors =</span> sf[[tm]],</span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_perm =</span> <span class="dv">2000</span>L,</span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">seed =</span> <span class="dv">20261103</span>L</span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">type_test_calibration</span>(res_null)</span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="co"># Gate on the chosen test, rank by the deviance R^2.</span></span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>ranked <span class="ot">&lt;-</span> <span class="fu">lapply</span>(times, <span class="cf">function</span>(tm) {</span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rank_genes_omnibus</span>(</span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>    sc[[tm]],</span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>    cell_type[[tm]],</span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">size_factors =</span> sf[[tm]],</span>
-<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">fdr =</span> <span class="fl">0.05</span>,</span>
-<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_frac =</span> <span class="fl">0.05</span>,</span>
-<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_select =</span> <span class="dv">500</span>L,</span>
-<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>    <span class="at">gate_test =</span> <span class="st">"ql_f"</span></span>
-<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(ranked) <span class="ot">&lt;-</span> times</span>
-<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel passed to tier (iii): genes selected at any time (the tier (i)</span></span>
-<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a><span class="co"># markers are united with it before export).</span></span>
-<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>panel <span class="ot">&lt;-</span> <span class="fu">unique</span>(<span class="fu">unlist</span>(<span class="fu">lapply</span>(ranked, <span class="cf">function</span>(r) r<span class="sc">$</span>gene[r<span class="sc">$</span>selected])))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># slot tm; cell_type[[tm]]: their labels; batch[[tm]]: their batch;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># lib[[tm]]: full library sizes (column sums of the deposited counts).</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># B, the seeds and the thresholds are fixed before the run.</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/02_00_utils.R"</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/02_01_stats_quality_control.R"</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/02_02_stats_cross_cell.R"</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>times <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"48h"</span>, <span class="st">"72h"</span>, <span class="st">"96h"</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>sf <span class="ot">&lt;-</span> <span class="fu">lapply</span>(lib, <span class="cf">function</span>(l) l <span class="sc">/</span> stats<span class="sc">::</span><span class="fu">median</span>(l))</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>tests <span class="ot">&lt;-</span> <span class="fu">lapply</span>(times, <span class="cf">function</span>(tm) {</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">compare_type_effect_tests</span>(</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    sc[[tm]],</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    cell_type[[tm]],</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">size_factors =</span> sf[[tm]],</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_perm =</span> <span class="dv">2000</span>L,</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">seed =</span> <span class="dv">20261101</span>L,</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">strata =</span> batch[[tm]],</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">fdr =</span> <span class="fl">0.05</span>,</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_frac =</span> <span class="fl">0.05</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(tests) <span class="ot">&lt;-</span> times</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Agreement of the gene orders: all tested genes, then those passing</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="co"># the gate (permuted Welch G).</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>tau_all <span class="ot">&lt;-</span> <span class="fu">lapply</span>(tests, type_test_kendall)</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>tau_gated <span class="ot">&lt;-</span> <span class="fu">lapply</span>(tests, <span class="cf">function</span>(r) <span class="fu">type_test_kendall</span>(r, <span class="at">genes =</span> r<span class="sc">$</span>welch_perm_pass))</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Conservativeness: rerun on one within-batch permutation of the labels</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="co"># (null by construction) and compare the share of p-values below 0.01</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="co"># and 0.05.</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>calibration <span class="ot">&lt;-</span> <span class="fu">lapply</span>(times, <span class="cf">function</span>(tm) {</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>  null_labels <span class="ot">&lt;-</span> withr<span class="sc">::</span><span class="fu">with_seed</span>(<span class="dv">20261102</span>L, {</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>    lab <span class="ot">&lt;-</span> cell_type[[tm]]</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (idx <span class="cf">in</span> <span class="fu">split</span>(<span class="fu">seq_along</span>(lab), batch[[tm]])) {</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>      lab[idx] <span class="ot">&lt;-</span> lab[idx][<span class="fu">sample.int</span>(<span class="fu">length</span>(idx))]</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>    lab</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>  res_null <span class="ot">&lt;-</span> <span class="fu">compare_type_effect_tests</span>(</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>    sc[[tm]],</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>    null_labels,</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">size_factors =</span> sf[[tm]],</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_perm =</span> <span class="dv">2000</span>L,</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">seed =</span> <span class="dv">20261103</span>L,</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">strata =</span> batch[[tm]]</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">type_test_calibration</span>(res_null)</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a><span class="co"># Gate on the permuted Welch G, rank by the deviance R^2; the fits and</span></span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a><span class="co"># permutations of `tests` are reused, not redrawn.</span></span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>ranked <span class="ot">&lt;-</span> <span class="fu">lapply</span>(times, <span class="cf">function</span>(tm) {</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rank_genes_omnibus</span>(</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>    <span class="at">fdr =</span> <span class="fl">0.05</span>,</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_select =</span> <span class="cn">Inf</span>,</span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>    <span class="at">gate_test =</span> <span class="st">"welch_perm"</span>,</span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>    <span class="at">results =</span> tests[[tm]]</span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(ranked) <span class="ot">&lt;-</span> times</span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel passed to tier (iii): genes selected at any time (the tier (i)</span></span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a><span class="co"># markers are united with it before export).</span></span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a>panel <span class="ot">&lt;-</span> <span class="fu">unique</span>(<span class="fu">unlist</span>(<span class="fu">lapply</span>(ranked, <span class="cf">function</span>(r) r<span class="sc">$</span>gene[r<span class="sc">$</span>selected])))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p><strong>Expected outputs (not produced yet).</strong> For each time slot, the Kendall <span class="math inline">\tau</span> matrix between the gene orders of the four tests, over all gated genes and over the genes that pass the gate; for each test, the share of <span class="math inline">p</span>-values below 0.01 and 0.05 under permuted labels, which orders the tests from the most to the least conservative; and the number of genes passing BH 0.05 under each test. Gene orders are expected to agree; these outputs measure how far they do.</p>
+<p><strong>Results.</strong> <code>scripts/02_02_stats_cross_cell_consistency.R</code> has been run (21 min, 23 GB peak memory). Its outputs in <code>output/feature_selection/tier_02/</code> are <code>calibration.csv</code>, <code>permutation_floor.csv</code>, <code>kendall_&lt;time&gt;.csv</code>, <code>selected_&lt;time&gt;.csv</code> and <code>cross_cell.rds</code> (every test table, tracked with DVC); the figures are drawn by <code>scripts/02_02_vis_cross_cell.R</code>.</p>
+<ul>
+<li><strong>Calibration.</strong> Under one within-batch permutation of the labels (<a href="#fig-fs-null-calibration" class="quarto-xref">Figure&nbsp;<span>3.4</span></a>), the analytic tests are anti-conservative at 48 h: at the 0.01 level the likelihood ratio rejects 2.9 times the nominal rate, the quasi-likelihood <span class="math inline">F</span> 2.8 times and the shifted-log ANOVA 3.4 times. A within-batch permutation keeps the association between type and cell line, and these tests do not model the cell line, so its effect reads as a type effect. The permuted Welch <span class="math inline">G</span> rejects 0.63 times the nominal rate there. At 72 h and 96 h, one batch each, every test is at or below its nominal rate except the ANOVA (1.2 to 1.4 times at 0.01).</li>
+<li><strong>Gate.</strong> The permuted Welch <span class="math inline">G</span> passes 1,417 (48 h), 3,420 (72 h) and 5,821 (96 h) of the 8,643, 8,636 and 8,788 tested genes at BH 0.05. The genes at the floor <span class="math inline">1/(B+1)</span> (635, 1,686 and 2,869) far exceed the about 87 needed for all of them to pass (<code>permutation_floor.csv</code>), so the floor does not limit the gate.</li>
+<li><strong>Agreement.</strong> Kendall’s <span class="math inline">\tau</span> between the likelihood ratio and the quasi-likelihood <span class="math inline">F</span> is 0.98 at every time; between the permuted Welch <span class="math inline">G</span> and the other three it is 0.68 to 0.80 (<a href="#fig-fs-test-agreement" class="quarto-xref">Figure&nbsp;<span>3.5</span></a>).</li>
+<li><strong>Panel.</strong> Every gated gene enters the panel (<a href="#fig-fs-gate-rank" class="quarto-xref">Figure&nbsp;<span>3.6</span></a>): 1,417, 3,420 and 5,821 genes at 48, 72 and 96 h, 6,604 across the three times (<code>selected_&lt;time&gt;.csv</code>, ordered by <span class="math inline">R^{2}_{D}</span>). The largest <span class="math inline">R^{2}_{D}</span> is 0.60 (<em>Slc2a3</em> at 96 h), but 99 % (48 h), 96 % (72 h) and 89 % (96 h) of the gated genes explain less than 5 % of the deviance (median <span class="math inline">R^{2}_{D}</span> 0.003, 0.005 and 0.010): real but small effects, whose weight is the relevance question left to the model (tier (iv)).</li>
+<li><strong>Overdispersion.</strong> The gene-wise <span class="math inline">1/\psi_g</span> decreases with the mean (<a href="#fig-fs-overdispersion" class="quarto-xref">Figure&nbsp;<span>3.7</span></a>); a group of genes sits near zero, the Poisson limit of the fit.</li>
+</ul>
+<div id="fig-fs-null-calibration" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-fs-null-calibration-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/feature_selection/fs_tier2_null_calibration.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-fs-null-calibration-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.4: Null calibration of the four tests. Observed against expected <span class="math inline">-\log_{10}p</span> on the genes of each slot after one within-batch permutation of the labels, one panel per test, one line per time (labelled at its end); the grey band is the pointwise 95 % interval of uniform order statistics (48 h genes); square panels, common range. Source: <code>cross_cell.rds</code>, element <code>null_tests</code>; <code>scripts/02_02_vis_cross_cell.R</code>.
+</figcaption>
+</figure>
+</div>
+<div id="fig-fs-test-agreement" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-fs-test-agreement-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/feature_selection/fs_tier2_test_agreement.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-fs-test-agreement-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.5: Kendall’s <span class="math inline">\tau_b</span> between the <span class="math inline">p</span>-value rankings of the four tests over all tested genes, per time; lower triangle only (the matrix is symmetric). LR: likelihood ratio; ANOVA: on the shifted log; QL F: quasi-likelihood <span class="math inline">F</span>; Welch G: permuted Welch <span class="math inline">G</span>. Source: <code>kendall_&lt;time&gt;.csv</code>.
+</figcaption>
+</figure>
+</div>
+<div id="fig-fs-gate-rank" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-fs-gate-rank-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/feature_selection/fs_tier2_gate_rank.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-fs-gate-rank-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.6: Gate and rank per time. Deviance explained <span class="math inline">R^{2}_{D}</span> (square-root scale) against <span class="math inline">-\log_{10}p</span> of the permuted Welch <span class="math inline">G</span> (jittered, since <span class="math inline">p</span> takes discrete values), one point per tested gene; grey: fails BH 0.05; orange: passes and enters the panel (no cap). Dashed line: largest <span class="math inline">p</span> that passes BH; dotted line: permutation floor <span class="math inline">1/(B+1)</span>. Source: <code>cross_cell.rds</code>, element <code>ranked</code>.
+</figcaption>
+</figure>
+</div>
+<div id="fig-fs-overdispersion" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-fs-overdispersion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/feature_selection/fs_tier2_overdispersion.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-fs-overdispersion-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.7: Gene-wise overdispersion <span class="math inline">1/\psi_g</span> of <span class="math inline">M_1</span> (maximum likelihood) against the mean size-normalised count, both on log scales, with a loess trend (orange); dotted line at <span class="math inline">10^{-4}</span>, below which a gene is counted at the Poisson limit of the fit. Source: <code>cross_cell.rds</code>, element <code>tests</code>, and <code>scored_slots.rds</code>.
+</figcaption>
+</figure>
+</div>
 <div id="tbl-fs-boot-perm" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-fs-boot-perm-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -866,7 +925,12 @@ Table&nbsp;3.4: Resampling plan of tier (ii). <span class="math inline">B</span>
 <tr class="odd">
 <td>Is the nominal tail of each test accurate?</td>
 <td>label permutation, one permutation applied to all genes</td>
-<td>labels within the slot</td>
+<td>labels within batch, within the slot</td>
+</tr>
+<tr class="even">
+<td>Which genes pass the gate?</td>
+<td><span class="math inline">B</span> shared label permutations (Freedman–Lane, Welch’s <span class="math inline">G</span>)</td>
+<td>labels within batch, within the slot</td>
 </tr>
 </tbody>
 </table>
@@ -874,6 +938,7 @@ Table&nbsp;3.4: Resampling plan of tier (ii). <span class="math inline">B</span>
 </figure>
 </div>
 <p>Cell types are the authors’ annotations, fixed before any statistic is computed here. Labels refined on the same counts would make every permutation <span class="math inline">p</span>-value anti-conservative <span class="citation" data-cites="gonzalezDelgadoPostclusteringInference2025">(<a href="#ref-gonzalezDelgadoPostclusteringInference2025" role="doc-biblioref">González-Delgado et al. 2025</a>)</span>.</p>
+<p><strong>Conclusion of tier (ii).</strong> <span class="light-content" style="color: #7a1f1f;border-radius: 0.2rem; padding: 0 0.2rem 0 0.2rem;background-color: #f4c7c3;">Decision: the panel has no cap and no effect-size floor. The earlier rule kept the 500 genes with the largest <span class="math inline">R^{2}_{D}</span> per time; it came from the legacy panel and had no data-driven basis, so it is removed, and no threshold on <span class="math inline">R^{2}_{D}</span> replaces it. The panel is every gene that passes the calibrated gate (permuted Welch <span class="math inline">G</span>, BH at 0.05): 1,417, 3,420 and 5,821 genes at 48, 72 and 96 h, 6,604 across the three times. The gate controls false discoveries, not relevance: with thousands of cells per slot, 99 % (48 h), 96 % (72 h) and 89 % (96 h) of the gated genes explain less than 5 % of the deviance. Weighting these small effects is left to the model (tier (iv), <a href="#sec-fs-weighting-pointer" class="quarto-xref"><span>Section 3.5</span></a>). Open question: if the fit of tier (iv) cannot absorb them, an effect-size floor chosen from the data (for example from the null distribution of <span class="math inline">R^{2}_{D}</span> under within-batch permutations) is the next step.</span></p>
 <div style="page-break-after: always;"></div>
 </section>
 </section>
@@ -894,7 +959,7 @@ Table&nbsp;3.4: Resampling plan of tier (ii). <span class="math inline">B</span>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Not run. After fs-omnibus-call and fs-bulk-consistency-call: panel</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># genes, reference counts, labels, size factors and the tier (iii) plug-in.</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/02_03_influence.R"</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/02_03_stats_influence.R"</span>)</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>outlier_cells <span class="ot">&lt;-</span> <span class="fu">lapply</span>(times, <span class="cf">function</span>(tm) {</span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cook_cells</span>(sc[[tm]][panel, ], cell_type[[tm]], <span class="at">size_factors =</span> sf[[tm]])</span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>})</span>
@@ -916,11 +981,16 @@ Table&nbsp;3.4: Resampling plan of tier (ii). <span class="math inline">B</span>
 <li><strong>Matched pairs.</strong> The single-cell reference matches the standard-Wnt bulk at all three times used in this book: single-cell 48 h (B-S and SBR pooled), 72 h (SBR) and 96 h (B-S), each against three biological replicates of the standard-Wnt bulk at that time.</li>
 <li><strong>No match for early Wnt.</strong> The early-Wnt bulk (Wnt pulse at 24 h) has no single-cell counterpart at any time, so no bulk–reference comparison is possible on that arm.</li>
 <li><strong>Fit.</strong> At each of the three matched times independently, in two steps. First, a <span class="math inline">\boldsymbol{p}</span>-free check: the distance of each normalised bulk value to the range of the type means, with RNA-Sieve’s range bound and median-absolute-deviation outlier rule <span class="citation" data-cites="erdmann-phamLikelihoodbasedDeconvolutionBulk2021">(<a href="#ref-erdmann-phamLikelihoodbasedDeconvolutionBulk2021" role="doc-biblioref">Erdmann-Pham et al. 2021</a>)</span> (<code>bulk_consistency_filter()</code>, a heuristic). Second, the tail statements below, on a statistic that uses a plug-in composition.</li>
-<li><strong>Apply.</strong> A gene flagged at any of the three matched times is removed from the panel at every time, including the early-Wnt arm, where no matched pair exists.</li>
-<li><strong>Assumption, now testable.</strong> With three matched times the flags can be compared across 48 h, 72 h and 96 h: a gene flagged consistently supports treating the platform effect as a property of the gene, a gene flagged only at one time does not. This comparison has not yet been run.</li>
-<li><strong>Status.</strong> <code>scripts/02_01_stats_quality_control.R</code> reads the HTSeq table for the symbol intersection, and <code>scripts/02_03_cross_platform_consistency.R</code> reads it for the filter. Neither script has been run.</li>
+<li><strong>Apply (planned, not applied).</strong> The rule was to remove a gene flagged at any of the three matched times from the panel at every time, including the early-Wnt arm. The run below shows that the model-based statements flag 93 to 95 % of the panel under A3, and still 70 to 72 % after a cross-fitted gene-wise platform ratio, so the rule is not applied (see <strong>Results</strong>).</li>
+<li><strong>Drift across times.</strong> With three matched times the flags can be compared across 48 h, 72 h and 96 h. <code>platform_drift_summary()</code> classifies each gene by the times at which it is flagged (T4 by default) and by the sign of its standardised discrepancy <span class="math inline">D_{gi}/\operatorname{sd}D_{gi}</span>: flagged at several times with one sign supports treating the platform effect as a property of the gene; flagged at one time only does not.</li>
+<li><strong>Code.</strong> Tier (iii) has two files: <code>R/02_03_stats_influence.R</code> (Cook’s distance for cells and genes, <a href="#sec-fs-outliers" class="quarto-xref"><span>Section 3.4.1</span></a>) and <code>R/02_03_stats_tail_bounds.R</code> (range check, plug-in, tail statements, quantile band, drift, transcript length and the gene-wise platform ratio). <code>scripts/02_03_stats_cross_platform_consistency.R</code> runs both. It has been run; its outputs in <code>output/feature_selection/tier_03/</code> are <code>tail_order_&lt;time&gt;.csv</code> (A3), <code>platform_drift.csv</code> (flagged genes only), <code>platform_log_ratio.csv</code>, <code>platform_length.csv</code>, <code>platform_ratio.csv</code> (cross-fitted <span class="math inline">\log_2\hat b_g</span> and its standard error, per held-out time and method), <code>a3_shift_summary.csv</code> (one row per time and variant), <code>settings.csv</code> and <code>cross_platform.rds</code> (every table, tracked with DVC). The figures are drawn by <code>scripts/02_03_vis_cross_platform.R</code>.</li>
 </ul>
-<p><strong>Plug-in composition.</strong> For each bulk replicate <span class="math inline">i</span>, <code>plugin_composition_demixsc()</code> fits the bulk counts <span class="math inline">y_{gi}</span> on the per-cell type means of the reference by iterated weighted non-negative least squares, in the style of deMixSC: weights <span class="math inline">1/(\hat y_{gi}^{2}+(y_{gi}-\hat y_{gi})^{2}+c)</span> with <span class="math inline">c=2</span>. deMixSC also calibrates a gene set G2 on a same-aliquot benchmark; none exists for Suppinger, so G2 is empty. <span class="math inline">a_i</span> is the sum of the NNLS coefficients and <span class="math inline">\hat p_{ji}</span> the coefficients divided by <span class="math inline">a_i</span>; the extra overdispersion between platforms is fixed at 1. MuSiC <span class="citation" data-cites="wangBulkTissueCell2019">(<a href="#ref-wangBulkTissueCell2019" role="doc-biblioref">Wang et al. 2019</a>)</span> is not used, because its weights need at least two donors. <code>nnls</code> is not in <code>renv.lock</code>, so the Lawson–Hanson algorithm is written inline. Why this plug-in, and what it costs, is in <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-plugin">3.1, plug-in</a>.</p>
+<p><strong>Plug-in composition: deMixSC, not plain NNLS.</strong> For each bulk replicate <span class="math inline">i</span>, <code>plugin_composition_demixsc()</code> fits the bulk counts <span class="math inline">y_{gi}</span> on the per-cell type means of the reference by iterated weighted non-negative least squares, as deMixSC does: weights <span class="math inline">1/(\hat y_{gi}^{2}+(y_{gi}-\hat y_{gi})^{2}+c)</span> with <span class="math inline">c=2</span>. Plain NNLS is not used as a plug-in, for two reasons.</p>
+<ul>
+<li><strong>Weights of the model.</strong> Under DeCovarT the variance of a bulk count is gene-specific and depends on <span class="math inline">\boldsymbol{p}</span> and on the type means. Unweighted NNLS gives every gene the same weight, so the most expressed genes decide <span class="math inline">\hat{\boldsymbol{p}}</span>. The deMixSC weights are inverse-variance weights that follow the current fit: the diagonal, plug-in counterpart of the generalised least squares that DeCovarT solves (<a href="04-deconvolution-pipeline.html#sec-deconv-models" class="quarto-xref"><span>Section 5.1</span></a>). Of the two, it is the closer to the final model.</li>
+<li><strong>Robustness to the genes under test.</strong> The residual term <span class="math inline">(y_{gi}-\hat y_{gi})^{2}</span> down-weights the genes that the bulk expresses far from the reference, which are the genes this filter must find, so that they do not bias <span class="math inline">\hat{\boldsymbol{p}}</span> and, in turn, their own statistic.</li>
+</ul>
+<p>Non-negative least squares remains only the solver of each reweighting step (<code>nnls::nnls()</code>, the Lawson–Hanson algorithm). deMixSC also calibrates a gene set G2 on a same-aliquot benchmark; none exists for Suppinger, so G2 is empty. <span class="math inline">a_i</span> is the sum of the coefficients and <span class="math inline">\hat p_{ji}</span> the coefficients divided by <span class="math inline">a_i</span>; the extra overdispersion between platforms is fixed at 1. MuSiC <span class="citation" data-cites="wangBulkTissueCell2019">(<a href="#ref-wangBulkTissueCell2019" role="doc-biblioref">Wang et al. 2019</a>)</span> is not used, because its weights need at least two donors. What the plug-in costs is in <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-plugin">3.1, plug-in</a>.</p>
 <p><span class="light-content" style="color: #7a1f1f;border-radius: 0.2rem; padding: 0 0.2rem 0 0.2rem;background-color: #f4c7c3;">TODO-cite: deMixSC (Eq. 4, PDF p.&nbsp;12), iterated W-NNLS weights</span> <span class="light-content" style="color: #7a1f1f;border-radius: 0.2rem; padding: 0 0.2rem 0 0.2rem;background-color: #f4c7c3;">TODO-cite: Lawson &amp; Hanson (1974), Solving Least Squares Problems, ch.&nbsp;23</span></p>
 <p><strong>Statistic.</strong> With <span class="math inline">\hat{\tilde\mu}_{gj}</span> the mean raw count per cell of type <span class="math inline">j</span> over its <span class="math inline">C_j</span> reference cells, and <span class="math inline">\hat\psi_{gj}</span> the negative-binomial size matched to their mean and variance (<code>type_moments_nb()</code>; raw counts, because a bulk is a sum of raw cell profiles),</p>
 <p><span id="eq-fs-bulk-stat"><span class="math display">
@@ -933,7 +1003,7 @@ S_{Mi}=\sum_{g\in M}\frac{D_{gi}}{\operatorname{sd}D_{gi}},
 <div id="tbl-fs-tail-statements" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-fs-tail-statements-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;3.5: Tail statements of the bulk filter as implemented in <code>R/02_03_tail_bounds.R</code>. <code>tail_threshold()</code> dispatches one function per statement.
+Table&nbsp;3.5: Tail statements of the bulk filter as implemented in <code>R/02_03_stats_tail_bounds.R</code>. <code>tail_threshold()</code> dispatches one function per statement.
 </figcaption>
 <div aria-describedby="tbl-fs-tail-statements-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <table class="caption-top table">
@@ -1014,9 +1084,103 @@ Table&nbsp;3.5: Tail statements of the bulk filter as implemented in <code>R/02_
 <li><strong>Dependency graph.</strong> Inside a module, <code>module_dependency_graph()</code> joins the gene pairs with the largest within-type correlations, with maximum degree <span class="math inline">\le10</span> and mean degree <span class="math inline">\le3</span>. With at most four genes both caps are met by construction. Genes without an edge are assumed independent; T2 uses the within-type correlations on the edges, T5 only the colouring of the graph (<code>greedy_colouring()</code>).</li>
 <li><strong>Quantile band.</strong> <code>quantile_band_flags()</code> regresses <span class="math inline">y_{gi}/a_i</span> on <span class="math inline">\sum_j\hat p_{ji}\hat{\tilde\mu}_{gj}</span> across the genes of one replicate, at <span class="math inline">\tau=0.01</span> and <span class="math inline">0.99</span>, without a count model. Each bound above bounds a quantile of <span class="math inline">D_{gi}</span> under a model; the band estimates it from the genes, assuming they are exchangeable given the fitted value (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-bounds-compare">3.1, comparison of the bounds</a>).</li>
 <li><strong>Ranking on the simulated tails.</strong> The vignette compares the statements on one gene and one module, which is not a Suppinger result (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#tbl-fs-thresholds">3.1, thresholds</a>; <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#fig-fs-bounds-gene">gene tails</a>; <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#fig-fs-bounds-module">module tails</a>). Per gene, T4 has the largest threshold and does not under-cover. Per module, T5 has the largest threshold and does not under-cover. T3 is far too small for a high-expression gene.</li>
-<li><strong>Multiplicity, two counts.</strong> The level 0.01 per tail is per gene. In the vignette, that level flags about 60 consistent genes out of about 3,000: that count is the vignette’s one comparison. Here, the planned Suppinger panel is about 500 genes times three replicates, which would flag about ten genes per tail and statement. The filter has not been run, so a flag would be a candidate for removal, not a proven platform artefact.</li>
+<li><strong>Multiplicity, two counts.</strong> The level 0.01 per tail is per gene. In the vignette, that level flags about 60 consistent genes out of about 3,000: that count is the vignette’s one comparison. Here, the Suppinger panel is 6,615 genes times three replicates, which would give about 200 (gene, replicate) flags per tail and statement if the model held. The run flags about 6,200 genes (below).</li>
 </ul>
-<p><strong>Planned outputs.</strong> At each time: the genes and modules flagged by each statement; their overlap (pairwise Jaccard indices and an UpSet-style table of membership patterns, <code>tail_flag_overlap()</code>); and the order of the statements from the most to the least conservative, read from the number of flags and the median thresholds, not assumed.</p>
+<p><strong>Results.</strong> The panel is the 6,604 genes that pass the tier (ii) gate at any time, united with the mapped markers: 6,616 genes, of which 6,615 are in each slot. All three variants below run on that panel.</p>
+<ul>
+<li><strong>What the tail statements assume.</strong> Every statement T1 to T5 tests <span class="math inline">D_{gi}</span> against its spread under assumption A3: each gene has the same mean count per cell in the bulk as in the reference, so the bulk differs from <span class="math inline">a_i\sum_j\hat p_{ji}\hat{\tilde\mu}_{gj}</span> only by the negative-binomial sampling of <span class="math inline">a_i</span> cells. With <span class="math inline">a_i\approx1{,}200</span> to <span class="math inline">1{,}900</span> cells that sampling averages out, so <span class="math inline">\operatorname{sd}D_{gi}</span> is small, and a gene is flagged when <span class="math inline">D_{gi}</span> is more than about 2.3 of these standard deviations from 0 (T1; the Chernoff statements are somewhat wider).</li>
+<li><strong>What the data show under A3.</strong> The median <span class="math inline">|D_{gi}|/\operatorname{sd}D_{gi}</span> is 17 at every time: the discrepancies are about 17 times larger, and their variance about 300 times larger, than A3 allows; 91 to 92 % of the (gene, replicate) values lie beyond <span class="math inline">\pm2.33</span>, where 2 % are expected (<a href="#fig-fs-a3-shift" class="quarto-xref">Figure&nbsp;<span>3.9</span></a>). T4, the most conservative per gene, flags 6,147 (48 h), 6,220 (72 h) and 6,274 (96 h) of the 6,615 genes (<code>a3_shift_summary.csv</code>, <a href="#fig-fs-tail-flags" class="quarto-xref">Figure&nbsp;<span>3.11</span></a>). These flags measure the failure of A3, not a defect of individual genes.</li>
+<li><strong>The discrepancy is a gene-wise ratio.</strong> For each gene and time, the mean over replicates of <span class="math inline">\log_2\{(y_{gi}/a_i)/\sum_j\hat
+p_{ji}\hat{\tilde\mu}_{gj}\}</span> (<code>platform_log_ratio()</code>) has an interquartile range of 2.0 to 2.2 across genes: half the genes are more than 2-fold away from the reference (<code>platform_log_ratio.csv</code>). The same genes are off in the same direction at every time: the Spearman correlation of the ratios is 0.97 (48 h–72 h), 0.95 (72 h–96 h) and 0.94 (48 h–96 h) (<a href="#fig-fs-drift" class="quarto-xref">Figure&nbsp;<span>3.12</span></a>). 5,890 genes are flagged by T4 at two or three times with one sign; the 466 flagged with a sign change and the 226 flagged at one time only sit near a ratio of 0, where a small difference flips the sign or the flag.</li>
+<li><strong>The ratio follows transcript length.</strong> The bulk is a full-length library and the reference a 3′ UMI library (protocols below), so a gene’s bulk reads grow with its transcript length and its reference counts do not. The prediction is a slope of 1 of the log2 ratio on log2 length. The median-regression slope is 1.06 (48 h, 95 % gene-bootstrap interval 1.02 to 1.10), 1.18 (72 h, 1.13 to 1.22) and 1.06 (96 h, 1.01 to 1.10); Spearman’s correlation is 0.55 to 0.59, and a loess on length explains 31 to 34 % of the variance of the ratio (<code>platform_length.csv</code>, <a href="#fig-fs-length" class="quarto-xref">Figure&nbsp;<span>3.8</span></a>). Length is a large part of the platform effect, but two thirds of the gene-to-gene variation remain. The bootstrap treats genes as independent, so the intervals are too narrow if genes are correlated.</li>
+<li><strong>Dividing by a cross-fitted ratio.</strong> With the free gene-wise ratio (estimated on the two other times), the interquartile range of the residual log2 ratio falls from 2.0–2.2 to 0.38–0.42, the share of genes more than 2-fold off from 51–54 % to 2–4 %, and the range rule flags 79, 309 and 82 genes instead of 3,179, 3,802 and 2,859 (<a href="#fig-fs-bulk-fit" class="quarto-xref">Figure&nbsp;<span>3.10</span></a>, <a href="#fig-fs-tail-flags" class="quarto-xref">Figure&nbsp;<span>3.11</span></a>). The ratio learnt at 72 and 96 h (primitive streak, mesoderm) transfers to the epiblast bulk at 48 h, and conversely, so for most genes the effect belongs to the gene, not to a type. The length-only ratio removes less: residual interquartile range 1.5 to 1.6, range flags 2,007 to 2,940.</li>
+<li><strong>A residual remains.</strong> With the gene-wise ratio the median <span class="math inline">|z|</span> is 2.0 to 2.2, and 44 to 48 % of the values lie beyond <span class="math inline">\pm2.33</span> instead of 2 %; T4 still flags 4,628, 4,751 and 4,722 genes (<a href="#fig-fs-a3-shift" class="quarto-xref">Figure&nbsp;<span>3.9</span></a>). The residual log ratio (interquartile range about 0.4 in log2 units, a 30 % spread) is far larger than both the negative-binomial sampling of the bulk and the uncertainty of the ratio itself (median standard error of <span class="math inline">\log_2\hat b_g</span> 0.06 to 0.07, <code>platform_ratio.csv</code>). Three sources are possible, none tested here: a ratio that depends on the type as well as the gene, which is not identified without paired measurements; biological differences between the gastruloids profiled in bulk and in single cell, which are different specimens; and errors of the plug-in composition. Our reading is that the tail statements need an extra between-platform overdispersion, fixed at 1 (none) here, before their flags can single out genes.</li>
+<li><strong>Two side effects.</strong> The MAD rules flag more genes with the ratio (587 to 720 against 299 to 463), because one of their summaries is a bulk-to-reference ratio. The model-free quantile band flags 191 to 203 genes with the ratio and 154 to 161 under A3, 2.3 to 3.1 % of the panel, near the 2 % it is fitted for. The residual log ratios are negatively correlated between times (Spearman −0.25 to −0.45): this is built in by cross-fitting, since each time’s ratio is the average of the two others, and is not a drift.</li>
+<li><strong>Plug-in composition.</strong> Under A3, epiblast takes all of the 48 h bulk and the primitive streak all of the 72 h bulk (shares of at least 0.999), the types that dominate the reference (97 % and 93 % of the scored cells); at 96 h pre-somitic mesoderm takes 0.73 and caudal mesoderm 0.26. With the gene-wise ratio, the 48 h bulk becomes 0.91 epiblast and 0.08 exiting naïve pluripotency, 72 h is unchanged (0.99 primitive streak), and the 96 h composition inverts: caudal mesoderm 0.72, pre-somitic mesoderm 0.25 (<a href="#fig-fs-plugin" class="quarto-xref">Figure&nbsp;<span>3.13</span></a>). The ratio used at 96 h was learnt at 48 and 72 h, where neither mesoderm type exists, so the genes that separate the two types carry ratios estimated from other cell states. No ground truth exists for these bulk samples: the inversion shows that the plug-in composition is not robust to the platform model, not which composition is right.</li>
+<li><strong>Cook’s distance.</strong> No gene is flagged in the weighted bulk fit at any time. This is a property of the deMixSC weights, not a finding: with <span class="math inline">w_g=1/(\hat y_g^{2}+e_g^{2}+c)</span>, <span class="math inline">\sqrt{w_g}\,|e_g|&lt;1</span>, so the standardised residual is bounded (it stays within <span class="math inline">\pm1.7</span>) and never reaches 3. Among cells, 21,686 to 27,679 (gene, cell) pairs are flagged per time, all in the small types, where a cell’s leverage can exceed <span class="math inline">3J/C</span> (<a href="#fig-fs-cook" class="quarto-xref">Figure&nbsp;<span>3.14</span></a>).</li>
+</ul>
+<p><strong>Gene-wise platform ratio: method.</strong> The two libraries differ by design. The bulk (GSE229386) is an Illumina Stranded mRNA Ligation library of poly(A) RNA, aligned with STAR and counted with HTSeq on GENCODE vM24 (mm10); the reference (GSE229513) is 10x Genomics Single Cell 3′ v3, quantified with Salmon/Alevin on GENCODE M24 (GRCm38) (GEO series records). Full-length single-cell protocols show the length bias of bulk RNA-seq and UMI protocols do not <span class="light-content" style="color: #7a1f1f;border-radius: 0.2rem; padding: 0 0.2rem 0 0.2rem;background-color: #f4c7c3;">TODO-cite: Phipson, Zappia &amp; Oshlack 2017, Gene length and detection bias in single cell RNA sequencing protocols, F1000Research 6:595, doi:10.12688/f1000research.11290.1</span>; the bulk side is the transcript-length bias of RNA-seq counts <span class="light-content" style="color: #7a1f1f;border-radius: 0.2rem; padding: 0 0.2rem 0 0.2rem;background-color: #f4c7c3;">TODO-cite: Oshlack &amp; Wakefield 2009, Transcript length bias in RNA-seq data confounds systems biology, Biology Direct 4:14, doi:10.1186/1745-6150-4-14</span>. The model, its identifiability conditions and the tail statements with a plug-in ratio are in <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-platform-ratio">3.1, plug-in platform ratio</a>. As applied here:</p>
+<ul>
+<li><strong>Length.</strong> <code>gene_transcript_length()</code> averages the exonic length of the UCSC knownGene transcripts of each gene (<code>TxDb.Mmusculus.UCSC.mm10.knownGene</code> 3.10.0, <code>GenomicFeatures::transcriptLengths()</code>), matched by Ensembl id through <code>org.Mm.eg.db</code>, then by symbol: 6,564 genes by Ensembl id, 24 by symbol, 28 without a length. That annotation is based on GENCODE VM23, one release before the authors’ vM24. Adapted from <code>annotate_genes_local()</code> of GastroDeconv2FateMap, which uses the genomic span instead (introns included).</li>
+<li><strong>Three variants, no filtering.</strong> (i) A3, no ratio. (ii) A ratio from length: a robust loess of the per-gene median log ratio on log2 length. (iii) A free gene-wise ratio: the deMixSC plug-in on <span class="math inline">y_{gi}/\hat b_g</span> alternates with <span class="math inline">\log\hat b_g=</span> median over the pooled replicates of the log ratio, until the largest change is below <span class="math inline">10^{-3}</span> (18 to 21 rounds; <code>estimate_platform_ratio()</code>). In (ii) and
+<ol start="3" type="i">
+<li><span class="math inline">\operatorname{median}_g\log\hat b_g=0</span>, since <span class="math inline">a_i</span> absorbs a common factor.</li>
+</ol></li>
+<li><strong>Cross-fitting.</strong> The ratio used at one time is estimated on the six replicates of the two other times (<code>cross_fit_platform_ratio()</code>), so it cannot absorb the residual it is meant to test, and its transfer across compositions is what is tested.</li>
+<li><strong>Statistic.</strong> <code>bulk_tail_filter(platform_ratio, platform_var)</code> divides the bulk by <span class="math inline">\hat b_g</span> before the plug-in fit, and adds the delta-method term <span class="math inline">(\sum_j\hat p_{ji}\hat{\tilde\mu}_{gj})^{2}\operatorname{Var}\log\hat b_g</span> to the variance of <span class="math inline">D_{gi}</span> in <span class="math inline">z</span> and in T1; T1-log, T3, T4 and the module statements treat <span class="math inline">\hat b_g</span> as known. The RNA-Sieve range and MAD rules need no composition and run on <span class="math inline">y_{gi}/\hat b_g</span> as well.</li>
+</ul>
+<p>What this changes: no gene is removed at this tier. A cross-fitted gene-wise ratio removes most of the platform shift, so it belongs in the model of tier (iv) rather than in a filter; the tail statements become usable as a filter only once a between-platform overdispersion is added for what the ratio leaves.</p>
+<div id="fig-fs-length" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-fs-length-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/feature_selection/fs_tier3_length.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-fs-length-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.8: Platform ratio against transcript length. Per time, the log2 ratio of bulk per cell to the fitted reference under A3, one value per panel gene (mean over three replicates), against the log2 mean transcript length (exonic, UCSC knownGene mm10, averaged over isoforms), as 2D bins with counts on a log scale. Orange: median regression; dashed: line of slope 1 through the medians, the prediction for a full-length bulk against 3′ UMI counts. The label gives the slope with its gene-bootstrap 95 % interval (1,000 resamples), Spearman’s correlation and the share of variance explained by a loess. Source: <code>cross_platform.rds</code>, elements <code>log_ratio</code>, <code>lengths</code> and <code>length_test</code>; <code>scripts/02_03_vis_cross_platform.R</code>.
+</figcaption>
+</figure>
+</div>
+<div id="fig-fs-a3-shift" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-fs-a3-shift-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/feature_selection/fs_tier3_a3_shift.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-fs-a3-shift-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.9: Distribution of the standardised discrepancy <span class="math inline">z=D/\operatorname{sd}D</span> over panel genes and the three replicates, per time, under three models: A3 (grey), a cross-fitted ratio from transcript length (blue) and a cross-fitted gene-wise ratio (orange), with N(0, 1) draws (dark) as the law of <span class="math inline">z</span> when the model holds. Signed <span class="math inline">\log_{10}(1+|z|)</span> axis; grey band: <span class="math inline">|z|\le2.33</span>, the T1 threshold at 0.01 per tail. The label gives the share of values beyond the band. Source: <code>cross_platform.rds</code>, element <code>variants</code>.
+</figcaption>
+</figure>
+</div>
+<div id="fig-fs-bulk-fit" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-fs-bulk-fit-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/feature_selection/fs_tier3_bulk_fit.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-fs-bulk-fit-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.10: Observed bulk per cell <span class="math inline">y/(a\hat b)</span> against the fitted <span class="math inline">\sum_j\hat p_j\hat\mu_{gj}</span>, both as <span class="math inline">\log_{10}(1+x)</span>, under A3 (<span class="math inline">\hat b=1</span>, top row) and with the cross-fitted gene-wise ratio (bottom row); 2D bins over genes and the three replicates, counts on a log scale; dashed line: identity. The label gives the median absolute <span class="math inline">\log_{10}</span> ratio. Source: <code>cross_platform.rds</code>, element <code>variants</code>.
+</figcaption>
+</figure>
+</div>
+<div id="fig-fs-tail-flags" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-fs-tail-flags-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/feature_selection/fs_tier3_tail_flags.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-fs-tail-flags-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.11: Genes flagged in at least one replicate by each statement, per time, under the three models: tail statements T1, T1-log, T3 and T4 of <a href="#tbl-fs-tail-statements" class="quarto-xref">Table&nbsp;<span>3.5</span></a>, the quantile band and the two RNA-Sieve rules; statements ranked by their count under A3. Source: <code>cross_platform.rds</code>, element <code>variants</code>; <code>a3_shift_summary.csv</code>.
+</figcaption>
+</figure>
+</div>
+<div id="fig-fs-drift" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-fs-drift-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/feature_selection/fs_tier3_drift.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-fs-drift-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.12: Gene-wise bulk-to-reference ratio under A3, one matched time against another: mean over the three replicates of <span class="math inline">\log_2\{(y/a)/\sum_j\hat p_j\hat\mu_{gj}\}</span> (pseudo-count 0.01 per cell), one point per panel gene; orange: genes flagged by T4 at two or three times with one sign; grey: other genes. Dashed line: identity; under A3 the points would gather at (0, 0). Panel titles give the Spearman correlation. Source: <code>cross_platform.rds</code>, elements <code>log_ratio</code> and <code>drift</code>.
+</figcaption>
+</figure>
+</div>
+<div id="fig-fs-plugin" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-fs-plugin-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/feature_selection/fs_tier3_plugin_composition.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-fs-plugin-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.13: Plug-in composition <span class="math inline">\hat p</span> of each standard-Wnt bulk replicate (deMixSC weights, <span class="math inline">c=2</span>), per time, under A3 (grey) and with the cross-fitted gene-wise ratio (orange), one point per replicate; types ranked by mean share. Source: <code>cross_platform.rds</code>, element <code>variants</code>.
+</figcaption>
+</figure>
+</div>
+<div id="fig-fs-cook" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-fs-cook-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/feature_selection/fs_tier3_cook.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-fs-cook-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3.14: Cook diagnostics. (a) Leverage (log scale) against standardised residual of each panel gene in the weighted bulk-on-reference fit under A3, three replicates per time; dashed lines at <span class="math inline">\pm3</span>; no gene is flagged. (b) (Gene, cell) pairs flagged in the <span class="math inline">M_1</span> fits (leverage above three times its mean and <span class="math inline">|r|&gt;3</span>) per cell of each type and time, types ranked; labels give the number of pairs, axis labels the number of cells. Source: <code>cross_platform.rds</code>, elements <code>outlier_genes</code> and <code>outlier_cells</code>.
+</figcaption>
+</figure>
+</div>
+<p><strong>Outputs.</strong> At each time: the genes and modules flagged by each statement; their overlap (pairwise Jaccard indices and an UpSet-style table of membership patterns, <code>tail_flag_overlap()</code>); and the order of the statements from the most to the least conservative, read from the number of flags and the median thresholds, not assumed. Across times: the drift class of each gene (<code>platform_drift.csv</code>), and the settings of the run, including the smallest within-type correlation for an edge of the dependency graph (<code>min_abs_cor = 0.1</code>, <code>settings.csv</code>).</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Not run. sc[[tm]]: raw counts (genes x cells) of the scored cells of</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># slot tm, with labels cell_type[[tm]] and full library sizes lib[[tm]];</span></span>
@@ -1025,61 +1189,89 @@ Table&nbsp;3.5: Tail statements of the bulk filter as implemented in <code>R/02_
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># selected by tier (ii) and the markers of tier (i).</span></span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/02_00_utils.R"</span>)</span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/02_01_stats_quality_control.R"</span>)</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/02_03_bulk_consistency.R"</span>)</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/02_03_plugin_composition.R"</span>)</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/02_03_tail_bounds.R"</span>)</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 1: p-free range check (RNA-Sieve range bound and MAD rule).</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>range_flags <span class="ot">&lt;-</span> <span class="fu">lapply</span>(times, <span class="cf">function</span>(tm) {</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> sc[[tm]][panel, , drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  ct <span class="ot">&lt;-</span> <span class="fu">droplevels</span>(<span class="fu">factor</span>(cell_type[[tm]]))</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  norm <span class="ot">&lt;-</span> <span class="fu">sweep</span>(<span class="fu">as.matrix</span>(x), <span class="dv">2</span>L, sf[[tm]], <span class="st">"/"</span>)</span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  mu <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="fu">levels</span>(ct), <span class="cf">function</span>(k) <span class="fu">rowMeans</span>(norm[, ct <span class="sc">==</span> k, <span class="at">drop =</span> <span class="cn">FALSE</span>]))</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  sd <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="fu">levels</span>(ct), <span class="cf">function</span>(k) <span class="fu">apply</span>(norm[, ct <span class="sc">==</span> k, <span class="at">drop =</span> <span class="cn">FALSE</span>], <span class="dv">1</span>L, stats<span class="sc">::</span>sd))</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">bulk_consistency_filter</span>(</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">bulk =</span> bulk[[tm]][panel, , <span class="at">drop =</span> <span class="cn">FALSE</span>],</span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">mu =</span> mu,</span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd =</span> sd,</span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_cells =</span> <span class="fu">table</span>(ct)[<span class="fu">levels</span>(ct)],</span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">z_range =</span> <span class="dv">3</span>,</span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">mad_k =</span> <span class="dv">3</span></span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>  out<span class="sc">$</span>gene[<span class="sc">!</span>out<span class="sc">$</span>keep]</span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 2: tail statements per gene and per module, and the quantile band.</span></span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>dict <span class="ot">&lt;-</span> utils<span class="sc">::</span><span class="fu">read.csv</span>(<span class="st">"data/dictionaries/mouse_gastruloid_signaling_markers.csv"</span>)</span>
-<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>map <span class="ot">&lt;-</span> <span class="fu">map_marker_symbols</span>(dict<span class="sc">$</span>gene_marker, <span class="at">universe =</span> <span class="fu">rownames</span>(sc[[<span class="st">"48h"</span>]]))</span>
-<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>dict<span class="sc">$</span>gene <span class="ot">&lt;-</span> map<span class="sc">$</span>mouse_symbol[<span class="fu">match</span>(dict<span class="sc">$</span>gene_marker, map<span class="sc">$</span>gene_marker)]</span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>modules <span class="ot">&lt;-</span> <span class="fu">lapply</span>(</span>
-<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">split</span>(dict<span class="sc">$</span>gene, dict<span class="sc">$</span>cell_type_excel),</span>
-<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(g) <span class="fu">unique</span>(stats<span class="sc">::</span><span class="fu">na.omit</span>(g))</span>
-<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>tail_res <span class="ot">&lt;-</span> <span class="fu">lapply</span>(times, <span class="cf">function</span>(tm) {</span>
-<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bulk_tail_filter</span>(</span>
-<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">bulk =</span> bulk[[tm]][panel, , <span class="at">drop =</span> <span class="cn">FALSE</span>],</span>
-<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">counts =</span> sc[[tm]][panel, , <span class="at">drop =</span> <span class="cn">FALSE</span>],</span>
-<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">cell_type =</span> cell_type[[tm]],</span>
-<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">modules =</span> modules,</span>
-<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">level =</span> <span class="fl">0.01</span>,</span>
-<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>    <span class="at">c_reg =</span> <span class="dv">2</span>,</span>
-<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_degree =</span> <span class="dv">10</span>L,</span>
-<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_degree =</span> <span class="dv">3</span></span>
-<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(tail_res) <span class="ot">&lt;-</span> times</span>
-<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>overlap <span class="ot">&lt;-</span> <span class="fu">lapply</span>(tail_res, <span class="cf">function</span>(r) <span class="fu">tail_flag_overlap</span>(r<span class="sc">$</span>gene, <span class="at">band =</span> r<span class="sc">$</span>quantile_band))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/02_03_stats_tail_bounds.R"</span>)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 1: p-free range check (RNA-Sieve range bound and MAD rule).</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>range_flags <span class="ot">&lt;-</span> <span class="fu">lapply</span>(times, <span class="cf">function</span>(tm) {</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> sc[[tm]][panel, , drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  ct <span class="ot">&lt;-</span> <span class="fu">droplevels</span>(<span class="fu">factor</span>(cell_type[[tm]]))</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  norm <span class="ot">&lt;-</span> <span class="fu">sweep</span>(<span class="fu">as.matrix</span>(x), <span class="dv">2</span>L, sf[[tm]], <span class="st">"/"</span>)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  mu <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="fu">levels</span>(ct), <span class="cf">function</span>(k) <span class="fu">rowMeans</span>(norm[, ct <span class="sc">==</span> k, <span class="at">drop =</span> <span class="cn">FALSE</span>]))</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  sd <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="fu">levels</span>(ct), <span class="cf">function</span>(k) <span class="fu">apply</span>(norm[, ct <span class="sc">==</span> k, <span class="at">drop =</span> <span class="cn">FALSE</span>], <span class="dv">1</span>L, stats<span class="sc">::</span>sd))</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">bulk_consistency_filter</span>(</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">bulk =</span> bulk[[tm]][panel, , <span class="at">drop =</span> <span class="cn">FALSE</span>],</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">mu =</span> mu,</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd =</span> sd,</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_cells =</span> <span class="fu">table</span>(ct)[<span class="fu">levels</span>(ct)],</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">z_range =</span> <span class="dv">3</span>,</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">mad_k =</span> <span class="dv">3</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>  out<span class="sc">$</span>gene[<span class="sc">!</span>out<span class="sc">$</span>keep]</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 2: tail statements per gene and per module, and the quantile band.</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>dict <span class="ot">&lt;-</span> utils<span class="sc">::</span><span class="fu">read.csv</span>(<span class="st">"data/dictionaries/mouse_gastruloid_signaling_markers.csv"</span>)</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>map <span class="ot">&lt;-</span> <span class="fu">map_marker_symbols</span>(dict<span class="sc">$</span>gene_marker, <span class="at">universe =</span> <span class="fu">rownames</span>(sc[[<span class="st">"48h"</span>]]))</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>dict<span class="sc">$</span>gene <span class="ot">&lt;-</span> map<span class="sc">$</span>mouse_symbol[<span class="fu">match</span>(dict<span class="sc">$</span>gene_marker, map<span class="sc">$</span>gene_marker)]</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>modules <span class="ot">&lt;-</span> <span class="fu">lapply</span>(</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">split</span>(dict<span class="sc">$</span>gene, dict<span class="sc">$</span>cell_type_excel),</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(g) <span class="fu">unique</span>(stats<span class="sc">::</span><span class="fu">na.omit</span>(g))</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>tail_res <span class="ot">&lt;-</span> <span class="fu">lapply</span>(times, <span class="cf">function</span>(tm) {</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bulk_tail_filter</span>(</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">bulk =</span> bulk[[tm]][panel, , <span class="at">drop =</span> <span class="cn">FALSE</span>],</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">counts =</span> sc[[tm]][panel, , <span class="at">drop =</span> <span class="cn">FALSE</span>],</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">cell_type =</span> cell_type[[tm]],</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">modules =</span> modules,</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">level =</span> <span class="fl">0.01</span>,</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">c_reg =</span> <span class="dv">2</span>,</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_degree =</span> <span class="dv">10</span>L,</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_degree =</span> <span class="dv">3</span>,</span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">min_abs_cor =</span> <span class="fl">0.1</span></span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(tail_res) <span class="ot">&lt;-</span> times</span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>overlap <span class="ot">&lt;-</span> <span class="fu">lapply</span>(tail_res, <span class="cf">function</span>(r) <span class="fu">tail_flag_overlap</span>(r<span class="sc">$</span>gene, <span class="at">band =</span> r<span class="sc">$</span>quantile_band))</span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 3: drift of the discrepancy across the three matched times.</span></span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>drift <span class="ot">&lt;-</span> <span class="fu">platform_drift_summary</span>(<span class="fu">lapply</span>(tail_res, <span class="cf">function</span>(r) r<span class="sc">$</span>gene), <span class="at">statement =</span> <span class="st">"T4"</span>)</span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 4: does the bulk / reference ratio follow transcript length?</span></span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a><span class="co"># ensembl[panel]: Ensembl ids of the panel genes (bulk row names).</span></span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>log_ratio <span class="ot">&lt;-</span> <span class="fu">platform_log_ratio</span>(tail_res)</span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>lengths <span class="ot">&lt;-</span> <span class="fu">gene_transcript_length</span>(panel, ensembl[panel])</span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>log2_length <span class="ot">&lt;-</span> <span class="fu">setNames</span>(<span class="fu">log2</span>(lengths<span class="sc">$</span>mean_tx_length), lengths<span class="sc">$</span>gene)</span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>length_test <span class="ot">&lt;-</span> <span class="fu">platform_length_test</span>(log_ratio<span class="sc">$</span>log_ratio, log2_length, <span class="at">seed =</span> <span class="dv">20261109</span>L)</span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 5: cross-fitted platform ratio (each time from the two others),</span></span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a><span class="co"># then the same statements on bulk / b. No gene is removed.</span></span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>mu_list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(tail_res, <span class="cf">function</span>(r) r<span class="sc">$</span>moments<span class="sc">$</span>mu)</span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>ratio_gene <span class="ot">&lt;-</span> <span class="fu">cross_fit_platform_ratio</span>(bulk, mu_list, <span class="at">method =</span> <span class="st">"gene"</span>, <span class="at">n_iter =</span> <span class="dv">30</span>L)</span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>ratio_length <span class="ot">&lt;-</span> <span class="fu">cross_fit_platform_ratio</span>(</span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>  bulk, mu_list, <span class="at">method =</span> <span class="st">"length"</span>, <span class="at">log2_length =</span> log2_length, <span class="at">n_iter =</span> <span class="dv">30</span>L</span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>tail_gene <span class="ot">&lt;-</span> <span class="fu">lapply</span>(times, <span class="cf">function</span>(tm) {</span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>  r <span class="ot">&lt;-</span> ratio_gene[[tm]]</span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bulk_tail_filter</span>(</span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>    <span class="at">bulk =</span> bulk[[tm]][panel, , <span class="at">drop =</span> <span class="cn">FALSE</span>],</span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>    <span class="at">counts =</span> sc[[tm]][panel, , <span class="at">drop =</span> <span class="cn">FALSE</span>],</span>
+<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a>    <span class="at">cell_type =</span> cell_type[[tm]],</span>
+<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a>    <span class="at">modules =</span> modules,</span>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>    <span class="at">platform_ratio =</span> <span class="fu">setNames</span>(<span class="fu">exp</span>(r<span class="sc">$</span>log_b), r<span class="sc">$</span>gene),</span>
+<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a>    <span class="at">platform_var =</span> <span class="fu">setNames</span>(r<span class="sc">$</span>var_log_b, r<span class="sc">$</span>gene)</span>
+<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div style="page-break-after: always;"></div>
 </section>
 </section>
 <section id="sec-fs-weighting-pointer" class="level2" data-number="3.5">
 <h2 data-number="3.5" class="anchored" data-anchor-id="sec-fs-weighting-pointer"><span class="header-section-number">3.5</span> Tier (iv): down-weighting by the model</h2>
-<p>Tiers (i) to (iii) keep or drop a gene. Tier (iv) keeps every gene of the panel and lets the model weight it: genes with a large or poorly estimated within-type covariance count less in the generalised least squares of DeCovarT. Nothing is selected at this tier, so it has no code in this chapter. The covariances that carry the weights are estimated in <a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a> and enter the deconvolution of <a href="04-deconvolution-pipeline.html#sec-deconv-models" class="quarto-xref"><span>Section 5.1</span></a>; why weighting can replace a hard filter is in <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-weighting">3.1, down-weighting</a>.</p>
+<p>Tier (iv) is a remark, not a step of this chapter. Tiers (i) to (iii) keep or drop a gene; tier (iv) keeps every gene of the exported panel and lets the model weight it, so that genes with a large or poorly estimated within-type covariance count less in the generalised least squares of DeCovarT. That weighting happens only when DeCovarT itself is fitted on the panel of 2, with the covariances estimated in <a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a>, in the deconvolution of <a href="04-deconvolution-pipeline.html#sec-deconv-models" class="quarto-xref"><span>Section 5.1</span></a>. No gene is selected and no code runs here. Why weighting can replace a hard filter is in <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-weighting">3.1, down-weighting</a>.</p>
 </section>
 <section id="sec-fs-export" class="level2" data-number="3.6">
 <h2 data-number="3.6" class="anchored" data-anchor-id="sec-fs-export"><span class="header-section-number">3.6</span> Panel export</h2>
-<p>The current export is the legacy one: <code>scripts/01_03_export_equal_type_seurat.R</code> subsets the allow-list Seurat object to the 500 genes of the type-equal ratio (<a href="#sec-fs-ms-ratio">type-equal ratio</a>) at each time and writes <code>data/intermediate/equal_type_top500_by_time.rds</code>, the input of every script of <a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a>. Its <code>nCount_RNA</code> is recomputed on the 500 genes and is not a library size. That file stays the input until the new rank has been run.</p>
+<p>The covariance scripts of <a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a> read the counts of <code>output/feature_selection/tier_01/scored_slots.rds</code> restricted, at each time, to the genes of <code>output/feature_selection/tier_02/selected_&lt;time&gt;.csv</code>: the gated panel of tier (ii), 1,417, 3,420 and 5,821 genes at 48, 72 and 96 h, with full library sizes. The legacy export (the 500 genes of the type-equal ratio, <a href="#sec-fs-ms-ratio">type-equal ratio</a>, in <code>data/intermediate/equal_type_top500_by_time.rds</code>) is no longer read.</p>
 <p>The new rank table will have one row per gene and time, with the columns of <a href="#tbl-fs-new-rank-columns" class="quarto-xref">Table&nbsp;<span>3.6</span></a>.</p>
 <div id="tbl-fs-new-rank-columns" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -1107,39 +1299,44 @@ Table&nbsp;3.6: Planned columns of the new rank table. Not written yet.
 <td>slot</td>
 </tr>
 <tr class="even">
+<td>Tier (i) gene rules</td>
+<td><code>fractional_share</code>, <code>in_sct_layer</code>, <code>shared_with_bulk</code></td>
+<td><code>fractional_count_share()</code>, <code>gene_filter_rules()</code></td>
+</tr>
+<tr class="odd">
 <td>Presence gate</td>
 <td><code>min_detection</code>, <code>weakest_type</code>, <code>pass_presence</code></td>
 <td><code>presence_gate()</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Fits and effect size</td>
 <td><code>overdispersion</code>, <code>deviance_m0</code>, <code>deviance_m1</code>, <code>deviance_r2</code></td>
 <td><code>compare_type_effect_tests()</code></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Four tests</td>
 <td><code>&lt;test&gt;_stat</code>, <code>&lt;test&gt;_pval</code>, <code>&lt;test&gt;_padj</code>, <code>&lt;test&gt;_pass</code> for <code>lr</code>, <code>anova_vst</code>, <code>ql_f</code>, <code>welch_perm</code></td>
 <td>same</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Gate and rank</td>
 <td><code>gate_test</code>, <code>adj_pval</code>, <code>pass_fdr</code>, <code>rank</code>, <code>selected</code></td>
 <td><code>rank_genes_omnibus()</code></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Tier (i) markers</td>
 <td><code>in_marker_panel</code>, <code>in_union</code></td>
 <td>signalling dictionary</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Tier (iii) outliers</td>
 <td>largest cell Cook’s distance, number of flagged cells, gene Cook flag per replicate</td>
 <td><code>cook_cells()</code>, <code>cook_genes()</code></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Tier (iii) bulk flags</td>
-<td>range flag; one flag per statement (T1, T1-log, T3, T4, quantile band), any replicate; module flags</td>
-<td><code>bulk_consistency_filter()</code>, <code>bulk_tail_filter()</code></td>
+<td>range flag; one flag per statement (T1, T1-log, T3, T4, quantile band), any replicate, under A3 and with the cross-fitted gene-wise ratio; module flags; drift class across times; mean transcript length; <span class="math inline">\log_2\hat b_g</span> and its standard error</td>
+<td><code>bulk_consistency_filter()</code>, <code>bulk_tail_filter()</code>, <code>platform_drift_summary()</code>, <code>gene_transcript_length()</code>, <code>cross_fit_platform_ratio()</code></td>
 </tr>
 </tbody>
 </table>
@@ -1170,7 +1367,7 @@ Table&nbsp;3.6: Planned columns of the new rank table. Not written yet.
 <p><span class="light-content" style="color: #7a1f1f;border-radius: 0.2rem; padding: 0 0.2rem 0 0.2rem;background-color: #f4c7c3;">TODO-cite: glmnet (Friedman, Hastie &amp; Tibshirani 2010); mixOmics (Rohart et al.&nbsp;2017); ranger (Wright &amp; Ziegler 2017)</span></p>
 <p><code>classifier_markers()</code> (<code>R/02_05_classifiers.R</code>) subsamples half of the cells of each type 100 times, keeps the top 50 genes of each fit, and reports each gene’s selection frequency; the stable set is the genes selected in at least 60 % of the subsamples. The cells come from one specimen, so the resampling unit is the cell and the frequencies measure generalisation to new cells of this specimen (<a href="#nte-pseudoreplication" class="quarto-xref">Note&nbsp;<span>3.1</span></a>). The purpose is to check that the panel is biologically meaningful, robust and able to discriminate the types, not to replace it: the stable sets are compared with the omnibus panel through their overlaps (<code>set_overlap()</code> in <code>R/02_00_utils.R</code>).</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Not run. glmnet, mixOmics and ranger are not in renv.lock.</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Not run.</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/02_00_utils.R"</span>)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/02_05_classifiers.R"</span>)</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>clf <span class="ot">&lt;-</span> <span class="fu">lapply</span>(times, <span class="cf">function</span>(tm) {</span>
@@ -1197,13 +1394,13 @@ Table&nbsp;3.6: Planned columns of the new rank table. Not written yet.
 <h3 class="appendix anchored" data-number="3.7.3" data-anchor-id="sec-fs-nsga2"><span class="header-section-number">3.7.3</span> Optional multivariate refinement</h3>
 <p>A univariate rank ignores redundancy between genes and the covariances DeCovarT models. The optional stage searches subsets of the panel with a multi-objective criterion on all types jointly (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-multivariate">3.1, covariance-driven (post hoc) selection</a>). It needs <span class="math inline">\widehat{\boldsymbol{\Sigma}}_{j}</span>, so it runs after <a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a>, and it is drawn dashed in <a href="index.html#fig-pipeline" class="quarto-xref">Figure&nbsp;<span>1</span></a>. Its panels fall under the circularity warning of the vignette (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#wrn-fs-circularity">3.1, circularity</a>): a comparison with other methods also reports the panel of 2, chosen without the model.</p>
 <p><strong>Shortlist.</strong> The multi-donor pipeline of the screening appendix (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/S6-feature-screening-scenario.html#sec-recommended">S6, multi-donor pipeline</a>) feeds NSGA-II with a <code>DESeq2</code> pseudo-bulk shortlist. With one specimen, as for the Suppinger reference, the <code>DESeq2</code> step does not apply, and strategy B of that appendix (presence gate, omnibus gate, effect-size rank; <a href="#sec-fs-presence" class="quarto-xref"><span>Section 3.2.3</span></a> and <a href="#sec-fs-omnibus" class="quarto-xref"><span>Section 3.3.2</span></a>) replaces the shortlist.</p>
-<p><strong>Types with few cells.</strong> A joint test or objective on the panel <span class="math inline">\mathcal{G}</span> uses the within-type covariance, which is high-dimensional when <span class="math inline">C_j</span> is not much larger than <span class="math inline">|\mathcal{G}|</span> (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-multivariate-tests">3.1, multivariate tests</a>). With the 500-gene panel of 2, seven of the eleven scored type × time cells of <a href="#tbl-fs-cell-counts" class="quarto-xref">Table&nbsp;<span>3.2</span></a> have <span class="math inline">C_j&lt;|\mathcal{G}|</span>, so their sample covariance is singular:</p>
+<p><strong>Types with few cells.</strong> A joint test or objective on the panel <span class="math inline">\mathcal{G}</span> uses the within-type covariance, which is high-dimensional when <span class="math inline">C_j</span> is not much larger than <span class="math inline">|\mathcal{G}|</span> (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-multivariate-tests">3.1, multivariate tests</a>). With the gated panel of 2 (1,417, 3,420 and 5,821 genes at 48, 72 and 96 h), nine of the eleven scored type × time cells of <a href="#tbl-fs-cell-counts" class="quarto-xref">Table&nbsp;<span>3.2</span></a> have <span class="math inline">C_j&lt;|\mathcal{G}|</span>, so their sample covariance is singular (<a href="03-covariance-estimation.html#tbl-cov-units" class="quarto-xref">Table&nbsp;<span>4.3</span></a>):</p>
 <ul>
 <li>48 h: exiting naïve pluripotency (265 cells), naïve pluripotency (36);</li>
 <li>72 h: ectopic pluripotency (266), naïve pluripotency (66);</li>
-<li>96 h: gut (140), ectopic pluripotency (116), somite differentiation front (29).</li>
+<li>96 h: pre-somitic mesoderm (3,589), caudal mesoderm (1,061), gut (140), ectopic pluripotency (116), somite differentiation front (29).</li>
 </ul>
-<p>Caudal mesoderm at 96 h (1,061 cells) is about twice the panel size. For these types the objectives below use the regularised <span class="math inline">\widehat{\boldsymbol{\Sigma}}_{j}</span> of <a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a>, never the sample covariance.</p>
+<p>Only 48 h epiblast and 72 h primitive streak have more cells than genes. For these types the objectives below use the regularised <span class="math inline">\widehat{\boldsymbol{\Sigma}}_{j}</span> of <a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a>, never the sample covariance.</p>
 <p>Planned settings:</p>
 <ul>
 <li><strong>Optimiser.</strong> NSGA-II through <code>mco::nsga2()</code> <span class="citation" data-cites="R-mco">(<a href="#ref-R-mco" role="doc-biblioref">Mersmann et al. 2020</a>)</span>. Genes are encoded as a mask in <span class="math inline">[0,1]^{G}</span>, thresholded to a target panel size.</li>
@@ -1348,178 +1545,6 @@ J^{-1}\sum_{j=1}^{J}v_{gj}
 </ol></li>
 </ol>
 <p>Each list is then united with the signalling markers of the types scored in that slot (<a href="#sec-fs-markers" class="quarto-xref"><span>Section 3.2.2</span></a>). At 48 h the leading equal-cell ratios land on naïve-pluripotency markers; at 96 h the top gene is the endoderm marker <em>Sox17</em>. The residual clip changes only the far tail of these ratios.</p>
-<p><code>ranks_global_equal_type.csv</code> has one row per gene and time. Its columns are in <a href="#tbl-fs-equal-type-columns" class="quarto-xref">Table&nbsp;<span>3.8</span></a>.</p>
-<div class="cell">
-<div id="tbl-fs-equal-type-columns" class="cell quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-fs-equal-type-columns-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;3.8: Columns of the type-equal global rank table, grouped by role. The middle block is what <code>ranks_global_equal_type.csv</code> stores. The cell-weighted block is the same names in <code>ranks_global.csv</code>. <code>cell_type</code> is omitted because it is unused in both global files.
-</figcaption>
-<div aria-describedby="tbl-fs-equal-type-columns-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output-display">
-<script src="https://cdn.jsdelivr.net/gh/vincentarelbundock/tinytable@main/inst/tinytable.js"></script>
-
-    <script>
-      // Create table-specific functions using external factory
-      const tableFns_q1fod8ndenhwrnspqhz5 = TinyTable.createTableFunctions("tinytable_q1fod8ndenhwrnspqhz5");
-      // tinytable span after
-      window.addEventListener('load', function () { tableFns_q1fod8ndenhwrnspqhz5.spanCell(17, 1, 1, 3) })
-      window.addEventListener('load', function () { tableFns_q1fod8ndenhwrnspqhz5.spanCell(11, 1, 1, 3) })
-      window.addEventListener('load', function () { tableFns_q1fod8ndenhwrnspqhz5.spanCell(5, 1, 1, 3) })
-      window.addEventListener('load', function () { tableFns_q1fod8ndenhwrnspqhz5.spanCell(1, 1, 1, 3) })
-      window.addEventListener('load', function () {
-          var cellsToStyle = [
-            // tinytable style arrays after
-          { positions: [ { i: '22', j: 1 }, { i: '22', j: 2 }, { i: '22', j: 3 } ], css_id: 'tinytable_css_qm1cx91ezfxfghr52lf7',}, 
-          { positions: [ { i: '0', j: 1 }, { i: '0', j: 2 }, { i: '0', j: 3 } ], css_id: 'tinytable_css_x04rxprtv0z7l5pa24rm',}, 
-          ];
-
-          // Loop over the arrays to style the cells
-          cellsToStyle.forEach(function (group) {
-              group.positions.forEach(function (cell) {
-                  tableFns_q1fod8ndenhwrnspqhz5.styleCell(cell.i, cell.j, group.css_id);
-              });
-          });
-      });
-    </script>
-
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/vincentarelbundock/tinytable@main/inst/tinytable.css">
-    <style>
-    /* tinytable css entries after */
-    #tinytable_q1fod8ndenhwrnspqhz5 td.tinytable_css_qm1cx91ezfxfghr52lf7, #tinytable_q1fod8ndenhwrnspqhz5 th.tinytable_css_qm1cx91ezfxfghr52lf7 {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.08em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%;  }
-    #tinytable_q1fod8ndenhwrnspqhz5 td.tinytable_css_x04rxprtv0z7l5pa24rm, #tinytable_q1fod8ndenhwrnspqhz5 th.tinytable_css_x04rxprtv0z7l5pa24rm {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.08em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%;  }
-    </style>
-    <div class="container">
-      <table class="tinytable" id="tinytable_q1fod8ndenhwrnspqhz5" style="table-layout: fixed; width: 100% !important; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
-        
-        <thead>
-              <tr>
-                <th scope="col" data-row="0" data-col="1">Column</th>
-                <th scope="col" data-row="0" data-col="2">File</th>
-                <th scope="col" data-row="0" data-col="3">Meaning</th>
-              </tr>
-        </thead>
-        
-        <tbody>
-                <tr>
-                  <td data-row="1" data-col="1">Identifiers</td>
-                  <td data-row="1" data-col="2">Identifiers</td>
-                  <td data-row="1" data-col="3">Identifiers</td>
-                </tr>
-                <tr>
-                  <td data-row="2" data-col="1">time_point</td>
-                  <td data-row="2" data-col="2">both global tables</td>
-                  <td data-row="2" data-col="3">Bulk-matched slot of the v2 fit (48h, 72h, 96h).</td>
-                </tr>
-                <tr>
-                  <td data-row="3" data-col="1">gene</td>
-                  <td data-row="3" data-col="2">both global tables</td>
-                  <td data-row="3" data-col="3">Mouse symbol on the author SCT allow-list.</td>
-                </tr>
-                <tr>
-                  <td data-row="4" data-col="1">top_cell_type</td>
-                  <td data-row="4" data-col="2">both global tables</td>
-                  <td data-row="4" data-col="3">Type with the largest mean Pearson residual.</td>
-                </tr>
-                <tr>
-                  <td data-row="5" data-col="1">Unweighted type-equal mean squares</td>
-                  <td data-row="5" data-col="2">Unweighted type-equal mean squares</td>
-                  <td data-row="5" data-col="3">Unweighted type-equal mean squares</td>
-                </tr>
-                <tr>
-                  <td data-row="6" data-col="1">ss_between</td>
-                  <td data-row="6" data-col="2">ranks_global_equal_type.csv</td>
-                  <td data-row="6" data-col="3">Unweighted variance of the J type means (type-equal MS_between).</td>
-                </tr>
-                <tr>
-                  <td data-row="7" data-col="1">ss_within</td>
-                  <td data-row="7" data-col="2">ranks_global_equal_type.csv</td>
-                  <td data-row="7" data-col="3">Mean of the J within-type residual variances (type-equal MS_within).</td>
-                </tr>
-                <tr>
-                  <td data-row="8" data-col="1">between_over_within</td>
-                  <td data-row="8" data-col="2">ranks_global_equal_type.csv</td>
-                  <td data-row="8" data-col="3">MS_between / MS_within; ranking score.</td>
-                </tr>
-                <tr>
-                  <td data-row="9" data-col="1">between_over_total</td>
-                  <td data-row="9" data-col="2">ranks_global_equal_type.csv</td>
-                  <td data-row="9" data-col="3">MS_between / (MS_between + MS_within).</td>
-                </tr>
-                <tr>
-                  <td data-row="10" data-col="1">passes_between_gt_within</td>
-                  <td data-row="10" data-col="2">ranks_global_equal_type.csv</td>
-                  <td data-row="10" data-col="3">TRUE when MS_between &gt; MS_within (not a selection gate).</td>
-                </tr>
-                <tr>
-                  <td data-row="11" data-col="1">Cell-weighted sums of squares</td>
-                  <td data-row="11" data-col="2">Cell-weighted sums of squares</td>
-                  <td data-row="11" data-col="3">Cell-weighted sums of squares</td>
-                </tr>
-                <tr>
-                  <td data-row="12" data-col="1">ss_between</td>
-                  <td data-row="12" data-col="2">ranks_global.csv</td>
-                  <td data-row="12" data-col="3">Cell-weighted between-type sum of squares; each barcode has weight one.</td>
-                </tr>
-                <tr>
-                  <td data-row="13" data-col="1">ss_within</td>
-                  <td data-row="13" data-col="2">ranks_global.csv</td>
-                  <td data-row="13" data-col="3">Cell-weighted within-type sum of squares.</td>
-                </tr>
-                <tr>
-                  <td data-row="14" data-col="1">between_over_within</td>
-                  <td data-row="14" data-col="2">ranks_global.csv</td>
-                  <td data-row="14" data-col="3">SS_between / SS_within; ranking score in ranks_global.csv.</td>
-                </tr>
-                <tr>
-                  <td data-row="15" data-col="1">between_over_total</td>
-                  <td data-row="15" data-col="2">ranks_global.csv</td>
-                  <td data-row="15" data-col="3">SS_between / (SS_between + SS_within).</td>
-                </tr>
-                <tr>
-                  <td data-row="16" data-col="1">passes_between_gt_within</td>
-                  <td data-row="16" data-col="2">ranks_global.csv</td>
-                  <td data-row="16" data-col="3">TRUE when SS_between &gt; SS_within (not a selection gate).</td>
-                </tr>
-                <tr>
-                  <td data-row="17" data-col="1">Ranking and marker union</td>
-                  <td data-row="17" data-col="2">Ranking and marker union</td>
-                  <td data-row="17" data-col="3">Ranking and marker union</td>
-                </tr>
-                <tr>
-                  <td data-row="18" data-col="1">rank</td>
-                  <td data-row="18" data-col="2">both global tables</td>
-                  <td data-row="18" data-col="3">Order by between_over_within, then ss_between, then gene name.</td>
-                </tr>
-                <tr>
-                  <td data-row="19" data-col="1">selected</td>
-                  <td data-row="19" data-col="2">both global tables</td>
-                  <td data-row="19" data-col="3">TRUE for the top 500 finite ratios in that slot.</td>
-                </tr>
-                <tr>
-                  <td data-row="20" data-col="1">in_marker_panel</td>
-                  <td data-row="20" data-col="2">both global tables</td>
-                  <td data-row="20" data-col="3">Signalling-dictionary marker for a type scored in that slot.</td>
-                </tr>
-                <tr>
-                  <td data-row="21" data-col="1">in_union</td>
-                  <td data-row="21" data-col="2">both global tables</td>
-                  <td data-row="21" data-col="3">selected or in_marker_panel.</td>
-                </tr>
-                <tr>
-                  <td data-row="22" data-col="1">source</td>
-                  <td data-row="22" data-col="2">both global tables</td>
-                  <td data-row="22" data-col="3">sctransform (top 500 only), marker (panel only), both, or screened (allow-list, neither).</td>
-                </tr>
-        </tbody>
-      </table>
-    </div>
-<!-- hack to avoid NA insertion in last line -->
-</div>
-</div>
-</figure>
-</div>
-</div>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="list">

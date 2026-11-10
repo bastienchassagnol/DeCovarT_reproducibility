@@ -7,6 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Bastien Chassagnol">
+<meta name="dcterms.date" content="2026-11-10">
 <meta name="description" content="What this book runs on the Suppinger gastruloids, and where the theory lives.">
 
 <title>DeCovarT reproducibility</title>
@@ -226,7 +227,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">9 Nov 2026</p>
+        <p class="date">10 Nov 2026</p>
       </div>
     </div>
     
@@ -336,7 +337,7 @@ window.Quarto = {
 <li>Choose that panel for the purpose: genes whose moments can be estimated in every type and that carry information about the proportions <span class="math inline">\boldsymbol{p}</span> (<a href="02-feature-selection.html#sec-fs-scope" class="quarto-xref"><span>Section 3.1</span></a>).</li>
 <li>Plug the moments into DeCovarT and deconvolve the bulk series (GSE229386) where a single-cell reference matches it: the standard-Wnt samples at 48 h, 72 h and 96 h.</li>
 </ol>
-<p>The target is a covariance plug-in for the likelihood, not a biologically interpretable gene regulatory network (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-cov-target">03-2, target</a>). Indices follow the article: gene <span class="math inline">g=1,\ldots,G</span>, type <span class="math inline">j=1,\ldots,J</span>, bulk sample <span class="math inline">i=1,\ldots,N</span>, cell <span class="math inline">c</span>, with <span class="math inline">C_j</span> cells of type <span class="math inline">j</span>.</p>
+<p>The target is a covariance plug-in for the likelihood, not a biologically interpretable gene regulatory network (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#nte-cov-why">03-2, why a regularised covariance</a>). Indices follow the article: gene <span class="math inline">g=1,\ldots,G</span>, type <span class="math inline">j=1,\ldots,J</span>, bulk sample <span class="math inline">i=1,\ldots,N</span>, cell <span class="math inline">c</span>, with <span class="math inline">C_j</span> cells of type <span class="math inline">j</span>.</p>
 </section>
 <section id="sec-pipeline" class="level2" data-number="0.2">
 <h2 data-number="0.2" class="anchored" data-anchor-id="sec-pipeline"><span class="header-section-number">0.2</span> Pipeline</h2>
@@ -382,8 +383,8 @@ Table&nbsp;1: Book chapters and the vignette chapters that hold their theory.
 </tr>
 <tr class="odd">
 <td><a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a>, Covariance estimation</td>
-<td>four estimators, cross-validated tuning</td>
-<td><a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-cov-target">3.2 Covariance estimation</a></td>
+<td>shrinkage plug-in, four sensitivity arms, cross-validated tuning</td>
+<td><a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#tbl-cov-estimators">3.2 Covariance estimation</a></td>
 </tr>
 <tr class="even">
 <td><a href="04-deconvolution-pipeline.html#sec-deconv-models" class="quarto-xref"><span>Section 5.1</span></a>, Comparators</td>

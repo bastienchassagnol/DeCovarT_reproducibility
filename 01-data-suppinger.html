@@ -6,6 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="dcterms.date" content="2026-11-10">
 <meta name="description" content="Single-cell and bulk counts from the Suppinger gastruloid resource.">
 
 <title>2&nbsp; Suppinger gastruloids – DeCovarT reproducibility</title>
@@ -238,7 +239,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">9 Nov 2026</p>
+        <p class="date">10 Nov 2026</p>
       </div>
     </div>
     
@@ -380,7 +381,7 @@ Table&nbsp;2.1: Raw inputs. <code>data/raw/</code> is immutable; download comman
 </div>
 </figure>
 </div>
-<p>The scRNA-seq experiment is <strong>one</strong> 10x Chromium 3′ v3 resource from one specimen series, not a panel of independent biological replicates. DeCovarT treats it as the one-replicate regime (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/02-1-single-cell-generative-optimisation.html#sec-one-replicate">2.1, one single-cell replicate</a>). Zeros are taken as molecule-sampling counts (<a href="03-covariance-estimation.html#nte-drop-zico" class="quarto-xref">Note&nbsp;<span>4.1</span></a>). GSE250136 is a later stem-embryo dataset and is not part of this resource.</p>
+<p>The scRNA-seq experiment is <strong>one</strong> 10x Chromium 3′ v3 resource from one specimen series, not a panel of independent biological replicates. DeCovarT treats it as the one-replicate regime (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/02-1-single-cell-generative-optimisation.html#sec-one-replicate">2.1, one single-cell replicate</a>). Zeros are taken as molecule-sampling counts (<span class="quarto-unresolved-ref">?nte-drop-zico</span>). GSE250136 is a later stem-embryo dataset and is not part of this resource.</p>
 <section id="sec-geo-design" class="level2" data-number="2.1">
 <h2 data-number="2.1" class="anchored" data-anchor-id="sec-geo-design"><span class="header-section-number">2.1</span> Hierarchical design</h2>
 <p><a href="#fig-suppinger-design" class="quarto-xref">Figure&nbsp;<span>2.1</span></a> draws the two designs side by side.</p>
@@ -435,7 +436,7 @@ Table&nbsp;2.2: Single-cell counts per line at the bulk times, before the cultur
 </section>
 <section id="sec-seurat" class="level2" data-number="2.2">
 <h2 data-number="2.2" class="anchored" data-anchor-id="sec-seurat"><span class="header-section-number">2.2</span> Seurat processing</h2>
-<p>Embeddings, QC and clustering follow the Seurat workflow of the Suppinger resource <span class="citation" data-cites="suppingerMultimodalCharacterizationMurine2023">(<a href="#ref-suppingerMultimodalCharacterizationMurine2023" role="doc-biblioref">Suppinger et al. 2023</a>)</span>, drawn in <a href="#fig-seurat-workflow" class="quarto-xref">Figure&nbsp;<span>2.2</span></a>: Alevin counts, <code>scater</code> QC, <code>SCTransform</code> Pearson residuals per batch for integration, CCA, PCA, UMAP and Louvain clustering. Two products of that workflow are used here: the cell-type labels (<code>celltypeannotation</code>), and the gene list of the authors’ <code>SCT</code> counts layer, which serves as the gene allow-list (<a href="02-feature-selection.html#sec-fs-qc" class="quarto-xref"><span>Section 3.2</span></a>). The authors’ residuals themselves are not used: the ranking fits its own negative-binomial GLMs per time slot (<a href="02-feature-selection.html#sec-fs-glm" class="quarto-xref"><span>Section 3.3.1</span></a>), the legacy panel refitted <code>SCTransform</code> v2 per slot (<a href="./02-feature-selection.html#sec-fs-sct">legacy SCTransform fit</a>), and the covariances are estimated from raw counts (<a href="03-covariance-estimation.html#sec-cov-inputs" class="quarto-xref"><span>Section 4.1.2</span></a>).</p>
+<p>Embeddings, QC and clustering follow the Seurat workflow of the Suppinger resource <span class="citation" data-cites="suppingerMultimodalCharacterizationMurine2023">(<a href="#ref-suppingerMultimodalCharacterizationMurine2023" role="doc-biblioref">Suppinger et al. 2023</a>)</span>, drawn in <a href="#fig-seurat-workflow" class="quarto-xref">Figure&nbsp;<span>2.2</span></a>: Alevin counts, <code>scater</code> QC, <code>SCTransform</code> Pearson residuals per batch for integration, CCA, PCA, UMAP and Louvain clustering. The deposited object (Seurat 4.1.0) holds the raw counts (<code>RNA</code>, 27,027 genes, 71,005 cells), the <code>SCT</code> layer and the <code>integrated</code> assay. The <code>SCT</code> and <code>integrated</code> layers keep the same 71,005 cells and only 2,944 genes: the variable features of the CCA integration, chosen over all twelve time points and both batches. Two products of that workflow are used here: the cell-type labels (<code>celltypeannotation</code>), and that 2,944-gene list, which was the gene allow-list of the legacy panel only; the current tier (i) starts from the raw counts and records the list for comparison (<a href="02-feature-selection.html#sec-fs-qc" class="quarto-xref"><span>Section 3.2</span></a>). The authors’ residuals themselves are not used: the ranking fits its own negative-binomial GLMs per time slot (<a href="02-feature-selection.html#sec-fs-glm" class="quarto-xref"><span>Section 3.3.1</span></a>), the legacy panel refitted <code>SCTransform</code> v2 per slot (<a href="./02-feature-selection.html#sec-fs-sct">legacy SCTransform fit</a>), and the covariances are estimated from raw counts (<a href="03-covariance-estimation.html#sec-cov-inputs" class="quarto-xref"><span>Section 4.1.1</span></a>).</p>
 <div id="fig-seurat-workflow" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-seurat-workflow-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">

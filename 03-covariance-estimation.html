@@ -6,6 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="dcterms.date" content="2026-11-10">
 <meta name="description" content="Per-type means and covariances estimated on the Suppinger reference.">
 
 <title>4&nbsp; Covariance estimation – DeCovarT reproducibility</title>
@@ -26,6 +27,41 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 /* CSS for citations */
 div.csl-bib-body { }
@@ -238,7 +274,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">9 Nov 2026</p>
+        <p class="date">10 Nov 2026</p>
       </div>
     </div>
     
@@ -329,15 +365,17 @@ window.Quarto = {
   <ul>
   <li><a href="#sec-cov-scope" id="toc-sec-cov-scope" class="nav-link active" data-scroll-target="#sec-cov-scope"><span class="header-section-number">4.1</span> Scope and status</a>
   <ul>
-  <li><a href="#sec-cov-units" id="toc-sec-cov-units" class="nav-link" data-scroll-target="#sec-cov-units"><span class="header-section-number">4.1.1</span> Units and regimes</a></li>
-  <li><a href="#sec-cov-inputs" id="toc-sec-cov-inputs" class="nav-link" data-scroll-target="#sec-cov-inputs"><span class="header-section-number">4.1.2</span> Inputs and scales</a></li>
+  <li><a href="#sec-cov-inputs" id="toc-sec-cov-inputs" class="nav-link" data-scroll-target="#sec-cov-inputs"><span class="header-section-number">4.1.1</span> Inputs and scales</a></li>
+  <li><a href="#sec-cov-units" id="toc-sec-cov-units" class="nav-link" data-scroll-target="#sec-cov-units"><span class="header-section-number">4.1.2</span> Units and regimes</a></li>
+  <li><a href="#sec-cov-bulk-depth" id="toc-sec-cov-bulk-depth" class="nav-link" data-scroll-target="#sec-cov-bulk-depth"><span class="header-section-number">4.1.3</span> Bulk depth per cell</a></li>
   </ul></li>
-  <li><a href="#sec-cov-estimators" id="toc-sec-cov-estimators" class="nav-link" data-scroll-target="#sec-cov-estimators"><span class="header-section-number">4.2</span> Four estimators as run</a>
+  <li><a href="#sec-cov-estimators" id="toc-sec-cov-estimators" class="nav-link" data-scroll-target="#sec-cov-estimators"><span class="header-section-number">4.2</span> Estimators as run</a>
   <ul>
-  <li><a href="#sec-shrinkage" id="toc-sec-shrinkage" class="nav-link" data-scroll-target="#sec-shrinkage"><span class="header-section-number">4.2.1</span> Shrinkage covariance (default)</a></li>
-  <li><a href="#sec-glasso" id="toc-sec-glasso" class="nav-link" data-scroll-target="#sec-glasso"><span class="header-section-number">4.2.2</span> Graphical lasso with an unpenalised diagonal</a></li>
-  <li><a href="#sec-silggm" id="toc-sec-silggm" class="nav-link" data-scroll-target="#sec-silggm"><span class="header-section-number">4.2.3</span> <code>SILGGM</code> support, then a refit</a></li>
-  <li><a href="#sec-pln" id="toc-sec-pln" class="nav-link" data-scroll-target="#sec-pln"><span class="header-section-number">4.2.4</span> <code>PLNnetwork</code></a></li>
+  <li><a href="#sec-shrinkage" id="toc-sec-shrinkage" class="nav-link" data-scroll-target="#sec-shrinkage"><span class="header-section-number">4.2.1</span> Shrinkage covariance</a></li>
+  <li><a href="#sec-cov-denoised" id="toc-sec-cov-denoised" class="nav-link" data-scroll-target="#sec-cov-denoised"><span class="header-section-number">4.2.2</span> Denoised shrinkage</a></li>
+  <li><a href="#sec-glasso" id="toc-sec-glasso" class="nav-link" data-scroll-target="#sec-glasso"><span class="header-section-number">4.2.3</span> Graphical lasso with an unpenalised diagonal</a></li>
+  <li><a href="#sec-silggm" id="toc-sec-silggm" class="nav-link" data-scroll-target="#sec-silggm"><span class="header-section-number">4.2.4</span> <code>SILGGM</code> support, then a refit</a></li>
+  <li><a href="#sec-pln" id="toc-sec-pln" class="nav-link" data-scroll-target="#sec-pln"><span class="header-section-number">4.2.5</span> <code>PLNnetwork</code></a></li>
   </ul></li>
   <li><a href="#sec-cov-cv-run" id="toc-sec-cov-cv-run" class="nav-link" data-scroll-target="#sec-cov-cv-run"><span class="header-section-number">4.3</span> Cross-validation and outputs</a>
   <ul>
@@ -356,7 +394,7 @@ window.Quarto = {
 
 <section id="sec-cov-scope" class="level2" data-number="4.1">
 <h2 data-number="4.1" class="anchored" data-anchor-id="sec-cov-scope"><span class="header-section-number">4.1</span> Scope and status</h2>
-<p>This chapter estimates, for each scored cell type <span class="math inline">j</span> at each bulk-matched time, the mean <span class="math inline">\widehat{\boldsymbol{\mu}}_{\cdot j}</span> and the within-type covariance <span class="math inline">\widehat{\boldsymbol{\Sigma}}_{j}</span> of the gene panel of <a href="02-feature-selection.html#sec-fs-export" class="quarto-xref"><span>Section 3.6</span></a>, and exports them on the linear scale of DeCovarT’s convolution,</p>
+<p>This chapter estimates, for each scored cell type <span class="math inline">j</span> at each bulk-matched time, the mean <span class="math inline">\widehat{\boldsymbol{\mu}}_{\cdot j}</span> and the within-type covariance <span class="math inline">\widehat{\boldsymbol{\Sigma}}_{j}</span> of the gene panel of tier (ii) (<a href="02-feature-selection.html#sec-fs-consistency" class="quarto-xref"><span>Section 3.3</span></a>), and exports them on the linear scale of DeCovarT’s convolution,</p>
 <p><span id="eq-grn-export"><span class="math display">
 \bigl\{
 \widehat{\boldsymbol{\mu}}_{\cdot j},\,
@@ -366,7 +404,8 @@ window.Quarto = {
 \qquad
 \widehat{\boldsymbol{\Sigma}}_{j}\succ 0 .
 \tag{4.1}</span></span></p>
-<p>The target is the covariance that enters the likelihood, not a mechanistic gene network; a dense estimate is therefore an acceptable plug-in and is the default (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-cov-target">3.2, target</a>).</p>
+<p>The target is the covariance that enters the likelihood, not a mechanistic gene network; a dense estimate is therefore an acceptable plug-in (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#nte-cov-why">3.2, why a regularised covariance</a>).</p>
+<p><strong>Plug-in and sensitivity analyses.</strong> The exported plug-in is the shrinkage covariance (<a href="#sec-shrinkage" class="quarto-xref"><span>Section 4.2.1</span></a>). Four arms are sensitivity analyses of that choice: the graphical lasso (3), the <code>SILGGM</code> support with a refit (<a href="#sec-silggm" class="quarto-xref"><span>Section 4.2.4</span></a>), <code>PLNnetwork</code> (<a href="#sec-pln" class="quarto-xref"><span>Section 4.2.5</span></a>) and the shrinkage of the denoised covariance (2). All five are scored by the same nested cross-validation (<a href="#sec-cov-cv-run" class="quarto-xref"><span>Section 4.3</span></a>); their theory is summarised in <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#tbl-cov-estimators">3.2, estimators</a>.</p>
 <div id="tbl-cov-status" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-cov-status-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -388,139 +427,58 @@ Table&nbsp;4.1: Covariance-estimation code and status.
 </thead>
 <tbody>
 <tr class="odd">
-<td>Four estimators, one fit wrapper each</td>
-<td><code>R/cv_covariance_selection.R</code>: <code>fit_cov_shrinkage()</code>, <code>fit_cov_glasso()</code>, <code>fit_cov_silggm_refit()</code>, <code>fit_cov_plnnetwork()</code></td>
+<td>Panel input</td>
+<td><code>R/cv_covariance_selection.R</code>: <code>read_panel_slot()</code></td>
+<td>written, not run</td>
+</tr>
+<tr class="even">
+<td>Five arms, one fit wrapper per estimator</td>
+<td>same file: <code>fit_cov_shrinkage()</code>, <code>fit_cov_glasso()</code>, <code>fit_cov_silggm_refit()</code>, <code>fit_cov_plnnetwork()</code>; <code>preprocess = "denoised"</code> for the first three</td>
+<td>written, not run</td>
+</tr>
+<tr class="odd">
+<td>Denoising and extrinsic noise</td>
+<td>same file: <code>denoise_covariance()</code>, <code>reconstruct_count_covariance()</code>, <code>extrinsic_noise_nu()</code>; <code>pln_linear_moments(size_term, poisson_diag)</code></td>
 <td>written, not run</td>
 </tr>
 <tr class="even">
 <td>Held-out score, tuning, nested comparison</td>
-<td>same file: <code>heldout_gaussian_logscore()</code>, <code>cv_select_tuning()</code>, <code>nested_cv_compare()</code></td>
+<td>same file: <code>heldout_gaussian_logscore()</code>, <code>score_fit()</code>, <code>cv_select_tuning()</code>, <code>nested_cv_compare()</code></td>
 <td>written, not run</td>
 </tr>
 <tr class="odd">
-<td>Driver for the four estimators</td>
+<td>Driver for the five arms</td>
 <td><code>scripts/03_04_cv_covariance.R</code></td>
 <td>written, not run</td>
 </tr>
 <tr class="even">
 <td>Graphical lasso EBIC path (diagnostic)</td>
-<td><code>scripts/03_01_grn_huge.R</code>, <code>R/ebic_regularisation_path.R</code></td>
-<td>rewritten to export on the linear scale; not re-run</td>
+<td><code>scripts/03_01_grn_glasso.R</code>, <code>R/ebic_regularisation_path.R</code></td>
+<td>input moved to the gated panel; not re-run</td>
 </tr>
 <tr class="odd">
 <td><code>SILGGM</code> fit</td>
 <td><code>scripts/03_02_grn_silggm.R</code></td>
-<td>never run</td>
+<td>input moved to the gated panel; never run</td>
 </tr>
 <tr class="even">
 <td><code>PLNnetwork</code> fit</td>
 <td><code>scripts/03_03_grn_plnnetwork.R</code></td>
-<td>offset fixed to the full library size; never run</td>
+<td>input moved to the gated panel; full-library offset; never run</td>
 </tr>
 </tbody>
 </table>
 </div>
 </figure>
 </div>
-<section id="sec-cov-units" class="level3" data-number="4.1.1">
-<h3 data-number="4.1.1" class="anchored" data-anchor-id="sec-cov-units"><span class="header-section-number">4.1.1</span> Units and regimes</h3>
-<p>Each fit uses the cells of one type at one time, treated as independent draws: eleven type × time units (<a href="02-feature-selection.html#tbl-fs-cell-counts" class="quarto-xref">Table&nbsp;<span>3.2</span></a>). Cell line is not a covariate (<a href="01-data-suppinger.html#sec-geo-design" class="quarto-xref"><span>Section 2.1</span></a>). The panel has <span class="math inline">G=500</span> genes per time before genes constant in a type are removed.</p>
-<div id="tbl-cov-units" class="quarto-float quarto-figure quarto-figure-center anchored">
-<figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-cov-units-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;4.2: The eleven type × time units. Seven have fewer cells than panel genes, so their sample covariance is singular.
-</figcaption>
-<div aria-describedby="tbl-cov-units-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Time</th>
-<th>Cell type</th>
-<th style="text-align: right;"><span class="math inline">C_j</span></th>
-<th><span class="math inline">C_j</span> against <span class="math inline">G=500</span></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>48 h</td>
-<td>Epiblast</td>
-<td style="text-align: right;">10,590</td>
-<td><span class="math inline">C_j&gt;G</span></td>
-</tr>
-<tr class="even">
-<td>48 h</td>
-<td>Exiting naïve pluripotency</td>
-<td style="text-align: right;">265</td>
-<td><span class="math inline">C_j&lt;G</span></td>
-</tr>
-<tr class="odd">
-<td>48 h</td>
-<td>Naïve pluripotency</td>
-<td style="text-align: right;">36</td>
-<td><span class="math inline">C_j&lt;G</span></td>
-</tr>
-<tr class="even">
-<td>72 h</td>
-<td>Primitive streak</td>
-<td style="text-align: right;">4,279</td>
-<td><span class="math inline">C_j&gt;G</span></td>
-</tr>
-<tr class="odd">
-<td>72 h</td>
-<td>Ectopic pluripotency</td>
-<td style="text-align: right;">266</td>
-<td><span class="math inline">C_j&lt;G</span></td>
-</tr>
-<tr class="even">
-<td>72 h</td>
-<td>Naïve pluripotency</td>
-<td style="text-align: right;">66</td>
-<td><span class="math inline">C_j&lt;G</span></td>
-</tr>
-<tr class="odd">
-<td>96 h</td>
-<td>Pre-somitic mesoderm</td>
-<td style="text-align: right;">3,589</td>
-<td><span class="math inline">C_j&gt;G</span></td>
-</tr>
-<tr class="even">
-<td>96 h</td>
-<td>Caudal mesoderm</td>
-<td style="text-align: right;">1,061</td>
-<td><span class="math inline">C_j&gt;G</span></td>
-</tr>
-<tr class="odd">
-<td>96 h</td>
-<td>Gut</td>
-<td style="text-align: right;">140</td>
-<td><span class="math inline">C_j&lt;G</span></td>
-</tr>
-<tr class="even">
-<td>96 h</td>
-<td>Ectopic pluripotency</td>
-<td style="text-align: right;">116</td>
-<td><span class="math inline">C_j&lt;G</span></td>
-</tr>
-<tr class="odd">
-<td>96 h</td>
-<td>Somite differentiation front</td>
-<td style="text-align: right;">29</td>
-<td><span class="math inline">C_j&lt;G</span></td>
-</tr>
-</tbody>
-</table>
-</div>
-</figure>
-</div>
-<p>In the seven units with <span class="math inline">C_j&lt;G</span> the sample covariance is singular, and only a regularised estimate exists. Which thresholds matter for existence, for the maximum-likelihood estimate and for support recovery is in <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-cov-regimes">3.2, regimes</a>. The cross-validated score of <a href="#sec-cov-cv-run" class="quarto-xref"><span>Section 4.3</span></a> is defined in every regime because each estimator returns a positive definite matrix.</p>
-</section>
-<section id="sec-cov-inputs" class="level3" data-number="4.1.2">
-<h3 data-number="4.1.2" class="anchored" data-anchor-id="sec-cov-inputs"><span class="header-section-number">4.1.2</span> Inputs and scales</h3>
-<p>All four estimators read <code>data/intermediate/equal_type_top500_by_time.rds</code> (<a href="02-feature-selection.html#sec-fs-export" class="quarto-xref"><span>Section 3.6</span></a>). A transformation belongs to one estimator only.</p>
+<section id="sec-cov-inputs" class="level3" data-number="4.1.1">
+<h3 data-number="4.1.1" class="anchored" data-anchor-id="sec-cov-inputs"><span class="header-section-number">4.1.1</span> Inputs and scales</h3>
+<p>Every arm reads the raw UMI counts of the scored cells, element <code>slots[[time]]</code> of <code>output/feature_selection/tier_01/scored_slots.rds</code> (<a href="02-feature-selection.html#sec-fs-qc-applied" class="quarto-xref"><span>Section 3.2.1</span></a>): <code>counts</code> (genes × cells), <code>cell_type</code>, <code>batch</code> and <code>library_size</code>, the full RNA library of each cell. The counts are restricted to the genes of <code>output/feature_selection/tier_02/selected_&lt;time&gt;.csv</code>, the panel gated by the permuted Welch <span class="math inline">G</span> at BH 0.05 (<a href="02-feature-selection.html#sec-fs-consistency" class="quarto-xref"><span>Section 3.3</span></a>): 1,417 genes at 48 h, 3,420 at 72 h and 5,821 at 96 h, with no cap. <code>read_panel_slot()</code> does the subset and returns cells × genes. The 500-gene legacy export of <a href="02-feature-selection.html#sec-fs-export" class="quarto-xref"><span>Section 3.6</span></a> is no longer read. A transformation belongs to one arm only.</p>
+<p><strong>Normalisation.</strong> The exported means and covariances are computed on raw per-cell UMI counts, with no per-cell library division (<code>normalise = "none"</code>). Dividing each cell by its total library removes the type-level transcriptome size <span class="math inline">S_j</span>: signatures become mRNA fractions, and the proportions are estimated as <span class="math inline">q_j\propto p_jS_j</span> instead of <span class="math inline">p_j</span> <span class="citation" data-cites="luTranscriptomeSizeMatters2025">(<a href="#ref-luTranscriptomeSizeMatters2025" role="doc-biblioref">Lu et al. 2025</a>)</span>. It also removes the biological size variation between cells of one type, which the bulk accumulates. Without spike-ins the technical size factor cannot be separated from the biological one, so the size term of the covariance is bracketed by the coefficient <span class="math inline">\kappa</span> of the denoised estimator (2): <span class="math inline">\kappa=0</span> treats all size variation as biological; <span class="math inline">\kappa=\hat\nu/(1+\hat\nu)</span> treats it all as technical, which matches library normalisation for the covariance. The argument is in <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-raw-vs-denoised">3.2, raw or denoised</a>. The earlier per-cell division, <code>X &lt;- y / (lib / ref_lib)</code> with <code>ref_lib</code> the median library of the time point, is kept only as a sensitivity variant (<code>normalise = "library"</code>). <code>PLNnetwork</code> keeps its full-library offset <span class="math inline">\log s_c</span> in both cases.</p>
 <div id="tbl-cov-inputs" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-cov-inputs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;4.3: What each estimator sees and what it exports.
+Table&nbsp;4.2: What each arm sees and what it exports. The first row is the plug-in.
 </figcaption>
 <div aria-describedby="tbl-cov-inputs-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <table class="caption-top table">
@@ -531,20 +489,20 @@ Table&nbsp;4.3: What each estimator sees and what it exports.
 </colgroup>
 <thead>
 <tr class="header">
-<th>Estimator</th>
+<th>Arm</th>
 <th>What is passed in</th>
 <th>Scale of the export</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Shrinkage (<code>corpcor</code>)</td>
-<td>size-factor-normalised counts</td>
-<td>linear</td>
+<td>Shrinkage (<code>corpcor</code>), plug-in</td>
+<td>raw per-cell UMI counts</td>
+<td>linear, raw counts</td>
 </tr>
 <tr class="even">
 <td>Graphical lasso (<code>glasso</code>)</td>
-<td>correlation matrix of the same table</td>
+<td>correlation matrix of the same counts</td>
 <td>linear, after rescaling by the sample standard deviations</td>
 </tr>
 <tr class="odd">
@@ -555,28 +513,299 @@ Table&nbsp;4.3: What each estimator sees and what it exports.
 <tr class="even">
 <td><code>PLNnetwork</code></td>
 <td>raw UMI counts, offset <span class="math inline">\log s_c</span> (full library)</td>
-<td>linear, through the moment map of <a href="#sec-pln" class="quarto-xref"><span>Section 4.2.4</span></a></td>
+<td>linear, through the moment map of <a href="#sec-pln" class="quarto-xref"><span>Section 4.2.5</span></a>; the two denoised brackets are exported beside it</td>
+</tr>
+<tr class="odd">
+<td>Denoised shrinkage, <span class="math inline">\kappa=0</span></td>
+<td>raw counts, <a href="#eq-cov-denoised" class="quarto-xref">Equation&nbsp;<span>4.3</span></a> with <span class="math inline">\kappa=0</span> (Poisson diagonal removed), eigenvalues clipped at zero</td>
+<td><span class="math inline">\widehat{\boldsymbol{\Sigma}}^{\mathrm{bio}}_{j}</span>; scored through <a href="#eq-cov-renoise" class="quarto-xref">Equation&nbsp;<span>4.4</span></a></td>
+</tr>
+<tr class="even">
+<td>Denoised shrinkage, <span class="math inline">\kappa=\hat\kappa_{\max}</span> (variant)</td>
+<td>raw counts, <a href="#eq-cov-denoised" class="quarto-xref">Equation&nbsp;<span>4.3</span></a> with <span class="math inline">\kappa=\hat\nu/(1+\hat\nu)</span>, eigenvalues clipped at zero</td>
+<td><span class="math inline">\widehat{\boldsymbol{\Sigma}}^{\mathrm{bio}}_{j}</span>; tuned by cross-validation, outside the nested comparison</td>
+</tr>
+<tr class="odd">
+<td>Library-divided counts (variant, <code>normalise = "library"</code>)</td>
+<td><code>y / (lib / ref_lib)</code> for the first four arms; the denoised arm is left out</td>
+<td>linear, library-divided counts</td>
 </tr>
 </tbody>
 </table>
 </div>
 </figure>
 </div>
-<p>Two earlier choices are reverted, both in code that has not been re-run:</p>
+<p>Earlier choices reverted, in code that has not been re-run:</p>
 <ul>
-<li><strong>Scale of the export.</strong> <code>scripts/03_01_grn_huge.R</code> used to fit and export on <span class="math inline">\log(1+x)</span> (<code>x &lt;- log1p(x)</code>, then <code>mu &lt;- colMeans(x)</code>). The convolution is linear only on an additive scale (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/02-1-single-cell-generative-optimisation.html#sec-norm-linear">2.1, normalisation</a>), so <span class="math inline">\widehat{\boldsymbol{\mu}}_{\cdot j}</span> and <span class="math inline">\widehat{\boldsymbol{\Sigma}}_{j}</span> are now computed on size-factor-normalised counts. A <span class="math inline">\log(1+x)</span> table may still be used to detect a support, never to export a moment.</li>
-<li><strong>Library size in <code>PLNnetwork</code>.</strong> <code>scripts/03_03_grn_plnnetwork.R</code> used the row sum over the 500 panel genes as offset. It now uses the full RNA library size, recovered from <code>log_umi</code> (<span class="math inline">s_c=10^{\texttt{log\_umi}}</span>), as in <a href="02-feature-selection.html#eq-fs-v2-offset" class="quarto-xref">Equation&nbsp;<span>3.5</span></a>. <code>nCount_RNA</code> in the exported object is the 500-gene sum and is not used.</li>
+<li><strong>Scale of the export.</strong> <code>scripts/03_01_grn_glasso.R</code> (then named <code>03_01_grn_huge.R</code>) used to fit and export on <span class="math inline">\log(1+x)</span> (<code>x &lt;- log1p(x)</code>, then <code>mu &lt;- colMeans(x)</code>). The convolution is linear only on an additive scale (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/02-1-single-cell-generative-optimisation.html#sec-norm-linear">2.1, normalisation</a>), so <span class="math inline">\widehat{\boldsymbol{\mu}}_{\cdot j}</span> and <span class="math inline">\widehat{\boldsymbol{\Sigma}}_{j}</span> are now computed on the linear counts. A <span class="math inline">\log(1+x)</span> table may still be used to detect a support, never to export a moment.</li>
+<li><strong>Per-cell library division.</strong> <code>scripts/03_04_cv_covariance.R</code> divided each cell by its library (<code>X &lt;- y / (lib / ref_lib)</code>), which is option (b) of <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-raw-vs-denoised">3.2, raw or denoised</a>. It is now the <code>normalise = "library"</code> variant.</li>
 </ul>
-<p>Pearson residuals, of the legacy <code>SCTransform</code> fit (<a href="./02-feature-selection.html#sec-fs-sct">legacy SCTransform fit</a>) or of the count GLMs of the new rank (<a href="02-feature-selection.html#sec-fs-glm" class="quarto-xref"><span>Section 3.3.1</span></a>), are used only for ranking and are never passed to an estimator.</p>
+</section>
+<section id="sec-cov-units" class="level3" data-number="4.1.2">
+<h3 data-number="4.1.2" class="anchored" data-anchor-id="sec-cov-units"><span class="header-section-number">4.1.2</span> Units and regimes</h3>
+<p>Each fit uses the cells of one type at one time, treated as independent draws: eleven type × time units (<a href="02-feature-selection.html#tbl-fs-cell-counts" class="quarto-xref">Table&nbsp;<span>3.2</span></a>). Cell line is not a covariate (<a href="01-data-suppinger.html#sec-geo-design" class="quarto-xref"><span>Section 2.1</span></a>). The panel has <span class="math inline">G_t</span> genes at time <span class="math inline">t</span>, before genes constant within a type are removed. <a href="#tbl-cov-units" class="quarto-xref">Table&nbsp;<span>4.3</span></a> sets the <span class="math inline">C_j</span> cells of each unit against three sample-size layers (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-cov-regimes">3.2, regimes</a>): existence of the maximum-likelihood estimate of <span class="math inline">\boldsymbol{\Sigma}_{j}</span>, support recovery by the graphical lasso, and support recovery by neighbourhood selection.</p>
+<div class="cell">
+<div id="tbl-cov-units" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-cov-units-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;4.3: The eleven type × time units against the gated panel. <span class="math inline">C_j</span>: scored cells of the unit (<code>cell_counts.csv</code>); <span class="math inline">G_t</span>: panel genes at that time (rows of <code>selected_&lt;time&gt;.csv</code>). The two recovery columns are orders of magnitude without their constants, with natural logarithms and an assumed maximum node degree <span class="math inline">d=10</span> of the precision graph; they are not thresholds. Shaded rows (<span class="math inline">C_j\le G_t</span>) have a singular sample covariance and need a regularised estimate.
+</figcaption>
+<div aria-describedby="tbl-cov-units-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<script src="https://cdn.jsdelivr.net/gh/vincentarelbundock/tinytable@main/inst/tinytable.js"></script>
+
+    <script>
+      // Create table-specific functions using external factory
+      const tableFns_gniu0i93583k5nt3g5ex = TinyTable.createTableFunctions("tinytable_gniu0i93583k5nt3g5ex");
+      // tinytable span after
+      window.addEventListener('load', function () {
+          var cellsToStyle = [
+            // tinytable style arrays after
+          { positions: [ { i: '-1', j: 9 } ], css_id: 'tinytable_css_qkfcwp1udst1j4831651',}, 
+          { positions: [ { i: '-1', j: 7 } ], css_id: 'tinytable_css_4ke5twxptwni7tpgjngx',}, 
+          { positions: [ { i: '-1', j: 6 }, { i: '-1', j: 8 } ], css_id: 'tinytable_css_9ei3cape46bb134c9gcx',}, 
+          { positions: [ { i: '11', j: 3 }, { i: '11', j: 4 }, { i: '11', j: 6 }, { i: '11', j: 8 } ], css_id: 'tinytable_css_2g8cc1o5zs4wk6danwkp',}, 
+          { positions: [ { i: '2', j: 3 }, { i: '3', j: 3 }, { i: '5', j: 3 }, { i: '6', j: 3 }, { i: '7', j: 3 }, { i: '8', j: 3 }, { i: '9', j: 3 }, { i: '10', j: 3 }, { i: '2', j: 4 }, { i: '3', j: 4 }, { i: '5', j: 4 }, { i: '6', j: 4 }, { i: '7', j: 4 }, { i: '8', j: 4 }, { i: '9', j: 4 }, { i: '10', j: 4 }, { i: '2', j: 6 }, { i: '3', j: 6 }, { i: '5', j: 6 }, { i: '6', j: 6 }, { i: '7', j: 6 }, { i: '8', j: 6 }, { i: '9', j: 6 }, { i: '10', j: 6 }, { i: '2', j: 8 }, { i: '3', j: 8 }, { i: '5', j: 8 }, { i: '6', j: 8 }, { i: '7', j: 8 }, { i: '8', j: 8 }, { i: '9', j: 8 }, { i: '10', j: 8 } ], css_id: 'tinytable_css_fjsnwmvchjhvt0mql8wt',}, 
+          { positions: [ { i: '1', j: 3 }, { i: '4', j: 3 }, { i: '1', j: 4 }, { i: '4', j: 4 }, { i: '1', j: 6 }, { i: '4', j: 6 }, { i: '1', j: 8 }, { i: '4', j: 8 } ], css_id: 'tinytable_css_cdk5mcdcoidg7kt9x6rv',}, 
+          { positions: [ { i: '0', j: 3 }, { i: '0', j: 4 }, { i: '0', j: 6 }, { i: '0', j: 8 } ], css_id: 'tinytable_css_0em6l9g1npucg5qwz8pk',}, 
+          { positions: [ { i: '-1', j: 3 }, { i: '-1', j: 4 } ], css_id: 'tinytable_css_kvvkqa60dfjfrj0q0di3',}, 
+          { positions: [ { i: '11', j: 1 }, { i: '11', j: 2 }, { i: '11', j: 5 }, { i: '11', j: 7 }, { i: '11', j: 9 } ], css_id: 'tinytable_css_qqgabbjs6u8684c96m92',}, 
+          { positions: [ { i: '2', j: 1 }, { i: '3', j: 1 }, { i: '5', j: 1 }, { i: '6', j: 1 }, { i: '7', j: 1 }, { i: '8', j: 1 }, { i: '9', j: 1 }, { i: '10', j: 1 }, { i: '2', j: 2 }, { i: '3', j: 2 }, { i: '5', j: 2 }, { i: '6', j: 2 }, { i: '7', j: 2 }, { i: '8', j: 2 }, { i: '9', j: 2 }, { i: '10', j: 2 }, { i: '2', j: 5 }, { i: '3', j: 5 }, { i: '5', j: 5 }, { i: '6', j: 5 }, { i: '7', j: 5 }, { i: '8', j: 5 }, { i: '9', j: 5 }, { i: '10', j: 5 }, { i: '2', j: 7 }, { i: '3', j: 7 }, { i: '5', j: 7 }, { i: '6', j: 7 }, { i: '7', j: 7 }, { i: '8', j: 7 }, { i: '9', j: 7 }, { i: '10', j: 7 }, { i: '2', j: 9 }, { i: '3', j: 9 }, { i: '5', j: 9 }, { i: '6', j: 9 }, { i: '7', j: 9 }, { i: '8', j: 9 }, { i: '9', j: 9 }, { i: '10', j: 9 } ], css_id: 'tinytable_css_np4ifgsou958iy1flj9k',}, 
+          { positions: [ { i: '0', j: 1 }, { i: '0', j: 2 }, { i: '0', j: 5 }, { i: '0', j: 7 }, { i: '0', j: 9 } ], css_id: 'tinytable_css_psqyqyncz4777cgj5e4n',}, 
+          { positions: [ { i: '-1', j: 1 }, { i: '-1', j: 2 }, { i: '-1', j: 5 } ], css_id: 'tinytable_css_kusijpff4q8bx937usr9',}, 
+          ];
+
+          // Loop over the arrays to style the cells
+          cellsToStyle.forEach(function (group) {
+              group.positions.forEach(function (cell) {
+                  tableFns_gniu0i93583k5nt3g5ex.styleCell(cell.i, cell.j, group.css_id);
+              });
+          });
+      });
+    </script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/vincentarelbundock/tinytable@main/inst/tinytable.css">
+    <style>
+    /* tinytable css entries after */
+    #tinytable_gniu0i93583k5nt3g5ex td.tinytable_css_qkfcwp1udst1j4831651, #tinytable_gniu0i93583k5nt3g5ex th.tinytable_css_qkfcwp1udst1j4831651 {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.03em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.08em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: center }
+    #tinytable_gniu0i93583k5nt3g5ex td.tinytable_css_4ke5twxptwni7tpgjngx, #tinytable_gniu0i93583k5nt3g5ex th.tinytable_css_4ke5twxptwni7tpgjngx {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.03em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.08em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 3%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: center }
+    #tinytable_gniu0i93583k5nt3g5ex td.tinytable_css_9ei3cape46bb134c9gcx, #tinytable_gniu0i93583k5nt3g5ex th.tinytable_css_9ei3cape46bb134c9gcx {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.03em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.08em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 3%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: right }
+    #tinytable_gniu0i93583k5nt3g5ex td.tinytable_css_2g8cc1o5zs4wk6danwkp, #tinytable_gniu0i93583k5nt3g5ex th.tinytable_css_2g8cc1o5zs4wk6danwkp {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.08em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: right; background-color: #fbe3d6 }
+    #tinytable_gniu0i93583k5nt3g5ex td.tinytable_css_fjsnwmvchjhvt0mql8wt, #tinytable_gniu0i93583k5nt3g5ex th.tinytable_css_fjsnwmvchjhvt0mql8wt { text-align: right; background-color: #fbe3d6 }
+    #tinytable_gniu0i93583k5nt3g5ex td.tinytable_css_cdk5mcdcoidg7kt9x6rv, #tinytable_gniu0i93583k5nt3g5ex th.tinytable_css_cdk5mcdcoidg7kt9x6rv { text-align: right }
+    #tinytable_gniu0i93583k5nt3g5ex td.tinytable_css_0em6l9g1npucg5qwz8pk, #tinytable_gniu0i93583k5nt3g5ex th.tinytable_css_0em6l9g1npucg5qwz8pk {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: right }
+    #tinytable_gniu0i93583k5nt3g5ex td.tinytable_css_kvvkqa60dfjfrj0q0di3, #tinytable_gniu0i93583k5nt3g5ex th.tinytable_css_kvvkqa60dfjfrj0q0di3 {  position: relative; --border-bottom: 0; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.1em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.08em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: right }
+    #tinytable_gniu0i93583k5nt3g5ex td.tinytable_css_qqgabbjs6u8684c96m92, #tinytable_gniu0i93583k5nt3g5ex th.tinytable_css_qqgabbjs6u8684c96m92 {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.08em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; background-color: #fbe3d6 }
+    #tinytable_gniu0i93583k5nt3g5ex td.tinytable_css_np4ifgsou958iy1flj9k, #tinytable_gniu0i93583k5nt3g5ex th.tinytable_css_np4ifgsou958iy1flj9k { background-color: #fbe3d6 }
+    #tinytable_gniu0i93583k5nt3g5ex td.tinytable_css_psqyqyncz4777cgj5e4n, #tinytable_gniu0i93583k5nt3g5ex th.tinytable_css_psqyqyncz4777cgj5e4n {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%;  }
+    #tinytable_gniu0i93583k5nt3g5ex td.tinytable_css_kusijpff4q8bx937usr9, #tinytable_gniu0i93583k5nt3g5ex th.tinytable_css_kusijpff4q8bx937usr9 {  position: relative; --border-bottom: 0; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.1em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.08em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: center }
+    </style>
+    <div class="container">
+      
+<table id="tinytable_gniu0i93583k5nt3g5ex" class="tinytable cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: center;" data-quarto-table-cell-role="th" scope="col" data-row="-1" data-col="1"></th>
+<th style="text-align: center;" data-quarto-table-cell-role="th" scope="col" data-row="-1" data-col="2"></th>
+<th style="text-align: center;" data-quarto-table-cell-role="th" scope="col" data-row="-1" data-col="3"></th>
+<th style="text-align: center;" data-quarto-table-cell-role="th" scope="col" data-row="-1" data-col="4"></th>
+<th style="text-align: center;" data-quarto-table-cell-role="th" scope="col" data-row="-1" data-col="5"></th>
+<th colspan="2" style="text-align: center;" data-quarto-table-cell-role="th" scope="col" data-row="-1" data-col="6">Graphical-lasso support recovery</th>
+<th colspan="2" style="text-align: center;" data-quarto-table-cell-role="th" scope="col" data-row="-1" data-col="8">Neighbourhood selection</th>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th" scope="col" data-row="0" data-col="1">Time</th>
+<th data-quarto-table-cell-role="th" scope="col" data-row="0" data-col="2">Cell type</th>
+<th data-quarto-table-cell-role="th" scope="col" data-row="0" data-col="3">$C_j$</th>
+<th data-quarto-table-cell-role="th" scope="col" data-row="0" data-col="4">$G_t$</th>
+<th data-quarto-table-cell-role="th" scope="col" data-row="0" data-col="5">MLE of $\boldsymbol{\Sigma}_j$ exists ($C_j\ge G_t+1$)</th>
+<th data-quarto-table-cell-role="th" scope="col" data-row="0" data-col="6">$d^{2}\log G_t$</th>
+<th data-quarto-table-cell-role="th" scope="col" data-row="0" data-col="7">$C_j&gt;d^{2}\log G_t$</th>
+<th data-quarto-table-cell-role="th" scope="col" data-row="0" data-col="8">$d\log G_t$</th>
+<th data-quarto-table-cell-role="th" scope="col" data-row="0" data-col="9">$C_j&gt;d\log G_t$</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-row="1" data-col="1">48 h</td>
+<td data-row="1" data-col="2">Epiblast</td>
+<td data-row="1" data-col="3">10,590</td>
+<td data-row="1" data-col="4">1,417</td>
+<td data-row="1" data-col="5">yes</td>
+<td data-row="1" data-col="6">726</td>
+<td data-row="1" data-col="7">yes</td>
+<td data-row="1" data-col="8">73</td>
+<td data-row="1" data-col="9">yes</td>
+</tr>
+<tr class="even">
+<td data-row="2" data-col="1">48 h</td>
+<td data-row="2" data-col="2">Exiting naïve pluripotency</td>
+<td data-row="2" data-col="3">265</td>
+<td data-row="2" data-col="4">1,417</td>
+<td data-row="2" data-col="5">no</td>
+<td data-row="2" data-col="6">726</td>
+<td data-row="2" data-col="7">no</td>
+<td data-row="2" data-col="8">73</td>
+<td data-row="2" data-col="9">yes</td>
+</tr>
+<tr class="odd">
+<td data-row="3" data-col="1">48 h</td>
+<td data-row="3" data-col="2">Naïve pluripotency</td>
+<td data-row="3" data-col="3">36</td>
+<td data-row="3" data-col="4">1,417</td>
+<td data-row="3" data-col="5">no</td>
+<td data-row="3" data-col="6">726</td>
+<td data-row="3" data-col="7">no</td>
+<td data-row="3" data-col="8">73</td>
+<td data-row="3" data-col="9">no</td>
+</tr>
+<tr class="even">
+<td data-row="4" data-col="1">72 h</td>
+<td data-row="4" data-col="2">Primitive streak</td>
+<td data-row="4" data-col="3">4,279</td>
+<td data-row="4" data-col="4">3,420</td>
+<td data-row="4" data-col="5">yes</td>
+<td data-row="4" data-col="6">814</td>
+<td data-row="4" data-col="7">yes</td>
+<td data-row="4" data-col="8">81</td>
+<td data-row="4" data-col="9">yes</td>
+</tr>
+<tr class="odd">
+<td data-row="5" data-col="1">72 h</td>
+<td data-row="5" data-col="2">Ectopic pluripotency</td>
+<td data-row="5" data-col="3">266</td>
+<td data-row="5" data-col="4">3,420</td>
+<td data-row="5" data-col="5">no</td>
+<td data-row="5" data-col="6">814</td>
+<td data-row="5" data-col="7">no</td>
+<td data-row="5" data-col="8">81</td>
+<td data-row="5" data-col="9">yes</td>
+</tr>
+<tr class="even">
+<td data-row="6" data-col="1">72 h</td>
+<td data-row="6" data-col="2">Naïve pluripotency</td>
+<td data-row="6" data-col="3">66</td>
+<td data-row="6" data-col="4">3,420</td>
+<td data-row="6" data-col="5">no</td>
+<td data-row="6" data-col="6">814</td>
+<td data-row="6" data-col="7">no</td>
+<td data-row="6" data-col="8">81</td>
+<td data-row="6" data-col="9">no</td>
+</tr>
+<tr class="odd">
+<td data-row="7" data-col="1">96 h</td>
+<td data-row="7" data-col="2">Pre-somitic mesoderm</td>
+<td data-row="7" data-col="3">3,589</td>
+<td data-row="7" data-col="4">5,821</td>
+<td data-row="7" data-col="5">no</td>
+<td data-row="7" data-col="6">867</td>
+<td data-row="7" data-col="7">yes</td>
+<td data-row="7" data-col="8">87</td>
+<td data-row="7" data-col="9">yes</td>
+</tr>
+<tr class="even">
+<td data-row="8" data-col="1">96 h</td>
+<td data-row="8" data-col="2">Caudal mesoderm</td>
+<td data-row="8" data-col="3">1,061</td>
+<td data-row="8" data-col="4">5,821</td>
+<td data-row="8" data-col="5">no</td>
+<td data-row="8" data-col="6">867</td>
+<td data-row="8" data-col="7">yes</td>
+<td data-row="8" data-col="8">87</td>
+<td data-row="8" data-col="9">yes</td>
+</tr>
+<tr class="odd">
+<td data-row="9" data-col="1">96 h</td>
+<td data-row="9" data-col="2">Gut</td>
+<td data-row="9" data-col="3">140</td>
+<td data-row="9" data-col="4">5,821</td>
+<td data-row="9" data-col="5">no</td>
+<td data-row="9" data-col="6">867</td>
+<td data-row="9" data-col="7">no</td>
+<td data-row="9" data-col="8">87</td>
+<td data-row="9" data-col="9">yes</td>
+</tr>
+<tr class="even">
+<td data-row="10" data-col="1">96 h</td>
+<td data-row="10" data-col="2">Ectopic pluripotency</td>
+<td data-row="10" data-col="3">116</td>
+<td data-row="10" data-col="4">5,821</td>
+<td data-row="10" data-col="5">no</td>
+<td data-row="10" data-col="6">867</td>
+<td data-row="10" data-col="7">no</td>
+<td data-row="10" data-col="8">87</td>
+<td data-row="10" data-col="9">yes</td>
+</tr>
+<tr class="odd">
+<td data-row="11" data-col="1">96 h</td>
+<td data-row="11" data-col="2">Somite differentiation front</td>
+<td data-row="11" data-col="3">29</td>
+<td data-row="11" data-col="4">5,821</td>
+<td data-row="11" data-col="5">no</td>
+<td data-row="11" data-col="6">867</td>
+<td data-row="11" data-col="7">no</td>
+<td data-row="11" data-col="8">87</td>
+<td data-row="11" data-col="9">no</td>
+</tr>
+</tbody>
+</table>
+
+    </div>
+<!-- hack to avoid NA insertion in last line -->
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>In nine of the eleven units <span class="math inline">C_j\le G_t</span>: the sample covariance is singular, and only a regularised estimate exists. Only the 48 h epiblast (10,590 cells against 1,417 genes) and the 72 h primitive streak (4,279 against 3,420) have a maximum-likelihood estimate. Four units exceed the graphical-lasso order and eight the neighbourhood-selection order; the 48 h and 72 h naïve pluripotency and the somite differentiation front exceed neither. The cross-validated score of <a href="#sec-cov-cv-run" class="quarto-xref"><span>Section 4.3</span></a> is defined in every regime because each arm returns a positive definite matrix.</p>
+</section>
+<section id="sec-cov-bulk-depth" class="level3" data-number="4.1.3">
+<h3 data-number="4.1.3" class="anchored" data-anchor-id="sec-cov-bulk-depth"><span class="header-section-number">4.1.3</span> Bulk depth per cell</h3>
+<p>Which covariance enters the bulk law, raw or denoised, depends on the bulk depth per cell relative to the reference (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-raw-vs-denoised">3.2, raw or denoised</a>): the raw covariance is exact only at <span class="math inline">a_i=1</span>. For bulk sample <span class="math inline">i</span>,</p>
+<p><span id="eq-cov-bulk-depth"><span class="math display">
+a_i=\frac{y_{+i}/n_i}{\bar s_{\mathrm{ref}}},
+\tag{4.2}</span></span></p>
+<!-- chk: V45 -->
+<p>with <span class="math inline">y_{+i}</span> the total counts of the bulk sample, <span class="math inline">n_i</span> the number of cells in it, and <span class="math inline">\bar s_{\mathrm{ref}}</span> the median UMIs per reference cell at the matched time. <span class="math inline">a_i&lt;1</span> is expected: the bulk library is deeper in total than one droplet, but it spreads that depth over every cell of the pooled sample. Bulk counts are reads, not UMIs, so their sampling noise is overdispersed, with a dispersion <span class="math inline">\omega_i\ge1</span> that lowers the effective depth to <span class="math inline">a_i/\omega_i</span>. The raw plug-in, the implemented default, assumes <span class="math inline">a_i=1</span>. <span class="math inline">n_i</span> is <span class="light-content" style="color: #7a1f1f;border-radius: 0.2rem; padding: 0 0.2rem 0 0.2rem;background-color: #f4c7c3;">TODO: cells per gastruloid × gastruloids per bulk sample, from the Suppinger et al.&nbsp;2023 methods</span> <span class="citation" data-cites="suppingerMultimodalCharacterizationMurine2023">(<a href="#ref-suppingerMultimodalCharacterizationMurine2023" role="doc-biblioref">Suppinger et al. 2023</a>)</span>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Not run. Bulk depth per cell a_i of the standard-Wnt samples</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># (GSE229386) against the scored reference cells of the matched time.</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/02_00_utils.R"</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/02_01_stats_quality_control.R"</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>htseq <span class="ot">&lt;-</span> <span class="fu">read_bulk_htseq</span>(</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"data/raw/GSE229386_AllHTSeqCountsWithGeneNames.txt.gz"</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># HTSeq summary rows (__no_feature, __ambiguous, ...) are not genes.</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>is_gene <span class="ot">&lt;-</span> <span class="sc">!</span><span class="fu">startsWith</span>(<span class="fu">rownames</span>(htseq<span class="sc">$</span>counts), <span class="st">"__"</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>slots <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"output/feature_selection/tier_01/scored_slots.rds"</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co">: cells per gastruloid x gastruloids per bulk sample, from the</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Suppinger et al. 2023 methods.</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>cells_per_bulk <span class="ot">&lt;-</span> <span class="cn">NA_real_</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>bulk_depth <span class="ot">&lt;-</span> <span class="fu">do.call</span>(</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  rbind,</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lapply</span>(<span class="fu">c</span>(<span class="st">"48h"</span>, <span class="st">"72h"</span>, <span class="st">"96h"</span>), <span class="cf">function</span>(tm) {</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    samples <span class="ot">&lt;-</span> <span class="fu">standard_wnt_samples</span>(<span class="fu">colnames</span>(htseq<span class="sc">$</span>counts), tm)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    y_total <span class="ot">&lt;-</span> <span class="fu">colSums</span>(htseq<span class="sc">$</span>counts[is_gene, samples, <span class="at">drop =</span> <span class="cn">FALSE</span>])</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    s_ref <span class="ot">&lt;-</span> stats<span class="sc">::</span><span class="fu">median</span>(slots<span class="sc">$</span>slots[[tm]]<span class="sc">$</span>library_size)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">data.frame</span>(</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>      <span class="at">time_point =</span> tm,</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>      <span class="at">sample =</span> samples,</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>      <span class="at">bulk_counts =</span> y_total,</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>      <span class="at">ref_median_umi =</span> s_ref,</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>      <span class="at">a =</span> (y_total <span class="sc">/</span> cells_per_bulk) <span class="sc">/</span> s_ref</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
 </section>
 </section>
 <section id="sec-cov-estimators" class="level2" data-number="4.2">
-<h2 data-number="4.2" class="anchored" data-anchor-id="sec-cov-estimators"><span class="header-section-number">4.2</span> Four estimators as run</h2>
-<p>All four leave the diagonal of the precision unpenalised. Why the diagonal must not be penalised is in <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-cov-diagonal">3.2, diagonal</a>. Each estimator has exactly one tuning parameter, chosen by <a href="#sec-cov-cv-run" class="quarto-xref"><span>Section 4.3</span></a>.</p>
+<h2 data-number="4.2" class="anchored" data-anchor-id="sec-cov-estimators"><span class="header-section-number">4.2</span> Estimators as run</h2>
+<p>None of the five arms penalises the diagonal: the three sparse estimators leave the diagonal of the precision unpenalised, and the shrinkage target D keeps the variances. Why the diagonal must not be penalised is in <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-cov-diagonal">3.2, diagonal</a>. Each arm has exactly one tuning parameter, chosen by <a href="#sec-cov-cv-run" class="quarto-xref"><span>Section 4.3</span></a>.</p>
 <div id="tbl-cov-estimators" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-cov-estimators-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;4.4: The four estimators, their calls and their tuning parameter. The grids are set in <code>scripts/03_04_cv_covariance.R</code>.
+Table&nbsp;4.4: The five arms, their calls and their tuning parameter. The first row is the plug-in; the other four are sensitivity analyses. The grids are set in <code>scripts/03_04_cv_covariance.R</code>.
 </figcaption>
 <div aria-describedby="tbl-cov-estimators-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <table class="caption-top table">
@@ -589,7 +818,7 @@ Table&nbsp;4.4: The four estimators, their calls and their tuning parameter. The
 </colgroup>
 <thead>
 <tr class="header">
-<th>Estimator</th>
+<th>Arm</th>
 <th>Wrapper</th>
 <th>Underlying call</th>
 <th>Tuning parameter</th>
@@ -598,7 +827,7 @@ Table&nbsp;4.4: The four estimators, their calls and their tuning parameter. The
 </thead>
 <tbody>
 <tr class="odd">
-<td>Shrinkage (default)</td>
+<td>Shrinkage (plug-in)</td>
 <td><code>fit_cov_shrinkage()</code></td>
 <td><code>corpcor::cov.shrink(x, lambda, lambda.var = 0)</code></td>
 <td>intensity <span class="math inline">\lambda\in[0,1]</span></td>
@@ -625,42 +854,84 @@ Table&nbsp;4.4: The four estimators, their calls and their tuning parameter. The
 <td>penalty</td>
 <td>the family’s own penalty grid</td>
 </tr>
+<tr class="odd">
+<td>Denoised shrinkage</td>
+<td><code>fit_cov_shrinkage(preprocess = "denoised", kappa)</code></td>
+<td><code>denoise_covariance(x, kappa)</code>, then target D on the denoised variances</td>
+<td>intensity <span class="math inline">\lambda</span>; <span class="math inline">\kappa</span> bracketed, not tuned</td>
+<td>the shrinkage grid</td>
+</tr>
 </tbody>
 </table>
 </div>
 </figure>
 </div>
 <section id="sec-shrinkage" class="level3" data-number="4.2.1">
-<h3 data-number="4.2.1" class="anchored" data-anchor-id="sec-shrinkage"><span class="header-section-number">4.2.1</span> Shrinkage covariance (default)</h3>
-<p><code>fit_cov_shrinkage()</code> calls <code>corpcor::cov.shrink()</code> <span class="citation" data-cites="R-corpcor">(<a href="#ref-R-corpcor" role="doc-biblioref">Schäfer et al. 2021</a>)</span> with the Schäfer–Strimmer target D: variances kept, correlations shrunk towards zero by a common factor <span class="citation" data-cites="schäferShrinkageApproachLargescale2005">(<a href="#ref-schäferShrinkageApproachLargescale2005" role="doc-biblioref">Schäfer and Strimmer 2005</a>)</span>. <code>corpcor</code> 1.6.10 also shrinks the variances towards their median by default; <code>lambda.var = 0</code> switches that off, so the target is exactly D. The closed-form intensity <span class="math inline">\hat\lambda^{\ast}</span> (<code>corpcor::estimate.lambda()</code>) is the centre of the grid, and cross-validation picks the value used. The estimate is positive definite for any <span class="math inline">C_j</span> and <span class="math inline">G</span>, so it is the estimator used when the others fail. The theory is in <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-cov-shrinkage">3.2, shrinkage</a>. <code>corpcor</code> is not in <code>renv.lock</code>.</p>
+<h3 data-number="4.2.1" class="anchored" data-anchor-id="sec-shrinkage"><span class="header-section-number">4.2.1</span> Shrinkage covariance</h3>
+<p><code>fit_cov_shrinkage()</code> calls <code>corpcor::cov.shrink()</code> <span class="citation" data-cites="R-corpcor">(<a href="#ref-R-corpcor" role="doc-biblioref">Schäfer et al. 2021</a>)</span> with the Schäfer–Strimmer target D: variances kept, correlations shrunk towards zero by a common factor <span class="citation" data-cites="schäferShrinkageApproachLargescale2005">(<a href="#ref-schäferShrinkageApproachLargescale2005" role="doc-biblioref">Schäfer and Strimmer 2005</a>)</span>. <code>corpcor</code> 1.6.10 also shrinks the variances towards their median by default; <code>lambda.var = 0</code> switches that off, so the target is exactly D. The closed-form intensity <span class="math inline">\hat\lambda^{\ast}</span> (<code>corpcor::estimate.lambda()</code>) is the centre of the grid, and cross-validation picks the value used. The estimate is positive definite for any <span class="math inline">C_j</span> and <span class="math inline">G_t</span>, so it is the plug-in, and the estimator used when the others fail. The theory is in <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-cov-shrinkage">3.2, shrinkage</a>.</p>
 </section>
-<section id="sec-glasso" class="level3" data-number="4.2.2">
-<h3 data-number="4.2.2" class="anchored" data-anchor-id="sec-glasso"><span class="header-section-number">4.2.2</span> Graphical lasso with an unpenalised diagonal</h3>
+<section id="sec-cov-denoised" class="level3" data-number="4.2.2">
+<h3 data-number="4.2.2" class="anchored" data-anchor-id="sec-cov-denoised"><span class="header-section-number">4.2.2</span> Denoised shrinkage</h3>
+<p><code>fit_cov_shrinkage(preprocess = "denoised", kappa)</code> applies the moment correction of <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-raw-vs-denoised">3.2, raw or denoised</a> before the shrinkage. With <span class="math inline">\boldsymbol{V}_j</span> the unbiased sample covariance of the raw counts of the <span class="math inline">C_j</span> cells and <span class="math inline">\bar{\boldsymbol{x}}_j</span> their mean (<code>denoise_covariance()</code>),</p>
+<p><span id="eq-cov-denoised"><span class="math display">
+\widetilde{\boldsymbol{V}}_j
+=
+\boldsymbol{V}_j-\operatorname{diag}(\bar{\boldsymbol{x}}_j)
+-\kappa\Bigl[\boldsymbol{V}_j-\operatorname{diag}(\bar{\boldsymbol{x}}_j)
++\bar{\boldsymbol{x}}_j\bar{\boldsymbol{x}}_j^{\top}
+-\frac{\boldsymbol{V}_j}{C_j}\Bigr].
+\tag{4.3}</span></span></p>
+<!-- chk: V38b, V14a, V14b, V14c, V14e -->
+<ol type="1">
+<li>The eigenvalues of <span class="math inline">\widetilde{\boldsymbol{V}}_j</span> below zero are raised to zero, the nearest positive semi-definite matrix in Frobenius norm <span class="light-content" style="color: #7a1f1f;border-radius: 0.2rem; padding: 0 0.2rem 0 0.2rem;background-color: #f4c7c3;">TODO-cite: Datta &amp; Zou 2017 (CoCoLasso); Loh &amp; Wainwright 2012; keys not in bibliography/REFERENCES.bib</span>. This costs one eigen-decomposition of a <span class="math inline">G_t\times G_t</span> matrix per training set.</li>
+<li>A gene whose denoised variance is not positive is a Poisson gene at this depth. Its variance is floored at <span class="math inline">10^{-4}</span> times the median positive denoised variance, its correlations are set to zero, and it is listed in <code>floored_genes</code>.</li>
+<li>Target D is applied to the projected matrix: <span class="math inline">\widehat{\boldsymbol{\Sigma}}^{\mathrm{bio}}_{j}=\boldsymbol{D}^{1/2}\{(1-\lambda)\boldsymbol{R}+\lambda\boldsymbol{I}\}\boldsymbol{D}^{1/2}</span>, with <span class="math inline">\boldsymbol{R}</span> and <span class="math inline">\boldsymbol{D}</span> its correlation and variances, and <span class="math inline">\lambda</span> chosen on the grid of <a href="#sec-shrinkage" class="quarto-xref"><span>Section 4.2.1</span></a>.</li>
+</ol>
+<p>The exported matrix is <span class="math inline">\widehat{\boldsymbol{\Sigma}}^{\mathrm{bio}}_{j}</span>. The held-out cells are raw counts and carry the Poisson noise and the size term that the correction removed, so the arm is scored through the raw count covariance rebuilt from the estimate, with <span class="math inline">\nu^{\mathrm{tech}}=\kappa/(1-\kappa)</span>:</p>
+<p><span id="eq-cov-renoise"><span class="math display">
+\widehat{\boldsymbol{\Sigma}}^{\mathrm{score}}_{j}
+=
+\widehat{\boldsymbol{\Sigma}}^{\mathrm{bio}}_{j}
++\operatorname{diag}(\widehat{\boldsymbol{\mu}}_{\cdot j})
++\frac{\kappa}{1-\kappa}
+\bigl(\widehat{\boldsymbol{\Sigma}}^{\mathrm{bio}}_{j}
++\widehat{\boldsymbol{\mu}}_{\cdot j}\widehat{\boldsymbol{\mu}}_{\cdot j}^{\top}\bigr)
+\tag{4.4}</span></span></p>
+<!-- chk: V38c -->
+<p>(<code>reconstruct_count_covariance()</code>, element <code>score_sigma</code> of the fit, used by <code>score_fit()</code> when present). With <span class="math inline">\kappa=0</span> it is <span class="math inline">\widehat{\boldsymbol{\Sigma}}^{\mathrm{bio}}_{j}+\operatorname{diag}(\widehat{\boldsymbol{\mu}}_{\cdot j})</span>. The cross-validation therefore compares only how the biological part is regularised; it cannot choose <span class="math inline">\kappa</span>, because every <span class="math inline">\kappa</span> rebuilds the same raw moments up to regularisation. <span class="math inline">\kappa</span> stays a bracket: the nested comparison uses <span class="math inline">\kappa=0</span>, which needs no estimate, and the upper end <span class="math inline">\hat\kappa_{\max}=\hat\nu/(1+\hat\nu)</span> is exported as a variant (<code>shrinkage_denoised_kappa_max</code>), tuned but not compared.</p>
+<p><span class="math inline">\hat\nu</span> comes from <code>extrinsic_noise_nu()</code>: the mode of the normalised covariances <span class="math inline">\widehat{\operatorname{Cov}}(x_g,x_h)/(\bar x_g\bar x_h)</span> over pairs of genes with a mean of at least one count (at most 2,000 genes, largest means first), after Fang and Pachter <span class="light-content" style="color: #7a1f1f;border-radius: 0.2rem; padding: 0 0.2rem 0 0.2rem;background-color: #f4c7c3;">TODO-cite: Fang &amp; Pachter 2025, extrinsic biological stochasticity; key fangExtrinsicBiologicalStochasticity2025 is in the DeCovarT bibliography, not in bibliography/REFERENCES.bib</span>. The estimate assumes that most gene pairs are intrinsically uncorrelated; co-regulated modules bias <span class="math inline">\hat\nu</span> upwards. Without spike-ins <span class="math inline">\hat\nu</span> mixes the biological and technical size factors, so <span class="math inline">\hat\kappa_{\max}</span> is the all-technical end of the bracket. The estimates are written per unit to <code>output/grn/cv/extrinsic_noise.csv</code>.</p>
+<p>The graphical lasso and the <code>SILGGM</code> refit accept the same preprocessing (<code>preprocess = "denoised"</code>). The graphical lasso then fits the correlation of the projected matrix. For <code>SILGGM</code>, ranks cannot be denoised: the support still comes from the nonparanormal scores, and only the linear-scale refit on that support uses the projected matrix. Neither variant is an arm of the nested comparison.</p>
+</section>
+<section id="sec-glasso" class="level3" data-number="4.2.3">
+<h3 data-number="4.2.3" class="anchored" data-anchor-id="sec-glasso"><span class="header-section-number">4.2.3</span> Graphical lasso with an unpenalised diagonal</h3>
 <p><code>fit_cov_glasso()</code> standardises the panel, fits <code>glasso::glasso(R, rho = lambda, penalize.diagonal = FALSE)</code> <span class="citation" data-cites="R-glasso">(<a href="#ref-R-glasso" role="doc-biblioref">Friedman et al. 2019</a>)</span> on the sample correlation <span class="math inline">\boldsymbol{R}_j</span> by block coordinate descent <span class="citation" data-cites="friedmanSparseInverseCovariance2008">(<a href="#ref-friedmanSparseInverseCovariance2008" role="doc-biblioref">Friedman et al. 2008</a>)</span>, and rescales: <span class="math inline">\widehat{\boldsymbol{\Omega}}_{j}=\Delta_j^{-1/2}\widehat{\boldsymbol{\Omega}}_{R}\Delta_j^{-1/2}</span> with <span class="math inline">\Delta_j=\operatorname{diag}(\boldsymbol{V}_j)</span> (<code>rescale_correlation_fit()</code>). With the diagonal unpenalised the fitted correlation keeps a unit diagonal, so <span class="math inline">\widehat{\boldsymbol{\Sigma}}_{j}</span> matches the sample variances.</p>
 <ul>
 <li><code>penalize.diagonal</code> defaults to <code>TRUE</code> in <code>glasso</code> 1.11; it is set explicitly.</li>
-<li><code>huge</code> <span class="citation" data-cites="R-huge">(<a href="#ref-R-huge" role="doc-biblioref">Zhao et al. 2022</a>)</span> is not used: <code>huge.glasso()</code> always penalises the diagonal and has no switch for it (checked in the <code>huge</code> 1.5.1 sources). The reasons are in <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-3-precision-networks.html#sec-cov-glasso">3.3, graphical lasso</a>.</li>
-<li>Grid endpoints come from <code>lambda_endpoints()</code>: at <span class="math inline">\lambda_{\max}=\max_{g\neq g'}|R_{gg'}|</span> the off-diagonal precision is zero; the lower end is of order <span class="math inline">\sqrt{\log G/C_j}</span>.</li>
+<li><code>huge</code> <span class="citation" data-cites="R-huge">(<a href="#ref-R-huge" role="doc-biblioref">Zhao et al. 2022</a>)</span> is not used: <code>huge.glasso()</code> always penalises the diagonal and has no switch for it (checked in the <code>huge</code> 1.5.1 sources). The reasons are in <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-cov-glasso">3.2, graphical lasso</a>.</li>
+<li>Grid endpoints come from <code>lambda_endpoints()</code>: at <span class="math inline">\lambda_{\max}=\max_{g\neq g'}|R_{gg'}|</span> the off-diagonal precision is zero; the lower end is of order <span class="math inline">\sqrt{\log G_t/C_j}</span>.</li>
 <li>A gene constant across the cells of a type is left out of that type’s fit and listed in <code>excluded_genes</code>, instead of forcing a diagonal covariance for all genes.</li>
 <li>A penalty whose solve fails is dropped from the grid and listed in <code>failed_lambda</code>, instead of being replaced by a diagonal precision.</li>
 </ul>
-<p>The earlier selector, a safeguarded EBIC interval search (<code>ebic_adaptive_path()</code>, at most <code>n_solves = 40</code> solves, <span class="math inline">\gamma=0.5</span> <span class="citation" data-cites="foygelExtendedBayesianInformation2010">(<a href="#ref-foygelExtendedBayesianInformation2010" role="doc-biblioref">Foygel and Drton 2010</a>)</span>), is kept in <code>scripts/03_01_grn_huge.R</code> as a diagnostic path. It no longer chooses <span class="math inline">\lambda</span>.</p>
+<p>The earlier selector, a safeguarded EBIC interval search (<code>ebic_adaptive_path()</code>, at most <code>n_solves = 40</code> solves, <span class="math inline">\gamma=0.5</span> <span class="citation" data-cites="foygelExtendedBayesianInformation2010">(<a href="#ref-foygelExtendedBayesianInformation2010" role="doc-biblioref">Foygel and Drton 2010</a>)</span>), is kept in <code>scripts/03_01_grn_glasso.R</code> as a diagnostic path. It no longer chooses <span class="math inline">\lambda</span>.</p>
 </section>
-<section id="sec-silggm" class="level3" data-number="4.2.3">
-<h3 data-number="4.2.3" class="anchored" data-anchor-id="sec-silggm"><span class="header-section-number">4.2.3</span> <code>SILGGM</code> support, then a refit</h3>
+<section id="sec-silggm" class="level3" data-number="4.2.4">
+<h3 data-number="4.2.4" class="anchored" data-anchor-id="sec-silggm"><span class="header-section-number">4.2.4</span> <code>SILGGM</code> support, then a refit</h3>
 <p><code>fit_cov_silggm_refit()</code> runs in three steps:</p>
 <ol type="1">
-<li>Nonparanormal scores with <code>huge::huge.npn(x, npn.func = "shrinkage")</code> (rank <span class="math inline">R_{gc}</span> mapped to <span class="math inline">\Phi^{-1}\{R_{gc}/(C_j+1)\}</span>, then standardised). The choice of shrinkage over truncation is argued in <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-3-precision-networks.html#sec-cov-npn">3.3, nonparanormal</a>.</li>
+<li>Nonparanormal scores with <code>huge::huge.npn(x, npn.func = "shrinkage")</code> (rank <span class="math inline">R_{gc}</span> mapped to <span class="math inline">\Phi^{-1}\{R_{gc}/(C_j+1)\}</span>, then standardised). The choice of shrinkage over truncation is argued in <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-cov-npn">3.2, nonparanormal</a>.</li>
 <li><code>SILGGM::SILGGM(npn, method = "D-S_GL", global = TRUE, alpha)</code> <span class="citation" data-cites="R-SILGGM zhangSILGGMExtensivePackage2018">(<a href="#ref-R-SILGGM" role="doc-biblioref">Zhang et al. 2018b</a>, <a href="#ref-zhangSILGGMExtensivePackage2018" role="doc-biblioref">2018a</a>)</span>: de-sparsified graphical lasso with the global FDR rule of
 <ol class="example" type="1">
 <li>The object kept is the support at level <span class="math inline">\alpha</span> (<code>global_decision</code>), not the dense de-sparsified matrix.</li>
 </ol></li>
-<li>An SPD refit on the linear-scale panel under the zeros of that support, with <code>glasso::glasso(V, rho = 0, zero = ..., penalize.diagonal = FALSE)</code>.</li>
+<li>An SPD refit on the linear-scale panel under the zeros of that support, with <code>glasso::glasso(V, rho = 0, zero = ..., penalize.diagonal = FALSE)</code>; with <code>preprocess = "denoised"</code>, on the projected denoised matrix of
+<ol start="2" class="example" type="1">
+<li></li>
+</ol></li>
 </ol>
 <p>The script <code>scripts/03_02_grn_silggm.R</code> (seed 1, <span class="math inline">\alpha=0.05</span>) stops after step 2 and has never been run; the refit lives in the wrapper.</p>
 </section>
-<section id="sec-pln" class="level3" data-number="4.2.4">
-<h3 data-number="4.2.4" class="anchored" data-anchor-id="sec-pln"><span class="header-section-number">4.2.4</span> <code>PLNnetwork</code></h3>
+<section id="sec-pln" class="level3" data-number="4.2.5">
+<h3 data-number="4.2.5" class="anchored" data-anchor-id="sec-pln"><span class="header-section-number">4.2.5</span> <code>PLNnetwork</code></h3>
 <p><code>fit_cov_plnnetwork()</code> fits the Poisson-lognormal network of <code>PLNmodels</code> <span class="citation" data-cites="R-PLNmodels chiquetVariationalInferenceSparse2018">(<a href="#ref-R-PLNmodels" role="doc-biblioref">Chiquet et al. 2025</a>, <a href="#ref-chiquetVariationalInferenceSparse2018" role="doc-biblioref">2018</a>)</span> to the raw counts of one unit, with the full-library offset:</p>
 <p><span id="eq-pln"><span class="math display">
 x_{gc}\mid\boldsymbol{z}_{\cdot c}
@@ -672,7 +943,7 @@ x_{gc}\mid\boldsymbol{z}_{\cdot c}
 \mathcal{N}_{G}(\boldsymbol{\mu}_{z},\boldsymbol{\Sigma}_{z}),
 \qquad
 \boldsymbol{\Omega}_{z}=\boldsymbol{\Sigma}_{z}^{-1}\ \text{penalised off the diagonal}.
-\tag{4.2}</span></span></p>
+\tag{4.5}</span></span></p>
 <div id="tbl-pln-hyperparameters" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-pln-hyperparameters-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -697,7 +968,7 @@ Table&nbsp;4.5: <code>PLNnetwork</code> settings. Earlier versions of the script
 </tr>
 <tr class="even">
 <td><code>log_library</code></td>
-<td><span class="math inline">\log s_c</span>, full RNA library (<a href="#sec-cov-inputs" class="quarto-xref"><span>Section 4.1.2</span></a>)</td>
+<td><span class="math inline">\log s_c</span>, full RNA library (<code>library_size</code> of the slot, <a href="#sec-cov-inputs" class="quarto-xref"><span>Section 4.1.1</span></a>)</td>
 </tr>
 <tr class="odd">
 <td><code>n_penalties</code></td>
@@ -720,13 +991,13 @@ Table&nbsp;4.5: <code>PLNnetwork</code> settings. Earlier versions of the script
 </div>
 </figure>
 </div>
-<div id="algo-plnnetwork" class="pseudocode-container quarto-float" data-comment-delimiter="//" data-chapter-level="4" data-indent-size="1.2em" data-no-end="false" data-line-number="true" data-indent-lines="false" data-pseudocode-number="1" data-line-number-punc=":" data-caption-prefix="Algorithm">
+<div id="algo-plnnetwork" class="pseudocode-container quarto-float" data-no-end="false" data-pseudocode-number="1" data-line-number-punc=":" data-line-number="true" data-chapter-level="4" data-comment-delimiter="//" data-indent-size="1.2em" data-caption-prefix="Algorithm" data-indent-lines="false">
 <div class="pseudocode">
 \begin{algorithm} \caption{PLNnetwork: alternating graphical lasso and variational updates} \begin{algorithmic} \Require counts $X$, offsets $O=\log s$, penalty $\lambda$, weights $W$ \State initialise the variational means $M$, variances $S$ and $\Sigma$ \For{$h = 1,\ldots,$ maxit\_out} \State $\Omega^{(h)} \gets$ \Call{GraphicalLasso}{$\Sigma^{(h-1)}, \lambda W$} \State $(B^{(h)},M^{(h)},S^{(h)}) \gets$ \Call{NLopt}{$B^{(h-1)},M^{(h-1)},S^{(h-1)};\Omega^{(h)}$} \State $\Sigma^{(h)} \gets C^{-1}\left[{M^{(h)}}^\top M^{(h)} + \sum_c S_c^{(h)}\right]$ \State $F_h \gets -\mathrm{ELBO}(B^{(h)},M^{(h)},S^{(h)},\Omega^{(h)}) + \lambda\|\Omega^{(h)}\|_{1,W}$ \If{$|F_h-F_{h-1}|/|F_h| &lt;$ ftol\_out} \State \textbf{break} \EndIf \EndFor \State \Return $(B,M,S,\Omega,\Sigma)$ \end{algorithmic} \end{algorithm}
 </div>
 </div>
-<p><a href="#algo-plnnetwork" class="quarto-xref">Algorithm 4.1</a> is the block-coordinate scheme of <span class="citation" data-cites="chiquetVariationalInferenceSparse2018">Chiquet et al. (<a href="#ref-chiquetVariationalInferenceSparse2018" role="doc-biblioref">2018</a>)</span>. The model, the variational bound and the role of the offset are in <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-3-precision-networks.html#sec-cov-pln">3.3, PLN</a>.</p>
-<p>The latent moments <span class="math inline">(\boldsymbol{\mu}_{z},\boldsymbol{\Sigma}_{z})</span> are not on DeCovarT’s scale. <code>pln_linear_moments()</code> maps them to the moments of the counts, averaged over the size factors <span class="math inline">s_c</span> of the cells being scored:</p>
+<p><a href="#algo-plnnetwork" class="quarto-xref">Algorithm 4.1</a> is the block-coordinate scheme of <span class="citation" data-cites="chiquetVariationalInferenceSparse2018">Chiquet et al. (<a href="#ref-chiquetVariationalInferenceSparse2018" role="doc-biblioref">2018</a>)</span>. The model, the variational bound and the role of the offset are in <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-cov-pln">3.2, PLN</a>.</p>
+<p>The latent moments <span class="math inline">(\boldsymbol{\mu}_{z},\boldsymbol{\Sigma}_{z})</span> are not on DeCovarT’s scale. Given the library <span class="math inline">s_c</span> of a cell, the moments of its counts are</p>
 <p><span id="eq-pln-linear"><span class="math display">
 \mathbb{E}\,x_{gc}=s_{c}\,e^{\mu_{z,g}+\sigma_{z,gg}/2},
 \qquad
@@ -737,53 +1008,75 @@ Table&nbsp;4.5: <code>PLNnetwork</code> settings. Earlier versions of the script
 \bigl(\mathbb{E}\,\boldsymbol{x}_{\cdot c}\,\mathbb{E}\,\boldsymbol{x}_{\cdot c}^{\top}\bigr)
 \circ
 \bigl(e^{\boldsymbol{\Sigma}_{z}}-\mathbf{1}\mathbf{1}^{\top}\bigr),
-\tag{4.3}</span></span></p>
-<p>with <span class="math inline">e^{\boldsymbol{\Sigma}_{z}}</span> taken entrywise. The moments are then divided by the size factor, so that the four estimators are scored on the same size-factor-normalised table. <!-- chk: V3 --></p>
+\tag{4.6}</span></span></p>
+<p>with <span class="math inline">e^{\boldsymbol{\Sigma}_{z}}</span> taken entrywise. <!-- chk: V3 --> On raw counts (<code>normalise = "none"</code>), <code>pln_linear_moments(scale = "counts")</code> averages <a href="#eq-pln-linear" class="quarto-xref">Equation&nbsp;<span>4.6</span></a> over the libraries of the cells being scored, by the law of total covariance:</p>
+<p><span id="eq-pln-linear-avg"><span class="math display">
+\bar{\boldsymbol{x}}=\bar s\,\boldsymbol{m},
+\qquad
+\operatorname{Cov}\boldsymbol{x}
+=
+\bar s\operatorname{diag}(\boldsymbol{m})
++\overline{s^{2}}\,(\boldsymbol{m}\boldsymbol{m}^{\top})
+\circ\bigl(e^{\boldsymbol{\Sigma}_{z}}-\mathbf{1}\mathbf{1}^{\top}\bigr)
++\operatorname{Var}(s)\,\boldsymbol{m}\boldsymbol{m}^{\top},
+\qquad
+\boldsymbol{m}=e^{\boldsymbol{\mu}_{z}+\operatorname{diag}(\boldsymbol{\Sigma}_{z})/2},
+\tag{4.7}</span></span></p>
+<!-- chk: V3 -->
+<p>with <span class="math inline">\bar s</span>, <span class="math inline">\overline{s^{2}}</span> and <span class="math inline">\operatorname{Var}(s)</span> the mean, mean square and variance of those libraries. This is the matrix that is scored, comparable with the raw sample covariance. The offset removes every size variation from <span class="math inline">\boldsymbol{\Sigma}_{z}</span>, biological size included, so <code>PLNnetwork</code> needs no moment correction, only a choice of what to put back at export. Beside the scored moments, the driver exports the two brackets without the Poisson diagonal (<code>poisson_diag = FALSE</code>): <span class="math inline">\kappa=0</span> keeps the depth terms (<code>size_term = "keep"</code>), and the all-technical end gives every cell the mean library, so <span class="math inline">\operatorname{Var}(s)=0</span> and <span class="math inline">\overline{s^{2}}=\bar s^{2}</span> (<code>size_term = "drop"</code>). With <code>normalise = "library"</code> the moments are divided by the size factor instead (<code>scale = "normalised"</code>).</p>
 </section>
 </section>
 <section id="sec-cov-cv-run" class="level2" data-number="4.3">
 <h2 data-number="4.3" class="anchored" data-anchor-id="sec-cov-cv-run"><span class="header-section-number">4.3</span> Cross-validation and outputs</h2>
-<p>The same loss selects the tuning parameter of every estimator and compares the four: the held-out Gaussian log-likelihood on the linear scale. For held-out cells <span class="math inline">\mathcal{T}</span> and an estimate <span class="math inline">(\widehat{\boldsymbol{\mu}},\widehat{\boldsymbol{\Sigma}})</span> fitted without them,</p>
+<p>The same loss selects the tuning parameter of every arm and compares the five: the held-out Gaussian log-likelihood on the linear scale. For held-out cells <span class="math inline">\mathcal{T}</span> and an estimate <span class="math inline">(\widehat{\boldsymbol{\mu}},\widehat{\boldsymbol{\Sigma}})</span> fitted without them,</p>
 <p><span id="eq-heldout-loglik"><span class="math display">
 \ell(\widehat{\boldsymbol{\mu}},\widehat{\boldsymbol{\Sigma}};\mathcal{T})
 =
 \frac{1}{|\mathcal{T}|}\sum_{c\in\mathcal{T}}
 \log\phi_{G}\bigl(\boldsymbol{x}_{\cdot c};\widehat{\boldsymbol{\mu}},\widehat{\boldsymbol{\Sigma}}\bigr),
-\tag{4.4}</span></span></p>
-<p>computed by <code>heldout_gaussian_logscore()</code> through a Cholesky factor of <span class="math inline">\widehat{\boldsymbol{\Sigma}}</span>. Why this score is a legitimate loss for the covariance even though cells are not Gaussian, and why it replaces AIC, BIC and EBIC as the selector, is in <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-cov-cv">3.2, cross-validation</a>.</p>
-<div id="algo-cv-covariance" class="pseudocode-container quarto-float" data-comment-delimiter="//" data-chapter-level="4" data-indent-size="1.2em" data-no-end="false" data-line-number="true" data-indent-lines="false" data-pseudocode-number="2" data-line-number-punc=":" data-caption-prefix="Algorithm">
+\tag{4.8}</span></span></p>
+<p>computed by <code>heldout_gaussian_logscore()</code> through a Cholesky factor of <span class="math inline">\widehat{\boldsymbol{\Sigma}}</span>; for the denoised arm, <span class="math inline">\widehat{\boldsymbol{\Sigma}}</span> is <a href="#eq-cov-renoise" class="quarto-xref">Equation&nbsp;<span>4.4</span></a>. Why this score is a legitimate loss for the covariance even though cells are not Gaussian is in <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#prp-gaussian-logscore">3.2, Gaussian log-score</a>, and why it replaces AIC, BIC and EBIC as the selector in <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-cov-cv">3.2, cross-validation</a>.</p>
+<div id="algo-cv-covariance" class="pseudocode-container quarto-float" data-no-end="false" data-pseudocode-number="2" data-line-number-punc=":" data-line-number="true" data-chapter-level="4" data-comment-delimiter="//" data-indent-size="1.2em" data-caption-prefix="Algorithm" data-indent-lines="false">
 <div class="pseudocode">
-\begin{algorithm} \caption{Tuning by K-fold cross-validation, and nested comparison of the four estimators} \begin{algorithmic} \Procedure{CVSelect}{$X, f, \Lambda, K$} \State split the cells of $X$ into $K$ folds at random, with a fixed seed \For{$\lambda \in \Lambda$} \For{$k = 1,\ldots,K$} \State $(\hat\mu,\hat\Sigma) \gets f(X_{-k};\lambda)$ \State $\ell_k(\lambda) \gets$ \Call{HeldOutLogScore}{$\hat\mu,\hat\Sigma,X_k$} \EndFor \State $m(\lambda) \gets$ mean of $\ell_k(\lambda)$; $\mathrm{se}(\lambda) \gets$ its standard error \EndFor \State $\lambda_{\min} \gets \arg\max_{\lambda} m(\lambda)$ \State $\lambda_{1\mathrm{se}} \gets$ most regularised $\lambda$ with $m(\lambda) \ge m(\lambda_{\min}) - \mathrm{se}(\lambda_{\min})$ \State \Return $(m, \mathrm{se}, \lambda_{\min}, \lambda_{1\mathrm{se}})$ \EndProcedure \Procedure{NestedCompare}{$X, \{(f_e,\Lambda_e)\}_{e=1}^{4}, K_{\mathrm{out}}, K_{\mathrm{in}}$} \For{$k = 1,\ldots,K_{\mathrm{out}}$} \For{$e = 1,\ldots,4$} \State $\lambda_e \gets \lambda_{\min}$ of \Call{CVSelect}{$X_{-k}, f_e, \Lambda_e, K_{\mathrm{in}}$} \State $(\hat\mu,\hat\Sigma) \gets f_e(X_{-k};\lambda_e)$ \State $s_{ek} \gets$ \Call{HeldOutLogScore}{$\hat\mu,\hat\Sigma,X_k$} \EndFor \EndFor \State \Return $(s_{ek})$, paired by outer fold \EndProcedure \end{algorithmic} \end{algorithm}
+\begin{algorithm} \caption{Tuning by K-fold cross-validation, and nested comparison of the five arms} \begin{algorithmic} \Procedure{CVSelect}{$X, f, \Lambda, K$} \State split the cells of $X$ into $K$ folds at random, with a fixed seed \For{$\lambda \in \Lambda$} \For{$k = 1,\ldots,K$} \State $(\hat\mu,\hat\Sigma) \gets f(X_{-k};\lambda)$ \State $\ell_k(\lambda) \gets$ \Call{HeldOutLogScore}{$\hat\mu,\hat\Sigma,X_k$} \EndFor \State $m(\lambda) \gets$ mean of $\ell_k(\lambda)$; $\mathrm{se}(\lambda) \gets$ its standard error \EndFor \State $\lambda_{\min} \gets \arg\max_{\lambda} m(\lambda)$ \State $\lambda_{1\mathrm{se}} \gets$ most regularised $\lambda$ with $m(\lambda) \ge m(\lambda_{\min}) - \mathrm{se}(\lambda_{\min})$ \State \Return $(m, \mathrm{se}, \lambda_{\min}, \lambda_{1\mathrm{se}})$ \EndProcedure \Procedure{NestedCompare}{$X, \{(f_e,\Lambda_e)\}_{e=1}^{5}, K_{\mathrm{out}}, K_{\mathrm{in}}$} \For{$k = 1,\ldots,K_{\mathrm{out}}$} \For{$e = 1,\ldots,5$} \State $\lambda_e \gets \lambda_{\min}$ of \Call{CVSelect}{$X_{-k}, f_e, \Lambda_e, K_{\mathrm{in}}$} \State $(\hat\mu,\hat\Sigma) \gets f_e(X_{-k};\lambda_e)$ \State $s_{ek} \gets$ \Call{HeldOutLogScore}{$\hat\mu,\hat\Sigma,X_k$} \EndFor \EndFor \State \Return $(s_{ek})$, paired by outer fold \EndProcedure \end{algorithmic} \end{algorithm}
 </div>
 </div>
 <p>Settings in <code>scripts/03_04_cv_covariance.R</code>:</p>
 <ul>
 <li><code>cv_select_tuning(X, fit_fun, grid, K = 5, seed)</code> returns the mean and standard error per grid value and the <code>min</code> and <code>1se</code> choices. The exported fit uses <code>min</code>; <code>1se</code> is reported beside it.</li>
-<li><code>nested_cv_compare(X, estimators, K_outer = 5, K_inner = 5, seed)</code> is run only to compare the four estimators. The inner loop chooses the tuning parameter, the outer loop scores the chosen fit on cells it never saw.</li>
+<li><code>nested_cv_compare(X, estimators, K_outer = 5, K_inner = 5, seed)</code> is run only to compare the five arms. The inner loop chooses the tuning parameter, the outer loop scores the chosen fit on cells it never saw. The denoised arm enters with <span class="math inline">\kappa=0</span>; the <span class="math inline">\hat\kappa_{\max}</span> variant is tuned by <code>cv_select_tuning()</code> alone (2).</li>
 <li>Folds split cells of one unit. The score measures generalisation to new cells of this specimen, not to new specimens (<a href="02-feature-selection.html#nte-pseudoreplication" class="quarto-xref">Note&nbsp;<span>3.1</span></a>).</li>
-<li>In units with very few cells (29 cells for the somite differentiation front) each training fold has about 23 cells; the shrinkage estimate is the only one expected to be stable there.</li>
+<li>In units with very few cells (29 cells for the somite differentiation front, against 5,821 panel genes) each training fold has about 23 cells; the shrinkage estimate is the only one expected to be stable there.</li>
+<li><strong>Run time.</strong> At 96 h the panel has 5,821 genes. <code>SILGGM</code> (D-S_GL) then tests about <span class="math inline">1.7\times10^{7}</span> gene pairs per unit and <code>PLNnetwork</code> updates a <span class="math inline">5{,}821\times5{,}821</span> latent covariance at every step, each refitted <span class="math inline">K</span> times for selection and <span class="math inline">K_{\mathrm{out}}(K_{\mathrm{in}}+1)</span> times for the comparison; these two arms dominate the cost. No cap on the panel is imposed to save time.</li>
 </ul>
-<p>Diagnostics that are computed but do not select: the EBIC path of the graphical lasso (<a href="#sec-glasso" class="quarto-xref"><span>Section 4.2.2</span></a>), and edge stability under subsampling. StARS is not run: with 20 subsamples and 40 penalties it costs about 800 graphical-lasso solves per unit, against 40 for the EBIC path.</p>
+<p><strong>Diagnostics that are computed but do not select.</strong> The held-out log-score of <a href="#eq-heldout-loglik" class="quarto-xref">Equation&nbsp;<span>4.8</span></a> is the only selector. The diagnostics of <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#nte-cov-criteria">3.2, diagnostics</a> describe a fit; none of them chooses a tuning value or an arm.</p>
+<ul>
+<li>For every arm: the condition number and the eigen-spectrum of <span class="math inline">\widehat{\boldsymbol{\Sigma}}_{j}</span> against the Marchenko–Pastur band of the sample covariance <span class="light-content" style="color: #7a1f1f;border-radius: 0.2rem; padding: 0 0.2rem 0 0.2rem;background-color: #f4c7c3;">TODO-cite: Marchenko &amp; Pastur 1967; key not in bibliography/REFERENCES.bib</span>; the bootstrap spread of <span class="math inline">\widehat{\boldsymbol{\Sigma}}_{j}</span> in Frobenius and Bures distance (<a href="#sec-cov-evaluation" class="quarto-xref"><span>Section 4.3.2</span></a>); and the Hellinger distance and <code>MixSim</code> overlap between types <span class="citation" data-cites="melnykovMixSimPackageSimulating2012">(<a href="#ref-melnykovMixSimPackageSimulating2012" role="doc-biblioref">Melnykov et al. 2012</a>)</span> (4). Only the last two are coded (<code>gaussian_hellinger()</code>, <code>gaussian_mixsim_overlap()</code>); the spectrum and the bootstrap spread are planned.</li>
+<li>For the sparse arms only: EBIC along the graphical-lasso path
+<ol start="3" class="example" type="1">
+<li>and edge stability under subsampling. Both count edges, so they do not apply to the shrinkage arms. StARS <span class="citation" data-cites="liuStabilityApproachRegularization2010">(<a href="#ref-liuStabilityApproachRegularization2010" role="doc-biblioref">Liu et al. 2010</a>)</span> is not run: with 20 subsamples and 40 penalties it costs about 800 graphical-lasso solves per unit, against 40 for the EBIC path.</li>
+</ol></li>
+</ul>
 <blockquote class="blockquote">
-<p>For the estimator retained for a unit, <span class="math inline">\widehat{\boldsymbol{\mu}}_{\cdot j}</span> is the mean of the size-factor-normalised counts of its cells and <span class="math inline">\widehat{\boldsymbol{\Sigma}}_{j}</span> is the selected covariance, both on the scale of <a href="#sec-cov-inputs" class="quarto-xref"><span>Section 4.1.2</span></a>; <a href="#eq-grn-export" class="quarto-xref">Equation&nbsp;<span>4.1</span></a> holds by construction. For <code>PLNnetwork</code> both come from <a href="#eq-pln-linear" class="quarto-xref">Equation&nbsp;<span>4.3</span></a>. Which covariance layer these cell-level moments identify, and how the sample scales are estimated inside the DeCovarT fit, is in <a href="https://bastienchassagnol.github.io/DeCovarT/articles/02-1-single-cell-generative-optimisation.html#sec-three-regimes">2.1, three regimes</a> and <a href="https://bastienchassagnol.github.io/DeCovarT/articles/02-1-single-cell-generative-optimisation.html#sec-profile-newton">2.1, profile Newton</a>.</p>
+<p>For the arm retained for a unit, <span class="math inline">\widehat{\boldsymbol{\mu}}_{\cdot j}</span> is the mean of the raw counts of its cells and <span class="math inline">\widehat{\boldsymbol{\Sigma}}_{j}</span> is the selected covariance, both on the scale of <a href="#sec-cov-inputs" class="quarto-xref"><span>Section 4.1.1</span></a>; <a href="#eq-grn-export" class="quarto-xref">Equation&nbsp;<span>4.1</span></a> holds by construction. For <code>PLNnetwork</code> both come from <a href="#eq-pln-linear-avg" class="quarto-xref">Equation&nbsp;<span>4.7</span></a>; for the denoised arm the exported covariance is <span class="math inline">\widehat{\boldsymbol{\Sigma}}^{\mathrm{bio}}_{j}</span>. Which covariance layer these cell-level moments identify, and how the sample scales are estimated inside the DeCovarT fit, is in <a href="https://bastienchassagnol.github.io/DeCovarT/articles/02-1-single-cell-generative-optimisation.html#sec-three-regimes">2.1, three regimes</a> and <a href="https://bastienchassagnol.github.io/DeCovarT/articles/02-1-single-cell-generative-optimisation.html#sec-profile-newton">2.1, profile Newton</a>.</p>
 </blockquote>
 <section id="sec-cov-plots" class="level3" data-number="4.3.1">
 <h3 data-number="4.3.1" class="anchored" data-anchor-id="sec-cov-plots"><span class="header-section-number">4.3.1</span> Displays</h3>
 <p>Plot functions are in <code>R/plot_grn_regularisation.R</code>. Each display answers one question.</p>
-<p><strong>Choosing the tuning parameter (one unit, one estimator).</strong></p>
+<p><strong>Choosing the tuning parameter (one unit, one arm).</strong></p>
 <ul>
 <li>Cross-validation curve: <span class="math inline">m(\lambda)\pm\mathrm{se}(\lambda)</span> against the tuning parameter, with the <code>min</code> and <code>1se</code> choices marked (new; not produced yet).</li>
 <li>Regularisation path: each off-diagonal entry of <span class="math inline">\widehat{\boldsymbol{\Omega}}(\lambda)</span> against <span class="math inline">\log\lambda</span>, five edges that survive at the selected <span class="math inline">\lambda</span> and five that are driven to zero (graphical lasso, <code>PLNnetwork</code>).</li>
 <li>EBIC against <span class="math inline">\log\lambda</span>, and EBIC against edge density <span class="math inline">|E|/\{G(G-1)/2\}</span> (diagnostic only).</li>
 </ul>
-<p><strong>Comparing estimators (one unit).</strong></p>
+<p><strong>Comparing arms (one unit).</strong></p>
 <ul>
-<li>Outer-fold held-out scores <span class="math inline">s_{ek}</span> of <a href="#algo-cv-covariance" class="quarto-xref">Algorithm 4.2</a>, one line per fold across the four estimators, so that the comparison is paired.</li>
+<li>Outer-fold held-out scores <span class="math inline">s_{ek}</span> of <a href="#algo-cv-covariance" class="quarto-xref">Algorithm 4.2</a>, one line per fold across the five arms, so that the comparison is paired.</li>
 <li>Partial-correlation heatmaps at the selected tuning parameter, with one gene order frozen across estimators and types, <span id="eq-partial"><span class="math display">
 \rho_{gg'\mid\mathrm{rest}}
 =
 -\frac{\omega_{gg'}}{\sqrt{\omega_{gg}\omega_{g'g'}}},
-\tag{4.5}</span></span> on a diverging scale centred at zero.</li>
+\tag{4.9}</span></span> on a diverging scale centred at zero.</li>
 <li>For the three sparse estimators: UpSet plots of edge presence and of signed edges.</li>
 </ul>
 <p><strong>Comparing types (one time).</strong> Pairwise Hellinger distance and <code>MixSim</code> overlap between the exported Gaussians on the linear scale (<code>gaussian_hellinger()</code>, <code>gaussian_mixsim_overlap()</code> in <code>R/ebic_regularisation_path.R</code>). Distances computed on another scale (nonparanormal scores, <span class="math inline">\log(1+x)</span>) do not describe what DeCovarT has to separate.</p>
@@ -792,29 +1085,16 @@ Table&nbsp;4.5: <code>PLNnetwork</code> settings. Earlier versions of the script
 <h3 data-number="4.3.2" class="anchored" data-anchor-id="sec-cov-evaluation"><span class="header-section-number">4.3.2</span> Evaluation</h3>
 <p>There is no ground-truth network for murine gastruloids, and the estimand is a covariance. The scores are therefore relative, in this order of weight:</p>
 <ol type="1">
-<li><strong>Held-out likelihood</strong>, outer folds of <a href="#algo-cv-covariance" class="quarto-xref">Algorithm 4.2</a>: the selector, and the only score that compares all four estimators on one scale.</li>
-<li><strong>Downstream deconvolution</strong>: DeCovarT error on the matched 48 h bulk and in the misspecification sweep of <a href="06-sensitivity-misspecification.html#sec-sensitivity" class="quarto-xref"><span>Section 7.1</span></a>, with <span class="math inline">\widehat{\boldsymbol{\Sigma}}_{j}</span> from each estimator. This is the score tied to the paper’s estimand.</li>
-<li><strong>Technical stability</strong>: a bootstrap of cells within type, labels fixed (<a href="02-feature-selection.html#nte-pseudoreplication" class="quarto-xref">Note&nbsp;<span>3.1</span></a>). Edge-inclusion frequencies for the sparse estimators and the Frobenius spread of <span class="math inline">\widehat{\boldsymbol{\Sigma}}_{j}</span> for all four. Conditional on this specimen.</li>
+<li><strong>Held-out likelihood</strong>, outer folds of <a href="#algo-cv-covariance" class="quarto-xref">Algorithm 4.2</a>: the selector, and the only score that compares all five arms on one scale.</li>
+<li><strong>Downstream deconvolution</strong>: DeCovarT error on the matched 48 h bulk and in the misspecification sweep of <a href="06-sensitivity-misspecification.html#sec-sensitivity" class="quarto-xref"><span>Section 7.1</span></a>, with <span class="math inline">\widehat{\boldsymbol{\Sigma}}_{j}</span> from each arm. This is the score tied to the paper’s estimand.</li>
+<li><strong>Technical stability</strong>: a bootstrap of cells within type, labels fixed (<a href="02-feature-selection.html#nte-pseudoreplication" class="quarto-xref">Note&nbsp;<span>3.1</span></a>). Edge-inclusion frequencies for the sparse estimators and the Frobenius spread of <span class="math inline">\widehat{\boldsymbol{\Sigma}}_{j}</span> for every arm. Conditional on this specimen.</li>
 <li><strong>Separation of types</strong>: Hellinger and <code>MixSim</code> overlap of
-<ol start="2" class="example" type="1">
+<ol start="4" class="example" type="1">
 <li></li>
 </ol></li>
 <li><strong>Concordance of the sparse estimators</strong>: overlap of edge sets (intersection over the smaller set) and Hamming distance between skeletons, raw and divided by <span class="math inline">G(G-1)/2</span>. Agreement is a robustness number, not a validation.</li>
 </ol>
-<p>Scores that need a known skeleton, curated transcription-factor targets, other assays or perturbations are perspectives (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-3-precision-networks.html#sec-cov-perspectives">3.3, perspectives</a>).</p>
-<div id="nte-drop-zico" class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Note&nbsp;4.1: <span class="emoji" data-emoji="information_source">ℹ️</span> No zero-inflation layer
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Suppinger is droplet UMI data. Zeros are modelled as Poisson or negative-binomial sampling zeros <span class="citation" data-cites="svenssonDropletScRNAseqNot2020">(<a href="#ref-svenssonDropletScRNAseqNot2020" role="doc-biblioref">Svensson 2020</a>)</span>; no estimator in this book has a zero-inflation or hurdle layer. Zero-inflated observation models appear only as a contamination in <a href="06-sensitivity-misspecification.html#sec-sensitivity" class="quarto-xref"><span>Section 7.1</span></a>.</p>
-</div>
-</div>
+<p>Scores that need a known skeleton, curated transcription-factor targets, other assays or perturbations are perspectives (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-cov-perspectives">3.2, perspectives</a>).</p>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="list">
@@ -833,14 +1113,23 @@ Friedman, Jerome, Trevor Hastie, and Rob Tibshirani. 2019. <em>Glasso: Graphical
 <div id="ref-friedmanSparseInverseCovariance2008" class="csl-entry" role="listitem">
 Friedman, Jerome, Trevor Hastie, and Robert Tibshirani. 2008. <span>“Sparse Inverse Covariance Estimation with the Graphical Lasso.”</span> <em>Biostatistics (Oxford, England)</em> 9 (3): 432–41. <a href="https://doi.org/10.1093/biostatistics/kxm045">https://doi.org/10.1093/biostatistics/kxm045</a>.
 </div>
+<div id="ref-liuStabilityApproachRegularization2010" class="csl-entry" role="listitem">
+Liu, Han, Kathryn Roeder, and Larry Wasserman. 2010. <span>“Stability Approach to Regularization Selection (<span>StARS</span>) for High Dimensional Graphical Models.”</span> <em>Advances in Neural Information Processing Systems</em> 24 (2): 1432–40.
+</div>
+<div id="ref-luTranscriptomeSizeMatters2025" class="csl-entry" role="listitem">
+Lu, Songjian, Jiyuan Yang, Lei Yan, et al. 2025. <span>“Transcriptome Size Matters for Single-Cell <span class="nocase">RNA-seq</span> Normalization and Bulk Deconvolution.”</span> <em>Nature Communications</em> 16 (1). <a href="https://doi.org/10.1038/s41467-025-56623-1">https://doi.org/10.1038/s41467-025-56623-1</a>.
+</div>
+<div id="ref-melnykovMixSimPackageSimulating2012" class="csl-entry" role="listitem">
+Melnykov, Volodymyr, Wei-Chen Chen, and Ranjan Maitra. 2012. <span>“<span>MixSim</span>: <span>An R Package</span> for <span>Simulating Data</span> to <span>Study Performance</span> of <span>Clustering Algorithms</span>.”</span> <em>Journal of Statistical Software</em> 51. <a href="https://doi.org/10.18637/jss.v051.i12">https://doi.org/10.18637/jss.v051.i12</a>.
+</div>
 <div id="ref-R-corpcor" class="csl-entry" role="listitem">
 Schäfer, Juliane, Rainer Opgen-Rhein, Verena Zuber, Miika Ahdesmäki, A. Pedro Duarte Silva, and Korbinian Strimmer. 2021. <em>Corpcor: Efficient Estimation of Covariance and (Partial) Correlation</em>. <a href="https://CRAN.R-project.org/package=corpcor">https://CRAN.R-project.org/package=corpcor</a>.
 </div>
 <div id="ref-schäferShrinkageApproachLargescale2005" class="csl-entry" role="listitem">
 Schäfer, Juliane, and Korbinian Strimmer. 2005. <span>“A Shrinkage Approach to Large-Scale Covariance Matrix Estimation and Implications for Functional Genomics.”</span> <em>Statistical Applications in Genetics and Molecular Biology</em> 4: Article32. <a href="https://doi.org/10.2202/1544-6115.1175">https://doi.org/10.2202/1544-6115.1175</a>.
 </div>
-<div id="ref-svenssonDropletScRNAseqNot2020" class="csl-entry" role="listitem">
-Svensson, Valentine. 2020. <span>“Droplet <span class="nocase">scRNA-seq</span> Is Not Zero-Inflated.”</span> <em>Nature Biotechnology</em> 38 (2): 147–50. <a href="https://doi.org/10.1038/s41587-019-0379-5">https://doi.org/10.1038/s41587-019-0379-5</a>.
+<div id="ref-suppingerMultimodalCharacterizationMurine2023" class="csl-entry" role="listitem">
+Suppinger, Simon, Marietta Zinner, Nadim Aizarani, et al. 2023. <span>“Multimodal Characterization of Murine Gastruloid Development.”</span> <em>Cell Stem Cell</em> 30 (6): 867–84. <a href="https://doi.org/10.1016/j.stem.2023.04.018">https://doi.org/10.1016/j.stem.2023.04.018</a>.
 </div>
 <div id="ref-zhangSILGGMExtensivePackage2018" class="csl-entry" role="listitem">
 Zhang, Rong, Zhao Ren, and Wei Chen. 2018a. <span>“<span>SILGGM</span>: <span>An</span> Extensive <span>R</span> Package for Efficient Statistical Inference in Large-Scale Gene Networks.”</span> <em>PLOS Computational Biology</em> 14 (8): e1006369. <a href="https://doi.org/10.1371/journal.pcbi.1006369">https://doi.org/10.1371/journal.pcbi.1006369</a>.
