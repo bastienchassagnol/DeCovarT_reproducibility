@@ -54,7 +54,9 @@ jobs:
             libfreetype6-dev \
             libpng-dev \
             libtiff-dev \
-            libjpeg-dev
+            libjpeg-dev \
+            libgl1 \
+            libglu1-mesa
 
       - name: Restore renv lockfile
         uses: r-lib/actions/setup-renv@v2

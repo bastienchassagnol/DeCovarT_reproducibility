@@ -1059,14 +1059,13 @@ weighting can replace a hard filter is in
 
 ## Panel export {#sec-fs-export}
 
-The current export is the legacy one:
-`scripts/01_03_export_equal_type_seurat.R` subsets the allow-list
-Seurat object to the 500 genes of the type-equal ratio
-([type-equal ratio](#sec-fs-ms-ratio)) at each time and writes
-`data/intermediate/equal_type_top500_by_time.rds`, the input of every
-script of @sec-cov-scope. Its `nCount_RNA` is recomputed on the 500
-genes and is not a library size. That file stays the input until the
-new rank has been run.
+The covariance scripts of @sec-cov-scope read the counts of
+`output/feature_selection/tier_01/scored_slots.rds` restricted, at each
+time, to the genes of `output/feature_selection/tier_02/selected_<time>.csv`:
+the gated panel of tier (ii), 1,417, 3,420 and 5,821 genes at 48, 72
+and 96 h, with full library sizes. The legacy export (the 500 genes of
+the type-equal ratio, [type-equal ratio](#sec-fs-ms-ratio), in
+`data/intermediate/equal_type_top500_by_time.rds`) is no longer read.
 
 The new rank table will have one row per gene and time, with the
 columns of @tbl-fs-new-rank-columns.
@@ -1183,16 +1182,17 @@ shortlist.
 $\mathcal{G}$ uses the within-type covariance, which is
 high-dimensional when $C_j$ is not much larger than $|\mathcal{G}|$
 ([3.1, multivariate tests](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-multivariate-tests)).
-With the 500-gene panel of @sec-fs-export, seven of the eleven scored
-type × time cells of @tbl-fs-cell-counts have $C_j<|\mathcal{G}|$, so
-their sample covariance is singular:
+With the gated panel of @sec-fs-export (1,417, 3,420 and 5,821 genes
+at 48, 72 and 96 h), nine of the eleven scored type × time cells of
+@tbl-fs-cell-counts have $C_j<|\mathcal{G}|$, so their sample
+covariance is singular (@tbl-cov-units):
 
 - 48 h: exiting naïve pluripotency (265 cells), naïve pluripotency (36);
 - 72 h: ectopic pluripotency (266), naïve pluripotency (66);
-- 96 h: gut (140), ectopic pluripotency (116), somite differentiation
-  front (29).
+- 96 h: pre-somitic mesoderm (3,589), caudal mesoderm (1,061), gut
+  (140), ectopic pluripotency (116), somite differentiation front (29).
 
-Caudal mesoderm at 96 h (1,061 cells) is about twice the panel size.
+Only 48 h epiblast and 72 h primitive streak have more cells than genes.
 For these types the objectives below use the regularised
 $\widehat{\boldsymbol{\Sigma}}_{j}$ of @sec-cov-scope, never the
 sample covariance.

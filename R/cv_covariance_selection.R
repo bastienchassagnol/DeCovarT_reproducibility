@@ -1,12 +1,25 @@
 #' Cross-validated selection and comparison of within-type covariances.
 #'
 #' Every estimator in this file returns a mean `mu` and a covariance
-#' `sigma` on the scale of DeCovarT's convolution: size-factor-normalised
-#' counts, `x_cg = y_cg / s_c` with `s_c = L_c / L_ref`, where `L_c` is
-#' the full RNA library of cell `c` and `L_ref` a reference library (the
-#' median over the cells of one time point). All four estimators are
-#' therefore scored by the same loss: the held-out Gaussian log-score of
-#' the test cells.
+#' `sigma` on the linear scale of DeCovarT's convolution. By default
+#' that scale is the raw per-cell UMI count of the panel genes, with no
+#' per-cell library division (`normalise = "none"` in the drivers): the
+#' division removes the type-level transcriptome size and the biological
+#' size variation that the bulk accumulates. The earlier scale,
+#' `x_cg = y_cg / s_c` with `s_c = L_c / L_ref` (`L_c` the full RNA
+#' library of cell `c`, `L_ref` its median over the cells of one time
+#' point), is kept as a sensitivity variant (`normalise = "library"`).
+#' All estimators are scored by the same loss: the held-out Gaussian
+#' log-score of the test cells on that scale.
+#'
+#' A denoised fit (`preprocess = "denoised"`) exports the biological
+#' covariance `sigma`, without the Poisson diagonal and with part or all
+#' of the size term removed ([denoise_covariance()]). The test cells
+#' still carry those terms, so such a fit also returns `score_sigma`, the
+#' count covariance rebuilt from `sigma` ([reconstruct_count_covariance()]),
+#' and [score_fit()] scores `score_sigma` when it is present. Every
+#' `kappa` rebuilds the same count moments up to regularisation, so the
+#' score cannot choose `kappa`; it stays a bracket.
 #'
 #' Why the Gaussian log-score is a legitimate loss when cells are not
 #' Gaussian: for any law of the cells with mean `m` and covariance
@@ -92,19 +105,24 @@ make_cv_folds <- function(n, K = 5L, seed = NULL) {
 #' depends on the size factors of the cells it is evaluated on (see
 #' [pln_linear_moments()]).
 #'
-#' @param fit List with `mu` and `sigma`, or with `moments`, a function
-#'   of the test-row indices.
+#' @param fit List with `mu` and `sigma` (and, for a denoised fit,
+#'   `score_sigma`), or with `moments`, a function of the test-row
+#'   indices.
 #' @param test_rows Indices of the test cells in the caller's full data.
-#' @return A list with `mu` and `sigma`.
+#' @return A list with `mu`, `sigma` (the exported covariance) and
+#'   `score_sigma` (`NULL` unless the fit is denoised).
 fit_moments <- function(fit, test_rows) {
   if (is.function(fit$moments)) {
     fit$moments(test_rows)
   } else {
-    list(mu = fit$mu, sigma = fit$sigma)
+    list(mu = fit$mu, sigma = fit$sigma, score_sigma = fit$score_sigma)
   }
 }
 
 #' Held-out log-score of one fit, `NA` for a failed fit.
+#'
+#' A denoised fit is scored through `score_sigma`, the count covariance
+#' rebuilt from its exported `sigma`; every other fit through `sigma`.
 #'
 #' @param fit A fit as described in [fit_moments()], possibly with
 #'   `failed = TRUE`.
@@ -116,7 +134,7 @@ score_fit <- function(fit, X_test, test_rows) {
     return(NA_real_)
   }
   m <- fit_moments(fit, test_rows)
-  heldout_gaussian_logscore(m$mu, m$sigma, X_test)
+  heldout_gaussian_logscore(m$mu, m$score_sigma %||% m$sigma, X_test)
 }
 
 # ==========================================================================
@@ -481,6 +499,238 @@ refit_covariance_on_support <- function(
 }
 
 # ==========================================================================
+# Denoised covariance: moment correction, then a PSD projection ----
+# ==========================================================================
+
+#' Denoised within-type covariance of raw UMI counts.
+#'
+#' Moment estimator of the covariance of the captured molecule content
+#' (eq-denoised-within of vignette 05-1). With `V` the unbiased sample
+#' covariance of the `n` cells and `xbar` their mean,
+#' `V - diag(xbar) - kappa * (V - diag(xbar) + xbar xbar' - V / n)`.
+#' The first subtraction removes the Poisson measurement diagonal. The
+#' `kappa` term removes the technical share of the size term, with
+#' `kappa = nu_tech / (1 + nu_tech)`. Without spike-ins `kappa` is not
+#' identified and is bracketed: `kappa = 0` keeps the whole size term
+#' (all size variation biological); `kappa = nu / (1 + nu)`, with `nu`
+#' from [extrinsic_noise_nu()], removes it (all size variation
+#' technical, which matches library normalisation for the covariance).
+#'
+#' The estimate can be indefinite. With `psd = "clip"` its eigenvalues
+#' below `eig_floor` are raised to `eig_floor`; with `eig_floor = 0`
+#' this is the nearest positive semi-definite matrix in Frobenius norm.
+#' The eigen-decomposition costs of order `p^3` operations.
+#'
+#' @param X Cells by genes, raw counts of one type at one time.
+#' @param kappa Share of the size term removed, in `[0, 1)`. Default `0`.
+#' @param psd `"clip"` (default) or `"none"`.
+#' @param eig_floor Smallest eigenvalue kept by `psd = "clip"`.
+#'   Default `0`.
+#' @return A list with `sigma` (denoised covariance, `p` by `p`), `mu`
+#'   (`xbar`), `variance` (diagonal before the projection; a gene with
+#'   `variance <= 0` is a Poisson gene at this depth), `n_clipped`
+#'   (eigenvalues raised), `kappa`, `n`.
+denoise_covariance <- function(
+  X,
+  kappa = 0,
+  psd = c("clip", "none"),
+  eig_floor = 0
+) {
+  psd <- match.arg(psd)
+  X <- as.matrix(X)
+  n <- nrow(X)
+  if (n < 2L) {
+    stop("`X` needs at least two cells.")
+  }
+  if (!is.numeric(kappa) || length(kappa) != 1L || !is.finite(kappa) ||
+      kappa < 0 || kappa >= 1) {
+    stop("`kappa` must be one number in [0, 1); got ", kappa, ".")
+  }
+  xbar <- colMeans(X)
+  V <- stats::cov(X)
+  A <- V - diag(xbar, length(xbar))
+  sigma <- A - kappa * (A + tcrossprod(xbar) - V / n)
+  sigma <- (sigma + t(sigma)) / 2
+  variance <- diag(sigma)
+  n_clipped <- 0L
+  if (identical(psd, "clip")) {
+    eg <- eigen(sigma, symmetric = TRUE)
+    low <- eg$values < eig_floor
+    n_clipped <- sum(low)
+    if (n_clipped > 0L) {
+      values <- pmax(eg$values, eig_floor)
+      sigma <- eg$vectors %*% (values * t(eg$vectors))
+      sigma <- (sigma + t(sigma)) / 2
+    }
+  }
+  genes <- colnames(X)
+  dimnames(sigma) <- list(genes, genes)
+  names(xbar) <- genes
+  names(variance) <- genes
+  list(
+    sigma = sigma,
+    mu = xbar,
+    variance = variance,
+    n_clipped = as.integer(n_clipped),
+    kappa = kappa,
+    n = n
+  )
+}
+
+#' Count covariance rebuilt from a denoised covariance.
+#'
+#' Inverts the moment correction at reference depth, so that a denoised
+#' fit can be scored on raw test cells:
+#' `sigma_bio + diag(mu) + kappa / (1 - kappa) * (sigma_bio + mu mu')`,
+#' with `nu_tech = kappa / (1 - kappa)`. With `kappa = 0` it is
+#' `sigma_bio + diag(mu)`. The finite-sample term `V / n` of
+#' [denoise_covariance()] is not added back: this is the population
+#' identity, evaluated at the estimates.
+#'
+#' @param sigma_bio Denoised (and regularised) covariance.
+#' @param mu Mean counts of the same genes.
+#' @param kappa The `kappa` used to denoise.
+#' @return The rebuilt covariance, `p` by `p`.
+reconstruct_count_covariance <- function(sigma_bio, mu, kappa = 0) {
+  mu <- as.numeric(mu)
+  out <- sigma_bio + diag(mu, length(mu)) +
+    kappa / (1 - kappa) * (sigma_bio + tcrossprod(mu))
+  out <- (out + t(out)) / 2
+  dimnames(out) <- dimnames(sigma_bio)
+  out
+}
+
+#' Means, standard deviations and correlation of a denoised covariance.
+#'
+#' The counterpart of [standardise_genes()] for [denoise_covariance()].
+#' A gene whose denoised variance (before the projection) is not
+#' positive is a Poisson gene: its biological variance is set to
+#' `var_floor`, its correlations to zero, and it is listed in
+#' `floored_genes`. The floor is a numerical guard, not an estimate.
+#'
+#' @param den Output of [denoise_covariance()].
+#' @param var_floor Variance floor. Default `NULL`: `1e-4` times the
+#'   median positive denoised variance (or `1` when none is positive).
+#' @return A list with `mu`, `sd`, `R`, `floored` (logical),
+#'   `floored_genes`, `n`.
+standardise_denoised <- function(den, var_floor = NULL) {
+  v <- diag(den$sigma)
+  floored <- !is.finite(den$variance) | den$variance <= 0 |
+    !is.finite(v) | v <= 0
+  if (is.null(var_floor)) {
+    var_floor <- if (any(!floored)) 1e-4 * stats::median(v[!floored]) else 1
+  }
+  v[floored] <- 0
+  sd <- sqrt(pmax(v, var_floor))
+  p <- length(sd)
+  R <- diag(1, p)
+  keep <- !floored
+  if (sum(keep) >= 2L) {
+    s_keep <- sqrt(v[keep])
+    R[keep, keep] <- den$sigma[keep, keep, drop = FALSE] / outer(s_keep, s_keep)
+  }
+  R <- (R + t(R)) / 2
+  diag(R) <- 1
+  genes <- colnames(den$sigma)
+  dimnames(R) <- list(genes, genes)
+  names(sd) <- genes
+  list(
+    mu = den$mu,
+    sd = sd,
+    R = R,
+    floored = floored,
+    floored_genes = genes[floored],
+    n = den$n
+  )
+}
+
+#' Extrinsic noise `nu` of one cell type, from the normalised covariances.
+#'
+#' After Fang and Pachter (2025): inside one type, the normalised
+#' covariance `cov(x_g, x_h) / (mean_g * mean_h)` of two genes that are
+#' intrinsically uncorrelated equals `nu = CV^2(s_c)`, the squared
+#' coefficient of variation of the cell size factor. The estimate is the
+#' mode of these values over gene pairs (maximum of a Gaussian kernel
+#' density). The estimate assumes that most gene pairs are intrinsically
+#' uncorrelated; co-regulated modules shift the distribution to the
+#' right and bias `nu` upwards. Pairs of genes with small means have a
+#' noisy ratio, so only genes with `mean >= min_mean` enter, at most
+#' `max_genes` of them (largest means first); `min_mean` is a choice of
+#' this repository, not of the paper.
+#'
+#' `nu` mixes the biological and technical size factors,
+#' `1 + nu = (1 + nu_bio)(1 + nu_tech)`. Without spike-ins only the
+#' upper end of the `kappa` bracket follows: `kappa_max = nu / (1 + nu)`.
+#'
+#' @param X Cells by genes, raw counts of one type at one time.
+#' @param min_mean Smallest mean count of a gene that enters. Default `1`.
+#' @param max_genes Largest number of genes. Default `2000`.
+#' @param trim Share of pairs trimmed in each tail before the density,
+#'   which keeps the bandwidth from being set by outliers. Default `0.01`.
+#' @param adjust Bandwidth multiplier passed to [stats::density()].
+#' @return A list with `nu`, `kappa_max`, `n_genes`, `n_pairs`,
+#'   `bandwidth`.
+extrinsic_noise_nu <- function(
+  X,
+  min_mean = 1,
+  max_genes = 2000L,
+  trim = 0.01,
+  adjust = 1
+) {
+  X <- as.matrix(X)
+  m <- colMeans(X)
+  keep <- which(is.finite(m) & m >= min_mean)
+  if (length(keep) > max_genes) {
+    keep <- keep[order(m[keep], decreasing = TRUE)][seq_len(max_genes)]
+  }
+  if (length(keep) < 3L) {
+    stop(
+      "Fewer than 3 genes have a mean count >= ", min_mean,
+      "; lower `min_mean` to estimate nu."
+    )
+  }
+  V <- stats::cov(X[, keep, drop = FALSE])
+  eta <- V / tcrossprod(m[keep])
+  vals <- eta[upper.tri(eta)]
+  vals <- vals[is.finite(vals)]
+  bounds <- stats::quantile(vals, c(trim, 1 - trim), names = FALSE)
+  vals_mid <- vals[vals >= bounds[[1L]] & vals <= bounds[[2L]]]
+  dens <- stats::density(vals_mid, adjust = adjust, n = 2048L)
+  nu <- dens$x[[which.max(dens$y)]]
+  if (nu <= 0) {
+    warning(
+      "The mode of the normalised covariances is not positive (nu = ",
+      signif(nu, 3), "); kappa_max is set to 0.",
+      call. = FALSE
+    )
+  }
+  nu_pos <- max(nu, 0)
+  list(
+    nu = nu,
+    kappa_max = nu_pos / (1 + nu_pos),
+    n_genes = length(keep),
+    n_pairs = length(vals),
+    bandwidth = dens$bw
+  )
+}
+
+#' Attach the denoised export and its scoring covariance to a fit.
+#'
+#' @param fit A fit with `mu` and `sigma` on the denoised scale.
+#' @param st Output of [standardise_denoised()].
+#' @param den Output of [denoise_covariance()].
+#' @return `fit` with `score_sigma`, `preprocess`, `kappa`, `n_clipped`
+#'   and `floored_genes` added.
+finish_denoised_fit <- function(fit, st, den) {
+  fit$score_sigma <- reconstruct_count_covariance(fit$sigma, fit$mu, den$kappa)
+  fit$preprocess <- "denoised"
+  fit$kappa <- den$kappa
+  fit$n_clipped <- den$n_clipped
+  fit$floored_genes <- st$floored_genes
+  fit
+}
+
+# ==========================================================================
 # Estimator 1 · Schäfer–Strimmer shrinkage ----
 # ==========================================================================
 
@@ -492,13 +742,69 @@ refit_covariance_on_support <- function(
 #' covariance. Constant genes are kept on the diagonal with the floored
 #' variance of [standardise_genes()].
 #'
-#' @param X Cells by genes (training cells).
-#' @param lambda Correlation shrinkage intensity in `[0, 1]`.
+#' With `preprocess = "denoised"` the same target D is applied to the
+#' denoised covariance of [denoise_covariance()] (positive semi-definite
+#' after clipping): `D^{1/2} {(1 - lambda) R + lambda I} D^{1/2}`, where
+#' `R` and `D` are the correlation and the variances of the denoised
+#' matrix (as `corpcor` does on the sample covariance). Poisson genes
+#' (denoised variance `<= 0`) get the floor of [standardise_denoised()].
+#' The returned `sigma` is the denoised estimate (the export);
+#' `score_sigma` is the count covariance used by [score_fit()].
+#'
+#' @param X Cells by genes (training cells), raw counts for
+#'   `preprocess = "denoised"`.
+#' @param lambda Correlation shrinkage intensity in `[0, 1]`; a vector
+#'   when `as_path = TRUE`.
 #' @param train_rows Unused; kept for the common fit signature.
-#' @param var_floor Passed to [standardise_genes()].
-#' @return A list with `mu`, `sigma`, `failed`.
-fit_cov_shrinkage <- function(X, lambda, train_rows = NULL, var_floor = NULL) {
+#' @param var_floor Passed to [standardise_genes()] or
+#'   [standardise_denoised()].
+#' @param preprocess `"raw"` (default) or `"denoised"`.
+#' @param kappa Passed to [denoise_covariance()]. Default `0`.
+#' @param as_path If `TRUE`, `lambda` is a grid and a list of fits is
+#'   returned, with the preprocessing done once (use with
+#'   `path_fit = TRUE` in [cv_select_tuning()]). Default `FALSE`.
+#' @return A list with `mu`, `sigma`, `failed` (and, when denoised,
+#'   `score_sigma`, `kappa`, `n_clipped`, `floored_genes`); a list of
+#'   such fits when `as_path = TRUE`.
+fit_cov_shrinkage <- function(
+  X,
+  lambda,
+  train_rows = NULL,
+  var_floor = NULL,
+  preprocess = c("raw", "denoised"),
+  kappa = 0,
+  as_path = FALSE
+) {
+  preprocess <- match.arg(preprocess)
   X <- as.matrix(X)
+  if (identical(preprocess, "denoised")) {
+    den <- tryCatch(denoise_covariance(X, kappa = kappa), error = function(e) e)
+    if (inherits(den, "error")) {
+      message("  denoising failed (", conditionMessage(den), ").")
+      failed <- list(failed = TRUE)
+      return(if (as_path) rep(list(failed), length(lambda)) else failed)
+    }
+    st <- standardise_denoised(den, var_floor)
+    off <- st$R
+    diag(off) <- 0
+    one_fit <- function(lam) {
+      R_shrunk <- (1 - lam) * off
+      diag(R_shrunk) <- 1
+      sigma <- R_shrunk * outer(st$sd, st$sd)
+      dimnames(sigma) <- list(colnames(X), colnames(X))
+      finish_denoised_fit(
+        list(mu = st$mu, sigma = sigma, failed = FALSE),
+        st,
+        den
+      )
+    }
+    return(if (as_path) lapply(lambda, one_fit) else one_fit(lambda))
+  }
+  if (as_path) {
+    return(lapply(lambda, function(lam) {
+      fit_cov_shrinkage(X, lam, train_rows, var_floor)
+    }))
+  }
   st <- standardise_genes(X, var_floor)
   vary <- !st$constant
   sigma <- diag(st$sd^2, ncol(X))
@@ -557,33 +863,59 @@ shrinkage_lambda_grid <- function(X, train_rows = NULL) {
 #' scale for every gene; the fit is rescaled by the gene standard
 #' deviations with `rescale_correlation_fit()`.
 #'
+#' With `preprocess = "denoised"` the input is the correlation of the
+#' denoised covariance ([denoise_covariance()], clipped to positive
+#' semi-definite) and the rescaling uses its standard deviations; Poisson
+#' genes get the floor of [standardise_denoised()]. `sigma` and `omega`
+#' are then the denoised estimate and its precision; `score_sigma` is the
+#' count covariance used by [score_fit()]. The denoising is redone for
+#' every `lambda`, which costs one eigen-decomposition per call.
+#'
 #' @param X Cells by genes (training cells).
 #' @param lambda Lasso penalty on the correlation scale.
 #' @param train_rows Unused; kept for the common fit signature.
-#' @param var_floor Passed to [standardise_genes()].
+#' @param var_floor Passed to [standardise_genes()] or
+#'   [standardise_denoised()].
 #' @param thr,maxit Passed to [glasso::glasso()].
-#' @return A list with `mu`, `sigma`, `omega`, `n_edges`, `failed`.
+#' @param preprocess `"raw"` (default) or `"denoised"`.
+#' @param kappa Passed to [denoise_covariance()]. Default `0`.
+#' @return A list with `mu`, `sigma`, `omega`, `n_edges`, `failed` (and,
+#'   when denoised, `score_sigma`, `kappa`, `n_clipped`, `floored_genes`).
 fit_cov_glasso <- function(
   X,
   lambda,
   train_rows = NULL,
   var_floor = NULL,
   thr = 1e-4,
-  maxit = 1e4
+  maxit = 1e4,
+  preprocess = c("raw", "denoised"),
+  kappa = 0
 ) {
-  st <- standardise_genes(X, var_floor)
+  preprocess <- match.arg(preprocess)
+  den <- NULL
+  st <- if (identical(preprocess, "denoised")) {
+    den <- tryCatch(denoise_covariance(X, kappa = kappa), error = function(e) e)
+    if (inherits(den, "error")) {
+      message("  denoising failed (", conditionMessage(den), ").")
+      return(list(failed = TRUE))
+    }
+    standardise_denoised(den, var_floor)
+  } else {
+    standardise_genes(X, var_floor)
+  }
   fit <- make_glasso_solver(st$R, st$n, thr = thr, maxit = maxit)(lambda)
   if (isTRUE(fit$failed)) {
     return(list(failed = TRUE))
   }
   scaled <- rescale_correlation_fit(fit$omega, fit$sigma, st$sd)
-  list(
+  out <- list(
     mu = st$mu,
     sigma = scaled$sigma,
     omega = scaled$omega,
     n_edges = count_undirected_edges(fit$omega),
     failed = FALSE
   )
+  if (is.null(den)) out else finish_denoised_fit(out, st, den)
 }
 
 #' Log-spaced graphical-lasso grid on the correlation scale.
@@ -626,6 +958,14 @@ glasso_lambda_grid <- function(
 #' run serves every `alpha`, so this wrapper always returns a list of
 #' fits (use `path_fit = TRUE` in [cv_select_tuning()]).
 #'
+#' With `preprocess = "denoised"` only the refit changes: ranks cannot be
+#' denoised, so the support still comes from the nonparanormal scores of
+#' `X`, and [refit_covariance_on_support()] receives the correlation and
+#' standard deviations of the denoised covariance
+#' ([denoise_covariance()], [standardise_denoised()]). `sigma` and
+#' `omega` are then the denoised estimate and its precision;
+#' `score_sigma` is the count covariance used by [score_fit()].
+#'
 #' @param X Cells by genes (training cells), linear scale.
 #' @param alpha Vector of FDR levels.
 #' @param train_rows Unused; kept for the common fit signature.
@@ -634,9 +974,13 @@ glasso_lambda_grid <- function(
 #' @param npn_func Passed to `huge::huge.npn(npn.func = ...)`. Default
 #'   `"shrinkage"`.
 #' @param rho_refit Passed to [refit_covariance_on_support()].
-#' @param var_floor Passed to [standardise_genes()].
+#' @param var_floor Passed to [standardise_genes()] or
+#'   [standardise_denoised()].
+#' @param preprocess `"raw"` (default) or `"denoised"`, for the refit.
+#' @param kappa Passed to [denoise_covariance()]. Default `0`.
 #' @return A list of fits, one per `alpha`, each with `mu`, `sigma`,
-#'   `omega`, `n_edges`, `failed`.
+#'   `omega`, `n_edges`, `failed` (and, when denoised, `score_sigma`,
+#'   `kappa`, `n_clipped`, `floored_genes`).
 fit_cov_silggm_refit <- function(
   X,
   alpha,
@@ -644,8 +988,11 @@ fit_cov_silggm_refit <- function(
   method = "D-S_GL",
   npn_func = "shrinkage",
   rho_refit = 1e-4,
-  var_floor = NULL
+  var_floor = NULL,
+  preprocess = c("raw", "denoised"),
+  kappa = 0
 ) {
+  preprocess <- match.arg(preprocess)
   X <- as.matrix(X)
   st <- standardise_genes(X, var_floor)
   vary <- !st$constant
@@ -653,6 +1000,19 @@ fit_cov_silggm_refit <- function(
   failed_all <- rep(list(list(failed = TRUE)), length(alpha))
   if (sum(vary) < 2L) {
     return(failed_all)
+  }
+  # Scale of the refit: the linear-scale sample correlation, or that of
+  # the denoised covariance. The support below uses the ranks of X either
+  # way.
+  den <- NULL
+  st_refit <- st
+  if (identical(preprocess, "denoised")) {
+    den <- tryCatch(denoise_covariance(X, kappa = kappa), error = function(e) e)
+    if (inherits(den, "error")) {
+      message("  denoising failed (", conditionMessage(den), ").")
+      return(failed_all)
+    }
+    st_refit <- standardise_denoised(den, var_floor)
   }
   x_npn <- huge::huge.npn(
     X[, vary, drop = FALSE],
@@ -686,16 +1046,17 @@ fit_cov_silggm_refit <- function(
     adjacency <- matrix(0, p, p)
     adjacency[vary, vary] <- as.matrix(decision)
     refit <- refit_covariance_on_support(
-      st$R,
+      st_refit$R,
       adjacency,
-      st$sd,
+      st_refit$sd,
       rho = rho_refit,
-      nobs = st$n
+      nobs = st_refit$n
     )
     if (isTRUE(refit$failed)) {
       return(refit)
     }
-    c(list(mu = st$mu), refit)
+    out <- c(list(mu = st_refit$mu), refit)
+    if (is.null(den)) out else finish_denoised_fit(out, st_refit, den)
   })
 }
 
@@ -721,6 +1082,18 @@ fit_cov_silggm_refit <- function(
 #'   `Cov y = diag(lambda) mean(L) + mean(L^2) (lambda lambda') * K
 #'   + var(L) lambda lambda'`, with the population variance of `L`.
 #'
+#' The offset `log L_c` removes every cell-level size variation from
+#' `Sigma_z`, biological size included. Two arguments decide what the
+#' export puts back (the `kappa` bracket of [denoise_covariance()]):
+#' - `size_term = "keep"` (default) averages over the libraries of the
+#'   cells, as above, so the depth variation is kept (`kappa = 0` with
+#'   `scale = "counts"`); `size_term = "drop"` gives every cell the mean
+#'   library, so `var(L) = 0` and `mean(L^2) = mean(L)^2` (all size
+#'   variation treated as technical);
+#' - `poisson_diag = TRUE` (default) keeps the Poisson measurement
+#'   diagonal; `FALSE` omits it, for a denoised export. Scoring on raw
+#'   test cells needs `TRUE`.
+#'
 #' @param mu_z Latent mean (length `p`), on the log scale per unit of
 #'   library (the PLN intercept with offset `log L_c`).
 #' @param sigma_z Latent covariance, `p` by `p`.
@@ -728,27 +1101,40 @@ fit_cov_silggm_refit <- function(
 #' @param ref_lib Reference library `L_ref`. Default the median of
 #'   `lib_size`; pass the value used to normalise the data.
 #' @param scale `"normalised"` (default) or `"counts"`.
+#' @param size_term `"keep"` (default) or `"drop"`.
+#' @param poisson_diag Keep the Poisson diagonal. Default `TRUE`.
 #' @return A list with `mu` and `sigma`.
 pln_linear_moments <- function(
   mu_z,
   sigma_z,
   lib_size,
   ref_lib = stats::median(lib_size),
-  scale = c("normalised", "counts")
+  scale = c("normalised", "counts"),
+  size_term = c("keep", "drop"),
+  poisson_diag = TRUE
 ) {
   scale <- match.arg(scale)
+  size_term <- match.arg(size_term)
   sigma_z <- as.matrix(sigma_z)
   mu_z <- as.numeric(mu_z)
   if (any(!is.finite(lib_size)) || any(lib_size <= 0)) {
     stop("`lib_size` must be positive and finite.")
   }
+  # `ref_lib` is evaluated before the libraries are equalised, so its
+  # default stays the median of the libraries passed in.
+  force(ref_lib)
+  if (identical(size_term, "drop")) {
+    lib_size <- rep(mean(lib_size), length(lib_size))
+  }
   lambda <- exp(mu_z + diag(sigma_z) / 2)
   K <- exp(sigma_z) - 1
+  diag_weight <- if (isTRUE(poisson_diag)) 1 else 0
   out <- if (identical(scale, "normalised")) {
     nu <- ref_lib * lambda
     list(
       mu = nu,
-      sigma = diag(nu * mean(ref_lib / lib_size), length(nu)) +
+      sigma = diag_weight *
+        diag(nu * mean(ref_lib / lib_size), length(nu)) +
         outer(nu, nu) * K
     )
   } else {
@@ -756,7 +1142,7 @@ pln_linear_moments <- function(
     m2 <- mean(lib_size^2)
     list(
       mu = m1 * lambda,
-      sigma = diag(lambda * m1, length(lambda)) +
+      sigma = diag_weight * diag(lambda * m1, length(lambda)) +
         m2 * outer(lambda, lambda) * K +
         (m2 - m1^2) * outer(lambda, lambda)
     )
@@ -883,8 +1269,9 @@ pln_penalty_grid <- function(
 
 #' Fit function for [cv_select_tuning()] around [fit_cov_plnnetwork()].
 #'
-#' The CV helpers pass the normalised matrix `X`, which PLN cannot use;
-#' this closure fits the raw counts of the same rows and returns, for
+#' The CV helpers pass the scoring matrix `X` (raw or library-divided
+#' counts), which PLN does not fit directly; this closure fits the raw
+#' counts of the same rows with the full-library offset and returns, for
 #' each penalty, a `moments` function that maps the latent fit to the
 #' linear scale of `X` for the test cells' library sizes
 #' ([pln_linear_moments()]). Use with `path_fit = TRUE`.
@@ -893,11 +1280,21 @@ pln_penalty_grid <- function(
 #'   rows index.
 #' @param lib_size Full library sizes of the same cells.
 #' @param ref_lib Reference library used to build `X = counts * ref_lib
-#'   / lib_size`.
+#'   / lib_size` (ignored when `scale = "counts"`).
 #' @param control Passed to [fit_cov_plnnetwork()].
+#' @param scale Scale of `X`, passed to [pln_linear_moments()]:
+#'   `"normalised"` (default, library-divided `X`) or `"counts"` (raw
+#'   counts, `normalise = "none"` in the drivers).
 #' @return A function `(X_train, penalties, train_rows)` returning a list
 #'   of fits.
-make_pln_fit_fun <- function(counts, lib_size, ref_lib, control = NULL) {
+make_pln_fit_fun <- function(
+  counts,
+  lib_size,
+  ref_lib,
+  control = NULL,
+  scale = c("normalised", "counts")
+) {
+  scale <- match.arg(scale)
   force(counts)
   force(lib_size)
   force(ref_lib)
@@ -916,9 +1313,83 @@ make_pln_fit_fun <- function(counts, lib_size, ref_lib, control = NULL) {
       mu_z <- fit$mu_z
       sigma_z <- fit$sigma_z
       fit$moments <- function(test_rows) {
-        pln_linear_moments(mu_z, sigma_z, lib_size[test_rows], ref_lib)
+        pln_linear_moments(
+          mu_z,
+          sigma_z,
+          lib_size[test_rows],
+          ref_lib,
+          scale = scale
+        )
       }
       fit
     })
   }
+}
+
+# ==========================================================================
+# Inputs: scored counts restricted to the gated panel ----
+# ==========================================================================
+
+#' Panel counts of one bulk-matched time.
+#'
+#' Reads one slot of `scored_slots.rds` (tier (i) of the feature
+#' selection: raw UMI counts of the scored cells, genes by cells, with
+#' `cell_type`, `batch` and the full RNA `library_size`) and keeps the
+#' genes of `selected_<time>.csv` (tier (ii): every gene that passes the
+#' permuted Welch G at BH 0.05, no cap).
+#'
+#' @param slots Output of `readRDS("output/feature_selection/tier_01/scored_slots.rds")`.
+#' @param selected_dir Directory of `selected_<time>.csv`
+#'   (`output/feature_selection/tier_02`).
+#' @param time_level One of `slots$time_levels`.
+#' @return A list with `y` (cells by genes, dense, raw counts of the
+#'   panel genes, not rounded), `cell_type`, `batch`, `library_size`
+#'   (full library, one value per cell), `cells`, `genes`.
+read_panel_slot <- function(slots, selected_dir, time_level) {
+  slot <- slots$slots[[time_level]]
+  if (is.null(slot)) {
+    stop("No slot for time ", time_level, " in scored_slots.rds.")
+  }
+  if (methods::is(slot$counts, "Matrix")) {
+    # Methods for `[` and `as.matrix()` on the sparse counts.
+    requireNamespace("Matrix", quietly = TRUE)
+  }
+  selected_path <- file.path(
+    selected_dir,
+    paste0("selected_", time_level, ".csv")
+  )
+  if (!file.exists(selected_path)) {
+    stop(
+      "Missing ", selected_path,
+      ". Run scripts/02_02_stats_cross_cell_consistency.R first."
+    )
+  }
+  genes <- utils::read.csv(
+    selected_path,
+    stringsAsFactors = FALSE,
+    fileEncoding = "UTF-8"
+  )$gene
+  missing <- setdiff(genes, rownames(slot$counts))
+  if (length(missing) > 0L) {
+    stop(
+      length(missing), " panel genes of ", time_level,
+      " are absent from the slot counts (first: ", missing[[1L]], ")."
+    )
+  }
+  cells <- slot$cells %||% colnames(slot$counts)
+  y <- t(as.matrix(slot$counts[genes, , drop = FALSE]))
+  dimnames(y) <- list(cells, genes)
+  lib <- as.numeric(slot$library_size)
+  if (length(lib) != nrow(y) || any(!is.finite(lib)) || any(lib <= 0)) {
+    stop("Invalid library sizes in the ", time_level, " slot.")
+  }
+  names(lib) <- cells
+  list(
+    y = y,
+    cell_type = as.character(slot$cell_type),
+    batch = as.character(slot$batch),
+    library_size = lib,
+    cells = cells,
+    genes = genes
+  )
 }

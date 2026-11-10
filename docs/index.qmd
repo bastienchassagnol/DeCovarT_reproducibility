@@ -28,7 +28,7 @@ and does not restate the theory.
 
 The target is a covariance plug-in for the likelihood, not a
 biologically interpretable gene regulatory network
-([03-2, target](https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-cov-target)).
+([03-2, why a regularised covariance](https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#nte-cov-why)).
 Indices follow the article: gene $g=1,\ldots,G$, type
 $j=1,\ldots,J$, bulk sample $i=1,\ldots,N$, cell $c$, with $C_j$ cells
 of type $j$.
@@ -84,7 +84,7 @@ run on Suppinger.
 |---|---|---|
 | @sec-geo-design, Suppinger data | GEO objects, design, Seurat processing | [1.1 Generative model](https://bastienchassagnol.github.io/DeCovarT/articles/01-1-population-generative-optimisation.html); [2.1 Three reference regimes](https://bastienchassagnol.github.io/DeCovarT/articles/02-1-single-cell-generative-optimisation.html#sec-three-regimes) |
 | @sec-fs-scope, Feature selection | tier (i) QC, markers and presence gate; tier (ii) four tests of the type effect and deviance rank; tier (iii) outliers and bulk tail filter | [3.1 Feature selection](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#wrn-fs-estimand) |
-| @sec-cov-scope, Covariance estimation | four estimators, cross-validated tuning | [3.2 Covariance estimation](https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-cov-target) |
+| @sec-cov-scope, Covariance estimation | shrinkage plug-in, four sensitivity arms, cross-validated tuning | [3.2 Covariance estimation](https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#tbl-cov-estimators) |
 | @sec-deconv-models, Comparators | DeCovarT, second-generation methods, NNLS and RLM baselines | [5.1 Review](https://bastienchassagnol.github.io/DeCovarT/articles/05-1-review-distribution-aware.html); [2.1 From cells to reference moments](https://bastienchassagnol.github.io/DeCovarT/articles/02-1-single-cell-generative-optimisation.html#sec-reference) |
 | @sec-bio-deconv, Biological reading | early versus standard Wnt | none |
 | @sec-sensitivity, Sensitivity | misspecification sweep, `scDesign3` calibration | [S5 Misspecification](https://bastienchassagnol.github.io/DeCovarT/articles/S5-misspecification.html) |

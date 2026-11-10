@@ -3,18 +3,27 @@
 #   scripts/03_03_grn_plnnetwork.R \
 #   > "logs/03_03_plnnetwork_$(date +%F)_offset.log" 2>&1 &
 #
-# Independent PLNnetwork fit per labelled type and time, with a
+# Independent PLNnetwork fit per scored type and time, with a
 # library-size offset. Run from the repository root.
 #
-# The offset is log of the full RNA library L_c (metadata `log_umi`,
-# log10 of the full column sum, as in
-# scripts/legacy/02_90_stats_prepare_panel.R), not the row sum of
-# the 500 panel genes: a panel sum moves with the panel's own expression
-# and absorbs part of the cell-type signal. `prepare_data(offset =
-# "none")` stops PLNmodels from adding its TSS (panel-sum) offset. The
-# control list uses `PLNnetwork_param()`; the older `control_init` /
+# Input. Raw UMI counts of the scored cells (`scored_slots.rds`)
+# restricted to the gated panel of each time (`selected_<time>.csv`):
+# 1,417, 3,420 and 5,821 genes at 48, 72 and 96 h. With 5,821 genes at
+# 96 h each fit updates a 5,821 x 5,821 latent covariance; no cap is
+# imposed.
+#
+# The offset is log of the full RNA library L_c (`slot$library_size`,
+# the column sum over all deposited genes, computed before any gene
+# subset), not the row sum of the panel genes: a panel sum moves with
+# the panel's own expression and absorbs part of the cell-type signal.
+# `prepare_data(offset = "none")` stops PLNmodels from adding its TSS
+# (panel-sum) offset. There is no `normalise` switch: the offset is the
+# model's own treatment of the size factor, and what is put back at
+# export is decided by `pln_linear_moments(size_term, poisson_diag)`.
+# The control list uses `PLNnetwork_param()`; the older `control_init` /
 # `control_main` arguments were removed in PLNmodels 1.0.0. Outputs
-# written before this change used the panel-sum offset and are stale.
+# written before these changes used the 500-gene legacy panel and are
+# stale.
 
 # ==========================================================================
 # SECTION 0 · Dependencies, hyperparameters, paths ----
@@ -22,20 +31,22 @@
 
 root <- getwd()
 source(file.path(root, "R", "02_00_utils.R"))
+source(file.path(root, "R", "cv_covariance_selection.R"))
 
 time_levels <- c("48h", "72h", "96h")
-cell_type_col <- "celltypeannotation"
 min_cells <- 20L
 n_penalties <- 40L
 min_ratio <- 0.1
 penalize_diagonal <- FALSE
 
-input_rds <- file.path(
+slots_path <- file.path(
   root,
-  "data",
-  "intermediate",
-  "equal_type_top500_by_time.rds"
+  "output",
+  "feature_selection",
+  "tier_01",
+  "scored_slots.rds"
 )
+selected_dir <- file.path(root, "output", "feature_selection", "tier_02")
 out_dir <- file.path(root, "output", "grn", "plnnetwork")
 dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
 
@@ -43,32 +54,28 @@ dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
 # SECTION 1 · Inputs ----
 # ==========================================================================
 
-if (!file.exists(input_rds)) {
+if (!file.exists(slots_path)) {
   stop(
     "Missing ",
-    input_rds,
-    ". Run scripts/01_03_export_equal_type_seurat.R first."
+    slots_path,
+    ". From the repository root run: dvc pull ",
+    "output/feature_selection/tier_01/scored_slots.rds.dvc"
   )
 }
-objects <- readRDS(input_rds)
+slots <- readRDS(slots_path)
 
 # ==========================================================================
 # SECTION 2 · PLNnetwork per type and time ----
 # ==========================================================================
 
 results <- lapply(time_levels, function(time_level) {
-  seu <- objects[[time_level]]
-  counts <- assay_matrix(seu, "RNA", "counts")
-  labels <- seurat_metadata_chr(seu, cell_type_col)
-  lib_size <- 10^as.numeric(seurat_metadata_chr(seu, "log_umi"))
-  names(lib_size) <- colnames(seu)
-  if (any(!is.finite(lib_size)) || any(lib_size <= 0)) {
-    stop("Metadata log_umi is missing or invalid at ", time_level, ".")
-  }
+  panel <- read_panel_slot(slots, selected_dir, time_level)
+  labels <- panel$cell_type
+  lib_size <- panel$library_size
   types <- sort(unique(labels[!is.na(labels) & nzchar(labels)]))
   fits <- list()
   for (tp in types) {
-    cells <- unique(colnames(seu)[labels == tp])
+    cells <- which(labels == tp)
     if (length(cells) < min_cells) {
       message(
         "Skipping ",
@@ -81,12 +88,12 @@ results <- lapply(time_levels, function(time_level) {
       )
       next
     }
-    y <- t(as.matrix(counts[, cells, drop = FALSE]))
+    y <- round(panel$y[cells, , drop = FALSE])
     storage.mode(y) <- "integer"
     lib <- as.numeric(lib_size[cells])
     dat <- PLNmodels::prepare_data(
       counts = y,
-      covariates = data.frame(log_library = log(lib), row.names = cells),
+      covariates = data.frame(log_library = log(lib), row.names = rownames(y)),
       offset = "none"
     )
     message("Fitting PLNnetwork: ", time_level, " / ", tp)
