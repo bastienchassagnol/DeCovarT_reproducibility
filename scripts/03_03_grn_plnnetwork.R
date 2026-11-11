@@ -31,7 +31,7 @@
 
 root <- getwd()
 source(file.path(root, "R", "02_00_utils.R"))
-source(file.path(root, "R", "cv_covariance_selection.R"))
+source(file.path(root, "R", "03_01_stats_covariance_estimation.R"))
 
 time_levels <- c("48h", "72h", "96h")
 min_cells <- 20L

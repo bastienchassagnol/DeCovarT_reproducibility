@@ -1,0 +1,12 @@
+"time","cell_type","cells","observed"
+"48h","Epiblast",10590,0.972362501147737
+"48h","Exiting naïve pluripotency",265,0.0243320172619594
+"48h","Naïve pluripotency",36,0.00330548159030392
+"72h","Ectopic pluripotency",266,0.0576881370635437
+"72h","Naïve pluripotency",66,0.0143135979180221
+"72h","Primitive streak",4279,0.927998265018434
+"96h","Caudal mesoderm",1061,0.21499493414387
+"96h","Ectopic pluripotency",116,0.0235055724417427
+"96h","Gut",140,0.0283687943262411
+"96h","Pre-somitic mesoderm",3589,0.72725430597771
+"96h","Somite differentiation front",29,0.00587639311043566

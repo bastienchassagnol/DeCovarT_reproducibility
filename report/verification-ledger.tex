@@ -1,0 +1,22 @@
+% Written by verification/run_all.py; do not edit.
+\begin{longtable}{llp{0.42\linewidth}lp{0.28\linewidth}}
+\toprule
+Id & Status & Claim & Kind & Detail \\
+\midrule
+\endhead
+C1 & pass & Bulk covariance with multinomial cell-type counts is n S\_T(p) & exact & law of total covariance with Cov(N) from the multinomial MGF, G = 2, J = 3; conditional on the within-type moments \\
+C2 & pass & S\_T(p) - sum\_j p\_j Sigma\_j = sum\_j p\_j (m\_j - Mp)(m\_j - Mp)'; rank <= J - 1 & exact & identity exact; (diag p - pp')1 = 0 exact; rank 2 for G = 4, J = 3 \\
+C3 & pass & det(T - mm') = det(T)(1 - m'T\^{}-1 m) and the matching inverse & exact & symbolic 2 x 2; S\_T is positive definite when m'T\^{}-1 m < 1 \\
+L1 & pass & log det(sum\_j p\_j Sigma\_j) >= sum\_j p\_j log det Sigma\_j & numeric & mpmath, 40 digits, 25 random draws, G = 6, J = 3; smallest gap 2.66382; a numerical check, not a proof \\
+L2 & pass & For A = diag(1, eps), B = diag(eps, 1): the gap of L1 is -log(eps) + log(p(1 - p)) + O(eps) & series & expansion in eps to first order; O(eps) term epsilon*(-2*p**2 + 2*p - 1)/(p*(p - 1)) \\
+M1 & pass & Aitchison distance (clr) equals the Euclidean distance of ILR coordinates in the Helmert basis & exact & symbolic, J = 3; the basis is orthonormal \\
+M2 & pass & p\_j = (q\_j / s\_j) / sum\_k (q\_k / s\_k) inverts q\_j = p\_j s\_j / sum\_k p\_k s\_k & exact & symbolic, J = 3 \\
+F1 & pass & dp/dz = (diag p - pp')V; det(J'J) vanishes on every face, so the ILR information J' I\_p J is singular there & exact & symbolic, J = 3; det(J'J) = 9*p1**2*p2**2*(p1 + p2 - 1)**2 \\
+Q1 & pass & Cov = sum\_j p\_j\^{}2 Sigma\_B,j + (1/n) sum\_j p\_j Sigma\_W,j for the replicate-plus-cell hierarchy & exact & variance of a linear combination of independent terms, one gene, n = 12, p = (1/4, 3/4); conditional on independence across cells and types \\
+P1 & pass & c = m'Wy / m'Wm and phi = r'Wr / G are the stationary scales; profile log-likelihood = -(G/2) log phi - (1/2) log det S - G/2 & exact & symbolic, G = 2, generic symmetric precision \\
+P2 & pass & Score in p\_k: (c/phi) m\_k'a + a'(dS\_k)a / (2 phi) - tr(S\^{}-1 dS\_k) / 2, a = S\^{}-1 r; and its tied-scale form & rational-sampling & exact rational arithmetic at 25 points, G = 2, J = 2; between=False, tied=False: max |gap| 0; between=False, tied=True: max |gap| 0; between=True, tied=False: max |gap| 0; between=True, tied=True: max |gap| 0 \\
+P3 & pass & d/dtheta[-(G/2) log q] equals d/dtheta[-q / (2 phi)] at phi = q / G: profiling divides the gradient of the quadratic form by phi-hat & exact & symbolic, generic q(theta) \\
+S1 & pass & m\_j = mu\_j + (w\_j / C\_j) Sigma\_j (U + Q)\^{}-1 (y - mu w) is the stationary point of the mean stage & exact & scalar case symbolic; G = 3, J = 2 in exact rationals at 25 points, largest gradient entry 0 \\
+S2 & pass & Multiplying the off-diagonal terms of the lambda1-shrunk covariance by (1 - lambda2) / (1 - lambda1) gives the lambda2-shrunk covariance & exact & symbolic 2 x 2, estimator D\^{}1/2 {(1 - lambda) R + lambda I} D\^{}1/2 \\
+\bottomrule
+\end{longtable}

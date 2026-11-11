@@ -8,6 +8,46 @@
   if (is.null(x) || length(x) == 0L || all(is.na(x))) y else x
 }
 
+#' Stop unless the OpenBLAS kernel gives correct factorisations.
+#'
+#' On this workstation (Ubuntu 22.04, OpenBLAS 0.3.20, AVX-512 CPU) the
+#' default kernel returns wrong `chol()`, `solve()` and `eigen()` results
+#' without an error; `OPENBLAS_CORETYPE=Haswell` is correct
+#' (`DeCovarT/scripts/failed_reports/openblas_launchpad_comment.md`). The
+#' variable is read when the library is loaded, so it must be set in the
+#' shell that starts R. The check is the test of that report: the
+#' Cholesky factor and the eigen-decomposition of the AR(1) matrix
+#' `0.5^|i - j|`. Passing it does not exclude the rarer `eigen()`
+#' failures that the report found under other kernels than Haswell.
+#'
+#' @param n Size of the test matrix. Default `64`.
+#' @param tol Largest accepted reconstruction error. Default `1e-10`.
+#' @return The reconstruction error, invisibly.
+check_blas_kernel <- function(n = 64L, tol = 1e-10) {
+  a <- 0.5^abs(outer(seq_len(n), seq_len(n), "-"))
+  r <- tryCatch(chol(a), error = function(e) NULL)
+  eg <- tryCatch(eigen(a, symmetric = TRUE), error = function(e) NULL)
+  err <- if (is.null(r) || is.null(eg)) {
+    Inf
+  } else {
+    max(
+      abs(crossprod(r) - a),
+      abs(eg$vectors %*% (eg$values * t(eg$vectors)) - a)
+    )
+  }
+  if (!is.finite(err) || err > tol) {
+    stop(
+      "chol() or eigen() is wrong under this BLAS kernel (error ",
+      signif(err, 3),
+      "; OPENBLAS_CORETYPE = '",
+      Sys.getenv("OPENBLAS_CORETYPE"),
+      "'). Start R with OPENBLAS_CORETYPE=Haswell.",
+      call. = FALSE
+    )
+  }
+  invisible(err)
+}
+
 #' One character label per cell from a Seurat metadata column.
 #'
 #' `seu[[column]]` is a one-column data frame. Coercing that frame

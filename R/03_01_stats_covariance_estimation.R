@@ -31,7 +31,7 @@
 #' covariance estimators by the quantity the deconvolution needs.
 #'
 #' Requires `R/02_00_utils.R` (`%||%`) and
-#' `R/ebic_regularisation_path.R` (`make_glasso_solver()`,
+#' `R/03_02_stats_regularisation_path.R` (`make_glasso_solver()`,
 #' `rescale_correlation_fit()`, `count_undirected_edges()`) to be
 #' sourced first.
 
@@ -1342,10 +1342,13 @@ make_pln_fit_fun <- function(
 #' @param selected_dir Directory of `selected_<time>.csv`
 #'   (`output/feature_selection/tier_02`).
 #' @param time_level One of `slots$time_levels`.
+#' @param genes Optional character vector of gene symbols. When supplied,
+#'   these genes are kept, in this order, and `selected_<time>.csv` is not
+#'   read. Default `NULL`: every gene of `selected_<time>.csv`.
 #' @return A list with `y` (cells by genes, dense, raw counts of the
 #'   panel genes, not rounded), `cell_type`, `batch`, `library_size`
 #'   (full library, one value per cell), `cells`, `genes`.
-read_panel_slot <- function(slots, selected_dir, time_level) {
+read_panel_slot <- function(slots, selected_dir, time_level, genes = NULL) {
   slot <- slots$slots[[time_level]]
   if (is.null(slot)) {
     stop("No slot for time ", time_level, " in scored_slots.rds.")
@@ -1354,21 +1357,27 @@ read_panel_slot <- function(slots, selected_dir, time_level) {
     # Methods for `[` and `as.matrix()` on the sparse counts.
     requireNamespace("Matrix", quietly = TRUE)
   }
-  selected_path <- file.path(
-    selected_dir,
-    paste0("selected_", time_level, ".csv")
-  )
-  if (!file.exists(selected_path)) {
-    stop(
-      "Missing ", selected_path,
-      ". Run scripts/02_02_stats_cross_cell_consistency.R first."
+  if (is.null(genes)) {
+    selected_path <- file.path(
+      selected_dir,
+      paste0("selected_", time_level, ".csv")
     )
+    if (!file.exists(selected_path)) {
+      stop(
+        "Missing ", selected_path,
+        ". Run scripts/02_02_stats_cross_cell_consistency.R first."
+      )
+    }
+    genes <- utils::read.csv(
+      selected_path,
+      stringsAsFactors = FALSE,
+      fileEncoding = "UTF-8"
+    )$gene
   }
-  genes <- utils::read.csv(
-    selected_path,
-    stringsAsFactors = FALSE,
-    fileEncoding = "UTF-8"
-  )$gene
+  genes <- as.character(genes)
+  if (length(genes) == 0L || anyDuplicated(genes) > 0L) {
+    stop("`genes` must be a non-empty vector of distinct symbols.")
+  }
   missing <- setdiff(genes, rownames(slot$counts))
   if (length(missing) > 0L) {
     stop(

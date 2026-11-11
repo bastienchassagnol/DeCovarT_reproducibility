@@ -1,0 +1,119 @@
+{
+  "date": "2026-11-11",
+  "engine": "sympy==1.14.0 (mpmath for numeric rows)",
+  "lean": "not configured for this repository",
+  "rows": [
+    {
+      "id": "C1",
+      "claim": "Bulk covariance with multinomial cell-type counts is n S_T(p)",
+      "kind": "exact",
+      "status": "pass",
+      "detail": "law of total covariance with Cov(N) from the multinomial MGF, G = 2, J = 3; conditional on the within-type moments",
+      "file": "check_covariance_total.py"
+    },
+    {
+      "id": "C2",
+      "claim": "S_T(p) - sum_j p_j Sigma_j = sum_j p_j (m_j - Mp)(m_j - Mp)'; rank <= J - 1",
+      "kind": "exact",
+      "status": "pass",
+      "detail": "identity exact; (diag p - pp')1 = 0 exact; rank 2 for G = 4, J = 3",
+      "file": "check_covariance_total.py"
+    },
+    {
+      "id": "C3",
+      "claim": "det(T - mm') = det(T)(1 - m'T^-1 m) and the matching inverse",
+      "kind": "exact",
+      "status": "pass",
+      "detail": "symbolic 2 x 2; S_T is positive definite when m'T^-1 m < 1",
+      "file": "check_covariance_total.py"
+    },
+    {
+      "id": "L1",
+      "claim": "log det(sum_j p_j Sigma_j) >= sum_j p_j log det Sigma_j",
+      "kind": "numeric",
+      "status": "pass",
+      "detail": "mpmath, 40 digits, 25 random draws, G = 6, J = 3; smallest gap 2.66382; a numerical check, not a proof",
+      "file": "check_log_determinant.py"
+    },
+    {
+      "id": "L2",
+      "claim": "For A = diag(1, eps), B = diag(eps, 1): the gap of L1 is -log(eps) + log(p(1 - p)) + O(eps)",
+      "kind": "series",
+      "status": "pass",
+      "detail": "expansion in eps to first order; O(eps) term epsilon*(-2*p**2 + 2*p - 1)/(p*(p - 1))",
+      "file": "check_log_determinant.py"
+    },
+    {
+      "id": "M1",
+      "claim": "Aitchison distance (clr) equals the Euclidean distance of ILR coordinates in the Helmert basis",
+      "kind": "exact",
+      "status": "pass",
+      "detail": "symbolic, J = 3; the basis is orthonormal",
+      "file": "check_metrics_and_layers.py"
+    },
+    {
+      "id": "M2",
+      "claim": "p_j = (q_j / s_j) / sum_k (q_k / s_k) inverts q_j = p_j s_j / sum_k p_k s_k",
+      "kind": "exact",
+      "status": "pass",
+      "detail": "symbolic, J = 3",
+      "file": "check_metrics_and_layers.py"
+    },
+    {
+      "id": "F1",
+      "claim": "dp/dz = (diag p - pp')V; det(J'J) vanishes on every face, so the ILR information J' I_p J is singular there",
+      "kind": "exact",
+      "status": "pass",
+      "detail": "symbolic, J = 3; det(J'J) = 9*p1**2*p2**2*(p1 + p2 - 1)**2",
+      "file": "check_metrics_and_layers.py"
+    },
+    {
+      "id": "Q1",
+      "claim": "Cov = sum_j p_j^2 Sigma_B,j + (1/n) sum_j p_j Sigma_W,j for the replicate-plus-cell hierarchy",
+      "kind": "exact",
+      "status": "pass",
+      "detail": "variance of a linear combination of independent terms, one gene, n = 12, p = (1/4, 3/4); conditional on independence across cells and types",
+      "file": "check_metrics_and_layers.py"
+    },
+    {
+      "id": "P1",
+      "claim": "c = m'Wy / m'Wm and phi = r'Wr / G are the stationary scales; profile log-likelihood = -(G/2) log phi - (1/2) log det S - G/2",
+      "kind": "exact",
+      "status": "pass",
+      "detail": "symbolic, G = 2, generic symmetric precision",
+      "file": "check_profile_likelihood.py"
+    },
+    {
+      "id": "P2",
+      "claim": "Score in p_k: (c/phi) m_k'a + a'(dS_k)a / (2 phi) - tr(S^-1 dS_k) / 2, a = S^-1 r; and its tied-scale form",
+      "kind": "rational-sampling",
+      "status": "pass",
+      "detail": "exact rational arithmetic at 25 points, G = 2, J = 2; between=False, tied=False: max |gap| 0; between=False, tied=True: max |gap| 0; between=True, tied=False: max |gap| 0; between=True, tied=True: max |gap| 0",
+      "file": "check_profile_likelihood.py"
+    },
+    {
+      "id": "P3",
+      "claim": "d/dtheta[-(G/2) log q] equals d/dtheta[-q / (2 phi)] at phi = q / G: profiling divides the gradient of the quadratic form by phi-hat",
+      "kind": "exact",
+      "status": "pass",
+      "detail": "symbolic, generic q(theta)",
+      "file": "check_profile_likelihood.py"
+    },
+    {
+      "id": "S1",
+      "claim": "m_j = mu_j + (w_j / C_j) Sigma_j (U + Q)^-1 (y - mu w) is the stationary point of the mean stage",
+      "kind": "exact",
+      "status": "pass",
+      "detail": "scalar case symbolic; G = 3, J = 2 in exact rationals at 25 points, largest gradient entry 0",
+      "file": "check_sieve.py"
+    },
+    {
+      "id": "S2",
+      "claim": "Multiplying the off-diagonal terms of the lambda1-shrunk covariance by (1 - lambda2) / (1 - lambda1) gives the lambda2-shrunk covariance",
+      "kind": "exact",
+      "status": "pass",
+      "detail": "symbolic 2 x 2, estimator D^1/2 {(1 - lambda) R + lambda I} D^1/2",
+      "file": "check_sieve.py"
+    }
+  ]
+}
