@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2026-11-10">
+<meta name="dcterms.date" content="2026-11-11">
 <meta name="description" content="Deconvolution methods compared on the same Suppinger gene panel.">
 
 <title>5&nbsp; Applying and comparing deconvolution outputs applied to Suppinger study – DeCovarT reproducibility</title>
@@ -274,7 +274,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">10 Nov 2026</p>
+        <p class="date">11 Nov 2026</p>
       </div>
     </div>
     
@@ -369,7 +369,11 @@ window.Quarto = {
   <li><a href="#sec-deconv-single-cell" id="toc-sec-deconv-single-cell" class="nav-link" data-scroll-target="#sec-deconv-single-cell"><span class="header-section-number">5.1.2</span> Single-cell likelihood strategy</a></li>
   <li><a href="#sec-deconv-baselines" id="toc-sec-deconv-baselines" class="nav-link" data-scroll-target="#sec-deconv-baselines"><span class="header-section-number">5.1.3</span> Gold-standard baselines</a></li>
   </ul></li>
-  <li><a href="#sec-deconv-interpretation" id="toc-sec-deconv-interpretation" class="nav-link" data-scroll-target="#sec-deconv-interpretation"><span class="header-section-number">5.2</span> Statistical interpretation of the results</a></li>
+  <li><a href="#sec-deconv-interpretation" id="toc-sec-deconv-interpretation" class="nav-link" data-scroll-target="#sec-deconv-interpretation"><span class="header-section-number">5.2</span> Statistical interpretation of the results</a>
+  <ul>
+  <li><a href="#sec-deconv-own-genes" id="toc-sec-deconv-own-genes" class="nav-link" data-scroll-target="#sec-deconv-own-genes"><span class="header-section-number">5.2.1</span> Scenario 1: each method selects its own genes</a></li>
+  <li><a href="#sec-deconv-fixed-panel" id="toc-sec-deconv-fixed-panel" class="nav-link" data-scroll-target="#sec-deconv-fixed-panel"><span class="header-section-number">5.2.2</span> Scenario 2: one gene panel for every method</a></li>
+  </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/edit/main/docs/04-deconvolution-pipeline.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/blob/main/docs/04-deconvolution-pipeline.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -431,18 +435,83 @@ window.Quarto = {
 </section>
 <section id="sec-deconv-interpretation" class="level2" data-number="5.2">
 <h2 data-number="5.2" class="anchored" data-anchor-id="sec-deconv-interpretation"><span class="header-section-number">5.2</span> Statistical interpretation of the results</h2>
-<p>Second-generation methods differ in how they build the cell-type reference from the same labelled cells. Those that keep a gene only when it lowers the condition number of the mean signature select for separation of the means.</p>
-<p>That rule is a poor match to the gastruloid reference. Labelled states at 48 h, 72 h and 96 h lie on a continuum, so neighbouring types have nearly collinear mean profiles and the condition number of the mean matrix is large (<a href="#fig-kappa-gastruloid" class="quarto-xref">Figure&nbsp;<span>5.1</span></a>). Minimising that number retains genes that separate a few dominant lineages and drops genes that distinguish closely related types through their covariance. Mean-only pruning therefore under-represents adjacent embryonic states.</p>
+<p>Two scenarios are kept apart, because they answer different questions. In the first, each method chooses its own genes, so a difference between two methods mixes the gene set, the input scale and the estimator. In the second, every method receives the same genes, so a difference comes from the estimator alone.</p>
+<section id="sec-deconv-own-genes" class="level3" data-number="5.2.1">
+<h3 data-number="5.2.1" class="anchored" data-anchor-id="sec-deconv-own-genes"><span class="header-section-number">5.2.1</span> Scenario 1: each method selects its own genes</h3>
+<p>The earlier runs on these data (GastroDeconv2FateMap) called the methods through the <code>omnideconv</code> wrapper. Its benchmark states the policy: the authors “consulted the methods’ developers for guidance on optimal parameter settings and data type usage. In the absence of feedback, we ran the corresponding method with default parameters and considered counts and transcripts per million (TPM) as single-cell and bulk RNA-seq input data, respectively” (Dietrich et al.&nbsp;2026, p.&nbsp;5). Signature building and deconvolution are run as two steps for DWLS and SCDC, among others (p.&nbsp;27). <span class="light-content" style="color: #7a1f1f;border-radius: 0.2rem; padding: 0 0.2rem 0 0.2rem;background-color: #f4c7c3;">TODO-cite: Dietrich et al.&nbsp;2026, omnideconv, Genome Biology 27:6, doi:10.1186/s13059-026-03955-w; not in Zotero nor in bibliography/REFERENCES.bib.</span></p>
+<p>Under that policy the three second-generation methods do not see the same genes, nor the same weights (<a href="#tbl-deconv-own-genes" class="quarto-xref">Table&nbsp;<span>5.1</span></a>).</p>
+<div id="tbl-deconv-own-genes" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-deconv-own-genes-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;5.1: Gene selection and gene weights of the three second-generation methods when each runs with its own defaults. Code columns read from the installed packages (DWLS 0.5.2, SCDC 0.0.0.9000, BayesPrism 2.2.3); the last column from Dietrich et al.&nbsp;(2026).
+</figcaption>
+<div aria-describedby="tbl-deconv-own-genes-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Method</th>
+<th>Genes kept</th>
+<th>Weight of a gene in the fit</th>
+<th>Input scale in the omnideconv benchmark</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>DWLS</td>
+<td>Markers only. MAST test of each type against the rest; genes with adjusted <span class="math inline">p</span> below <code>pval.cutoff</code> and <span class="math inline">\log_2</span> fold change above <code>diff.cutoff = 0.5</code>; the top <span class="math inline">g</span> per type by fold change, with <span class="math inline">g</span> scanned from 50 to 200 and chosen to minimise the condition number of the signature (<code>DWLS::buildSignatureMatrixMAST()</code>)</td>
+<td>Inverse squared fitted value, capped by the dampening constant</td>
+<td><code>pval_cutoff = 0.05</code>, other defaults (p.&nbsp;29); scale not reported in the DWLS paragraph</td>
+</tr>
+<tr class="even">
+<td>SCDC</td>
+<td>No selection: every gene shared by the reference and the bulk</td>
+<td>Iterated weights <span class="math inline">1/(\nu+\hat\delta_g^{2})</span>, with <span class="math inline">\hat\delta_g</span> the residual of gene <span class="math inline">g</span> (<code>SCDC::SCDC_prop_ONE()</code>); the weighted basis is used (<code>weight.basis = TRUE</code>)</td>
+<td>Single-cell counts, bulk TPM, one reference (p.&nbsp;29)</td>
+</tr>
+<tr class="odd">
+<td>BayesPrism</td>
+<td>No marker step inside <code>new.prism()</code>; genes that dominate a bulk are dropped (<code>outlier.cut = 0.01</code>, <code>outlier.fraction = 0.1</code>). <code>cleanup.genes()</code> and <code>select.marker()</code> are optional steps left to the user</td>
+<td>None explicit: a multinomial likelihood, so a gene counts in proportion to its reads</td>
+<td>Un-normalised counts for both inputs; cell types only (p.&nbsp;27). Gene clean-up: not reported</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p><strong>Hypothesis for the gastruloid reference (not tested here).</strong> DWLS is the only one of the three that prunes genes on the condition number of the mean signature. Labelled states at 48 h, 72 h and 96 h lie on a continuum, so neighbouring types have nearly collinear mean profiles. A rule that minimises the condition number then keeps the genes that separate a few dominant lineages and drops those that distinguish closely related types. SCDC and BayesPrism keep those genes, with a low weight or a low read share. That would explain estimates that agree between SCDC and BayesPrism and differ for DWLS (<a href="#fig-kappa-gastruloid" class="quarto-xref">Figure&nbsp;<span>5.1</span></a>).</p>
 <div id="fig-kappa-gastruloid" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-kappa-gastruloid-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="images/condition_number_poor_performance_correlated_cell_types.png" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-kappa-gastruloid-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;5.1: Condition-number pruning on correlated developmental cell types (gastruloid continuum). Mean-only <span class="math inline">\kappa</span> filtering can concentrate signal in dominant collinear lineages and shrink closely related states.
+Figure&nbsp;5.1: Hypothesis: sources of disagreement between SCDC, BayesPrism and DWLS when each builds its own signature from one reference. A: shared notation. B: how each method builds its reference. C: inference step and the proposed reading for gastruloids. The picture was generated by an AI image model; it is a teaching sketch of the hypothesis, not a result, and its formulas are simplified.
 </figcaption>
 </figure>
 </div>
+<p>Two cautions:</p>
+<ul>
+<li><strong>The benchmark does not support the hypothesis directly.</strong> Dietrich et al.&nbsp;report DWLS among the most stable methods across annotation resolutions and the one with the least spillover between related immune types (pp.&nbsp;8 and 13). They compare two DWLS signatures and find the better deconvolution with the lower condition number (p.&nbsp;16). Their references are immune and tumour atlases with ground truth from flow cytometry, not a developmental continuum.</li>
+<li><strong>Scenario 1 cannot isolate the cause.</strong> DWLS differs from the other two by its genes, its weights and its solver at once.</li>
+</ul>
+</section>
+<section id="sec-deconv-fixed-panel" class="level3" data-number="5.2.2">
+<h3 data-number="5.2.2" class="anchored" data-anchor-id="sec-deconv-fixed-panel"><span class="header-section-number">5.2.2</span> Scenario 2: one gene panel for every method</h3>
+<p>The runs of this book give every method the same genes, the same scored cells and raw counts (<code>scripts/04_01_stats_deconvolution.R</code>):</p>
+<ul>
+<li>two panels per time, the Welch-gated genes and their subset with <span class="math inline">R^2_D\ge 5\%</span> (<a href="02-feature-selection.html#sec-fs-consistency" class="quarto-xref"><span>Section 3.3</span></a>);</li>
+<li>the solver of each method, called directly, without its own marker step: <code>DWLS::solveDampenedWLS()</code> on the mean signature, <code>SCDC::SCDC_prop_ONE()</code>, <code>BayesPrism</code> with its outlier filter off, <code>rnasieve</code>, and the DeMixSC weighted NNLS;</li>
+<li>DeCovarT with four covariance inputs, with and without the gene-wise platform ratio, and two optimisers.</li>
+</ul>
+<p>A difference between methods is then a difference between estimators. A difference between the two panels, for one method, measures what the gene set contributes. If the hypothesis of scenario 1 holds, DWLS on the shared panel should move towards SCDC and BayesPrism.</p>
+<p><span class="light-content" style="color: #7a1f1f;border-radius: 0.2rem; padding: 0 0.2rem 0 0.2rem;background-color: #f4c7c3;">TODO: report the fixed-panel results (<code>output/deconvolution/benchmark_metrics.csv</code>, figures in <code>images/deconvolution/</code>) once the Welch-gated fits at 96 h are finished, and add a scenario-1 run of DWLS with its own signature on the same cells to test the hypothesis.</span></p>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="list">
@@ -459,6 +528,7 @@ Tsoucas, Daphne, Rui Dong, Haide Chen, Qian Zhu, Guoji Guo, and Guo-Cheng Yuan. 
 Xie, Dongyue, and Jingshu Wang. 2023. <em>Robust Statistical Inference for Cell Type Deconvolution</em>. arXiv. <a href="https://doi.org/10.48550/arxiv.2202.06420">https://doi.org/10.48550/arxiv.2202.06420</a>.
 </div>
 </div>
+</section>
 </section>
 
 </main> <!-- /main -->

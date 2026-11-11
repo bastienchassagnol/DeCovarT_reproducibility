@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2026-11-10">
+<meta name="dcterms.date" content="2026-11-11">
 <meta name="description" content="Per-type means and covariances estimated on the Suppinger reference.">
 
 <title>4&nbsp; Covariance estimation – DeCovarT reproducibility</title>
@@ -274,7 +274,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">10 Nov 2026</p>
+        <p class="date">11 Nov 2026</p>
       </div>
     </div>
     
@@ -382,6 +382,10 @@ window.Quarto = {
   <li><a href="#sec-cov-plots" id="toc-sec-cov-plots" class="nav-link" data-scroll-target="#sec-cov-plots"><span class="header-section-number">4.3.1</span> Displays</a></li>
   <li><a href="#sec-cov-evaluation" id="toc-sec-cov-evaluation" class="nav-link" data-scroll-target="#sec-cov-evaluation"><span class="header-section-number">4.3.2</span> Evaluation</a></li>
   </ul></li>
+  <li><a href="#sec-cov-results-discussion" id="toc-sec-cov-results-discussion" class="nav-link" data-scroll-target="#sec-cov-results-discussion"><span class="header-section-number">4.4</span> Results and discussion</a>
+  <ul>
+  <li><a href="#sec-cov-shrinkage-reading" id="toc-sec-cov-shrinkage-reading" class="nav-link" data-scroll-target="#sec-cov-shrinkage-reading"><span class="header-section-number">4.4.1</span> Regularisation shrinks covariance terms without setting them to zero</a></li>
+  </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/edit/main/docs/03-covariance-estimation.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/blob/main/docs/03-covariance-estimation.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -428,7 +432,7 @@ Table&nbsp;4.1: Covariance-estimation code and status.
 <tbody>
 <tr class="odd">
 <td>Panel input</td>
-<td><code>R/cv_covariance_selection.R</code>: <code>read_panel_slot()</code></td>
+<td><code>R/03_01_stats_covariance_estimation.R</code>: <code>read_panel_slot()</code></td>
 <td>written, not run</td>
 </tr>
 <tr class="even">
@@ -453,7 +457,7 @@ Table&nbsp;4.1: Covariance-estimation code and status.
 </tr>
 <tr class="even">
 <td>Graphical lasso EBIC path (diagnostic)</td>
-<td><code>scripts/03_01_grn_glasso.R</code>, <code>R/ebic_regularisation_path.R</code></td>
+<td><code>scripts/03_01_grn_glasso.R</code>, <code>R/03_02_stats_regularisation_path.R</code></td>
 <td>input moved to the gated panel; not re-run</td>
 </tr>
 <tr class="odd">
@@ -556,29 +560,29 @@ Table&nbsp;4.3: The eleven type × time units against the gated panel. <span cla
 
     <script>
       // Create table-specific functions using external factory
-      const tableFns_lotjajinuzfgw9gw7oqp = TinyTable.createTableFunctions("tinytable_lotjajinuzfgw9gw7oqp");
+      const tableFns_zkwshrhmjk94bi7yv2qb = TinyTable.createTableFunctions("tinytable_zkwshrhmjk94bi7yv2qb");
       // tinytable span after
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: '-1', j: 9 } ], css_id: 'tinytable_css_cecendtuw6wp1npoj98v',}, 
-          { positions: [ { i: '-1', j: 7 } ], css_id: 'tinytable_css_uj1y8agn4rl5rp1rwll4',}, 
-          { positions: [ { i: '-1', j: 6 }, { i: '-1', j: 8 } ], css_id: 'tinytable_css_bp735r5m4x5bhrz26p1d',}, 
-          { positions: [ { i: '11', j: 3 }, { i: '11', j: 4 }, { i: '11', j: 6 }, { i: '11', j: 8 } ], css_id: 'tinytable_css_2dvsmi8uwcgvypheljh2',}, 
-          { positions: [ { i: '2', j: 3 }, { i: '3', j: 3 }, { i: '5', j: 3 }, { i: '6', j: 3 }, { i: '7', j: 3 }, { i: '8', j: 3 }, { i: '9', j: 3 }, { i: '10', j: 3 }, { i: '2', j: 4 }, { i: '3', j: 4 }, { i: '5', j: 4 }, { i: '6', j: 4 }, { i: '7', j: 4 }, { i: '8', j: 4 }, { i: '9', j: 4 }, { i: '10', j: 4 }, { i: '2', j: 6 }, { i: '3', j: 6 }, { i: '5', j: 6 }, { i: '6', j: 6 }, { i: '7', j: 6 }, { i: '8', j: 6 }, { i: '9', j: 6 }, { i: '10', j: 6 }, { i: '2', j: 8 }, { i: '3', j: 8 }, { i: '5', j: 8 }, { i: '6', j: 8 }, { i: '7', j: 8 }, { i: '8', j: 8 }, { i: '9', j: 8 }, { i: '10', j: 8 } ], css_id: 'tinytable_css_xy6t5c7pzwpg1ijawcdg',}, 
-          { positions: [ { i: '1', j: 3 }, { i: '4', j: 3 }, { i: '1', j: 4 }, { i: '4', j: 4 }, { i: '1', j: 6 }, { i: '4', j: 6 }, { i: '1', j: 8 }, { i: '4', j: 8 } ], css_id: 'tinytable_css_bjjy8qhmihmutserscuj',}, 
-          { positions: [ { i: '0', j: 3 }, { i: '0', j: 4 }, { i: '0', j: 6 }, { i: '0', j: 8 } ], css_id: 'tinytable_css_ewx6cpaok9aw5sr8j49r',}, 
-          { positions: [ { i: '-1', j: 3 }, { i: '-1', j: 4 } ], css_id: 'tinytable_css_x8m6wc6jhs74bqrijwai',}, 
-          { positions: [ { i: '11', j: 1 }, { i: '11', j: 2 }, { i: '11', j: 5 }, { i: '11', j: 7 }, { i: '11', j: 9 } ], css_id: 'tinytable_css_uo55s6o7bt1ujj1nybot',}, 
-          { positions: [ { i: '2', j: 1 }, { i: '3', j: 1 }, { i: '5', j: 1 }, { i: '6', j: 1 }, { i: '7', j: 1 }, { i: '8', j: 1 }, { i: '9', j: 1 }, { i: '10', j: 1 }, { i: '2', j: 2 }, { i: '3', j: 2 }, { i: '5', j: 2 }, { i: '6', j: 2 }, { i: '7', j: 2 }, { i: '8', j: 2 }, { i: '9', j: 2 }, { i: '10', j: 2 }, { i: '2', j: 5 }, { i: '3', j: 5 }, { i: '5', j: 5 }, { i: '6', j: 5 }, { i: '7', j: 5 }, { i: '8', j: 5 }, { i: '9', j: 5 }, { i: '10', j: 5 }, { i: '2', j: 7 }, { i: '3', j: 7 }, { i: '5', j: 7 }, { i: '6', j: 7 }, { i: '7', j: 7 }, { i: '8', j: 7 }, { i: '9', j: 7 }, { i: '10', j: 7 }, { i: '2', j: 9 }, { i: '3', j: 9 }, { i: '5', j: 9 }, { i: '6', j: 9 }, { i: '7', j: 9 }, { i: '8', j: 9 }, { i: '9', j: 9 }, { i: '10', j: 9 } ], css_id: 'tinytable_css_uncbthr4yncoo8cs3njw',}, 
-          { positions: [ { i: '0', j: 1 }, { i: '0', j: 2 }, { i: '0', j: 5 }, { i: '0', j: 7 }, { i: '0', j: 9 } ], css_id: 'tinytable_css_evlqevgh5k1ca4ht641r',}, 
-          { positions: [ { i: '-1', j: 1 }, { i: '-1', j: 2 }, { i: '-1', j: 5 } ], css_id: 'tinytable_css_p5lnqupca2egq10ux1o7',}, 
+          { positions: [ { i: '-1', j: 9 } ], css_id: 'tinytable_css_x52ez30uqj96ymn373rb',}, 
+          { positions: [ { i: '-1', j: 7 } ], css_id: 'tinytable_css_djjjjbyqafg9ye5uy4mr',}, 
+          { positions: [ { i: '-1', j: 6 }, { i: '-1', j: 8 } ], css_id: 'tinytable_css_bob6n7her3flkmz37kwh',}, 
+          { positions: [ { i: '11', j: 3 }, { i: '11', j: 4 }, { i: '11', j: 6 }, { i: '11', j: 8 } ], css_id: 'tinytable_css_f2wjhpa35njejbhvpoxz',}, 
+          { positions: [ { i: '2', j: 3 }, { i: '3', j: 3 }, { i: '5', j: 3 }, { i: '6', j: 3 }, { i: '7', j: 3 }, { i: '8', j: 3 }, { i: '9', j: 3 }, { i: '10', j: 3 }, { i: '2', j: 4 }, { i: '3', j: 4 }, { i: '5', j: 4 }, { i: '6', j: 4 }, { i: '7', j: 4 }, { i: '8', j: 4 }, { i: '9', j: 4 }, { i: '10', j: 4 }, { i: '2', j: 6 }, { i: '3', j: 6 }, { i: '5', j: 6 }, { i: '6', j: 6 }, { i: '7', j: 6 }, { i: '8', j: 6 }, { i: '9', j: 6 }, { i: '10', j: 6 }, { i: '2', j: 8 }, { i: '3', j: 8 }, { i: '5', j: 8 }, { i: '6', j: 8 }, { i: '7', j: 8 }, { i: '8', j: 8 }, { i: '9', j: 8 }, { i: '10', j: 8 } ], css_id: 'tinytable_css_o02ciwa41n3p7wl34axu',}, 
+          { positions: [ { i: '1', j: 3 }, { i: '4', j: 3 }, { i: '1', j: 4 }, { i: '4', j: 4 }, { i: '1', j: 6 }, { i: '4', j: 6 }, { i: '1', j: 8 }, { i: '4', j: 8 } ], css_id: 'tinytable_css_6lyaddz0l0cg1n58rce5',}, 
+          { positions: [ { i: '0', j: 3 }, { i: '0', j: 4 }, { i: '0', j: 6 }, { i: '0', j: 8 } ], css_id: 'tinytable_css_6ys3t0lmvd5yux0t7haf',}, 
+          { positions: [ { i: '-1', j: 3 }, { i: '-1', j: 4 } ], css_id: 'tinytable_css_ng2ef6bxjsk9f4tacm41',}, 
+          { positions: [ { i: '11', j: 1 }, { i: '11', j: 2 }, { i: '11', j: 5 }, { i: '11', j: 7 }, { i: '11', j: 9 } ], css_id: 'tinytable_css_7i1l2oabrs8hwtxir5md',}, 
+          { positions: [ { i: '2', j: 1 }, { i: '3', j: 1 }, { i: '5', j: 1 }, { i: '6', j: 1 }, { i: '7', j: 1 }, { i: '8', j: 1 }, { i: '9', j: 1 }, { i: '10', j: 1 }, { i: '2', j: 2 }, { i: '3', j: 2 }, { i: '5', j: 2 }, { i: '6', j: 2 }, { i: '7', j: 2 }, { i: '8', j: 2 }, { i: '9', j: 2 }, { i: '10', j: 2 }, { i: '2', j: 5 }, { i: '3', j: 5 }, { i: '5', j: 5 }, { i: '6', j: 5 }, { i: '7', j: 5 }, { i: '8', j: 5 }, { i: '9', j: 5 }, { i: '10', j: 5 }, { i: '2', j: 7 }, { i: '3', j: 7 }, { i: '5', j: 7 }, { i: '6', j: 7 }, { i: '7', j: 7 }, { i: '8', j: 7 }, { i: '9', j: 7 }, { i: '10', j: 7 }, { i: '2', j: 9 }, { i: '3', j: 9 }, { i: '5', j: 9 }, { i: '6', j: 9 }, { i: '7', j: 9 }, { i: '8', j: 9 }, { i: '9', j: 9 }, { i: '10', j: 9 } ], css_id: 'tinytable_css_3hv7aoas8hyf8t0kffk5',}, 
+          { positions: [ { i: '0', j: 1 }, { i: '0', j: 2 }, { i: '0', j: 5 }, { i: '0', j: 7 }, { i: '0', j: 9 } ], css_id: 'tinytable_css_rimma9u4x82e7y00lnuj',}, 
+          { positions: [ { i: '-1', j: 1 }, { i: '-1', j: 2 }, { i: '-1', j: 5 } ], css_id: 'tinytable_css_enm1jednex8naox7ugb3',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  tableFns_lotjajinuzfgw9gw7oqp.styleCell(cell.i, cell.j, group.css_id);
+                  tableFns_zkwshrhmjk94bi7yv2qb.styleCell(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -587,22 +591,22 @@ Table&nbsp;4.3: The eleven type × time units against the gated panel. <span cla
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/vincentarelbundock/tinytable@main/inst/tinytable.css">
     <style>
     /* tinytable css entries after */
-    #tinytable_lotjajinuzfgw9gw7oqp td.tinytable_css_cecendtuw6wp1npoj98v, #tinytable_lotjajinuzfgw9gw7oqp th.tinytable_css_cecendtuw6wp1npoj98v {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.03em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.08em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: center }
-    #tinytable_lotjajinuzfgw9gw7oqp td.tinytable_css_uj1y8agn4rl5rp1rwll4, #tinytable_lotjajinuzfgw9gw7oqp th.tinytable_css_uj1y8agn4rl5rp1rwll4 {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.03em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.08em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 3%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: center }
-    #tinytable_lotjajinuzfgw9gw7oqp td.tinytable_css_bp735r5m4x5bhrz26p1d, #tinytable_lotjajinuzfgw9gw7oqp th.tinytable_css_bp735r5m4x5bhrz26p1d {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.03em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.08em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 3%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: right }
-    #tinytable_lotjajinuzfgw9gw7oqp td.tinytable_css_2dvsmi8uwcgvypheljh2, #tinytable_lotjajinuzfgw9gw7oqp th.tinytable_css_2dvsmi8uwcgvypheljh2 {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.08em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: right; background-color: #fbe3d6 }
-    #tinytable_lotjajinuzfgw9gw7oqp td.tinytable_css_xy6t5c7pzwpg1ijawcdg, #tinytable_lotjajinuzfgw9gw7oqp th.tinytable_css_xy6t5c7pzwpg1ijawcdg { text-align: right; background-color: #fbe3d6 }
-    #tinytable_lotjajinuzfgw9gw7oqp td.tinytable_css_bjjy8qhmihmutserscuj, #tinytable_lotjajinuzfgw9gw7oqp th.tinytable_css_bjjy8qhmihmutserscuj { text-align: right }
-    #tinytable_lotjajinuzfgw9gw7oqp td.tinytable_css_ewx6cpaok9aw5sr8j49r, #tinytable_lotjajinuzfgw9gw7oqp th.tinytable_css_ewx6cpaok9aw5sr8j49r {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: right }
-    #tinytable_lotjajinuzfgw9gw7oqp td.tinytable_css_x8m6wc6jhs74bqrijwai, #tinytable_lotjajinuzfgw9gw7oqp th.tinytable_css_x8m6wc6jhs74bqrijwai {  position: relative; --border-bottom: 0; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.1em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.08em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: right }
-    #tinytable_lotjajinuzfgw9gw7oqp td.tinytable_css_uo55s6o7bt1ujj1nybot, #tinytable_lotjajinuzfgw9gw7oqp th.tinytable_css_uo55s6o7bt1ujj1nybot {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.08em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; background-color: #fbe3d6 }
-    #tinytable_lotjajinuzfgw9gw7oqp td.tinytable_css_uncbthr4yncoo8cs3njw, #tinytable_lotjajinuzfgw9gw7oqp th.tinytable_css_uncbthr4yncoo8cs3njw { background-color: #fbe3d6 }
-    #tinytable_lotjajinuzfgw9gw7oqp td.tinytable_css_evlqevgh5k1ca4ht641r, #tinytable_lotjajinuzfgw9gw7oqp th.tinytable_css_evlqevgh5k1ca4ht641r {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%;  }
-    #tinytable_lotjajinuzfgw9gw7oqp td.tinytable_css_p5lnqupca2egq10ux1o7, #tinytable_lotjajinuzfgw9gw7oqp th.tinytable_css_p5lnqupca2egq10ux1o7 {  position: relative; --border-bottom: 0; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.1em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.08em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: center }
+    #tinytable_zkwshrhmjk94bi7yv2qb td.tinytable_css_x52ez30uqj96ymn373rb, #tinytable_zkwshrhmjk94bi7yv2qb th.tinytable_css_x52ez30uqj96ymn373rb {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.03em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.08em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: center }
+    #tinytable_zkwshrhmjk94bi7yv2qb td.tinytable_css_djjjjbyqafg9ye5uy4mr, #tinytable_zkwshrhmjk94bi7yv2qb th.tinytable_css_djjjjbyqafg9ye5uy4mr {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.03em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.08em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 3%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: center }
+    #tinytable_zkwshrhmjk94bi7yv2qb td.tinytable_css_bob6n7her3flkmz37kwh, #tinytable_zkwshrhmjk94bi7yv2qb th.tinytable_css_bob6n7her3flkmz37kwh {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.03em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.08em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 3%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: right }
+    #tinytable_zkwshrhmjk94bi7yv2qb td.tinytable_css_f2wjhpa35njejbhvpoxz, #tinytable_zkwshrhmjk94bi7yv2qb th.tinytable_css_f2wjhpa35njejbhvpoxz {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.08em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: right; background-color: #fbe3d6 }
+    #tinytable_zkwshrhmjk94bi7yv2qb td.tinytable_css_o02ciwa41n3p7wl34axu, #tinytable_zkwshrhmjk94bi7yv2qb th.tinytable_css_o02ciwa41n3p7wl34axu { text-align: right; background-color: #fbe3d6 }
+    #tinytable_zkwshrhmjk94bi7yv2qb td.tinytable_css_6lyaddz0l0cg1n58rce5, #tinytable_zkwshrhmjk94bi7yv2qb th.tinytable_css_6lyaddz0l0cg1n58rce5 { text-align: right }
+    #tinytable_zkwshrhmjk94bi7yv2qb td.tinytable_css_6ys3t0lmvd5yux0t7haf, #tinytable_zkwshrhmjk94bi7yv2qb th.tinytable_css_6ys3t0lmvd5yux0t7haf {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: right }
+    #tinytable_zkwshrhmjk94bi7yv2qb td.tinytable_css_ng2ef6bxjsk9f4tacm41, #tinytable_zkwshrhmjk94bi7yv2qb th.tinytable_css_ng2ef6bxjsk9f4tacm41 {  position: relative; --border-bottom: 0; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.1em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.08em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: right }
+    #tinytable_zkwshrhmjk94bi7yv2qb td.tinytable_css_7i1l2oabrs8hwtxir5md, #tinytable_zkwshrhmjk94bi7yv2qb th.tinytable_css_7i1l2oabrs8hwtxir5md {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.08em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; background-color: #fbe3d6 }
+    #tinytable_zkwshrhmjk94bi7yv2qb td.tinytable_css_3hv7aoas8hyf8t0kffk5, #tinytable_zkwshrhmjk94bi7yv2qb th.tinytable_css_3hv7aoas8hyf8t0kffk5 { background-color: #fbe3d6 }
+    #tinytable_zkwshrhmjk94bi7yv2qb td.tinytable_css_rimma9u4x82e7y00lnuj, #tinytable_zkwshrhmjk94bi7yv2qb th.tinytable_css_rimma9u4x82e7y00lnuj {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%;  }
+    #tinytable_zkwshrhmjk94bi7yv2qb td.tinytable_css_enm1jednex8naox7ugb3, #tinytable_zkwshrhmjk94bi7yv2qb th.tinytable_css_enm1jednex8naox7ugb3 {  position: relative; --border-bottom: 0; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.1em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.08em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: center }
     </style>
     <div class="container">
       
-<table id="tinytable_lotjajinuzfgw9gw7oqp" class="tinytable cell caption-top table table-sm table-striped small">
+<table id="tinytable_zkwshrhmjk94bi7yv2qb" class="tinytable cell caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th style="text-align: center;" data-quarto-table-cell-role="th" scope="col" data-row="-1" data-col="1"></th>
@@ -1070,7 +1074,7 @@ Table&nbsp;4.5: <code>PLNnetwork</code> settings. Earlier versions of the script
 </div>
 </figure>
 </div>
-<div id="algo-plnnetwork" class="pseudocode-container quarto-float" data-pseudocode-number="1" data-caption-prefix="Algorithm" data-indent-size="1.2em" data-chapter-level="4" data-no-end="false" data-line-number-punc=":" data-comment-delimiter="//" data-line-number="true" data-indent-lines="false">
+<div id="algo-plnnetwork" class="pseudocode-container quarto-float" data-caption-prefix="Algorithm" data-line-number-punc=":" data-comment-delimiter="//" data-no-end="false" data-chapter-level="4" data-indent-size="1.2em" data-line-number="true" data-indent-lines="false" data-pseudocode-number="1">
 <div class="pseudocode">
 \begin{algorithm} \caption{PLNnetwork: alternating graphical lasso and variational updates} \begin{algorithmic} \Require counts $X$, offsets $O=\log s$, penalty $\lambda$, weights $W$ \State initialise the variational means $M$, variances $S$ and $\Sigma$ \For{$h = 1,\ldots,$ maxit\_out} \State $\Omega^{(h)} \gets$ \Call{GraphicalLasso}{$\Sigma^{(h-1)}, \lambda W$} \State $(B^{(h)},M^{(h)},S^{(h)}) \gets$ \Call{NLopt}{$B^{(h-1)},M^{(h-1)},S^{(h-1)};\Omega^{(h)}$} \State $\Sigma^{(h)} \gets C^{-1}\left[{M^{(h)}}^\top M^{(h)} + \sum_c S_c^{(h)}\right]$ \State $F_h \gets -\mathrm{ELBO}(B^{(h)},M^{(h)},S^{(h)},\Omega^{(h)}) + \lambda\|\Omega^{(h)}\|_{1,W}$ \If{$|F_h-F_{h-1}|/|F_h| &lt;$ ftol\_out} \State \textbf{break} \EndIf \EndFor \State \Return $(B,M,S,\Omega,\Sigma)$ \end{algorithmic} \end{algorithm}
 </div>
@@ -1115,7 +1119,7 @@ Table&nbsp;4.5: <code>PLNnetwork</code> settings. Earlier versions of the script
 \log\phi_{G}\bigl(\boldsymbol{x}_{\cdot c};\widehat{\boldsymbol{\mu}},\widehat{\boldsymbol{\Sigma}}\bigr),
 \tag{4.8}</span></span></p>
 <p>computed by <code>heldout_gaussian_logscore()</code> through a Cholesky factor of <span class="math inline">\widehat{\boldsymbol{\Sigma}}</span>; for the denoised arm, <span class="math inline">\widehat{\boldsymbol{\Sigma}}</span> is <a href="#eq-cov-renoise" class="quarto-xref">Equation&nbsp;<span>4.4</span></a>. Why this score is a legitimate loss for the covariance even though cells are not Gaussian is in <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#prp-gaussian-logscore">3.2, Gaussian log-score</a>, and why it replaces AIC, BIC and EBIC as the selector in <a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-cov-cv">3.2, cross-validation</a>.</p>
-<div id="algo-cv-covariance" class="pseudocode-container quarto-float" data-pseudocode-number="2" data-caption-prefix="Algorithm" data-indent-size="1.2em" data-chapter-level="4" data-no-end="false" data-line-number-punc=":" data-comment-delimiter="//" data-line-number="true" data-indent-lines="false">
+<div id="algo-cv-covariance" class="pseudocode-container quarto-float" data-caption-prefix="Algorithm" data-line-number-punc=":" data-comment-delimiter="//" data-no-end="false" data-chapter-level="4" data-indent-size="1.2em" data-line-number="true" data-indent-lines="false" data-pseudocode-number="2">
 <div class="pseudocode">
 \begin{algorithm} \caption{Tuning by K-fold cross-validation, and nested comparison of the five arms} \begin{algorithmic} \Procedure{CVSelect}{$X, f, \Lambda, K$} \State split the cells of $X$ into $K$ folds at random, with a fixed seed \For{$\lambda \in \Lambda$} \For{$k = 1,\ldots,K$} \State $(\hat\mu,\hat\Sigma) \gets f(X_{-k};\lambda)$ \State $\ell_k(\lambda) \gets$ \Call{HeldOutLogScore}{$\hat\mu,\hat\Sigma,X_k$} \EndFor \State $m(\lambda) \gets$ mean of $\ell_k(\lambda)$; $\mathrm{se}(\lambda) \gets$ its standard error \EndFor \State $\lambda_{\min} \gets \arg\max_{\lambda} m(\lambda)$ \State $\lambda_{1\mathrm{se}} \gets$ most regularised $\lambda$ with $m(\lambda) \ge m(\lambda_{\min}) - \mathrm{se}(\lambda_{\min})$ \State \Return $(m, \mathrm{se}, \lambda_{\min}, \lambda_{1\mathrm{se}})$ \EndProcedure \Procedure{NestedCompare}{$X, \{(f_e,\Lambda_e)\}_{e=1}^{5}, K_{\mathrm{out}}, K_{\mathrm{in}}$} \For{$k = 1,\ldots,K_{\mathrm{out}}$} \For{$e = 1,\ldots,5$} \State $\lambda_e \gets \lambda_{\min}$ of \Call{CVSelect}{$X_{-k}, f_e, \Lambda_e, K_{\mathrm{in}}$} \State $(\hat\mu,\hat\Sigma) \gets f_e(X_{-k};\lambda_e)$ \State $s_{ek} \gets$ \Call{HeldOutLogScore}{$\hat\mu,\hat\Sigma,X_k$} \EndFor \EndFor \State \Return $(s_{ek})$, paired by outer fold \EndProcedure \end{algorithmic} \end{algorithm}
 </div>
@@ -1141,7 +1145,7 @@ Table&nbsp;4.5: <code>PLNnetwork</code> settings. Earlier versions of the script
 </blockquote>
 <section id="sec-cov-plots" class="level3" data-number="4.3.1">
 <h3 data-number="4.3.1" class="anchored" data-anchor-id="sec-cov-plots"><span class="header-section-number">4.3.1</span> Displays</h3>
-<p>Plot functions are in <code>R/plot_grn_regularisation.R</code>. Each display answers one question.</p>
+<p>Plot functions are in <code>R/03_02_vis_regularisation_path.R</code>. Each display answers one question.</p>
 <p><strong>Choosing the tuning parameter (one unit, one arm).</strong></p>
 <ul>
 <li>Cross-validation curve: <span class="math inline">m(\lambda)\pm\mathrm{se}(\lambda)</span> against the tuning parameter, with the <code>min</code> and <code>1se</code> choices marked (new; not produced yet).</li>
@@ -1158,7 +1162,7 @@ Table&nbsp;4.5: <code>PLNnetwork</code> settings. Earlier versions of the script
 \tag{4.9}</span></span> on a diverging scale centred at zero.</li>
 <li>For the three sparse estimators: UpSet plots of edge presence and of signed edges.</li>
 </ul>
-<p><strong>Comparing types (one time).</strong> Pairwise Hellinger distance and <code>MixSim</code> overlap between the exported Gaussians on the linear scale (<code>gaussian_hellinger()</code>, <code>gaussian_mixsim_overlap()</code> in <code>R/ebic_regularisation_path.R</code>). Distances computed on another scale (nonparanormal scores, <span class="math inline">\log(1+x)</span>) do not describe what DeCovarT has to separate.</p>
+<p><strong>Comparing types (one time).</strong> Pairwise Hellinger distance and <code>MixSim</code> overlap between the exported Gaussians on the linear scale (<code>gaussian_hellinger()</code>, <code>gaussian_mixsim_overlap()</code> in <code>R/03_02_stats_regularisation_path.R</code>). Distances computed on another scale (nonparanormal scores, <span class="math inline">\log(1+x)</span>) do not describe what DeCovarT has to separate.</p>
 </section>
 <section id="sec-cov-evaluation" class="level3" data-number="4.3.2">
 <h3 data-number="4.3.2" class="anchored" data-anchor-id="sec-cov-evaluation"><span class="header-section-number">4.3.2</span> Evaluation</h3>
@@ -1174,6 +1178,200 @@ Table&nbsp;4.5: <code>PLNnetwork</code> settings. Earlier versions of the script
 <li><strong>Concordance of the sparse estimators</strong>: overlap of edge sets (intersection over the smaller set) and Hamming distance between skeletons, raw and divided by <span class="math inline">G(G-1)/2</span>. Agreement is a robustness number, not a validation.</li>
 </ol>
 <p>Scores that need a known skeleton, curated transcription-factor targets, other assays or perturbations are perspectives (<a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-cov-perspectives">3.2, perspectives</a>).</p>
+</section>
+</section>
+<section id="sec-cov-results-discussion" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="sec-cov-results-discussion"><span class="header-section-number">4.4</span> Results and discussion</h2>
+<section id="sec-cov-shrinkage-reading" class="level3" data-number="4.4.1">
+<h3 data-number="4.4.1" class="anchored" data-anchor-id="sec-cov-shrinkage-reading"><span class="header-section-number">4.4.1</span> Regularisation shrinks covariance terms without setting them to zero</h3>
+<p><strong>Status.</strong> The plug-in covariances of the first deconvolution pass exist (<code>scripts/03_05_stats_plugin_covariance.R</code>, outputs in <code>output/grn/plugin/</code>). They use the closed-form intensity <span class="math inline">\hat\lambda^{\ast}</span>, floored at <span class="math inline">10^{-3}</span>, on the Welch-gated panel and on its subset with a deviance share <span class="math inline">R^2_D\ge 5\%</span>. The cross-validation of <a href="#sec-cov-cv-run" class="quarto-xref"><span>Section 4.3</span></a> has not been run, so the intensity is not the cross-validated one that <a href="#sec-shrinkage" class="quarto-xref"><span>Section 4.2.1</span></a> announces.</p>
+<p><strong>What the estimator returns.</strong> With <span class="math inline">\boldsymbol{R}_j</span> the sample correlation and <span class="math inline">\boldsymbol{D}_j</span> the sample variances, the estimate is <span class="math inline">\boldsymbol{D}_j^{1/2}\{(1-\lambda)\boldsymbol{R}_j+\lambda\boldsymbol{I}\}\boldsymbol{D}_j^{1/2}</span> (<a href="#sec-shrinkage" class="quarto-xref"><span>Section 4.2.1</span></a>). Three readings follow.</p>
+<ul>
+<li><strong>Variances are untouched.</strong> Only the correlations move.</li>
+<li><strong>Every correlation is multiplied by <span class="math inline">1-\lambda</span>; none becomes zero.</strong> The estimate has as many non-zero off-diagonal terms as the sample covariance: all <span class="math inline">G_t(G_t-1)/2</span> pairs, that is 1.0 million at 48 h, 5.8 million at 72 h and 16.9 million at 96 h on the Welch-gated panel. Its inverse is dense as well, so no graph can be read from either matrix.</li>
+<li><strong><span class="math inline">\lambda</span> is a floor on the spectrum.</strong> Each eigenvalue <span class="math inline">\ell</span> of <span class="math inline">\boldsymbol{R}_j</span> becomes <span class="math inline">(1-\lambda)\ell+\lambda</span>, so the smallest eigenvalue of the shrunk correlation is at least <span class="math inline">\lambda</span>. That floor is what makes the estimate positive definite when <span class="math inline">C_j\le G_t</span>.</li>
+</ul>
+<p><strong>Reading <span class="math inline">\hat\lambda^{\ast}</span>.</strong> The closed-form intensity is the estimated share of the squared sample correlations that is sampling variance <span class="citation" data-cites="schäferShrinkageApproachLargescale2005">(<a href="#ref-schäferShrinkageApproachLargescale2005" role="doc-biblioref">Schäfer and Strimmer 2005</a>)</span>. It rises when a unit has few cells for its number of genes (<a href="#tbl-cov-lambda" class="quarto-xref">Table&nbsp;<span>4.6</span></a>).</p>
+<div class="cell">
+<div id="tbl-cov-lambda" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-cov-lambda-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;4.6: Closed-form shrinkage intensity per type × time unit, Welch-gated panel (<code>output/grn/plugin/plugin_summary.csv</code>). <span class="math inline">C_j</span>: scored cells; <span class="math inline">G_t</span>: panel genes; <span class="math inline">1-\hat\lambda^{\ast}</span>: factor applied to every sample correlation; last column: share of the <span class="math inline">G_t</span> eigenvalues of the denoised matrix of <a href="#eq-cov-denoised" class="quarto-xref">Equation&nbsp;<span>4.3</span></a> (<span class="math inline">\kappa=0</span>) that were negative and raised to zero.
+</figcaption>
+<div aria-describedby="tbl-cov-lambda-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<script src="https://cdn.jsdelivr.net/gh/vincentarelbundock/tinytable@main/inst/tinytable.js"></script>
+
+    <script>
+      // Create table-specific functions using external factory
+      const tableFns_tl1y5cq40brwsrl4idvf = TinyTable.createTableFunctions("tinytable_tl1y5cq40brwsrl4idvf");
+      // tinytable span after
+      window.addEventListener('load', function () {
+          var cellsToStyle = [
+            // tinytable style arrays after
+          { positions: [ { i: '11', j: 3 }, { i: '11', j: 4 }, { i: '11', j: 5 }, { i: '11', j: 6 }, { i: '11', j: 7 } ], css_id: 'tinytable_css_at5milpr7otejo4h03jl',}, 
+          { positions: [ { i: '1', j: 3 }, { i: '2', j: 3 }, { i: '3', j: 3 }, { i: '4', j: 3 }, { i: '5', j: 3 }, { i: '6', j: 3 }, { i: '7', j: 3 }, { i: '8', j: 3 }, { i: '9', j: 3 }, { i: '10', j: 3 }, { i: '1', j: 4 }, { i: '2', j: 4 }, { i: '3', j: 4 }, { i: '4', j: 4 }, { i: '5', j: 4 }, { i: '6', j: 4 }, { i: '7', j: 4 }, { i: '8', j: 4 }, { i: '9', j: 4 }, { i: '10', j: 4 }, { i: '1', j: 5 }, { i: '2', j: 5 }, { i: '3', j: 5 }, { i: '4', j: 5 }, { i: '5', j: 5 }, { i: '6', j: 5 }, { i: '7', j: 5 }, { i: '8', j: 5 }, { i: '9', j: 5 }, { i: '10', j: 5 }, { i: '1', j: 6 }, { i: '2', j: 6 }, { i: '3', j: 6 }, { i: '4', j: 6 }, { i: '5', j: 6 }, { i: '6', j: 6 }, { i: '7', j: 6 }, { i: '8', j: 6 }, { i: '9', j: 6 }, { i: '10', j: 6 }, { i: '1', j: 7 }, { i: '2', j: 7 }, { i: '3', j: 7 }, { i: '4', j: 7 }, { i: '5', j: 7 }, { i: '6', j: 7 }, { i: '7', j: 7 }, { i: '8', j: 7 }, { i: '9', j: 7 }, { i: '10', j: 7 } ], css_id: 'tinytable_css_20o6ecuizajxyqlhm9cy',}, 
+          { positions: [ { i: '0', j: 3 }, { i: '0', j: 4 }, { i: '0', j: 5 }, { i: '0', j: 6 }, { i: '0', j: 7 } ], css_id: 'tinytable_css_kuzgt60lrkstd57jc3s8',}, 
+          { positions: [ { i: '11', j: 1 }, { i: '11', j: 2 } ], css_id: 'tinytable_css_c9i1zutp8rdd2f1vm23z',}, 
+          { positions: [ { i: '0', j: 1 }, { i: '0', j: 2 } ], css_id: 'tinytable_css_oey0ss8v7fubz6gr36d4',}, 
+          ];
+
+          // Loop over the arrays to style the cells
+          cellsToStyle.forEach(function (group) {
+              group.positions.forEach(function (cell) {
+                  tableFns_tl1y5cq40brwsrl4idvf.styleCell(cell.i, cell.j, group.css_id);
+              });
+          });
+      });
+    </script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/vincentarelbundock/tinytable@main/inst/tinytable.css">
+    <style>
+    /* tinytable css entries after */
+    #tinytable_tl1y5cq40brwsrl4idvf td.tinytable_css_at5milpr7otejo4h03jl, #tinytable_tl1y5cq40brwsrl4idvf th.tinytable_css_at5milpr7otejo4h03jl {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.08em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: right }
+    #tinytable_tl1y5cq40brwsrl4idvf td.tinytable_css_20o6ecuizajxyqlhm9cy, #tinytable_tl1y5cq40brwsrl4idvf th.tinytable_css_20o6ecuizajxyqlhm9cy { text-align: right }
+    #tinytable_tl1y5cq40brwsrl4idvf td.tinytable_css_kuzgt60lrkstd57jc3s8, #tinytable_tl1y5cq40brwsrl4idvf th.tinytable_css_kuzgt60lrkstd57jc3s8 {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.08em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: right }
+    #tinytable_tl1y5cq40brwsrl4idvf td.tinytable_css_c9i1zutp8rdd2f1vm23z, #tinytable_tl1y5cq40brwsrl4idvf th.tinytable_css_c9i1zutp8rdd2f1vm23z {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.08em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%;  }
+    #tinytable_tl1y5cq40brwsrl4idvf td.tinytable_css_oey0ss8v7fubz6gr36d4, #tinytable_tl1y5cq40brwsrl4idvf th.tinytable_css_oey0ss8v7fubz6gr36d4 {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.08em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%;  }
+    </style>
+    <div class="container">
+      
+<table id="tinytable_tl1y5cq40brwsrl4idvf" class="tinytable cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" scope="col" data-row="0" data-col="1">Time</th>
+<th data-quarto-table-cell-role="th" scope="col" data-row="0" data-col="2">Cell type</th>
+<th data-quarto-table-cell-role="th" scope="col" data-row="0" data-col="3">$C_j$</th>
+<th data-quarto-table-cell-role="th" scope="col" data-row="0" data-col="4">$G_t$</th>
+<th data-quarto-table-cell-role="th" scope="col" data-row="0" data-col="5">$\hat\lambda^{\ast}$</th>
+<th data-quarto-table-cell-role="th" scope="col" data-row="0" data-col="6">$1-\hat\lambda^{\ast}$</th>
+<th data-quarto-table-cell-role="th" scope="col" data-row="0" data-col="7">Eigenvalues raised to zero</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-row="1" data-col="1">48 h</td>
+<td data-row="1" data-col="2">Epiblast</td>
+<td data-row="1" data-col="3">10,590</td>
+<td data-row="1" data-col="4">1,417</td>
+<td data-row="1" data-col="5">0.006</td>
+<td data-row="1" data-col="6">0.99</td>
+<td data-row="1" data-col="7">44%</td>
+</tr>
+<tr class="even">
+<td data-row="2" data-col="1">48 h</td>
+<td data-row="2" data-col="2">Exiting naïve pluripotency</td>
+<td data-row="2" data-col="3">265</td>
+<td data-row="2" data-col="4">1,417</td>
+<td data-row="2" data-col="5">0.253</td>
+<td data-row="2" data-col="6">0.75</td>
+<td data-row="2" data-col="7">81%</td>
+</tr>
+<tr class="odd">
+<td data-row="3" data-col="1">48 h</td>
+<td data-row="3" data-col="2">Naïve pluripotency</td>
+<td data-row="3" data-col="3">36</td>
+<td data-row="3" data-col="4">1,417</td>
+<td data-row="3" data-col="5">0.744</td>
+<td data-row="3" data-col="6">0.26</td>
+<td data-row="3" data-col="7">97%</td>
+</tr>
+<tr class="even">
+<td data-row="4" data-col="1">72 h</td>
+<td data-row="4" data-col="2">Primitive streak</td>
+<td data-row="4" data-col="3">4,279</td>
+<td data-row="4" data-col="4">3,420</td>
+<td data-row="4" data-col="5">0.026</td>
+<td data-row="4" data-col="6">0.97</td>
+<td data-row="4" data-col="7">58%</td>
+</tr>
+<tr class="odd">
+<td data-row="5" data-col="1">72 h</td>
+<td data-row="5" data-col="2">Ectopic pluripotency</td>
+<td data-row="5" data-col="3">266</td>
+<td data-row="5" data-col="4">3,420</td>
+<td data-row="5" data-col="5">0.372</td>
+<td data-row="5" data-col="6">0.63</td>
+<td data-row="5" data-col="7">92%</td>
+</tr>
+<tr class="even">
+<td data-row="6" data-col="1">72 h</td>
+<td data-row="6" data-col="2">Naïve pluripotency</td>
+<td data-row="6" data-col="3">66</td>
+<td data-row="6" data-col="4">3,420</td>
+<td data-row="6" data-col="5">0.595</td>
+<td data-row="6" data-col="6">0.40</td>
+<td data-row="6" data-col="7">98%</td>
+</tr>
+<tr class="odd">
+<td data-row="7" data-col="1">96 h</td>
+<td data-row="7" data-col="2">Pre-somitic mesoderm</td>
+<td data-row="7" data-col="3">3,589</td>
+<td data-row="7" data-col="4">5,821</td>
+<td data-row="7" data-col="5">0.021</td>
+<td data-row="7" data-col="6">0.98</td>
+<td data-row="7" data-col="7">64%</td>
+</tr>
+<tr class="even">
+<td data-row="8" data-col="1">96 h</td>
+<td data-row="8" data-col="2">Caudal mesoderm</td>
+<td data-row="8" data-col="3">1,061</td>
+<td data-row="8" data-col="4">5,821</td>
+<td data-row="8" data-col="5">0.078</td>
+<td data-row="8" data-col="6">0.92</td>
+<td data-row="8" data-col="7">81%</td>
+</tr>
+<tr class="odd">
+<td data-row="9" data-col="1">96 h</td>
+<td data-row="9" data-col="2">Gut</td>
+<td data-row="9" data-col="3">140</td>
+<td data-row="9" data-col="4">5,821</td>
+<td data-row="9" data-col="5">0.386</td>
+<td data-row="9" data-col="6">0.61</td>
+<td data-row="9" data-col="7">97%</td>
+</tr>
+<tr class="even">
+<td data-row="10" data-col="1">96 h</td>
+<td data-row="10" data-col="2">Ectopic pluripotency</td>
+<td data-row="10" data-col="3">116</td>
+<td data-row="10" data-col="4">5,821</td>
+<td data-row="10" data-col="5">0.408</td>
+<td data-row="10" data-col="6">0.59</td>
+<td data-row="10" data-col="7">98%</td>
+</tr>
+<tr class="odd">
+<td data-row="11" data-col="1">96 h</td>
+<td data-row="11" data-col="2">Somite differentiation front</td>
+<td data-row="11" data-col="3">29</td>
+<td data-row="11" data-col="4">5,821</td>
+<td data-row="11" data-col="5">0.630</td>
+<td data-row="11" data-col="6">0.37</td>
+<td data-row="11" data-col="7">99%</td>
+</tr>
+</tbody>
+</table>
+
+    </div>
+<!-- hack to avoid NA insertion in last line -->
+</div>
+</div>
+</figure>
+</div>
+</div>
+<ul>
+<li><strong>Abundant types are barely shrunk.</strong> In the three units with 3,589 cells or more, <span class="math inline">\hat\lambda^{\ast}</span> is 0.006 to 0.03: the estimate is the sample correlation to within 3%, with all its sampling noise, and the floor on the correlation eigenvalues is only 0.006 to 0.03.</li>
+<li><strong>Rare types are shrunk towards independence.</strong> With 29 to 66 cells, <span class="math inline">\hat\lambda^{\ast}</span> is 0.60 to 0.74: about 40% or less of each sample correlation is kept, and the estimate is close to a diagonal matrix.</li>
+<li><strong>One number for all pairs.</strong> The same factor applies to a pair of co-regulated genes and to a pair of unrelated genes. The estimator cannot keep one and remove the other.</li>
+</ul>
+<p><strong>A dense estimate is not evidence that every pair of genes interacts.</strong> Three mechanisms give a non-zero covariance to a pair with no direct link.</p>
+<ul>
+<li><strong>Sampling noise.</strong> A sample correlation is never exactly zero, even for independent genes. Shrinkage multiplies it by <span class="math inline">1-\lambda</span>; it does not threshold.</li>
+<li><strong>Covariance is not the network.</strong> Direct interactions are the zeros of the precision matrix. Two genes linked only through other genes still have a non-zero covariance. A covariance block is zero only between groups of genes with no path between them. Isolated groups can be looked for with the sparse arms (3, <a href="#sec-silggm" class="quarto-xref"><span>Section 4.2.4</span></a>), not with this one.</li>
+<li><strong>Raw counts share a cell-size factor.</strong> The covariances are computed on raw counts (<a href="#sec-cov-inputs" class="quarto-xref"><span>Section 4.1.1</span></a>), so every pair of genes receives the size term <span class="math inline">\nu\,\mu_g\mu_h</span>, positive for all pairs. This is the extrinsic noise that <code>extrinsic_noise_nu()</code> estimates (2).</li>
+</ul>
+<p><strong>Denoised arm.</strong> Removing the Poisson diagonal leaves a matrix with many negative eigenvalues, raised to zero before shrinkage (last column of <a href="#tbl-cov-lambda" class="quarto-xref">Table&nbsp;<span>4.6</span></a>). For the rarest types the count equals <span class="math inline">G_t-(C_j-1)</span>, the null space of the sample covariance (1,382 of 1,417 for the 36 naïve-pluripotency cells at 48 h): before shrinkage, <span class="math inline">\widehat{\boldsymbol{\Sigma}}^{\mathrm{bio}}_{j}</span> has rank at most <span class="math inline">C_j-1</span>, and <span class="math inline">\lambda</span> alone makes it invertible.</p>
+<p><strong>What this implies for the deconvolution.</strong> The acceptance of a dense plug-in (<a href="#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a>) concerns the likelihood, not the interpretation. In the first pass the Newton failure rate did not differ between the four covariance inputs (22 to 28 of 48 fits each, <code>convergence_failures.md</code>), so the level of regularisation is not what stops the optimiser. Its effect on the accuracy of <span class="math inline">\hat{\boldsymbol{p}}</span> is not measured yet.</p>
+<p><span class="light-content" style="color: #7a1f1f;border-radius: 0.2rem; padding: 0 0.2rem 0 0.2rem;background-color: #f4c7c3;">TODO: compare <span class="math inline">\hat\lambda^{\ast}</span> with a grid up to <span class="math inline">\lambda=1</span> and with the sparse arms on deconvolution accuracy; planned as a factor of the sweep in <a href="06-sensitivity-misspecification.html#sec-sens-panel-size" class="quarto-xref"><span>Section 7.3</span></a>.</span></p>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="list">

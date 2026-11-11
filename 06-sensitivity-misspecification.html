@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2026-11-10">
+<meta name="dcterms.date" content="2026-11-11">
 <meta name="description" content="How the fit moves when the precision matrices are misspecified.">
 
 <title>7&nbsp; Sensitivity analyses – DeCovarT reproducibility</title>
@@ -254,7 +254,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">10 Nov 2026</p>
+        <p class="date">11 Nov 2026</p>
       </div>
     </div>
     
@@ -523,15 +523,16 @@ Table&nbsp;7.2: Factors of the panel-size sweep. The largest panel stays below t
 <li><strong>Metrics.</strong> <code>DeCovarT::compute_benchmark_metrics()</code> with the true cell fractions: total variation and RMSE per bulk (<code>regression$global</code>), and per-type correlation and error (<code>regression$cell_type</code>). For the real bulks, the total variation between <span class="math inline">\hat{\boldsymbol{p}}</span> at each size and at 500 genes.</li>
 </ul>
 <p>The covariance has <span class="math inline">G(G+1)/2</span> entries per type. Above the number of reference cells of a type the sample covariance is singular, and only the shrinkage estimate of <a href="03-covariance-estimation.html#sec-shrinkage" class="quarto-xref"><span>Section 4.2.1</span></a> is defined; the closed-form intensity is used in the sweep rather than cross-validation, to keep the cost linear in the number of panels.</p>
+<p><span class="light-content" style="color: #7a1f1f;border-radius: 0.2rem; padding: 0 0.2rem 0 0.2rem;background-color: #f4c7c3;">TODO: add the level of covariance regularisation as a factor of the sweep. The shrinkage estimate is dense by construction: it multiplies every sample correlation by <span class="math inline">1 - \lambda</span> and sets none to zero, so it says nothing about isolated groups of genes. At the closed-form intensity the abundant types are barely shrunk (<span class="math inline">\lambda</span> of 0.006 to 0.03 on the Welch-gated panels, <code>output/grn/plugin/plugin_summary.csv</code>). Levels to compare: (i) <span class="math inline">\lambda</span> on a grid, closed form; 0.25; 0.5; 0.75; 1 (diagonal, no gene-gene term); (ii) a sparse arm, the graphical lasso precision of <a href="03-covariance-estimation.html#eq-grn-export" class="quarto-xref">Equation&nbsp;<span>4.1</span></a> along its penalty path; (iii) raw counts against size-factor-scaled counts, since a shared cell-size factor correlates every pair of genes. Report, per type and level, the share of non-zero off-diagonal partial correlations, the number of connected components and the condition number, next to the accuracy metrics and the agreement between the two optimisers. First pass (<code>convergence_failures.md</code>): the Newton failure rate did not differ between the four covariance inputs, so the question is open for accuracy, not for convergence.</span></p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Not run. Function names and arguments follow R/02_02_stats_cross_cell.R,</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># R/cv_covariance_selection.R and the DeCovarT reference. Culture-stress</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># labels are removed first,</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># as in scripts/01_03_export_equal_type_seurat.R.</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># R/03_01_stats_covariance_estimation.R and the DeCovarT reference.</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Culture-stress labels are removed first, as in</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># scripts/01_03_export_equal_type_seurat.R.</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/02_00_utils.R"</span>)</span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/02_01_stats_quality_control.R"</span>)</span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/02_02_stats_cross_cell.R"</span>)</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/cv_covariance_selection.R"</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/03_01_stats_covariance_estimation.R"</span>)</span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>seu <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"data/intermediate/suppinger_sct_allowlist_seurat.rds"</span>)</span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>ranks <span class="ot">&lt;-</span> utils<span class="sc">::</span><span class="fu">read.csv</span>(</span>
