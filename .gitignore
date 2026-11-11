@@ -50,6 +50,7 @@ data/processed/*
 !output/.gitkeep
 # Retired figures and tables. Kept on disk; not part of the book.
 output/archives/
+output/archive_deconvolution/
 logs/*
 !logs/.gitkeep
 
@@ -71,3 +72,9 @@ rsconnect/
 
 # Machine-specific Quarto environment (TIKZ_BIN for scripts/tikz-lualatex.sh)
 docs/_environment.local
+
+# Document extractions (document-extraction rule)
+.firecrawl/
+
+# Python byte-code of the verification checks
+__pycache__/

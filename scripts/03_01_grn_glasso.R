@@ -35,9 +35,9 @@
 
 root <- getwd()
 source(file.path(root, "R", "02_00_utils.R"))
-source(file.path(root, "R", "ebic_regularisation_path.R"))
-source(file.path(root, "R", "cv_covariance_selection.R"))
-source(file.path(root, "R", "plot_grn_regularisation.R"))
+source(file.path(root, "R", "03_02_stats_regularisation_path.R"))
+source(file.path(root, "R", "03_01_stats_covariance_estimation.R"))
+source(file.path(root, "R", "03_02_vis_regularisation_path.R"))
 
 time_levels <- c("48h", "72h", "96h")
 normalise <- "none" # "none" (default) or "library" (sensitivity variant)

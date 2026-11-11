@@ -1,0 +1,87 @@
+"time","gene_set","genes","type_a","type_b","pearson","kendall","cosine"
+"48h","r2_05",17,"Epiblast","Epiblast",1,1,1
+"48h","r2_05",17,"Exiting naïve pluripotency","Epiblast",0.990184598955271,0.926470588235294,0.991075675331779
+"48h","r2_05",17,"Naïve pluripotency","Epiblast",0.98326621394322,0.808823529411765,0.985087540286845
+"48h","r2_05",17,"Epiblast","Exiting naïve pluripotency",0.990184598955271,0.926470588235294,0.991075675331779
+"48h","r2_05",17,"Exiting naïve pluripotency","Exiting naïve pluripotency",1,1,1
+"48h","r2_05",17,"Naïve pluripotency","Exiting naïve pluripotency",0.995053560822205,0.882352941176471,0.996159607380889
+"48h","r2_05",17,"Epiblast","Naïve pluripotency",0.98326621394322,0.808823529411765,0.985087540286845
+"48h","r2_05",17,"Exiting naïve pluripotency","Naïve pluripotency",0.995053560822205,0.882352941176471,0.996159607380889
+"48h","r2_05",17,"Naïve pluripotency","Naïve pluripotency",1,1,1
+"48h","welch",1417,"Epiblast","Epiblast",1,1,1
+"48h","welch",1417,"Exiting naïve pluripotency","Epiblast",0.973521339151035,0.777428473243962,0.976159575134385
+"48h","welch",1417,"Naïve pluripotency","Epiblast",0.916253676896128,0.621914159867515,0.923700736617535
+"48h","welch",1417,"Epiblast","Exiting naïve pluripotency",0.973521339151035,0.777428473243962,0.976159575134385
+"48h","welch",1417,"Exiting naïve pluripotency","Exiting naïve pluripotency",1,1,1
+"48h","welch",1417,"Naïve pluripotency","Exiting naïve pluripotency",0.979530040582598,0.797596763578315,0.98114275457039
+"48h","welch",1417,"Epiblast","Naïve pluripotency",0.916253676896128,0.621914159867515,0.923700736617535
+"48h","welch",1417,"Exiting naïve pluripotency","Naïve pluripotency",0.979530040582598,0.797596763578315,0.98114275457039
+"48h","welch",1417,"Naïve pluripotency","Naïve pluripotency",1,1,0.999999999999999
+"72h","r2_05",140,"Ectopic pluripotency","Ectopic pluripotency",1,1,1
+"72h","r2_05",140,"Naïve pluripotency","Ectopic pluripotency",0.947520575695253,0.677912168126263,0.954525898065012
+"72h","r2_05",140,"Primitive streak","Ectopic pluripotency",0.843913226824734,0.71559256211083,0.86784781179488
+"72h","r2_05",140,"Ectopic pluripotency","Naïve pluripotency",0.947520575695253,0.677912168126263,0.954525898065012
+"72h","r2_05",140,"Naïve pluripotency","Naïve pluripotency",1,1,1
+"72h","r2_05",140,"Primitive streak","Naïve pluripotency",0.789046207102708,0.521520145322156,0.819189158561147
+"72h","r2_05",140,"Ectopic pluripotency","Primitive streak",0.843913226824734,0.71559256211083,0.86784781179488
+"72h","r2_05",140,"Naïve pluripotency","Primitive streak",0.789046207102708,0.521520145322156,0.819189158561147
+"72h","r2_05",140,"Primitive streak","Primitive streak",1,1,1
+"72h","welch",3420,"Ectopic pluripotency","Ectopic pluripotency",1,1,0.999999999999999
+"72h","welch",3420,"Naïve pluripotency","Ectopic pluripotency",0.981984553844014,0.823828275696509,0.98332825668908
+"72h","welch",3420,"Primitive streak","Ectopic pluripotency",0.979920486883074,0.802570273048028,0.981668461178904
+"72h","welch",3420,"Ectopic pluripotency","Naïve pluripotency",0.981984553844014,0.823828275696509,0.98332825668908
+"72h","welch",3420,"Naïve pluripotency","Naïve pluripotency",1,1,1
+"72h","welch",3420,"Primitive streak","Naïve pluripotency",0.950107585038569,0.69221851079033,0.954081796023073
+"72h","welch",3420,"Ectopic pluripotency","Primitive streak",0.979920486883074,0.802570273048028,0.981668461178904
+"72h","welch",3420,"Naïve pluripotency","Primitive streak",0.950107585038569,0.69221851079033,0.954081796023073
+"72h","welch",3420,"Primitive streak","Primitive streak",1,1,1
+"96h","r2_05",635,"Caudal mesoderm","Caudal mesoderm",1,1,1
+"96h","r2_05",635,"Ectopic pluripotency","Caudal mesoderm",0.88109857303105,0.574396139977002,0.892742472733718
+"96h","r2_05",635,"Gut","Caudal mesoderm",0.905409471699943,0.622903863104573,0.915101981518949
+"96h","r2_05",635,"Pre-somitic mesoderm","Caudal mesoderm",0.977316336445984,0.602332484721249,0.979181813119788
+"96h","r2_05",635,"Somite differentiation front","Caudal mesoderm",0.967664285274494,0.50792697113939,0.970418643764144
+"96h","r2_05",635,"Caudal mesoderm","Ectopic pluripotency",0.88109857303105,0.574396139977002,0.892742472733718
+"96h","r2_05",635,"Ectopic pluripotency","Ectopic pluripotency",1,1,1
+"96h","r2_05",635,"Gut","Ectopic pluripotency",0.796018926358628,0.538419845613233,0.815414691050523
+"96h","r2_05",635,"Pre-somitic mesoderm","Ectopic pluripotency",0.850840850065108,0.412190919426297,0.864723314408001
+"96h","r2_05",635,"Somite differentiation front","Ectopic pluripotency",0.846985857222261,0.380649999858251,0.861115092440504
+"96h","r2_05",635,"Caudal mesoderm","Gut",0.905409471699943,0.622903863104573,0.915101981518949
+"96h","r2_05",635,"Ectopic pluripotency","Gut",0.796018926358628,0.538419845613233,0.815414691050523
+"96h","r2_05",635,"Gut","Gut",1,1,1
+"96h","r2_05",635,"Pre-somitic mesoderm","Gut",0.892946039728421,0.478863276527619,0.903188604723961
+"96h","r2_05",635,"Somite differentiation front","Gut",0.87957020491144,0.440295307781381,0.890983643082429
+"96h","r2_05",635,"Caudal mesoderm","Pre-somitic mesoderm",0.977316336445984,0.602332484721249,0.979181813119788
+"96h","r2_05",635,"Ectopic pluripotency","Pre-somitic mesoderm",0.850840850065108,0.412190919426297,0.864723314408001
+"96h","r2_05",635,"Gut","Pre-somitic mesoderm",0.892946039728421,0.478863276527619,0.903188604723961
+"96h","r2_05",635,"Pre-somitic mesoderm","Pre-somitic mesoderm",1,1,1
+"96h","r2_05",635,"Somite differentiation front","Pre-somitic mesoderm",0.996486223960355,0.827318529206229,0.996809583990749
+"96h","r2_05",635,"Caudal mesoderm","Somite differentiation front",0.967664285274494,0.50792697113939,0.970418643764144
+"96h","r2_05",635,"Ectopic pluripotency","Somite differentiation front",0.846985857222261,0.380649999858251,0.861115092440504
+"96h","r2_05",635,"Gut","Somite differentiation front",0.87957020491144,0.440295307781381,0.890983643082429
+"96h","r2_05",635,"Pre-somitic mesoderm","Somite differentiation front",0.996486223960355,0.827318529206229,0.996809583990749
+"96h","r2_05",635,"Somite differentiation front","Somite differentiation front",1,1,1
+"96h","welch",5821,"Caudal mesoderm","Caudal mesoderm",1,1,1
+"96h","welch",5821,"Ectopic pluripotency","Caudal mesoderm",0.944386384864481,0.743208532279219,0.948958380281312
+"96h","welch",5821,"Gut","Caudal mesoderm",0.958380236881047,0.792404944394993,0.961863296791193
+"96h","welch",5821,"Pre-somitic mesoderm","Caudal mesoderm",0.988736361591132,0.810096131278411,0.989717549061771
+"96h","welch",5821,"Somite differentiation front","Caudal mesoderm",0.978313393311464,0.726628229310768,0.980297147440467
+"96h","welch",5821,"Caudal mesoderm","Ectopic pluripotency",0.944386384864481,0.743208532279219,0.948958380281312
+"96h","welch",5821,"Ectopic pluripotency","Ectopic pluripotency",1,1,1
+"96h","welch",5821,"Gut","Ectopic pluripotency",0.903448887941246,0.683633721878908,0.911296371508739
+"96h","welch",5821,"Pre-somitic mesoderm","Ectopic pluripotency",0.932986375302818,0.673582593554795,0.938526661787381
+"96h","welch",5821,"Somite differentiation front","Ectopic pluripotency",0.929008349322051,0.638306684064874,0.93490660358132
+"96h","welch",5821,"Caudal mesoderm","Gut",0.958380236881047,0.792404944394993,0.961863296791193
+"96h","welch",5821,"Ectopic pluripotency","Gut",0.903448887941246,0.683633721878908,0.911296371508739
+"96h","welch",5821,"Gut","Gut",1,1,1
+"96h","welch",5821,"Pre-somitic mesoderm","Gut",0.953046937022077,0.737769617968172,0.956995707757716
+"96h","welch",5821,"Somite differentiation front","Gut",0.937923982869154,0.683108820059223,0.943190132306099
+"96h","welch",5821,"Caudal mesoderm","Pre-somitic mesoderm",0.988736361591132,0.810096131278411,0.989717549061771
+"96h","welch",5821,"Ectopic pluripotency","Pre-somitic mesoderm",0.932986375302818,0.673582593554795,0.938526661787381
+"96h","welch",5821,"Gut","Pre-somitic mesoderm",0.953046937022077,0.737769617968172,0.956995707757716
+"96h","welch",5821,"Pre-somitic mesoderm","Pre-somitic mesoderm",1,1,1
+"96h","welch",5821,"Somite differentiation front","Pre-somitic mesoderm",0.993687347691896,0.84111178969107,0.994234928041082
+"96h","welch",5821,"Caudal mesoderm","Somite differentiation front",0.978313393311464,0.726628229310768,0.980297147440467
+"96h","welch",5821,"Ectopic pluripotency","Somite differentiation front",0.929008349322051,0.638306684064874,0.93490660358132
+"96h","welch",5821,"Gut","Somite differentiation front",0.937923982869154,0.683108820059223,0.943190132306099
+"96h","welch",5821,"Pre-somitic mesoderm","Somite differentiation front",0.993687347691896,0.84111178969107,0.994234928041082
+"96h","welch",5821,"Somite differentiation front","Somite differentiation front",1,1,1

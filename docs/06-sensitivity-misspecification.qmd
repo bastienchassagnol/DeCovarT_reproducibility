@@ -155,17 +155,37 @@ the shrinkage estimate of @sec-shrinkage is defined; the closed-form
 intensity is used in the sweep rather than cross-validation, to keep the
 cost linear in the number of panels.
 
+[TODO: add the level of covariance regularisation as a factor of the
+sweep. The shrinkage estimate is dense by construction: it multiplies
+every sample correlation by $1 - \lambda$ and sets none to zero, so it
+says nothing about isolated groups of genes. At the closed-form
+intensity the abundant types are barely shrunk ($\lambda$ of 0.006 to
+0.03 on the Welch-gated panels, `output/grn/plugin/plugin_summary.csv`).
+Levels to compare: (i) $\lambda$ on a grid, closed form; 0.25; 0.5;
+0.75; 1 (diagonal, no gene-gene term); (ii) a sparse arm, the graphical
+lasso precision of @eq-grn-export along its penalty path; (iii) raw
+counts against size-factor-scaled counts, since a shared cell-size
+factor correlates every pair of genes. Report, per type and level, the
+share of non-zero off-diagonal partial correlations, the number of
+connected components and the condition number, next to the accuracy
+metrics and the agreement between the two optimisers. Done so far
+(@sec-deconv-96h-diagnosis): level (i) for DeCovarT on the raw
+covariance, L-BFGS-B, bulk as is; the RMSE at 96 h on the Welch-gated
+panel goes from 0.36 (closed form) to 0.034 ($\lambda=0.5$), with no
+gain on the small panels. Levels (ii) and (iii), and a choice of
+$\lambda$ that does not use the observed composition, remain.]{.highlight}
+
 ```{r}
 #| label: sens-panel-size-sweep
 #| eval: false
 # Not run. Function names and arguments follow R/02_02_stats_cross_cell.R,
-# R/cv_covariance_selection.R and the DeCovarT reference. Culture-stress
-# labels are removed first,
-# as in scripts/01_03_export_equal_type_seurat.R.
+# R/03_01_stats_covariance_estimation.R and the DeCovarT reference.
+# Culture-stress labels are removed first, as in
+# scripts/01_03_export_equal_type_seurat.R.
 source("R/02_00_utils.R")
 source("R/02_01_stats_quality_control.R")
 source("R/02_02_stats_cross_cell.R")
-source("R/cv_covariance_selection.R")
+source("R/03_01_stats_covariance_estimation.R")
 
 seu <- readRDS("data/intermediate/suppinger_sct_allowlist_seurat.rds")
 ranks <- utils::read.csv(
