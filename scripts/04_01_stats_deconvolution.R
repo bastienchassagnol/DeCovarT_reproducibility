@@ -8,6 +8,10 @@
 #   gene_sets=r2_05,welch   times=48h,72h,96h   samples=48h_CTL_rep1
 #   stages=decovart,comparators,sieve,lambda,total,firth,tables
 #   covariances=diag_raw,full_raw,full_bio   (stage sieve only)
+#   ratios=none,gene       platform ratios of the stages decovart, total
+#                          and firth
+#   firth_budget=3600      seconds; a Firth slot whose projected time per
+#                          fit is above it is recorded as not run
 # A partial run writes checkpoints; `stages=tables` rebuilds the tables
 # from every checkpoint on disk.
 #
@@ -92,7 +96,7 @@ stage_levels <- c(
 sieve_inputs <- c("diag_raw", "full_raw", "full_bio")
 lambda_levels <- c(0.25, 0.5, 0.75, 1)
 variant_covariances <- c("raw", "denoised_bio")
-firth_budget_sec <- 3600 # projected time of one Firth fit
+firth_budget_default <- 3600 # projected seconds of one Firth fit
 mead_pseudo_individuals <- 4L
 optimisers <- c("newton", "lbfgsb")
 platform_ratios <- c("none", "gene")
@@ -120,6 +124,12 @@ run_gene_sets <- match.arg(
 )
 run_stages <- match.arg(cli_value("stages", stage_levels), stage_levels, TRUE)
 run_samples <- cli_value("samples", NULL)
+platform_ratios <- match.arg(
+  cli_value("ratios", platform_ratios),
+  platform_ratios,
+  TRUE
+)
+firth_budget_sec <- as.numeric(cli_value("firth_budget", firth_budget_default))
 run_sieve_inputs <- match.arg(
   cli_value("covariances", sieve_inputs),
   sieve_inputs,
@@ -714,7 +724,12 @@ for (stage in intersect(c("total", "firth"), run_stages)) {
       )
       tasks <- tasks[!file.exists(tasks$file), , drop = FALSE]
       gate_path <- extra_file(stage, tm, gs, "not_run")
-      if (nrow(tasks) == 0L || file.exists(gate_path)) {
+      # A slot recorded as not run is tried again only with a larger
+      # budget than the default.
+      if (
+        nrow(tasks) == 0L ||
+          (file.exists(gate_path) && firth_budget_sec <= firth_budget_default)
+      ) {
         next
       }
       moments <- read_moments(tm, gs)
@@ -778,6 +793,7 @@ for (stage in intersect(c("total", "firth"), run_stages)) {
           invisible(gc())
           next
         }
+        unlink(gate_path)
       }
       done <- parallel::mclapply(
         seq_len(nrow(tasks)),
@@ -1096,7 +1112,7 @@ if ("tables" %in% run_stages) {
   write_table(pooled[order(pooled$rmse), ], "benchmark_metrics_pooled.csv")
 
   # Correlation between the mean profiles of the cell types, per time
-  # and gene set (Pearson on mean counts, and Kendall).
+  # and gene set (Pearson and cosine on mean counts, and Kendall).
   profile_correlation <- do.call(
     rbind,
     lapply(time_levels, function(tm) {
@@ -1117,6 +1133,7 @@ if ("tables" %in% run_stages) {
             grid,
             pearson = stats::cor(mu)[at],
             kendall = stats::cor(mu, method = "kendall")[at],
+            cosine = (crossprod(mu) / tcrossprod(sqrt(colSums(mu^2))))[at],
             stringsAsFactors = FALSE
           )
         })

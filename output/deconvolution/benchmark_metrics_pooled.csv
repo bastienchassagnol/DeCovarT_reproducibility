@@ -1,20 +1,22 @@
 "method","n_points","n_missing","n_times","pearson","rmse","mae","aitchison","family","algorithm","gene_set","covariance","platform_ratio","optimiser"
-"DeCovarT shrinkage lambda_0.50 | lbfgsb | b_g none | welch",15,0,1,0.986315282670364,0.0452518069821772,0.0250441258372763,1.69025947576236,"DeCovarT variant","DeCovarT shrinkage","welch","lambda_0.50","none","lbfgsb"
+"DeCovarT shrinkage lambda_0.50 | lbfgsb | b_g none | welch",33,0,3,0.99577818675023,0.0396098772180027,0.0269920928716643,1.89625814899703,"DeCovarT variant","DeCovarT shrinkage","welch","lambda_0.50","none","lbfgsb"
 "RNA-Sieve (R) diag_raw | qp_huber | b_g none | welch",33,0,3,0.992239894088509,0.047112873585447,0.0360752459366182,2.36755916430266,"sieve","RNA-Sieve (R)","welch","diag_raw","none","qp_huber"
 "RNA-Sieve (R) full_raw | qp_within | b_g none | welch",33,0,3,0.992120199612257,0.0526130400105379,0.0353827570592156,2.52814299066576,"sieve","RNA-Sieve (R)","welch","full_raw","none","qp_within"
 "RNA-Sieve (R) full_raw | qp | b_g none | welch",33,0,3,0.99211980953699,0.052613918107892,0.0353820369638502,2.52825017297562,"sieve","RNA-Sieve (R)","welch","full_raw","none","qp"
 "DeMixSC wNNLS | welch",33,0,3,0.995018940267441,0.0539034999649318,0.0373030169137603,2.41406611378505,"comparator","DeMixSC wNNLS","welch",NA,"none",NA
+"DeCovarT shrinkage lambda_0.75 | lbfgsb | b_g none | welch",33,0,3,0.988131866625493,0.0611828289452699,0.0389917298400394,2.2665338435812,"DeCovarT variant","DeCovarT shrinkage","welch","lambda_0.75","none","lbfgsb"
 "RNA-Sieve (R) diag_raw | qp | b_g none | welch",33,0,3,0.979214958058021,0.0766129276648384,0.0470039106943502,2.04071130590392,"sieve","RNA-Sieve (R)","welch","diag_raw","none","qp"
 "RNA-Sieve | welch",33,0,3,0.982405265772478,0.0780595306335241,0.0589776036237027,2.82049415329453,"comparator","RNA-Sieve","welch",NA,"none",NA
-"DeCovarT shrinkage lambda_0.75 | lbfgsb | b_g none | welch",15,0,1,0.957348511131911,0.0798572692850561,0.0472505446128532,1.86821205763998,"DeCovarT variant","DeCovarT shrinkage","welch","lambda_0.75","none","lbfgsb"
 "RNA-Sieve (R) diag_raw | qp_within | b_g none | welch",33,0,3,0.975591667620755,0.0829397241002734,0.0487634102455315,1.95403425083502,"sieve","RNA-Sieve (R)","welch","diag_raw","none","qp_within"
 "RNA-Sieve (R) full_raw | qp_huber | b_g none | welch",33,0,3,0.969137688854008,0.094056709180216,0.0749671121765958,3.84861849510497,"sieve","RNA-Sieve (R)","welch","full_raw","none","qp_huber"
 "DWLS | welch",33,0,3,0.967798750421928,0.0972636117720861,0.0581930760644394,2.62389614617208,"comparator","DWLS","welch",NA,"none",NA
 "MEAD (pseudo-individuals) | welch",33,0,3,0.96968580812936,0.0996025210610924,0.0702008795651567,2.78128025023552,"comparator","MEAD (pseudo-individuals)","welch",NA,"none",NA
 "ReDeconv | welch",33,0,3,0.958514022348453,0.113123551779449,0.0748752948559245,2.0337647023888,"comparator","ReDeconv","welch",NA,"none",NA
 "BayesPrism | welch",33,0,3,0.952414721246231,0.118847099631185,0.0675727298837481,2.93042599588629,"comparator","BayesPrism","welch",NA,"none",NA
+"DeCovarT shrinkage lambda_1.00 | lbfgsb | b_g none | welch",33,0,3,0.950744579225972,0.122222574944736,0.0686203987022552,2.94917674871353,"DeCovarT variant","DeCovarT shrinkage","welch","lambda_1.00","none","lbfgsb"
 "DeCovarT total covariance denoised_bio | lbfgsb | b_g none | r2_05",33,0,3,0.941257485294169,0.127971523510781,0.0677338324335678,1.69526934914503,"DeCovarT variant","DeCovarT total covariance","r2_05","denoised_bio","none","lbfgsb"
 "DeCovarT total covariance raw | lbfgsb | b_g gene | r2_05",33,0,3,0.943361264312741,0.128591508926461,0.0731440214532742,2.81697702479918,"DeCovarT variant","DeCovarT total covariance","r2_05","raw","gene","lbfgsb"
+"DeCovarT shrinkage lambda_0.25 | lbfgsb | b_g none | welch",33,0,3,0.931890721157425,0.138897006038356,0.0767029383802512,2.21945172176817,"DeCovarT variant","DeCovarT shrinkage","welch","lambda_0.25","none","lbfgsb"
 "DeCovarT total covariance denoised_bio | lbfgsb | b_g gene | r2_05",33,0,3,0.930092574838071,0.139535962666421,0.0861966991653701,2.76678911624954,"DeCovarT variant","DeCovarT total covariance","r2_05","denoised_bio","gene","lbfgsb"
 "DeCovarT Firth raw | bfgs | b_g gene | r2_05",33,0,3,0.930314808906176,0.140805360459616,0.0766628477981403,1.70716654752589,"DeCovarT variant","DeCovarT Firth","r2_05","raw","gene","bfgs"
 "DeCovarT raw | lbfgsb | b_g gene | r2_05",33,0,3,0.93177774483108,0.140952750267841,0.0791487816720752,2.67539598842318,"DeCovarT","DeCovarT","r2_05","raw","gene","lbfgsb"
@@ -22,19 +24,20 @@
 "DeCovarT Firth denoised_bio | bfgs | b_g gene | r2_05",33,0,3,0.925048040534735,0.144404938193159,0.0859065027494486,2.11576563457829,"DeCovarT variant","DeCovarT Firth","r2_05","denoised_bio","gene","bfgs"
 "DeCovarT denoised + Poisson (fixed-point a) | lbfgsb | b_g gene | r2_05",33,0,3,0.924939683647054,0.144989086141953,0.0883064626587462,2.72336701421159,"DeCovarT","DeCovarT","r2_05","denoised_fixed","gene","lbfgsb"
 "DeCovarT denoised (bio only) | lbfgsb | b_g gene | r2_05",33,0,3,0.923344710719403,0.146340261357122,0.0884428935571064,2.62624839931121,"DeCovarT","DeCovarT","r2_05","denoised_bio","gene","lbfgsb"
-"DeCovarT shrinkage lambda_0.25 | lbfgsb | b_g none | welch",24,0,2,0.89361118983267,0.161623480648527,0.0944276794994591,2.86515436355861,"DeCovarT variant","DeCovarT shrinkage","welch","lambda_0.25","none","lbfgsb"
 "RLM | welch",33,0,3,0.896032988296557,0.168119777469782,0.113686110601498,4.18812674664779,"comparator","RLM","welch",NA,"none",NA
-"DeCovarT shrinkage lambda_1.00 | lbfgsb | b_g none | welch",15,0,1,0.782788758275688,0.175634894817842,0.11110918361143,3.58071165684029,"DeCovarT variant","DeCovarT shrinkage","welch","lambda_1.00","none","lbfgsb"
 "DeCovarT denoised + Poisson (plug-in a) | newton | b_g gene | r2_05",33,0,3,0.889216050710726,0.182475487106643,0.0859475631583831,2.98142997642134,"DeCovarT","DeCovarT","r2_05","denoised_plugin","gene","newton"
 "DeCovarT denoised + Poisson (fixed-point a) | newton | b_g gene | r2_05",33,0,3,0.887210543831999,0.183424165481821,0.0868103155678002,2.92485958768597,"DeCovarT","DeCovarT","r2_05","denoised_fixed","gene","newton"
 "DeCovarT denoised (bio only) | newton | b_g gene | r2_05",33,0,3,0.885668661263795,0.184020217099334,0.0869464099785634,2.83079688767517,"DeCovarT","DeCovarT","r2_05","denoised_bio","gene","newton"
 "DeCovarT raw | newton | b_g gene | r2_05",33,0,3,0.883472162628102,0.187836936411689,0.0942390961974136,3.18793085562715,"DeCovarT","DeCovarT","r2_05","raw","gene","newton"
+"DeCovarT Firth raw | bfgs | b_g gene | welch",18,0,2,0.956601044389229,0.201383584753767,0.178277750655086,2.36561414378121,"DeCovarT variant","DeCovarT Firth","welch","raw","gene","bfgs"
 "DeMixSC wNNLS + b_g | welch",33,0,3,0.851701025455939,0.207728681013009,0.110275620945925,2.85185425805243,"comparator","DeMixSC wNNLS","welch",NA,"gene",NA
 "DeMixSC wNNLS + b_g | r2_05",33,0,3,0.839231672018347,0.219795126687105,0.106532572383238,2.32029147206794,"comparator","DeMixSC wNNLS","r2_05",NA,"gene",NA
 "SCDC | welch",33,0,3,0.80817046213485,0.228166452459905,0.142525867975323,3.93155627388289,"comparator","SCDC","welch",NA,"none",NA
 "DeCovarT raw | lbfgsb | b_g gene | welch",33,0,3,0.799147198254432,0.244093612144088,0.19724413255404,2.82370191097378,"DeCovarT","DeCovarT","welch","raw","gene","lbfgsb"
 "ReDeconv | r2_05",33,0,3,0.759886251426888,0.247874099237037,0.16185706576415,3.85026001207818,"comparator","ReDeconv","r2_05",NA,"none",NA
+"DeCovarT Firth raw | bfgs | b_g none | welch",18,0,2,0.818417867628316,0.251051279044289,0.15166008869496,1.51680735092829,"DeCovarT variant","DeCovarT Firth","welch","raw","none","bfgs"
 "RNA-Sieve (R) full_bio | qp_huber | b_g none | welch",33,0,3,0.736367200110819,0.261170063988932,0.170973942048889,4.55616961386065,"sieve","RNA-Sieve (R)","welch","full_bio","none","qp_huber"
+"DeCovarT total covariance raw | lbfgsb | b_g none | welch",33,0,3,0.688447549029881,0.278110179276294,0.190654151435061,2.89352509740851,"DeCovarT variant","DeCovarT total covariance","welch","raw","none","lbfgsb"
 "DeCovarT denoised + Poisson (plug-in a) | lbfgsb | b_g gene | welch",33,0,3,0.697751372854398,0.283762122941512,0.168469683527103,2.76250388573557,"DeCovarT","DeCovarT","welch","denoised_plugin","gene","lbfgsb"
 "SCDC | r2_05",33,0,3,0.71563693985721,0.286563539048851,0.168932580567352,4.24199225807628,"comparator","SCDC","r2_05",NA,"none",NA
 "DeCovarT denoised + Poisson (fixed-point a) | lbfgsb | b_g gene | welch",33,0,3,0.709354193293035,0.295746092635958,0.162049204774245,3.10212610854818,"DeCovarT","DeCovarT","welch","denoised_fixed","gene","lbfgsb"
@@ -52,6 +55,7 @@
 "DeCovarT raw | newton | b_g none | welch",33,0,3,0.701065267648676,0.324262443163891,0.160844378192653,3.71431007836965,"DeCovarT","DeCovarT","welch","raw","none","newton"
 "DeCovarT denoised + Poisson (fixed-point a) | newton | b_g none | welch",33,0,3,0.680548906351274,0.331063188822983,0.166788459179796,3.39425295314564,"DeCovarT","DeCovarT","welch","denoised_fixed","none","newton"
 "DeCovarT Firth raw | bfgs | b_g none | r2_05",33,0,3,0.536575720533233,0.33437964112373,0.214448126891075,2.70694453697426,"DeCovarT variant","DeCovarT Firth","r2_05","raw","none","bfgs"
+"DeCovarT total covariance raw | lbfgsb | b_g gene | welch",33,0,3,0.363914565906813,0.355136761439254,0.284034451607738,3.82626456224257,"DeCovarT variant","DeCovarT total covariance","welch","raw","gene","lbfgsb"
 "DeCovarT Firth denoised_bio | bfgs | b_g none | r2_05",33,0,3,0.44905451613401,0.363341655202357,0.213253132216342,2.7786462893646,"DeCovarT variant","DeCovarT Firth","r2_05","denoised_bio","none","bfgs"
 "BayesPrism | r2_05",33,0,3,0.446160598979258,0.377116176458708,0.239401057464673,3.99048937190592,"comparator","BayesPrism","r2_05",NA,"none",NA
 "DeCovarT denoised (bio only) | lbfgsb | b_g none | r2_05",33,0,3,0.322303752752021,0.415046643693758,0.238840688135744,3.96493295034968,"DeCovarT","DeCovarT","r2_05","denoised_bio","none","lbfgsb"
@@ -85,11 +89,15 @@
 "RNA-Sieve (R) full_bio | qp_means_var | b_g none | welch",33,0,3,-0.079500259154362,0.498892753276392,0.389532220612127,6.53833413939343,"sieve","RNA-Sieve (R)","welch","full_bio","none","qp_means_var"
 "RNA-Sieve (R) full_bio | full_lik | b_g none | welch",33,0,3,-0.122666728447827,0.505682775957705,0.385814688438184,5.38219999249454,"sieve","RNA-Sieve (R)","welch","full_bio","none","full_lik"
 "DeCovarT denoised (bio only) | lbfgsb | b_g gene | welch",33,0,3,0.214398439674041,0.507573743432672,0.322470487394733,4.79981328203767,"DeCovarT","DeCovarT","welch","denoised_bio","gene","lbfgsb"
+"DeCovarT total covariance denoised_bio | lbfgsb | b_g none | welch",33,0,3,0.20974381186803,0.509081329948985,0.322728469338438,4.54680086417486,"DeCovarT variant","DeCovarT total covariance","welch","denoised_bio","none","lbfgsb"
 "DeCovarT denoised (bio only) | lbfgsb | b_g none | welch",33,0,3,0.209989343856672,0.509092573877254,0.322816685748252,4.60612641618806,"DeCovarT","DeCovarT","welch","denoised_bio","none","lbfgsb"
+"DeCovarT total covariance denoised_bio | lbfgsb | b_g gene | welch",33,0,3,0.196937459207144,0.516786365120497,0.327572340319047,4.88850411320689,"DeCovarT variant","DeCovarT total covariance","welch","denoised_bio","gene","lbfgsb"
 "RNA-Sieve (R) diag_raw | qp_means | b_g none | welch",33,0,3,0.207259018953542,0.520836460138534,0.326968903052795,5.44141804338744,"sieve","RNA-Sieve (R)","welch","diag_raw","none","qp_means"
 "RNA-Sieve (R) full_raw | qp_means | b_g none | welch",33,0,3,0.197079977928663,0.524113550202111,0.330393298348617,5.2396542057046,"sieve","RNA-Sieve (R)","welch","full_raw","none","qp_means"
 "RNA-Sieve (R) full_bio | qp_huber | b_g none | r2_05",33,0,3,-0.0427187917414822,0.52663405197353,0.375370534873901,6.27129877433577,"sieve","RNA-Sieve (R)","r2_05","full_bio","none","qp_huber"
 "RNA-Sieve (R) full_raw | qp_huber | b_g none | r2_05",33,0,3,-0.213549337012849,0.529913736441724,0.405645123401783,5.73826881431346,"sieve","RNA-Sieve (R)","r2_05","full_raw","none","qp_huber"
+"DeCovarT Firth denoised_bio | bfgs | b_g gene | welch",18,0,2,0.271421458917515,0.534163965001749,0.333521849955175,4.62542873374547,"DeCovarT variant","DeCovarT Firth","welch","denoised_bio","gene","bfgs"
+"DeCovarT Firth denoised_bio | bfgs | b_g none | welch",18,0,2,0.26162629277994,0.539239375930876,0.336089916998174,4.65350385583038,"DeCovarT variant","DeCovarT Firth","welch","denoised_bio","none","bfgs"
 "RNA-Sieve (R) full_raw | qp_means_var | b_g none | r2_05",33,0,3,-0.240346239588663,0.545392100850455,0.42909165438996,6.97758306548298,"sieve","RNA-Sieve (R)","r2_05","full_raw","none","qp_means_var"
 "RNA-Sieve (R) full_bio | full_lik | b_g none | r2_05",33,0,3,-0.114519426513676,0.547632429522166,0.388778059245837,5.66864011626672,"sieve","RNA-Sieve (R)","r2_05","full_bio","none","full_lik"
 "RNA-Sieve (R) diag_raw | full_lik | b_g none | r2_05",33,0,3,0.0190833147152461,0.54882607166537,0.366787911221858,6.71607184762722,"sieve","RNA-Sieve (R)","r2_05","diag_raw","none","full_lik"

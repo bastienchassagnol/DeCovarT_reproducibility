@@ -955,11 +955,14 @@ $C_j-1$, and $\lambda$ alone makes it invertible.
 **What this implies for the deconvolution.** The acceptance of a dense
 plug-in (@sec-cov-scope) concerns the likelihood, not the
 interpretation. In the first pass the Newton failure rate did not
-differ between the four covariance inputs (22 to 28 of 48 fits each,
-`convergence_failures.md`), so the level of regularisation is not what
-stops the optimiser. Its effect on the accuracy of
-$\hat{\boldsymbol{p}}$ is not measured yet.
+differ between the four covariance inputs (22 to 28 of 48 fits each),
+so the level of regularisation is not what stops the optimiser. Its
+effect on the accuracy of $\hat{\boldsymbol{p}}$ is large: on the
+Welch-gated panel at 96 h, the RMSE of DeCovarT on the raw covariance
+goes from 0.36 at $\hat\lambda^{\ast}$ to 0.034 at a common
+$\lambda=0.5$ (@sec-deconv-96h-diagnosis). The closed-form intensity
+minimises the error of the covariance, not that of the composition.
 
-[TODO: compare $\hat\lambda^{\ast}$ with a grid up to $\lambda=1$ and
+[TODO: select $\lambda$ without the observed composition, and compare
 with the sparse arms on deconvolution accuracy; planned as a factor of
 the sweep in @sec-sens-panel-size.]{.highlight}

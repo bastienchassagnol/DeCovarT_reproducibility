@@ -1416,6 +1416,31 @@
       "Author": "Andrew McDavid [aut, cre], Greg Finak [aut], Masanao Yajima [aut]",
       "Maintainer": "Andrew McDavid <andrew.n.mcdavid@gmail.com>"
     },
+    "MEAD": {
+      "Package": "MEAD",
+      "Version": "1.0.2",
+      "Source": "GitHub",
+      "Type": "Package",
+      "Title": "Measurement adjusted deconvolution",
+      "Author": "Dongyue Xie",
+      "Maintainer": "Dongyue Xie <dyxie@uchicago.edu>",
+      "Description": "Perform estimation and inference for cell type deconvolution problem.",
+      "License": "GPL (>= 3)",
+      "Encoding": "UTF-8",
+      "LazyData": "true",
+      "Suggests": [
+        "knitr",
+        "rmarkdown"
+      ],
+      "VignetteBuilder": "knitr",
+      "RoxygenNote": "7.2.3",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteUsername": "DongyueXie",
+      "RemoteRepo": "MEAD",
+      "RemoteRef": "d66fa10491fb86de720a173e64b5cb26eeeefcd7",
+      "RemoteSha": "d66fa10491fb86de720a173e64b5cb26eeeefcd7"
+    },
     "Matrix": {
       "Package": "Matrix",
       "Version": "1.7-6",
