@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2026-11-11">
+<meta name="dcterms.date" content="2026-11-12">
 <meta name="description" content="How the fit moves when the precision matrices are misspecified.">
 
 <title>7&nbsp; Sensitivity analyses – DeCovarT reproducibility</title>
@@ -114,6 +114,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<script type="application/json" class="js-hypothesis-config">
+{
+  "theme": "clean"
+}
+</script>
+<script async="" src="https://hypothes.is/embed.js"></script>
+<script>
+  window.document.addEventListener("DOMContentLoaded", function (_event) {
+    document.body.classList.add('hypothesis-enabled');
+  });
+</script>
 <style>
 
       .quarto-title-block .quarto-title-banner {
@@ -254,7 +265,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">11 Nov 2026</p>
+        <p class="date">12 Nov 2026</p>
       </div>
     </div>
     
@@ -346,6 +357,7 @@ window.Quarto = {
   <li><a href="#sec-sensitivity" id="toc-sec-sensitivity" class="nav-link active" data-scroll-target="#sec-sensitivity"><span class="header-section-number">7.1</span> Contaminating <span class="math inline">\boldsymbol{\Omega}_{j}</span></a></li>
   <li><a href="#sec-sens-scdesign3" id="toc-sec-sens-scdesign3" class="nav-link" data-scroll-target="#sec-sens-scdesign3"><span class="header-section-number">7.2</span> <code>scDesign3</code> settings for GSE229513</a></li>
   <li><a href="#sec-sens-panel-size" id="toc-sec-sens-panel-size" class="nav-link" data-scroll-target="#sec-sens-panel-size"><span class="header-section-number">7.3</span> Signature size and selection threshold</a></li>
+  <li><a href="#sec-aliquots" id="toc-sec-aliquots" class="nav-link" data-scroll-target="#sec-aliquots"><span class="header-section-number">7.4</span> A paired bulk and single-cell split</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/edit/main/docs/06-sensitivity-misspecification.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/blob/main/docs/06-sensitivity-misspecification.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -523,7 +535,7 @@ Table&nbsp;7.2: Factors of the panel-size sweep. The largest panel stays below t
 <li><strong>Metrics.</strong> <code>DeCovarT::compute_benchmark_metrics()</code> with the true cell fractions: total variation and RMSE per bulk (<code>regression$global</code>), and per-type correlation and error (<code>regression$cell_type</code>). For the real bulks, the total variation between <span class="math inline">\hat{\boldsymbol{p}}</span> at each size and at 500 genes.</li>
 </ul>
 <p>The covariance has <span class="math inline">G(G+1)/2</span> entries per type. Above the number of reference cells of a type the sample covariance is singular, and only the shrinkage estimate of <a href="03-covariance-estimation.html#sec-shrinkage" class="quarto-xref"><span>Section 4.2.1</span></a> is defined; the closed-form intensity is used in the sweep rather than cross-validation, to keep the cost linear in the number of panels.</p>
-<p><span class="light-content" style="color: #7a1f1f;border-radius: 0.2rem; padding: 0 0.2rem 0 0.2rem;background-color: #f4c7c3;">TODO: add the level of covariance regularisation as a factor of the sweep. The shrinkage estimate is dense by construction: it multiplies every sample correlation by <span class="math inline">1 - \lambda</span> and sets none to zero, so it says nothing about isolated groups of genes. At the closed-form intensity the abundant types are barely shrunk (<span class="math inline">\lambda</span> of 0.006 to 0.03 on the Welch-gated panels, <code>output/grn/plugin/plugin_summary.csv</code>). Levels to compare: (i) <span class="math inline">\lambda</span> on a grid, closed form; 0.25; 0.5; 0.75; 1 (diagonal, no gene-gene term); (ii) a sparse arm, the graphical lasso precision of <a href="03-covariance-estimation.html#eq-grn-export" class="quarto-xref">Equation&nbsp;<span>4.1</span></a> along its penalty path; (iii) raw counts against size-factor-scaled counts, since a shared cell-size factor correlates every pair of genes. Report, per type and level, the share of non-zero off-diagonal partial correlations, the number of connected components and the condition number, next to the accuracy metrics and the agreement between the two optimisers. First pass (<code>convergence_failures.md</code>): the Newton failure rate did not differ between the four covariance inputs, so the question is open for accuracy, not for convergence.</span></p>
+<p><span class="light-content" style="color: #7a1f1f;border-radius: 0.2rem; padding: 0 0.2rem 0 0.2rem;background-color: #f4c7c3;">TODO: add the level of covariance regularisation as a factor of the sweep. The shrinkage estimate is dense by construction: it multiplies every sample correlation by <span class="math inline">1 - \lambda</span> and sets none to zero, so it says nothing about isolated groups of genes. At the closed-form intensity the abundant types are barely shrunk (<span class="math inline">\lambda</span> of 0.006 to 0.03 on the Welch-gated panels, <code>output/grn/plugin/plugin_summary.csv</code>). Levels to compare: (i) <span class="math inline">\lambda</span> on a grid, closed form; 0.25; 0.5; 0.75; 1 (diagonal, no gene-gene term); (ii) a sparse arm, the graphical lasso precision of <a href="03-covariance-estimation.html#eq-grn-export" class="quarto-xref">Equation&nbsp;<span>4.1</span></a> along its penalty path; (iii) raw counts against size-factor-scaled counts, since a shared cell-size factor correlates every pair of genes. Report, per type and level, the share of non-zero off-diagonal partial correlations, the number of connected components and the condition number, next to the accuracy metrics and the agreement between the two optimisers. Done so far (<a href="04-deconvolution-pipeline.html#sec-deconv-96h-diagnosis" class="quarto-xref"><span>Section 5.2.2.2</span></a>): level (i) for DeCovarT on the raw covariance, L-BFGS-B, bulk as is; the RMSE at 96 h on the Welch-gated panel goes from 0.36 (closed form) to 0.034 (<span class="math inline">\lambda=0.5</span>), with no gain on the small panels. Levels (ii) and (iii), and a choice of <span class="math inline">\lambda</span> that does not use the observed composition, remain.</span></p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Not run. Function names and arguments follow R/02_02_stats_cross_cell.R,</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># R/03_01_stats_covariance_estimation.R and the DeCovarT reference.</span></span>
@@ -651,6 +663,60 @@ Table&nbsp;7.2: Factors of the panel-size sweep. The largest panel stays below t
 <span id="cb2-124"><a href="#cb2-124" aria-hidden="true" tabindex="-1"></a><span class="co"># rank_lists_clean &lt;- lapply(rank_lists, intersect, flags$gene[flags$keep])</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Three outcomes would bear on the hypothesis. A rise and a plateau in both methods, with no decline up to 2000 genes, says that the panel of 500 is not too large for the pseudo-bulks. A decline that disappears after the bulk consistency filter points to platform-inconsistent genes, which only the real bulks can show. A decline in DeCovarT alone, present already on pseudo-bulks, points to the covariance estimate rather than to the genes.</p>
+<style>
+a.glossary {
+  color: #0e4d3a;
+  text-decoration: underline;
+  cursor: help;
+  position: relative;
+}
+
+/* only needed for popup = "click" */
+/* popup-definition */
+a.glossary .def {
+  display: none;
+  position: absolute;
+  z-index: 1;
+  width: 200px;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -100px;
+  background-color: #f7f4ef;
+  color: #1c2b24;
+  padding: 5px;
+  border-radius: 6px;
+}
+/* show on click */
+a.glossary:active .def {
+  display: inline-block;
+}
+/* triangle arrow */
+a.glossary:active .def::after {
+  content: ' ';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #f7f4ef transparent transparent transparent;
+}
+</style>
+</section>
+<section id="sec-aliquots" class="level2" data-number="7.4">
+<h2 data-number="7.4" class="anchored" data-anchor-id="sec-aliquots"><span class="header-section-number">7.4</span> A paired bulk and single-cell split</h2>
+<p>The Suppinger score compares a deconvolution with the composition of a single-cell reference from the same time. That reference is not a split of the bulk. An <a class="glossary" title="A physical split of one specimen, so a bulk library and a single-cell library measure the same material.">aliquot</a> is a physical split of one specimen, so the bulk library and the single-cell library measure the same material. Four constraints decide whether a published set can carry that comparison.</p>
+<ul>
+<li>Real bulk and real single-cell counts come from the same specimen, or from a physical split of one suspension.</li>
+<li>Sample identifiers can be traced from the bulk to the single-cell library.</li>
+<li>A deconvolution of that pair has been published.</li>
+<li>Where the only available truth would be the single-cell recovery itself, an independent count (FACS, imaging or histology) is required.</li>
+</ul>
+<p>Three sets meet the first three constraints. Citekeys for these papers are not in the bibliography, so each is named with its DOI.</p>
+<p>Dong and colleagues (<a href="https://doi.org/10.1093/bib/bbz166">10.1093/bib/bbz166</a>) split a mouse mammary suspension (GEO GSE136148). SCDC, which is already a comparator in this benchmark, was published on that split. Two animals, and the reported truth is the single-cell recovery.</p>
+<p>Guo and colleagues (<a href="https://doi.org/10.1101/gr.278822.123">10.1101/gr.278822.123</a>) profiled healthy retina from 24 specimens, taking bulk and single-cell nuclei from the same suspension. DeMixSC, already a comparator here, was published on that series. The bulk accessions are GSE175937.</p>
+<p>Dai and colleagues (<a href="https://doi.org/10.1126/sciadv.adh2588">10.1126/sciadv.adh2588</a>) deconvolved the forebrain organoids of Jourdon and colleagues (<a href="https://doi.org/10.1038/s41593-023-01399-0">10.1038/s41593-023-01399-0</a>). About 60 samples are reported at TD0, TD30 and TD60. A preparation may pool organoids, so a sample is not always one organoid. Access is NIMH Data Archive study 1482.</p>
+<p>He and colleagues (<a href="https://doi.org/10.1038/s41586-020-2536-x">10.1038/s41586-020-2536-x</a>) and the BEDwARS analysis of Ghaffari and colleagues (<a href="https://doi.org/10.1186/s13059-023-03007-7">10.1186/s13059-023-03007-7</a>) are not split aliquots: the bulk and the single-cell profiles are not a physical division of one specimen.</p>
 
 
 </section>

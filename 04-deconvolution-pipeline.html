@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2026-11-11">
+<meta name="dcterms.date" content="2026-11-12">
 <meta name="description" content="Deconvolution methods compared on the same Suppinger gene panel.">
 
 <title>5&nbsp; Applying and comparing deconvolution outputs applied to Suppinger study – DeCovarT reproducibility</title>
@@ -134,6 +134,17 @@ div.csl-indent {
     "search-label": "Search"
   }
 }</script>
+<script type="application/json" class="js-hypothesis-config">
+{
+  "theme": "clean"
+}
+</script>
+<script async="" src="https://hypothes.is/embed.js"></script>
+<script>
+  window.document.addEventListener("DOMContentLoaded", function (_event) {
+    document.body.classList.add('hypothesis-enabled');
+  });
+</script>
 <style>
 
       .quarto-title-block .quarto-title-banner {
@@ -274,7 +285,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">11 Nov 2026</p>
+        <p class="date">12 Nov 2026</p>
       </div>
     </div>
     
@@ -372,7 +383,12 @@ window.Quarto = {
   <li><a href="#sec-deconv-interpretation" id="toc-sec-deconv-interpretation" class="nav-link" data-scroll-target="#sec-deconv-interpretation"><span class="header-section-number">5.2</span> Statistical interpretation of the results</a>
   <ul>
   <li><a href="#sec-deconv-own-genes" id="toc-sec-deconv-own-genes" class="nav-link" data-scroll-target="#sec-deconv-own-genes"><span class="header-section-number">5.2.1</span> Scenario 1: each method selects its own genes</a></li>
-  <li><a href="#sec-deconv-fixed-panel" id="toc-sec-deconv-fixed-panel" class="nav-link" data-scroll-target="#sec-deconv-fixed-panel"><span class="header-section-number">5.2.2</span> Scenario 2: one gene panel for every method</a></li>
+  <li><a href="#sec-deconv-fixed-panel" id="toc-sec-deconv-fixed-panel" class="nav-link" data-scroll-target="#sec-deconv-fixed-panel"><span class="header-section-number">5.2.2</span> Scenario 2: one gene panel for every method</a>
+  <ul class="collapse">
+  <li><a href="#sec-deconv-fixed-results" id="toc-sec-deconv-fixed-results" class="nav-link" data-scroll-target="#sec-deconv-fixed-results">Results on a shared panel</a></li>
+  <li><a href="#sec-deconv-96h-diagnosis" id="toc-sec-deconv-96h-diagnosis" class="nav-link" data-scroll-target="#sec-deconv-96h-diagnosis">Why the profile likelihood loses at 96 h</a></li>
+  </ul></li>
+  <li><a href="#sec-deconv-perspectives" id="toc-sec-deconv-perspectives" class="nav-link" data-scroll-target="#sec-deconv-perspectives"><span class="header-section-number">5.2.3</span> Five directions to improve the estimates</a></li>
   </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/edit/main/docs/04-deconvolution-pipeline.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/blob/main/docs/04-deconvolution-pipeline.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
@@ -511,7 +527,1111 @@ Figure&nbsp;5.1: Hypothesis: sources of disagreement between SCDC, BayesPrism an
 <li>DeCovarT with four covariance inputs, with and without the gene-wise platform ratio, and two optimisers.</li>
 </ul>
 <p>A difference between methods is then a difference between estimators. A difference between the two panels, for one method, measures what the gene set contributes. If the hypothesis of scenario 1 holds, DWLS on the shared panel should move towards SCDC and BayesPrism.</p>
-<p><span class="light-content" style="color: #7a1f1f;border-radius: 0.2rem; padding: 0 0.2rem 0 0.2rem;background-color: #f4c7c3;">TODO: report the fixed-panel results (<code>output/deconvolution/benchmark_metrics.csv</code>, figures in <code>images/deconvolution/</code>) once the Welch-gated fits at 96 h are finished, and add a scenario-1 run of DWLS with its own signature on the same cells to test the hypothesis.</span></p>
+<p>The second pass (11 November 2026) adds to that list MEAD with four pseudo-individuals per type, ReDeconv on supplied moments, robust linear regression (<code>DeCovarT::deconvolute_ratios_rlm()</code>), and four diagnostic families written in <code>R/04_02_stats_sieve_multivariate.R</code>: a multivariate RNA-Sieve, DeCovarT at other shrinkage levels, DeCovarT with the between-type covariance term, and Firth-penalised DeCovarT.</p>
+<p>Local symbols, used in this section only: <span class="math inline">\boldsymbol{w}=n\boldsymbol{p}</span>, unnormalised weights for a bulk of <span class="math inline">n</span> cells; <span class="math inline">\boldsymbol{S}_W(\boldsymbol{p})=\sum_j p_j\boldsymbol{\Sigma}_j</span>, the mixture covariance of the DeCovarT single-cell model; <span class="math inline">\boldsymbol{S}_T(\boldsymbol{p})</span>, the same with the between-type term (<a href="#eq-deconv-total-cov" class="quarto-xref">Equation&nbsp;<span>5.2</span></a>); <span class="math inline">d_g</span>, a gene-wise variance scale; <span class="math inline">\lambda</span>, the shrinkage of <a href="03-covariance-estimation.html#sec-cov-shrinkage-reading" class="quarto-xref"><span>Section 4.4.1</span></a>.</p>
+<section id="sec-deconv-fixed-results" class="level4">
+<h4 class="anchored" data-anchor-id="sec-deconv-fixed-results">Results on a shared panel</h4>
+<p>Status: point estimates, three standard-Wnt replicates per time, the observed composition being the share of scored cells in the single-cell annotation (not flow cytometry). No interval is reported. Each mean below is over three bulk replicates of one protocol.</p>
+<div class="cell">
+<div id="tbl-deconv-fixed-rmse" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-deconv-fixed-rmse-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;5.2: Root mean squared error of the estimated proportions, mean over the three standard-Wnt replicates, per time and gene panel (<code>output/deconvolution/benchmark_metrics.csv</code>). Bulk as is. DeCovarT rows: L-BFGS-B. Rows are ordered by the last column.
+</figcaption>
+<div aria-describedby="tbl-deconv-fixed-rmse-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<script src="https://cdn.jsdelivr.net/gh/vincentarelbundock/tinytable@main/inst/tinytable.js"></script>
+
+    <script>
+      // Create table-specific functions using external factory
+      const tableFns_4tw81w9szann3lhr9p6k = TinyTable.createTableFunctions("tinytable_4tw81w9szann3lhr9p6k");
+      // tinytable span after
+      window.addEventListener('load', function () {
+          var cellsToStyle = [
+            // tinytable style arrays after
+          { positions: [ { i: '13', j: 2 }, { i: '13', j: 3 }, { i: '13', j: 4 }, { i: '13', j: 5 }, { i: '13', j: 6 }, { i: '13', j: 7 } ], css_id: 'tinytable_css_ar8prcnr8df7xhkwjggs',}, 
+          { positions: [ { i: '1', j: 2 }, { i: '2', j: 2 }, { i: '3', j: 2 }, { i: '4', j: 2 }, { i: '5', j: 2 }, { i: '6', j: 2 }, { i: '7', j: 2 }, { i: '8', j: 2 }, { i: '9', j: 2 }, { i: '10', j: 2 }, { i: '11', j: 2 }, { i: '12', j: 2 }, { i: '1', j: 3 }, { i: '2', j: 3 }, { i: '3', j: 3 }, { i: '4', j: 3 }, { i: '5', j: 3 }, { i: '6', j: 3 }, { i: '7', j: 3 }, { i: '8', j: 3 }, { i: '9', j: 3 }, { i: '10', j: 3 }, { i: '11', j: 3 }, { i: '12', j: 3 }, { i: '1', j: 4 }, { i: '2', j: 4 }, { i: '3', j: 4 }, { i: '4', j: 4 }, { i: '5', j: 4 }, { i: '6', j: 4 }, { i: '7', j: 4 }, { i: '8', j: 4 }, { i: '9', j: 4 }, { i: '10', j: 4 }, { i: '11', j: 4 }, { i: '12', j: 4 }, { i: '1', j: 5 }, { i: '2', j: 5 }, { i: '3', j: 5 }, { i: '4', j: 5 }, { i: '5', j: 5 }, { i: '6', j: 5 }, { i: '7', j: 5 }, { i: '8', j: 5 }, { i: '9', j: 5 }, { i: '10', j: 5 }, { i: '11', j: 5 }, { i: '12', j: 5 }, { i: '1', j: 6 }, { i: '2', j: 6 }, { i: '3', j: 6 }, { i: '4', j: 6 }, { i: '5', j: 6 }, { i: '6', j: 6 }, { i: '7', j: 6 }, { i: '8', j: 6 }, { i: '9', j: 6 }, { i: '10', j: 6 }, { i: '11', j: 6 }, { i: '12', j: 6 }, { i: '1', j: 7 }, { i: '2', j: 7 }, { i: '3', j: 7 }, { i: '4', j: 7 }, { i: '5', j: 7 }, { i: '6', j: 7 }, { i: '7', j: 7 }, { i: '8', j: 7 }, { i: '9', j: 7 }, { i: '10', j: 7 }, { i: '11', j: 7 }, { i: '12', j: 7 } ], css_id: 'tinytable_css_w29o5w49v64grfg3b7v4',}, 
+          { positions: [ { i: '0', j: 2 }, { i: '0', j: 3 }, { i: '0', j: 4 }, { i: '0', j: 5 }, { i: '0', j: 6 }, { i: '0', j: 7 } ], css_id: 'tinytable_css_k5yt3dak9aasvqp1c76u',}, 
+          { positions: [ { i: '13', j: 1 } ], css_id: 'tinytable_css_69d9d81zhxvohhkmrsbq',}, 
+          { positions: [ { i: '0', j: 1 } ], css_id: 'tinytable_css_mxmd3ustxecu9o3lo78u',}, 
+          ];
+
+          // Loop over the arrays to style the cells
+          cellsToStyle.forEach(function (group) {
+              group.positions.forEach(function (cell) {
+                  tableFns_4tw81w9szann3lhr9p6k.styleCell(cell.i, cell.j, group.css_id);
+              });
+          });
+      });
+    </script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/vincentarelbundock/tinytable@main/inst/tinytable.css">
+    <style>
+    /* tinytable css entries after */
+    #tinytable_4tw81w9szann3lhr9p6k td.tinytable_css_ar8prcnr8df7xhkwjggs, #tinytable_4tw81w9szann3lhr9p6k th.tinytable_css_ar8prcnr8df7xhkwjggs {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.08em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: right }
+    #tinytable_4tw81w9szann3lhr9p6k td.tinytable_css_w29o5w49v64grfg3b7v4, #tinytable_4tw81w9szann3lhr9p6k th.tinytable_css_w29o5w49v64grfg3b7v4 { text-align: right }
+    #tinytable_4tw81w9szann3lhr9p6k td.tinytable_css_k5yt3dak9aasvqp1c76u, #tinytable_4tw81w9szann3lhr9p6k th.tinytable_css_k5yt3dak9aasvqp1c76u {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.08em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: right }
+    #tinytable_4tw81w9szann3lhr9p6k td.tinytable_css_69d9d81zhxvohhkmrsbq, #tinytable_4tw81w9szann3lhr9p6k th.tinytable_css_69d9d81zhxvohhkmrsbq {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.08em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%;  }
+    #tinytable_4tw81w9szann3lhr9p6k td.tinytable_css_mxmd3ustxecu9o3lo78u, #tinytable_4tw81w9szann3lhr9p6k th.tinytable_css_mxmd3ustxecu9o3lo78u {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.08em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%;  }
+    </style>
+    <div class="container">
+      
+<table id="tinytable_4tw81w9szann3lhr9p6k" class="tinytable cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" scope="col" data-row="0" data-col="1">Method</th>
+<th data-quarto-table-cell-role="th" scope="col" data-row="0" data-col="2">48 h, $R^2_D\ge 5\%$</th>
+<th data-quarto-table-cell-role="th" scope="col" data-row="0" data-col="3">48 h, Welch</th>
+<th data-quarto-table-cell-role="th" scope="col" data-row="0" data-col="4">72 h, $R^2_D\ge 5\%$</th>
+<th data-quarto-table-cell-role="th" scope="col" data-row="0" data-col="5">72 h, Welch</th>
+<th data-quarto-table-cell-role="th" scope="col" data-row="0" data-col="6">96 h, $R^2_D\ge 5\%$</th>
+<th data-quarto-table-cell-role="th" scope="col" data-row="0" data-col="7">96 h, Welch</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-row="1" data-col="1">DeCovarT, raw covariance, λ = 0.5</td>
+<td data-row="1" data-col="2">0.769</td>
+<td data-row="1" data-col="3">0.021</td>
+<td data-row="1" data-col="4">0.036</td>
+<td data-row="1" data-col="5">0.043</td>
+<td data-row="1" data-col="6">0.310</td>
+<td data-row="1" data-col="7">0.034</td>
+</tr>
+<tr class="even">
+<td data-row="2" data-col="1">MEAD, pseudo-individuals</td>
+<td data-row="2" data-col="2">0.795</td>
+<td data-row="2" data-col="3">0.093</td>
+<td data-row="2" data-col="4">0.115</td>
+<td data-row="2" data-col="5">0.141</td>
+<td data-row="2" data-col="6">0.282</td>
+<td data-row="2" data-col="7">0.048</td>
+</tr>
+<tr class="odd">
+<td data-row="3" data-col="1">RNA-Sieve (Python)</td>
+<td data-row="3" data-col="2">0.795</td>
+<td data-row="3" data-col="3">0.070</td>
+<td data-row="3" data-col="4">0.049</td>
+<td data-row="3" data-col="5">0.095</td>
+<td data-row="3" data-col="6">0.270</td>
+<td data-row="3" data-col="7">0.056</td>
+</tr>
+<tr class="even">
+<td data-row="4" data-col="1">RNA-Sieve (R), QP, full raw covariance</td>
+<td data-row="4" data-col="2">0.700</td>
+<td data-row="4" data-col="3">0.021</td>
+<td data-row="4" data-col="4">0.166</td>
+<td data-row="4" data-col="5">0.038</td>
+<td data-row="4" data-col="6">0.362</td>
+<td data-row="4" data-col="7">0.060</td>
+</tr>
+<tr class="odd">
+<td data-row="5" data-col="1">DeMixSC wNNLS</td>
+<td data-row="5" data-col="2">0.731</td>
+<td data-row="5" data-col="3">0.021</td>
+<td data-row="5" data-col="4">0.045</td>
+<td data-row="5" data-col="5">0.035</td>
+<td data-row="5" data-col="6">0.291</td>
+<td data-row="5" data-col="7">0.071</td>
+</tr>
+<tr class="even">
+<td data-row="6" data-col="1">ReDeconv</td>
+<td data-row="6" data-col="2">0.070</td>
+<td data-row="6" data-col="3">0.155</td>
+<td data-row="6" data-col="4">0.147</td>
+<td data-row="6" data-col="5">0.026</td>
+<td data-row="6" data-col="6">0.339</td>
+<td data-row="6" data-col="7">0.103</td>
+</tr>
+<tr class="odd">
+<td data-row="7" data-col="1">RNA-Sieve (R), QP, diagonal</td>
+<td data-row="7" data-col="2">0.728</td>
+<td data-row="7" data-col="3">0.021</td>
+<td data-row="7" data-col="4">0.173</td>
+<td data-row="7" data-col="5">0.031</td>
+<td data-row="7" data-col="6">0.306</td>
+<td data-row="7" data-col="7">0.105</td>
+</tr>
+<tr class="even">
+<td data-row="8" data-col="1">DWLS</td>
+<td data-row="8" data-col="2">0.411</td>
+<td data-row="8" data-col="3">0.021</td>
+<td data-row="8" data-col="4">0.059</td>
+<td data-row="8" data-col="5">0.042</td>
+<td data-row="8" data-col="6">0.265</td>
+<td data-row="8" data-col="7">0.135</td>
+</tr>
+<tr class="odd">
+<td data-row="9" data-col="1">BayesPrism</td>
+<td data-row="9" data-col="2">0.576</td>
+<td data-row="9" data-col="3">0.021</td>
+<td data-row="9" data-col="4">0.066</td>
+<td data-row="9" data-col="5">0.047</td>
+<td data-row="9" data-col="6">0.301</td>
+<td data-row="9" data-col="7">0.162</td>
+</tr>
+<tr class="even">
+<td data-row="10" data-col="1">Robust regression</td>
+<td data-row="10" data-col="2">0.270</td>
+<td data-row="10" data-col="3">0.073</td>
+<td data-row="10" data-col="4">0.054</td>
+<td data-row="10" data-col="5">0.090</td>
+<td data-row="10" data-col="6">0.412</td>
+<td data-row="10" data-col="7">0.220</td>
+</tr>
+<tr class="odd">
+<td data-row="11" data-col="1">SCDC</td>
+<td data-row="11" data-col="2">0.078</td>
+<td data-row="11" data-col="3">0.168</td>
+<td data-row="11" data-col="4">0.054</td>
+<td data-row="11" data-col="5">0.047</td>
+<td data-row="11" data-col="6">0.415</td>
+<td data-row="11" data-col="7">0.307</td>
+</tr>
+<tr class="even">
+<td data-row="12" data-col="1">DeCovarT, raw covariance, closed-form λ</td>
+<td data-row="12" data-col="2">0.744</td>
+<td data-row="12" data-col="3">0.021</td>
+<td data-row="12" data-col="4">0.038</td>
+<td data-row="12" data-col="5">0.355</td>
+<td data-row="12" data-col="6">0.212</td>
+<td data-row="12" data-col="7">0.359</td>
+</tr>
+<tr class="odd">
+<td data-row="13" data-col="1">DeCovarT, denoised covariance</td>
+<td data-row="13" data-col="2">0.756</td>
+<td data-row="13" data-col="3">0.761</td>
+<td data-row="13" data-col="4">0.010</td>
+<td data-row="13" data-col="5">0.053</td>
+<td data-row="13" data-col="6">0.166</td>
+<td data-row="13" data-col="7">0.470</td>
+</tr>
+</tbody>
+</table>
+
+    </div>
+<!-- hack to avoid NA insertion in last line -->
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>What <a href="#tbl-deconv-fixed-rmse" class="quarto-xref">Table&nbsp;<span>5.2</span></a> and <a href="#fig-deconv-rmse" class="quarto-xref">Figure&nbsp;<span>5.2</span></a> show:</p>
+<ul>
+<li><strong>At 96 h on the Welch panel, five estimators are within 0.03 to 0.07</strong> of the observed composition: DeCovarT on the raw covariance shrunk at <span class="math inline">\lambda=0.5</span> (0.034), MEAD (0.048), RNA-Sieve (0.056), the quadratic programme of the multivariate RNA-Sieve with the full raw covariance (0.060), and the DeMixSC weights (0.071).</li>
+<li><strong>DeCovarT with the closed-form shrinkage is at 0.36, and at 0.47 with the denoised covariance.</strong> The first-pass plug-ins, not the DeCovarT law, are what fails: the same law with another <span class="math inline">\lambda</span> is the best row of the table.</li>
+<li><strong>The small panel is worse for every comparator at 96 h</strong> (0.27 to 0.42) and at 48 h, where 17 genes carry the fit. The panel matters more than the method there.</li>
+<li><strong>Pooled over the three times,</strong> the lowest RMSE on the Welch panel is 0.040 (DeCovarT, <span class="math inline">\lambda=0.5</span>), then 0.053 (QP, full raw covariance) and 0.054 (DeMixSC weights); the best first-pass DeCovarT flavour was 0.14 (<code>benchmark_metrics_pooled.csv</code>).</li>
+<li><strong><span class="math inline">\lambda=0.5</span> was not chosen beforehand.</strong> It is the best of four levels scored against the same nine samples that define the error, so 0.034 is an optimistic value. A level chosen without the observed composition is needed before the comparison with MEAD or RNA-Sieve is fair.</li>
+</ul>
+<div id="fig-deconv-rmse" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-deconv-rmse-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/deconvolution/benchmark_rmse.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-deconv-rmse-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.2: Root mean squared error per replicate, every method, gene panel and treatment of the bulk. Rows of panels: methods; columns: bulk times. Small points: the three standard-Wnt replicates; large point: their mean. Black: comparators and the QP stage of the multivariate RNA-Sieve; blue: DeCovarT by trust-region Newton; orange: DeCovarT by L-BFGS-B, or BFGS for the Firth fits.
+</figcaption>
+</figure>
+</div>
+<div id="fig-deconv-aitchison" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-deconv-aitchison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/deconvolution/benchmark_aitchison.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-deconv-aitchison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.3: Aitchison distance to the observed composition, same layout as <a href="#fig-deconv-rmse" class="quarto-xref">Figure&nbsp;<span>5.2</span></a>. Zeros are replaced at 0.001 before the centred log-ratio. The distance depends on the number of parts (3 at 48 h and 72 h, 5 at 96 h), so it compares methods within a column only.
+</figcaption>
+</figure>
+</div>
+<p>The Aitchison distance (<a href="#fig-deconv-aitchison" class="quarto-xref">Figure&nbsp;<span>5.3</span></a>, ledger M1) ranks differently, because it is driven by the rare types. An estimate of exactly zero for a type observed at 0.6% costs more than 0.1 of mass moved between two abundant types. At 96 h on the Welch panel the lowest mean distances are 1.69 (DeCovarT, <span class="math inline">\lambda=0.5</span>), 1.87 (<span class="math inline">\lambda=0.75</span>) and 2.59 (DeMixSC weights); MEAD is at 3.39 and RNA-Sieve at 3.82. With the floor at 0.01 instead of 0.001 the column <code>aitchison_01</code> of the table gives the sensitivity.</p>
+<div id="fig-deconv-scatter" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-deconv-scatter-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/deconvolution/observed_vs_estimated_welch.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-deconv-scatter-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.4: Observed against estimated proportions on the Welch panel, comparators and the QP stage of the multivariate RNA-Sieve. Standard-Wnt replicates; one point per cell type and replicate; dashed line: equality. Above each panel: Pearson correlation and RMSE over its points.
+</figcaption>
+</figure>
+</div>
+</section>
+<section id="sec-deconv-96h-diagnosis" class="level4">
+<h4 class="anchored" data-anchor-id="sec-deconv-96h-diagnosis">Why the profile likelihood loses at 96 h</h4>
+<section id="assumptions-made-before-the-second-pass-and-what-the-data-say" class="level5">
+<h5 class="anchored" data-anchor-id="assumptions-made-before-the-second-pass-and-what-the-data-say">Assumptions made before the second pass, and what the data say</h5>
+<p>Seven explanations were on the table: five from the discussion of 11 November, two of mine. Each keeps its row whether or not the data went its way.</p>
+<div id="tbl-deconv-assumptions" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-deconv-assumptions-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;5.3: Assumptions and verdicts. “Discussion”: raised by the author of the book on 11 November 2026.
+</figcaption>
+<div aria-describedby="tbl-deconv-assumptions-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Assumption</th>
+<th>Source</th>
+<th>Verdict</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Too many genes, or too few at 48 h</td>
+<td>discussion</td>
+<td>Partly</td>
+<td>Not monotonic. At 96 h the large panel helps every comparator and hurts DeCovarT with the closed-form <span class="math inline">\lambda</span>; 17 genes at 48 h fail for most methods unless the bulk is divided by <span class="math inline">b_g</span> (<a href="#tbl-deconv-fixed-rmse" class="quarto-xref">Table&nbsp;<span>5.2</span></a>).</td>
+</tr>
+<tr class="even">
+<td>The Gaussian law does not hold</td>
+<td>discussion</td>
+<td>True as a misfit, not the cause</td>
+<td><span class="math inline">\hat n&lt;1</span> cell at 96 h; 18 to 28% of genes more than 4-fold off (<a href="#tbl-deconv-agreement" class="quarto-xref">Table&nbsp;<span>5.6</span></a>). Yet the same Gaussian law with <span class="math inline">\lambda=0.5</span> gives the lowest error.</td>
+</tr>
+<tr class="odd">
+<td>The covariance is not regularised enough</td>
+<td>discussion</td>
+<td><strong>Supported</strong></td>
+<td>RMSE 0.36 → 0.034 at 96 h on the Welch panel when <span class="math inline">\lambda</span> goes from the closed form to 0.5 (<a href="#fig-deconv-shrinkage" class="quarto-xref">Figure&nbsp;<span>5.6</span></a>). I had ranked this last in my first note of 11 November; that ranking was wrong.</td>
+</tr>
+<tr class="even">
+<td>ILR optimiser against quadratic programming</td>
+<td>discussion</td>
+<td>Not the optimiser; yes for the estimating equation</td>
+<td>DeCovarT’s estimate has a higher likelihood than the observed composition in all 36 sample × panel × covariance cells (<a href="#tbl-deconv-loglik" class="quarto-xref">Table&nbsp;<span>5.4</span></a>). A QP on the same plug-ins gives 0.060 (<a href="#fig-deconv-sieve" class="quarto-xref">Figure&nbsp;<span>5.5</span></a>).</td>
+</tr>
+<tr class="odd">
+<td>Bulk means and covariances differ from the single-cell plug-ins</td>
+<td>discussion</td>
+<td>The fact is supported, the remedy tried is not</td>
+<td>Agreement in <a href="#tbl-deconv-agreement" class="quarto-xref">Table&nbsp;<span>5.6</span></a>. Refining the means from one bulk raises the RMSE to 0.50.</td>
+</tr>
+<tr class="even">
+<td>ILR chart traps Newton near a face</td>
+<td>mine</td>
+<td>Explains the convergence code only</td>
+<td>Newton and L-BFGS-B share the same accuracy problem (<a href="#fig-deconv-rmse" class="quarto-xref">Figure&nbsp;<span>5.2</span></a>).</td>
+</tr>
+<tr class="odd">
+<td>The log-determinant pulls the estimate to a vertex</td>
+<td>mine, from one sample</td>
+<td>Holds for the denoised covariance on the Welch panel only</td>
+<td><a href="#tbl-deconv-loglik" class="quarto-xref">Table&nbsp;<span>5.4</span></a>: the gain is in the log-determinant at 72 h and 96 h with the denoised covariance, in the quadratic term with the raw one.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+<section id="the-optimiser-reaches-a-better-likelihood-than-the-observed-composition" class="level5">
+<h5 class="anchored" data-anchor-id="the-optimiser-reaches-a-better-likelihood-than-the-observed-composition">The optimiser reaches a better likelihood than the observed composition</h5>
+<p>The profile log-likelihood of <code>DeCovarT::deconvolute_single_cell()</code> at a composition <span class="math inline">\boldsymbol{p}</span> is, up to a constant (ledger P1),</p>
+<p><span id="eq-deconv-profile"><span class="math display">
+\ell(\boldsymbol{p})
+=-\frac{G}{2}\log\hat\phi(\boldsymbol{p})
+-\frac{1}{2}\log\det\boldsymbol{S}_W(\boldsymbol{p}),
+\qquad
+\hat\phi(\boldsymbol{p})=\frac{1}{G}\,
+\boldsymbol{r}^{\top}\boldsymbol{S}_W(\boldsymbol{p})^{-1}\boldsymbol{r},
+\quad
+\boldsymbol{r}=\boldsymbol{y}-\hat c\,\boldsymbol{\mu}\boldsymbol{p}.
+\tag{5.1}</span></span></p>
+<p><code>scripts/04_02_stats_likelihood_terms.R</code> evaluates the two terms at the observed composition and at the DeCovarT estimate, for the nine standard-Wnt samples.</p>
+<div class="cell">
+<div id="tbl-deconv-loglik" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-deconv-loglik-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;5.4: Profile log-likelihood at the DeCovarT estimate (L-BFGS-B, bulk as is) minus its value at the observed composition, split into the two terms of <a href="#eq-deconv-profile" class="quarto-xref">Equation&nbsp;<span>5.1</span></a>; mean over the three standard-Wnt replicates (<code>output/deconvolution/likelihood_terms.csv</code>). ‘Smallest gain’: lowest of the three replicates; a negative value would mean the optimiser stopped below the observed composition.
+</figcaption>
+<div aria-describedby="tbl-deconv-loglik-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<script src="https://cdn.jsdelivr.net/gh/vincentarelbundock/tinytable@main/inst/tinytable.js"></script>
+
+    <script>
+      // Create table-specific functions using external factory
+      const tableFns_xyokaar5klz9u8i91v4s = TinyTable.createTableFunctions("tinytable_xyokaar5klz9u8i91v4s");
+      // tinytable span after
+      window.addEventListener('load', function () {
+          var cellsToStyle = [
+            // tinytable style arrays after
+          { positions: [ { i: '12', j: 3 }, { i: '12', j: 4 }, { i: '12', j: 5 }, { i: '12', j: 6 }, { i: '12', j: 7 } ], css_id: 'tinytable_css_4a7f0l1b0mkcgugtw58m',}, 
+          { positions: [ { i: '1', j: 3 }, { i: '2', j: 3 }, { i: '3', j: 3 }, { i: '4', j: 3 }, { i: '5', j: 3 }, { i: '6', j: 3 }, { i: '7', j: 3 }, { i: '8', j: 3 }, { i: '9', j: 3 }, { i: '10', j: 3 }, { i: '11', j: 3 }, { i: '1', j: 4 }, { i: '2', j: 4 }, { i: '3', j: 4 }, { i: '4', j: 4 }, { i: '5', j: 4 }, { i: '6', j: 4 }, { i: '7', j: 4 }, { i: '8', j: 4 }, { i: '9', j: 4 }, { i: '10', j: 4 }, { i: '11', j: 4 }, { i: '1', j: 5 }, { i: '2', j: 5 }, { i: '3', j: 5 }, { i: '4', j: 5 }, { i: '5', j: 5 }, { i: '6', j: 5 }, { i: '7', j: 5 }, { i: '8', j: 5 }, { i: '9', j: 5 }, { i: '10', j: 5 }, { i: '11', j: 5 }, { i: '1', j: 6 }, { i: '2', j: 6 }, { i: '3', j: 6 }, { i: '4', j: 6 }, { i: '5', j: 6 }, { i: '6', j: 6 }, { i: '7', j: 6 }, { i: '8', j: 6 }, { i: '9', j: 6 }, { i: '10', j: 6 }, { i: '11', j: 6 }, { i: '1', j: 7 }, { i: '2', j: 7 }, { i: '3', j: 7 }, { i: '4', j: 7 }, { i: '5', j: 7 }, { i: '6', j: 7 }, { i: '7', j: 7 }, { i: '8', j: 7 }, { i: '9', j: 7 }, { i: '10', j: 7 }, { i: '11', j: 7 } ], css_id: 'tinytable_css_9w4onwrny3e1q6xxrfjz',}, 
+          { positions: [ { i: '0', j: 3 }, { i: '0', j: 4 }, { i: '0', j: 5 }, { i: '0', j: 6 }, { i: '0', j: 7 } ], css_id: 'tinytable_css_1s23czai6xm3p11uvl0t',}, 
+          { positions: [ { i: '12', j: 1 }, { i: '12', j: 2 } ], css_id: 'tinytable_css_lnehosqy47zcudxh2zir',}, 
+          { positions: [ { i: '0', j: 1 }, { i: '0', j: 2 } ], css_id: 'tinytable_css_c2rf7xxne171ydbqkdlf',}, 
+          ];
+
+          // Loop over the arrays to style the cells
+          cellsToStyle.forEach(function (group) {
+              group.positions.forEach(function (cell) {
+                  tableFns_xyokaar5klz9u8i91v4s.styleCell(cell.i, cell.j, group.css_id);
+              });
+          });
+      });
+    </script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/vincentarelbundock/tinytable@main/inst/tinytable.css">
+    <style>
+    /* tinytable css entries after */
+    #tinytable_xyokaar5klz9u8i91v4s td.tinytable_css_4a7f0l1b0mkcgugtw58m, #tinytable_xyokaar5klz9u8i91v4s th.tinytable_css_4a7f0l1b0mkcgugtw58m {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.08em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: right }
+    #tinytable_xyokaar5klz9u8i91v4s td.tinytable_css_9w4onwrny3e1q6xxrfjz, #tinytable_xyokaar5klz9u8i91v4s th.tinytable_css_9w4onwrny3e1q6xxrfjz { text-align: right }
+    #tinytable_xyokaar5klz9u8i91v4s td.tinytable_css_1s23czai6xm3p11uvl0t, #tinytable_xyokaar5klz9u8i91v4s th.tinytable_css_1s23czai6xm3p11uvl0t {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.08em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: right }
+    #tinytable_xyokaar5klz9u8i91v4s td.tinytable_css_lnehosqy47zcudxh2zir, #tinytable_xyokaar5klz9u8i91v4s th.tinytable_css_lnehosqy47zcudxh2zir {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.08em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%;  }
+    #tinytable_xyokaar5klz9u8i91v4s td.tinytable_css_c2rf7xxne171ydbqkdlf, #tinytable_xyokaar5klz9u8i91v4s th.tinytable_css_c2rf7xxne171ydbqkdlf {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.08em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%;  }
+    </style>
+    <div class="container">
+      
+<table id="tinytable_xyokaar5klz9u8i91v4s" class="tinytable cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" scope="col" data-row="0" data-col="1">Covariance</th>
+<th data-quarto-table-cell-role="th" scope="col" data-row="0" data-col="2">Time</th>
+<th data-quarto-table-cell-role="th" scope="col" data-row="0" data-col="3">Genes</th>
+<th data-quarto-table-cell-role="th" scope="col" data-row="0" data-col="4">Gain in $\ell$</th>
+<th data-quarto-table-cell-role="th" scope="col" data-row="0" data-col="5">of which quadratic term</th>
+<th data-quarto-table-cell-role="th" scope="col" data-row="0" data-col="6">of which log-determinant</th>
+<th data-quarto-table-cell-role="th" scope="col" data-row="0" data-col="7">Smallest gain</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-row="1" data-col="1">denoised</td>
+<td data-row="1" data-col="2">48 h</td>
+<td data-row="1" data-col="3">17</td>
+<td data-row="1" data-col="4">3</td>
+<td data-row="1" data-col="5">22</td>
+<td data-row="1" data-col="6">-19</td>
+<td data-row="1" data-col="7">1</td>
+</tr>
+<tr class="even">
+<td data-row="2" data-col="1">denoised</td>
+<td data-row="2" data-col="2">72 h</td>
+<td data-row="2" data-col="3">140</td>
+<td data-row="2" data-col="4">0</td>
+<td data-row="2" data-col="5">2</td>
+<td data-row="2" data-col="6">-2</td>
+<td data-row="2" data-col="7">0</td>
+</tr>
+<tr class="odd">
+<td data-row="3" data-col="1">denoised</td>
+<td data-row="3" data-col="2">96 h</td>
+<td data-row="3" data-col="3">635</td>
+<td data-row="3" data-col="4">27</td>
+<td data-row="3" data-col="5">152</td>
+<td data-row="3" data-col="6">-124</td>
+<td data-row="3" data-col="7">22</td>
+</tr>
+<tr class="even">
+<td data-row="4" data-col="1">denoised</td>
+<td data-row="4" data-col="2">48 h</td>
+<td data-row="4" data-col="3">1,417</td>
+<td data-row="4" data-col="4">22</td>
+<td data-row="4" data-col="5">722</td>
+<td data-row="4" data-col="6">-700</td>
+<td data-row="4" data-col="7">13</td>
+</tr>
+<tr class="odd">
+<td data-row="5" data-col="1">denoised</td>
+<td data-row="5" data-col="2">72 h</td>
+<td data-row="5" data-col="3">3,420</td>
+<td data-row="5" data-col="4">915</td>
+<td data-row="5" data-col="5">-411</td>
+<td data-row="5" data-col="6">1,326</td>
+<td data-row="5" data-col="7">908</td>
+</tr>
+<tr class="even">
+<td data-row="6" data-col="1">denoised</td>
+<td data-row="6" data-col="2">96 h</td>
+<td data-row="6" data-col="3">5,821</td>
+<td data-row="6" data-col="4">1,133</td>
+<td data-row="6" data-col="5">74</td>
+<td data-row="6" data-col="6">1,059</td>
+<td data-row="6" data-col="7">1,100</td>
+</tr>
+<tr class="odd">
+<td data-row="7" data-col="1">raw</td>
+<td data-row="7" data-col="2">48 h</td>
+<td data-row="7" data-col="3">17</td>
+<td data-row="7" data-col="4">2</td>
+<td data-row="7" data-col="5">17</td>
+<td data-row="7" data-col="6">-16</td>
+<td data-row="7" data-col="7">1</td>
+</tr>
+<tr class="even">
+<td data-row="8" data-col="1">raw</td>
+<td data-row="8" data-col="2">72 h</td>
+<td data-row="8" data-col="3">140</td>
+<td data-row="8" data-col="4">3</td>
+<td data-row="8" data-col="5">-12</td>
+<td data-row="8" data-col="6">15</td>
+<td data-row="8" data-col="7">1</td>
+</tr>
+<tr class="odd">
+<td data-row="9" data-col="1">raw</td>
+<td data-row="9" data-col="2">96 h</td>
+<td data-row="9" data-col="3">635</td>
+<td data-row="9" data-col="4">30</td>
+<td data-row="9" data-col="5">25</td>
+<td data-row="9" data-col="6">5</td>
+<td data-row="9" data-col="7">16</td>
+</tr>
+<tr class="even">
+<td data-row="10" data-col="1">raw</td>
+<td data-row="10" data-col="2">48 h</td>
+<td data-row="10" data-col="3">1,417</td>
+<td data-row="10" data-col="4">4</td>
+<td data-row="10" data-col="5">-5</td>
+<td data-row="10" data-col="6">9</td>
+<td data-row="10" data-col="7">2</td>
+</tr>
+<tr class="odd">
+<td data-row="11" data-col="1">raw</td>
+<td data-row="11" data-col="2">72 h</td>
+<td data-row="11" data-col="3">3,420</td>
+<td data-row="11" data-col="4">206</td>
+<td data-row="11" data-col="5">448</td>
+<td data-row="11" data-col="6">-242</td>
+<td data-row="11" data-col="7">201</td>
+</tr>
+<tr class="even">
+<td data-row="12" data-col="1">raw</td>
+<td data-row="12" data-col="2">96 h</td>
+<td data-row="12" data-col="3">5,821</td>
+<td data-row="12" data-col="4">1,098</td>
+<td data-row="12" data-col="5">1,664</td>
+<td data-row="12" data-col="6">-566</td>
+<td data-row="12" data-col="7">1,092</td>
+</tr>
+</tbody>
+</table>
+
+    </div>
+<!-- hack to avoid NA insertion in last line -->
+</div>
+</div>
+</figure>
+</div>
+</div>
+<ul>
+<li><strong>No optimiser failure.</strong> The gain is never negative: the estimate is a better maximum of the objective than the observed composition, by about 1,100 units at 96 h on the Welch panel. L-BFGS-B works on non-negative weights, not on ILR coordinates.</li>
+<li><strong>Which term carries the gain depends on the covariance.</strong> With the denoised covariance on the Welch panel at 72 h and 96 h it is the log-determinant; with the raw covariance at 96 h it is the quadratic term, and the log-determinant goes the other way. My first reading, from one sample, generalised the denoised case too far.</li>
+<li><strong>Why the log-determinant can matter at all.</strong> <span class="math inline">\log\det</span> is concave on positive definite matrices (ledger L1, numeric). When two covariances have complementary near-null directions of size <span class="math inline">\varepsilon</span>, mixing them raises <span class="math inline">\log\det</span> by about <span class="math inline">-\log\varepsilon</span> (ledger L2). The denoised covariance of a type with <span class="math inline">C_j</span> cells has rank at most <span class="math inline">C_j-1</span> before shrinkage (<a href="03-covariance-estimation.html#tbl-cov-lambda" class="quarto-xref">Table&nbsp;<span>4.6</span></a>), so a vertex has a much smaller determinant than a mixture.</li>
+<li><strong>Why profiling makes both terms comparable.</strong> The quadratic form enters <a href="#eq-deconv-profile" class="quarto-xref">Equation&nbsp;<span>5.1</span></a> through its logarithm. Its gradient is the fixed-scale gradient divided by <span class="math inline">\hat\phi</span> (ledger P3), and <span class="math inline">\hat\phi</span> is <span class="math inline">10^6</span> to <span class="math inline">10^8</span> here. A model with one scale for mean and variance, as RNA-Sieve, keeps the quadratic form at full weight.</li>
+</ul>
+</section>
+<section id="same-plug-ins-quadratic-programme-instead-of-likelihood" class="level5">
+<h5 class="anchored" data-anchor-id="same-plug-ins-quadratic-programme-instead-of-likelihood">Same plug-ins, quadratic programme instead of likelihood</h5>
+<p>The multivariate RNA-Sieve (<code>fit_sieve_chain()</code>) writes the bulk as <span class="math inline">\boldsymbol{y}\sim\mathcal{N}\bigl(\boldsymbol{\mu}\boldsymbol{w},\,
+n\,\boldsymbol{S}_T(\boldsymbol{p})\bigr)</span>, one <span class="math inline">n</span> for the mean and the covariance. Its covariance is that of a bulk whose cell-type counts are multinomial (ledger C1, C2):</p>
+<p><span id="eq-deconv-total-cov"><span class="math display">
+\boldsymbol{S}_T(\boldsymbol{p})
+=\sum_j p_j\bigl(\boldsymbol{\Sigma}_j
++\boldsymbol{\mu}_{\cdot j}\boldsymbol{\mu}_{\cdot j}^{\top}\bigr)
+-(\boldsymbol{\mu}\boldsymbol{p})(\boldsymbol{\mu}\boldsymbol{p})^{\top}
+=\boldsymbol{S}_W(\boldsymbol{p})
++\sum_j p_j(\boldsymbol{\mu}_{\cdot j}-\boldsymbol{\mu}\boldsymbol{p})
+(\boldsymbol{\mu}_{\cdot j}-\boldsymbol{\mu}\boldsymbol{p})^{\top}.
+\tag{5.2}</span></span></p>
+<p>The second term is the covariance of the type a random cell belongs to. It does not correlate the cell types with one another; it has rank at most <span class="math inline">J-1</span>. DeCovarT’s <span class="math inline">\boldsymbol{S}_W</span> omits it, which holds the number of cells of each type fixed. RNA-Sieve states the diagonal of <a href="#eq-deconv-total-cov" class="quarto-xref">Equation&nbsp;<span>5.2</span></a>; the matrix form is derived here.</p>
+<p>Six stages are stored for each of three covariance inputs (diagonal of the raw covariance, full raw, full denoised):</p>
+<ol type="1">
+<li><code>qp_within</code>: freeze the covariance, solve <span class="math inline">\min_{\boldsymbol{w}\ge 0}(\boldsymbol{y}-\boldsymbol{\mu}\boldsymbol{w})^{\top}
+\boldsymbol{U}^{-1}(\boldsymbol{y}-\boldsymbol{\mu}\boldsymbol{w})</span> with <code>quadprog::solve.QP()</code>, update the covariance, repeat; then <span class="math inline">\hat{\boldsymbol{p}}=\boldsymbol{w}/\sum_j w_j</span>. Within-type covariance only.</li>
+<li><code>qp</code>: the same with <span class="math inline">\boldsymbol{S}_T</span>.</li>
+<li><code>qp_huber</code>: <code>qp</code> with Huber weights on the whitened residuals.</li>
+<li><code>qp_means</code>: <code>qp</code> alternated with the closed-form refinement of the means, per bulk (ledger S1), <span class="math inline">\boldsymbol{m}_j=\boldsymbol{\mu}_{\cdot j}
++(w_j/C_j)\,\boldsymbol{\Sigma}_j(\boldsymbol{U}+\boldsymbol{Q})^{-1}
+(\boldsymbol{y}-\boldsymbol{\mu}\boldsymbol{w})</span>, <span class="math inline">\boldsymbol{Q}=\sum_j(w_j^{2}/C_j)\boldsymbol{\Sigma}_j</span>.</li>
+<li><code>qp_means_var</code>: adds <span class="math inline">d_g</span>, the mean over the six bulks of a time of the squared residual over the model variance (the diagonal of the DECALS moment regression; correlations kept from the reference).</li>
+<li><code>full_lik</code>: from that state, the full likelihood with its log-determinant, maximised in <span class="math inline">\boldsymbol{w}\ge 0</span>.</li>
+</ol>
+<div id="fig-deconv-sieve" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-deconv-sieve-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/deconvolution/sieve_stages_rmse.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-deconv-sieve-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.5: Stages of the multivariate RNA-Sieve, RMSE per replicate. Rows of panels: covariance input; columns: bulk times. Stages are fitted from top to bottom, each from the previous one. Blue: Welch panel; orange: genes with <span class="math inline">R^2_D\ge 5\%</span>. Small points: the three standard-Wnt replicates; large point: their mean.
+</figcaption>
+</figure>
+</div>
+<ul>
+<li><strong>The estimating equation is what differs.</strong> On the Welch panel at 96 h, with the full raw covariance, the QP gives 0.060 and its iteration converges for the three replicates. DeCovarT with the same covariance gives 0.36. The QP uses the covariance as a weight only; the likelihood also reads the composition from it.</li>
+<li><strong>The between-type term changes little:</strong> <code>qp_within</code> and <code>qp</code> have the same RMSE to the third decimal in 10 of the 18 cells of <a href="#fig-deconv-sieve" class="quarto-xref">Figure&nbsp;<span>5.5</span></a>, and differ by at most 0.05.</li>
+<li><strong>Refining the means from one bulk fails.</strong> The RMSE rises to 0.50 at 96 h and to 0.76 at 72 h on the Welch panel; the refined profiles move by 20 to 100% of their norm (mean over the six bulks of a chain). One bulk has <span class="math inline">G</span> values for <span class="math inline">JG</span> means, so the bulk is fitted by the profiles instead of the proportions. RNA-Sieve shares the refined means across bulks; that version was not written here, and six bulks with two protocols would still be few for three to five profiles.</li>
+<li><strong>The gene-wise variance scale has no consistent effect</strong> (better at 72 h on the small panel, worse at 96 h on the Welch panel), and the alternation did not converge in 13 of 18 chains.</li>
+<li><strong>The full likelihood undoes the QP</strong> on the Welch panel with the full raw covariance (0.060 → 0.47 at 96 h, starting from refined means).</li>
+<li><strong>The denoised covariance alone is unstable:</strong> its QP iteration does not converge at 96 h on either panel. It is a fixed point, not a descent, and a nearly singular weight matrix makes it cycle.</li>
+<li><strong>On the small panel at 96 h the QP is worse than DeCovarT</strong> (0.36 against 0.21) and does not converge. The result above is a result about the Welch panel.</li>
+</ul>
+<p>The Python RNA-Sieve behaves as a weighted least squares in this benchmark. In <code>rnasieve</code> 0.1.4 the proportion update passes its constraints to <code>cp.Minimize()</code>; under the pinned <code>cvxpy</code> 1.6.0 that call raises a <code>TypeError</code>, which the package catches. I checked the error; that the proportions then come from the final projection alone is read from the code, not traced at run time.</p>
+</section>
+<section id="shrinkage-level-of-the-raw-covariance" class="level5">
+<h5 class="anchored" data-anchor-id="shrinkage-level-of-the-raw-covariance">Shrinkage level of the raw covariance</h5>
+<p><code>rescale_shrinkage()</code> moves the raw covariance to another <span class="math inline">\lambda</span> by multiplying its off-diagonal terms by <span class="math inline">(1-\lambda)/(1-\hat\lambda^{\ast}_j)</span> (ledger S2); variances are untouched.</p>
+<div id="fig-deconv-shrinkage" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-deconv-shrinkage-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/deconvolution/shrinkage_sweep.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-deconv-shrinkage-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.6: DeCovarT on the raw covariance along the shrinkage level, L-BFGS-B, bulk as is. Columns: bulk times; rows: RMSE and Aitchison distance. First level: closed-form shrinkage of each type (0.006 to 0.74); <span class="math inline">\lambda=1</span> keeps the variances only. Small points: the three standard-Wnt replicates; line: their mean.
+</figcaption>
+</figure>
+</div>
+<ul>
+<li><strong>Welch panel, 96 h:</strong> RMSE 0.36 (closed form), 0.19 (0.25), 0.034 (0.5), 0.067 (0.75), 0.16 (1). The optimum is interior: correlations help, at half their sample value.</li>
+<li><strong>Welch panel, 72 h:</strong> 0.36 → 0.033 at <span class="math inline">\lambda=0.25</span>.</li>
+<li><strong>Small panels:</strong> no gain (0.21 → 0.28 to 0.32 at 96 h).</li>
+<li><strong>Reading.</strong> The closed-form <span class="math inline">\lambda</span> minimises the error of the covariance, type by type. Abundant types get <span class="math inline">\lambda\approx 0.02</span> and rare ones 0.6: the weight matrices of the types are then of very different quality, and the likelihood reads that difference as signal. One common, larger <span class="math inline">\lambda</span> removes it. This is an interpretation; the sweep does not separate “larger” from “common”.</li>
+</ul>
+</section>
+<section id="collinear-mean-profiles-the-error-at-96-h-is-a-split-inside-one-lineage" class="level5">
+<h5 class="anchored" data-anchor-id="collinear-mean-profiles-the-error-at-96-h-is-a-split-inside-one-lineage">Collinear mean profiles: the error at 96 h is a split inside one lineage</h5>
+<div id="fig-deconv-profile-cor" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-deconv-profile-cor-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/deconvolution/profile_correlation_welch.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-deconv-profile-cor-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.7: Correlation between the mean profiles of the scored cell types, Welch panel. Rows: Pearson on mean raw counts per cell, and Kendall’s tau; columns: times. Types are ordered by hierarchical clustering and numbered in that order.
+</figcaption>
+</figure>
+</div>
+<p>At 96 h, pre-somitic mesoderm, caudal mesoderm and the somite differentiation front have Pearson correlations of 0.98 to 0.99 and a cosine similarity up to 0.994 (<a href="#fig-deconv-profile-cor" class="quarto-xref">Figure&nbsp;<span>5.7</span></a>, <code>profile_correlation.csv</code>). Kendall’s tau is lower (0.73 to 0.84): the profiles differ in rank on many genes of low count, which carry little weight in a fit on raw counts.</p>
+<div class="cell">
+<div id="tbl-deconv-lineage" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-deconv-lineage-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;5.5: RMSE at 96 h on the Welch panel, mean over the three standard-Wnt replicates, on the five scored types and after caudal mesoderm, pre-somitic mesoderm and the somite differentiation front are summed into one part (three parts left). Last column: estimated share of pre-somitic mesoderm inside that lineage; observed 0.77 (<code>output/deconvolution/lineage_collapsed_metrics.csv</code>).
+</figcaption>
+<div aria-describedby="tbl-deconv-lineage-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<script src="https://cdn.jsdelivr.net/gh/vincentarelbundock/tinytable@main/inst/tinytable.js"></script>
+
+    <script>
+      // Create table-specific functions using external factory
+      const tableFns_903bzwgxlyos6k1eer8u = TinyTable.createTableFunctions("tinytable_903bzwgxlyos6k1eer8u");
+      // tinytable span after
+      window.addEventListener('load', function () {
+          var cellsToStyle = [
+            // tinytable style arrays after
+          { positions: [ { i: '13', j: 2 }, { i: '13', j: 3 }, { i: '13', j: 4 } ], css_id: 'tinytable_css_goybynhc9mdjer3k9v5w',}, 
+          { positions: [ { i: '1', j: 2 }, { i: '2', j: 2 }, { i: '3', j: 2 }, { i: '4', j: 2 }, { i: '5', j: 2 }, { i: '6', j: 2 }, { i: '7', j: 2 }, { i: '8', j: 2 }, { i: '9', j: 2 }, { i: '10', j: 2 }, { i: '11', j: 2 }, { i: '12', j: 2 }, { i: '1', j: 3 }, { i: '2', j: 3 }, { i: '3', j: 3 }, { i: '4', j: 3 }, { i: '5', j: 3 }, { i: '6', j: 3 }, { i: '7', j: 3 }, { i: '8', j: 3 }, { i: '9', j: 3 }, { i: '10', j: 3 }, { i: '11', j: 3 }, { i: '12', j: 3 }, { i: '1', j: 4 }, { i: '2', j: 4 }, { i: '3', j: 4 }, { i: '4', j: 4 }, { i: '5', j: 4 }, { i: '6', j: 4 }, { i: '7', j: 4 }, { i: '8', j: 4 }, { i: '9', j: 4 }, { i: '10', j: 4 }, { i: '11', j: 4 }, { i: '12', j: 4 } ], css_id: 'tinytable_css_8lic7dn0m04gyy65eooz',}, 
+          { positions: [ { i: '0', j: 2 }, { i: '0', j: 3 }, { i: '0', j: 4 } ], css_id: 'tinytable_css_9vj7907ci19cacypq36p',}, 
+          { positions: [ { i: '13', j: 1 } ], css_id: 'tinytable_css_zvv7ilkgr1xubsceajmr',}, 
+          { positions: [ { i: '0', j: 1 } ], css_id: 'tinytable_css_q6t1gpz7gqf7fmjbe6i8',}, 
+          ];
+
+          // Loop over the arrays to style the cells
+          cellsToStyle.forEach(function (group) {
+              group.positions.forEach(function (cell) {
+                  tableFns_903bzwgxlyos6k1eer8u.styleCell(cell.i, cell.j, group.css_id);
+              });
+          });
+      });
+    </script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/vincentarelbundock/tinytable@main/inst/tinytable.css">
+    <style>
+    /* tinytable css entries after */
+    #tinytable_903bzwgxlyos6k1eer8u td.tinytable_css_goybynhc9mdjer3k9v5w, #tinytable_903bzwgxlyos6k1eer8u th.tinytable_css_goybynhc9mdjer3k9v5w {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.08em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: right }
+    #tinytable_903bzwgxlyos6k1eer8u td.tinytable_css_8lic7dn0m04gyy65eooz, #tinytable_903bzwgxlyos6k1eer8u th.tinytable_css_8lic7dn0m04gyy65eooz { text-align: right }
+    #tinytable_903bzwgxlyos6k1eer8u td.tinytable_css_9vj7907ci19cacypq36p, #tinytable_903bzwgxlyos6k1eer8u th.tinytable_css_9vj7907ci19cacypq36p {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.08em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: right }
+    #tinytable_903bzwgxlyos6k1eer8u td.tinytable_css_zvv7ilkgr1xubsceajmr, #tinytable_903bzwgxlyos6k1eer8u th.tinytable_css_zvv7ilkgr1xubsceajmr {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.08em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%;  }
+    #tinytable_903bzwgxlyos6k1eer8u td.tinytable_css_q6t1gpz7gqf7fmjbe6i8, #tinytable_903bzwgxlyos6k1eer8u th.tinytable_css_q6t1gpz7gqf7fmjbe6i8 {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.08em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%;  }
+    </style>
+    <div class="container">
+      
+<table id="tinytable_903bzwgxlyos6k1eer8u" class="tinytable cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" scope="col" data-row="0" data-col="1">Method</th>
+<th data-quarto-table-cell-role="th" scope="col" data-row="0" data-col="2">RMSE, five types</th>
+<th data-quarto-table-cell-role="th" scope="col" data-row="0" data-col="3">RMSE, lineage summed</th>
+<th data-quarto-table-cell-role="th" scope="col" data-row="0" data-col="4">Pre-somitic share of the lineage</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-row="1" data-col="1">DeCovarT, raw covariance, λ = 0.5</td>
+<td data-row="1" data-col="2">0.034</td>
+<td data-row="1" data-col="3">0.014</td>
+<td data-row="1" data-col="4">0.73</td>
+</tr>
+<tr class="even">
+<td data-row="2" data-col="1">MEAD, pseudo-individuals</td>
+<td data-row="2" data-col="2">0.048</td>
+<td data-row="2" data-col="3">0.037</td>
+<td data-row="2" data-col="4">0.71</td>
+</tr>
+<tr class="odd">
+<td data-row="3" data-col="1">RNA-Sieve (Python)</td>
+<td data-row="3" data-col="2">0.056</td>
+<td data-row="3" data-col="3">0.037</td>
+<td data-row="3" data-col="4">0.68</td>
+</tr>
+<tr class="even">
+<td data-row="4" data-col="1">RNA-Sieve (R), QP, full raw covariance</td>
+<td data-row="4" data-col="2">0.060</td>
+<td data-row="4" data-col="3">0.035</td>
+<td data-row="4" data-col="4">0.73</td>
+</tr>
+<tr class="odd">
+<td data-row="5" data-col="1">DeMixSC wNNLS</td>
+<td data-row="5" data-col="2">0.071</td>
+<td data-row="5" data-col="3">0.030</td>
+<td data-row="5" data-col="4">0.87</td>
+</tr>
+<tr class="even">
+<td data-row="6" data-col="1">ReDeconv</td>
+<td data-row="6" data-col="2">0.103</td>
+<td data-row="6" data-col="3">0.034</td>
+<td data-row="6" data-col="4">0.60</td>
+</tr>
+<tr class="odd">
+<td data-row="7" data-col="1">RNA-Sieve (R), QP, diagonal</td>
+<td data-row="7" data-col="2">0.105</td>
+<td data-row="7" data-col="3">0.034</td>
+<td data-row="7" data-col="4">0.60</td>
+</tr>
+<tr class="even">
+<td data-row="8" data-col="1">DWLS</td>
+<td data-row="8" data-col="2">0.135</td>
+<td data-row="8" data-col="3">0.033</td>
+<td data-row="8" data-col="4">0.55</td>
+</tr>
+<tr class="odd">
+<td data-row="9" data-col="1">BayesPrism</td>
+<td data-row="9" data-col="2">0.162</td>
+<td data-row="9" data-col="3">0.036</td>
+<td data-row="9" data-col="4">0.50</td>
+</tr>
+<tr class="even">
+<td data-row="10" data-col="1">Robust regression</td>
+<td data-row="10" data-col="2">0.220</td>
+<td data-row="10" data-col="3">0.037</td>
+<td data-row="10" data-col="4">0.37</td>
+</tr>
+<tr class="odd">
+<td data-row="11" data-col="1">SCDC</td>
+<td data-row="11" data-col="2">0.307</td>
+<td data-row="11" data-col="3">0.027</td>
+<td data-row="11" data-col="4">0.26</td>
+</tr>
+<tr class="even">
+<td data-row="12" data-col="1">DeCovarT, raw covariance, closed-form λ</td>
+<td data-row="12" data-col="2">0.359</td>
+<td data-row="12" data-col="3">0.494</td>
+<td data-row="12" data-col="4">0.69</td>
+</tr>
+<tr class="odd">
+<td data-row="13" data-col="1">DeCovarT, denoised covariance</td>
+<td data-row="13" data-col="2">0.470</td>
+<td data-row="13" data-col="3">0.033</td>
+<td data-row="13" data-col="4">0.01</td>
+</tr>
+</tbody>
+</table>
+
+    </div>
+<!-- hack to avoid NA insertion in last line -->
+</div>
+</div>
+</figure>
+</div>
+</div>
+<ul>
+<li><strong>Once the lineage is summed, twelve of the thirteen rows are at 0.04 or below,</strong> DeCovarT with the denoised covariance included (0.033). Its error of 0.47 is entirely a wrong split between caudal and pre-somitic mesoderm (share 0.01 against 0.77 observed).</li>
+<li><strong>DeCovarT on the raw covariance with the closed-form <span class="math inline">\lambda</span> is the exception</strong> (0.49 after summing): it moves mass to gut, outside the lineage.</li>
+<li>The comparators differ mostly by that split as well: SCDC puts 0.26 of the lineage in pre-somitic mesoderm, DWLS 0.55, RNA-Sieve 0.68.</li>
+</ul>
+</section>
+<section id="how-far-the-bulk-is-from-the-reference" class="level5">
+<h5 class="anchored" data-anchor-id="how-far-the-bulk-is-from-the-reference">How far the bulk is from the reference</h5>
+<div class="cell">
+<div id="tbl-deconv-agreement" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-deconv-agreement-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;5.6: Bulk against the reference mixed at the observed composition, standard-Wnt samples, mean over three replicates (<code>output/deconvolution/bulk_reference_agreement.csv</code>). Correlations of <span class="math inline">\log(1+y_g)</span> with <span class="math inline">\log(1+(\boldsymbol{\mu}\boldsymbol{p})_g)</span>; share of genes whose bulk-to-reference ratio is more than 4-fold from the median ratio of the sample.
+</figcaption>
+<div aria-describedby="tbl-deconv-agreement-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<script src="https://cdn.jsdelivr.net/gh/vincentarelbundock/tinytable@main/inst/tinytable.js"></script>
+
+    <script>
+      // Create table-specific functions using external factory
+      const tableFns_gb24ht3tonypdqfz99qo = TinyTable.createTableFunctions("tinytable_gb24ht3tonypdqfz99qo");
+      // tinytable span after
+      window.addEventListener('load', function () {
+          var cellsToStyle = [
+            // tinytable style arrays after
+          { positions: [ { i: '6', j: 2 }, { i: '6', j: 3 }, { i: '6', j: 4 }, { i: '6', j: 5 } ], css_id: 'tinytable_css_hajnn2a4e2509i08a1df',}, 
+          { positions: [ { i: '1', j: 2 }, { i: '2', j: 2 }, { i: '3', j: 2 }, { i: '4', j: 2 }, { i: '5', j: 2 }, { i: '1', j: 3 }, { i: '2', j: 3 }, { i: '3', j: 3 }, { i: '4', j: 3 }, { i: '5', j: 3 }, { i: '1', j: 4 }, { i: '2', j: 4 }, { i: '3', j: 4 }, { i: '4', j: 4 }, { i: '5', j: 4 }, { i: '1', j: 5 }, { i: '2', j: 5 }, { i: '3', j: 5 }, { i: '4', j: 5 }, { i: '5', j: 5 } ], css_id: 'tinytable_css_y3awwx35vn95xm3u98o3',}, 
+          { positions: [ { i: '0', j: 2 }, { i: '0', j: 3 }, { i: '0', j: 4 }, { i: '0', j: 5 } ], css_id: 'tinytable_css_o375t9qwjyczsfn3ajn4',}, 
+          { positions: [ { i: '6', j: 1 } ], css_id: 'tinytable_css_ukit75lewiuf9p4222b2',}, 
+          { positions: [ { i: '0', j: 1 } ], css_id: 'tinytable_css_1nlg0odcu5plv44mn11w',}, 
+          ];
+
+          // Loop over the arrays to style the cells
+          cellsToStyle.forEach(function (group) {
+              group.positions.forEach(function (cell) {
+                  tableFns_gb24ht3tonypdqfz99qo.styleCell(cell.i, cell.j, group.css_id);
+              });
+          });
+      });
+    </script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/vincentarelbundock/tinytable@main/inst/tinytable.css">
+    <style>
+    /* tinytable css entries after */
+    #tinytable_gb24ht3tonypdqfz99qo td.tinytable_css_hajnn2a4e2509i08a1df, #tinytable_gb24ht3tonypdqfz99qo th.tinytable_css_hajnn2a4e2509i08a1df {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.08em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: right }
+    #tinytable_gb24ht3tonypdqfz99qo td.tinytable_css_y3awwx35vn95xm3u98o3, #tinytable_gb24ht3tonypdqfz99qo th.tinytable_css_y3awwx35vn95xm3u98o3 { text-align: right }
+    #tinytable_gb24ht3tonypdqfz99qo td.tinytable_css_o375t9qwjyczsfn3ajn4, #tinytable_gb24ht3tonypdqfz99qo th.tinytable_css_o375t9qwjyczsfn3ajn4 {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.08em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: right }
+    #tinytable_gb24ht3tonypdqfz99qo td.tinytable_css_ukit75lewiuf9p4222b2, #tinytable_gb24ht3tonypdqfz99qo th.tinytable_css_ukit75lewiuf9p4222b2 {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.08em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%;  }
+    #tinytable_gb24ht3tonypdqfz99qo td.tinytable_css_1nlg0odcu5plv44mn11w, #tinytable_gb24ht3tonypdqfz99qo th.tinytable_css_1nlg0odcu5plv44mn11w {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.08em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%;  }
+    </style>
+    <div class="container">
+      
+<table id="tinytable_gb24ht3tonypdqfz99qo" class="tinytable cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th" scope="col" data-row="0" data-col="1">Time</th>
+<th data-quarto-table-cell-role="th" scope="col" data-row="0" data-col="2">Genes</th>
+<th data-quarto-table-cell-role="th" scope="col" data-row="0" data-col="3">Pearson, log scale</th>
+<th data-quarto-table-cell-role="th" scope="col" data-row="0" data-col="4">Spearman</th>
+<th data-quarto-table-cell-role="th" scope="col" data-row="0" data-col="5">Genes more than 4-fold off</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-row="1" data-col="1">48 h</td>
+<td data-row="1" data-col="2">17</td>
+<td data-row="1" data-col="3">0.83</td>
+<td data-row="1" data-col="4">0.78</td>
+<td data-row="1" data-col="5">20%</td>
+</tr>
+<tr class="even">
+<td data-row="2" data-col="1">48 h</td>
+<td data-row="2" data-col="2">1,417</td>
+<td data-row="2" data-col="3">0.60</td>
+<td data-row="2" data-col="4">0.63</td>
+<td data-row="2" data-col="5">18%</td>
+</tr>
+<tr class="odd">
+<td data-row="3" data-col="1">72 h</td>
+<td data-row="3" data-col="2">140</td>
+<td data-row="3" data-col="3">0.70</td>
+<td data-row="3" data-col="4">0.77</td>
+<td data-row="3" data-col="5">28%</td>
+</tr>
+<tr class="even">
+<td data-row="4" data-col="1">72 h</td>
+<td data-row="4" data-col="2">3,420</td>
+<td data-row="4" data-col="3">0.54</td>
+<td data-row="4" data-col="4">0.57</td>
+<td data-row="4" data-col="5">21%</td>
+</tr>
+<tr class="odd">
+<td data-row="5" data-col="1">96 h</td>
+<td data-row="5" data-col="2">635</td>
+<td data-row="5" data-col="3">0.59</td>
+<td data-row="5" data-col="4">0.58</td>
+<td data-row="5" data-col="5">26%</td>
+</tr>
+<tr class="even">
+<td data-row="6" data-col="1">96 h</td>
+<td data-row="6" data-col="2">5,821</td>
+<td data-row="6" data-col="3">0.48</td>
+<td data-row="6" data-col="4">0.53</td>
+<td data-row="6" data-col="5">20%</td>
+</tr>
+</tbody>
+</table>
+
+    </div>
+<!-- hack to avoid NA insertion in last line -->
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>The correlation between a bulk and its own reference mixture falls from 0.83 (48 h, 17 genes) to 0.48 (96 h, 5,821 genes), and about one gene in five is more than 4-fold off. The fitted DeCovarT scales say the same: the variance scale implies fewer than one cell per bulk at 96 h. The residual is a difference between platforms, gene by gene, not the sampling of cells. The three-layer law of the DeCovarT vignette, <span class="math inline">\sum_j p_j^{2}\boldsymbol{\Sigma}_{B,j}+n^{-1}\sum_j p_j\boldsymbol{\Sigma}_{W,j}
++\boldsymbol{\Sigma}_{\mathrm{obs}}</span> (ledger Q1), has two layers that do not shrink with <span class="math inline">n</span>; the fits here use the middle one only.</p>
+</section>
+<section id="two-variants-that-did-not-change-the-picture" class="level5">
+<h5 class="anchored" data-anchor-id="two-variants-that-did-not-change-the-picture">Two variants that did not change the picture</h5>
+<ul>
+<li><strong>Between-type covariance in the DeCovarT likelihood</strong> (<code>fit_decovart_total()</code>, <a href="#eq-deconv-total-cov" class="quarto-xref">Equation&nbsp;<span>5.2</span></a> with free <span class="math inline">c</span> and <span class="math inline">\phi</span>). With the term switched off the function reproduces the package fit. With it, the RMSE at 96 h on the Welch panel is 0.30 against 0.36 (raw) and 0.47 against 0.47 (denoised); across the 24 cells of the design it is lower in some and higher in others, with no pattern.</li>
+<li><strong>Firth penalty</strong> (<code>fit_decovart_firth()</code>, from two interior starts). The penalty is half the log-determinant of the information of the <span class="math inline">J-1</span> ILR coordinates, a few units (median 4 on the Welch panel at 48 h and 72 h), against likelihood differences of hundreds. The estimates equal the unpenalised ones to the third decimal on the Welch panel at 72 h; on the 17-gene panel at 48 h the RMSE goes from 0.74 to 0.57. The information is singular on a face (ledger F1), so the penalty keeps the estimate interior; it does not act on the covariance log-determinant of <a href="#eq-deconv-profile" class="quarto-xref">Equation&nbsp;<span>5.1</span></a>. <span class="light-content" style="color: #7a1f1f;border-radius: 0.2rem; padding: 0 0.2rem 0 0.2rem;background-color: #f4c7c3;">At 96 h on the Welch panel one Firth fit is projected at about 8 h (one Hessian takes 70 s); the three standard-Wnt samples are running for the raw and denoised covariance, bulk as is, and are not in the figures yet.</span></li>
+</ul>
+</section>
+<section id="limits" class="level5">
+<h5 class="anchored" data-anchor-id="limits">Limits</h5>
+<ul>
+<li>One reference per time, from one cell line at 72 h and 96 h; three bulk replicates per protocol; the observed composition is the share of scored cells, which leaves out unscored cells present in the bulk.</li>
+<li>MEAD ran on pseudo-individuals, so its gene weights measure the precision of the reference means, not donor variation.</li>
+<li>Robust regression returned a negative coefficient for every sample; the reported estimate is the clipped one.</li>
+<li>Every “best” value above was selected on the samples that score it.</li>
+<li>The equations of this section are checked in <code>verification/ledger.json</code> (<a href="#tbl-deconv-ledger" class="quarto-xref">Table&nbsp;<span>5.7</span></a>); the repository has no Lean project, and no shared notation file exists yet.</li>
+</ul>
+<div class="cell">
+<div id="tbl-deconv-ledger" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-deconv-ledger-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;5.7: Symbolic checks of the equations used in this section (<code>python3 verification/run_all.py</code>, SymPy 1.14.0). ‘exact’: the difference simplifies to zero; ‘rational-sampling’: zero in exact rational arithmetic at 25 points, not a proof; ‘numeric’: mpmath at 40 digits, not a proof; ‘series’: expansion to the stated order.
+</figcaption>
+<div aria-describedby="tbl-deconv-ledger-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<script src="https://cdn.jsdelivr.net/gh/vincentarelbundock/tinytable@main/inst/tinytable.js"></script>
+
+    <script>
+      // Create table-specific functions using external factory
+      const tableFns_gcrpqbquwsgmg14flcx0 = TinyTable.createTableFunctions("tinytable_gcrpqbquwsgmg14flcx0");
+      // tinytable span after
+      window.addEventListener('load', function () {
+          var cellsToStyle = [
+            // tinytable style arrays after
+          { positions: [ { i: '14', j: 4 } ], css_id: 'tinytable_css_hq3h07bh2uteerzi972y',}, 
+          { positions: [ { i: '1', j: 4 }, { i: '2', j: 4 }, { i: '3', j: 4 }, { i: '4', j: 4 }, { i: '5', j: 4 }, { i: '6', j: 4 }, { i: '7', j: 4 }, { i: '8', j: 4 }, { i: '9', j: 4 }, { i: '10', j: 4 }, { i: '11', j: 4 }, { i: '12', j: 4 }, { i: '13', j: 4 } ], css_id: 'tinytable_css_pwny236hs12nzttx58rz',}, 
+          { positions: [ { i: '0', j: 4 } ], css_id: 'tinytable_css_evhe00eb5h2001bpegxo',}, 
+          { positions: [ { i: '14', j: 3 } ], css_id: 'tinytable_css_i1rz72jnnqwzboblb1jo',}, 
+          { positions: [ { i: '1', j: 3 }, { i: '2', j: 3 }, { i: '3', j: 3 }, { i: '4', j: 3 }, { i: '5', j: 3 }, { i: '6', j: 3 }, { i: '7', j: 3 }, { i: '8', j: 3 }, { i: '9', j: 3 }, { i: '10', j: 3 }, { i: '11', j: 3 }, { i: '12', j: 3 }, { i: '13', j: 3 } ], css_id: 'tinytable_css_i4allp0se6ld4i2yhggp',}, 
+          { positions: [ { i: '0', j: 3 } ], css_id: 'tinytable_css_wuckngln3461qrrh2ilc',}, 
+          { positions: [ { i: '14', j: 2 } ], css_id: 'tinytable_css_qu2scu5oi5ae63caz8vk',}, 
+          { positions: [ { i: '1', j: 2 }, { i: '2', j: 2 }, { i: '3', j: 2 }, { i: '4', j: 2 }, { i: '5', j: 2 }, { i: '6', j: 2 }, { i: '7', j: 2 }, { i: '8', j: 2 }, { i: '9', j: 2 }, { i: '10', j: 2 }, { i: '11', j: 2 }, { i: '12', j: 2 }, { i: '13', j: 2 } ], css_id: 'tinytable_css_ncmgc81iq1o9wnfm2qbt',}, 
+          { positions: [ { i: '0', j: 2 } ], css_id: 'tinytable_css_4d6bvneesnyi7v3t4jft',}, 
+          { positions: [ { i: '14', j: 1 } ], css_id: 'tinytable_css_p3y0b7sebzru5aei1zql',}, 
+          { positions: [ { i: '1', j: 1 }, { i: '2', j: 1 }, { i: '3', j: 1 }, { i: '4', j: 1 }, { i: '5', j: 1 }, { i: '6', j: 1 }, { i: '7', j: 1 }, { i: '8', j: 1 }, { i: '9', j: 1 }, { i: '10', j: 1 }, { i: '11', j: 1 }, { i: '12', j: 1 }, { i: '13', j: 1 } ], css_id: 'tinytable_css_sqfbooiihhfydqz3kjee',}, 
+          { positions: [ { i: '0', j: 1 } ], css_id: 'tinytable_css_952nkitu9fh5yrdzpoya',}, 
+          ];
+
+          // Loop over the arrays to style the cells
+          cellsToStyle.forEach(function (group) {
+              group.positions.forEach(function (cell) {
+                  tableFns_gcrpqbquwsgmg14flcx0.styleCell(cell.i, cell.j, group.css_id);
+              });
+          });
+      });
+    </script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/vincentarelbundock/tinytable@main/inst/tinytable.css">
+    <style>
+    /* tinytable css entries after */
+    #tinytable_gcrpqbquwsgmg14flcx0 td.tinytable_css_hq3h07bh2uteerzi972y, #tinytable_gcrpqbquwsgmg14flcx0 th.tinytable_css_hq3h07bh2uteerzi972y {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.08em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; width: 12%; }
+    #tinytable_gcrpqbquwsgmg14flcx0 td.tinytable_css_pwny236hs12nzttx58rz, #tinytable_gcrpqbquwsgmg14flcx0 th.tinytable_css_pwny236hs12nzttx58rz { width: 12%; }
+    #tinytable_gcrpqbquwsgmg14flcx0 td.tinytable_css_evhe00eb5h2001bpegxo, #tinytable_gcrpqbquwsgmg14flcx0 th.tinytable_css_evhe00eb5h2001bpegxo {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.08em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; width: 12%; }
+    #tinytable_gcrpqbquwsgmg14flcx0 td.tinytable_css_i1rz72jnnqwzboblb1jo, #tinytable_gcrpqbquwsgmg14flcx0 th.tinytable_css_i1rz72jnnqwzboblb1jo {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.08em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; width: 16%; }
+    #tinytable_gcrpqbquwsgmg14flcx0 td.tinytable_css_i4allp0se6ld4i2yhggp, #tinytable_gcrpqbquwsgmg14flcx0 th.tinytable_css_i4allp0se6ld4i2yhggp { width: 16%; }
+    #tinytable_gcrpqbquwsgmg14flcx0 td.tinytable_css_wuckngln3461qrrh2ilc, #tinytable_gcrpqbquwsgmg14flcx0 th.tinytable_css_wuckngln3461qrrh2ilc {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.08em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; width: 16%; }
+    #tinytable_gcrpqbquwsgmg14flcx0 td.tinytable_css_qu2scu5oi5ae63caz8vk, #tinytable_gcrpqbquwsgmg14flcx0 th.tinytable_css_qu2scu5oi5ae63caz8vk {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.08em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; width: 66%; }
+    #tinytable_gcrpqbquwsgmg14flcx0 td.tinytable_css_ncmgc81iq1o9wnfm2qbt, #tinytable_gcrpqbquwsgmg14flcx0 th.tinytable_css_ncmgc81iq1o9wnfm2qbt { width: 66%; }
+    #tinytable_gcrpqbquwsgmg14flcx0 td.tinytable_css_4d6bvneesnyi7v3t4jft, #tinytable_gcrpqbquwsgmg14flcx0 th.tinytable_css_4d6bvneesnyi7v3t4jft {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.08em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; width: 66%; }
+    #tinytable_gcrpqbquwsgmg14flcx0 td.tinytable_css_p3y0b7sebzru5aei1zql, #tinytable_gcrpqbquwsgmg14flcx0 th.tinytable_css_p3y0b7sebzru5aei1zql {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.08em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; width: 6%; }
+    #tinytable_gcrpqbquwsgmg14flcx0 td.tinytable_css_sqfbooiihhfydqz3kjee, #tinytable_gcrpqbquwsgmg14flcx0 th.tinytable_css_sqfbooiihhfydqz3kjee { width: 6%; }
+    #tinytable_gcrpqbquwsgmg14flcx0 td.tinytable_css_952nkitu9fh5yrdzpoya, #tinytable_gcrpqbquwsgmg14flcx0 th.tinytable_css_952nkitu9fh5yrdzpoya {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.08em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; width: 6%; }
+    </style>
+    <div class="container">
+      <table class="tinytable" id="tinytable_gcrpqbquwsgmg14flcx0" style="table-layout: fixed; width: 100%; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+        
+        <thead>
+              <tr>
+                <th scope="col" data-row="0" data-col="1">Id</th>
+                <th scope="col" data-row="0" data-col="2">Claim</th>
+                <th scope="col" data-row="0" data-col="3">Kind</th>
+                <th scope="col" data-row="0" data-col="4">Status</th>
+              </tr>
+        </thead>
+        
+        <tbody>
+                <tr>
+                  <td data-row="1" data-col="1">C1</td>
+                  <td data-row="1" data-col="2">Bulk covariance with multinomial cell-type counts is n S_T(p)</td>
+                  <td data-row="1" data-col="3">exact</td>
+                  <td data-row="1" data-col="4">pass</td>
+                </tr>
+                <tr>
+                  <td data-row="2" data-col="1">C2</td>
+                  <td data-row="2" data-col="2">S_T(p) - sum_j p_j Sigma_j = sum_j p_j (m_j - Mp)(m_j - Mp)'; rank &lt;= J - 1</td>
+                  <td data-row="2" data-col="3">exact</td>
+                  <td data-row="2" data-col="4">pass</td>
+                </tr>
+                <tr>
+                  <td data-row="3" data-col="1">C3</td>
+                  <td data-row="3" data-col="2">det(T - mm') = det(T)(1 - m'T^-1 m) and the matching inverse</td>
+                  <td data-row="3" data-col="3">exact</td>
+                  <td data-row="3" data-col="4">pass</td>
+                </tr>
+                <tr>
+                  <td data-row="4" data-col="1">L1</td>
+                  <td data-row="4" data-col="2">log det(sum_j p_j Sigma_j) &gt;= sum_j p_j log det Sigma_j</td>
+                  <td data-row="4" data-col="3">numeric</td>
+                  <td data-row="4" data-col="4">pass</td>
+                </tr>
+                <tr>
+                  <td data-row="5" data-col="1">L2</td>
+                  <td data-row="5" data-col="2">For A = diag(1, eps), B = diag(eps, 1): the gap of L1 is -log(eps) + log(p(1 - p)) + O(eps)</td>
+                  <td data-row="5" data-col="3">series</td>
+                  <td data-row="5" data-col="4">pass</td>
+                </tr>
+                <tr>
+                  <td data-row="6" data-col="1">M1</td>
+                  <td data-row="6" data-col="2">Aitchison distance (clr) equals the Euclidean distance of ILR coordinates in the Helmert basis</td>
+                  <td data-row="6" data-col="3">exact</td>
+                  <td data-row="6" data-col="4">pass</td>
+                </tr>
+                <tr>
+                  <td data-row="7" data-col="1">M2</td>
+                  <td data-row="7" data-col="2">p_j = (q_j / s_j) / sum_k (q_k / s_k) inverts q_j = p_j s_j / sum_k p_k s_k</td>
+                  <td data-row="7" data-col="3">exact</td>
+                  <td data-row="7" data-col="4">pass</td>
+                </tr>
+                <tr>
+                  <td data-row="8" data-col="1">F1</td>
+                  <td data-row="8" data-col="2">dp/dz = (diag p - pp')V; det(J'J) vanishes on every face, so the ILR information J' I_p J is singular there</td>
+                  <td data-row="8" data-col="3">exact</td>
+                  <td data-row="8" data-col="4">pass</td>
+                </tr>
+                <tr>
+                  <td data-row="9" data-col="1">Q1</td>
+                  <td data-row="9" data-col="2">Cov = sum_j p_j^2 Sigma_B,j + (1/n) sum_j p_j Sigma_W,j for the replicate-plus-cell hierarchy</td>
+                  <td data-row="9" data-col="3">exact</td>
+                  <td data-row="9" data-col="4">pass</td>
+                </tr>
+                <tr>
+                  <td data-row="10" data-col="1">P1</td>
+                  <td data-row="10" data-col="2">c = m'Wy / m'Wm and phi = r'Wr / G are the stationary scales; profile log-likelihood = -(G/2) log phi - (1/2) log det S - G/2</td>
+                  <td data-row="10" data-col="3">exact</td>
+                  <td data-row="10" data-col="4">pass</td>
+                </tr>
+                <tr>
+                  <td data-row="11" data-col="1">P2</td>
+                  <td data-row="11" data-col="2">Score in p_k: (c/phi) m_k'a + a'(dS_k)a / (2 phi) - tr(S^-1 dS_k) / 2, a = S^-1 r; and its tied-scale form</td>
+                  <td data-row="11" data-col="3">rational-sampling</td>
+                  <td data-row="11" data-col="4">pass</td>
+                </tr>
+                <tr>
+                  <td data-row="12" data-col="1">P3</td>
+                  <td data-row="12" data-col="2">d/dtheta[-(G/2) log q] equals d/dtheta[-q / (2 phi)] at phi = q / G: profiling divides the gradient of the quadratic form by phi-hat</td>
+                  <td data-row="12" data-col="3">exact</td>
+                  <td data-row="12" data-col="4">pass</td>
+                </tr>
+                <tr>
+                  <td data-row="13" data-col="1">S1</td>
+                  <td data-row="13" data-col="2">m_j = mu_j + (w_j / C_j) Sigma_j (U + Q)^-1 (y - mu w) is the stationary point of the mean stage</td>
+                  <td data-row="13" data-col="3">exact</td>
+                  <td data-row="13" data-col="4">pass</td>
+                </tr>
+                <tr>
+                  <td data-row="14" data-col="1">S2</td>
+                  <td data-row="14" data-col="2">Multiplying the off-diagonal terms of the lambda1-shrunk covariance by (1 - lambda2) / (1 - lambda1) gives the lambda2-shrunk covariance</td>
+                  <td data-row="14" data-col="3">exact</td>
+                  <td data-row="14" data-col="4">pass</td>
+                </tr>
+        </tbody>
+      </table>
+    </div>
+<!-- hack to avoid NA insertion in last line -->
+</div>
+</div>
+</figure>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="sec-deconv-perspectives" class="level3" data-number="5.2.3">
+<h3 data-number="5.2.3" class="anchored" data-anchor-id="sec-deconv-perspectives"><span class="header-section-number">5.2.3</span> Five directions to improve the estimates</h3>
+<p>Ranked by the evidence of this benchmark, with the perspectives of the DeCovarT article in mind (its section “Improve DeCovarT”). Each item states what was observed here and what is only expected.</p>
+<ol type="1">
+<li><strong>Choose the regularisation of the covariance for the deconvolution, not for the covariance.</strong>
+<ul>
+<li>Observed: <span class="math inline">\lambda=0.5</span> divides the RMSE by ten at 96 h on the Welch panel (<a href="#fig-deconv-shrinkage" class="quarto-xref">Figure&nbsp;<span>5.6</span></a>); the denoised covariance, which is the least regularised input, is the worst.</li>
+<li>To do: select <span class="math inline">\lambda</span> without the observed composition, on pseudo-bulks made of held-out cells (the cross-validation of <a href="03-covariance-estimation.html#sec-cov-shrinkage-reading" class="quarto-xref"><span>Section 4.4.1</span></a>), with one level common to the types against one per type. Add an eigenvalue floor and a factor form <span class="math inline">\boldsymbol{B}\boldsymbol{B}^{\top}+\boldsymbol{\Psi}</span> as competitors, and the sparse precisions of chapter 3.</li>
+<li>Expected, not shown: a common level matters more than its value.</li>
+</ul></li>
+<li><strong>Estimate the composition from the mean equation: quasi-likelihood, GEE, Fisher scoring.</strong>
+<ul>
+<li>Observed: the QP with the full raw covariance (0.060) against the likelihood on the same plug-ins (0.36), and the full-likelihood stage undoing the QP (<a href="#fig-deconv-sieve" class="quarto-xref">Figure&nbsp;<span>5.5</span></a>).</li>
+<li>The quasi-score <span class="math inline">\boldsymbol{D}^{\top}\boldsymbol{V}_0^{-1}\{\boldsymbol{y}-\boldsymbol{m}(\boldsymbol{p})\}
+=\boldsymbol{0}</span> stays unbiased when the working covariance is wrong; the likelihood does not. Its iteration is the IRLS of the article, and the QP stage here is that iteration with a non-negativity constraint.</li>
+<li>Inference then needs a sandwich. With one bulk the genes are the only units and they are correlated: HC3 as a leave-one-gene-out jackknife is too narrow, and a jackknife over clusters of the precision graph is the natural version for DeCovarT.</li>
+<li>Stacking the covariance equation on the mean equation (GMM) would bring back the term that failed here; it should come with a weight chosen from the data, not at full weight.</li>
+</ul></li>
+<li><strong>Treat close types as a lineage.</strong>
+<ul>
+<li>Observed: after summing the paraxial mesoderm, twelve of thirteen methods are within 0.04 (<a href="#tbl-deconv-lineage" class="quarto-xref">Table&nbsp;<span>5.5</span></a>); the mean profiles have a cosine similarity of 0.99 (<a href="#fig-deconv-profile-cor" class="quarto-xref">Figure&nbsp;<span>5.7</span></a>).</li>
+<li>To do: a two-level fit (lineage first, then the split inside it on the genes that separate its members), or a penalty on the split, or archetypes along the differentiation axis instead of discrete types.</li>
+<li>This is the direction with the least dependence on the estimator: it helps every method of the table.</li>
+</ul></li>
+<li><strong>Add a measurement layer between the single-cell reference and the bulk.</strong>
+<ul>
+<li>Observed: correlation 0.48 to 0.83 between a bulk and its own reference mixture; <span class="math inline">\hat n&lt;1</span>; Huber weights help the diagonal QP (0.105 → 0.039 at 96 h); the DeMixSC residual weights are among the best comparators; dividing the bulk by <span class="math inline">b_g</span> helps on the small panels and hurts on the Welch panel at 96 h.</li>
+<li>Not supported as implemented: one variance scale per gene, pooled over six bulks (stage <code>qp_means_var</code>).</li>
+<li>To do: a gene-wise mean–variance law across bulks, <span class="math inline">\operatorname{Var}(y_{gi})=\omega m_{gi}+\kappa_g m_{gi}^{2}</span>, which is the marginal law of a Poisson log-normal model (<a href="03-covariance-estimation.html#eq-pln" class="quarto-xref">Equation&nbsp;<span>4.5</span></a>), or a mixed model with a gene random effect shared by the bulks of one platform. A full multivariate Poisson log-normal convolution has no closed form; its first two moments are enough for item 2.</li>
+</ul></li>
+<li><strong>Carry the precision of the reference, with replicates or a jackknife; do not refit the reference from the bulk.</strong>
+<ul>
+<li>Observed: MEAD weights genes by the variance of the type means across (pseudo-)individuals and is the best comparator at 96 h on the Welch panel (0.048); refining the means from one bulk is the worst stage (0.50).</li>
+<li>To do: a delete-a-group jackknife of the cells of each type for the variance of <span class="math inline">\hat{\boldsymbol{\mu}}_{\cdot j}</span> and of <span class="math inline">\hat{\boldsymbol{\Sigma}}_j</span>, used as weights and in the sandwich of item 2; the two cell lines at 48 h for a first estimate of the between-replicate layer; a mean refinement only when it is shared by many bulks.</li>
+</ul></li>
+</ol>
+<p>Not in the list, on this evidence: the Firth penalty and the between-type covariance term (no consistent effect), and other optimisers (the optimiser is not what fails).</p>
+<p>Which direction pays most depends on the mixture. The table states the expectation; only the first column was measured here.</p>
+<div id="tbl-deconv-regimes" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-deconv-regimes-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;5.8: Expected dependence of the best direction on the mixture. Speculation except for the measured column.
+</figcaption>
+<div aria-describedby="tbl-deconv-regimes-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Property of the problem</th>
+<th>Measured here</th>
+<th>Direction expected to matter most</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Cosine similarity of the closest mean profiles</td>
+<td>0.98 (48 h, 72 h), 0.99 (96 h), Welch panel</td>
+<td>above about 0.98: lineage (3); below: any estimator of the table does well once the lineage is summed</td>
+</tr>
+<tr class="even">
+<td>Shift between bulk and reference</td>
+<td>log-scale correlation 0.48 to 0.83; 18 to 28% of genes 4-fold off</td>
+<td>large: measurement layer and robust weights (4), mean equation (2); small: the likelihood can use the covariance (1)</td>
+</tr>
+<tr class="odd">
+<td>Cells per type against genes</td>
+<td>29 to 10,590 cells for 1,417 to 5,821 genes</td>
+<td>few cells: stronger, common regularisation (1) and reference precision (5)</td>
+</tr>
+<tr class="even">
+<td>Gene–gene covariance changed by the condition</td>
+<td>not measured: the reference follows the standard protocol only</td>
+<td>if it changes, the covariance is a weight at best (2); a covariance per condition needs a reference per condition</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p><span class="light-content" style="color: #7a1f1f;border-radius: 0.2rem; padding: 0 0.2rem 0 0.2rem;background-color: #f4c7c3;">TODO: (a) select <span class="math inline">\lambda</span> without the observed composition and rerun the comparison; (b) write the mean-equation fit with a cluster jackknife; (c) fit the lineage in two levels; (d) add a scenario-1 run of DWLS with its own signature on the same cells; (e) add the 96 h Firth fits when they finish.</span></p>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="list">

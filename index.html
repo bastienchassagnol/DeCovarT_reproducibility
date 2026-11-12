@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Bastien Chassagnol">
-<meta name="dcterms.date" content="2026-11-11">
+<meta name="dcterms.date" content="2026-11-12">
 <meta name="description" content="What this book runs on the Suppinger gastruloids, and where the theory lives.">
 
 <title>DeCovarT reproducibility</title>
@@ -80,6 +80,17 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
+<script type="application/json" class="js-hypothesis-config">
+{
+  "theme": "clean"
+}
+</script>
+<script async="" src="https://hypothes.is/embed.js"></script>
+<script>
+  window.document.addEventListener("DOMContentLoaded", function (_event) {
+    document.body.classList.add('hypothesis-enabled');
+  });
+</script>
 <style>
 
       .quarto-title-block .quarto-title-banner {
@@ -227,7 +238,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">11 Nov 2026</p>
+        <p class="date">12 Nov 2026</p>
       </div>
     </div>
     
@@ -319,6 +330,7 @@ window.Quarto = {
   <li><a href="#sec-aims" id="toc-sec-aims" class="nav-link active" data-scroll-target="#sec-aims"><span class="header-section-number">0.1</span> Aims</a></li>
   <li><a href="#sec-pipeline" id="toc-sec-pipeline" class="nav-link" data-scroll-target="#sec-pipeline"><span class="header-section-number">0.2</span> Pipeline</a></li>
   <li><a href="#sec-reading-guide" id="toc-sec-reading-guide" class="nav-link" data-scroll-target="#sec-reading-guide"><span class="header-section-number">0.3</span> Reading guide</a></li>
+  <li><a href="#sec-slides" id="toc-sec-slides" class="nav-link" data-scroll-target="#sec-slides"><span class="header-section-number">0.4</span> Slide deck</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/edit/main/docs/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/blob/main/docs/index.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -407,6 +419,18 @@ Table&nbsp;1: Book chapters and the vignette chapters that hold their theory.
 </figure>
 </div>
 <p>Code in <code>R/</code> and <code>scripts/</code> is written to be run from the repository root. Chunks marked <code>eval: false</code> show calls that have not been run in the current state of the repository; the outputs they would produce are listed as missing where it matters.</p>
+</section>
+<section id="sec-slides" class="level2" data-number="0.4">
+<h2 data-number="0.4" class="anchored" data-anchor-id="sec-slides"><span class="header-section-number">0.4</span> Slide deck</h2>
+<p>The Suppinger findings, the measurement slides and the three checks are one deck. The chapters below are the same material as running text.</p>
+<p><a href="slides-deck/index.html">Open the deck full screen</a>.</p>
+<iframe class="slides" src="slides-deck/index.html" title="DeCovarT reproducibility slides" width="100%" height="600" style="border: 1px solid #ccc;" allowfullscreen=""></iframe>
+<style>
+iframe.slides {
+  aspect-ratio: 16 / 9;
+  min-height: 480px;
+}
+</style>
 
 
 </section>
