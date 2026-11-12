@@ -1,0 +1,18 @@
+"Frobenius risk": |
+  The expected sum, over every gene pair, of the squared error of that covariance entry. A variance and a covariance count the same.
+"bias-variance trade-off": |
+  A larger shrinkage intensity makes the sample correlations less variable and pulls them toward zero. That pull is bias when the correlations are not zero.
+"shrinkage intensity": |
+  The number between 0 and 1 that multiplies the sample correlations of a type. At 0 they are kept. At 1 only the variances remain.
+"negative binomial dispersion": |
+  The factor in the variance mean plus dispersion times mean squared. Here it is biological variability of the expression or of the size factor.
+"Fano factor": |
+  Variance of a count divided by its mean. For a Poisson process over a long window the factor tends to 1, and the extra above 1 is the negative binomial dispersion.
+"capture ratio": |
+  The factor that takes a reference count onto the scale of the bulk. The mean grows with the product of this factor and the cell count. The within-type covariance grows with its square times the cell count.
+"proportion": |
+  The fraction of cells of one type. It is the weight of that type in the mixture.
+"presence gate": |
+  A gene is kept when at least 5 percent of the cells of every scored type detect it and its count varies inside every type.
+"aliquot": |
+  A physical split of one specimen, so a bulk library and a single-cell library measure the same material.

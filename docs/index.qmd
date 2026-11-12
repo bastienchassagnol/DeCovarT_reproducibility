@@ -95,3 +95,31 @@ Code in `R/` and `scripts/` is written to be run from the repository
 root. Chunks marked `eval: false` show calls that have not been run in
 the current state of the repository; the outputs they would produce are
 listed as missing where it matters.
+
+## Slide deck {#sec-slides}
+
+The Suppinger findings, the measurement slides and the three checks
+are one deck. The chapters below are the same material as running text.
+
+[Open the deck full screen](slides-deck/index.html).
+
+```{=html}
+<iframe
+  class="slides"
+  src="slides-deck/index.html"
+  title="DeCovarT reproducibility slides"
+  width="100%"
+  height="600"
+  style="border: 1px solid #ccc;"
+  allowfullscreen
+></iframe>
+```
+
+```{=html}
+<style>
+iframe.slides {
+  aspect-ratio: 16 / 9;
+  min-height: 480px;
+}
+</style>
+```

@@ -203,3 +203,66 @@ $presentation-h3-font-size: 0.95em;
 .reveal .slides section.layers .credit {
   font-size: 0.84em;
 }
+
+.reveal .slides section.section-divider {
+  text-align: center;
+}
+
+.reveal .slides section.section-divider h2 {
+  font-size: 1.85em;
+  border-bottom: none;
+  margin: 0;
+}
+
+.reveal .slides section a.glossary,
+.reveal .slides section span.glossary {
+  color: #0e4d3a;
+  background-color: #f6e2c4;
+  border-radius: 0.15em;
+  padding: 0 0.15em;
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+  cursor: help;
+  position: relative;
+}
+
+.reveal .slides section a.glossary:hover::after {
+  content: attr(title);
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 6px);
+  z-index: 30;
+  width: 280px;
+  background: #f7f4ef;
+  color: #1c2b24;
+  border: 1px solid #cfc6b8;
+  border-radius: 6px;
+  padding: 0.35em 0.5em;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.3;
+  text-align: left;
+  text-decoration: none;
+  white-space: normal;
+}
+
+.reveal .slides section.plsda img {
+  max-height: 520px !important;
+  max-width: 100% !important;
+}
+
+.reveal .slides section.upset img {
+  max-height: 500px !important;
+  max-width: 100% !important;
+}
+
+.reveal .slides section.ladder img {
+  max-height: 560px !important;
+  max-width: 100% !important;
+}
+
+.reveal .slides section.measurement img,
+.reveal .slides section.measurement svg {
+  max-height: 520px !important;
+  max-width: 100% !important;
+}

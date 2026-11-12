@@ -8,8 +8,20 @@ from: markdown+emoji
 # TikZ via the diagram filter already used by the book. The cache key is
 # the picture source only. TIKZ_BIN is set in _environment.local.
 filters:
+  - highlight-text
   - at: pre-ast
     path: _extensions/pandoc-ext/diagram/diagram.lua
+
+revealjs-plugins:
+  - quiz
+
+quiz:
+  checkKey: "c"
+  resetKey: "q"
+  shuffleOptions: true
+  defaultCorrect: "Correct."
+  defaultIncorrect: "Not this one."
+  includeScore: false
 
 diagram:
   cache: true
@@ -77,3 +89,6 @@ format:
     footer: "DeCovarT reproducibility — Suppinger benchmark"
     title-slide-attributes:
       data-background-color: "#f7f4ef"
+    comments:
+      hypothesis:
+        theme: clean

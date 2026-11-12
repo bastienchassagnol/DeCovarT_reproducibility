@@ -6,7 +6,19 @@ date: today
 engine: knitr
 ---
 
-## Independent cells, shared noise, or one profile {.dag}
+```{r}
+#| include: false
+if (!requireNamespace("glossary", quietly = TRUE)) {
+  sys.source(file.path("..", "renv", "activate.R"), envir = globalenv())
+}
+library(glossary)
+glossary_path(file.path("..", "glossary", "glossary.yml"))
+glossary_popup("hover")
+```
+
+## 1 · Two weights {.center .section-divider background-gradient="linear-gradient(160deg, #f7f4ef 0%, #f6e2c4 100%)"}
+
+## i · Independent cells, shared noise, or one profile {.dag}
 
 ```{.tikz}
 %%| filename: fig-cell-stories
@@ -65,7 +77,7 @@ engine: knitr
 **Say.** The released DeCovarT used the square. The reference we have only supports the linear weight.
 :::
 
-## A square weight shrinks the rare type's contribution {.explorer}
+## ii · A square weight shrinks the rare type's contribution {.explorer}
 
 ```{ojs}
 //| echo: false
@@ -147,7 +159,7 @@ mixLin = {
     const u = Math.max(rnd(), 1e-12);
     return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * rnd());
   };
-  return { mat, add, det, inv, ring, laws, fisher, loglik, normal };
+  return { mat, add, det, inv, quad, ring, laws, fisher, loglik, normal };
 }
 ```
 
@@ -156,77 +168,105 @@ mixLin = {
 viewof densCtrl = Inputs.form({
   v1: Inputs.range([1, 64], {value: 16, step: 1, label: "Variance, gene 1"}),
   v2: Inputs.range([1, 64], {value: 16, step: 1, label: "Variance, gene 2"}),
-  rho: Inputs.range([-0.85, 0.85], {value: 0.6, step: 0.05, label: "Correlation, type 1"}),
-  share: Inputs.range([0.02, 0.98], {value: 0.5, step: 0.01, label: "Share of type 1"})
+  rho1: Inputs.range([-0.85, 0.85], {value: 0.6, step: 0.05, label: "Correlation, type 1"}),
+  rho2: Inputs.range([-0.85, 0.85], {value: 0, step: 0.05, label: "Correlation, type 2"}),
+  proportion: Inputs.range([0.02, 0.98], {value: 0.5, step: 0.01, label: "Proportion of type 1"}),
+  distance: Inputs.range([0, 16], {value: 2 * Math.SQRT2, step: 0.1, label: "Distance between centroids"})
 })
 ```
 
 ```{ojs}
 //| echo: false
+// Axes stay at the slider extremes. A larger variance or a wider
+// separation changes the shape, not the frame.
 densModel = {
-  const p = densCtrl.share;
-  const S1 = mixLin.mat(densCtrl.v1, densCtrl.v2, densCtrl.rho);
-  const S2 = mixLin.mat(densCtrl.v1, densCtrl.v2, 0);
-  const mu1 = [20, 22], mu2 = [22, 20];
+  const p = densCtrl.proportion;
+  const S1 = mixLin.mat(densCtrl.v1, densCtrl.v2, densCtrl.rho1);
+  const S2 = mixLin.mat(densCtrl.v1, densCtrl.v2, densCtrl.rho2);
+  const u = 1 / Math.SQRT2;
+  const shift = densCtrl.distance / 2 * u;
+  const mu1 = [21 - shift, 21 + shift];
+  const mu2 = [21 + shift, 21 - shift];
   const mean = [p * mu1[0] + (1 - p) * mu2[0], p * mu1[1] + (1 - p) * mu2[1]];
-  const { Squad, Slin, quadParts, linParts } = mixLin.laws(p, S1, S2);
-  const pts = mixLin.ring(mean, Squad, 2, 48)
-    .concat(mixLin.ring(mean, Slin, 2, 48), [mu1, mu2, mean]);
-  const xs = pts.map((d) => d[0]), ys = pts.map((d) => d[1]);
-  const xmin = Math.min(...xs), xmax = Math.max(...xs);
-  const ymin = Math.min(...ys), ymax = Math.max(...ys);
+  const { Squad, Slin } = mixLin.laws(p, S1, S2);
+  const vMax = 64, rhoMax = 0.85, dMax = 16;
+  const reach = 2 * Math.sqrt(vMax * (1 + rhoMax));
+  const half = dMax / (2 * Math.SQRT2);
+  const pad = 2;
+  const peak = (S) => 1 / (2 * Math.PI * Math.sqrt(Math.max(mixLin.det(S), 1e-12)));
   const H = p <= 0 || p >= 1 ? 0 : -p * Math.log2(p) - (1 - p) * Math.log2(1 - p);
   return {
-    Squad, Slin, quadParts, linParts, mu1, mu2, mean, p, H,
-    xdom: [xmin - 0.08 * (xmax - xmin || 1), xmax + 0.08 * (xmax - xmin || 1)],
-    ydom: [ymin - 0.08 * (ymax - ymin || 1), ymax + 0.08 * (ymax - ymin || 1)]
+    Squad, Slin, S1, S2, mu1, mu2, mean, p, H,
+    colourMax: Math.max(peak(Squad), peak(Slin)),
+    xdom: [21 - half - reach - pad, 21 + half + reach + pad],
+    ydom: [21 - half - reach - pad, 21 + half + reach + pad]
   };
 }
 ```
 
 ```{ojs}
 //| echo: false
-densNote = html`<span style="color:#5c6b63">Share of type 1 ${densModel.p.toFixed(2)}. Shannon entropy ${densModel.H.toFixed(2)} bits. One bit is an even mix.</span>`
+densNote = html`<span style="color:#5c6b63">Proportion of type 1 ${densModel.p.toFixed(2)}. Shannon entropy ${densModel.H.toFixed(2)} bits. One bit is an even mix. Centroid distance ${densCtrl.distance.toFixed(2)}.</span>`
 ```
 
 ```{ojs}
 //| echo: false
-// One panel: the two weighted type covariances (outlines, one standard
-// deviation) and their sum, the bulk covariance (filled, one and two).
+// Filled pixels: the density of the bulk law. Outlines: each type's own
+// covariance, one standard deviation, centred on that type's mean.
 densPanel = (model, law) => {
   const quad = law === "quad";
   const sum = quad ? model.Squad : model.Slin;
-  const parts = quad ? model.quadParts : model.linParts;
   const colour = quad ? "#c45c26" : "#1d4e89";
   const types = [
-    { S: parts[0], colour: "#5c3d7a", mu: model.mu1, label: quad ? "Type 1: p² Σ₁" : "Type 1: p Σ₁" },
-    { S: parts[1], colour: "#0e4d3a", mu: model.mu2, label: quad ? "Type 2: (1 − p)² Σ₂" : "Type 2: (1 − p) Σ₂" }
+    { S: model.S1, colour: "#5c3d7a", mu: model.mu1, label: "Type 1" },
+    { S: model.S2, colour: "#0e4d3a", mu: model.mu2, label: "Type 2" }
   ];
-  const W = 460, H = 290, left = 44, right = 14, top = 44, bottom = 32;
+  const viridis = (t) => {
+    const stops = [[68, 1, 84], [59, 82, 139], [33, 145, 140], [94, 201, 98], [253, 231, 37]];
+    const x = Math.max(0, Math.min(1, t)) * (stops.length - 1);
+    const i = Math.min(stops.length - 2, Math.floor(x));
+    const f = x - i;
+    const c = stops[i].map((v, k) => Math.round(v + f * (stops[i + 1][k] - v)));
+    return `rgb(${c[0]},${c[1]},${c[2]})`;
+  };
+  const W = 460, Ht = 210, left = 36, right = 8, top = 18, bottom = 22;
   const x = d3.scaleLinear().domain(model.xdom).range([left, W - right]);
-  const y = d3.scaleLinear().domain(model.ydom).range([H - bottom, top]);
-  const svg = d3.create("svg").attr("viewBox", [0, 0, W, H]).attr("width", "100%")
-    .style("font", "14px sans-serif");
-  svg.append("g").attr("transform", `translate(${left},0)`).call(d3.axisLeft(y).ticks(4));
-  svg.append("g").attr("transform", `translate(0,${H - bottom})`).call(d3.axisBottom(x).ticks(4));
-  const line = d3.line().x((d) => x(d[0])).y((d) => y(d[1]));
-  for (const k of [2, 1]) {
-    svg.append("path")
-      .attr("d", line(mixLin.ring(model.mean, sum, k, 64)) + "Z")
-      .attr("fill", colour).attr("fill-opacity", k === 2 ? 0.12 : 0.25)
-      .attr("stroke", colour);
+  const y = d3.scaleLinear().domain(model.ydom).range([Ht - bottom, top]);
+  const svg = d3.create("svg").attr("viewBox", [0, 0, W, Ht]).attr("width", "100%")
+    .style("font", "13px sans-serif");
+  const nx = 56, ny = 36;
+  const Si = mixLin.inv(sum);
+  const detS = Math.max(mixLin.det(sum), 1e-12);
+  const norm = 1 / (2 * Math.PI * Math.sqrt(detS));
+  const dx = (model.xdom[1] - model.xdom[0]) / nx;
+  const dy = (model.ydom[1] - model.ydom[0]) / ny;
+  for (let i = 0; i < nx; i++) {
+    for (let j = 0; j < ny; j++) {
+      const x0 = model.xdom[0] + i * dx;
+      const y0 = model.ydom[0] + j * dy;
+      const r = [x0 + dx / 2 - model.mean[0], y0 + dy / 2 - model.mean[1]];
+      const f = norm * Math.exp(-0.5 * mixLin.quad(r, Si));
+      svg.append("rect")
+        .attr("x", x(x0)).attr("y", y(y0 + dy))
+        .attr("width", Math.max(0, x(x0 + dx) - x(x0)) + 0.4)
+        .attr("height", Math.max(0, y(y0) - y(y0 + dy)) + 0.4)
+        .attr("fill", viridis(f / model.colourMax))
+        .attr("stroke", "none");
+    }
   }
+  svg.append("g").attr("transform", `translate(${left},0)`).call(d3.axisLeft(y).ticks(4));
+  svg.append("g").attr("transform", `translate(0,${Ht - bottom})`).call(d3.axisBottom(x).ticks(4));
+  const line = d3.line().x((d) => x(d[0])).y((d) => y(d[1]));
   for (const t of types) {
     svg.append("path")
-      .attr("d", line(mixLin.ring(model.mean, t.S, 1, 64)) + "Z")
-      .attr("fill", "none").attr("stroke", t.colour).attr("stroke-width", 2.5);
-    svg.append("circle").attr("cx", x(t.mu[0])).attr("cy", y(t.mu[1])).attr("r", 5).attr("fill", t.colour);
+      .attr("d", line(mixLin.ring(t.mu, t.S, 1, 64)) + "Z")
+      .attr("fill", "none").attr("stroke", t.colour).attr("stroke-width", 2);
+    svg.append("circle").attr("cx", x(t.mu[0])).attr("cy", y(t.mu[1])).attr("r", 4).attr("fill", t.colour);
   }
-  svg.append("text").attr("x", left + 8).attr("y", 16).attr("fill", colour).attr("font-weight", 700)
-    .text(quad ? "Population: square weights, sum filled" : "Single cell: linear weights, sum filled");
-  const key = svg.append("text").attr("x", left + 8).attr("y", 34);
-  key.append("tspan").attr("fill", types[0].colour).text(types[0].label);
-  key.append("tspan").attr("fill", types[1].colour).attr("dx", 18).text(types[1].label);
+  svg.append("circle").attr("cx", x(model.mean[0])).attr("cy", y(model.mean[1]))
+    .attr("r", 3.5).attr("fill", colour).attr("stroke", "#f7f4ef");
+  svg.append("text").attr("x", left + 6).attr("y", 16).attr("fill", colour).attr("font-weight", 700)
+    .text(quad ? "Population density, weights p² and (1 − p)²" : "Single-cell density, weights p and 1 − p");
   return svg.node();
 }
 ```
@@ -250,17 +290,19 @@ densRight = densPanel(densModel, "lin")
 :::
 :::
 
-[Outlines: the weighted covariance of each type, at one standard deviation, drawn around the bulk mean. Filled: their sum, the covariance of the bulk, at one and two standard deviations. Covariances add because the bulk is a sum of independent draws; the picture is not a mixture density. Dots: the type means, (20, 22) in purple and (22, 20) in green. Type 2 correlation is held at 0. Both panels share the axes.]{.credit}
+[The `r glossary("proportion")` of type 1 is the weight in each panel. Filled pixels are the bulk density, population weights on the left and single-cell weights on the right, on one colour scale. Outlines are each type's own covariance, one standard deviation, on that type's mean. The axes stay fixed.]{.credit}
 
 ::: {.notes}
-**Mathematics.** The bulk is a sum of independent contributions, so its covariance is the sum of the weighted type covariances: p² Σ₁ + (1 − p)² Σ₂ for population profiles, p Σ₁ + (1 − p) Σ₂ for cells of one specimen. Move the share to 0.05. The weight of type 1 is 0.0025 under the square and 0.05 under the linear law, twenty times more. The square weights sum to p² + (1 − p)², which is 0.5 at an even mix, so the filled ellipse on the left is the smaller one there. The linear weights always sum to 1.
+**Mathematics.** The bulk is a sum of independent contributions, so its covariance is the sum of the weighted type covariances: p² Σ₁ + (1 − p)² Σ₂ for population profiles, p Σ₁ + (1 − p) Σ₂ for cells of one specimen. Move the proportion to 0.05. The weight of type 1 is 0.0025 under the square and 0.05 under the linear law, twenty times more. The square weights sum to p² + (1 − p)², which is 0.5 at an even mix, so the left density is the tighter one there. The linear weights always sum to 1. A type outline is that type's covariance around its own mean. It is not drawn on the bulk mean, so the two outlines do not sit on one filled ring.
 
-**Biology.** The somite differentiation front has 29 of the 4,935 reference cells at 96 h, a share of 0.006. Its square is 0.00003. Under the square law the covariance of a rare type has almost no say in the likelihood.
+**Biology.** The somite differentiation front has 29 of the 4,935 reference cells at 96 h, a proportion of 0.006. Its square is 0.00003. Under the square law the covariance of a rare type has almost no say in the likelihood.
 
-**Say.** Watch the purple outline. On the left it vanishes well before the type does.
+**Say.** Set type 2's correlation away from 0. The green outline tilts on its own. The left density still follows type 1 until the proportion moves.
+
+**Proportion.** The fraction of cells of one type. It is the weight of that type in the mixture.
 :::
 
-## The square weight is not the wider interval {.explorer}
+## iii · The square weight is not the wider interval {.explorer}
 
 ```{ojs}
 //| echo: false
@@ -268,7 +310,7 @@ viewof ciCtrl = Inputs.form({
   v1: Inputs.range([1, 64], {value: 16, step: 1, label: "Variance, gene 1"}),
   v2: Inputs.range([1, 64], {value: 16, step: 1, label: "Variance, gene 2"}),
   rho: Inputs.range([-0.85, 0.85], {value: 0.6, step: 0.05, label: "Correlation, type 1"}),
-  share: Inputs.range([0.02, 0.98], {value: 0.05, step: 0.01, label: "True share of type 1"})
+  proportion: Inputs.range([0.02, 0.98], {value: 0.05, step: 0.01, label: "True proportion of type 1"})
 })
 ```
 
@@ -280,7 +322,7 @@ viewof ciDraw = Inputs.button("Draw one bulk from the linear law")
 ```{ojs}
 //| echo: false
 ciChart = {
-  const p0 = ciCtrl.share;
+  const p0 = ciCtrl.proportion;
   const mu1 = [20, 22], mu2 = [22, 20];
   const delta = [mu1[0] - mu2[0], mu1[1] - mu2[1]];
   const meanOf = (p) => [p * mu1[0] + (1 - p) * mu2[0], p * mu1[1] + (1 - p) * mu2[1]];
@@ -314,7 +356,7 @@ ciChart = {
     .style("font", "14px sans-serif");
   const xShare = d3.scaleLinear().domain([0, 1]).range([48, mid - 24]);
   svg.append("text").attr("x", 48).attr("y", 16).attr("fill", "#1c2b24").attr("font-weight", 700)
-    .text("Wald interval for the true share");
+    .text("Wald interval for the true proportion");
   svg.append("line").attr("x1", xShare(0)).attr("x2", xShare(1)).attr("y1", 108).attr("y2", 108)
     .attr("stroke", "#cfc6b8");
   svg.append("line").attr("x1", xShare(p0)).attr("x2", xShare(p0)).attr("y1", 36).attr("y2", 168)
@@ -329,7 +371,7 @@ ciChart = {
       .text(`${s.name}: half-width ${s.half.toFixed(2)}`);
   });
   svg.append("text").attr("x", 48).attr("y", 200).attr("fill", "#5c6b63")
-    .text("Dashed line: true share. Bars are clipped to [0, 1].");
+    .text("Dashed line: true proportion. Bars are clipped to [0, 1].");
   const xP = d3.scaleLinear().domain([0.02, 0.98]).range([mid + 36, W - 16]);
   const lls = series.flatMap((s) => s.ll);
   const cuts = series.map((s) => s.max - 1.92);
@@ -357,23 +399,25 @@ ciChart = {
 }
 ```
 
-[Expected Fisher information of one Gaussian bulk: the mean contrast $\delta=\mu_1-\mu_2$, plus half the trace of $\Sigma^{-1}\Sigma'\Sigma^{-1}\Sigma'$. Opening setting, checked separately: variances 16, correlation 0.6 against 0, share 0.05, half-widths 0.92 (square) and 2.09 (linear). The square weight is tighter because $p^2+(1-p)^2$ still moves. The dashed lines on the right are the likelihood-ratio cuts, 1.92 below each maximum, which is 3.84 on the deviance scale.]{.credit}
+[Expected Fisher information of one Gaussian bulk: the mean contrast $\delta=\mu_1-\mu_2$, plus half the trace of $\Sigma^{-1}\Sigma'\Sigma^{-1}\Sigma'$. Opening setting, checked separately: variances 16, correlation 0.6 against 0, proportion 0.05, half-widths 0.92 (square) and 2.09 (linear). The square weight is tighter because $p^2+(1-p)^2$ still moves. The dashed lines on the right are the likelihood-ratio cuts, 1.92 below each maximum, which is 3.84 on the deviance scale.]{.credit}
 
 ::: {.notes}
 **Mathematics.** For one Gaussian bulk with mean μ(p) and covariance Σ(p), the expected information on p is δᵀ Σ⁻¹ δ + ½ tr(Σ⁻¹ Σ′ Σ⁻¹ Σ′). The derivative Σ′ is 2p Σ₁ − 2(1 − p) Σ₂ under the square law and Σ₁ − Σ₂ under the linear law. The rare type's own piece, 2p Σ₁, vanishes as p falls. The curvature that remains is the scale of the abundant type. Under the linear law, two types with equal covariances give Σ′ = 0, and only the mean informs.
 
-**Caution.** Do not tell the room that a low share makes the population interval wider: at the opening setting it is the narrower one. Both half-widths, 0.92 and 2.09, exceed the simplex. One bulk of two genes says little, and the comparison is between the two laws.
+**Caution.** Do not tell the room that a low proportion makes the population interval wider: at the opening setting it is the narrower one. Both half-widths, 0.92 and 2.09, exceed the simplex. One bulk of two genes says little, and the comparison is between the two laws.
 
 **Say.** The square weight is not a loss of information. It is a different model, and the reference does not support it.
 :::
 
-## Symbols for the averaged mixture {.dense}
+## 2 · From one cell to the bulk {.center .section-divider background-gradient="linear-gradient(160deg, #f7f4ef 0%, #cfe3d8 100%)"}
+
+## i · Symbols for the averaged mixture {.dense}
 
 | Symbol | Meaning on the next two slides |
 |---|---|
 | $p_{ji}$ | Cell fraction of type $j$ in bulk $i$ |
 | $n_i$ | Number of cells behind that bulk |
-| $a_i$ | Capture ratio from the reference to the bulk |
+| $a_i$ | `r glossary("capture ratio")` from the reference to the bulk |
 | $c_i = a_i n_i$ | Scale of the mean |
 | $\phi_i = a_i^2 n_i$ | Scale of the within-type covariance |
 | $\boldsymbol{S}_W(\boldsymbol{p}) = \sum_j p_j \boldsymbol{\Sigma}_{W,j}$ | Linear mixture of within-type covariances |
@@ -387,7 +431,7 @@ ciChart = {
 **Say.** Keep c and φ in mind: these are the two quantities the best fit estimates, and the only two.
 :::
 
-## Three layers, from a missing count to a diagonal {.layers}
+## ii · Three layers, from a missing count to a diagonal {.layers}
 
 ::: {.columns}
 ::: {.column width="33%"}
@@ -418,7 +462,7 @@ $$\boldsymbol{\Sigma}=\phi\,\boldsymbol{S}_W(\boldsymbol{p})+\boldsymbol{D}$$
 
 The off-diagonal entries pin $\phi$. The diagonal excess is $\boldsymbol{D}$.
 
-The raw $\boldsymbol{\Sigma}_{W,j}$ matches the bulk only at capture ratio 1. Otherwise the bulk adds its own diagonal.
+The raw $\boldsymbol{\Sigma}_{W,j}$ matches the bulk only at capture ratio 1. Otherwise the bulk adds its own diagonal. This fit does not use that diagonal.
 
 :::
 :::
@@ -431,14 +475,82 @@ The raw $\boldsymbol{\Sigma}_{W,j}$ matches the bulk only at capture ratio 1. Ot
 **Say.** Three layers, each added because the previous one left something unexplained.
 :::
 
-## Capture and depth are different powers of $a$ {.explorer}
+## iii · Measurement, then expression {.layers .measurement}
+
+```{.tikz}
+%%| filename: fig-dag-measurement
+%%| alt: Plate diagram. Inside a plate over cell types j, fixed mu_j and Sigma lambda_j generate the latent expression lambda_c. Inside a nested plate over cells, the latent biological size factor s bio multiplies lambda_c to give the deterministic molecule content m_c, and the latent technical size factor s tech together with the fixed gene capture vector b outside the plates generate the observed counts x_c through a Poisson law.
+\begin{tikzpicture}[node distance=10mm and 12mm]
+\node[stoch] (lam) {$\boldsymbol{\lambda}_{\cdot c}$};
+\node[stoch, left=of lam] (sbio) {$s^{\mathrm{bio}}_c$};
+\node[det, below=of lam] (m) {$\boldsymbol{m}_{\cdot c}$};
+\node[stoch, left=of m] (stech) {$s^{\mathrm{tech}}_c$};
+\node[obs, below=of m] (x) {$\boldsymbol{x}_{\cdot c}$};
+\node[const, above=10mm of lam] (mu) {$\tilde{\boldsymbol{\mu}}_{\cdot j}$};
+\node[const, right=8mm of mu] (Sig) {$\boldsymbol{\Sigma}^{\lambda}_{j}$};
+\node[note, right=2mm of lam] (nl) {$\sim F_j(\tilde{\boldsymbol{\mu}}_{\cdot j},\boldsymbol{\Sigma}^{\lambda}_j)$};
+\node[note, right=2mm of m] (nm) {$=s^{\mathrm{bio}}_c\boldsymbol{\lambda}_{\cdot c}$};
+\node[note, below=2mm of x] (nx) {$x_{gc}\sim\mathrm{Poisson}(s^{\mathrm{tech}}_c b_g m_{gc})$};
+\node[note, left=1mm of sbio] {cell size};
+\node[note, left=1mm of stech] {depth};
+\draw[edge] (mu) -- (lam); \draw[edge] (Sig) -- (lam);
+\draw[edge] (lam) -- (m); \draw[edge] (sbio) -- (m);
+\draw[edge] (m) -- (x); \draw[edge] (stech) -- (x);
+\plate{cells}{(sbio)(stech)(lam)(m)(x)(nl)(nm)(nx)}{cells $c\in\mathcal{C}_j$}
+\plate{types}{(mu)(Sig)(cells)(cells-lab)}{$j=1,\ldots,J$}
+\node[const] (b) at ([xshift=12mm]types.east |- x) {$\boldsymbol{b}$};
+\node[note, above=1mm of b] {gene capture};
+\draw[edge] (b) -- (x);
+\end{tikzpicture}
+```
+
+$\boldsymbol{\lambda}_{\cdot c}$ is the size-free expression. $s^{\mathrm{bio}}$, $s^{\mathrm{tech}}$ and $\boldsymbol{b}$ are measurement. Sarkar and Stephens, and Fang and Pachter, separate the two. The $\lambda$ of the covariance slides is the shrinkage intensity, a different quantity.
+
+::: {.notes}
+**Say.** Expression is what the cell produces. Measurement is how the protocol counts it.
+:::
+
+## iv · UMIs make the measurement Poisson {.dense}
+
+$$x_{gc}\sim\mathrm{Poisson}\bigl(s^{\mathrm{tech}}_c\, b_g\, m_{gc}\bigr)$$
+
+- Inside one protocol, $b_g$ is absorbed into the reference. It cancels from a within-protocol contrast.
+- Between the reference and the bulk it need not cancel. That ratio is the gene scale the benchmark tried, and did not keep.
+- Spike-in controls in those papers put the extra variance in the expression, not in the capture.
+
+::: {.notes}
+**Say.** With UMIs the capture is close to Poisson. The gene scale that remains is a difference of protocols, and the fit dropped it.
+:::
+
+## v · What the sample covariance mixes {.dense}
+
+The sample covariance of raw UMI counts mixes three objects. Only part of it belongs in the bulk.
+
+- The Poisson diagonal is single-cell sampling, at single-cell depth. A bulk has its own sampling noise.
+- The technical size factor is a protocol artefact. It correlates every gene with every other gene.
+- The biological size factor belongs in the bulk. Cells differ in volume, and the tissue sums them as they are.
+
+::: {.notes}
+**Say.** Subtracting the Poisson diagonal is the denoising step. The next slide says what the winning row does with it.
+:::
+
+## vi · What the winning row keeps {.dense}
+
+- Gaussian likelihood on the raw counts, with the linear weight. The Poisson diagonal stays in the plug-in.
+- Denoising that diagonal is the weak row: RMSE 0.47 at 96 h on the Welch panel, a wrong split inside the mesoderm lineage.
+- A Poisson–log-normal convolution, integrating the expression noise instead of plugging in two moments, is an extension. It is not a row of this benchmark.
+
+::: {.notes}
+**Say.** The row that wins leaves the Poisson diagonal in. Removing it is what produces 0.47.
+:::
+
+## vii · Capture and depth are different powers of $a$ {.explorer}
 
 ```{ojs}
 //| echo: false
 viewof scaleCtrl = Inputs.form({
   a: Inputs.range([-1.3, 0.7], {value: 0, step: 0.05, label: "log10 capture a"}),
-  n: Inputs.range([1, 4], {value: 2, step: 0.05, label: "log10 cell count n"}),
-  tau: Inputs.range([0, 6], {value: 2, step: 0.1, label: "log10 diagonal variance"})
+  n: Inputs.range([1, 4], {value: 2, step: 0.05, label: "log10 cell count n"})
 })
 ```
 
@@ -450,29 +562,23 @@ viewof scaleCtrl = Inputs.form({
 scaleCloud = {
   const a = 10 ** scaleCtrl.a;
   const n = 10 ** scaleCtrl.n;
-  const tau2 = 10 ** scaleCtrl.tau;
   const p = 0.35;
-  const c = a * n, phi = a * a * n;
+  const phi = a * a * n;
   const S1 = mixLin.mat(16, 16, 0.5);
   const S2 = mixLin.mat(16, 16, 0);
   const Sw = mixLin.add(S1, S2, p, 1 - p);
-  const S = mixLin.add(Sw, [[1, 0], [0, 1]], phi, tau2);
   const Sbio = mixLin.add(Sw, [[0, 0], [0, 0]], phi, 0);
-  const mean = [0, 0];
-  const pts = mixLin.ring(mean, S, 2, 64);
-  const xs = pts.map((d) => d[0]), ys = pts.map((d) => d[1]);
-  const lim = Math.max(Math.abs(Math.min(...xs)), Math.abs(Math.max(...xs)), Math.abs(Math.min(...ys)), Math.abs(Math.max(...ys)), 1) * 1.15;
-  const W = 520, H = 280, m = 36;
-  const x = d3.scaleLinear().domain([-lim, lim]).range([m, W - 8]);
-  const y = d3.scaleLinear().domain([-lim, lim]).range([H - 28, 22]);
+  const aMax = 10 ** 0.7, nMax = 10 ** 4;
+  const reach = 2 * Math.sqrt(aMax * aMax * nMax * 16);
+  const W = 520, H = 280, m = 42;
+  const x = d3.scaleLinear().domain([-reach, reach]).range([m, W - 8]);
+  const y = d3.scaleLinear().domain([-reach, reach]).range([H - 28, 22]);
   const svg = d3.create("svg").attr("viewBox", [0, 0, W, H]).attr("width", "100%").style("font", "14px sans-serif");
   const line = d3.line().x((d) => x(d[0])).y((d) => y(d[1]));
-  svg.append("path").attr("d", line(mixLin.ring(mean, Sbio, 2, 64)) + "Z")
-    .attr("fill", "#1d4e89").attr("fill-opacity", 0.25).attr("stroke", "#1d4e89");
-  svg.append("path").attr("d", line(pts) + "Z")
-    .attr("fill", "none").attr("stroke", "#c45c26").attr("stroke-width", 2);
+  svg.append("path").attr("d", line(mixLin.ring([0, 0], Sbio, 2, 80)) + "Z")
+    .attr("fill", "#1d4e89").attr("fill-opacity", 0.28).attr("stroke", "#1d4e89");
   svg.append("text").attr("x", m).attr("y", 16).attr("fill", "#1c2b24")
-    .text("Blue: φ S_W only. Orange: plus the diagonal.");
+    .text("φ S_W only. The axes stay at the slider extremes.");
   return svg.node();
 }
 ```
@@ -485,34 +591,26 @@ scaleCloud = {
 scaleRead = {
   const a = 10 ** scaleCtrl.a;
   const n = 10 ** scaleCtrl.n;
-  const tau2 = 10 ** scaleCtrl.tau;
-  const p = 0.35;
   const c = a * n, phi = a * a * n;
-  const S1 = mixLin.mat(16, 16, 0.5);
-  const S2 = mixLin.mat(16, 16, 0);
-  const sw = p * S1[0][0] + (1 - p) * S2[0][0];
-  const bio = phi * sw;
-  const share = tau2 / (bio + tau2);
-  const nNaive = n * (1 - share);
-  const box = (label, value) => `<div style="margin:0.15em 0"><span style="color:#5c6b63">${label}</span><br><b style="font-size:22px;color:#0e4d3a">${value}</b></div>`;
-  return html`<div style="font-size:15px;line-height:1.25">${box("Mean scale c = a n", c.toPrecision(3))}${box("Variance scale φ = a² n", phi.toPrecision(3))}${box("Diagonal share, gene 1", (100 * share).toFixed(0) + "%")}${box("n read if the diagonal is ignored", nNaive.toPrecision(3))}</div>`;
+  const box = (label, value) => `<div style="margin:0.35em 0"><span style="color:#5c6b63">${label}</span><br><b style="font-size:22px;color:#0e4d3a">${value}</b></div>`;
+  return html`<div style="font-size:15px;line-height:1.25">${box("Mean scale c = a n", c.toPrecision(3))}${box("Variance scale φ = a² n", phi.toPrecision(3))}</div>`;
 }
 ```
 
 :::
 :::
 
-[Share of type 1 fixed at 0.35. Variances 16. Type 1 correlation 0.5, type 2 correlation 0. When the diagonal dominates, the covariance no longer returns $n$. This is the linear-weight law of the raw-covariance fits.]{.credit}
+[Proportion of type 1 fixed at 0.35. Variances 16. Type 1 correlation 0.5, type 2 correlation 0. The ellipse is $\phi\boldsymbol{S}_W$ only. The fitted model does not add a diagonal.]{.credit}
 
 ::: {.notes}
-**Mathematics.** At the opening setting a = 1 and n = 100, so c = φ = 100. Lower the capture by a factor ten: c falls by ten, φ by a hundred. The share of the diagonal in the variance of gene 1 is the diagonal variance over φ s_W plus the diagonal variance. A fit that ignores the diagonal reads n times one minus that share.
+**Mathematics.** At the opening setting a = 1 and n = 100, so c = φ = 100. Lower the capture by a factor ten: c falls by ten, φ by a hundred. The window is the two-standard-deviation reach at the largest capture and the largest cell count, so the opening ellipse is small.
 
 **Biology.** On Suppinger the fitted φ is 10⁶ to 10⁸ and the implied cell count c² / φ is below one cell. The covariance magnitude does not return a plausible n, which is why n is not reported.
 
 **Say.** The variance scale absorbs everything the bulk adds. It is a nuisance scale, not a cell count.
 :::
 
-## The best fit profiles out two scales and nothing else {.dense}
+## viii · The best fit profiles out two scales and nothing else {.dense}
 
 | Technical factor | In the raw-covariance fit at $\lambda = 0.5$ |
 |---|---|
@@ -533,32 +631,75 @@ scaleRead = {
 **Say.** The winning row is the plainest model of the slide before: two scales, raw counts, and a covariance shrunk half-way.
 :::
 
-## The authors' cell filters stand {.qc}
+## 3 · Which genes {.center .section-divider background-gradient="linear-gradient(160deg, #f7f4ef 0%, #d5e2f4 100%)"}
 
-::: {.columns}
-::: {.column width="50%"}
+## i · The authors' cell filters stand {.qc}
 
-![Detected genes against library size, and the log library size by type, for the cells the authors kept.](images/feature_selection/fs_tier1_low_quality_cells.png){group="qc"}
+![Detected genes against library size, and the log library size by type, for the cells the authors kept.](images/feature_selection/fs_tier1_low_quality_cells.png)
 
-:::
-::: {.column width="50%"}
-
-![How many deposited genes fail each rule, the fractional-count share, and the overlap with the authors' SCT list.](images/feature_selection/fs_tier1_gene_filters.png){group="qc"}
-
-:::
-:::
-
-[Cells kept above 1,800 genes and below 10% mitochondrial counts stay kept. The book drops genes whose non-zero entries are more than 90% fractional, and keeps a gene only if it is seen in at least 5% of the cells of every scored type.]{.credit}
+[Cells kept above 1,800 genes and below 10% mitochondrial counts stay kept. Genes whose non-zero entries are more than 90% fractional are dropped. That fractional cut is not a detection rule. The `r glossary("presence gate")` is the detection rule, and it is the next slide.]{.credit}
 
 ::: {.notes}
 **Biology.** The authors kept cells with more than 1,800 detected genes and less than 10% mitochondrial counts. Both cut-offs are stricter than the examples of the deconvolution literature (200 genes, 50%), so no rule of that literature removes a cell they kept. In the deposited counts, 65 of the 20,437 scored cells sit at or below 1,800 genes, with a minimum of 1,548. The mitochondrial share cannot be recomputed: no mitochondrial gene is deposited. The book applies no new cell filter.
 
-**Genes.** Salmon/Alevin splits multi-mapping molecules, so 12.8% of the non-zero entries are fractional. Genes with more than 90% fractional entries are dropped. The presence gate asks for 5% of the cells of every scored type, because a gene absent from one type has no variance to estimate there.
+**Genes.** Salmon/Alevin splits multi-mapping molecules, so 12.8% of the non-zero entries are fractional. Genes with more than 90% fractional entries are dropped. That is not a detection rate.
+
+**Presence gate.** A gene is kept when at least 5 percent of the cells of every scored type detect it and its count varies inside every type.
 
 **Say.** We did not re-filter the cells. We filtered genes, for reasons the covariance needs.
 :::
 
-## Three of the four tests assume independent cells {.dense}
+## ii · Two detection rules, and neither contains the other {.upset}
+
+```{r}
+#| echo: false
+#| fig-alt: UpSet of genes outside the presence gate or below 20 percent detection in every type, one panel per time.
+upset_path <- "images/feature_selection/fs_tier1_detection_upset.png"
+if (file.exists(upset_path)) {
+  knitr::include_graphics(upset_path)
+}
+```
+
+[Outside the presence gate: under 5% of the cells of some scored type, or zero within-type variance. Under 20% in every type: no scored type reaches that rate. deMixSC at 5% of all cells is not drawn, because those genes are already outside the presence gate. All-zero genes, and the mitochondrial, ribosomal and Gm rules, are already absent.]{.credit}
+
+::: {.notes}
+**Say.** Two sets, and neither contains the other. A gene can sit under 20% in its best type and still clear 5% in every type.
+:::
+
+## iii · At 48 h the same scores, by type and by cell line {.plsda}
+
+```{r}
+#| echo: false
+#| fig-alt: PCA and PLS-DA at 48 hours, coloured by cell type and again by cell line.
+plsda_48 <- "images/feature_selection/fs_tier1_plsda_48h.png"
+if (file.exists(plsda_48)) knitr::include_graphics(plsda_48)
+```
+
+[Pearson residuals of $M_0$, two components, cell type as the response. The lower row colours the same scores by cell line.]{.credit}
+
+## iv · At 72 h the projection is by cell type {.plsda}
+
+```{r}
+#| echo: false
+#| fig-alt: PCA and PLS-DA at 72 hours, coloured by cell type.
+plsda_72 <- "images/feature_selection/fs_tier1_plsda_72h.png"
+if (file.exists(plsda_72)) knitr::include_graphics(plsda_72)
+```
+
+[One cell line at 72 h. Same residuals, same two components, cell type as the response.]{.credit}
+
+## v · At 96 h the projection is by cell type {.plsda}
+
+```{r}
+#| echo: false
+#| fig-alt: PCA and PLS-DA at 96 hours, coloured by cell type.
+plsda_96 <- "images/feature_selection/fs_tier1_plsda_96h.png"
+if (file.exists(plsda_96)) knitr::include_graphics(plsda_96)
+```
+
+[One cell line at 96 h. Same construction as the 72 h slide.]{.credit}
+
+## vi · Three of the four tests assume independent cells {.dense}
 
 | Test | Reference law | What has to be true |
 |---|---|---|
@@ -577,7 +718,7 @@ scaleRead = {
 **Say.** Three tests share one assumption. The next slide shows the time point where it fails.
 :::
 
-## At 48 h the analytic tests read cell line as type {.qq}
+## vii · At 48 h the analytic tests read cell line as type {.qq}
 
 ![Null calibration: observed against expected minus log10 p after one within-batch permutation of the labels, one panel per test.](images/feature_selection/fs_tier2_null_calibration.png)
 
@@ -591,7 +732,7 @@ scaleRead = {
 **Say.** The gate is the permutation test. Most gated genes carry a real but small type effect.
 :::
 
-## Dispersion widens two intervals; correlation fools the within-cell ones {.explorer}
+## viii · Dispersion widens two intervals; correlation fools the within-cell ones {.explorer}
 
 ```{ojs}
 //| echo: false
@@ -670,7 +811,7 @@ forestChart = {
 }
 ```
 
-[A Gaussian sketch, not the Suppinger likelihoods. Forty cells and ten cells. Type 2's cell variance is four times type 1's, and $\varphi$ multiplies both. The likelihood-ratio interval uses a fixed variance. The quasi-likelihood interval multiplies the Poisson standard error by $\sqrt{\varphi}$. ANOVA and Welch use within-type variances, which shrink as the correlation grows, while the variance of the mean grows.]{.credit}
+[A Gaussian sketch, not the Suppinger likelihoods. Forty cells and ten cells. Type 2's cell variance is four times type 1's, and $\varphi$ multiplies both. In the count model that factor is the `r glossary("negative binomial dispersion")`: variance $\mu+\varphi\mu^{2}$, biological variability of the expression or of the size factor. For a Poisson point process over a long window, variance over mean tends to the `r glossary("Fano factor")`, and the extra above 1 is this dispersion. The capture is taken to be long enough for that regime. The likelihood-ratio interval uses a fixed variance. The quasi-likelihood interval multiplies the Poisson standard error by $\sqrt{\varphi}$. ANOVA and Welch use within-type variances, which shrink as the correlation grows, while the variance of the mean grows. Definitions: [Fano factor](https://en.wikipedia.org/wiki/Fano_factor), [Poisson point process](https://en.wikipedia.org/wiki/Poisson_point_process).]{.credit}
 
 ::: {.notes}
 **Mathematics.** The mean of m equicorrelated cells has variance σ² [1 + (m − 1)ϱ] / m. The variance measured within the type is σ² (1 − ϱ). The first grows with ϱ and the second shrinks, so an interval built from within-type variances gets shorter while the truth gets wider. At φ = 1 and correlation 0, Welch matches the true interval and the other three are short, because they miss the four-fold variance ratio or the Poisson mean. Raise φ: the quasi-likelihood interval widens and the likelihood-ratio interval does not.
@@ -678,13 +819,17 @@ forestChart = {
 **Biology.** Shared culture, cell line and capture make cells of one type correlated. This is the mechanism behind the previous slide, in a two-group sketch.
 
 **Say.** The percentage on the right is the coverage each interval really has. Nominal is 95.
+
+**Dispersion.** The factor in the variance mean plus dispersion times mean squared. Here it is biological variability of the expression or of the size factor. The Fano factor is variance of a count divided by its mean.
 :::
 
-## A covariance entry is a property of the gene pair
+## 4 · The covariance {.center .section-divider background-gradient="linear-gradient(160deg, #f7f4ef 0%, #e6dcf2 100%)"}
+
+## i · A covariance entry is a property of the gene pair
 
 - Deleting a gene leaves the other covariance entries as they were. A precision entry is a Schur complement of the panel, so it changes when a neighbour is removed.
 - The likelihood inverts a sum of type covariances. That sum is dense even when every type precision is sparse.
-- Shrinkage spends variance against bias. The sparse precision estimators stay in the benchmark as sensitivity analyses, not as the plug-in.
+- The `r glossary("shrinkage intensity")` spends variance against bias. The sparse precision estimators stay in the benchmark as sensitivity analyses, not as the plug-in.
 
 ::: {.notes}
 **Mathematics.** The covariance of genes g and g′ depends on those two genes only. The precision entry is the partial covariance given every other gene of the panel, so removing one gene changes it. The likelihood needs the inverse of Σ_j p_j Σ_j. The inverse of a sum is not the sum of the inverses: sparse type precisions do not give a sparse bulk precision.
@@ -694,26 +839,32 @@ forestChart = {
 **Say.** We estimate covariances, shrink them, and invert only the mixture.
 :::
 
-## The closed form minimises the wrong risk {.dense}
+## ii · The closed form minimises the wrong risk {.dense}
 
-$$\hat\Sigma_{gg} = V_{gg},\qquad \hat\Sigma_{gg'} = (1-\lambda)\,R_{gg'}\sqrt{V_{gg}V_{g'g'}}$$
+$$\hat\Sigma_{gg}=V_{gg},\qquad \hat\Sigma_{gg'}=(1-\lambda)\,R_{gg'}\sqrt{V_{gg}V_{g'g'}}$$
 
-The closed form of $\lambda$ minimises a Frobenius risk. DeCovarT evaluates a Gaussian likelihood. The tuning criterion is the mean Gaussian log-density of held-out cells of the same specimen, $K$ folds, the same score for every covariance estimator.
+$$R(\lambda)=\mathbb{E}\bigl\|\hat{\boldsymbol{\Sigma}}(\lambda)-\boldsymbol{\Sigma}\bigr\|_{F}^{2}=\sum_{g,g'}\mathbb{E}\bigl(\hat\Sigma_{gg'}-\Sigma_{gg'}\bigr)^{2}$$
+
+$\lambda=0$ keeps the sample correlations. $\lambda=1$ keeps only the variances, a bias toward no correlation. The closed form minimises the `r glossary("Frobenius risk")`. That minimum is a `r glossary("bias-variance trade-off", "bias–variance trade-off")` on the covariance entries. [This risk is not the deconvolution loss.]{bg-colour="#f6e2c4"} DeCovarT's selection criterion is a Gaussian log-density of held-out cells. That cell-wise score is written and has not been run. The reported level was read on the composition error.
 
 - Welch panel, 96 h, mean over three standard-Wnt replicates: raw covariance at $\lambda = 0.5$ has RMSE 0.034. The closed-form $\lambda$ has RMSE 0.36.
-- $\lambda = 0.5$ is the best of four levels scored on those same nine samples. The 0.034 is optimistic until a level is chosen without the observed composition.
+- $\lambda = 0.5$ is the best of the four levels $0.25, 0.5, 0.75, 1$ on those same nine samples. It is the bulk-RMSE level, not a completed nested cross-validation. The 0.034 is optimistic.
 
 ::: {.notes}
-**Mathematics.** The estimator keeps the variances V and multiplies the correlations R by 1 − λ. The closed form picks λ to minimise the expected squared distance to the true covariance. That risk treats every entry alike. The Gaussian likelihood depends on the inverse and the determinant, which the smallest eigenvalues drive.
+**Mathematics.** The estimator keeps the variances V and multiplies the correlations R by 1 − λ. The Frobenius risk is the expected sum, over every gene pair, of the squared error of that entry. A variance and a covariance count the same. The Gaussian likelihood depends on the inverse and the determinant, which the smallest eigenvalues drive.
 
 **Biology.** The closed-form λ of the types ranges from 0.006 to 0.74. On the Welch panel at 96 h the RMSE along λ is 0.36 at the closed form, 0.19 at 0.25, 0.034 at 0.5, 0.067 at 0.75 and 0.16 at 1, where only variances remain. The optimum is interior: correlations help, at half their sample value. At 72 h the best level is 0.25, with 0.033. The small panels show no gain.
 
-**Caution.** The level was read on the nine samples that score it. Held-out cells of the same specimen give a criterion that never sees the observed composition.
+**Caution.** The level was read on the nine samples that score it. The nested score on held-out cells has not chosen it.
 
-**Say.** One number, λ, moves the error tenfold.
+**Say.** One number, λ, moves the error tenfold. The sand highlight is the clause that this risk is not the deconvolution loss.
+
+**Frobenius risk.** The expected sum, over every gene pair, of the squared error of that covariance entry.
+
+**Bias–variance trade-off.** A larger shrinkage intensity makes the sample correlations less variable and pulls them toward zero.
 :::
 
-## On the smallest panel, the three mesoderm profiles correlate at 0.97 and above {.corr}
+## iii · On the smallest panel, the three mesoderm profiles correlate at 0.97 and above {.corr}
 
 ![Correlation between the mean profiles of the cell types on the genes with a deviance share of at least 5%. Top row Pearson on mean raw counts, bottom row Kendall's tau; columns 48 h, 72 h and 96 h.](images/deconvolution/profile_correlation_r2_05.png){group="corr"}
 
@@ -727,7 +878,7 @@ The closed form of $\lambda$ minimises a Frobenius risk. DeCovarT evaluates a Ga
 **Say.** The types that matter most at 96 h are the ones the means cannot tell apart.
 :::
 
-## On the Welch panel the mesoderm lineage stays at 0.98 to 0.99 {.corr .dense}
+## iv · On the Welch panel the mesoderm lineage stays at 0.98 to 0.99 {.corr .dense}
 
 ::: {.columns}
 ::: {.column width="60%"}
@@ -755,7 +906,9 @@ The closed form of $\lambda$ minimises a Frobenius risk. DeCovarT evaluates a Ga
 **Say.** The information that separates the lineage is in the covariance, not in the means.
 :::
 
-## Eight comparators, four ways to model the bulk {.dense .grouped}
+## 5 · The benchmark {.center .section-divider background-gradient="linear-gradient(160deg, #f7f4ef 0%, #b9d4c6 100%)"}
+
+## i · Eight comparators, four ways to model the bulk {.dense .grouped}
 
 ```{r}
 comparators <- data.frame(
@@ -811,7 +964,17 @@ reactable::reactable(
 **Say.** Read the table downwards: each group uses more of the second moment than the one above.
 :::
 
-## Same likelihood, and the plug-in decides the error {.dense}
+## ii · Seven rungs, and where this benchmark sits {.ladder}
+
+<img src="images/theory/fig-ladder.svg" alt="Ladder of noise models for the bulk error, from one common variance at the bottom to a mixed model at the top.">
+
+[The vignette ladder, reduced to the slide. DeCovarT sits on the dense covariance. MEAD puts dependence in the sandwich. Weighted least squares are diagonal.]{.credit}
+
+::: {.notes}
+**Say.** Read upwards: each rung models more of the bulk covariance. Methods that are not in this benchmark are on the figure; the speaker notes in the vignette place them.
+:::
+
+## iii · Same likelihood, and the plug-in decides the error {.dense}
 
 | DeCovarT variant | Welch panel, 96 h, or what the figure states |
 |---|---|
@@ -831,7 +994,7 @@ reactable::reactable(
 **Say.** Same likelihood, same data: the error goes from 0.47 to 0.034 on the plug-in alone.
 :::
 
-## Root mean squared error, three replicates {.bench}
+## iv · Root mean squared error, three replicates {.bench}
 
 ![Root mean squared error of each method at 48 h, 72 h and 96 h. Small points are replicates. Large points are means. Black, blue and orange mark comparators, Newton and L-BFGS-B.](images/deconvolution/benchmark_rmse.png){group="bench"}
 
@@ -845,7 +1008,7 @@ reactable::reactable(
 **Say.** Three replicates per time. Read the spread of the small points before the rank of the large ones.
 :::
 
-## Aitchison distance ranks the rare types {.bench}
+## v · Aitchison distance ranks the rare types {.bench}
 
 ![Aitchison distance of each method to the observed composition, same layout as the RMSE figure.](images/deconvolution/benchmark_aitchison.png){group="bench"}
 
@@ -859,7 +1022,7 @@ reactable::reactable(
 **Say.** RMSE asks whether the large types are right. Aitchison asks whether the rare ones exist.
 :::
 
-## What this benchmark supports
+## vi · What this benchmark supports
 
 - The penalty on the covariance moves the error more than the choice of optimiser: 0.36 against 0.034 at 96 h on the Welch panel.
 - The fit is not missing the mode. Its likelihood beats the observed composition in all 36 cases.
@@ -867,7 +1030,7 @@ reactable::reactable(
 - Refining the mean profiles from one bulk raises the error to about 0.50.
 - Summing caudal mesoderm, pre-somitic mesoderm and the somite front at 96 h puts twelve of thirteen methods at 0.04 or below.
 
-[$\lambda = 0.5$ was chosen on the samples that define the error. A level chosen on held-out cells, without the observed composition, is still required before that row is compared with MEAD or RNA-Sieve.]{.credit}
+[$\lambda = 0.5$ is the bulk-RMSE level on the samples that define the error. The cell-wise nested score has not chosen it. That score is still required before the row is compared with MEAD or RNA-Sieve.]{.credit}
 
 ::: {.notes}
 **Mathematics.** "Not missing the mode": in all 36 fits the likelihood at the estimate is higher than at the observed composition. The optimiser found a better point of the likelihood than the truth, so the likelihood, through its plug-ins, is what misleads. The quadratic programme uses the same raw plug-ins with the covariance held fixed, and reaches 0.060.
@@ -877,7 +1040,9 @@ reactable::reactable(
 **Say.** The model is not wrong in its form. Its inputs, and one lineage, carry the error.
 :::
 
-## Five directions, ranked by this evidence
+## 6 · What remains {.center .section-divider background-gradient="linear-gradient(160deg, #f7f4ef 0%, #c5d4ea 100%)"}
+
+## i · Five directions, ranked by this evidence
 
 1. **Choose the shrinkage level without the answer.** Score each level on pseudo-bulks of held-out cells. Compare one common level with one per type.
 2. **Estimate the composition from the mean equation.** Keep the covariance as a weight, and take the variance from a jackknife over gene clusters.
@@ -900,6 +1065,41 @@ reactable::reactable(
 
 **Say.** The first direction is the one owed before any claim against MEAD or RNA-Sieve.
 :::
+
+## ii · An aliquot is the external check {.dense}
+
+The Suppinger reference is not a split of the bulk. An `r glossary("aliquot")` is a physical split of one specimen, so the bulk and the single-cell library measure the same material.
+
+- Dong and colleagues, [10.1093/bib/bbz166](https://doi.org/10.1093/bib/bbz166). Mouse mammary suspension, GEO GSE136148. SCDC, already a comparator, was published on that split. Two animals. The truth is the single-cell recovery.
+- Guo and colleagues, [10.1101/gr.278822.123](https://doi.org/10.1101/gr.278822.123). Healthy retina, 24 specimens, same nuclei suspension. DeMixSC, already a comparator. Bulk GSE175937.
+- Dai and colleagues, [10.1126/sciadv.adh2588](https://doi.org/10.1126/sciadv.adh2588), on Jourdon and colleagues, [10.1038/s41593-023-01399-0](https://doi.org/10.1038/s41593-023-01399-0). About 60 forebrain-organoid samples at TD0, TD30 and TD60. A preparation may pool organoids. Access is NIMH Data Archive study 1482.
+
+[He and colleagues and the BEDwARS analysis of Ghaffari and colleagues are not split aliquots. A usable set needs traceable identifiers, a published deconvolution, and an independent count when the single-cell recovery would be the only truth.]{.credit}
+
+::: {.notes}
+**Say.** These three sets are the biological check that does not use the Suppinger composition. SCDC and DeMixSC are already in the benchmark, so the new information is the paired material, not a new method.
+:::
+
+## iii · How is a rare type weighted? {.quiz-question}
+
+- By the cell count under both laws
+- [By $p^{2}$ under the population law and by $p$ under the single-cell law]{.correct}
+- By $p$ under both laws
+- Not at all, once the types are independent
+
+## iv · What chose $\lambda = 0.5$? {.quiz-question}
+
+- The nested score on held-out cells
+- [The best composition error on the scored samples; the cell-wise nested score has not chosen it]{.correct}
+- The closed form of the Frobenius risk
+- A match of pseudo-bulks to the real bulks
+
+## v · Where does $b_g$ cancel? {.quiz-question}
+
+- Between the reference and the bulk, always
+- [Inside one protocol. It need not cancel between the reference and the bulk]{.correct}
+- It never cancels, with or without UMIs
+- Only after library-size normalisation
 
 ## Appendix: three optimisers for the same likelihood {.layers}
 

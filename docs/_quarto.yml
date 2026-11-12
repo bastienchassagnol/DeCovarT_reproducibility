@@ -133,8 +133,14 @@ extensions:
         colour: "#7a1f1f"
         bg-colour: "#f4c7c3"
 
+resources:
+  - slides-deck
+
 format:
   html:
+    comments:
+      hypothesis:
+        theme: clean
     title-block-banner: images/logo.svg
     # Palette and fonts of the DeCovarT pkgdown site (`template.bslib` in the
     # package _pkgdown.yml), layered on the Bootswatch themes.
