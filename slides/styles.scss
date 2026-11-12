@@ -1,0 +1,205 @@
+/*-- scss:defaults --*/
+
+@import url("https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@500&display=swap");
+
+$font-family-sans-serif: "Century Gothic", "CenturyGothic", sans-serif;
+$presentation-heading-font: "Century Gothic", "CenturyGothic", sans-serif;
+$font-family-monospace: "Source Code Pro", monospace;
+
+$body-bg: #f7f4ef;
+$body-color: #1c2b24;
+$presentation-heading-color: #0e4d3a;
+$link-color: #9a3412;
+$code-color: #0e4d3a;
+$code-block-bg: #efeae2;
+$code-block-border-color: #cfc6b8;
+
+$presentation-font-size-root: 29px;
+$presentation-h1-font-size: 1.7em;
+$presentation-h2-font-size: 1.15em;
+$presentation-h3-font-size: 0.95em;
+
+/*-- scss:rules --*/
+
+.reveal .slides section {
+  text-align: left;
+}
+
+.reveal .slides section.quarto-title-block,
+.reveal .slides section.center {
+  text-align: center;
+}
+
+.reveal .slides section#title-slide {
+  border-top: 14px solid #0e4d3a;
+}
+
+.reveal .footer {
+  font-size: 0.42em !important;
+  color: #5c6b63 !important;
+}
+
+.reveal .slide-number {
+  font-size: 0.45em !important;
+  color: #5c6b63 !important;
+}
+
+.reveal .slides section figcaption {
+  display: none;
+}
+
+.reveal .slides section img {
+  border: none;
+  box-shadow: none;
+  background: transparent;
+  max-height: 390px !important;
+  max-width: 96% !important;
+  width: auto !important;
+  height: auto !important;
+  object-fit: contain;
+}
+
+.reveal .slides section img[src$=".svg"] {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.reveal .slides section .credit {
+  display: block;
+  margin-top: 0.25em;
+  font-size: 0.52em;
+  line-height: 1.3;
+  color: #5c6b63;
+}
+
+.reveal .slides section.dag img {
+  max-height: 500px !important;
+  max-width: 100% !important;
+}
+
+.reveal .slides section.qc img {
+  max-height: 250px !important;
+  max-width: 100% !important;
+}
+
+.reveal .slides section.qq img {
+  max-height: 400px !important;
+  max-width: 100% !important;
+}
+
+.reveal .slides section.bench img {
+  max-height: 500px !important;
+  max-width: 100% !important;
+}
+
+.reveal .slides section.dense {
+  font-size: 0.68em;
+}
+
+.reveal .slides section.dense h2 {
+  font-size: 1.55em;
+}
+
+.reveal .slides section.layers {
+  font-size: 0.62em;
+}
+
+.reveal .slides section.layers h2 {
+  font-size: 1.7em;
+}
+
+.reveal .slides section.layers h3 {
+  font-size: 1.2em;
+  color: #0e4d3a;
+  margin-bottom: 0.2em;
+}
+
+.reveal .slides section.layers .math.display {
+  font-size: 0.92em;
+  margin: 0.25em 0;
+}
+
+.reveal .slides section table {
+  width: 100%;
+  font-size: 0.72em;
+  margin-top: 0.3em;
+}
+
+.reveal .slides section.dense table {
+  font-size: 0.95em;
+}
+
+.reveal .slides section table th {
+  background: #e7f0ea;
+  color: #0e4d3a;
+}
+
+.reveal .slides section.explorer {
+  font-size: 18px;
+}
+
+.reveal .slides section.explorer h2 {
+  font-size: 28px;
+  margin-bottom: 0.15em;
+}
+
+.reveal .slides section.explorer .cell,
+.reveal .slides section.explorer .cell-output-display {
+  margin: 0;
+  padding: 0;
+}
+
+.reveal .slides section.explorer form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.15rem 1rem;
+  margin: 0 0 0.25rem 0;
+}
+
+.reveal .slides section.explorer form > div,
+.reveal .slides section.explorer form label {
+  flex: 1 1 200px;
+  font-size: 14px !important;
+}
+
+.reveal .slides section.explorer input,
+.reveal .slides section.explorer button {
+  font-size: 14px !important;
+}
+
+.reveal .slides section.explorer .credit {
+  font-size: 14px;
+}
+
+.reveal .slides section.corr img {
+  max-height: 455px !important;
+  max-width: 100% !important;
+}
+
+.reveal .slides section.corr.dense img {
+  max-height: 420px !important;
+}
+
+.reveal .slides section.grouped .reactable {
+  font-size: 17px;
+}
+
+.reveal .slides section.layers ul {
+  margin-left: 1em;
+}
+
+.reveal .slides section.layers .column {
+  box-sizing: border-box;
+  padding-right: 0.9em;
+}
+
+// Credits keep about 15px on the slides with a smaller base size.
+.reveal .slides section.dense .credit {
+  font-size: 0.76em;
+}
+
+.reveal .slides section.layers .credit {
+  font-size: 0.84em;
+}
