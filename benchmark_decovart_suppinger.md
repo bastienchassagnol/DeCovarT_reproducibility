@@ -1,11 +1,4 @@
 
-● Both sections are rewritten, but I have not rendered the book, so the new
-  table chunk and cross-references are untested in Quarto (the table's R code
-  runs on its own).
-
-  Your message stopped after scenario 1, so I took scenario 2 to be the runs of
-  this book, where every method gets the same gene panel. Say if you meant
-  something else.
 
   Chapter 3: reading the shrinkage estimate
 
@@ -208,7 +201,7 @@
   results with the next pipeline 2) also use the compsotional aware aithcison
   distance to compelment @docs/images/deconvolution/benchmark_pearson.png  and
   @docs/images/deconvolution/benchmark_rmse.png  .
-  3) write locally a rna-sieve multviariate inspired version (so the same
+  1) write locally a rna-sieve multviariate inspired version (so the same
   algorithm, usign an alternated or block graident approach, marginal variance
   inferred during the optimisation framework, ineuqality cosntraint only for
   the cellualr ratios that are post hoc nromalsied to reahc the unti simplex
