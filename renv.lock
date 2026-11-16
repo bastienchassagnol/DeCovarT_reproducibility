@@ -1428,6 +1428,13 @@
       "License": "GPL (>= 3)",
       "Encoding": "UTF-8",
       "LazyData": "true",
+      "Imports": [
+        "Matrix",
+        "Rfast",
+        "SingleCellExperiment",
+        "cluster",
+        "vashr"
+      ],
       "Suggests": [
         "knitr",
         "rmarkdown"
@@ -2087,6 +2094,26 @@
       "Maintainer": "James Melville <jlmelville@gmail.com>",
       "Repository": "https://packagemanager.posit.co/cran/latest"
     },
+    "RcppParallel": {
+      "Package": "RcppParallel",
+      "Version": "6.2.1",
+      "Source": "Repository",
+      "Depends": [
+        "R (>= 3.6.0)"
+      ],
+      "Imports": [],
+      "LinkingTo": [],
+      "Suggests": [
+        "Rcpp",
+        "knitr",
+        "rmarkdown"
+      ],
+      "Enhances": [],
+      "License": "GPL (>= 3)",
+      "NeedsCompilation": "yes",
+      "Repository": "CRAN",
+      "Type": "source"
+    },
     "RcppProgress": {
       "Package": "RcppProgress",
       "Version": "0.4.2",
@@ -2177,6 +2204,32 @@
       "Author": "Georgi N. Boshnakov [aut, cre] (ORCID: <https://orcid.org/0000-0003-2839-346X>), Duncan Murdoch [ctb]",
       "Maintainer": "Georgi N. Boshnakov <georgi.boshnakov@manchester.ac.uk>",
       "Repository": "CRAN"
+    },
+    "Rfast": {
+      "Package": "Rfast",
+      "Version": "2.1.5.2",
+      "Source": "Repository",
+      "Depends": [
+        "R (>= 3.5.0)",
+        "Rcpp (>= 0.12.3)",
+        "zigg",
+        "RcppParallel"
+      ],
+      "Imports": [],
+      "LinkingTo": [
+        "Rcpp (>= 0.12.3)",
+        "RcppArmadillo",
+        "RcppParallel",
+        "zigg"
+      ],
+      "Suggests": [
+        "philentropy"
+      ],
+      "Enhances": [],
+      "License": "GPL (>= 2.0)",
+      "NeedsCompilation": "yes",
+      "Repository": "CRAN",
+      "Type": "source"
     },
     "Rhdf5lib": {
       "Package": "Rhdf5lib",
@@ -2543,6 +2596,25 @@
       ],
       "NeedsCompilation": "yes",
       "Repository": "CRAN"
+    },
+    "SQUAREM": {
+      "Package": "SQUAREM",
+      "Version": "2026.1",
+      "Source": "Repository",
+      "Depends": [
+        "R (>= 4.0)"
+      ],
+      "Imports": [],
+      "LinkingTo": [],
+      "Suggests": [
+        "setRNG",
+        "interval"
+      ],
+      "Enhances": [],
+      "License": "GPL (>= 2)",
+      "NeedsCompilation": "no",
+      "Repository": "CRAN",
+      "Type": "source"
     },
     "ScaledMatrix": {
       "Package": "ScaledMatrix",
@@ -3169,6 +3241,40 @@
       "Author": "Guangchuang Yu [aut, cre] (ORCID: <https://orcid.org/0000-0002-6485-8781>), Shuangbin Xu [ctb] (ORCID: <https://orcid.org/0000-0003-3513-5362>), Thomas Hackl [ctb]",
       "Maintainer": "Guangchuang Yu <guangchuangyu@gmail.com>",
       "Repository": "CRAN"
+    },
+    "ashr": {
+      "Package": "ashr",
+      "Version": "2.2-63",
+      "Source": "Repository",
+      "Depends": [
+        "R (>= 3.1.0)"
+      ],
+      "Imports": [
+        "Matrix",
+        "stats",
+        "graphics",
+        "Rcpp (>= 0.10.5)",
+        "truncnorm",
+        "mixsqp",
+        "SQUAREM",
+        "etrunct",
+        "invgamma"
+      ],
+      "LinkingTo": [
+        "Rcpp"
+      ],
+      "Suggests": [
+        "testthat",
+        "knitr",
+        "rmarkdown",
+        "ggplot2",
+        "REBayes"
+      ],
+      "Enhances": [],
+      "License": "GPL (>= 3)",
+      "NeedsCompilation": "yes",
+      "Repository": "CRAN",
+      "Type": "source"
     },
     "askpass": {
       "Package": "askpass",
@@ -4817,6 +4923,22 @@
       "NeedsCompilation": "no",
       "Repository": "CRAN",
       "Encoding": "UTF-8"
+    },
+    "etrunct": {
+      "Package": "etrunct",
+      "Version": "0.1",
+      "Source": "Repository",
+      "Depends": [],
+      "Imports": [],
+      "LinkingTo": [],
+      "Suggests": [
+        "testthat"
+      ],
+      "Enhances": [],
+      "License": "MIT + file LICENSE",
+      "NeedsCompilation": "no",
+      "Repository": "CRAN",
+      "Type": "source"
     },
     "evaluate": {
       "Package": "evaluate",
@@ -6789,6 +6911,22 @@
       "Maintainer": "Kirill Müller <kirill@cynkra.com>",
       "Repository": "CRAN"
     },
+    "invgamma": {
+      "Package": "invgamma",
+      "Version": "1.2",
+      "Source": "Repository",
+      "Depends": [],
+      "Imports": [],
+      "LinkingTo": [],
+      "Suggests": [
+        "testthat (>= 3.0.0)"
+      ],
+      "Enhances": [],
+      "License": "MIT + file LICENSE",
+      "NeedsCompilation": "no",
+      "Repository": "CRAN",
+      "Type": "source"
+    },
     "irlba": {
       "Package": "irlba",
       "Version": "2.3.7",
@@ -7721,6 +7859,34 @@
       "Repository": "Bioconductor 3.23",
       "Author": "Kim-Anh Le Cao [aut], Florian Rohart [aut], Ignacio Gonzalez [aut], Sebastien Dejean [aut], Al J Abadi [ctb], Max Bladen [ctb], Benoit Gautier [ctb], Francois Bartolo [ctb], Pierre Monget [ctb], Jeff Coquery [ctb], FangZou Yao [ctb], Benoit Liquet [ctb], Eva Hamrud [ctb], Derek Lei [ctb, cre]",
       "Maintainer": "Derek Lei <mixomicsdeveloper@gmail.com>"
+    },
+    "mixsqp": {
+      "Package": "mixsqp",
+      "Version": "0.3-54",
+      "Source": "Repository",
+      "Depends": [
+        "R (>= 3.3.0)"
+      ],
+      "Imports": [
+        "utils",
+        "stats",
+        "irlba",
+        "Rcpp (>= 0.12.15)"
+      ],
+      "LinkingTo": [
+        "Rcpp",
+        "RcppArmadillo"
+      ],
+      "Suggests": [
+        "testthat",
+        "knitr",
+        "rmarkdown"
+      ],
+      "Enhances": [],
+      "License": "MIT + file LICENSE",
+      "NeedsCompilation": "yes",
+      "Repository": "CRAN",
+      "Type": "source"
     },
     "nlme": {
       "Package": "nlme",
@@ -8814,6 +8980,29 @@
       "VignetteBuilder": "R.rsp",
       "Author": "Roger Koenker [cre, aut], Stephen Portnoy [ctb] (Contributions to Censored QR code), Pin Tian Ng [ctb] (Contributions to Sparse QR code), Blaise Melly [ctb] (Contributions to preprocessing code), Achim Zeileis [ctb] (Contributions to dynrq code essentially identical to his dynlm code), Philip Grosjean [ctb] (Contributions to nlrq code), Cleve Moler [ctb] (author of several linpack routines), Yousef Saad [ctb] (author of sparskit2), Victor Chernozhukov [ctb] (contributions to extreme value inference code), Ivan Fernandez-Val [ctb] (contributions to extreme value inference code), Martin Maechler [ctb] (tweaks (src/chlfct.f, 'tiny','Large'), <https://orcid.org/0000-0002-8685-9910>), Brian D Ripley [trl, ctb] (Initial (2001) R port from S (to my everlasting shame -- how could I have been so slow to adopt R!) and for numerous other suggestions and useful advice)",
       "Encoding": "UTF-8"
+    },
+    "qvalue": {
+      "Package": "qvalue",
+      "Version": "2.44.0",
+      "Source": "Bioconductor",
+      "Depends": [
+        "R(>= 2.10)"
+      ],
+      "Imports": [
+        "splines",
+        "ggplot2",
+        "grid",
+        "reshape2"
+      ],
+      "LinkingTo": [],
+      "Suggests": [
+        "knitr"
+      ],
+      "Enhances": [],
+      "License": "LGPL",
+      "NeedsCompilation": "no",
+      "Repository": "BioCsoft",
+      "Type": "source"
     },
     "rARPACK": {
       "Package": "rARPACK",
@@ -11359,6 +11548,24 @@
       "Maintainer": "Tomasz Kalinowski <tomasz@posit.co>",
       "Repository": "CRAN"
     },
+    "truncnorm": {
+      "Package": "truncnorm",
+      "Version": "1.0-9",
+      "Source": "Repository",
+      "Depends": [
+        "R (>= 3.4.0)"
+      ],
+      "Imports": [],
+      "LinkingTo": [],
+      "Suggests": [
+        "testthat"
+      ],
+      "Enhances": [],
+      "License": "GPL (>= 2)",
+      "NeedsCompilation": "yes",
+      "Repository": "CRAN",
+      "Type": "source"
+    },
     "tweenr": {
       "Package": "tweenr",
       "Version": "2.0.3",
@@ -11495,6 +11702,35 @@
       "NeedsCompilation": "no",
       "Repository": "CRAN",
       "Encoding": "UTF-8"
+    },
+    "vashr": {
+      "Package": "vashr",
+      "Version": "0.99.1",
+      "Source": "GitHub",
+      "Author": "Mengyin Lu, Matthew Stephens",
+      "Maintainer": "Mengyin Lu <mengyin@uchicago.edu>",
+      "Type": "Package",
+      "Title": "Variance Adaptive Shrinkage",
+      "Date": "2016-6-10",
+      "Description": "The main function in the vashr package is \\code{\\link{vash}}, which should be examined for more details.",
+      "License": "GPL-3",
+      "Depends": [
+        "ashr",
+        "qvalue"
+      ],
+      "Suggests": [
+        "knitr",
+        "SQUAREM"
+      ],
+      "biocViews": "Software, GeneExpression, Bayesian, StatisticalMethod,  DifferentialExpression",
+      "VignetteBuilder": "knitr",
+      "RoxygenNote": "5.0.1",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteUsername": "stephenslab",
+      "RemoteRepo": "vashr",
+      "RemoteRef": "master",
+      "RemoteSha": "c921c099c717b6684842eae44cf2b7d051d952c3"
     },
     "vctrs": {
       "Package": "vctrs",
@@ -11909,6 +12145,20 @@
       "Author": "Guangchuang Yu [aut, cre] (ORCID: <https://orcid.org/0000-0002-6485-8781>)",
       "Maintainer": "Guangchuang Yu <guangchuangyu@gmail.com>",
       "Repository": "CRAN"
+    },
+    "zigg": {
+      "Package": "zigg",
+      "Version": "0.0.2",
+      "Source": "Repository",
+      "Depends": [],
+      "Imports": [],
+      "LinkingTo": [],
+      "Suggests": [],
+      "Enhances": [],
+      "License": "GPL (>= 2)",
+      "NeedsCompilation": "yes",
+      "Repository": "CRAN",
+      "Type": "source"
     },
     "zoo": {
       "Package": "zoo",
