@@ -158,6 +158,21 @@ if (!file.exists(slots_path)) {
   )
 }
 htseq <- read_bulk_htseq(bulk_path)
+# Column sums of the HTSeq table. The book reads this file; the raw
+# counts stay in DVC and are not on the GitHub runner.
+depth <- colSums(htseq$counts)
+utils::write.csv(
+  data.frame(
+    sample = names(depth),
+    time = sub("_.*$", "", names(depth)),
+    arm = ifelse(grepl("_CTL_", names(depth)), "standard", "early"),
+    depth = unname(depth),
+    stringsAsFactors = FALSE
+  ),
+  file.path(out_dir, "bulk_sample_depth.csv"),
+  row.names = FALSE,
+  fileEncoding = "UTF-8"
+)
 design <- bulk_sample_design(colnames(htseq$counts))
 observed <- observed_scored_fractions(file.path(tier_01, "cell_counts.csv"))
 slots <- readRDS(slots_path)
