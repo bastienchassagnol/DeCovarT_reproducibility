@@ -547,6 +547,183 @@ consistency_variance <- function(mu, p, n_bulk, n_ref, psi = Inf) {
   sum(p * s2) / n_bulk + sum(p^2 * s2 / n_ref)
 }
 
+#' Effective number of bulk cells, by a robust moment equation.
+#'
+#' `n_i` is not identified from a bulk sample (the plug-in scale `a_i`
+#' mixes the cell count with the platform scale), and A3 with `n_i = a_i`
+#' leaves the discrepancies far wider than their NB spread. The effective
+#' count `n_eff` is the root of
+#' `median_g D_g^2 / (v_bulk_g / n + v_fixed_g) = qchisq(0.5, 1)`:
+#' one dispersion `a_i / n_eff` per replicate, set by the typical gene so
+#' that the flagged genes do not set their own scale.
+#'
+#' @param d Discrepancies `D_gi` of one replicate.
+#' @param v_bulk Per-cell variance of the bulk mixture, `sum_j p_j s2_gj`.
+#' @param v_fixed Variance terms that do not scale with the cell count
+#'   (reference sampling, plug-in ratio).
+#' @param upper Upper end of the search, the plug-in `a_i`: no extra
+#'   dispersion. Returned when the equation has no root below it.
+#' @param lower Lower end of the search. Returned, with a warning, when
+#'   even that count leaves the median above the target.
+#' @return `n_eff`, one positive number.
+estimate_effective_cells <- function(d, v_bulk, v_fixed, upper, lower = 1e-3) {
+  ok <- is.finite(d) & is.finite(v_bulk) & is.finite(v_fixed) & v_bulk > 0
+  if (sum(ok) < 10L || !is.finite(upper) || upper <= lower) {
+    stop("`estimate_effective_cells()` needs ten finite genes and `upper > lower`.")
+  }
+  f <- function(n) {
+    stats::median(d[ok]^2 / (v_bulk[ok] / n + v_fixed[ok])) - stats::qchisq(0.5, 1)
+  }
+  if (f(upper) <= 0) {
+    return(upper)
+  }
+  if (f(lower) > 0) {
+    warning("No effective cell count above `lower`; returning `lower`.")
+    return(lower)
+  }
+  stats::uniroot(f, c(lower, upper), tol = 1e-8 * upper)$root
+}
+
+#' Multivariate bulk consistency test under the fitted DeCovarT model.
+#'
+#' For each replicate, `y ~ N(c mu p, phi S(p))` with
+#' `S(p) = sum_j p_j Sigma_j` and the fitted `p`, `c`, `phi`, no gene-wise
+#' platform ratio. With `r = y - c mu p` and `W = (phi S)^{-1}`, the gene
+#' statistic is the standardised conditional residual
+#' `z_g = (W r)_g / sqrt(W_gg)`, which is `N(0, 1)` under the model: it is
+#' `y_g - E(y_g | y_-g)` over its standard deviation, so the part of a
+#' gene's discrepancy shared with correlated genes is removed. The
+#' diagonal counterpart is `r_g / sqrt(phi S_gg)`. With `robust = TRUE`,
+#' each is divided by `sqrt(kappa)`, `kappa = median z^2 / qchisq(0.5, 1)`
+#' (a robust `phi`, one per statistic). Module sums `sum_{g in M} z_g`
+#' are tested with their exact variance `1' C_M 1`, `C` the correlation of
+#' `W` (or of `S` for the diagonal statistic).
+#'
+#' Power under the same model is exact, not simulated: a shift `delta`
+#' moves `z_cond` by `W delta / sqrt(diag W)` and `z_diag` by
+#' `delta / sqrt(diag V)`. For a shift of `k` marginal standard deviations
+#' in one gene the means are `k sqrt(V_gg W_gg)` and `k`; for a module, all
+#' genes shifted together by `k` standard deviations each.
+#'
+#' @param bulk Genes by samples raw bulk counts, rows in the order of `mu`.
+#' @param mu Genes by types per-cell means (raw counts).
+#' @param sigma Genes by genes by types covariance array ([build_sigma()]).
+#' @param p_hat Types by samples matrix of fitted compositions.
+#' @param c_hat,phi_hat Fitted mean and variance scales, one per sample.
+#' @param modules Optional named list of gene vectors.
+#' @param level Tail probability per side. Default `0.01`.
+#' @param robust Rescale by the median-based `kappa`. Default `TRUE`.
+#' @param shift Shift, in marginal standard deviations, for the power
+#'   table. Default `3`.
+#' @return A list with `gene` (`sample`, `gene`, `z_cond`, `z_diag`,
+#'   `flag_cond`, `flag_diag`, `gain` = `sqrt(V_gg W_gg)`, `power_cond`,
+#'   `power_diag` for a one-gene shift), `module` (`sample`, `module`,
+#'   `n_genes`, `s_cond`, `s_diag`, standardised, flags, and the power of
+#'   both for a module-wide shift) and `scales` (`sample`, `c_hat`,
+#'   `phi_hat`, `n_hat = c^2 / phi`, `quad_over_g = r' W r / G` at the
+#'   fitted `phi`, `kappa_cond`, `kappa_diag`).
+multivariate_tail_filter <- function(
+  bulk,
+  mu,
+  sigma,
+  p_hat,
+  c_hat,
+  phi_hat,
+  modules = NULL,
+  level = 0.01,
+  robust = TRUE,
+  shift = 3
+) {
+  bulk <- as.matrix(bulk)
+  genes <- rownames(mu)
+  types <- colnames(mu)
+  if (!identical(rownames(bulk), genes) || !identical(dimnames(sigma)[[3L]], types)) {
+    stop("`bulk` rows and `sigma` types must match `mu`.")
+  }
+  if (any(c_hat <= 0) || any(phi_hat <= 0)) {
+    stop("`c_hat` and `phi_hat` must be positive.")
+  }
+  t_cut <- stats::qnorm(1 - level)
+  med_chi <- stats::qchisq(0.5, 1)
+  power <- function(m) stats::pnorm(-t_cut + m) + stats::pnorm(-t_cut - m)
+  gene_rows <- list()
+  module_rows <- list()
+  scale_rows <- list()
+  for (i in seq_len(ncol(bulk))) {
+    sample <- colnames(bulk)[i]
+    p <- p_hat[types, sample]
+    S <- matrix(0, length(genes), length(genes))
+    for (j in seq_along(types)) {
+      S <- S + p[[j]] * sigma[, , j]
+    }
+    r <- bulk[, i] - c_hat[[i]] * drop(mu %*% p)
+    V <- phi_hat[[i]] * S
+    W <- chol2inv(chol(V))
+    w_r <- drop(W %*% r)
+    z_cond <- w_r / sqrt(diag(W))
+    z_diag <- r / sqrt(diag(V))
+    k_cond <- if (robust) stats::median(z_cond^2) / med_chi else 1
+    k_diag <- if (robust) stats::median(z_diag^2) / med_chi else 1
+    z_cond <- z_cond / sqrt(k_cond)
+    z_diag <- z_diag / sqrt(k_diag)
+    gain <- sqrt(diag(V) * diag(W))
+    gene_rows[[i]] <- data.frame(
+      sample = sample,
+      gene = genes,
+      z_cond = z_cond,
+      z_diag = z_diag,
+      flag_cond = abs(z_cond) > t_cut,
+      flag_diag = abs(z_diag) > t_cut,
+      gain = gain,
+      power_cond = power(shift * gain),
+      power_diag = power(shift),
+      stringsAsFactors = FALSE
+    )
+    scale_rows[[i]] <- data.frame(
+      sample = sample,
+      c_hat = c_hat[[i]],
+      phi_hat = phi_hat[[i]],
+      n_hat = c_hat[[i]]^2 / phi_hat[[i]],
+      quad_over_g = sum(r * w_r) / length(genes),
+      kappa_cond = k_cond,
+      kappa_diag = k_diag,
+      stringsAsFactors = FALSE
+    )
+    for (mod in names(modules)) {
+      m <- which(genes %in% modules[[mod]])
+      if (length(m) < 2L) {
+        next
+      }
+      c_w <- stats::cov2cor(W[m, m, drop = FALSE])
+      c_v <- stats::cov2cor(V[m, m, drop = FALSE])
+      s_cond <- sum(z_cond[m]) / sqrt(sum(c_w))
+      s_diag <- sum(z_diag[m]) / sqrt(sum(c_v))
+      # Shared shift of `shift` marginal SDs on every gene of the module.
+      delta <- shift * sqrt(diag(V)[m])
+      mean_cond <- sum((W[m, m, drop = FALSE] %*% delta) / sqrt(diag(W)[m])) /
+        sqrt(sum(c_w))
+      mean_diag <- length(m) * shift / sqrt(sum(c_v))
+      module_rows[[length(module_rows) + 1L]] <- data.frame(
+        sample = sample,
+        module = mod,
+        n_genes = length(m),
+        s_cond = s_cond,
+        s_diag = s_diag,
+        flag_cond = abs(s_cond) > t_cut,
+        flag_diag = abs(s_diag) > t_cut,
+        power_cond = power(mean_cond),
+        power_diag = power(mean_diag),
+        stringsAsFactors = FALSE
+      )
+    }
+  }
+  list(
+    gene = do.call(rbind, gene_rows),
+    module = if (length(module_rows) > 0L) do.call(rbind, module_rows),
+    scales = do.call(rbind, scale_rows)
+  )
+}
+
 #' Cumulant generating function of the consistency statistic of one gene.
 #'
 #' @inheritParams consistency_variance
@@ -1206,6 +1383,13 @@ quantile_band_flags <- function(observed, fitted, tau = c(0.01, 0.99)) {
 #'   `(sum_j p_ji mu_gj)^2 Var(log b_g)` to `Var D^b`; that term enters
 #'   `z` and the T1 threshold. T1-log, T3, T4 and the module statements
 #'   treat `b_g` as known.
+#' @param plugin_genes Optional genes on which the deMixSC plug-in
+#'   (`p_i`, `a_i`) is fitted; `D_gi` is then formed for every gene.
+#'   `NULL` (default) fits on all genes.
+#' @param n_bulk `"plugin"` (default) sets the bulk cell count of every
+#'   statement to `a_i`, the A3 reading. `"moment"` replaces it by the
+#'   effective count `n_eff,i` of [estimate_effective_cells()], one
+#'   dispersion per replicate; `a_i` still scales the bulk in `D_gi`.
 #' @return A list with `gene` (one row per sample, gene and statement:
 #'   `sample`, `gene`, `statistic`, `statement`, `t_lower`, `t_upper`,
 #'   `flag`, and `z = statistic / sd(D)`, the NB-standardised
@@ -1228,8 +1412,11 @@ bulk_tail_filter <- function(
   min_abs_cor = 0.1,
   qr_tau = c(level, 1 - level),
   platform_ratio = NULL,
-  platform_var = NULL
+  platform_var = NULL,
+  plugin_genes = NULL,
+  n_bulk = c("plugin", "moment")
 ) {
+  n_bulk <- match.arg(n_bulk)
   bulk <- as.matrix(bulk)
   if (is.null(rownames(bulk)) || is.null(rownames(counts))) {
     stop("`bulk` and `counts` need gene names as row names.")
@@ -1263,8 +1450,19 @@ bulk_tail_filter <- function(
     v_log_b[!is.finite(v_log_b) | v_log_b < 0] <- 0
   }
   bulk <- sweep(bulk[genes, , drop = FALSE], 1L, b_g, "/")
-  plug <- plugin_composition_demixsc(bulk, mom$mu, c_reg)
+  pg <- if (is.null(plugin_genes)) genes else intersect(plugin_genes, genes)
+  if (length(pg) < 10L) {
+    stop("Fewer than ten `plugin_genes` in the panel.")
+  }
+  plug <- plugin_composition_demixsc(
+    bulk[pg, , drop = FALSE],
+    mom$mu[pg, , drop = FALSE],
+    c_reg
+  )
+  plug$scale$n_bulk <- NA_real_
   types <- colnames(mom$mu)
+  # Per-cell NB variance of each gene and type, for n_eff.
+  s2 <- mom$mu + ifelse(is.finite(mom$psi), mom$mu^2 / mom$psi, 0)
 
   long_rows <- function(unit_col, unit, sample, statistic, thr) {
     wide_lo <- thr$threshold[thr$side == "lower"]
@@ -1317,11 +1515,26 @@ bulk_tail_filter <- function(
     a_hat <- plug$scale$a_hat[plug$scale$sample == sample]
     y <- stats::setNames(bulk[genes, i], genes)
     d <- consistency_statistic(y, a_hat, p_hat, mom$mu)
+    n_use <- a_hat
+    if (n_bulk == "moment") {
+      fit_g <- drop(mom$mu[genes, , drop = FALSE] %*% p_hat)
+      n_use <- estimate_effective_cells(
+        d[genes],
+        v_bulk = drop(s2[genes, , drop = FALSE] %*% p_hat),
+        v_fixed = drop(
+          sweep(s2[genes, , drop = FALSE], 2L, mom$n_cells[types], "/") %*%
+            p_hat^2
+        ) +
+          fit_g^2 * v_log_b[genes],
+        upper = a_hat
+      )
+    }
+    plug$scale$n_bulk[plug$scale$sample == sample] <- n_use
     for (g in genes) {
       thr <- tail_threshold(
         mom$mu[g, ],
         p_hat,
-        n_bulk = a_hat,
+        n_bulk = n_use,
         n_ref = mom$n_cells,
         psi = mom$psi[g, ],
         level = level
@@ -1329,7 +1542,7 @@ bulk_tail_filter <- function(
       sd_g <- sqrt(consistency_variance(
         mom$mu[g, ],
         p_hat,
-        a_hat,
+        n_use,
         mom$n_cells,
         mom$psi[g, ]
       ))
@@ -1364,7 +1577,7 @@ bulk_tail_filter <- function(
           sqrt(consistency_variance(
             mom$mu[g, ],
             p_hat,
-            a_hat,
+            n_use,
             mom$n_cells,
             mom$psi[g, ]
           ))
@@ -1380,7 +1593,7 @@ bulk_tail_filter <- function(
       thr <- tail_threshold(
         mom$mu[g_mod, , drop = FALSE],
         p_hat,
-        n_bulk = a_hat,
+        n_bulk = n_use,
         n_ref = mom$n_cells,
         psi = mom$psi[g_mod, , drop = FALSE],
         level = level,
@@ -1425,7 +1638,9 @@ bulk_tail_filter <- function(
       max_degree = max_degree,
       mean_degree = mean_degree,
       min_abs_cor = min_abs_cor,
-      platform_ratio = !is.null(platform_ratio)
+      platform_ratio = !is.null(platform_ratio),
+      plugin_genes = length(pg),
+      n_bulk = n_bulk
     )
   )
 }
@@ -2004,6 +2219,10 @@ a3_shift_summary <- function(tails, range, variant, level = 0.01) {
       flagged_range = sum(range[[tm]]$flag_range),
       flagged_mad = sum(range[[tm]]$flag_mad),
       iqr_log2_ratio = stats::IQR(lr[, tm], na.rm = TRUE),
+      median_n_bulk = stats::median(tails[[tm]]$plugin$scale$n_bulk %||%
+        tails[[tm]]$plugin$scale$a_hat),
+      median_n_over_a = stats::median((tails[[tm]]$plugin$scale$n_bulk %||%
+        tails[[tm]]$plugin$scale$a_hat) / tails[[tm]]$plugin$scale$a_hat),
       stringsAsFactors = FALSE
     )
   })

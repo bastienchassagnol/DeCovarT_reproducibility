@@ -1,1330 +1,31 @@
-#' Cross-validated selection and comparison of within-type covariances.
+#' Regularised within-type covariances and their cross-validated choice.
 #'
-#' Every estimator in this file returns a mean `mu` and a covariance
-#' `sigma` on the linear scale of DeCovarT's convolution. By default
-#' that scale is the raw per-cell UMI count of the panel genes, with no
-#' per-cell library division (`normalise = "none"` in the drivers): the
-#' division removes the type-level transcriptome size and the biological
-#' size variation that the bulk accumulates. The earlier scale,
-#' `x_cg = y_cg / s_c` with `s_c = L_c / L_ref` (`L_c` the full RNA
-#' library of cell `c`, `L_ref` its median over the cells of one time
-#' point), is kept as a sensitivity variant (`normalise = "library"`).
-#' All estimators are scored by the same loss: the held-out Gaussian
-#' log-score of the test cells on that scale.
+#' Every estimate keeps the sample variances of the raw per-cell UMI
+#' counts and regularises the correlation only. With `R_j` the sample
+#' correlation of type `j`, `Rbar` the pooled within-type correlation of
+#' the time point, and `D_j` the sample variances:
 #'
-#' A denoised fit (`preprocess = "denoised"`) exports the biological
-#' covariance `sigma`, without the Poisson diagonal and with part or all
-#' of the size term removed ([denoise_covariance()]). The test cells
-#' still carry those terms, so such a fit also returns `score_sigma`, the
-#' count covariance rebuilt from `sigma` ([reconstruct_count_covariance()]),
-#' and [score_fit()] scores `score_sigma` when it is present. Every
-#' `kappa` rebuilds the same count moments up to regularisation, so the
-#' score cannot choose `kappa`; it stays a bracket.
+#' - diagonal: `I`;
+#' - shrinkage: `(1 - lambda) R_j + lambda I`;
+#' - two-parameter: `(1 - lambda) {(1 - alpha) R_j + alpha Rbar} + lambda I`;
+#' - factor analysis: `B_j B_j' + Psi_j`, or `B B' + Psi_j` with loadings
+#'   shared by the types of a time point.
 #'
-#' Why the Gaussian log-score is a legitimate loss when cells are not
-#' Gaussian: for any law of the cells with mean `m` and covariance
-#' `Sigma_true`, the expected negative log-score of `N(mu, Sigma)` is
-#' `0.5 * {log det Sigma + tr(Sigma^-1 Sigma_true)
-#'   + (m - mu)' Sigma^-1 (m - mu)} + const`,
-#' which is minimised at `mu = m`, `Sigma = Sigma_true` (Stein's loss).
-#' DeCovarT's bulk model uses only these two moments, so the score ranks
-#' covariance estimators by the quantity the deconvolution needs.
+#' The covariance is `D_j^{1/2} (.) D_j^{1/2}`. Tuning values are chosen
+#' by the held-out Gaussian log-score of cells, which is minimised in
+#' expectation at the true mean and covariance whatever the law of the
+#' cells (Stein's loss).
 #'
-#' Requires `R/02_00_utils.R` (`%||%`) and
-#' `R/03_02_stats_regularisation_path.R` (`make_glasso_solver()`,
-#' `rescale_correlation_fit()`, `count_undirected_edges()`) to be
-#' sourced first.
-
-# ==========================================================================
-# Held-out score and folds ----
-# ==========================================================================
-
-#' Held-out Gaussian log-score through a Cholesky factor.
+#' No estimate is refitted per tuning value. For the two shrinkage forms
+#' the eigenvectors do not depend on `lambda`, so one decomposition per
+#' training set scores a whole grid. For factor analysis the score uses
+#' the Woodbury identity.
 #'
-#' With `Sigma = R'R` (upper-triangular `R`), the log-density of a test
-#' row `x` is `-0.5 * {p log(2 pi) + 2 sum(log diag R) + |R^-T (x - mu)|^2}`.
-#' No inverse is formed.
+#' The graphical-lasso, SILGGM, PLNnetwork and denoised arms are in
+#' `scripts/archives/sparse_precision_arms/` and
+#' `scripts/archives/denoised_covariance/`.
 #'
-#' @param mu Mean vector, length `p`.
-#' @param Sigma Covariance, `p` by `p`. It is symmetrised before the
-#'   factorisation.
-#' @param X_test Test cells in rows, genes in columns (`n_test` by `p`).
-#' @param average If `TRUE` (default), return the mean log-score per
-#'   test cell; otherwise one log-density per row.
-#' @return A scalar (or a vector of length `n_test`). `-Inf` when
-#'   `Sigma` is not numerically positive definite, so that such a fit
-#'   can never be selected.
-heldout_gaussian_logscore <- function(mu, Sigma, X_test, average = TRUE) {
-  X_test <- as.matrix(X_test)
-  Sigma <- as.matrix(Sigma)
-  mu <- as.numeric(mu)
-  p <- ncol(X_test)
-  if (length(mu) != p || nrow(Sigma) != p || ncol(Sigma) != p) {
-    stop("`mu`, `Sigma` and `X_test` must share the gene dimension.")
-  }
-  Sigma <- (Sigma + t(Sigma)) / 2
-  R <- if (all(is.finite(Sigma))) {
-    tryCatch(chol(Sigma), error = function(e) NULL)
-  } else {
-    NULL
-  }
-  if (is.null(R)) {
-    return(if (average) -Inf else rep(-Inf, nrow(X_test)))
-  }
-  centred <- t(X_test) - mu
-  z <- backsolve(R, centred, transpose = TRUE)
-  log_det <- 2 * sum(log(diag(R)))
-  per_cell <- -0.5 * (p * log(2 * pi) + log_det + colSums(z * z))
-  if (average) mean(per_cell) else per_cell
-}
-
-#' Balanced random assignment of rows to K folds.
-#'
-#' @param n Number of rows (cells).
-#' @param K Number of folds.
-#' @param seed Optional integer seed. When `NULL`, the current RNG
-#'   stream is used and left advanced.
-#' @return Integer vector of length `n` with values in `1:K`.
-make_cv_folds <- function(n, K = 5L, seed = NULL) {
-  K <- as.integer(K)
-  if (K < 2L || K > n) {
-    stop("Need 2 <= K <= n; got K = ", K, " for n = ", n, ".")
-  }
-  assign_folds <- function() sample(rep_len(seq_len(K), n))
-  if (is.null(seed)) {
-    assign_folds()
-  } else {
-    withr::with_seed(seed, assign_folds())
-  }
-}
-
-#' Mean and covariance that a fit predicts for a set of test cells.
-#'
-#' Most fits return fixed `mu` and `sigma`. A PLNnetwork fit returns a
-#' `moments` function instead, because its linear-scale covariance
-#' depends on the size factors of the cells it is evaluated on (see
-#' [pln_linear_moments()]).
-#'
-#' @param fit List with `mu` and `sigma` (and, for a denoised fit,
-#'   `score_sigma`), or with `moments`, a function of the test-row
-#'   indices.
-#' @param test_rows Indices of the test cells in the caller's full data.
-#' @return A list with `mu`, `sigma` (the exported covariance) and
-#'   `score_sigma` (`NULL` unless the fit is denoised).
-fit_moments <- function(fit, test_rows) {
-  if (is.function(fit$moments)) {
-    fit$moments(test_rows)
-  } else {
-    list(mu = fit$mu, sigma = fit$sigma, score_sigma = fit$score_sigma)
-  }
-}
-
-#' Held-out log-score of one fit, `NA` for a failed fit.
-#'
-#' A denoised fit is scored through `score_sigma`, the count covariance
-#' rebuilt from its exported `sigma`; every other fit through `sigma`.
-#'
-#' @param fit A fit as described in [fit_moments()], possibly with
-#'   `failed = TRUE`.
-#' @param X_test Test cells by genes.
-#' @param test_rows Indices of the test cells in the full data.
-#' @return Scalar mean log-score per test cell.
-score_fit <- function(fit, X_test, test_rows) {
-  if (is.null(fit) || isTRUE(fit$failed)) {
-    return(NA_real_)
-  }
-  m <- fit_moments(fit, test_rows)
-  heldout_gaussian_logscore(m$mu, m$score_sigma %||% m$sigma, X_test)
-}
-
-# ==========================================================================
-# K-fold selection of one tuning parameter ----
-# ==========================================================================
-
-#' K-fold cross-validated choice of one tuning parameter.
-#'
-#' For each fold, every grid value is fitted on the training cells and
-#' scored on the held-out cells by [heldout_gaussian_logscore()]. The
-#' `min` choice maximises the mean score; the `1se` choice is the most
-#' regularised value whose mean score is within one standard error of
-#' that maximum. A grid value with a failed fit in any fold is not
-#' eligible.
-#'
-#' `fit_fun(X_train, tuning, train_rows)` returns one fit (a list with
-#' `mu`/`sigma` or `moments`, or `failed = TRUE`). When `path_fit =
-#' TRUE` it receives the whole grid and returns a list of fits in grid
-#' order; SILGGM (one fit for all FDR levels) and PLNnetwork (one fit for
-#' a whole penalty path) are run this way.
-#'
-#' @param X Cells by genes, on the linear scale used for scoring.
-#' @param fit_fun Fit function, see above.
-#' @param grid Numeric vector of candidate tuning values.
-#' @param K Number of folds. Default `5`.
-#' @param seed Optional seed for the fold assignment.
-#' @param rows Indices of the rows of `X` in the caller's full data,
-#'   passed on to `fit_fun` and to `moments`. Default `seq_len(nrow(X))`.
-#' @param regularisation `"increasing"` (default) when a larger value
-#'   regularises more (lasso penalty, shrinkage intensity);
-#'   `"decreasing"` when a smaller value does (SILGGM FDR level).
-#' @param path_fit Whether `fit_fun` takes the whole grid at once.
-#' @param folds Optional precomputed fold labels (overrides `K`, `seed`).
-#' @param verbose Print progress.
-#' @return A list with `table` (`tuning`, `mean_score`, `se_score`,
-#'   `n_folds_ok`), `fold_scores` (grid by fold), `tuning_min`,
-#'   `tuning_1se`, `folds`, and `regularisation`.
-cv_select_tuning <- function(
-  X,
-  fit_fun,
-  grid,
-  K = 5L,
-  seed = NULL,
-  rows = NULL,
-  regularisation = c("increasing", "decreasing"),
-  path_fit = FALSE,
-  folds = NULL,
-  verbose = FALSE
-) {
-  regularisation <- match.arg(regularisation)
-  X <- as.matrix(X)
-  n <- nrow(X)
-  rows <- rows %||% seq_len(n)
-  if (length(rows) != n) {
-    stop("`rows` must have one entry per row of `X`.")
-  }
-  grid <- as.numeric(grid)
-  if (length(grid) == 0L || any(!is.finite(grid))) {
-    stop("`grid` must be a non-empty vector of finite values.")
-  }
-  folds <- folds %||% make_cv_folds(n, K, seed)
-  n_folds <- max(folds)
-  scores <- matrix(
-    NA_real_,
-    nrow = length(grid),
-    ncol = n_folds,
-    dimnames = list(NULL, paste0("fold_", seq_len(n_folds)))
-  )
-  for (k in seq_len(n_folds)) {
-    test <- which(folds == k)
-    train <- which(folds != k)
-    if (verbose) {
-      message("  fold ", k, "/", n_folds, " (", length(test), " test cells)")
-    }
-    X_train <- X[train, , drop = FALSE]
-    fits <- if (path_fit) {
-      fit_fun(X_train, grid, rows[train])
-    } else {
-      lapply(grid, function(g) fit_fun(X_train, g, rows[train]))
-    }
-    if (length(fits) != length(grid)) {
-      stop("`fit_fun` returned ", length(fits), " fits for ", length(grid),
-           " grid values.")
-    }
-    for (i in seq_along(grid)) {
-      scores[i, k] <- score_fit(fits[[i]], X[test, , drop = FALSE], rows[test])
-    }
-  }
-
-  n_ok <- rowSums(!is.na(scores))
-  mean_score <- rowMeans(scores)
-  se_score <- apply(scores, 1L, stats::sd) / sqrt(n_folds)
-  mean_score[n_ok < n_folds] <- NA_real_
-  se_score[n_ok < n_folds] <- NA_real_
-  table <- data.frame(
-    tuning = grid,
-    mean_score = mean_score,
-    se_score = se_score,
-    n_folds_ok = n_ok
-  )
-
-  eligible <- which(is.finite(mean_score))
-  if (length(eligible) == 0L) {
-    warning("No grid value was fitted in every fold.", call. = FALSE)
-    return(list(
-      table = table,
-      fold_scores = scores,
-      tuning_min = NA_real_,
-      tuning_1se = NA_real_,
-      folds = folds,
-      regularisation = regularisation
-    ))
-  }
-  i_min <- eligible[[which.max(mean_score[eligible])]]
-  se_min <- se_score[[i_min]]
-  if (!is.finite(se_min)) {
-    se_min <- 0
-  }
-  within <- eligible[mean_score[eligible] >= mean_score[[i_min]] - se_min]
-  i_1se <- if (identical(regularisation, "increasing")) {
-    within[[which.max(grid[within])]]
-  } else {
-    within[[which.min(grid[within])]]
-  }
-  list(
-    table = table,
-    fold_scores = scores,
-    tuning_min = grid[[i_min]],
-    tuning_1se = grid[[i_1se]],
-    folds = folds,
-    regularisation = regularisation
-  )
-}
-
-# ==========================================================================
-# Nested cross-validation across estimators ----
-# ==========================================================================
-
-#' Nested cross-validation of several covariance estimators.
-#'
-#' The outer loop estimates the held-out risk of each estimator; the
-#' inner loop, run on the outer training cells only, chooses that
-#' estimator's tuning value. Inner folds use the same seed for every
-#' estimator within an outer fold, so the per-fold scores are paired.
-#' Nested CV is needed only for this comparison; the tuning value that is
-#' finally exported comes from [cv_select_tuning()] on all cells of the
-#' type.
-#'
-#' Each element of `estimators` is a list with
-#' - `fit`: a fit function as in [cv_select_tuning()];
-#' - `grid`: a numeric grid, or a function `(X_train, train_rows)`
-#'   returning one, so that a data-driven grid is built from the outer
-#'   training cells only;
-#' - `regularisation` (optional, default `"increasing"`);
-#' - `path_fit` (optional, default `FALSE`).
-#'
-#' @param X Cells by genes, on the scoring scale.
-#' @param estimators Named list of estimator specifications.
-#' @param K_outer,K_inner Numbers of outer and inner folds. Default `5`.
-#' @param seed Optional seed. The outer folds use `seed`; the inner
-#'   folds of outer fold `k` use `seed + k`.
-#' @param rule `"min"` (default) or `"1se"`, the inner-loop choice.
-#' @param rows Indices of the rows of `X` in the caller's full data.
-#' @param verbose Print progress.
-#' @return A list with `by_fold` (one row per outer fold and estimator:
-#'   `outer_fold`, `estimator`, `tuning`, `n_test`, `score`), `summary`
-#'   (per estimator: `mean_score`, `se_score`, `n_folds_ok`) and
-#'   `outer_folds`.
-nested_cv_compare <- function(
-  X,
-  estimators,
-  K_outer = 5L,
-  K_inner = 5L,
-  seed = NULL,
-  rule = c("min", "1se"),
-  rows = NULL,
-  verbose = FALSE
-) {
-  rule <- match.arg(rule)
-  if (is.null(names(estimators)) || any(!nzchar(names(estimators)))) {
-    stop("`estimators` must be a named list.")
-  }
-  X <- as.matrix(X)
-  n <- nrow(X)
-  rows <- rows %||% seq_len(n)
-  outer <- make_cv_folds(n, K_outer, seed)
-  by_fold <- list()
-  for (k in seq_len(max(outer))) {
-    test <- which(outer == k)
-    train <- which(outer != k)
-    X_train <- X[train, , drop = FALSE]
-    inner_seed <- if (is.null(seed)) NULL else seed + k
-    inner_folds <- make_cv_folds(length(train), K_inner, inner_seed)
-    for (est_name in names(estimators)) {
-      est <- estimators[[est_name]]
-      if (verbose) {
-        message("Outer fold ", k, ": ", est_name)
-      }
-      grid <- if (is.function(est$grid)) {
-        est$grid(X_train, rows[train])
-      } else {
-        est$grid
-      }
-      path_fit <- isTRUE(est$path_fit)
-      sel <- tryCatch(
-        cv_select_tuning(
-          X_train,
-          fit_fun = est$fit,
-          grid = grid,
-          rows = rows[train],
-          regularisation = est$regularisation %||% "increasing",
-          path_fit = path_fit,
-          folds = inner_folds
-        ),
-        error = function(e) {
-          message("  inner CV failed: ", conditionMessage(e))
-          NULL
-        }
-      )
-      tuning <- if (is.null(sel)) NA_real_ else sel[[paste0("tuning_", rule)]]
-      score <- NA_real_
-      if (is.finite(tuning)) {
-        fit <- tryCatch(
-          if (path_fit) {
-            est$fit(X_train, tuning, rows[train])[[1L]]
-          } else {
-            est$fit(X_train, tuning, rows[train])
-          },
-          error = function(e) list(failed = TRUE)
-        )
-        score <- score_fit(fit, X[test, , drop = FALSE], rows[test])
-      }
-      by_fold[[length(by_fold) + 1L]] <- data.frame(
-        outer_fold = k,
-        estimator = est_name,
-        tuning = tuning,
-        n_test = length(test),
-        score = score,
-        stringsAsFactors = FALSE
-      )
-    }
-  }
-  by_fold <- do.call(rbind, by_fold)
-  summary <- do.call(
-    rbind,
-    lapply(split(by_fold, by_fold$estimator), function(d) {
-      ok <- is.finite(d$score)
-      data.frame(
-        estimator = d$estimator[[1L]],
-        mean_score = if (all(ok)) mean(d$score) else NA_real_,
-        se_score = if (all(ok)) stats::sd(d$score) / sqrt(nrow(d)) else NA_real_,
-        n_folds_ok = sum(ok),
-        stringsAsFactors = FALSE
-      )
-    })
-  )
-  rownames(summary) <- NULL
-  list(by_fold = by_fold, summary = summary, outer_folds = outer)
-}
-
-# ==========================================================================
-# Shared helpers for the correlation-scale estimators ----
-# ==========================================================================
-
-#' Means, standard deviations and correlation of the genes.
-#'
-#' A gene that is constant in the training cells has no correlation with
-#' any other gene: its row and column of `R` are zero (diagonal one), and
-#' its variance is floored so that the covariance stays positive
-#' definite. The floor is a numerical guard, not a model; a gene constant
-#' in training and variable in the test cells is still scored badly.
-#'
-#' @param X Cells by genes.
-#' @param var_floor Variance floor. Default `NULL`: `1e-4` times the
-#'   median positive variance (or `1` when no gene varies).
-#' @return A list with `mu`, `sd`, `R`, `constant` (logical), `n`.
-standardise_genes <- function(X, var_floor = NULL) {
-  X <- as.matrix(X)
-  p <- ncol(X)
-  mu <- colMeans(X)
-  v <- apply(X, 2L, stats::var)
-  constant <- !is.finite(v) | v <= 0
-  if (is.null(var_floor)) {
-    var_floor <- if (any(!constant)) 1e-4 * stats::median(v[!constant]) else 1
-  }
-  v[constant] <- 0
-  sd <- sqrt(pmax(v, var_floor))
-  R <- diag(1, p)
-  if (sum(!constant) >= 2L) {
-    R[!constant, !constant] <- stats::cor(X[, !constant, drop = FALSE])
-  }
-  R <- (R + t(R)) / 2
-  diag(R) <- 1
-  dimnames(R) <- list(colnames(X), colnames(X))
-  names(sd) <- colnames(X)
-  list(mu = mu, sd = sd, R = R, constant = constant, n = nrow(X))
-}
-
-#' Covariance refitted under a fixed zero pattern of the precision.
-#'
-#' Maximises the Gaussian likelihood of the correlation `R` with the
-#' precision entries outside `adjacency` constrained to zero, through
-#' `glasso::glasso(zero = ...)`. A small `rho` keeps the problem well
-#' posed when cells are fewer than genes; the diagonal is not penalised.
-#' The result is rescaled to the data scale by `sd`.
-#'
-#' @param R Correlation matrix, `p` by `p`.
-#' @param adjacency `p` by `p` matrix; non-zero off-diagonal entries are
-#'   the edges kept free.
-#' @param sd Standard deviations on the data scale.
-#' @param rho Ridge-like penalty on the free off-diagonal entries.
-#'   Default `1e-4`.
-#' @param nobs Number of cells behind `R` (only fills `loglik`).
-#' @param thr,maxit Passed to [glasso::glasso()].
-#' @return A list with `sigma`, `omega` (data scale), `n_edges`, and
-#'   `failed`.
-refit_covariance_on_support <- function(
-  R,
-  adjacency,
-  sd,
-  rho = 1e-4,
-  nobs = NULL,
-  thr = 1e-4,
-  maxit = 1e4
-) {
-  free <- as.matrix(adjacency) != 0
-  free <- free | t(free)
-  diag(free) <- TRUE
-  zero <- which(!free, arr.ind = TRUE)
-  if (nrow(zero) == 0L) {
-    zero <- NULL
-  }
-  fit <- tryCatch(
-    glasso::glasso(
-      R,
-      rho = rho,
-      nobs = nobs,
-      zero = zero,
-      thr = thr,
-      maxit = maxit,
-      penalize.diagonal = FALSE
-    ),
-    error = function(e) e
-  )
-  if (inherits(fit, "error") || fit$errflag != 0L) {
-    return(list(failed = TRUE))
-  }
-  omega <- (fit$wi + t(fit$wi)) / 2
-  sigma <- (fit$w + t(fit$w)) / 2
-  if (!all(is.finite(omega)) || !all(is.finite(sigma))) {
-    return(list(failed = TRUE))
-  }
-  dimnames(omega) <- dimnames(R)
-  dimnames(sigma) <- dimnames(R)
-  scaled <- rescale_correlation_fit(omega, sigma, sd)
-  list(
-    sigma = scaled$sigma,
-    omega = scaled$omega,
-    n_edges = sum(free[upper.tri(free)]),
-    failed = FALSE
-  )
-}
-
-# ==========================================================================
-# Denoised covariance: moment correction, then a PSD projection ----
-# ==========================================================================
-
-#' Denoised within-type covariance of raw UMI counts.
-#'
-#' Moment estimator of the covariance of the captured molecule content
-#' (eq-denoised-within of vignette 05-1). With `V` the unbiased sample
-#' covariance of the `n` cells and `xbar` their mean,
-#' `V - diag(xbar) - kappa * (V - diag(xbar) + xbar xbar' - V / n)`.
-#' The first subtraction removes the Poisson measurement diagonal. The
-#' `kappa` term removes the technical share of the size term, with
-#' `kappa = nu_tech / (1 + nu_tech)`. Without spike-ins `kappa` is not
-#' identified and is bracketed: `kappa = 0` keeps the whole size term
-#' (all size variation biological); `kappa = nu / (1 + nu)`, with `nu`
-#' from [extrinsic_noise_nu()], removes it (all size variation
-#' technical, which matches library normalisation for the covariance).
-#'
-#' The estimate can be indefinite. With `psd = "clip"` its eigenvalues
-#' below `eig_floor` are raised to `eig_floor`; with `eig_floor = 0`
-#' this is the nearest positive semi-definite matrix in Frobenius norm.
-#' The eigen-decomposition costs of order `p^3` operations.
-#'
-#' @param X Cells by genes, raw counts of one type at one time.
-#' @param kappa Share of the size term removed, in `[0, 1)`. Default `0`.
-#' @param psd `"clip"` (default) or `"none"`.
-#' @param eig_floor Smallest eigenvalue kept by `psd = "clip"`.
-#'   Default `0`.
-#' @return A list with `sigma` (denoised covariance, `p` by `p`), `mu`
-#'   (`xbar`), `variance` (diagonal before the projection; a gene with
-#'   `variance <= 0` is a Poisson gene at this depth), `n_clipped`
-#'   (eigenvalues raised), `kappa`, `n`.
-denoise_covariance <- function(
-  X,
-  kappa = 0,
-  psd = c("clip", "none"),
-  eig_floor = 0
-) {
-  psd <- match.arg(psd)
-  X <- as.matrix(X)
-  n <- nrow(X)
-  if (n < 2L) {
-    stop("`X` needs at least two cells.")
-  }
-  if (!is.numeric(kappa) || length(kappa) != 1L || !is.finite(kappa) ||
-      kappa < 0 || kappa >= 1) {
-    stop("`kappa` must be one number in [0, 1); got ", kappa, ".")
-  }
-  xbar <- colMeans(X)
-  V <- stats::cov(X)
-  A <- V - diag(xbar, length(xbar))
-  sigma <- A - kappa * (A + tcrossprod(xbar) - V / n)
-  sigma <- (sigma + t(sigma)) / 2
-  variance <- diag(sigma)
-  n_clipped <- 0L
-  if (identical(psd, "clip")) {
-    eg <- eigen(sigma, symmetric = TRUE)
-    low <- eg$values < eig_floor
-    n_clipped <- sum(low)
-    if (n_clipped > 0L) {
-      values <- pmax(eg$values, eig_floor)
-      sigma <- eg$vectors %*% (values * t(eg$vectors))
-      sigma <- (sigma + t(sigma)) / 2
-    }
-  }
-  genes <- colnames(X)
-  dimnames(sigma) <- list(genes, genes)
-  names(xbar) <- genes
-  names(variance) <- genes
-  list(
-    sigma = sigma,
-    mu = xbar,
-    variance = variance,
-    n_clipped = as.integer(n_clipped),
-    kappa = kappa,
-    n = n
-  )
-}
-
-#' Count covariance rebuilt from a denoised covariance.
-#'
-#' Inverts the moment correction at reference depth, so that a denoised
-#' fit can be scored on raw test cells:
-#' `sigma_bio + diag(mu) + kappa / (1 - kappa) * (sigma_bio + mu mu')`,
-#' with `nu_tech = kappa / (1 - kappa)`. With `kappa = 0` it is
-#' `sigma_bio + diag(mu)`. The finite-sample term `V / n` of
-#' [denoise_covariance()] is not added back: this is the population
-#' identity, evaluated at the estimates.
-#'
-#' @param sigma_bio Denoised (and regularised) covariance.
-#' @param mu Mean counts of the same genes.
-#' @param kappa The `kappa` used to denoise.
-#' @return The rebuilt covariance, `p` by `p`.
-reconstruct_count_covariance <- function(sigma_bio, mu, kappa = 0) {
-  mu <- as.numeric(mu)
-  out <- sigma_bio + diag(mu, length(mu)) +
-    kappa / (1 - kappa) * (sigma_bio + tcrossprod(mu))
-  out <- (out + t(out)) / 2
-  dimnames(out) <- dimnames(sigma_bio)
-  out
-}
-
-#' Means, standard deviations and correlation of a denoised covariance.
-#'
-#' The counterpart of [standardise_genes()] for [denoise_covariance()].
-#' A gene whose denoised variance (before the projection) is not
-#' positive is a Poisson gene: its biological variance is set to
-#' `var_floor`, its correlations to zero, and it is listed in
-#' `floored_genes`. The floor is a numerical guard, not an estimate.
-#'
-#' @param den Output of [denoise_covariance()].
-#' @param var_floor Variance floor. Default `NULL`: `1e-4` times the
-#'   median positive denoised variance (or `1` when none is positive).
-#' @return A list with `mu`, `sd`, `R`, `floored` (logical),
-#'   `floored_genes`, `n`.
-standardise_denoised <- function(den, var_floor = NULL) {
-  v <- diag(den$sigma)
-  floored <- !is.finite(den$variance) | den$variance <= 0 |
-    !is.finite(v) | v <= 0
-  if (is.null(var_floor)) {
-    var_floor <- if (any(!floored)) 1e-4 * stats::median(v[!floored]) else 1
-  }
-  v[floored] <- 0
-  sd <- sqrt(pmax(v, var_floor))
-  p <- length(sd)
-  R <- diag(1, p)
-  keep <- !floored
-  if (sum(keep) >= 2L) {
-    s_keep <- sqrt(v[keep])
-    R[keep, keep] <- den$sigma[keep, keep, drop = FALSE] / outer(s_keep, s_keep)
-  }
-  R <- (R + t(R)) / 2
-  diag(R) <- 1
-  genes <- colnames(den$sigma)
-  dimnames(R) <- list(genes, genes)
-  names(sd) <- genes
-  list(
-    mu = den$mu,
-    sd = sd,
-    R = R,
-    floored = floored,
-    floored_genes = genes[floored],
-    n = den$n
-  )
-}
-
-#' Extrinsic noise `nu` of one cell type, from the normalised covariances.
-#'
-#' After Fang and Pachter (2025): inside one type, the normalised
-#' covariance `cov(x_g, x_h) / (mean_g * mean_h)` of two genes that are
-#' intrinsically uncorrelated equals `nu = CV^2(s_c)`, the squared
-#' coefficient of variation of the cell size factor. The estimate is the
-#' mode of these values over gene pairs (maximum of a Gaussian kernel
-#' density). The estimate assumes that most gene pairs are intrinsically
-#' uncorrelated; co-regulated modules shift the distribution to the
-#' right and bias `nu` upwards. Pairs of genes with small means have a
-#' noisy ratio, so only genes with `mean >= min_mean` enter, at most
-#' `max_genes` of them (largest means first); `min_mean` is a choice of
-#' this repository, not of the paper.
-#'
-#' `nu` mixes the biological and technical size factors,
-#' `1 + nu = (1 + nu_bio)(1 + nu_tech)`. Without spike-ins only the
-#' upper end of the `kappa` bracket follows: `kappa_max = nu / (1 + nu)`.
-#'
-#' @param X Cells by genes, raw counts of one type at one time.
-#' @param min_mean Smallest mean count of a gene that enters. Default `1`.
-#' @param max_genes Largest number of genes. Default `2000`.
-#' @param trim Share of pairs trimmed in each tail before the density,
-#'   which keeps the bandwidth from being set by outliers. Default `0.01`.
-#' @param adjust Bandwidth multiplier passed to [stats::density()].
-#' @return A list with `nu`, `kappa_max`, `n_genes`, `n_pairs`,
-#'   `bandwidth`.
-extrinsic_noise_nu <- function(
-  X,
-  min_mean = 1,
-  max_genes = 2000L,
-  trim = 0.01,
-  adjust = 1
-) {
-  X <- as.matrix(X)
-  m <- colMeans(X)
-  keep <- which(is.finite(m) & m >= min_mean)
-  if (length(keep) > max_genes) {
-    keep <- keep[order(m[keep], decreasing = TRUE)][seq_len(max_genes)]
-  }
-  if (length(keep) < 3L) {
-    stop(
-      "Fewer than 3 genes have a mean count >= ", min_mean,
-      "; lower `min_mean` to estimate nu."
-    )
-  }
-  V <- stats::cov(X[, keep, drop = FALSE])
-  eta <- V / tcrossprod(m[keep])
-  vals <- eta[upper.tri(eta)]
-  vals <- vals[is.finite(vals)]
-  bounds <- stats::quantile(vals, c(trim, 1 - trim), names = FALSE)
-  vals_mid <- vals[vals >= bounds[[1L]] & vals <= bounds[[2L]]]
-  dens <- stats::density(vals_mid, adjust = adjust, n = 2048L)
-  nu <- dens$x[[which.max(dens$y)]]
-  if (nu <= 0) {
-    warning(
-      "The mode of the normalised covariances is not positive (nu = ",
-      signif(nu, 3), "); kappa_max is set to 0.",
-      call. = FALSE
-    )
-  }
-  nu_pos <- max(nu, 0)
-  list(
-    nu = nu,
-    kappa_max = nu_pos / (1 + nu_pos),
-    n_genes = length(keep),
-    n_pairs = length(vals),
-    bandwidth = dens$bw
-  )
-}
-
-#' Attach the denoised export and its scoring covariance to a fit.
-#'
-#' @param fit A fit with `mu` and `sigma` on the denoised scale.
-#' @param st Output of [standardise_denoised()].
-#' @param den Output of [denoise_covariance()].
-#' @return `fit` with `score_sigma`, `preprocess`, `kappa`, `n_clipped`
-#'   and `floored_genes` added.
-finish_denoised_fit <- function(fit, st, den) {
-  fit$score_sigma <- reconstruct_count_covariance(fit$sigma, fit$mu, den$kappa)
-  fit$preprocess <- "denoised"
-  fit$kappa <- den$kappa
-  fit$n_clipped <- den$n_clipped
-  fit$floored_genes <- st$floored_genes
-  fit
-}
-
-# ==========================================================================
-# Estimator 1 · Schäfer–Strimmer shrinkage ----
-# ==========================================================================
-
-#' Linear shrinkage covariance with a fixed intensity.
-#'
-#' `corpcor::cov.shrink()` shrinks the correlations towards the
-#' identity with intensity `lambda` and keeps the empirical variances
-#' (`lambda.var = 0`), so the target is the diagonal of the empirical
-#' covariance. Constant genes are kept on the diagonal with the floored
-#' variance of [standardise_genes()].
-#'
-#' With `preprocess = "denoised"` the same target D is applied to the
-#' denoised covariance of [denoise_covariance()] (positive semi-definite
-#' after clipping): `D^{1/2} {(1 - lambda) R + lambda I} D^{1/2}`, where
-#' `R` and `D` are the correlation and the variances of the denoised
-#' matrix (as `corpcor` does on the sample covariance). Poisson genes
-#' (denoised variance `<= 0`) get the floor of [standardise_denoised()].
-#' The returned `sigma` is the denoised estimate (the export);
-#' `score_sigma` is the count covariance used by [score_fit()].
-#'
-#' @param X Cells by genes (training cells), raw counts for
-#'   `preprocess = "denoised"`.
-#' @param lambda Correlation shrinkage intensity in `[0, 1]`; a vector
-#'   when `as_path = TRUE`.
-#' @param train_rows Unused; kept for the common fit signature.
-#' @param var_floor Passed to [standardise_genes()] or
-#'   [standardise_denoised()].
-#' @param preprocess `"raw"` (default) or `"denoised"`.
-#' @param kappa Passed to [denoise_covariance()]. Default `0`.
-#' @param as_path If `TRUE`, `lambda` is a grid and a list of fits is
-#'   returned, with the preprocessing done once (use with
-#'   `path_fit = TRUE` in [cv_select_tuning()]). Default `FALSE`.
-#' @return A list with `mu`, `sigma`, `failed` (and, when denoised,
-#'   `score_sigma`, `kappa`, `n_clipped`, `floored_genes`); a list of
-#'   such fits when `as_path = TRUE`.
-fit_cov_shrinkage <- function(
-  X,
-  lambda,
-  train_rows = NULL,
-  var_floor = NULL,
-  preprocess = c("raw", "denoised"),
-  kappa = 0,
-  as_path = FALSE
-) {
-  preprocess <- match.arg(preprocess)
-  X <- as.matrix(X)
-  if (identical(preprocess, "denoised")) {
-    den <- tryCatch(denoise_covariance(X, kappa = kappa), error = function(e) e)
-    if (inherits(den, "error")) {
-      message("  denoising failed (", conditionMessage(den), ").")
-      failed <- list(failed = TRUE)
-      return(if (as_path) rep(list(failed), length(lambda)) else failed)
-    }
-    st <- standardise_denoised(den, var_floor)
-    off <- st$R
-    diag(off) <- 0
-    one_fit <- function(lam) {
-      R_shrunk <- (1 - lam) * off
-      diag(R_shrunk) <- 1
-      sigma <- R_shrunk * outer(st$sd, st$sd)
-      dimnames(sigma) <- list(colnames(X), colnames(X))
-      finish_denoised_fit(
-        list(mu = st$mu, sigma = sigma, failed = FALSE),
-        st,
-        den
-      )
-    }
-    return(if (as_path) lapply(lambda, one_fit) else one_fit(lambda))
-  }
-  if (as_path) {
-    return(lapply(lambda, function(lam) {
-      fit_cov_shrinkage(X, lam, train_rows, var_floor)
-    }))
-  }
-  st <- standardise_genes(X, var_floor)
-  vary <- !st$constant
-  sigma <- diag(st$sd^2, ncol(X))
-  if (sum(vary) >= 2L) {
-    s <- tryCatch(
-      corpcor::cov.shrink(
-        X[, vary, drop = FALSE],
-        lambda = lambda,
-        lambda.var = 0,
-        verbose = FALSE
-      ),
-      error = function(e) NULL
-    )
-    if (is.null(s)) {
-      return(list(failed = TRUE))
-    }
-    sigma[vary, vary] <- matrix(as.numeric(s), sum(vary), sum(vary))
-  }
-  dimnames(sigma) <- list(colnames(X), colnames(X))
-  list(mu = st$mu, sigma = sigma, failed = FALSE)
-}
-
-#' Closed-form Schäfer–Strimmer shrinkage intensity.
-#'
-#' Used as one point of the CV grid (and as its natural start), not as
-#' the final choice.
-#'
-#' @param X Cells by genes.
-#' @return Scalar `lambda*` in `[0, 1]`.
-shrinkage_lambda_closed_form <- function(X) {
-  X <- as.matrix(X)
-  vary <- apply(X, 2L, stats::var) > 0
-  as.numeric(corpcor::estimate.lambda(X[, vary, drop = FALSE], verbose = FALSE))
-}
-
-#' Default shrinkage grid: fixed points in `(0, 1)` plus `lambda*`.
-#'
-#' @param X Cells by genes.
-#' @param train_rows Unused; kept for the grid-function signature.
-#' @return Sorted unique numeric grid.
-shrinkage_lambda_grid <- function(X, train_rows = NULL) {
-  fixed <- c(0.01, 0.02, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.7, 0.9)
-  star <- tryCatch(shrinkage_lambda_closed_form(X), error = function(e) NULL)
-  grid <- c(fixed, star)
-  sort(unique(pmin(pmax(grid, 1e-3), 1)))
-}
-
-# ==========================================================================
-# Estimator 2 · Graphical lasso, unpenalised diagonal ----
-# ==========================================================================
-
-#' Graphical lasso on the correlation, rescaled to covariance.
-#'
-#' Same solver as the EBIC path (`make_glasso_solver()`:
-#' `penalize.diagonal = FALSE`), so the penalty is on the correlation
-#' scale for every gene; the fit is rescaled by the gene standard
-#' deviations with `rescale_correlation_fit()`.
-#'
-#' With `preprocess = "denoised"` the input is the correlation of the
-#' denoised covariance ([denoise_covariance()], clipped to positive
-#' semi-definite) and the rescaling uses its standard deviations; Poisson
-#' genes get the floor of [standardise_denoised()]. `sigma` and `omega`
-#' are then the denoised estimate and its precision; `score_sigma` is the
-#' count covariance used by [score_fit()]. The denoising is redone for
-#' every `lambda`, which costs one eigen-decomposition per call.
-#'
-#' @param X Cells by genes (training cells).
-#' @param lambda Lasso penalty on the correlation scale.
-#' @param train_rows Unused; kept for the common fit signature.
-#' @param var_floor Passed to [standardise_genes()] or
-#'   [standardise_denoised()].
-#' @param thr,maxit Passed to [glasso::glasso()].
-#' @param preprocess `"raw"` (default) or `"denoised"`.
-#' @param kappa Passed to [denoise_covariance()]. Default `0`.
-#' @return A list with `mu`, `sigma`, `omega`, `n_edges`, `failed` (and,
-#'   when denoised, `score_sigma`, `kappa`, `n_clipped`, `floored_genes`).
-fit_cov_glasso <- function(
-  X,
-  lambda,
-  train_rows = NULL,
-  var_floor = NULL,
-  thr = 1e-4,
-  maxit = 1e4,
-  preprocess = c("raw", "denoised"),
-  kappa = 0
-) {
-  preprocess <- match.arg(preprocess)
-  den <- NULL
-  st <- if (identical(preprocess, "denoised")) {
-    den <- tryCatch(denoise_covariance(X, kappa = kappa), error = function(e) e)
-    if (inherits(den, "error")) {
-      message("  denoising failed (", conditionMessage(den), ").")
-      return(list(failed = TRUE))
-    }
-    standardise_denoised(den, var_floor)
-  } else {
-    standardise_genes(X, var_floor)
-  }
-  fit <- make_glasso_solver(st$R, st$n, thr = thr, maxit = maxit)(lambda)
-  if (isTRUE(fit$failed)) {
-    return(list(failed = TRUE))
-  }
-  scaled <- rescale_correlation_fit(fit$omega, fit$sigma, st$sd)
-  out <- list(
-    mu = st$mu,
-    sigma = scaled$sigma,
-    omega = scaled$omega,
-    n_edges = count_undirected_edges(fit$omega),
-    failed = FALSE
-  )
-  if (is.null(den)) out else finish_denoised_fit(out, st, den)
-}
-
-#' Log-spaced graphical-lasso grid on the correlation scale.
-#'
-#' Runs from `lambda_max = max |R_gh|` (empty graph) down to
-#' `min_ratio * lambda_max`.
-#'
-#' @param X Cells by genes.
-#' @param train_rows Unused; kept for the grid-function signature.
-#' @param n_lambda Number of grid values. Default `12`.
-#' @param min_ratio Smallest value as a fraction of `lambda_max`.
-#'   Default `0.05`.
-#' @return Decreasing numeric grid.
-glasso_lambda_grid <- function(
-  X,
-  train_rows = NULL,
-  n_lambda = 12L,
-  min_ratio = 0.05
-) {
-  R <- standardise_genes(X)$R
-  lambda_max <- max(abs(R[upper.tri(R)]))
-  if (!is.finite(lambda_max) || lambda_max <= 0) {
-    stop("No non-zero correlation: the graphical-lasso grid is empty.")
-  }
-  exp(seq(log(lambda_max), log(min_ratio * lambda_max), length.out = n_lambda))
-}
-
-# ==========================================================================
-# Estimator 3 · SILGGM support, then refit under the zeros ----
-# ==========================================================================
-
-#' SILGGM FDR-controlled support, refitted on the linear scale.
-#'
-#' The support comes from SILGGM's global FDR decision on the
-#' nonparanormal (shrinkage) transform of the training cells. The
-#' covariance is then refitted on the linear-scale correlation with the
-#' precision constrained to zero off that support
-#' ([refit_covariance_on_support()]). The tuning parameter is the FDR
-#' level `alpha`; a smaller `alpha` gives a sparser graph. One SILGGM
-#' run serves every `alpha`, so this wrapper always returns a list of
-#' fits (use `path_fit = TRUE` in [cv_select_tuning()]).
-#'
-#' With `preprocess = "denoised"` only the refit changes: ranks cannot be
-#' denoised, so the support still comes from the nonparanormal scores of
-#' `X`, and [refit_covariance_on_support()] receives the correlation and
-#' standard deviations of the denoised covariance
-#' ([denoise_covariance()], [standardise_denoised()]). `sigma` and
-#' `omega` are then the denoised estimate and its precision;
-#' `score_sigma` is the count covariance used by [score_fit()].
-#'
-#' @param X Cells by genes (training cells), linear scale.
-#' @param alpha Vector of FDR levels.
-#' @param train_rows Unused; kept for the common fit signature.
-#' @param method SILGGM method. Default `"D-S_GL"` (de-sparsified
-#'   graphical lasso).
-#' @param npn_func Passed to `huge::huge.npn(npn.func = ...)`. Default
-#'   `"shrinkage"`.
-#' @param rho_refit Passed to [refit_covariance_on_support()].
-#' @param var_floor Passed to [standardise_genes()] or
-#'   [standardise_denoised()].
-#' @param preprocess `"raw"` (default) or `"denoised"`, for the refit.
-#' @param kappa Passed to [denoise_covariance()]. Default `0`.
-#' @return A list of fits, one per `alpha`, each with `mu`, `sigma`,
-#'   `omega`, `n_edges`, `failed` (and, when denoised, `score_sigma`,
-#'   `kappa`, `n_clipped`, `floored_genes`).
-fit_cov_silggm_refit <- function(
-  X,
-  alpha,
-  train_rows = NULL,
-  method = "D-S_GL",
-  npn_func = "shrinkage",
-  rho_refit = 1e-4,
-  var_floor = NULL,
-  preprocess = c("raw", "denoised"),
-  kappa = 0
-) {
-  preprocess <- match.arg(preprocess)
-  X <- as.matrix(X)
-  st <- standardise_genes(X, var_floor)
-  vary <- !st$constant
-  p <- ncol(X)
-  failed_all <- rep(list(list(failed = TRUE)), length(alpha))
-  if (sum(vary) < 2L) {
-    return(failed_all)
-  }
-  # Scale of the refit: the linear-scale sample correlation, or that of
-  # the denoised covariance. The support below uses the ranks of X either
-  # way.
-  den <- NULL
-  st_refit <- st
-  if (identical(preprocess, "denoised")) {
-    den <- tryCatch(denoise_covariance(X, kappa = kappa), error = function(e) e)
-    if (inherits(den, "error")) {
-      message("  denoising failed (", conditionMessage(den), ").")
-      return(failed_all)
-    }
-    st_refit <- standardise_denoised(den, var_floor)
-  }
-  x_npn <- huge::huge.npn(
-    X[, vary, drop = FALSE],
-    npn.func = npn_func,
-    verbose = FALSE
-  )
-  sg <- tryCatch(
-    SILGGM::SILGGM(
-      x_npn,
-      method = method,
-      global = TRUE,
-      alpha = alpha,
-      cytoscape_format = FALSE,
-      csv_save = FALSE
-    ),
-    error = function(e) e
-  )
-  if (inherits(sg, "error")) {
-    message("  SILGGM failed (", conditionMessage(sg), ").")
-    return(failed_all)
-  }
-  decisions <- sg$global_decision
-  if (is.matrix(decisions)) {
-    decisions <- list(decisions)
-  }
-  if (length(decisions) != length(alpha)) {
-    stop("SILGGM returned ", length(decisions), " decisions for ",
-         length(alpha), " FDR levels.")
-  }
-  lapply(decisions, function(decision) {
-    adjacency <- matrix(0, p, p)
-    adjacency[vary, vary] <- as.matrix(decision)
-    refit <- refit_covariance_on_support(
-      st_refit$R,
-      adjacency,
-      st_refit$sd,
-      rho = rho_refit,
-      nobs = st_refit$n
-    )
-    if (isTRUE(refit$failed)) {
-      return(refit)
-    }
-    out <- c(list(mu = st_refit$mu), refit)
-    if (is.null(den)) out else finish_denoised_fit(out, st_refit, den)
-  })
-}
-
-# ==========================================================================
-# Estimator 4 · PLNnetwork, mapped to linear-scale moments ----
-# ==========================================================================
-
-#' Linear-scale moments of a Poisson log-normal model.
-#'
-#' Model: `y_cg | z_c ~ Poisson(L_c exp(z_cg))`, `z_c ~ N(mu_z, Sigma_z)`,
-#' independent over genes given `z_c`. Write
-#' `lambda = exp(mu_z + diag(Sigma_z) / 2)` and
-#' `K = exp(Sigma_z) - 1` (entrywise). Then, given `L_c`,
-#' `E y = L_c lambda` and
-#' `Cov y = diag(L_c lambda) + L_c^2 (lambda lambda') * K`.
-#'
-#' - `scale = "normalised"`: `x_c = y_c L_ref / L_c`. With
-#'   `nu = L_ref lambda`, `E x = nu` for every cell and, averaging over
-#'   the test cells (law of total covariance, the conditional means do
-#'   not vary), `Cov x = diag(nu) * mean(L_ref / L_c) + (nu nu') * K`.
-#' - `scale = "counts"`: raw counts of a cell drawn from the test cells,
-#'   `E y = mean(L) lambda` and
-#'   `Cov y = diag(lambda) mean(L) + mean(L^2) (lambda lambda') * K
-#'   + var(L) lambda lambda'`, with the population variance of `L`.
-#'
-#' The offset `log L_c` removes every cell-level size variation from
-#' `Sigma_z`, biological size included. Two arguments decide what the
-#' export puts back (the `kappa` bracket of [denoise_covariance()]):
-#' - `size_term = "keep"` (default) averages over the libraries of the
-#'   cells, as above, so the depth variation is kept (`kappa = 0` with
-#'   `scale = "counts"`); `size_term = "drop"` gives every cell the mean
-#'   library, so `var(L) = 0` and `mean(L^2) = mean(L)^2` (all size
-#'   variation treated as technical);
-#' - `poisson_diag = TRUE` (default) keeps the Poisson measurement
-#'   diagonal; `FALSE` omits it, for a denoised export. Scoring on raw
-#'   test cells needs `TRUE`.
-#'
-#' @param mu_z Latent mean (length `p`), on the log scale per unit of
-#'   library (the PLN intercept with offset `log L_c`).
-#' @param sigma_z Latent covariance, `p` by `p`.
-#' @param lib_size Library sizes `L_c` of the cells the moments are for.
-#' @param ref_lib Reference library `L_ref`. Default the median of
-#'   `lib_size`; pass the value used to normalise the data.
-#' @param scale `"normalised"` (default) or `"counts"`.
-#' @param size_term `"keep"` (default) or `"drop"`.
-#' @param poisson_diag Keep the Poisson diagonal. Default `TRUE`.
-#' @return A list with `mu` and `sigma`.
-pln_linear_moments <- function(
-  mu_z,
-  sigma_z,
-  lib_size,
-  ref_lib = stats::median(lib_size),
-  scale = c("normalised", "counts"),
-  size_term = c("keep", "drop"),
-  poisson_diag = TRUE
-) {
-  scale <- match.arg(scale)
-  size_term <- match.arg(size_term)
-  sigma_z <- as.matrix(sigma_z)
-  mu_z <- as.numeric(mu_z)
-  if (any(!is.finite(lib_size)) || any(lib_size <= 0)) {
-    stop("`lib_size` must be positive and finite.")
-  }
-  # `ref_lib` is evaluated before the libraries are equalised, so its
-  # default stays the median of the libraries passed in.
-  force(ref_lib)
-  if (identical(size_term, "drop")) {
-    lib_size <- rep(mean(lib_size), length(lib_size))
-  }
-  lambda <- exp(mu_z + diag(sigma_z) / 2)
-  K <- exp(sigma_z) - 1
-  diag_weight <- if (isTRUE(poisson_diag)) 1 else 0
-  out <- if (identical(scale, "normalised")) {
-    nu <- ref_lib * lambda
-    list(
-      mu = nu,
-      sigma = diag_weight *
-        diag(nu * mean(ref_lib / lib_size), length(nu)) +
-        outer(nu, nu) * K
-    )
-  } else {
-    m1 <- mean(lib_size)
-    m2 <- mean(lib_size^2)
-    list(
-      mu = m1 * lambda,
-      sigma = diag_weight * diag(lambda * m1, length(lambda)) +
-        m2 * outer(lambda, lambda) * K +
-        (m2 - m1^2) * outer(lambda, lambda)
-    )
-  }
-  genes <- rownames(sigma_z) %||% names(mu_z)
-  names(out$mu) <- genes
-  dimnames(out$sigma) <- list(genes, genes)
-  out
-}
-
-#' PLNnetwork fits along a penalty path, one per requested penalty.
-#'
-#' The offset is the log of the full RNA library `L_c` (as in
-#' `scripts/legacy/02_90_stats_prepare_panel.R`), not the row sum of
-#' the panel genes. `prepare_data()`
-#' is called with `offset = "none"` so that it does not add its own TSS
-#' offset.
-#'
-#' @param counts Cells by genes, integer counts of the panel genes.
-#' @param lib_size Full library size of each cell (length `nrow(counts)`).
-#' @param penalties Penalties to fit. A requested value that the fitted
-#'   family does not contain (a truncated path) gives `failed = TRUE`.
-#' @param control Optional `PLNmodels::PLNnetwork_param()` list. Default:
-#'   unpenalised diagonal, `trace = 0`.
-#' @return A list of fits, one per penalty, each with `mu_z`, `sigma_z`,
-#'   `penalty`, `n_edges` (`NA` when the fit does not expose it), and
-#'   `failed`.
-fit_cov_plnnetwork <- function(counts, lib_size, penalties, control = NULL) {
-  y <- round(as.matrix(counts))
-  if (is.null(rownames(y))) {
-    rownames(y) <- paste0("cell_", seq_len(nrow(y)))
-  }
-  if (length(lib_size) != nrow(y)) {
-    stop("`lib_size` must have one entry per cell (row of `counts`).")
-  }
-  covariates <- data.frame(
-    log_library = log(as.numeric(lib_size)),
-    row.names = rownames(y)
-  )
-  dat <- PLNmodels::prepare_data(
-    counts = y,
-    covariates = covariates,
-    offset = "none"
-  )
-  control <- control %||%
-    PLNmodels::PLNnetwork_param(penalize_diagonal = FALSE, trace = 0L)
-  family <- tryCatch(
-    PLNmodels::PLNnetwork(
-      Abundance ~ 1 + offset(log_library),
-      data = dat,
-      penalties = penalties,
-      control = control
-    ),
-    error = function(e) e
-  )
-  if (inherits(family, "error")) {
-    message("  PLNnetwork failed (", conditionMessage(family), ").")
-    return(rep(list(list(failed = TRUE)), length(penalties)))
-  }
-  available <- family$penalties
-  lapply(penalties, function(pen) {
-    k <- which(abs(available - pen) <= 1e-8 * max(abs(pen), 1e-12))
-    if (length(k) == 0L) {
-      return(list(failed = TRUE, penalty = pen))
-    }
-    model <- PLNmodels::getModel(family, available[[k[[1L]]]])
-    sigma_z <- as.matrix(stats::sigma(model))
-    mu_z <- as.numeric(stats::coef(model))
-    names(mu_z) <- colnames(y)
-    dimnames(sigma_z) <- list(colnames(y), colnames(y))
-    n_edges <- tryCatch(model$n_edges, error = function(e) NULL)
-    list(
-      mu_z = mu_z,
-      sigma_z = sigma_z,
-      penalty = pen,
-      n_edges = if (length(n_edges) == 1L) as.integer(n_edges) else NA_integer_,
-      failed = !(all(is.finite(mu_z)) && all(is.finite(sigma_z)))
-    )
-  })
-}
-
-#' Penalty grid of a PLNnetwork fit on all cells of one type.
-#'
-#' PLNmodels builds its own data-driven grid (and its scale changed
-#' between versions: covariance scale up to 1.3.2, correlation scale in
-#' later versions). Taking the grid from a fitted family keeps the CV
-#' grid on whatever scale the installed version uses. Only the candidate
-#' values come from all cells; the choice among them is cross-validated.
-#'
-#' @inheritParams fit_cov_plnnetwork
-#' @param n_penalties,min_ratio Passed to
-#'   `PLNmodels::PLNnetwork_param()`.
-#' @return Numeric vector of penalties, decreasing.
-pln_penalty_grid <- function(
-  counts,
-  lib_size,
-  n_penalties = 12L,
-  min_ratio = 0.1
-) {
-  y <- round(as.matrix(counts))
-  if (is.null(rownames(y))) {
-    rownames(y) <- paste0("cell_", seq_len(nrow(y)))
-  }
-  dat <- PLNmodels::prepare_data(
-    counts = y,
-    covariates = data.frame(
-      log_library = log(as.numeric(lib_size)),
-      row.names = rownames(y)
-    ),
-    offset = "none"
-  )
-  family <- PLNmodels::PLNnetwork(
-    Abundance ~ 1 + offset(log_library),
-    data = dat,
-    control = PLNmodels::PLNnetwork_param(
-      n_penalties = n_penalties,
-      min_ratio = min_ratio,
-      penalize_diagonal = FALSE,
-      trace = 0L
-    )
-  )
-  sort(family$penalties, decreasing = TRUE)
-}
-
-#' Fit function for [cv_select_tuning()] around [fit_cov_plnnetwork()].
-#'
-#' The CV helpers pass the scoring matrix `X` (raw or library-divided
-#' counts), which PLN does not fit directly; this closure fits the raw
-#' counts of the same rows with the full-library offset and returns, for
-#' each penalty, a `moments` function that maps the latent fit to the
-#' linear scale of `X` for the test cells' library sizes
-#' ([pln_linear_moments()]). Use with `path_fit = TRUE`.
-#'
-#' @param counts Cells by genes, raw counts of every cell that the CV
-#'   rows index.
-#' @param lib_size Full library sizes of the same cells.
-#' @param ref_lib Reference library used to build `X = counts * ref_lib
-#'   / lib_size` (ignored when `scale = "counts"`).
-#' @param control Passed to [fit_cov_plnnetwork()].
-#' @param scale Scale of `X`, passed to [pln_linear_moments()]:
-#'   `"normalised"` (default, library-divided `X`) or `"counts"` (raw
-#'   counts, `normalise = "none"` in the drivers).
-#' @return A function `(X_train, penalties, train_rows)` returning a list
-#'   of fits.
-make_pln_fit_fun <- function(
-  counts,
-  lib_size,
-  ref_lib,
-  control = NULL,
-  scale = c("normalised", "counts")
-) {
-  scale <- match.arg(scale)
-  force(counts)
-  force(lib_size)
-  force(ref_lib)
-  force(control)
-  function(X_train, penalties, train_rows) {
-    fits <- fit_cov_plnnetwork(
-      counts[train_rows, , drop = FALSE],
-      lib_size[train_rows],
-      penalties,
-      control = control
-    )
-    lapply(fits, function(fit) {
-      if (isTRUE(fit$failed)) {
-        return(fit)
-      }
-      mu_z <- fit$mu_z
-      sigma_z <- fit$sigma_z
-      fit$moments <- function(test_rows) {
-        pln_linear_moments(
-          mu_z,
-          sigma_z,
-          lib_size[test_rows],
-          ref_lib,
-          scale = scale
-        )
-      }
-      fit
-    })
-  }
-}
+#' Requires `R/02_00_utils.R` (`%||%`).
 
 # ==========================================================================
 # Inputs: scored counts restricted to the gated panel ----
@@ -1364,7 +65,8 @@ read_panel_slot <- function(slots, selected_dir, time_level, genes = NULL) {
     )
     if (!file.exists(selected_path)) {
       stop(
-        "Missing ", selected_path,
+        "Missing ",
+        selected_path,
         ". Run scripts/02_02_stats_cross_cell_consistency.R first."
       )
     }
@@ -1381,8 +83,12 @@ read_panel_slot <- function(slots, selected_dir, time_level, genes = NULL) {
   missing <- setdiff(genes, rownames(slot$counts))
   if (length(missing) > 0L) {
     stop(
-      length(missing), " panel genes of ", time_level,
-      " are absent from the slot counts (first: ", missing[[1L]], ")."
+      length(missing),
+      " panel genes of ",
+      time_level,
+      " are absent from the slot counts (first: ",
+      missing[[1L]],
+      ")."
     )
   }
   cells <- slot$cells %||% colnames(slot$counts)
@@ -1401,4 +107,879 @@ read_panel_slot <- function(slots, selected_dir, time_level, genes = NULL) {
     cells = cells,
     genes = genes
   )
+}
+
+# ==========================================================================
+# Folds ----
+# ==========================================================================
+
+#' Balanced random assignment of rows to K folds.
+#'
+#' @param n Number of rows (cells).
+#' @param K Number of folds.
+#' @param seed Optional integer seed. When `NULL`, the current RNG
+#'   stream is used and left advanced.
+#' @return Integer vector of length `n` with values in `1:K`.
+make_cv_folds <- function(n, K = 5L, seed = NULL) {
+  K <- as.integer(K)
+  if (K < 2L || K > n) {
+    stop("Need 2 <= K <= n; got K = ", K, " for n = ", n, ".")
+  }
+  assign_folds <- function() sample(rep_len(seq_len(K), n))
+  if (is.null(seed)) {
+    assign_folds()
+  } else {
+    withr::with_seed(seed, assign_folds())
+  }
+}
+
+#' Folds of one type x time unit: leave-one-out when cells are few.
+#'
+#' With fewer than `loo_below` cells every cell is its own fold; a
+#' training set then loses one cell instead of a fifth of them.
+#'
+#' @param n Number of cells.
+#' @param seed Seed of the K-fold assignment.
+#' @param K Number of folds above `loo_below`. Default `5`.
+#' @param loo_below Cell count under which leave-one-out is used.
+#' @return Integer fold labels of length `n`.
+unit_folds <- function(n, seed = NULL, K = 5L, loo_below = 100L) {
+  if (n < loo_below) seq_len(n) else make_cv_folds(n, K, seed)
+}
+
+# ==========================================================================
+# Standardisation of a training set ----
+# ==========================================================================
+
+#' Standardise training cells, and test cells with the training moments.
+#'
+#' A gene that is constant in the training cells has no correlation with
+#' any other gene. It is taken out of the correlation and scored as an
+#' independent Gaussian with a floored variance. That part of the score
+#' does not depend on any tuning value; it is returned apart (`const`)
+#' so that it does not inflate the fold-to-fold spread used by the
+#' one-standard-error rule.
+#'
+#' Every gene's variance is floored at its Poisson level plus one count
+#' over the training cells, `mean + 1/n`: a count cannot vary less than a
+#' Poisson count, and a variance below that level means too few cells
+#' (or the fractional counts of ambient correction, e.g. a training mean
+#' of 4e-7 at 96 h). The previous floor, `1e-4` times the median variance
+#' for constant genes only, let one such gene cost 6e11 in a held-out
+#' score.
+#'
+#' @param X_train Training cells by genes.
+#' @param X_test Optional test cells by genes.
+#' @return A list with `mu`, `sd`, `varying` (logical, per gene), `n`,
+#'   `Z` (training cells by varying genes, scaled so that
+#'   `crossprod(Z)` is the sample correlation, diagonal below 1 for a floored
+#'   gene), and, with `X_test`: `Zt`
+#'   (standardised test cells, varying genes), `base` (the part of the
+#'   log-score that is the same for every correlation estimate: one
+#'   number) and `const` (score of the constant genes, one value per test
+#'   cell).
+split_standardise <- function(X_train, X_test = NULL) {
+  X_train <- as.matrix(X_train)
+  n <- nrow(X_train)
+  if (n < 3L) {
+    stop("Need at least three training cells.")
+  }
+  mu <- colMeans(X_train)
+  centred <- sweep(X_train, 2L, mu, check.margin = FALSE)
+  v <- colSums(centred^2) / (n - 1)
+  varying <- is.finite(v) & v > 0
+  sd <- sqrt(pmax(ifelse(varying, v, 0), mu + 1 / n))
+  names(sd) <- colnames(X_train)
+  Z <- centred[, varying, drop = FALSE]
+  Z <- sweep(Z, 2L, sd[varying] * sqrt(n - 1), "/", check.margin = FALSE)
+  out <- list(mu = mu, sd = sd, varying = varying, n = n, Z = Z)
+  if (!is.null(X_test)) {
+    X_test <- as.matrix(X_test)
+    zt <- sweep(X_test, 2L, mu, check.margin = FALSE)
+    zt <- sweep(zt, 2L, sd, "/", check.margin = FALSE)
+    out$Zt <- zt[, varying, drop = FALSE]
+    out$base <- -0.5 *
+      (sum(varying) * log(2 * pi) + 2 * sum(log(sd[varying])))
+    out$const <- -0.5 *
+      (sum(!varying) *
+        log(2 * pi) +
+        2 * sum(log(sd[!varying])) +
+        rowSums(zt[, !varying, drop = FALSE]^2))
+  }
+  out
+}
+
+#' Non-zero spectrum and right singular vectors of a matrix.
+#'
+#' Works on the smaller of `Z Z'` and `Z' Z`.
+#'
+#' @param Z Matrix, `n` by `p`.
+#' @param tol Relative threshold under which an eigenvalue is zero.
+#' @return A list with `values` (eigenvalues of `Z' Z`, decreasing,
+#'   zeros dropped) and `vectors` (`p` by `length(values)`).
+right_spectrum <- function(Z, tol = 1e-10) {
+  n <- nrow(Z)
+  p <- ncol(Z)
+  if (n < p) {
+    eg <- eigen(tcrossprod(Z), symmetric = TRUE)
+    keep <- eg$values > tol * max(eg$values, 1)
+    values <- eg$values[keep]
+    vectors <- crossprod(Z, eg$vectors[, keep, drop = FALSE])
+    vectors <- sweep(vectors, 2L, sqrt(values), "/", check.margin = FALSE)
+  } else {
+    eg <- eigen(crossprod(Z), symmetric = TRUE)
+    keep <- eg$values > tol * max(eg$values, 1)
+    values <- eg$values[keep]
+    vectors <- eg$vectors[, keep, drop = FALSE]
+  }
+  list(values = values, vectors = vectors)
+}
+
+# ==========================================================================
+# Scores along a shrinkage path ----
+# ==========================================================================
+
+#' Log-score core of `(1 - lambda) M + lambda I` for a grid of `lambda`.
+#'
+#' With `M = V diag(values) V'` on its range and zero elsewhere, the
+#' eigenvalues of the shrunk matrix are `(1 - lambda) values + lambda` on
+#' the range and `lambda` on the null space. For a standardised test
+#' cell `z`, the quadratic form is
+#' `sum_i (v_i' z)^2 / {(1 - lambda) values_i + lambda}
+#'   + (|z|^2 - sum_i (v_i' z)^2) / lambda`.
+#'
+#' @param Zt Standardised test cells by genes.
+#' @param values,vectors Non-zero spectrum of `M`.
+#' @param grid Values of `lambda` in `[0, 1]`.
+#' @return Matrix, test cells by grid values, of
+#'   `-0.5 * (log det + quadratic form)`; `-Inf` at `lambda = 0` when
+#'   `M` is singular.
+spectral_path_core <- function(Zt, values, vectors, grid) {
+  p <- ncol(Zt)
+  r <- length(values)
+  w2 <- (Zt %*% vectors)^2
+  rest <- pmax(rowSums(Zt^2) - rowSums(w2), 0)
+  out <- matrix(NA_real_, nrow(Zt), length(grid))
+  for (i in seq_along(grid)) {
+    lam <- grid[[i]]
+    e <- (1 - lam) * values + lam
+    if (lam <= 0 && r < p) {
+      out[, i] <- -Inf
+      next
+    }
+    log_det <- sum(log(e)) + if (r < p) (p - r) * log(lam) else 0
+    quad <- drop(w2 %*% (1 / e)) + if (r < p) rest / lam else 0
+    out[, i] <- -0.5 * (log_det + quad)
+  }
+  out
+}
+
+#' Pooled within-type correlation.
+#'
+#' The correlation of `W = sum_j (n_j - 1) V_j / (N - J)`, the tied
+#' covariance of linear discriminant analysis, over the cell types of one
+#' time point and one gene panel. A gene with no pooled variance gets a
+#' unit diagonal and no correlation.
+#'
+#' @param scatter Sum over types of the centred cross-products, genes by
+#'   genes.
+#' @return A correlation matrix.
+pooled_correlation <- function(scatter) {
+  d <- diag(scatter)
+  ok <- is.finite(d) & d > 0
+  s <- ifelse(ok, sqrt(d), 1)
+  R <- scatter / tcrossprod(s)
+  R[!ok, ] <- 0
+  R[, !ok] <- 0
+  R <- (R + t(R)) / 2
+  diag(R) <- 1
+  R
+}
+
+#' Centred cross-product of a set of cells.
+#'
+#' @param X Cells by genes.
+#' @return Genes by genes matrix `sum_c (x_c - xbar)(x_c - xbar)'`.
+centred_scatter <- function(X) {
+  crossprod(sweep(as.matrix(X), 2L, colMeans(X), check.margin = FALSE))
+}
+
+# ==========================================================================
+# Gaussian factor analysis on the correlation scale ----
+# ==========================================================================
+
+#' Woodbury pieces of `B B' + Psi`.
+#'
+#' @param B Loadings, genes by factors.
+#' @param psi Positive uniquenesses, one per gene.
+#' @return A list with `Bp = Psi^-1 B`, `Minv = (I + B' Psi^-1 B)^-1` and
+#'   `log_det`, the log-determinant of `B B' + Psi`.
+factor_woodbury <- function(B, psi) {
+  q <- ncol(B)
+  Bp <- B / psi
+  if (q == 0L) {
+    return(list(Bp = Bp, Minv = matrix(0, 0L, 0L), log_det = sum(log(psi))))
+  }
+  M <- diag(q) + crossprod(B, Bp)
+  R <- chol((M + t(M)) / 2)
+  list(
+    Bp = Bp,
+    Minv = chol2inv(R),
+    log_det = sum(log(psi)) + 2 * sum(log(diag(R)))
+  )
+}
+
+#' Log-score core of `B B' + Psi` for standardised test cells.
+#'
+#' @param Zt Standardised test cells by genes.
+#' @param B,psi Factor model on the same genes.
+#' @return One value per test cell, `-0.5 * (log det + quadratic form)`.
+factor_core <- function(Zt, B, psi) {
+  w <- factor_woodbury(B, psi)
+  quad <- drop(Zt^2 %*% (1 / psi))
+  if (ncol(B) > 0L) {
+    u <- Zt %*% w$Bp
+    quad <- quad - rowSums((u %*% w$Minv) * u)
+  }
+  -0.5 * (w$log_det + quad)
+}
+
+#' Maximum-likelihood factor analysis of a correlation, by EM.
+#'
+#' Model `R = B B' + Psi` with `q` factors. The EM steps are those of
+#' Rubin and Thayer, written on the cells so that the genes by genes
+#' correlation is never formed: with `beta = (I + B' Psi^-1 B)^-1 B'
+#' Psi^-1`, `B <- R beta' (I - beta B + beta R beta')^-1` and
+#' `Psi <- diag(R - B beta R)`. The start is the probabilistic PCA
+#' solution. Uniquenesses are floored: with fewer cells than genes the
+#' likelihood is unbounded when one of them tends to zero.
+#'
+#' @param Z Cells by genes, scaled so that `crossprod(Z)` is the sample
+#'   correlation.
+#' @param q Number of factors; `0` returns the identity.
+#' @param spectrum Optional output of [right_spectrum()] on `Z`.
+#' @param psi_floor Smallest uniqueness. Default `0.01`.
+#' @param maxit,tol Stop after `maxit` steps or when no uniqueness moves
+#'   by more than `tol`.
+#' @return A list with `B`, `psi`, `iterations`, `converged` and
+#'   `n_floored`.
+fit_factor_correlation <- function(
+  Z,
+  q,
+  spectrum = NULL,
+  psi_floor = 0.01,
+  maxit = 200L,
+  tol = 1e-5
+) {
+  p <- ncol(Z)
+  q <- as.integer(q)
+  if (q == 0L) {
+    return(list(
+      B = matrix(0, p, 0L),
+      psi = rep(1, p),
+      iterations = 0L,
+      converged = TRUE,
+      n_floored = 0L
+    ))
+  }
+  spectrum <- spectrum %||% right_spectrum(Z)
+  if (q > min(length(spectrum$values), p - 1L)) {
+    stop("`q` exceeds the rank of the training cells.")
+  }
+  ell <- spectrum$values[seq_len(q)]
+  noise <- max((p - sum(ell)) / (p - q), psi_floor)
+  B <- sweep(
+    spectrum$vectors[, seq_len(q), drop = FALSE],
+    2L,
+    sqrt(pmax(ell - noise, 1e-8)),
+    "*",
+    check.margin = FALSE
+  )
+  psi <- pmax(1 - rowSums(B^2), psi_floor)
+  converged <- FALSE
+  for (it in seq_len(maxit)) {
+    w <- factor_woodbury(B, psi)
+    beta_t <- w$Bp %*% w$Minv
+    r_beta <- crossprod(Z, Z %*% beta_t)
+    e_zz <- w$Minv + crossprod(beta_t, r_beta)
+    B <- r_beta %*% solve((e_zz + t(e_zz)) / 2)
+    psi_new <- pmax(1 - rowSums(B * r_beta), psi_floor)
+    moved <- max(abs(psi_new - psi))
+    psi <- psi_new
+    if (moved < tol) {
+      converged <- TRUE
+      break
+    }
+  }
+  list(
+    B = B,
+    psi = psi,
+    iterations = it,
+    converged = converged,
+    n_floored = sum(psi <= psi_floor)
+  )
+}
+
+#' Factor analysis with loadings shared by the types of a time point.
+#'
+#' Model `R_j = B B' + Psi_j`: the same axes for every type, and one
+#' uniqueness per gene and type. Conditional maximisation: the row of
+#' `B` for gene `g` solves a `q` by `q` system weighted by
+#' `n_j / psi_jg`; `Psi_j` follows in closed form. A gene constant in a
+#' type has weight zero for that type.
+#'
+#' @param Z_list One matrix per type, cells by all genes, scaled as in
+#'   [fit_factor_correlation()], with zero columns for the genes that are
+#'   constant in that type.
+#' @param varying_list One logical vector per type, `FALSE` for those
+#'   genes.
+#' @param q Number of factors.
+#' @param psi_floor,maxit,tol As in [fit_factor_correlation()].
+#' @return A list with `B` (genes by factors), `psi` (genes by types),
+#'   `iterations` and `converged`.
+fit_factor_shared <- function(
+  Z_list,
+  varying_list,
+  q,
+  psi_floor = 0.01,
+  maxit = 100L,
+  tol = 1e-4
+) {
+  n_types <- length(Z_list)
+  p <- ncol(Z_list[[1L]])
+  n_cells <- vapply(Z_list, nrow, integer(1))
+  q <- as.integer(q)
+  psi <- matrix(1, p, n_types, dimnames = list(NULL, names(Z_list)))
+  if (q == 0L) {
+    return(list(
+      B = matrix(0, p, 0L),
+      psi = psi,
+      iterations = 0L,
+      converged = TRUE
+    ))
+  }
+  # Start: principal axes of the cell-weighted mean correlation.
+  weight <- sqrt((n_cells - 1) / sum(n_cells - 1))
+  stacked <- do.call(
+    rbind,
+    lapply(seq_len(n_types), function(j) Z_list[[j]] * weight[[j]])
+  )
+  spectrum <- right_spectrum(stacked)
+  rm(stacked)
+  if (q > min(length(spectrum$values), p - 1L)) {
+    stop("`q` exceeds the rank of the training cells.")
+  }
+  ell <- spectrum$values[seq_len(q)]
+  noise <- max((p - sum(ell)) / (p - q), psi_floor)
+  B <- sweep(
+    spectrum$vectors[, seq_len(q), drop = FALSE],
+    2L,
+    sqrt(pmax(ell - noise, 1e-8)),
+    "*",
+    check.margin = FALSE
+  )
+  for (j in seq_len(n_types)) {
+    psi[, j] <- pmax(1 - rowSums(B^2), psi_floor)
+  }
+  converged <- FALSE
+  for (it in seq_len(maxit)) {
+    steps <- lapply(seq_len(n_types), function(j) {
+      Bj <- B * varying_list[[j]]
+      w <- factor_woodbury(Bj, psi[, j])
+      beta_t <- w$Bp %*% w$Minv
+      r_beta <- crossprod(Z_list[[j]], Z_list[[j]] %*% beta_t)
+      list(r_beta = r_beta, e_zz = w$Minv + crossprod(beta_t, r_beta))
+    })
+    weights <- vapply(
+      seq_len(n_types),
+      function(j) n_cells[[j]] * varying_list[[j]] / psi[, j],
+      numeric(p)
+    )
+    rhs <- Reduce(
+      `+`,
+      lapply(seq_len(n_types), function(j) weights[, j] * steps[[j]]$r_beta)
+    )
+    e_flat <- matrix(
+      vapply(steps, function(s) as.numeric(s$e_zz), numeric(q * q)),
+      nrow = q * q
+    )
+    lhs <- weights %*% t(e_flat) # genes by q^2
+    for (g in seq_len(p)) {
+      a <- matrix(lhs[g, ], q, q)
+      if (sum(weights[g, ]) > 0) {
+        B[g, ] <- solve((a + t(a)) / 2, rhs[g, ])
+      } else {
+        B[g, ] <- 0
+      }
+    }
+    psi_new <- psi
+    for (j in seq_len(n_types)) {
+      fitted <- 1 -
+        2 * rowSums(B * steps[[j]]$r_beta) +
+        rowSums((B %*% steps[[j]]$e_zz) * B)
+      psi_new[, j] <- ifelse(varying_list[[j]], pmax(fitted, psi_floor), 1)
+    }
+    moved <- max(abs(psi_new - psi))
+    psi <- psi_new
+    if (moved < tol) {
+      converged <- TRUE
+      break
+    }
+  }
+  list(B = B, psi = psi, iterations = it, converged = converged)
+}
+
+# ==========================================================================
+# Held-out scores of every arm for one training and test set ----
+# ==========================================================================
+
+#' Largest number of factors a correlation of `p` genes can identify.
+#'
+#' The model has `p + q p - q (q - 1) / 2` free parameters, which must
+#' not exceed the `p (p + 1) / 2` entries of the matrix.
+#'
+#' @param p Genes.
+#' @return The largest admissible `q`.
+factor_rank_bound <- function(p) {
+  floor(p + 0.5 * (1 - sqrt(1 + 8 * p)))
+}
+
+#' Usable factor ranks for a training set.
+#'
+#' @param ranks Candidate ranks.
+#' @param n Training cells.
+#' @param rank Rank of the training correlation.
+#' @param p Genes.
+#' @return The ranks no larger than `min(n - 2, rank)` and than
+#'   [factor_rank_bound()].
+usable_ranks <- function(ranks, n, rank, p = Inf) {
+  ranks[ranks <= min(n - 2L, rank, factor_rank_bound(p))]
+}
+
+#' Mean held-out log-score of the per-type arms, at every tuning value.
+#'
+#' One spectral decomposition of the training correlation serves the
+#' shrinkage path and the start of every factor fit. The two-parameter
+#' arm needs one eigen-decomposition per `alpha`.
+#'
+#' @param X_train,X_test Cells by genes.
+#' @param lambda_grid Shrinkage levels.
+#' @param ranks Factor ranks; `NULL` skips factor analysis.
+#' @param alpha_grid Pooling weights; `NULL` skips the two-parameter arm.
+#' @param other_scatter Centred cross-product of the training cells of
+#'   the other types of the time point (needed with `alpha_grid`).
+#' @return A list with `shrinkage` (one mean score per `lambda`),
+#'   `factor` (one per rank, `NA` when the rank is not usable),
+#'   `two_param` (`alpha` by `lambda`), `const` (mean score of the genes
+#'   constant in training; add it for the full log-score) and `n_test`.
+score_unit_arms <- function(
+  X_train,
+  X_test,
+  lambda_grid,
+  ranks = NULL,
+  alpha_grid = NULL,
+  other_scatter = NULL
+) {
+  sp <- split_standardise(X_train, X_test)
+  spectrum <- right_spectrum(sp$Z)
+  out <- list(const = mean(sp$const), n_test = nrow(sp$Zt))
+  out$shrinkage <- sp$base +
+    colMeans(spectral_path_core(
+      sp$Zt,
+      spectrum$values,
+      spectrum$vectors,
+      lambda_grid
+    ))
+  if (!is.null(ranks)) {
+    ok <- usable_ranks(ranks, sp$n, length(spectrum$values), ncol(sp$Z))
+    out$factor <- vapply(
+      ranks,
+      function(q) {
+        if (!q %in% ok) {
+          return(NA_real_)
+        }
+        fit <- fit_factor_correlation(sp$Z, q, spectrum)
+        sp$base + mean(factor_core(sp$Zt, fit$B, fit$psi))
+      },
+      numeric(1)
+    )
+  }
+  if (!is.null(alpha_grid)) {
+    if (is.null(other_scatter)) {
+      stop("The two-parameter arm needs `other_scatter`.")
+    }
+    pooled <- pooled_correlation(other_scatter + centred_scatter(X_train))
+    pooled <- pooled[sp$varying, sp$varying, drop = FALSE]
+    own <- crossprod(sp$Z)
+    out$two_param <- t(vapply(
+      alpha_grid,
+      function(alpha) {
+        eg <- eigen((1 - alpha) * own + alpha * pooled, symmetric = TRUE)
+        keep <- eg$values > 1e-10 * max(eg$values)
+        sp$base +
+          colMeans(spectral_path_core(
+            sp$Zt,
+            eg$values[keep],
+            eg$vectors[, keep, drop = FALSE],
+            lambda_grid
+          ))
+      },
+      numeric(length(lambda_grid))
+    ))
+    dimnames(out$two_param) <- list(NULL, NULL)
+  }
+  out
+}
+
+#' Mean held-out log-score of the shared-loadings factor model.
+#'
+#' @param train_list,test_list One cells by genes matrix per type.
+#' @param ranks Factor ranks.
+#' @return A list with `scores` (types by ranks, mean scores without the
+#'   part of the constant genes), `const` (that part, one value per
+#'   type) and `n_test`.
+score_shared_factor <- function(train_list, test_list, ranks) {
+  splits <- Map(split_standardise, train_list, test_list)
+  p <- ncol(train_list[[1L]])
+  Z_list <- lapply(splits, function(sp) {
+    Z <- matrix(0, sp$n, p)
+    Z[, sp$varying] <- sp$Z
+    Z
+  })
+  varying_list <- lapply(splits, `[[`, "varying")
+  ok <- usable_ranks(
+    ranks,
+    sum(vapply(splits, `[[`, numeric(1), "n")) - length(splits),
+    p,
+    min(vapply(varying_list, sum, numeric(1)))
+  )
+  out <- vapply(
+    ranks,
+    function(q) {
+      if (!q %in% ok) {
+        return(rep(NA_real_, length(splits)))
+      }
+      fit <- fit_factor_shared(Z_list, varying_list, q)
+      vapply(
+        seq_along(splits),
+        function(j) {
+          sp <- splits[[j]]
+          sp$base +
+            mean(factor_core(
+              sp$Zt,
+              fit$B[sp$varying, , drop = FALSE],
+              fit$psi[sp$varying, j]
+            ))
+        },
+        numeric(1)
+      )
+    },
+    numeric(length(splits))
+  )
+  list(
+    scores = matrix(
+      out,
+      nrow = length(splits),
+      dimnames = list(names(train_list), as.character(ranks))
+    ),
+    const = vapply(splits, function(sp) mean(sp$const), numeric(1)),
+    n_test = vapply(splits, function(sp) nrow(sp$Zt), integer(1))
+  )
+}
+
+#' Cross-validated scores of the per-type arms for one unit.
+#'
+#' @param X Cells by genes of one type at one time.
+#' @param folds Fold label of each cell.
+#' @param lambda_grid,ranks,alpha_grid,other_scatter See
+#'   [score_unit_arms()]. `other_scatter` holds the other types only; the
+#'   training cells of this type are added in each fold.
+#' @return A list with one element per arm: a matrix, folds by tuning
+#'   values, of mean held-out scores; and `const`, one value per fold.
+cv_unit_arms <- function(
+  X,
+  folds,
+  lambda_grid,
+  ranks = NULL,
+  alpha_grid = NULL,
+  other_scatter = NULL
+) {
+  parts <- lapply(sort(unique(folds)), function(k) {
+    score_unit_arms(
+      X[folds != k, , drop = FALSE],
+      X[folds == k, , drop = FALSE],
+      lambda_grid,
+      ranks,
+      alpha_grid,
+      other_scatter
+    )
+  })
+  out <- list(
+    shrinkage = do.call(rbind, lapply(parts, `[[`, "shrinkage")),
+    const = vapply(parts, `[[`, numeric(1), "const")
+  )
+  if (!is.null(ranks)) {
+    out$factor <- do.call(rbind, lapply(parts, `[[`, "factor"))
+  }
+  if (!is.null(alpha_grid)) {
+    out$two_param <- do.call(
+      rbind,
+      lapply(parts, function(p) as.numeric(t(p$two_param)))
+    )
+  }
+  out
+}
+
+#' Mean, standard error and the two usual choices along one path.
+#'
+#' `min` maximises the mean held-out score. `1se` is the most regularised
+#' value whose mean is within one standard error of that maximum. A
+#' value that could not be fitted in every fold is not eligible.
+#'
+#' @param fold_scores Folds by tuning values.
+#' @param tuning The tuning values.
+#' @param regularised `"larger"` when a larger value regularises more
+#'   (shrinkage level), `"smaller"` when a smaller one does (factor
+#'   rank).
+#' @return A list with `table` (`tuning`, `mean_score`, `se_score`),
+#'   `min` and `one_se`.
+summarise_path <- function(
+  fold_scores,
+  tuning,
+  regularised = c("larger", "smaller")
+) {
+  regularised <- match.arg(regularised)
+  mean_score <- colMeans(fold_scores)
+  se_score <- apply(fold_scores, 2L, stats::sd) / sqrt(nrow(fold_scores))
+  ok <- which(is.finite(mean_score))
+  if (length(ok) == 0L) {
+    stop("No tuning value was scored in every fold.")
+  }
+  best <- ok[[which.max(mean_score[ok])]]
+  within <- ok[mean_score[ok] >= mean_score[[best]] - se_score[[best]]]
+  one_se <- if (regularised == "larger") {
+    within[[which.max(tuning[within])]]
+  } else {
+    within[[which.min(tuning[within])]]
+  }
+  list(
+    table = data.frame(
+      tuning = tuning,
+      mean_score = mean_score,
+      se_score = se_score
+    ),
+    min = tuning[[best]],
+    one_se = tuning[[one_se]]
+  )
+}
+
+# ==========================================================================
+# Reference score through a Cholesky factor (checks only) ----
+# ==========================================================================
+
+#' Held-out Gaussian log-score through a Cholesky factor.
+#'
+#' The direct computation, one factorisation per covariance. The path
+#' functions above are checked against it.
+#'
+#' @param mu Mean vector, length `p`.
+#' @param Sigma Covariance, `p` by `p`.
+#' @param X_test Test cells in rows, genes in columns.
+#' @param average If `TRUE` (default), the mean log-score per test cell.
+#' @return A scalar (or one value per test cell); `-Inf` when `Sigma` is
+#'   not numerically positive definite.
+heldout_gaussian_logscore <- function(mu, Sigma, X_test, average = TRUE) {
+  X_test <- as.matrix(X_test)
+  Sigma <- (as.matrix(Sigma) + t(as.matrix(Sigma))) / 2
+  p <- ncol(X_test)
+  R <- tryCatch(chol(Sigma), error = function(e) NULL)
+  if (is.null(R)) {
+    return(if (average) -Inf else rep(-Inf, nrow(X_test)))
+  }
+  z <- backsolve(R, t(X_test) - as.numeric(mu), transpose = TRUE)
+  per_cell <- -0.5 *
+    (p * log(2 * pi) + 2 * sum(log(diag(R))) + colSums(z * z))
+  if (average) mean(per_cell) else per_cell
+}
+
+# ==========================================================================
+# Plug-in covariances for the deconvolution ----
+# ==========================================================================
+
+#' Sample moments of every type of one time point and gene panel.
+#'
+#' @param y Cells by genes, raw counts.
+#' @param cell_type Type label of each cell.
+#' @param types Types to keep, in the order of the output.
+#' @param library_size Optional library size of each cell. When given,
+#'   the covariance (not the mean) is computed on cells divided by their
+#'   size factor `L_c / mean(L)` within the type: the size term of the
+#'   covariance is removed and the Poisson part kept (the "all technical"
+#'   end of the kappa bracket of chapter 3, without denoising).
+#' @return A list with `mu` (genes by types), `sigma_sample` (genes by
+#'   genes by types, unbiased sample covariance, not regularised),
+#'   `n_cells`, `r_pool` (pooled within-type correlation) and, with
+#'   `library_size`, `mu_cov` (means of the size-normalised cells).
+sample_moments <- function(y, cell_type, types, library_size = NULL) {
+  genes <- colnames(y)
+  mu <- matrix(NA_real_, length(genes), length(types), dimnames = list(genes, types))
+  sigma <- array(
+    NA_real_,
+    c(length(genes), length(genes), length(types)),
+    dimnames = list(genes, genes, types)
+  )
+  n_cells <- stats::setNames(integer(length(types)), types)
+  scatter <- matrix(0, length(genes), length(genes))
+  mu_cov <- if (!is.null(library_size)) mu
+  for (tp in types) {
+    rows <- which(cell_type %in% tp)
+    X <- y[rows, , drop = FALSE]
+    mu[, tp] <- colMeans(X)
+    if (!is.null(library_size)) {
+      X <- X / (library_size[rows] / mean(library_size[rows]))
+      mu_cov[, tp] <- colMeans(X)
+    }
+    s <- centred_scatter(X)
+    sigma[,, tp] <- s / (nrow(X) - 1)
+    n_cells[[tp]] <- nrow(X)
+    scatter <- scatter + s
+  }
+  r_pool <- pooled_correlation(scatter)
+  dimnames(r_pool) <- list(genes, genes)
+  list(mu = mu, sigma_sample = sigma, n_cells = n_cells, r_pool = r_pool, mu_cov = mu_cov)
+}
+
+#' Regularised covariances of every type, for one arm and tuning value.
+#'
+#' @param moments List with `sigma_sample` (genes by genes by types),
+#'   `types`, and `r_pool` for the two-parameter arm.
+#' @param arm `"shrinkage"`, `"two_param"` or `"factor"`.
+#' @param lambda Shrinkage level: one value, or one per type (named).
+#' @param alpha Pooling weight of the two-parameter arm: one value, or
+#'   one per type (named).
+#' @param factors For `arm = "factor"`: one list per type with `B` and
+#'   `psi` on the correlation scale ([fit_factor_correlation()] or the
+#'   columns of [fit_factor_shared()]).
+#' @param var_floor_rel Shrinkage arms: a gene with no variance in a type
+#'   gets this fraction of the median variance of the type. The factor arm
+#'   uses the scale of its fit instead, the Poisson floor of
+#'   [split_standardise()] (`mean + 1/n`), so that `B B' + Psi` maps back
+#'   to the sample variance.
+#' @return An array like `moments$sigma_sample`.
+build_sigma <- function(
+  moments,
+  arm = c("shrinkage", "two_param", "factor"),
+  lambda = NULL,
+  alpha = 0,
+  factors = NULL,
+  var_floor_rel = 1e-4
+) {
+  arm <- match.arg(arm)
+  types <- dimnames(moments$sigma_sample)[[3L]]
+  p <- dim(moments$sigma_sample)[[1L]]
+  if (arm != "factor") {
+    if (length(lambda) == 1L) {
+      lambda <- stats::setNames(rep(lambda, length(types)), types)
+    }
+    if (!all(types %in% names(lambda)) || any(lambda < 0 | lambda > 1)) {
+      stop("`lambda` needs one value in [0, 1] per type.")
+    }
+    if (length(alpha) == 1L) {
+      alpha <- stats::setNames(rep(alpha, length(types)), types)
+    }
+  }
+  out <- moments$sigma_sample
+  for (tp in types) {
+    v <- diag(out[,, tp])
+    sd <- if (arm == "factor") {
+      sqrt(pmax(v, (moments$mu_cov %||% moments$mu)[, tp] + 1 / moments$n_cells[[tp]]))
+    } else {
+      sqrt(pmax(v, var_floor_rel * stats::median(v[v > 0])))
+    }
+    R <- out[,, tp] / tcrossprod(sd)
+    if (arm == "shrinkage") {
+      R <- (1 - lambda[[tp]]) * R
+    } else if (arm == "two_param") {
+      R <- (1 - lambda[[tp]]) *
+        ((1 - alpha[[tp]]) * R + alpha[[tp]] * moments$r_pool)
+    } else {
+      f <- factors[[tp]]
+      R <- tcrossprod(f$B) + diag(f$psi, p)
+    }
+    if (arm != "factor") {
+      diag(R) <- 1
+    }
+    out[,, tp] <- R * tcrossprod(sd)
+  }
+  out
+}
+
+#' Free covariance parameters of the arms that have a count.
+#'
+#' Factor analysis with `q` factors on `p` genes has
+#' `p + q p - q (q - 1) / 2` free covariance parameters (loadings up to
+#' rotation, plus uniquenesses); `q = 0` is the diagonal model. With
+#' shared loadings over `n_types` types the loadings are counted once.
+#' The shrinkage arms have no such count.
+#'
+#' @param p Genes.
+#' @param q Factors.
+#' @param n_types Types sharing the loadings; `1` for a per-type model.
+#' @return The number of free covariance parameters.
+factor_parameter_count <- function(p, q, n_types = 1L) {
+  q * p - q * (q - 1) / 2 + n_types * p
+}
+
+#' AIC and BIC from a log-likelihood and a parameter count.
+#'
+#' @param loglik Maximised log-likelihood of the cells.
+#' @param k Free parameters, means included.
+#' @param n Cells.
+#' @return A named vector with `aic` and `bic`.
+information_criteria <- function(loglik, k, n) {
+  c(aic = -2 * loglik + 2 * k, bic = -2 * loglik + k * log(n))
+}
+
+#' Factor models of every type, on raw or size-normalised cells.
+#'
+#' The fits of the `fit` stage of `scripts/03_04_cv_covariance.R`, padded
+#' to all genes (a gene constant in a type gets no loading and
+#' uniqueness 1), with the largest cosine between a loading and the
+#' standardised mean of the type (`align`; near 1 for a cell-size
+#' factor).
+#'
+#' @param y Cells by genes, raw counts.
+#' @param cell_type Type of each cell.
+#' @param types Types to fit.
+#' @param ranks Ranks; a rank above the identifiable bound of a type is
+#'   skipped.
+#' @param library_size Optional library sizes; when given, cells are
+#'   divided by `L_c / mean(L)` within their type first.
+#' @return One list per type, named by rank, of `B`, `psi`, `align`.
+fit_factor_types <- function(y, cell_type, types, ranks, library_size = NULL) {
+  genes <- colnames(y)
+  lapply(stats::setNames(types, types), function(tp) {
+    rows <- which(cell_type %in% tp)
+    X <- y[rows, , drop = FALSE]
+    if (!is.null(library_size)) {
+      X <- X / (library_size[rows] / mean(library_size[rows]))
+    }
+    sp <- split_standardise(X)
+    spectrum <- right_spectrum(sp$Z)
+    ok <- usable_ranks(ranks, sp$n, length(spectrum$values), ncol(sp$Z))
+    z_mean <- (sp$mu / sp$sd)[sp$varying]
+    lapply(stats::setNames(ok, ok), function(q) {
+      fit <- fit_factor_correlation(sp$Z, q, spectrum)
+      B <- matrix(0, length(genes), q)
+      B[sp$varying, ] <- fit$B
+      psi <- rep(1, length(genes))
+      psi[sp$varying] <- fit$psi
+      list(
+        B = B,
+        psi = psi,
+        align = max(abs(drop(crossprod(fit$B, z_mean))) /
+          (sqrt(colSums(fit$B^2)) * sqrt(sum(z_mean^2))))
+      )
+    })
+  })
 }

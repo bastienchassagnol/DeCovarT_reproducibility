@@ -3,11 +3,12 @@
 #   scripts/03_05_stats_plugin_covariance.R \
 #   > "logs/03_05_stats_plugin_covariance_$(date +%F).log" 2>&1 &
 #
-# Plug-in within-type moments for the quick deconvolution benchmark
-# (scripts/04_01_stats_deconvolution.R). No cross-validation: the
-# shrinkage intensity is the closed-form Schafer-Strimmer value of each
-# type. The cross-validated comparison of the five arms stays in
-# scripts/03_04_cv_covariance.R.
+# Sample moments of the reference, per time, gene set and scored type.
+# Nothing is regularised here: the deconvolution builds each regularised
+# covariance from these moments with build_sigma()
+# (R/03_01_stats_covariance_estimation.R), at the tuning values chosen by
+# scripts/03_04_cv_covariance.R or by the bulk likelihood
+# (scripts/04_01_stats_deconvolution.R).
 #
 # Input. Raw UMI counts of the scored cells (`scored_slots.rds`, tier
 # (i)), no per-cell library division, restricted to one of two gene sets
@@ -15,23 +16,19 @@
 #   welch  every gene gated by the permuted Welch G at BH 0.05
 #          (1,417 / 3,420 / 5,821 genes at 48 / 72 / 96 h);
 #   r2_05  the gated genes with a deviance share R2_D >= 0.05
+#   r2_01  the gated genes with R2_D >= 0.01, between the two
 #          (17 / 140 / 635 genes).
-#
-# For each time x gene set x scored type, two covariances with the same
-# intensity lambda:
-#   raw       target D on the sample covariance (corpcor::cov.shrink);
-#   denoised  target D on the denoised covariance, kappa = 0: the Poisson
-#             diagonal is removed and negative eigenvalues are clipped
-#             (denoise_covariance()). This is Sigma_bio.
-# lambda is the closed-form value of the raw counts. It is derived for
-# the raw correlation; for the denoised arm it is a convenience value.
 #
 # Outputs, output/grn/plugin/:
 #   gene_sets.csv                  time_point, gene_set, gene
 #   plugin_summary.csv             one row per time x gene set x type
-#   moments_<time>_<gene_set>.rds  genes, types, mu (G x J), sigma_raw and
-#                                  sigma_bio (G x G x J), lambda, n_cells
-#                                  (DVC, not in Git)
+#   moments_<time>_<gene_set>.rds  genes, types, mu (G x J), sigma_sample
+#                                  (G x G x J, unbiased sample covariance),
+#                                  n_cells, r_pool (G x G, pooled
+#                                  within-type correlation) (not in Git)
+#
+# The closed-form shrinkage and the denoised covariance of the first pass
+# are in scripts/archives/denoised_covariance/.
 
 # ==========================================================================
 # SECTION 0 · Dependencies, settings, paths ----
@@ -39,16 +36,11 @@
 
 root <- getwd()
 source(file.path(root, "R", "02_00_utils.R"))
-source(file.path(root, "R", "03_02_stats_regularisation_path.R"))
 source(file.path(root, "R", "03_01_stats_covariance_estimation.R"))
 check_blas_kernel()
 
 time_levels <- c("48h", "72h", "96h")
-r2_floor <- 0.05 # deviance share of the small gene set
-kappa <- 0 # all size variation treated as biological
-# Target D needs lambda > 0 to make the clipped denoised matrix positive
-# definite; the same floor as shrinkage_lambda_grid().
-lambda_floor <- 1e-3
+r2_floors <- c(r2_05 = 0.05, r2_01 = 0.01) # deviance share of the smaller gene sets
 
 slots_path <- file.path(
   root,
@@ -83,7 +75,8 @@ gene_sets <- lapply(time_levels, function(tm) {
   )
   list(
     welch = selected$gene,
-    r2_05 = selected$gene[selected$deviance_r2 >= r2_floor]
+    r2_05 = selected$gene[selected$deviance_r2 >= r2_floors[["r2_05"]]],
+    r2_01 = selected$gene[selected$deviance_r2 >= r2_floors[["r2_01"]]]
   )
 })
 names(gene_sets) <- time_levels
@@ -111,7 +104,7 @@ utils::write.csv(
 )
 
 # ==========================================================================
-# SECTION 2 · Moments per time, gene set and type ----
+# SECTION 2 · Moments per time and gene set ----
 # ==========================================================================
 
 summary_rows <- list()
@@ -126,94 +119,46 @@ for (tm in time_levels) {
   types <- sort(unique(panel$cell_type[!is.na(panel$cell_type)]))
   for (gs in names(gene_sets[[tm]])) {
     genes <- gene_sets[[tm]][[gs]]
-    n_genes <- length(genes)
-    mu <- matrix(
-      NA_real_,
-      n_genes,
+    started <- proc.time()[["elapsed"]]
+    moments <- sample_moments(
+      panel$y[, genes, drop = FALSE],
+      panel$cell_type,
+      types
+    )
+    elapsed <- proc.time()[["elapsed"]] - started
+    variances <- apply(moments$sigma_sample, 3L, diag)
+    summary_rows[[length(summary_rows) + 1L]] <- data.frame(
+      time_point = tm,
+      gene_set = gs,
+      cell_type = types,
+      cells = as.integer(moments$n_cells[types]),
+      genes = length(genes),
+      constant_genes = colSums(variances <= 0),
+      stringsAsFactors = FALSE
+    )
+    message(
+      tm,
+      " / ",
+      gs,
+      ": ",
       length(types),
-      dimnames = list(genes, types)
+      " types, ",
+      length(genes),
+      " genes, ",
+      round(elapsed, 1),
+      " s"
     )
-    sigma_raw <- array(
-      NA_real_,
-      c(n_genes, n_genes, length(types)),
-      dimnames = list(genes, genes, types)
-    )
-    sigma_bio <- sigma_raw
-    lambda <- stats::setNames(rep(NA_real_, length(types)), types)
-    n_cells <- stats::setNames(rep(NA_integer_, length(types)), types)
-    for (tp in types) {
-      started <- proc.time()[["elapsed"]]
-      X <- panel$y[which(panel$cell_type %in% tp), genes, drop = FALSE]
-      lambda_star <- shrinkage_lambda_closed_form(X)
-      lambda_used <- min(max(lambda_star, lambda_floor), 1)
-      raw <- fit_cov_shrinkage(X, lambda_used)
-      den <- fit_cov_shrinkage(
-        X,
-        lambda_used,
-        preprocess = "denoised",
-        kappa = kappa
-      )
-      if (isTRUE(raw$failed) || isTRUE(den$failed)) {
-        stop("Shrinkage failed for ", tm, " / ", gs, " / ", tp, ".")
-      }
-      mu[, tp] <- raw$mu
-      sigma_raw[,, tp] <- raw$sigma
-      sigma_bio[,, tp] <- den$sigma
-      lambda[[tp]] <- lambda_used
-      n_cells[[tp]] <- nrow(X)
-      elapsed <- proc.time()[["elapsed"]] - started
-      summary_rows[[length(summary_rows) + 1L]] <- data.frame(
-        time_point = tm,
-        gene_set = gs,
-        cell_type = tp,
-        cells = nrow(X),
-        genes = n_genes,
-        lambda_star = lambda_star,
-        lambda_used = lambda_used,
-        constant_genes = sum(apply(X, 2L, stats::var) <= 0),
-        floored_genes = length(den$floored_genes),
-        clipped_eigenvalues = den$n_clipped,
-        elapsed_sec = elapsed,
-        stringsAsFactors = FALSE
-      )
-      message(
-        tm,
-        " / ",
-        gs,
-        " / ",
-        tp,
-        ": ",
-        nrow(X),
-        " cells, ",
-        n_genes,
-        " genes, lambda = ",
-        signif(lambda_used, 3),
-        ", ",
-        length(den$floored_genes),
-        " floored genes, ",
-        round(elapsed, 1),
-        " s"
-      )
-    }
     # Uncompressed: the arrays are dense doubles, and the deconvolution
     # script reads each file once per run.
     saveRDS(
-      list(
-        time_point = tm,
-        gene_set = gs,
-        genes = genes,
-        types = types,
-        mu = mu,
-        sigma_raw = sigma_raw,
-        sigma_bio = sigma_bio,
-        lambda = lambda,
-        n_cells = n_cells,
-        kappa = kappa
+      c(
+        list(time_point = tm, gene_set = gs, genes = genes, types = types),
+        moments
       ),
       file.path(out_dir, paste0("moments_", tm, "_", gs, ".rds")),
       compress = FALSE
     )
-    rm(sigma_raw, sigma_bio)
+    rm(moments)
     invisible(gc())
   }
 }

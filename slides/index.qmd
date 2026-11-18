@@ -16,7 +16,7 @@ glossary_path(file.path("..", "glossary", "glossary.yml"))
 glossary_popup("hover")
 ```
 
-## 1 · Two weights {.center .section-divider background-gradient="linear-gradient(160deg, #f7f4ef 0%, #f6e2c4 100%)"}
+## 1 · Two statistical paradigms for describing cell mixtures {.center .section-divider background-gradient="linear-gradient(160deg, #f7f4ef 0%, #f6e2c4 100%)"}
 
 ## i · Independent cells, shared noise, or one profile {.dag}
 
@@ -1080,21 +1080,23 @@ The Suppinger reference is not a split of the bulk. An `r glossary("aliquot")` i
 **Say.** These three sets are the biological check that does not use the Suppinger composition. SCDC and DeMixSC are already in the benchmark, so the new information is the paired material, not a new method.
 :::
 
-## iii · How is a rare type weighted? {.quiz-question}
+## 7 · Quizz {.center .section-divider background-gradient="linear-gradient(160deg, #f7f4ef 0%, #c5d4ea 100%)"}
+
+## i · How is a rare type weighted? {.quiz-question}
 
 - By the cell count under both laws
 - [By $p^{2}$ under the population law and by $p$ under the single-cell law]{.correct}
 - By $p$ under both laws
 - Not at all, once the types are independent
 
-## iv · What chose $\lambda = 0.5$? {.quiz-question}
+## ii · What chose $\lambda = 0.5$? {.quiz-question}
 
 - The nested score on held-out cells
 - [The best composition error on the scored samples; the cell-wise nested score has not chosen it]{.correct}
 - The closed form of the Frobenius risk
 - A match of pseudo-bulks to the real bulks
 
-## v · Where does $b_g$ cancel? {.quiz-question}
+## iii · Where does $b_g$ cancel? {.quiz-question}
 
 - Between the reference and the bulk, always
 - [Inside one protocol. It need not cancel between the reference and the bulk]{.correct}

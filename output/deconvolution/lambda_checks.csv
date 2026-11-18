@@ -1,0 +1,121 @@
+"check","time","sample","version","lambda","loglik","rmse","selected"
+"pseudo-bulk","72h","observed","as is",0.1,-13310.4694914452,0.0127028858800699,FALSE
+"pseudo-bulk","72h","uniform","as is",0.1,-16450.6156148971,0.178291594902155,FALSE
+"pseudo-bulk","72h","random","as is",0.1,-15449.0855251355,0.0331694561589718,FALSE
+"pseudo-bulk","72h","observed","with platform ratio",0.1,-22587.3675589959,0.620074504058871,FALSE
+"pseudo-bulk","72h","uniform","with platform ratio",0.1,-22723.2228308461,0.387968431736522,FALSE
+"pseudo-bulk","72h","random","with platform ratio",0.1,-22796.97808136,0.387662912488052,FALSE
+"pseudo-bulk","72h","observed","as is",0.25,-12903.7562418647,0.0126301724906561,FALSE
+"pseudo-bulk","72h","uniform","as is",0.25,-16232.1554387503,0.0654258617041331,FALSE
+"pseudo-bulk","72h","random","as is",0.25,-15088.9957227736,0.0223685596830698,FALSE
+"pseudo-bulk","72h","observed","with platform ratio",0.25,-22395.1445779944,0.0309870451897197,FALSE
+"pseudo-bulk","72h","uniform","with platform ratio",0.25,-22672.6479069113,0.273701066671007,FALSE
+"pseudo-bulk","72h","random","with platform ratio",0.25,-22673.2271527371,0.191013551579623,FALSE
+"pseudo-bulk","72h","observed","as is",0.375,-12756.8900204264,0.0125436892965804,FALSE
+"pseudo-bulk","72h","uniform","as is",0.375,-16128.1126733975,0.0411024981920183,FALSE
+"pseudo-bulk","72h","random","as is",0.375,-14956.9192768516,0.0281756383459908,FALSE
+"pseudo-bulk","72h","observed","with platform ratio",0.375,-22309.5219992963,0.0320988452543251,FALSE
+"pseudo-bulk","72h","uniform","with platform ratio",0.375,-22648.4313673632,0.193792260875624,FALSE
+"pseudo-bulk","72h","random","with platform ratio",0.375,-22592.9277732533,0.183895606237261,FALSE
+"pseudo-bulk","72h","observed","as is",0.5,-12669.4457147701,0.0125627194015951,FALSE
+"pseudo-bulk","72h","uniform","as is",0.5,-16059.4867777146,0.0380039047153834,FALSE
+"pseudo-bulk","72h","random","as is",0.5,-14875.4117760275,0.0306489534226632,FALSE
+"pseudo-bulk","72h","observed","with platform ratio",0.5,-22286.2217717938,0.0341940323055492,TRUE
+"pseudo-bulk","72h","uniform","with platform ratio",0.5,-22641.8286137338,0.152892280359078,TRUE
+"pseudo-bulk","72h","random","with platform ratio",0.5,-22576.6580062151,0.158375920675468,TRUE
+"pseudo-bulk","72h","observed","as is",0.625,-12614.7145269913,0.0126889047481939,FALSE
+"pseudo-bulk","72h","uniform","as is",0.625,-16010.6779199888,0.0378104974746998,FALSE
+"pseudo-bulk","72h","random","as is",0.625,-14820.7733946694,0.0305802404719431,FALSE
+"pseudo-bulk","72h","observed","with platform ratio",0.625,-22307.1506461179,0.0378757115585718,FALSE
+"pseudo-bulk","72h","uniform","with platform ratio",0.625,-22658.3965362245,0.145424326322865,FALSE
+"pseudo-bulk","72h","random","with platform ratio",0.625,-22592.3889735011,0.158727544863495,FALSE
+"pseudo-bulk","72h","observed","as is",0.75,-12583.1488495359,0.0129236945780952,FALSE
+"pseudo-bulk","72h","uniform","as is",0.75,-15974.9561818091,0.0363567835012891,FALSE
+"pseudo-bulk","72h","random","as is",0.75,-14784.2697074099,0.0285339581175528,FALSE
+"pseudo-bulk","72h","observed","with platform ratio",0.75,-22376.3663712566,0.0439429730558321,FALSE
+"pseudo-bulk","72h","uniform","with platform ratio",0.75,-22708.3190683868,0.13883854887336,FALSE
+"pseudo-bulk","72h","random","with platform ratio",0.75,-22651.4379309169,0.143601322455638,FALSE
+"pseudo-bulk","72h","observed","as is",0.9,-12576.7673278163,0.0134362395159336,TRUE
+"pseudo-bulk","72h","uniform","as is",0.9,-15949.8619158446,0.0306947098201948,TRUE
+"pseudo-bulk","72h","random","as is",0.9,-14764.6638764545,0.0241422499843205,TRUE
+"pseudo-bulk","72h","observed","with platform ratio",0.9,-22582.2716949376,0.0518167999140483,FALSE
+"pseudo-bulk","72h","uniform","with platform ratio",0.9,-22851.9289261055,0.0989296038472293,FALSE
+"pseudo-bulk","72h","random","with platform ratio",0.9,-22828.664689906,0.0699304761040542,FALSE
+"pseudo-bulk","72h","observed","as is",1,-12623.6355262066,0.0146836032672824,FALSE
+"pseudo-bulk","72h","uniform","as is",1,-15973.8757956883,0.0147178460223799,FALSE
+"pseudo-bulk","72h","random","as is",1,-14786.297309408,0.0244519988942544,FALSE
+"pseudo-bulk","72h","observed","with platform ratio",1,-23017.3158318493,0.0461449990916186,FALSE
+"pseudo-bulk","72h","uniform","with platform ratio",1,-23130.0090565137,0.382196496217176,FALSE
+"pseudo-bulk","72h","random","with platform ratio",1,-23173.415803207,0.333510254293672,FALSE
+"pseudo-bulk","96h","observed","as is",0.1,-23162.9085557215,0.0105160331563855,FALSE
+"pseudo-bulk","96h","uniform","as is",0.1,-28101.9022817372,0.137813994084475,FALSE
+"pseudo-bulk","96h","random","as is",0.1,-30554.0501961456,0.202411409872119,FALSE
+"pseudo-bulk","96h","observed","with platform ratio",0.1,-39932.0063674682,0.494858711466764,FALSE
+"pseudo-bulk","96h","uniform","with platform ratio",0.1,-40147.8699280632,0.355571938644103,FALSE
+"pseudo-bulk","96h","random","with platform ratio",0.1,-40022.6974289218,0.176915374242168,FALSE
+"pseudo-bulk","96h","observed","as is",0.25,-22271.9735357611,0.00900963355016044,FALSE
+"pseudo-bulk","96h","uniform","as is",0.25,-27678.669672484,0.121889352199741,FALSE
+"pseudo-bulk","96h","random","as is",0.25,-30320.3787100879,0.133253975840845,FALSE
+"pseudo-bulk","96h","observed","with platform ratio",0.25,-39825.5625570514,0.36603107833269,FALSE
+"pseudo-bulk","96h","uniform","with platform ratio",0.25,-40065.8505163883,0.281856948356198,FALSE
+"pseudo-bulk","96h","random","with platform ratio",0.25,-39837.6648693894,0.0894983980407209,FALSE
+"pseudo-bulk","96h","observed","as is",0.375,-21964.1035658327,0.00877524545362175,FALSE
+"pseudo-bulk","96h","uniform","as is",0.375,-27453.2932253391,0.140607774145673,FALSE
+"pseudo-bulk","96h","random","as is",0.375,-30066.5295462843,0.210864729445752,FALSE
+"pseudo-bulk","96h","observed","with platform ratio",0.375,-39744.7124783788,0.101928193010427,FALSE
+"pseudo-bulk","96h","uniform","with platform ratio",0.375,-40017.9931788363,0.224715164006884,FALSE
+"pseudo-bulk","96h","random","with platform ratio",0.375,-39718.8156171997,0.328338799054768,FALSE
+"pseudo-bulk","96h","observed","as is",0.5,-21780.8308350174,0.00863122037089671,FALSE
+"pseudo-bulk","96h","uniform","as is",0.5,-27316.1033997345,0.147977806402216,FALSE
+"pseudo-bulk","96h","random","as is",0.5,-29900.3525056714,0.235804789983538,FALSE
+"pseudo-bulk","96h","observed","with platform ratio",0.5,-39631.0164988542,0.103453204066967,FALSE
+"pseudo-bulk","96h","uniform","with platform ratio",0.5,-39981.9401891136,0.20023963294162,FALSE
+"pseudo-bulk","96h","random","with platform ratio",0.5,-39601.3898084706,0.329414494112715,FALSE
+"pseudo-bulk","96h","observed","as is",0.625,-21664.2067459314,0.00851287026149015,FALSE
+"pseudo-bulk","96h","uniform","as is",0.625,-27228.2132814595,0.149954630261196,FALSE
+"pseudo-bulk","96h","random","as is",0.625,-29789.5668150831,0.250741877317198,FALSE
+"pseudo-bulk","96h","observed","with platform ratio",0.625,-39590.9655276035,0.107923223393227,TRUE
+"pseudo-bulk","96h","uniform","with platform ratio",0.625,-39963.2978181047,0.211049456744308,TRUE
+"pseudo-bulk","96h","random","with platform ratio",0.625,-39560.3108879471,0.332297835554979,TRUE
+"pseudo-bulk","96h","observed","as is",0.75,-21594.3425949158,0.00846164509884931,FALSE
+"pseudo-bulk","96h","uniform","as is",0.75,-27174.6044270891,0.147899576977706,FALSE
+"pseudo-bulk","96h","random","as is",0.75,-29718.1825007645,0.25919743423637,FALSE
+"pseudo-bulk","96h","observed","with platform ratio",0.75,-39616.3913227157,0.116279872980973,FALSE
+"pseudo-bulk","96h","uniform","with platform ratio",0.75,-39989.5042501388,0.225222196801944,FALSE
+"pseudo-bulk","96h","random","with platform ratio",0.75,-39588.8154010295,0.337445051062384,FALSE
+"pseudo-bulk","96h","observed","as is",0.9,-21575.8358431053,0.00882416940359101,TRUE
+"pseudo-bulk","96h","uniform","as is",0.9,-27157.2838089423,0.138914480854501,TRUE
+"pseudo-bulk","96h","random","as is",0.9,-29686.6132199684,0.256479747934153,TRUE
+"pseudo-bulk","96h","observed","with platform ratio",0.9,-39798.2136641665,0.136810215747243,FALSE
+"pseudo-bulk","96h","uniform","with platform ratio",0.9,-40155.2469532804,0.224227559895954,FALSE
+"pseudo-bulk","96h","random","with platform ratio",0.9,-39792.5092675013,0.343200736486199,FALSE
+"pseudo-bulk","96h","observed","as is",1,-21742.463552421,0.011012245130971,FALSE
+"pseudo-bulk","96h","uniform","as is",1,-27254.5811082734,0.118883356454365,FALSE
+"pseudo-bulk","96h","random","as is",1,-29779.3747123575,0.22659373352268,FALSE
+"pseudo-bulk","96h","observed","with platform ratio",1,-40985.2126984295,0.148202913184762,FALSE
+"pseudo-bulk","96h","uniform","with platform ratio",1,-41342.6902542591,0.231814106977599,FALSE
+"pseudo-bulk","96h","random","with platform ratio",1,-41166.2240220782,0.33872813801063,FALSE
+"leave-one-module-out","72h","72h_CTL_rep1","real bulk",0.1,-30653.6436011928,NA,FALSE
+"leave-one-module-out","72h","72h_CTL_rep2","real bulk",0.1,-30763.3875679784,NA,FALSE
+"leave-one-module-out","72h","72h_CTL_rep3","real bulk",0.1,-29866.8193854612,NA,FALSE
+"leave-one-module-out","72h","72h_CTL_rep1","real bulk",0.25,-30075.5588326459,NA,FALSE
+"leave-one-module-out","72h","72h_CTL_rep2","real bulk",0.25,-30180.8106108256,NA,FALSE
+"leave-one-module-out","72h","72h_CTL_rep3","real bulk",0.25,-29278.4841661473,NA,FALSE
+"leave-one-module-out","72h","72h_CTL_rep1","real bulk",0.375,-29909.422509542,NA,FALSE
+"leave-one-module-out","72h","72h_CTL_rep2","real bulk",0.375,-30011.5773328992,NA,FALSE
+"leave-one-module-out","72h","72h_CTL_rep3","real bulk",0.375,-29110.708503068,NA,FALSE
+"leave-one-module-out","72h","72h_CTL_rep1","real bulk",0.5,-29838.2773254583,NA,FALSE
+"leave-one-module-out","72h","72h_CTL_rep2","real bulk",0.5,-29938.398708162,NA,FALSE
+"leave-one-module-out","72h","72h_CTL_rep3","real bulk",0.5,-29040.4603249651,NA,FALSE
+"leave-one-module-out","72h","72h_CTL_rep1","real bulk",0.625,-29825.8656062953,NA,TRUE
+"leave-one-module-out","72h","72h_CTL_rep2","real bulk",0.625,-29923.786472045,NA,TRUE
+"leave-one-module-out","72h","72h_CTL_rep3","real bulk",0.625,-29032.2686287013,NA,TRUE
+"leave-one-module-out","72h","72h_CTL_rep1","real bulk",0.75,-29874.4985883672,NA,FALSE
+"leave-one-module-out","72h","72h_CTL_rep2","real bulk",0.75,-29973.0867377961,NA,FALSE
+"leave-one-module-out","72h","72h_CTL_rep3","real bulk",0.75,-29087.0415294099,NA,FALSE
+"leave-one-module-out","72h","72h_CTL_rep1","real bulk",0.9,-30104.0681251647,NA,FALSE
+"leave-one-module-out","72h","72h_CTL_rep2","real bulk",0.9,-30210.4554881826,NA,FALSE
+"leave-one-module-out","72h","72h_CTL_rep3","real bulk",0.9,-29328.7702922712,NA,FALSE
+"leave-one-module-out","72h","72h_CTL_rep1","real bulk",1,-31022.339042483,NA,FALSE
+"leave-one-module-out","72h","72h_CTL_rep2","real bulk",1,-31163.6817783317,NA,FALSE
+"leave-one-module-out","72h","72h_CTL_rep3","real bulk",1,-30284.750486967,NA,FALSE

@@ -8,3 +8,9 @@ output/
 logs/
 .github/
 temp_*/
+docs/slides-deck/
+docs/_extensions/
+slides/_extensions/
+docs/_diagram-cache/
+_freeze/
+docs/_freeze/

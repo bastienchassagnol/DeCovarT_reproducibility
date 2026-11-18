@@ -1,0 +1,1063 @@
+"time","gene_set","arm","family","id","alpha","tuning","replicates","sum_profile","sum_restricted","selected_profile","selected_restricted","sum_profile_all_times","rmse","aitchison"
+"48h","r2_01","early","cv","cv_factor_per_type",NA,NA,3,-3841.88444535703,-3787.12317609259,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","cv","cv_factor_shared_loadings",NA,NA,3,-3823.79834828876,-3770.52827245997,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","cv","cv_shrinkage_common",NA,NA,3,-3860.22257509663,-3809.78045112798,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","cv","cv_shrinkage_per_type",NA,NA,3,-3849.97011714267,-3796.46103804605,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","cv","cv_two_parameter_common",NA,NA,3,-3839.15110350955,-3786.76947076196,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","cv","cv_two_parameter_per_type",NA,NA,3,-3831.91772065261,-3779.05260304729,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","factor","factor_01",NA,1,3,-3876.13742009545,-3825.05936098389,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","factor","factor_02",NA,2,3,-3880.52431647209,-3826.92190101523,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","factor","factor_03",NA,3,3,-3868.0729604091,-3815.5106705766,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","factor","factor_05",NA,5,3,-3844.10770018512,-3789.92508736554,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","factor","factor_08",NA,8,3,-3833.40754336963,-3779.11096154126,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","factor","factor_12",NA,12,3,-3829.72097931199,-3776.29981163401,TRUE,TRUE,NA,NA,NA
+"48h","r2_01","early","raw factor, positive scales","raw_factor_positive_scales_1",NA,1,3,-3876.13742024947,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","raw factor, positive scales","raw_factor_positive_scales_12",NA,12,3,-3829.72098653814,NA,TRUE,FALSE,NA,NA,NA
+"48h","r2_01","early","raw factor, positive scales","raw_factor_positive_scales_2",NA,2,3,-3880.52431651133,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","raw factor, positive scales","raw_factor_positive_scales_3",NA,3,3,-3868.07296046816,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","raw factor, positive scales","raw_factor_positive_scales_5",NA,5,3,-3844.10770545105,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","raw factor, positive scales","raw_factor_positive_scales_8",NA,8,3,-3833.40754373285,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.1",NA,0.1,3,-3849.11646669972,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.25",NA,0.25,3,-3846.22557826078,NA,TRUE,FALSE,NA,NA,NA
+"48h","r2_01","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.375",NA,0.375,3,-3846.2986154036,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.5",NA,0.5,3,-3848.70659723916,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.625",NA,0.625,3,-3853.38159684822,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.75",NA,0.75,3,-3860.52418803999,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.9",NA,0.9,3,-3873.3971175891,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_1",NA,1,3,-3885.81899793448,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.1",NA,0.1,3,-3833.31710789123,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.25",NA,0.25,3,-3830.39383076316,NA,TRUE,FALSE,NA,NA,NA
+"48h","r2_01","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.375",NA,0.375,3,-3830.43972879321,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.5",NA,0.5,3,-3832.79350512075,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.625",NA,0.625,3,-3837.42425654791,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.75",NA,0.75,3,-3844.50309222696,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.9",NA,0.9,3,-3857.21902809944,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_1",NA,1,3,-3869.25177584338,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","shrinkage","shrinkage_0.100",0,0.1,3,-3849.03615451176,-3793.65942167218,FALSE,FALSE,-91547.1273109301,NA,NA
+"48h","r2_01","early","shrinkage","shrinkage_0.250",0,0.25,3,-3846.11022865891,-3792.72943737694,TRUE,TRUE,-91229.6622571841,NA,NA
+"48h","r2_01","early","shrinkage","shrinkage_0.375",0,0.375,3,-3846.1567251925,-3793.75358055957,FALSE,FALSE,-91046.9461690943,NA,NA
+"48h","r2_01","early","shrinkage","shrinkage_0.500",0,0.5,3,-3848.5128417728,-3796.8134044482,FALSE,FALSE,-90940.8264223144,NA,NA
+"48h","r2_01","early","shrinkage","shrinkage_0.625",0,0.625,3,-3853.14372254203,-3802.05304968369,FALSE,FALSE,-90911.5212863962,NA,NA
+"48h","r2_01","early","shrinkage","shrinkage_0.750",0,0.75,3,-3860.22257509663,-3809.78045112798,FALSE,FALSE,-90985.0052459245,NA,NA
+"48h","r2_01","early","shrinkage","shrinkage_0.900",0,0.9,3,-3872.93799670151,-3823.66388793185,FALSE,FALSE,-91409.5940100814,NA,NA
+"48h","r2_01","early","shrinkage","shrinkage_1.000",0,1,3,-3884.96800542506,-3837.67225576717,FALSE,FALSE,-93185.0814886279,NA,NA
+"48h","r2_01","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.1",NA,0.1,3,-3843.01818663294,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.25",NA,0.25,3,-3841.79661108517,NA,TRUE,FALSE,NA,NA,NA
+"48h","r2_01","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.375",NA,0.375,3,-3842.74566550566,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.5",NA,0.5,3,-3845.66623590532,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.625",NA,0.625,3,-3850.57992299591,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.75",NA,0.75,3,-3857.73830424831,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.9",NA,0.9,3,-3870.35638329139,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_1",NA,1,3,-3882.61345539089,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","two_param","two_param_0.25_0.25",0.25,0.25,3,-3838.33351176095,-3785.72458849514,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","two_param","two_param_0.25_0.50",0.25,0.5,3,-3845.87714334829,-3794.21578870899,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","two_param","two_param_0.25_0.75",0.25,0.75,3,-3860.41256243928,-3809.87097073641,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","two_param","two_param_0.50_0.25",0.5,0.25,3,-3834.16421834171,-3781.61217680375,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","two_param","two_param_0.50_0.50",0.5,0.5,3,-3844.98006172016,-3793.19378780719,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","two_param","two_param_0.50_0.75",0.5,0.75,3,-3861.19921444494,-3810.54376945327,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","two_param","two_param_0.75_0.25",0.75,0.25,3,-3833.45396908021,-3780.73736576623,TRUE,TRUE,NA,NA,NA
+"48h","r2_01","early","two_param","two_param_0.75_0.50",0.75,0.5,3,-3845.90930450513,-3793.93256475763,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","early","two_param","two_param_0.75_0.75",0.75,0.75,3,-3862.65405845162,-3811.87654434875,FALSE,FALSE,NA,NA,NA
+"48h","r2_01","standard","cv","cv_factor_per_type",NA,NA,3,-3607.97121791886,-3558.88216938109,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","cv","cv_factor_shared_loadings",NA,NA,3,-3607.46344713905,-3558.32962325349,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","cv","cv_shrinkage_common",NA,NA,3,-3648.31100142175,-3600.60491984661,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","cv","cv_shrinkage_per_type",NA,NA,3,-3609.34578137025,-3560.3396917659,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","cv","cv_two_parameter_common",NA,NA,3,-3622.78864835831,-3574.24716298372,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","cv","cv_two_parameter_per_type",NA,NA,3,-3609.4054935529,-3560.34136265296,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","factor","factor_01",NA,1,3,-3673.47444392723,-3624.07490394409,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","factor","factor_02",NA,2,3,-3686.18692757801,-3633.81223039532,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","factor","factor_03",NA,3,3,-3687.06146430748,-3636.71276999586,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","factor","factor_05",NA,5,3,-3625.219844152,-3576.19130783304,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","factor","factor_08",NA,8,3,-3611.70750766971,-3562.44004759727,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","factor","factor_12",NA,12,3,-3609.00074913326,-3559.96073631149,TRUE,TRUE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","raw factor, positive scales","raw_factor_positive_scales_1",NA,1,3,-3673.47444392723,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","raw factor, positive scales","raw_factor_positive_scales_12",NA,12,3,-3609.00074913326,NA,TRUE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","raw factor, positive scales","raw_factor_positive_scales_2",NA,2,3,-3686.18692757801,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","raw factor, positive scales","raw_factor_positive_scales_3",NA,3,3,-3687.06146430748,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","raw factor, positive scales","raw_factor_positive_scales_5",NA,5,3,-3625.219844152,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","raw factor, positive scales","raw_factor_positive_scales_8",NA,8,3,-3611.70750766971,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.1",NA,0.1,3,-3610.24595924844,NA,TRUE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.25",NA,0.25,3,-3616.30161531467,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.375",NA,0.375,3,-3622.83731864583,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.5",NA,0.5,3,-3630.36392025018,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.625",NA,0.625,3,-3638.83420929906,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.75",NA,0.75,3,-3648.34080046025,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.9",NA,0.9,3,-3661.41427510728,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_1",NA,1,3,-3671.1955722592,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.1",NA,0.1,3,-3642.96794476354,NA,TRUE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.25",NA,0.25,3,-3649.02219687889,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.375",NA,0.375,3,-3655.55600100204,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.5",NA,0.5,3,-3663.07959016011,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.625",NA,0.625,3,-3671.54482750702,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.75",NA,0.75,3,-3681.0421674682,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.9",NA,0.9,3,-3694.09045006346,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_1",NA,1,3,-3703.87096501101,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","shrinkage","shrinkage_0.100",0,0.1,3,-3610.23874652811,-3561.2960213609,TRUE,TRUE,-90438.1095102519,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","shrinkage","shrinkage_0.250",0,0.25,3,-3616.29315865877,-3567.61380111857,FALSE,FALSE,-90033.0407868839,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","shrinkage","shrinkage_0.375",0,0.375,3,-3622.82710382671,-3574.34806621347,FALSE,FALSE,-89943.0630793018,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","shrinkage","shrinkage_0.500",0,0.5,3,-3630.35076883681,-3582.07592898807,FALSE,FALSE,-89974.6793813657,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","shrinkage","shrinkage_0.625",0,0.625,3,-3638.8156930111,-3590.77695930357,FALSE,FALSE,-90106.4502791005,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","shrinkage","shrinkage_0.750",0,0.75,3,-3648.31100142175,-3600.60491984661,FALSE,FALSE,-90363.1152159761,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","shrinkage","shrinkage_0.900",0,0.9,3,-3661.34173258335,-3614.48367708504,FALSE,FALSE,-91048.3904686761,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","shrinkage","shrinkage_1.000",0,1,3,-3670.98016987403,-3625.94186724034,FALSE,FALSE,-93252.0885959409,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.1",NA,0.1,3,-3611.37581958306,NA,TRUE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.25",NA,0.25,3,-3618.97529837921,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.375",NA,0.375,3,-3626.69591314225,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.5",NA,0.5,3,-3635.68868082751,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.625",NA,0.625,3,-3646.12642926239,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.75",NA,0.75,3,-3658.35005793289,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.9",NA,0.9,3,-3676.28898128824,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_1",NA,1,3,-3691.40292756769,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","two_param","two_param_0.25_0.25",0.25,0.25,3,-3616.29368413982,-3567.57862433637,TRUE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","two_param","two_param_0.25_0.50",0.25,0.5,3,-3630.31773540579,-3582.02999749894,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","two_param","two_param_0.25_0.75",0.25,0.75,3,-3648.27784479239,-3600.57368766193,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","two_param","two_param_0.50_0.25",0.5,0.25,3,-3616.30503360535,-3567.55820840975,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","two_param","two_param_0.50_0.50",0.5,0.5,3,-3630.29089140305,-3581.99191694964,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","two_param","two_param_0.50_0.75",0.5,0.75,3,-3648.24681402816,-3600.54495670271,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","two_param","two_param_0.75_0.25",0.75,0.25,3,-3616.32627227459,-3567.55145008078,FALSE,TRUE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","two_param","two_param_0.75_0.50",0.75,0.5,3,-3630.26992707194,-3581.9613850828,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","r2_01","standard","two_param","two_param_0.75_0.75",0.75,0.75,3,-3648.21784685256,-3600.51868551046,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"72h","r2_01","early","cv","cv_factor_per_type",NA,NA,3,-21061.1455263053,-21008.9529888721,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","cv","cv_factor_shared_loadings",NA,NA,3,-20895.1579266584,-20846.6313370238,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","cv","cv_shrinkage_common",NA,NA,3,-21143.3624543542,-21098.4918007419,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","cv","cv_shrinkage_per_type",NA,NA,3,-21096.5305734106,-21045.4578559212,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","cv","cv_two_parameter_common",NA,NA,3,-20950.384377516,-20901.8715824407,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","cv","cv_two_parameter_per_type",NA,NA,3,-20950.3843685249,-20901.8782496679,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","factor","factor_01",NA,1,3,-21353.3715028699,-21306.8919892038,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","factor","factor_02",NA,2,3,-21350.9738337961,-21302.7999688419,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","factor","factor_03",NA,3,3,-21330.9670300373,-21281.5280571108,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","factor","factor_05",NA,5,3,-21234.8391306701,-21184.9888813671,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","factor","factor_08",NA,8,3,-21083.0395462998,-21032.0071804014,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","factor","factor_12",NA,12,3,-21021.8261417013,-20971.7241447898,TRUE,TRUE,NA,NA,NA
+"72h","r2_01","early","raw factor, positive scales","raw_factor_positive_scales_1",NA,1,3,-21353.3715028699,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","raw factor, positive scales","raw_factor_positive_scales_12",NA,12,3,-21021.8261526324,NA,TRUE,FALSE,NA,NA,NA
+"72h","r2_01","early","raw factor, positive scales","raw_factor_positive_scales_2",NA,2,3,-21350.9738337961,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","raw factor, positive scales","raw_factor_positive_scales_3",NA,3,3,-21330.9670346484,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","raw factor, positive scales","raw_factor_positive_scales_5",NA,5,3,-21234.839137184,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","raw factor, positive scales","raw_factor_positive_scales_8",NA,8,3,-21083.0395590836,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.1",NA,0.1,3,-21123.1208519132,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.25",NA,0.25,3,-21059.435335345,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.375",NA,0.375,3,-21031.6440613722,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.5",NA,0.5,3,-21026.5517043596,NA,TRUE,FALSE,NA,NA,NA
+"72h","r2_01","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.625",NA,0.625,3,-21042.1335046527,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.75",NA,0.75,3,-21079.7582517194,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.9",NA,0.9,3,-21164.9314809148,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_1",NA,1,3,-21314.7372848551,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.1",NA,0.1,3,-21105.326252868,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.25",NA,0.25,3,-21041.4484199576,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.375",NA,0.375,3,-21013.5535022417,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.5",NA,0.5,3,-21008.3508042067,NA,TRUE,FALSE,NA,NA,NA
+"72h","r2_01","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.625",NA,0.625,3,-21023.7850310533,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.75",NA,0.75,3,-21061.1610100382,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.9",NA,0.9,3,-21145.3456054148,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_1",NA,1,3,-21288.1574467055,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","shrinkage","shrinkage_0.100",0,0.1,3,-21122.5590915589,-21060.3093080318,FALSE,FALSE,-91547.1273109301,NA,NA
+"72h","r2_01","early","shrinkage","shrinkage_0.250",0,0.25,3,-21058.6820772942,-21003.5155212363,FALSE,FALSE,-91229.6622571841,NA,NA
+"72h","r2_01","early","shrinkage","shrinkage_0.375",0,0.375,3,-21030.7873723694,-20978.9054903158,FALSE,FALSE,-91046.9461690943,NA,NA
+"72h","r2_01","early","shrinkage","shrinkage_0.500",0,0.5,3,-21025.5847239754,-20975.5913725809,TRUE,TRUE,-90940.8264223144,NA,NA
+"72h","r2_01","early","shrinkage","shrinkage_0.625",0,0.625,3,-21041.0190657979,-20992.6191824162,FALSE,FALSE,-90911.5212863962,NA,NA
+"72h","r2_01","early","shrinkage","shrinkage_0.750",0,0.75,3,-21078.395111827,-21031.7184673112,FALSE,FALSE,-90985.0052459245,NA,NA
+"72h","r2_01","early","shrinkage","shrinkage_0.900",0,0.9,3,-21162.5802705051,-21117.758704639,FALSE,FALSE,-91409.5940100814,NA,NA
+"72h","r2_01","early","shrinkage","shrinkage_1.000",0,1,3,-21305.3819877231,-21264.5334730028,FALSE,FALSE,-93185.0814886279,NA,NA
+"72h","r2_01","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.1",NA,0.1,3,-21047.4692948629,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.25",NA,0.25,3,-21007.0426332557,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.375",NA,0.375,3,-20995.7974100933,NA,TRUE,FALSE,NA,NA,NA
+"72h","r2_01","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.5",NA,0.5,3,-21005.1711386526,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.625",NA,0.625,3,-21035.5293695113,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.75",NA,0.75,3,-21090.5486839569,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.9",NA,0.9,3,-21203.6462928555,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_1",NA,1,3,-21362.5889014415,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","two_param","two_param_0.25_0.25",0.25,0.25,3,-20989.0023091283,-20939.0659154297,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","two_param","two_param_0.25_0.50",0.25,0.5,3,-20979.0900915551,-20930.9335747771,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","two_param","two_param_0.25_0.75",0.25,0.75,3,-21050.1286539017,-21003.7654059423,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","two_param","two_param_0.50_0.25",0.5,0.25,3,-20917.4978357405,-20868.4063792409,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","two_param","two_param_0.50_0.50",0.5,0.5,3,-20933.0991224073,-20884.4805798776,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","two_param","two_param_0.50_0.75",0.5,0.75,3,-21022.0902107151,-20974.102833606,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","two_param","two_param_0.75_0.25",0.75,0.25,3,-20854.0608266361,-20804.9914110934,TRUE,TRUE,NA,NA,NA
+"72h","r2_01","early","two_param","two_param_0.75_0.50",0.75,0.5,3,-20890.350372774,-20841.3864408459,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","early","two_param","two_param_0.75_0.75",0.75,0.75,3,-21004.9857562913,-20957.0562915072,FALSE,FALSE,NA,NA,NA
+"72h","r2_01","standard","cv","cv_factor_per_type",NA,NA,3,-20213.0712022996,-20159.413244226,FALSE,FALSE,NA,0.05120465226594,2.63311420463518
+"72h","r2_01","standard","cv","cv_factor_shared_loadings",NA,NA,3,-20210.0076012985,-20158.2262516418,FALSE,FALSE,NA,0.0539043909268273,2.96960785017065
+"72h","r2_01","standard","cv","cv_shrinkage_common",NA,NA,3,-20464.6868811629,-20401.8463944838,FALSE,FALSE,NA,0.0392288834038927,2.38234363046506
+"72h","r2_01","standard","cv","cv_shrinkage_per_type",NA,NA,3,-20265.2100036804,-20205.2832930914,FALSE,FALSE,NA,0.0522224641014808,2.66970685037305
+"72h","r2_01","standard","cv","cv_two_parameter_common",NA,NA,3,-20275.3937331087,-20222.6372515446,FALSE,FALSE,NA,0.051718312449452,2.646640032794
+"72h","r2_01","standard","cv","cv_two_parameter_per_type",NA,NA,3,-20235.0903146994,-20181.8063502741,FALSE,FALSE,NA,0.0532400816353495,2.79725446541529
+"72h","r2_01","standard","factor","factor_01",NA,1,3,-20710.6853077881,-20641.4542648783,FALSE,FALSE,NA,0.032077523209702,1.45410383637617
+"72h","r2_01","standard","factor","factor_02",NA,2,3,-20699.7801032535,-20631.777961903,FALSE,FALSE,NA,0.0356843202573126,1.92902562627776
+"72h","r2_01","standard","factor","factor_03",NA,3,3,-20653.3986725766,-20578.9427282819,FALSE,FALSE,NA,0.033741026774185,0.88049114715315
+"72h","r2_01","standard","factor","factor_05",NA,5,3,-20560.0880464855,-20509.9280697661,FALSE,FALSE,NA,0.0457465362756276,3.4234752084082
+"72h","r2_01","standard","factor","factor_08",NA,8,3,-20281.5690471562,-20235.7148785215,FALSE,FALSE,NA,0.0532045897778474,2.97194583737728
+"72h","r2_01","standard","factor","factor_12",NA,12,3,-20203.9867899955,-20153.2090836586,TRUE,TRUE,NA,0.0491544283983463,2.82338200458268
+"72h","r2_01","standard","raw factor, positive scales","raw_factor_positive_scales_1",NA,1,3,-20710.6853580676,NA,FALSE,FALSE,NA,0.0321204846597842,1.44849771923369
+"72h","r2_01","standard","raw factor, positive scales","raw_factor_positive_scales_12",NA,12,3,-20203.9867936846,NA,TRUE,FALSE,NA,0.0491554528686822,2.82474511765875
+"72h","r2_01","standard","raw factor, positive scales","raw_factor_positive_scales_2",NA,2,3,-20699.78011205,NA,FALSE,FALSE,NA,0.0356976606149971,1.92697510795541
+"72h","r2_01","standard","raw factor, positive scales","raw_factor_positive_scales_3",NA,3,3,-20653.3986791208,NA,FALSE,FALSE,NA,0.0337438650991061,0.880328736828834
+"72h","r2_01","standard","raw factor, positive scales","raw_factor_positive_scales_5",NA,5,3,-20560.0880464236,NA,FALSE,FALSE,NA,0.0457467288308167,3.42346262863206
+"72h","r2_01","standard","raw factor, positive scales","raw_factor_positive_scales_8",NA,8,3,-20281.5690471558,NA,FALSE,FALSE,NA,0.0532045776602423,2.97194679312852
+"72h","r2_01","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.1",NA,0.1,3,-20184.3186703107,NA,FALSE,FALSE,NA,0.034367602890682,1.26855616518233
+"72h","r2_01","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.25",NA,0.25,3,-20175.5790154904,NA,TRUE,FALSE,NA,0.0363632720584996,1.3564507390832
+"72h","r2_01","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.375",NA,0.375,3,-20191.7389728111,NA,FALSE,FALSE,NA,0.0370798389492772,1.3529997212233
+"72h","r2_01","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.5",NA,0.5,3,-20224.7101949877,NA,FALSE,FALSE,NA,0.0372848952240576,1.29486029145799
+"72h","r2_01","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.625",NA,0.625,3,-20275.6244948969,NA,FALSE,FALSE,NA,0.0372410303510738,1.79464385570863
+"72h","r2_01","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.75",NA,0.75,3,-20350.6732575783,NA,FALSE,FALSE,NA,0.0382146029760484,2.33560618017509
+"72h","r2_01","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.9",NA,0.9,3,-20496.2360325112,NA,FALSE,FALSE,NA,0.0405921747717091,2.39238550692573
+"72h","r2_01","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_1",NA,1,3,-20666.7332111706,NA,FALSE,FALSE,NA,0.0451137110549516,2.64959573003425
+"72h","r2_01","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.1",NA,0.1,3,-20330.4174228168,NA,FALSE,FALSE,NA,0.0343132810374738,1.27561374678218
+"72h","r2_01","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.25",NA,0.25,3,-20321.6197584667,NA,TRUE,FALSE,NA,0.0362825064580717,1.37778924891504
+"72h","r2_01","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.375",NA,0.375,3,-20337.7304451989,NA,FALSE,FALSE,NA,0.0369722497372596,1.39188762686256
+"72h","r2_01","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.5",NA,0.5,3,-20370.6428843905,NA,FALSE,FALSE,NA,0.0371416795616214,1.33830549016
+"72h","r2_01","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.625",NA,0.625,3,-20421.4771423153,NA,FALSE,FALSE,NA,0.0371024481378319,1.86505558283011
+"72h","r2_01","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.75",NA,0.75,3,-20496.4002133383,NA,FALSE,FALSE,NA,0.0377932714073533,2.3420038267591
+"72h","r2_01","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.9",NA,0.9,3,-20641.5712105272,NA,FALSE,FALSE,NA,0.0398028430788203,2.42937527978168
+"72h","r2_01","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_1",NA,1,3,-20809.497777475,NA,FALSE,FALSE,NA,0.0405811586744816,2.69566670877379
+"72h","r2_01","standard","shrinkage","shrinkage_0.100",0,0.1,3,-20184.0272879579,-20133.8450253375,FALSE,FALSE,-90438.1095102519,0.034322295175804,1.27586207694527
+"72h","r2_01","standard","shrinkage","shrinkage_0.250",0,0.25,3,-20175.2303446292,-20124.1335637721,TRUE,TRUE,-90033.0407868839,0.0363024739227205,1.37806450243032
+"72h","r2_01","standard","shrinkage","shrinkage_0.375",0,0.375,3,-20191.3409975306,-20139.1688504754,FALSE,FALSE,-89943.0630793018,0.0369796901428497,1.39042884459056
+"72h","r2_01","standard","shrinkage","shrinkage_0.500",0,0.5,3,-20224.2529255227,-20170.5361216572,FALSE,FALSE,-89974.6793813657,0.0371443118636104,1.33803106031349
+"72h","r2_01","standard","shrinkage","shrinkage_0.625",0,0.625,3,-20275.0863107832,-20219.0988477701,FALSE,FALSE,-90106.4502791005,0.0371030344862723,1.86665217816491
+"72h","r2_01","standard","shrinkage","shrinkage_0.750",0,0.75,3,-20350.0079829642,-20291.4225318664,FALSE,FALSE,-90363.1152159761,0.0378021682773758,2.34190660732838
+"72h","r2_01","standard","shrinkage","shrinkage_0.900",0,0.9,3,-20495.1758743396,-20431.0361799776,FALSE,FALSE,-91048.3904686761,0.0398254232798031,2.42900043303463
+"72h","r2_01","standard","shrinkage","shrinkage_1.000",0,1,3,-20663.0776000605,-20592.4742813529,FALSE,FALSE,-93252.0885959409,0.0407501813705535,2.69365929150963
+"72h","r2_01","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.1",NA,0.1,3,-20079.7126955796,NA,FALSE,FALSE,NA,0.0436134729363841,1.98200654532081
+"72h","r2_01","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.25",NA,0.25,3,-20077.2867704846,NA,TRUE,FALSE,NA,0.04889067636447,2.41343434245417
+"72h","r2_01","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.375",NA,0.375,3,-20095.0416776633,NA,FALSE,FALSE,NA,0.0513211328058917,2.59898717218142
+"72h","r2_01","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.5",NA,0.5,3,-20131.1071323297,NA,FALSE,FALSE,NA,0.0528476903505095,2.92400989695636
+"72h","r2_01","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.625",NA,0.625,3,-20189.0257732599,NA,FALSE,FALSE,NA,0.0539043909268273,2.96960785017065
+"72h","r2_01","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.75",NA,0.75,3,-20278.2174654122,NA,FALSE,FALSE,NA,0.0539043909268273,2.96960785017065
+"72h","r2_01","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.9",NA,0.9,3,-20461.5222486218,NA,FALSE,FALSE,NA,0.0539043909268273,2.96960785017065
+"72h","r2_01","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_1",NA,1,3,-20696.9617011937,NA,FALSE,FALSE,NA,0.0539043909268273,2.96960785017065
+"72h","r2_01","standard","two_param","two_param_0.25_0.25",0.25,0.25,3,-20168.9800002963,-20117.4821933221,FALSE,FALSE,NA,0.0460262548871839,2.21321538577181
+"72h","r2_01","standard","two_param","two_param_0.25_0.50",0.25,0.5,3,-20217.6267470712,-20163.9464890765,FALSE,FALSE,NA,0.0450164266828302,2.65039083247062
+"72h","r2_01","standard","two_param","two_param_0.25_0.75",0.25,0.75,3,-20345.2327038102,-20287.4622917283,FALSE,FALSE,NA,0.043977241997198,2.66035169399214
+"72h","r2_01","standard","two_param","two_param_0.50_0.25",0.5,0.25,3,-20160.3252812115,-20110.2156328881,FALSE,FALSE,NA,0.0506947439887175,2.62560507883492
+"72h","r2_01","standard","two_param","two_param_0.50_0.50",0.5,0.5,3,-20210.925240675,-20158.9550744863,FALSE,FALSE,NA,0.0490731432227009,2.62130745420447
+"72h","r2_01","standard","two_param","two_param_0.50_0.75",0.5,0.75,3,-20340.7793677188,-20284.4202650401,FALSE,FALSE,NA,0.0473421692603158,2.63068462880302
+"72h","r2_01","standard","two_param","two_param_0.75_0.25",0.75,0.25,3,-20153.2305446084,-20104.9119202922,TRUE,TRUE,NA,0.0539043909268273,2.96960785017065
+"72h","r2_01","standard","two_param","two_param_0.75_0.50",0.75,0.5,3,-20205.3424163731,-20154.9656243944,FALSE,FALSE,NA,0.0528552727584817,2.72664983405446
+"72h","r2_01","standard","two_param","two_param_0.75_0.75",0.75,0.75,3,-20336.7385134485,-20281.6996458435,FALSE,FALSE,NA,0.0507705415582722,2.62644502725073
+"96h","r2_01","early","cv","cv_factor_per_type",NA,NA,3,-66191.183025991,-66117.1742010066,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","cv","cv_factor_shared_loadings",NA,NA,3,-66037.0808914358,-65954.0571624417,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","cv","cv_shrinkage_common",NA,NA,3,-66374.0757428748,-66304.3580543696,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","cv","cv_shrinkage_per_type",NA,NA,3,-66264.8868243324,-66193.2552833125,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","cv","cv_two_parameter_common",NA,NA,3,-65876.1040302172,-65806.5723954497,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","cv","cv_two_parameter_per_type",NA,NA,3,-65861.7431909615,-65791.7772513077,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","factor","factor_01",NA,1,3,-67958.5770944195,-67868.1910724989,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","factor","factor_02",NA,2,3,NA,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","factor","factor_03",NA,3,3,NA,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","factor","factor_05",NA,5,3,-66300.4554000972,-66227.6933384834,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","factor","factor_08",NA,8,3,-66264.7440810212,-66187.8558638013,TRUE,TRUE,NA,NA,NA
+"96h","r2_01","early","factor","factor_12",NA,12,3,-66293.1956806299,-66216.5596740505,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","raw factor, positive scales","raw_factor_positive_scales_1",NA,1,3,-67958.5691280061,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","raw factor, positive scales","raw_factor_positive_scales_12",NA,12,3,-66293.1981963247,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","raw factor, positive scales","raw_factor_positive_scales_2",NA,2,3,-66744.9553509574,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","raw factor, positive scales","raw_factor_positive_scales_3",NA,3,3,-66536.0385665013,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","raw factor, positive scales","raw_factor_positive_scales_5",NA,5,3,-66300.455553112,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","raw factor, positive scales","raw_factor_positive_scales_8",NA,8,3,-66264.7440210221,NA,TRUE,FALSE,NA,NA,NA
+"96h","r2_01","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.1",NA,0.1,3,-66576.8200251692,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.25",NA,0.25,3,-66325.3848231916,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.375",NA,0.375,3,-66170.4637110221,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.5",NA,0.5,3,-66067.9867744209,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.625",NA,0.625,3,-66019.2168484855,NA,TRUE,FALSE,NA,NA,NA
+"96h","r2_01","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.75",NA,0.75,3,-66048.5905921833,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.9",NA,0.9,3,-66377.4148941672,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_1",NA,1,3,-68019.1619864647,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.1",NA,0.1,3,-66185.5335905108,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.25",NA,0.25,3,-65934.7053075595,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.375",NA,0.375,3,-65779.9867018345,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.5",NA,0.5,3,-65676.5705815434,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.625",NA,0.625,3,-65627.1972638952,NA,TRUE,FALSE,NA,NA,NA
+"96h","r2_01","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.75",NA,0.75,3,-65656.232422574,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.9",NA,0.9,3,-65983.9290186849,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_1",NA,1,3,-67605.2533307877,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","shrinkage","shrinkage_0.100",0,0.1,3,-66575.5320648595,-66470.8691793479,FALSE,FALSE,-91547.1273109301,NA,NA
+"96h","r2_01","early","shrinkage","shrinkage_0.250",0,0.25,3,-66324.869951231,-66233.6708248845,FALSE,FALSE,-91229.6622571841,NA,NA
+"96h","r2_01","early","shrinkage","shrinkage_0.375",0,0.375,3,-66170.0020715324,-66092.6610850014,FALSE,FALSE,-91046.9461690943,NA,NA
+"96h","r2_01","early","shrinkage","shrinkage_0.500",0,0.5,3,-66066.7288565661,-65993.9081961867,FALSE,FALSE,-90940.8264223144,NA,NA
+"96h","r2_01","early","shrinkage","shrinkage_0.625",0,0.625,3,-66017.3584980563,-65948.7434408831,TRUE,TRUE,-90911.5212863962,NA,NA
+"96h","r2_01","early","shrinkage","shrinkage_0.750",0,0.75,3,-66046.3875590009,-65977.0679196153,FALSE,FALSE,-90985.0052459245,NA,NA
+"96h","r2_01","early","shrinkage","shrinkage_0.900",0,0.9,3,-66374.0757428748,-66304.3580543696,FALSE,FALSE,-91409.5940100814,NA,NA
+"96h","r2_01","early","shrinkage","shrinkage_1.000",0,1,3,-67994.7314954797,-67924.3008803348,FALSE,FALSE,-93185.0814886279,NA,NA
+"96h","r2_01","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.1",NA,0.1,3,-66256.0958087489,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.25",NA,0.25,3,-66015.6941312161,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.375",NA,0.375,3,-65873.3768550341,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.5",NA,0.5,3,-65797.4761626078,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.625",NA,0.625,3,-65796.4719412226,NA,TRUE,FALSE,NA,NA,NA
+"96h","r2_01","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.75",NA,0.75,3,-65897.1336529757,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.9",NA,0.9,3,-66317.2856272585,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_1",NA,1,3,-68096.6927019027,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","two_param","two_param_0.25_0.25",0.25,0.25,3,-66089.177691627,-66004.8466146624,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","two_param","two_param_0.25_0.50",0.25,0.5,3,-65875.4988525656,-65806.8667869381,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","two_param","two_param_0.25_0.75",0.25,0.75,3,-65959.8539538259,-65890.6450264678,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","two_param","two_param_0.50_0.25",0.5,0.25,3,-65913.9123525352,-65838.1202434318,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","two_param","two_param_0.50_0.50",0.5,0.5,3,-65742.6778637631,-65673.9429366933,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","two_param","two_param_0.50_0.75",0.5,0.75,3,-65903.8697229986,-65834.7604532788,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","two_param","two_param_0.75_0.25",0.75,0.25,3,-65781.5934680329,-65709.5903305224,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","early","two_param","two_param_0.75_0.50",0.75,0.5,3,-65659.265681584,-65589.8335262827,TRUE,TRUE,NA,NA,NA
+"96h","r2_01","early","two_param","two_param_0.75_0.75",0.75,0.75,3,-65876.1040302172,-65806.5723954497,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","standard","cv","cv_factor_per_type",NA,NA,3,-66367.2552010948,-66294.8098362219,FALSE,FALSE,NA,0.161329969433354,3.49540704379941
+"96h","r2_01","standard","cv","cv_factor_shared_loadings",NA,NA,3,-66426.0775260599,-66357.5483294998,FALSE,FALSE,NA,0.326078608996411,4.7117596115733
+"96h","r2_01","standard","cv","cv_shrinkage_common",NA,NA,3,-66891.8728617532,-66823.3008058699,FALSE,FALSE,NA,0.26276261510432,3.51853529354262
+"96h","r2_01","standard","cv","cv_shrinkage_per_type",NA,NA,3,-66484.167336225,-66407.6974604685,FALSE,FALSE,NA,0.204922055616362,3.63070282551497
+"96h","r2_01","standard","cv","cv_two_parameter_common",NA,NA,3,-66273.6646277002,-66205.9060423387,FALSE,FALSE,NA,0.30954570526845,3.78489267139558
+"96h","r2_01","standard","cv","cv_two_parameter_per_type",NA,NA,3,-66206.199716841,-66138.2752580165,FALSE,FALSE,NA,0.305318228623191,3.76580221524025
+"96h","r2_01","standard","factor","factor_01",NA,1,3,-69068.2278598506,-68910.1800712453,FALSE,FALSE,NA,0.365172939872487,4.73856615008683
+"96h","r2_01","standard","factor","factor_02",NA,2,3,NA,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","standard","factor","factor_03",NA,3,3,NA,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_01","standard","factor","factor_05",NA,5,3,-66739.4924588869,-66662.7224839785,FALSE,FALSE,NA,0.245723509372457,3.21585365455559
+"96h","r2_01","standard","factor","factor_08",NA,8,3,-66752.0222301085,-66674.567182153,FALSE,FALSE,NA,0.254782268695012,1.99869020191413
+"96h","r2_01","standard","factor","factor_12",NA,12,3,-66703.0792812994,-66629.3658717763,TRUE,TRUE,NA,0.242603170261792,2.02961460852599
+"96h","r2_01","standard","raw factor, positive scales","raw_factor_positive_scales_1",NA,1,3,-68991.7600749764,NA,FALSE,FALSE,NA,0.235117840314293,3.65006374635474
+"96h","r2_01","standard","raw factor, positive scales","raw_factor_positive_scales_12",NA,12,3,-66703.0802867884,NA,TRUE,FALSE,NA,0.242275214546823,2.03104638214359
+"96h","r2_01","standard","raw factor, positive scales","raw_factor_positive_scales_2",NA,2,3,-67116.8628728283,NA,FALSE,FALSE,NA,0.235606112005165,2.84831813379171
+"96h","r2_01","standard","raw factor, positive scales","raw_factor_positive_scales_3",NA,3,3,-66937.5247680419,NA,FALSE,FALSE,NA,0.254950639270755,3.30637885508776
+"96h","r2_01","standard","raw factor, positive scales","raw_factor_positive_scales_5",NA,5,3,-66739.4919173788,NA,FALSE,FALSE,NA,0.245681838402453,3.21636236257664
+"96h","r2_01","standard","raw factor, positive scales","raw_factor_positive_scales_8",NA,8,3,-66752.021552321,NA,FALSE,FALSE,NA,0.254930949868403,1.99694655734387
+"96h","r2_01","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.1",NA,0.1,3,-66661.3142196475,NA,FALSE,FALSE,NA,0.332209131685174,4.9521068112601
+"96h","r2_01","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.25",NA,0.25,3,-66242.1382134814,NA,FALSE,FALSE,NA,0.0759916329901111,1.78340076378568
+"96h","r2_01","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.375",NA,0.375,3,-66129.5258787786,NA,FALSE,FALSE,NA,0.107055663073035,2.33170927521054
+"96h","r2_01","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.5",NA,0.5,3,-66120.7562641303,NA,TRUE,FALSE,NA,0.136153016151183,2.79543309863119
+"96h","r2_01","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.625",NA,0.625,3,-66193.3129500593,NA,FALSE,FALSE,NA,0.167785218297531,3.08608469892849
+"96h","r2_01","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.75",NA,0.75,3,-66365.6865832155,NA,FALSE,FALSE,NA,0.206156040411386,3.18137127753191
+"96h","r2_01","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.9",NA,0.9,3,-66893.2157709606,NA,FALSE,FALSE,NA,0.263239788739021,3.5455428696618
+"96h","r2_01","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_1",NA,1,3,-68954.568136566,NA,FALSE,FALSE,NA,0.245392833598248,3.6665146240958
+"96h","r2_01","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.1",NA,0.1,3,-66290.1616167564,NA,FALSE,FALSE,NA,0.332343920129872,4.94115187665366
+"96h","r2_01","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.25",NA,0.25,3,-65871.1474387803,NA,FALSE,FALSE,NA,0.0759477649562694,1.78403371805903
+"96h","r2_01","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.375",NA,0.375,3,-65758.4839531645,NA,FALSE,FALSE,NA,0.10710569034276,2.32735807293743
+"96h","r2_01","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.5",NA,0.5,3,-65749.6365147004,NA,TRUE,FALSE,NA,0.135995298920316,2.80701888684598
+"96h","r2_01","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.625",NA,0.625,3,-65822.0996097108,NA,FALSE,FALSE,NA,0.167710060454828,3.08848533742852
+"96h","r2_01","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.75",NA,0.75,3,-65994.356574337,NA,FALSE,FALSE,NA,0.205990433700193,3.18201513601839
+"96h","r2_01","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.9",NA,0.9,3,-66521.6545511976,NA,FALSE,FALSE,NA,0.262488728294239,3.51692015035725
+"96h","r2_01","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_1",NA,1,3,-68547.8312006496,NA,FALSE,FALSE,NA,0.242836839998776,3.66456720552252
+"96h","r2_01","standard","shrinkage","shrinkage_0.100",0,0.1,3,-66643.8434757659,-66524.2750037628,FALSE,FALSE,-90438.1095102519,0.325947007504823,5.19680968239845
+"96h","r2_01","standard","shrinkage","shrinkage_0.250",0,0.25,3,-66241.517283596,-66163.7462665538,FALSE,FALSE,-90033.0407868839,0.0759376912395528,1.78402145476782
+"96h","r2_01","standard","shrinkage","shrinkage_0.375",0,0.375,3,-66128.8949779444,-66051.8422181657,FALSE,FALSE,-89943.0630793018,0.10699812981429,2.32091786665004
+"96h","r2_01","standard","shrinkage","shrinkage_0.500",0,0.5,3,-66120.0756870061,-66043.6159037303,TRUE,TRUE,-89974.6793813657,0.135985062364734,2.80772074004981
+"96h","r2_01","standard","shrinkage","shrinkage_0.625",0,0.625,3,-66192.5482753062,-66117.0654087569,FALSE,FALSE,-90106.4502791005,0.167698352773751,3.08776863400266
+"96h","r2_01","standard","shrinkage","shrinkage_0.750",0,0.75,3,-66364.7962315901,-66291.3762852185,FALSE,FALSE,-90363.1152159761,0.206039358919901,3.17855104061642
+"96h","r2_01","standard","shrinkage","shrinkage_0.900",0,0.9,3,-66891.8728617532,-66823.3008058699,FALSE,FALSE,-91048.3904686761,0.26276261510432,3.51853529354262
+"96h","r2_01","standard","shrinkage","shrinkage_1.000",0,1,3,-68918.0308260064,-68841.5592343525,FALSE,FALSE,-93252.0885959409,0.24281500881446,3.66448508447546
+"96h","r2_01","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.1",NA,0.1,3,-66402.0586476393,NA,FALSE,FALSE,NA,0.0514662972731404,1.7956734961902
+"96h","r2_01","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.25",NA,0.25,3,-65871.3766521906,NA,FALSE,FALSE,NA,0.0591487258312539,1.57491726369267
+"96h","r2_01","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.375",NA,0.375,3,-65698.7127926168,NA,FALSE,FALSE,NA,0.0695002671163904,2.03013478501179
+"96h","r2_01","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.5",NA,0.5,3,-65652.1305344663,NA,TRUE,FALSE,NA,0.0764694817397819,2.74609101129016
+"96h","r2_01","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.625",NA,0.625,3,-65715.6778535352,NA,FALSE,FALSE,NA,0.0827697685791222,3.16358895849712
+"96h","r2_01","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.75",NA,0.75,3,-65927.0485758041,NA,FALSE,FALSE,NA,0.090543117539895,3.24851279178345
+"96h","r2_01","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.9",NA,0.9,3,-66650.0583193792,NA,FALSE,FALSE,NA,0.114413586421822,3.27464966230858
+"96h","r2_01","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_1",NA,1,3,-69195.5259056796,NA,FALSE,FALSE,NA,0.181228184385644,3.24610498273589
+"96h","r2_01","standard","two_param","two_param_0.25_0.25",0.25,0.25,3,-66184.0965046899,-66109.5685905502,FALSE,FALSE,NA,0.129343593722341,2.99549517540542
+"96h","r2_01","standard","two_param","two_param_0.25_0.50",0.25,0.5,3,-66070.5189514933,-65998.5327435871,FALSE,FALSE,NA,0.184324234930775,3.40499192298878
+"96h","r2_01","standard","two_param","two_param_0.25_0.75",0.25,0.75,3,-66329.5243532538,-66260.0511046678,FALSE,FALSE,NA,0.244060489496596,3.5374452285554
+"96h","r2_01","standard","two_param","two_param_0.50_0.25",0.5,0.25,3,-66116.4542944687,-66043.8517455734,FALSE,FALSE,NA,0.196587876881542,3.65728052932557
+"96h","r2_01","standard","two_param","two_param_0.50_0.50",0.5,0.5,3,-66018.0546762735,-65947.9653234604,FALSE,FALSE,NA,0.238328343940767,3.52663222523366
+"96h","r2_01","standard","two_param","two_param_0.50_0.75",0.5,0.75,3,-66297.1014416931,-66229.3905138208,FALSE,FALSE,NA,0.281518039041753,3.70639632937088
+"96h","r2_01","standard","two_param","two_param_0.75_0.25",0.75,0.25,3,-66046.7869288315,-65973.7541787178,FALSE,FALSE,NA,0.263327024799522,3.96423854459513
+"96h","r2_01","standard","two_param","two_param_0.75_0.50",0.75,0.5,3,-65969.9808559304,-65899.9312272564,TRUE,TRUE,NA,0.287165861233953,3.72700141053318
+"96h","r2_01","standard","two_param","two_param_0.75_0.75",0.75,0.75,3,-66273.6646277002,-66205.9060423387,FALSE,FALSE,NA,0.30954570526845,3.78489267139558
+"48h","r2_05","early","cv","cv_factor_per_type",NA,NA,3,-408.877601911978,-351.530741283813,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","early","cv","cv_factor_shared_loadings",NA,NA,3,-411.155270786645,-347.956837809197,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","early","cv","cv_shrinkage_common",NA,NA,3,-410.835283444906,-348.602867994876,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","early","cv","cv_shrinkage_per_type",NA,NA,3,-410.769926074496,-348.297687771744,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","early","cv","cv_two_parameter_common",NA,NA,3,-411.183929944659,-347.984636688533,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","early","cv","cv_two_parameter_per_type",NA,NA,3,-411.094212812183,-347.748768918566,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","early","factor","factor_01",NA,1,3,-408.877601911978,-351.530741283813,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","early","factor","factor_02",NA,2,3,-407.944036256918,-350.433084642381,TRUE,FALSE,NA,NA,NA
+"48h","r2_05","early","factor","factor_03",NA,3,3,-409.940196431087,-350.492282788055,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","early","factor","factor_05",NA,5,3,-410.236940673332,-348.444246038592,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","early","factor","factor_08",NA,8,3,-409.050631528287,-347.013694613081,FALSE,TRUE,NA,NA,NA
+"48h","r2_05","early","factor","factor_12",NA,12,3,-409.050631528287,-347.013694613081,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","early","raw factor, positive scales","raw_factor_positive_scales_1",NA,1,3,-408.877601911978,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","early","raw factor, positive scales","raw_factor_positive_scales_12",NA,12,3,-409.050631528287,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","early","raw factor, positive scales","raw_factor_positive_scales_2",NA,2,3,-407.944036256918,NA,TRUE,FALSE,NA,NA,NA
+"48h","r2_05","early","raw factor, positive scales","raw_factor_positive_scales_3",NA,3,3,-409.940196447026,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","early","raw factor, positive scales","raw_factor_positive_scales_5",NA,5,3,-410.236940673332,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","early","raw factor, positive scales","raw_factor_positive_scales_8",NA,8,3,-409.050631528287,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.1",NA,0.1,3,-410.16911650228,NA,TRUE,FALSE,NA,NA,NA
+"48h","r2_05","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.25",NA,0.25,3,-410.483836050968,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.375",NA,0.375,3,-410.665746626695,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.5",NA,0.5,3,-410.796593115993,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.625",NA,0.625,3,-410.883717746086,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.75",NA,0.75,3,-410.924429422087,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.9",NA,0.9,3,-410.749195257841,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_1",NA,1,3,-410.360280094727,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.1",NA,0.1,3,-408.375586349707,NA,TRUE,FALSE,NA,NA,NA
+"48h","r2_05","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.25",NA,0.25,3,-408.682716834526,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.375",NA,0.375,3,-408.857217939439,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.5",NA,0.5,3,-408.97947960654,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.625",NA,0.625,3,-409.056580939873,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.75",NA,0.75,3,-409.085488434485,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.9",NA,0.9,3,-408.906161060284,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_1",NA,1,3,-408.487589969664,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","early","shrinkage","shrinkage_0.100",0,0.1,3,-410.143196526422,-346.925176831568,TRUE,TRUE,-19466.5573412859,NA,NA
+"48h","r2_05","early","shrinkage","shrinkage_0.250",0,0.25,3,-410.45017656736,-347.478045155373,FALSE,FALSE,-19392.0424077502,NA,NA
+"48h","r2_05","early","shrinkage","shrinkage_0.375",0,0.375,3,-410.624520177866,-347.869598533717,FALSE,FALSE,-19368.136508588,NA,NA
+"48h","r2_05","early","shrinkage","shrinkage_0.500",0,0.5,3,-410.74655129723,-348.216607953379,FALSE,FALSE,-19362.1013185171,NA,NA
+"48h","r2_05","early","shrinkage","shrinkage_0.625",0,0.625,3,-410.823294597422,-348.529254533453,FALSE,FALSE,-19372.0502420049,NA,NA
+"48h","r2_05","early","shrinkage","shrinkage_0.750",0,0.75,3,-410.851616414692,-348.814054403558,FALSE,FALSE,-19401.4636937554,NA,NA
+"48h","r2_05","early","shrinkage","shrinkage_0.900",0,0.9,3,-410.670618022201,-350.053064374686,FALSE,FALSE,-19485.3884921515,NA,NA
+"48h","r2_05","early","shrinkage","shrinkage_1.000",0,1,3,-410.252294562608,-350.534064661037,FALSE,FALSE,-19630.4570823859,NA,NA
+"48h","r2_05","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.1",NA,0.1,3,-408.844228787264,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.25",NA,0.25,3,-409.109499527765,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.375",NA,0.375,3,-409.300195655617,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.5",NA,0.5,3,-409.474224063669,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.625",NA,0.625,3,-409.636461560875,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.75",NA,0.75,3,-409.601797438967,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.9",NA,0.9,3,-409.047620210247,NA,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_1",NA,1,3,-408.604916744227,NA,TRUE,FALSE,NA,NA,NA
+"48h","r2_05","early","two_param","two_param_0.25_0.25",0.25,0.25,3,-410.68366062677,-347.641497132761,TRUE,TRUE,NA,NA,NA
+"48h","r2_05","early","two_param","two_param_0.25_0.50",0.25,0.5,3,-410.913805510843,-348.314007431135,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","early","two_param","two_param_0.25_0.75",0.25,0.75,3,-410.947506706423,-348.859583477148,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","early","two_param","two_param_0.50_0.25",0.5,0.25,3,-410.92628553886,-347.810133656844,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","early","two_param","two_param_0.50_0.50",0.5,0.5,3,-411.089253026713,-348.414733347561,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","early","two_param","two_param_0.50_0.75",0.5,0.75,3,-411.031361403526,-349.166275946927,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","early","two_param","two_param_0.75_0.25",0.75,0.25,3,-411.183929944659,-347.984636688533,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","early","two_param","two_param_0.75_0.50",0.75,0.5,3,-411.274996059608,-348.51890320071,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","early","two_param","two_param_0.75_0.75",0.75,0.75,3,-411.05907810192,-349.672023327486,FALSE,FALSE,NA,NA,NA
+"48h","r2_05","standard","cv","cv_factor_per_type",NA,NA,3,-340.155380655267,-294.067253507645,FALSE,FALSE,NA,0.759520435681047,7.99534390963862
+"48h","r2_05","standard","cv","cv_factor_shared_loadings",NA,NA,3,-342.14429940635,-294.516546996424,FALSE,FALSE,NA,0.7748498140633,7.89197861874123
+"48h","r2_05","standard","cv","cv_shrinkage_common",NA,NA,3,-341.071995026773,-294.209200009991,FALSE,FALSE,NA,0.767100496542351,7.97672706876536
+"48h","r2_05","standard","cv","cv_shrinkage_per_type",NA,NA,3,-341.498271185876,-294.378765332109,FALSE,FALSE,NA,0.752368826243148,8.26968900724976
+"48h","r2_05","standard","cv","cv_two_parameter_common",NA,NA,3,-342.052730812068,-294.164113197252,FALSE,FALSE,NA,0.769413527989912,7.92755643747684
+"48h","r2_05","standard","cv","cv_two_parameter_per_type",NA,NA,3,-342.206000822394,-294.260335222404,FALSE,FALSE,NA,0.759077303134144,8.18929986122072
+"48h","r2_05","standard","factor","factor_01",NA,1,3,-339.362874478323,-293.395525592608,TRUE,FALSE,NA,0.759769284344671,7.99165765819127
+"48h","r2_05","standard","factor","factor_02",NA,2,3,-339.988381958211,-294.018792690586,FALSE,FALSE,NA,0.746808518412401,8.32417230870251
+"48h","r2_05","standard","factor","factor_03",NA,3,3,-343.038412687368,-294.171870597341,FALSE,FALSE,NA,0.771233190433063,7.91616467640494
+"48h","r2_05","standard","factor","factor_05",NA,5,3,-341.732409307281,-292.930951676098,FALSE,TRUE,NA,0.795283549514877,7.49754120089889
+"48h","r2_05","standard","factor","factor_08",NA,8,3,-342.166212801139,-293.555267556743,FALSE,FALSE,NA,0.784380722688241,7.80814603340115
+"48h","r2_05","standard","factor","factor_12",NA,12,3,-342.166212801139,-293.555267556743,FALSE,FALSE,NA,0.784380722688241,7.80814603340115
+"48h","r2_05","standard","raw factor, positive scales","raw_factor_positive_scales_1",NA,1,3,-339.362874478323,NA,TRUE,FALSE,NA,0.759769285036446,7.99165764959269
+"48h","r2_05","standard","raw factor, positive scales","raw_factor_positive_scales_12",NA,12,3,-342.166212801143,NA,FALSE,FALSE,NA,0.784380873681307,7.80814430569307
+"48h","r2_05","standard","raw factor, positive scales","raw_factor_positive_scales_2",NA,2,3,-339.988381984896,NA,FALSE,FALSE,NA,0.746818893979901,8.32406884463192
+"48h","r2_05","standard","raw factor, positive scales","raw_factor_positive_scales_3",NA,3,3,-343.038412687366,NA,FALSE,FALSE,NA,0.771233135360653,7.91616502755531
+"48h","r2_05","standard","raw factor, positive scales","raw_factor_positive_scales_5",NA,5,3,-341.732409307281,NA,FALSE,FALSE,NA,0.795283549514877,7.49754120089889
+"48h","r2_05","standard","raw factor, positive scales","raw_factor_positive_scales_8",NA,8,3,-342.166212801143,NA,FALSE,FALSE,NA,0.784380873681307,7.80814430569307
+"48h","r2_05","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.1",NA,0.1,3,-343.542765507726,NA,FALSE,FALSE,NA,0.776540661291248,8.01261890091046
+"48h","r2_05","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.25",NA,0.25,3,-342.896626524327,NA,FALSE,FALSE,NA,0.773219668007806,8.01348368769587
+"48h","r2_05","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.375",NA,0.375,3,-342.357207518673,NA,FALSE,FALSE,NA,0.770422666758599,8.01973109858057
+"48h","r2_05","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.5",NA,0.5,3,-341.804713566873,NA,FALSE,FALSE,NA,0.768168042411331,8.03012269086289
+"48h","r2_05","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.625",NA,0.625,3,-341.229450678974,NA,FALSE,FALSE,NA,0.766514847810787,8.04634338495648
+"48h","r2_05","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.75",NA,0.75,3,-340.617241216522,NA,FALSE,FALSE,NA,0.765406514731047,8.06522063257567
+"48h","r2_05","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.9",NA,0.9,3,-339.796667416214,NA,FALSE,FALSE,NA,0.764891632169839,8.08046440811086
+"48h","r2_05","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_1",NA,1,3,-339.153781542459,NA,TRUE,FALSE,NA,0.765336845850704,8.07571872923699
+"48h","r2_05","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.1",NA,0.1,3,-347.298287881622,NA,FALSE,FALSE,NA,0.781214622159215,7.94587433128236
+"48h","r2_05","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.25",NA,0.25,3,-346.672914104481,NA,FALSE,FALSE,NA,0.777822073985389,7.91751904457053
+"48h","r2_05","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.375",NA,0.375,3,-346.1453772903,NA,FALSE,FALSE,NA,0.773131300852384,7.90360140330649
+"48h","r2_05","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.5",NA,0.5,3,-345.594637221292,NA,FALSE,FALSE,NA,0.768125176566419,7.93541980927613
+"48h","r2_05","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.625",NA,0.625,3,-345.012066363628,NA,FALSE,FALSE,NA,0.764825530588752,7.95528446119194
+"48h","r2_05","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.75",NA,0.75,3,-344.388747701942,NA,FALSE,FALSE,NA,0.762853896658293,7.97351162827606
+"48h","r2_05","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.9",NA,0.9,3,-343.557039214803,NA,FALSE,FALSE,NA,0.760495420125795,8.08630126556973
+"48h","r2_05","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_1",NA,1,3,-342.913121640617,NA,TRUE,FALSE,NA,0.755187981281302,7.38816556265673
+"48h","r2_05","standard","shrinkage","shrinkage_0.100",0,0.1,3,-343.530656256102,-294.53160170801,FALSE,FALSE,-18986.4272923402,0.775893442022393,7.95270271439068
+"48h","r2_05","standard","shrinkage","shrinkage_0.250",0,0.25,3,-342.880390919922,-294.289315874927,FALSE,FALSE,-18966.8464072276,0.772804664115265,7.90595332567853
+"48h","r2_05","standard","shrinkage","shrinkage_0.375",0,0.375,3,-342.341369257872,-294.203048164188,FALSE,FALSE,-18971.0309632742,0.77040929546679,7.92137198948084
+"48h","r2_05","standard","shrinkage","shrinkage_0.500",0,0.5,3,-341.791706822471,-294.178276476151,FALSE,TRUE,-18991.1948878758,0.76880219842929,7.93130413009071
+"48h","r2_05","standard","shrinkage","shrinkage_0.625",0,0.625,3,-341.220036668652,-294.197856804226,FALSE,FALSE,-19029.2578508328,0.767499198878111,7.95262272937334
+"48h","r2_05","standard","shrinkage","shrinkage_0.750",0,0.75,3,-340.610586537069,-294.255137287142,FALSE,FALSE,-19093.6230121546,0.76603783886165,8.03027517720643
+"48h","r2_05","standard","shrinkage","shrinkage_0.900",0,0.9,3,-339.791166435335,-294.359570402786,FALSE,FALSE,-19244.653031305,0.765022644435984,8.07423232867673
+"48h","r2_05","standard","shrinkage","shrinkage_1.000",0,1,3,-339.147851414952,-294.445592833598,TRUE,FALSE,-19481.3139885311,0.76515627296306,8.07850351814078
+"48h","r2_05","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.1",NA,0.1,3,-339.437761185744,NA,FALSE,FALSE,NA,0.775710306885556,8.01008825366312
+"48h","r2_05","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.25",NA,0.25,3,-338.794243107455,NA,FALSE,FALSE,NA,0.767866710022353,8.01624425523649
+"48h","r2_05","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.375",NA,0.375,3,-338.306928482055,NA,FALSE,FALSE,NA,0.762966167801097,8.01523484878079
+"48h","r2_05","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.5",NA,0.5,3,-337.834153811781,NA,FALSE,FALSE,NA,0.753921651846952,8.27108227975392
+"48h","r2_05","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.625",NA,0.625,3,-337.34777984156,NA,FALSE,FALSE,NA,0.746177258735737,8.35372492789071
+"48h","r2_05","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.75",NA,0.75,3,-336.851361662435,NA,FALSE,FALSE,NA,0.738820139874169,8.55387930727549
+"48h","r2_05","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.9",NA,0.9,3,-336.232736799596,NA,FALSE,FALSE,NA,0.732135823210224,8.6578598424118
+"48h","r2_05","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_1",NA,1,3,-335.800953496087,NA,TRUE,FALSE,NA,0.729703552787463,8.6860982291217
+"48h","r2_05","standard","two_param","two_param_0.25_0.25",0.25,0.25,3,-342.598023257706,-294.202477172497,FALSE,FALSE,NA,0.771932534246393,7.91166938916734
+"48h","r2_05","standard","two_param","two_param_0.25_0.50",0.25,0.5,3,-341.631568759715,-294.182790611519,FALSE,FALSE,NA,0.768624301995699,7.93238878966209
+"48h","r2_05","standard","two_param","two_param_0.25_0.75",0.25,0.75,3,-340.538674458689,-294.280040786911,FALSE,FALSE,NA,0.765859909468651,8.04478840256273
+"48h","r2_05","standard","two_param","two_param_0.50_0.25",0.5,0.25,3,-342.323677011882,-294.162067653623,FALSE,TRUE,NA,0.770757404309578,7.91918271245436
+"48h","r2_05","standard","two_param","two_param_0.50_0.50",0.5,0.5,3,-341.470831495914,-294.20437256232,FALSE,FALSE,NA,0.76819639813632,7.93605242835926
+"48h","r2_05","standard","two_param","two_param_0.50_0.75",0.5,0.75,3,-340.465780806706,-294.30973920577,FALSE,FALSE,NA,0.76556565194861,8.06229962858361
+"48h","r2_05","standard","two_param","two_param_0.75_0.25",0.75,0.25,3,-342.052730812068,-294.164113197252,FALSE,FALSE,NA,0.769413527989912,7.92755643747684
+"48h","r2_05","standard","two_param","two_param_0.75_0.50",0.75,0.5,3,-341.30894560622,-294.248199480925,FALSE,FALSE,NA,0.766700596492664,8.03521519484545
+"48h","r2_05","standard","two_param","two_param_0.75_0.75",0.75,0.75,3,-340.391923694087,-294.344152111852,TRUE,FALSE,NA,0.765175465350338,8.08079564691208
+"72h","r2_05","early","cv","cv_factor_per_type",NA,NA,3,-3511.97655399303,-3451.92553096574,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","cv","cv_factor_shared_loadings",NA,NA,3,-3496.02166257605,-3443.79131238778,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","cv","cv_shrinkage_common",NA,NA,3,-3515.22784822872,-3464.76263795708,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","cv","cv_shrinkage_per_type",NA,NA,3,-3511.24797509724,-3457.9657002311,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","cv","cv_two_parameter_common",NA,NA,3,-3502.73025715383,-3451.14175499919,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","cv","cv_two_parameter_per_type",NA,NA,3,-3500.95665575288,-3448.74171388521,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","factor","factor_01",NA,1,3,-3532.22363308604,-3482.06675615223,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","factor","factor_02",NA,2,3,-3528.03638675526,-3474.71040834475,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","factor","factor_03",NA,3,3,-3527.37485459691,-3473.46749207509,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","factor","factor_05",NA,5,3,-3520.68507301084,-3466.6499619535,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","factor","factor_08",NA,8,3,-3509.65248447139,-3451.65269295786,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","factor","factor_12",NA,12,3,-3502.56638193238,-3448.45157440017,TRUE,TRUE,NA,NA,NA
+"72h","r2_05","early","raw factor, positive scales","raw_factor_positive_scales_1",NA,1,3,-3532.22363468749,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","raw factor, positive scales","raw_factor_positive_scales_12",NA,12,3,-3502.59080684537,NA,TRUE,FALSE,NA,NA,NA
+"72h","r2_05","early","raw factor, positive scales","raw_factor_positive_scales_2",NA,2,3,-3528.03645943522,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","raw factor, positive scales","raw_factor_positive_scales_3",NA,3,3,-3527.37505523304,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","raw factor, positive scales","raw_factor_positive_scales_5",NA,5,3,-3520.68510858571,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","raw factor, positive scales","raw_factor_positive_scales_8",NA,8,3,-3509.66996270367,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.1",NA,0.1,3,-3508.33852529207,NA,TRUE,FALSE,NA,NA,NA
+"72h","r2_05","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.25",NA,0.25,3,-3512.18636777637,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.375",NA,0.375,3,-3512.93631282726,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.5",NA,0.5,3,-3512.95098484562,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.625",NA,0.625,3,-3514.05623539457,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.75",NA,0.75,3,-3516.78705140108,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.9",NA,0.9,3,-3522.85377548213,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_1",NA,1,3,-3529.14496966795,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.1",NA,0.1,3,-3505.34775816051,NA,TRUE,FALSE,NA,NA,NA
+"72h","r2_05","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.25",NA,0.25,3,-3509.13160228903,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.375",NA,0.375,3,-3509.79374327376,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.5",NA,0.5,3,-3509.71805889349,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.625",NA,0.625,3,-3510.6984094814,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.75",NA,0.75,3,-3513.24127206411,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.9",NA,0.9,3,-3518.89204374214,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_1",NA,1,3,-3524.57101049346,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","shrinkage","shrinkage_0.100",0,0.1,3,-3508.14012246701,-3447.64339941302,TRUE,TRUE,-19466.5573412859,NA,NA
+"72h","r2_05","early","shrinkage","shrinkage_0.250",0,0.25,3,-3511.92329314032,-3453.0059396503,FALSE,FALSE,-19392.0424077502,NA,NA
+"72h","r2_05","early","shrinkage","shrinkage_0.375",0,0.375,3,-3512.57878738817,-3457.75159807223,FALSE,FALSE,-19368.136508588,NA,NA
+"72h","r2_05","early","shrinkage","shrinkage_0.500",0,0.5,3,-3512.50533105697,-3459.74484954615,FALSE,FALSE,-19362.1013185171,NA,NA
+"72h","r2_05","early","shrinkage","shrinkage_0.625",0,0.625,3,-3513.48639423103,-3462.10473600581,FALSE,FALSE,-19372.0502420049,NA,NA
+"72h","r2_05","early","shrinkage","shrinkage_0.750",0,0.75,3,-3516.02930433297,-3465.87014296232,FALSE,FALSE,-19401.4636937554,NA,NA
+"72h","r2_05","early","shrinkage","shrinkage_0.900",0,0.9,3,-3521.67890408613,-3473.2090131783,FALSE,FALSE,-19485.3884921515,NA,NA
+"72h","r2_05","early","shrinkage","shrinkage_1.000",0,1,3,-3527.35416749317,-3480.76089157096,FALSE,FALSE,-19630.4570823859,NA,NA
+"72h","r2_05","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.1",NA,0.1,3,-3493.15312866682,NA,TRUE,FALSE,NA,NA,NA
+"72h","r2_05","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.25",NA,0.25,3,-3498.42779720182,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.375",NA,0.375,3,-3503.45656960528,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.5",NA,0.5,3,-3508.53233694861,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.625",NA,0.625,3,-3511.85803191945,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.75",NA,0.75,3,-3516.02943593598,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.9",NA,0.9,3,-3523.61516748677,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_1",NA,1,3,-3530.97482682903,NA,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","two_param","two_param_0.25_0.25",0.25,0.25,3,-3508.21912445375,-3453.32644445158,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","two_param","two_param_0.25_0.50",0.25,0.5,3,-3509.68868399916,-3457.6149518641,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","two_param","two_param_0.25_0.75",0.25,0.75,3,-3515.56561302037,-3465.50984975461,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","two_param","two_param_0.50_0.25",0.5,0.25,3,-3502.96393067117,-3449.92230230161,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","two_param","two_param_0.50_0.50",0.5,0.5,3,-3507.36363529579,-3455.77616188305,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","two_param","two_param_0.50_0.75",0.5,0.75,3,-3515.32460212556,-3465.3745656315,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","two_param","two_param_0.75_0.25",0.75,0.25,3,-3498.43639061742,-3446.29624490256,TRUE,TRUE,NA,NA,NA
+"72h","r2_05","early","two_param","two_param_0.75_0.50",0.75,0.5,3,-3505.72488054343,-3454.51527246525,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","early","two_param","two_param_0.75_0.75",0.75,0.75,3,-3515.33822694593,-3465.50376769338,FALSE,FALSE,NA,NA,NA
+"72h","r2_05","standard","cv","cv_factor_per_type",NA,NA,3,-3200.23514063756,-3149.50196035909,FALSE,FALSE,NA,0.0447177291174665,2.57446102805812
+"72h","r2_05","standard","cv","cv_factor_shared_loadings",NA,NA,3,-3198.2182307708,-3147.95170532716,FALSE,FALSE,NA,0.046240340248882,2.63951871712806
+"72h","r2_05","standard","cv","cv_shrinkage_common",NA,NA,3,-3224.71144833062,-3174.08491349811,FALSE,FALSE,NA,0.0409061573014126,2.45654240106348
+"72h","r2_05","standard","cv","cv_shrinkage_per_type",NA,NA,3,-3207.31428270739,-3155.88372425491,FALSE,FALSE,NA,0.0414278661814953,2.68608623496155
+"72h","r2_05","standard","cv","cv_two_parameter_common",NA,NA,3,-3205.01450314945,-3156.5976693828,FALSE,FALSE,NA,0.0436521017586213,2.66350527733379
+"72h","r2_05","standard","cv","cv_two_parameter_per_type",NA,NA,3,-3202.31627195311,-3152.33816412891,FALSE,FALSE,NA,0.0419796376752311,2.68026297231217
+"72h","r2_05","standard","factor","factor_01",NA,1,3,-3241.67969664856,-3191.14280899783,FALSE,FALSE,NA,0.0309372287957654,2.02853214552038
+"72h","r2_05","standard","factor","factor_02",NA,2,3,-3240.0783771998,-3188.32064103098,FALSE,FALSE,NA,0.0394433133535202,2.20796647959672
+"72h","r2_05","standard","factor","factor_03",NA,3,3,-3238.78040741301,-3187.36595052702,FALSE,FALSE,NA,0.0345571073984357,1.28851396096451
+"72h","r2_05","standard","factor","factor_05",NA,5,3,-3232.55942112105,-3182.78412883912,FALSE,FALSE,NA,0.0326848091184549,1.43237788799908
+"72h","r2_05","standard","factor","factor_08",NA,8,3,-3205.06730194625,-3155.07382286847,FALSE,FALSE,NA,0.0401039013911153,1.77776359939346
+"72h","r2_05","standard","factor","factor_12",NA,12,3,-3199.49463711803,-3149.3363822588,TRUE,TRUE,NA,0.0392519679489478,1.80130289472191
+"72h","r2_05","standard","raw factor, positive scales","raw_factor_positive_scales_1",NA,1,3,-3241.67969701515,NA,FALSE,FALSE,NA,0.0309388266572005,2.02845399342034
+"72h","r2_05","standard","raw factor, positive scales","raw_factor_positive_scales_12",NA,12,3,-3199.49464061693,NA,TRUE,FALSE,NA,0.0392512932855428,1.80085746402132
+"72h","r2_05","standard","raw factor, positive scales","raw_factor_positive_scales_2",NA,2,3,-3240.07837723806,NA,FALSE,FALSE,NA,0.0394474161716397,2.20803244685201
+"72h","r2_05","standard","raw factor, positive scales","raw_factor_positive_scales_3",NA,3,3,-3238.7804076653,NA,FALSE,FALSE,NA,0.0345632845003757,1.2884533554898
+"72h","r2_05","standard","raw factor, positive scales","raw_factor_positive_scales_5",NA,5,3,-3232.55942141676,NA,FALSE,FALSE,NA,0.0326894221739022,1.43230105478641
+"72h","r2_05","standard","raw factor, positive scales","raw_factor_positive_scales_8",NA,8,3,-3205.06730423892,NA,FALSE,FALSE,NA,0.0401040096775271,1.77681914390958
+"72h","r2_05","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.1",NA,0.1,3,-3200.86322732066,NA,TRUE,FALSE,NA,0.0343173002394932,1.44216373261607
+"72h","r2_05","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.25",NA,0.25,3,-3205.68514507453,NA,FALSE,FALSE,NA,0.0331880384188232,1.94114414167968
+"72h","r2_05","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.375",NA,0.375,3,-3210.18532304725,NA,FALSE,FALSE,NA,0.0332567658955434,2.05265027812612
+"72h","r2_05","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.5",NA,0.5,3,-3215.15806489049,NA,FALSE,FALSE,NA,0.0341128121286461,2.08641560823583
+"72h","r2_05","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.625",NA,0.625,3,-3220.62661428018,NA,FALSE,FALSE,NA,0.0357961239073468,2.18713891187488
+"72h","r2_05","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.75",NA,0.75,3,-3226.65079478344,NA,FALSE,FALSE,NA,0.0377628586645344,2.42015012122774
+"72h","r2_05","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.9",NA,0.9,3,-3234.89193344277,NA,FALSE,FALSE,NA,0.0393105808769466,2.72163963553879
+"72h","r2_05","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_1",NA,1,3,-3241.54660566871,NA,FALSE,FALSE,NA,0.0400744463697132,2.70221420840437
+"72h","r2_05","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.1",NA,0.1,3,-3224.47936946902,NA,TRUE,FALSE,NA,0.0338604098229983,1.42339693146744
+"72h","r2_05","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.25",NA,0.25,3,-3229.28023500072,NA,FALSE,FALSE,NA,0.0329224721791062,1.83802508531387
+"72h","r2_05","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.375",NA,0.375,3,-3233.74785672201,NA,FALSE,FALSE,NA,0.0338880504108869,2.07655116051396
+"72h","r2_05","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.5",NA,0.5,3,-3238.66679024154,NA,FALSE,FALSE,NA,0.0357923126195193,2.13522692239283
+"72h","r2_05","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.625",NA,0.625,3,-3244.05537737064,NA,FALSE,FALSE,NA,0.0387785338827656,2.41824741403248
+"72h","r2_05","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.75",NA,0.75,3,-3249.9671619608,NA,FALSE,FALSE,NA,0.0416604453319215,2.49406090110463
+"72h","r2_05","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.9",NA,0.9,3,-3257.99636228746,NA,FALSE,FALSE,NA,0.0443924337496662,2.77500320819726
+"72h","r2_05","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_1",NA,1,3,-3264.37602995651,NA,FALSE,FALSE,NA,0.0463122817697084,2.78761572438555
+"72h","r2_05","standard","shrinkage","shrinkage_0.100",0,0.1,3,-3200.75597779579,-3150.67172845745,TRUE,TRUE,-18986.4272923402,0.0338584417016946,1.42511753559857
+"72h","r2_05","standard","shrinkage","shrinkage_0.250",0,0.25,3,-3205.55841716708,-3155.31990229174,FALSE,FALSE,-18966.8464072276,0.0329052305765313,1.83723453282201
+"72h","r2_05","standard","shrinkage","shrinkage_0.375",0,0.375,3,-3210.02677697673,-3159.7171988982,FALSE,FALSE,-18971.0309632742,0.0338453123427856,2.07643641384214
+"72h","r2_05","standard","shrinkage","shrinkage_0.500",0,0.5,3,-3214.94591101534,-3164.57227562972,FALSE,FALSE,-18991.1948878758,0.0357463323772556,2.13640374202779
+"72h","r2_05","standard","shrinkage","shrinkage_0.625",0,0.625,3,-3220.33400908973,-3169.8205967754,FALSE,FALSE,-19029.2578508328,0.0387570378797109,2.41728301367926
+"72h","r2_05","standard","shrinkage","shrinkage_0.750",0,0.75,3,-3226.24547558332,-3175.57052264852,FALSE,FALSE,-19093.6230121546,0.0416608798405745,2.48943968476346
+"72h","r2_05","standard","shrinkage","shrinkage_0.900",0,0.9,3,-3234.27142222939,-3183.36173000034,FALSE,FALSE,-19244.653031305,0.0446659912747876,2.77686486650362
+"72h","r2_05","standard","shrinkage","shrinkage_1.000",0,1,3,-3240.63353858614,-3189.52093738692,FALSE,FALSE,-19481.3139885311,0.0476742969396981,2.79602751765458
+"72h","r2_05","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.1",NA,0.1,3,-3178.75390197674,NA,TRUE,FALSE,NA,0.0498431732074069,2.62078778304304
+"72h","r2_05","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.25",NA,0.25,3,-3184.72158154264,NA,FALSE,FALSE,NA,0.0499266969074475,2.62095846674207
+"72h","r2_05","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.375",NA,0.375,3,-3190.59003149205,NA,FALSE,FALSE,NA,0.0500017152034515,2.62115842385736
+"72h","r2_05","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.5",NA,0.5,3,-3197.33718351651,NA,FALSE,FALSE,NA,0.050109591306436,2.62152850862927
+"72h","r2_05","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.625",NA,0.625,3,-3205.09945678001,NA,FALSE,FALSE,NA,0.0502886956535828,2.62237814057389
+"72h","r2_05","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.75",NA,0.75,3,-3214.12738933939,NA,FALSE,FALSE,NA,0.0505872725173363,2.62455252038842
+"72h","r2_05","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.9",NA,0.9,3,-3227.41868153709,NA,FALSE,FALSE,NA,0.0510373419910795,2.63013076658376
+"72h","r2_05","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_1",NA,1,3,-3239.25029893414,NA,FALSE,FALSE,NA,0.0495044825037445,2.62059525081064
+"72h","r2_05","standard","two_param","two_param_0.25_0.25",0.25,0.25,3,-3202.8575813727,-3153.15001665936,FALSE,FALSE,NA,0.0404383368172579,2.69741842164593
+"72h","r2_05","standard","two_param","two_param_0.25_0.50",0.25,0.5,3,-3212.78077429508,-3162.87327752228,FALSE,FALSE,NA,0.0393451275248509,2.72488187758452
+"72h","r2_05","standard","two_param","two_param_0.25_0.75",0.25,0.75,3,-3224.8454837687,-3174.60221496553,FALSE,FALSE,NA,0.0408838052119577,2.74763602557314
+"72h","r2_05","standard","two_param","two_param_0.50_0.25",0.5,0.25,3,-3200.53517555624,-3151.65540923352,FALSE,FALSE,NA,0.0424395644606506,2.6755485894973
+"72h","r2_05","standard","two_param","two_param_0.50_0.50",0.5,0.5,3,-3210.846535391,-3161.65236778923,FALSE,FALSE,NA,0.0402010116976452,2.70047898304117
+"72h","r2_05","standard","two_param","two_param_0.50_0.75",0.5,0.75,3,-3223.55777125186,-3173.79367139625,FALSE,FALSE,NA,0.0393651756856763,2.72582324613134
+"72h","r2_05","standard","two_param","two_param_0.75_0.25",0.75,0.25,3,-3198.76487440686,-3150.55851680076,TRUE,TRUE,NA,0.0448946670775261,2.6516320374925
+"72h","r2_05","standard","two_param","two_param_0.75_0.50",0.75,0.5,3,-3209.20680920834,-3160.61830061651,FALSE,FALSE,NA,0.0428729941657225,2.67118820872579
+"72h","r2_05","standard","two_param","two_param_0.75_0.75",0.75,0.75,3,-3222.36377280866,-3173.02335308302,FALSE,FALSE,NA,0.0402538033937761,2.69977881733535
+"96h","r2_05","early","cv","cv_factor_per_type",NA,NA,3,-15432.6301298584,-15353.2675052794,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","cv","cv_factor_shared_loadings",NA,NA,3,-15433.4807115853,-15353.3757495344,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","cv","cv_shrinkage_common",NA,NA,3,-15514.2095971095,-15436.6182548861,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","cv","cv_shrinkage_per_type",NA,NA,3,-15467.588664798,-15391.4786931604,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","cv","cv_two_parameter_common",NA,NA,3,-15410.5414062054,-15332.2266749922,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","cv","cv_two_parameter_per_type",NA,NA,3,-15404.5645763339,-15326.9575743824,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","factor","factor_01",NA,1,3,-15693.2973611924,-15618.337438564,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","factor","factor_02",NA,2,3,-15630.3057835441,-15548.9146568953,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","factor","factor_03",NA,3,3,-15606.042559932,-15521.3524744906,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","factor","factor_05",NA,5,3,-15443.3215097903,-15362.9190124591,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","factor","factor_08",NA,8,3,-15440.8437114365,-15362.5283295846,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","factor","factor_12",NA,12,3,-15429.478996899,-15351.6847057882,TRUE,TRUE,NA,NA,NA
+"96h","r2_05","early","raw factor, positive scales","raw_factor_positive_scales_1",NA,1,3,-15693.2973625309,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","raw factor, positive scales","raw_factor_positive_scales_12",NA,12,3,-15429.4789986222,NA,TRUE,FALSE,NA,NA,NA
+"96h","r2_05","early","raw factor, positive scales","raw_factor_positive_scales_2",NA,2,3,-15630.3057833584,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","raw factor, positive scales","raw_factor_positive_scales_3",NA,3,3,-15606.0425613935,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","raw factor, positive scales","raw_factor_positive_scales_5",NA,5,3,-15443.3215109974,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","raw factor, positive scales","raw_factor_positive_scales_8",NA,8,3,-15440.8437137208,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.1",NA,0.1,3,-15548.5686690274,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.25",NA,0.25,3,-15470.0928324066,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.375",NA,0.375,3,-15445.4942684445,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.5",NA,0.5,3,-15439.5719370127,NA,TRUE,FALSE,NA,NA,NA
+"96h","r2_05","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.625",NA,0.625,3,-15448.6579850038,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.75",NA,0.75,3,-15475.7642411711,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.9",NA,0.9,3,-15554.8754386441,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_1",NA,1,3,-15698.0836823127,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.1",NA,0.1,3,-15461.5283371721,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.25",NA,0.25,3,-15382.9314637018,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.375",NA,0.375,3,-15358.2060613484,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.5",NA,0.5,3,-15352.1324991861,NA,TRUE,FALSE,NA,NA,NA
+"96h","r2_05","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.625",NA,0.625,3,-15361.0296984093,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.75",NA,0.75,3,-15387.8688027139,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.9",NA,0.9,3,-15466.2994746874,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_1",NA,1,3,-15606.2614024372,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","shrinkage","shrinkage_0.100",0,0.1,3,-15548.2740222925,-15467.2494098478,FALSE,FALSE,-19466.5573412859,NA,NA
+"96h","r2_05","early","shrinkage","shrinkage_0.250",0,0.25,3,-15469.6689380425,-15391.0167814831,FALSE,FALSE,-19392.0424077502,NA,NA
+"96h","r2_05","early","shrinkage","shrinkage_0.375",0,0.375,3,-15444.9332010219,-15367.1022009964,FALSE,FALSE,-19368.136508588,NA,NA
+"96h","r2_05","early","shrinkage","shrinkage_0.500",0,0.5,3,-15438.8494361629,-15361.4267404115,TRUE,TRUE,-19362.1013185171,NA,NA
+"96h","r2_05","early","shrinkage","shrinkage_0.625",0,0.625,3,-15447.7405531765,-15370.4013342076,FALSE,FALSE,-19372.0502420049,NA,NA
+"96h","r2_05","early","shrinkage","shrinkage_0.750",0,0.75,3,-15474.5827730077,-15397.0889107114,FALSE,FALSE,-19401.4636937554,NA,NA
+"96h","r2_05","early","shrinkage","shrinkage_0.900",0,0.9,3,-15553.0389700431,-15475.6290227263,FALSE,FALSE,-19485.3884921515,NA,NA
+"96h","r2_05","early","shrinkage","shrinkage_1.000",0,1,3,-15692.8506203301,-15619.484890853,FALSE,FALSE,-19630.4570823859,NA,NA
+"96h","r2_05","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.1",NA,0.1,3,-15576.2154175848,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.25",NA,0.25,3,-15503.82305253,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.375",NA,0.375,3,-15464.833712248,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.5",NA,0.5,3,-15441.7250151492,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.625",NA,0.625,3,-15433.1914532579,NA,TRUE,FALSE,NA,NA,NA
+"96h","r2_05","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.75",NA,0.75,3,-15443.7115867008,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.9",NA,0.9,3,-15506.9909393086,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_1",NA,1,3,-15662.9350168715,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","two_param","two_param_0.25_0.25",0.25,0.25,3,-15434.7328383444,-15356.2369244974,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","two_param","two_param_0.25_0.50",0.25,0.5,3,-15426.1485176932,-15348.6224291559,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","two_param","two_param_0.25_0.75",0.25,0.75,3,-15471.8808326683,-15394.2100869273,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","two_param","two_param_0.50_0.25",0.5,0.25,3,-15405.7905342617,-15328.1668057661,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","two_param","two_param_0.50_0.50",0.5,0.5,3,-15414.2281650134,-15336.6624138519,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","two_param","two_param_0.50_0.75",0.5,0.75,3,-15470.3774505928,-15392.3196801787,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","two_param","two_param_0.75_0.25",0.75,0.25,3,-15381.4013281629,-15303.7019192639,TRUE,TRUE,NA,NA,NA
+"96h","r2_05","early","two_param","two_param_0.75_0.50",0.75,0.5,3,-15405.0907495995,-15326.8608523912,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","early","two_param","two_param_0.75_0.75",0.75,0.75,3,-15471.3470503497,-15392.4601760813,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","standard","cv","cv_factor_per_type",NA,NA,3,NA,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","standard","cv","cv_factor_shared_loadings",NA,NA,3,-15445.5809817808,-15366.4752350364,FALSE,FALSE,NA,0.340837253274787,4.41926093109086
+"96h","r2_05","standard","cv","cv_shrinkage_common",NA,NA,3,-15601.6528339894,-15528.1704538604,FALSE,FALSE,NA,0.320377999122492,3.80540111565213
+"96h","r2_05","standard","cv","cv_shrinkage_per_type",NA,NA,3,-15447.0189955116,-15369.7011191087,FALSE,FALSE,NA,0.300924631414873,3.74731941101958
+"96h","r2_05","standard","cv","cv_two_parameter_common",NA,NA,3,-15427.7845125026,-15351.8358157637,FALSE,FALSE,NA,0.335375672645342,4.41550421009144
+"96h","r2_05","standard","cv","cv_two_parameter_per_type",NA,NA,3,-15389.4300116622,-15312.5350440643,FALSE,FALSE,NA,0.329575692464077,4.41111323013441
+"96h","r2_05","standard","factor","factor_01",NA,1,3,NA,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","standard","factor","factor_02",NA,2,3,NA,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","standard","factor","factor_03",NA,3,3,NA,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","standard","factor","factor_05",NA,5,3,NA,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","standard","factor","factor_08",NA,8,3,NA,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","standard","factor","factor_12",NA,12,3,NA,NA,FALSE,FALSE,NA,NA,NA
+"96h","r2_05","standard","raw factor, positive scales","raw_factor_positive_scales_1",NA,1,3,-15925.1835120908,NA,FALSE,FALSE,NA,0.266451815880764,5.1793106284026
+"96h","r2_05","standard","raw factor, positive scales","raw_factor_positive_scales_12",NA,12,3,-15475.4783095616,NA,TRUE,FALSE,NA,0.296559744828286,3.78358457941391
+"96h","r2_05","standard","raw factor, positive scales","raw_factor_positive_scales_2",NA,2,3,-15898.6009056471,NA,FALSE,FALSE,NA,0.246029466184075,3.39075999293212
+"96h","r2_05","standard","raw factor, positive scales","raw_factor_positive_scales_3",NA,3,3,-15701.6320859306,NA,FALSE,FALSE,NA,0.25810968089987,3.19417331961881
+"96h","r2_05","standard","raw factor, positive scales","raw_factor_positive_scales_5",NA,5,3,-15498.0294459956,NA,FALSE,FALSE,NA,0.303442143959951,3.77854487637684
+"96h","r2_05","standard","raw factor, positive scales","raw_factor_positive_scales_8",NA,8,3,-15484.1065291055,NA,FALSE,FALSE,NA,0.309129082889517,3.78843407302684
+"96h","r2_05","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.1",NA,0.1,3,-15442.2690317744,NA,FALSE,FALSE,NA,0.232241241927839,3.51015723806177
+"96h","r2_05","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.25",NA,0.25,3,-15418.4937166754,NA,TRUE,FALSE,NA,0.281239421082222,3.71536067174081
+"96h","r2_05","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.375",NA,0.375,3,-15418.7560004029,NA,FALSE,FALSE,NA,0.299418857751513,3.74762776470765
+"96h","r2_05","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.5",NA,0.5,3,-15434.5677887602,NA,FALSE,FALSE,NA,0.309648128308002,3.769728329735
+"96h","r2_05","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.625",NA,0.625,3,-15467.8502435925,NA,FALSE,FALSE,NA,0.315802659727668,3.78638421495827
+"96h","r2_05","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.75",NA,0.75,3,-15526.9980348489,NA,FALSE,FALSE,NA,0.319406271039724,3.80049111520385
+"96h","r2_05","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.9",NA,0.9,3,-15671.2664318138,NA,FALSE,FALSE,NA,0.31976853328827,3.80882779349303
+"96h","r2_05","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_1",NA,1,3,-15907.6766123143,NA,FALSE,FALSE,NA,0.309639958904862,3.77162790844671
+"96h","r2_05","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.1",NA,0.1,3,-15359.777619045,NA,FALSE,FALSE,NA,0.232118652366688,3.51051756838194
+"96h","r2_05","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.25",NA,0.25,3,-15336.0368009199,NA,TRUE,FALSE,NA,0.28127422569304,3.7149452816958
+"96h","r2_05","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.375",NA,0.375,3,-15336.3012306747,NA,FALSE,FALSE,NA,0.299490450221229,3.74685022225101
+"96h","r2_05","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.5",NA,0.5,3,-15352.1105387717,NA,FALSE,FALSE,NA,0.30973493856004,3.76847272701238
+"96h","r2_05","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.625",NA,0.625,3,-15385.3807607355,NA,FALSE,FALSE,NA,0.31589103805748,3.78438998507033
+"96h","r2_05","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.75",NA,0.75,3,-15444.4864630054,NA,FALSE,FALSE,NA,0.319480322600469,3.79714487538276
+"96h","r2_05","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.9",NA,0.9,3,-15588.4281518562,NA,FALSE,FALSE,NA,0.319701861805693,3.80150508626019
+"96h","r2_05","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_1",NA,1,3,-15819.4275989906,NA,FALSE,FALSE,NA,0.307223119674022,3.75455335983813
+"96h","r2_05","standard","shrinkage","shrinkage_0.100",0,0.1,3,-15442.1406582883,-15359.5817722225,FALSE,FALSE,-18986.4272923402,0.232162955495394,3.51129641655838
+"96h","r2_05","standard","shrinkage","shrinkage_0.250",0,0.25,3,-15418.4075991406,-15338.8005461171,TRUE,TRUE,-18966.8464072276,0.281248380553352,3.71499105663756
+"96h","r2_05","standard","shrinkage","shrinkage_0.375",0,0.375,3,-15418.6628170396,-15340.6279728404,FALSE,FALSE,-18971.0309632742,0.299438036527972,3.74704534308381
+"96h","r2_05","standard","shrinkage","shrinkage_0.500",0,0.5,3,-15434.457270038,-15357.7696474217,FALSE,FALSE,-18991.1948878758,0.309667153170975,3.76893592809689
+"96h","r2_05","standard","shrinkage","shrinkage_0.625",0,0.625,3,-15467.7038050744,-15392.2521438492,FALSE,FALSE,-19029.2578508328,0.315811166143904,3.78527063614041
+"96h","r2_05","standard","shrinkage","shrinkage_0.750",0,0.75,3,-15526.7669500342,-15452.4829633836,FALSE,FALSE,-19093.6230121546,0.319367999774227,3.79835258491974
+"96h","r2_05","standard","shrinkage","shrinkage_0.900",0,0.9,3,-15670.5904426403,-15597.5381351449,FALSE,FALSE,-19244.653031305,0.319599716340186,3.80381416028749
+"96h","r2_05","standard","shrinkage","shrinkage_1.000",0,1,3,-15901.53259853,-15830.3797116043,FALSE,FALSE,-19481.3139885311,0.306951611584334,3.75443539235113
+"96h","r2_05","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.1",NA,0.1,3,-15372.491736775,NA,TRUE,FALSE,NA,0.132419981542706,3.024060404565
+"96h","r2_05","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.25",NA,0.25,3,-15382.8134800842,NA,FALSE,FALSE,NA,0.166152767150702,3.07273381705201
+"96h","r2_05","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.375",NA,0.375,3,-15402.4652934502,NA,FALSE,FALSE,NA,0.188013845405442,3.10975906828457
+"96h","r2_05","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.5",NA,0.5,3,-15433.806198664,NA,FALSE,FALSE,NA,0.207522520739274,3.15112888455904
+"96h","r2_05","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.625",NA,0.625,3,-15481.1387321681,NA,FALSE,FALSE,NA,0.226560351390833,3.21605924959929
+"96h","r2_05","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.75",NA,0.75,3,-15554.7321230686,NA,FALSE,FALSE,NA,0.246646823788225,3.42998673065755
+"96h","r2_05","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.9",NA,0.9,3,-15721.6593687459,NA,FALSE,FALSE,NA,0.272304943494932,3.66638591943774
+"96h","r2_05","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_1",NA,1,3,-15989.8092888218,NA,FALSE,FALSE,NA,0.285194456571868,3.74675173558782
+"96h","r2_05","standard","two_param","two_param_0.25_0.25",0.25,0.25,3,-15398.0565821997,-15320.0178185564,FALSE,FALSE,NA,0.305846560351003,3.80003258100185
+"96h","r2_05","standard","two_param","two_param_0.25_0.50",0.25,0.5,3,-15425.434224942,-15349.1423332541,FALSE,FALSE,NA,0.323135699271986,3.89004511876041
+"96h","r2_05","standard","two_param","two_param_0.25_0.75",0.25,0.75,3,-15525.0694210577,-15450.5736435231,FALSE,FALSE,NA,0.328335384008781,3.94104255064066
+"96h","r2_05","standard","two_param","two_param_0.50_0.25",0.5,0.25,3,-15383.6312333775,-15306.1089242248,FALSE,FALSE,NA,0.322328872085251,4.40552965351016
+"96h","r2_05","standard","two_param","two_param_0.50_0.50",0.5,0.5,3,-15419.9910466003,-15343.8343199152,FALSE,FALSE,NA,0.331556356473971,4.41268112639294
+"96h","r2_05","standard","two_param","two_param_0.50_0.75",0.5,0.75,3,-15525.1954958227,-15450.7748663156,FALSE,FALSE,NA,0.333758961109046,4.41439204947899
+"96h","r2_05","standard","two_param","two_param_0.75_0.25",0.75,0.25,3,-15375.5314159336,-15298.1613226761,TRUE,TRUE,NA,0.328425780117637,4.41020854779329
+"96h","r2_05","standard","two_param","two_param_0.75_0.50",0.75,0.5,3,-15418.7813842842,-15342.6432833507,FALSE,FALSE,NA,0.334933186591035,4.41516898272624
+"96h","r2_05","standard","two_param","two_param_0.75_0.75",0.75,0.75,3,-15527.8060624787,-15453.4755143252,FALSE,FALSE,NA,0.335991701629954,4.41601792830551
+"48h","welch","early","cv","cv_factor_per_type",NA,NA,3,-34423.0471646003,-34366.4616734834,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","cv","cv_factor_shared_loadings",NA,NA,3,-34418.1717457581,-34367.5691951579,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","cv","cv_shrinkage_common",NA,NA,3,-34851.5015107083,-34794.0008904914,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","cv","cv_shrinkage_per_type",NA,NA,3,-34441.825407232,-34380.502242956,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","cv","cv_two_parameter_common",NA,NA,3,-34470.3281151717,-34417.4545850321,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","cv","cv_two_parameter_per_type",NA,NA,3,-34382.8888500519,-34328.3445732486,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","factor","factor_01",NA,1,3,-35696.342770655,-35620.3763124992,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","factor","factor_02",NA,2,3,-35402.1848867639,-35332.2272666856,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","factor","factor_03",NA,3,3,-34682.7578960978,-34630.8534981169,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","factor","factor_05",NA,5,3,-34644.5620322595,-34589.7391788973,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","factor","factor_08",NA,8,3,-34596.3676756274,-34538.8594845936,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","factor","factor_12",NA,12,3,-34590.2021882248,-34536.5328366107,TRUE,TRUE,NA,NA,NA
+"48h","welch","early","raw factor, positive scales","raw_factor_positive_scales_1",NA,1,3,-35510.3067182507,NA,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","raw factor, positive scales","raw_factor_positive_scales_12",NA,12,3,-34590.2021852535,NA,TRUE,FALSE,NA,NA,NA
+"48h","welch","early","raw factor, positive scales","raw_factor_positive_scales_2",NA,2,3,-35402.1848841025,NA,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","raw factor, positive scales","raw_factor_positive_scales_3",NA,3,3,-34682.7578966462,NA,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","raw factor, positive scales","raw_factor_positive_scales_5",NA,5,3,-34644.5620319893,NA,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","raw factor, positive scales","raw_factor_positive_scales_8",NA,8,3,-34596.3676756066,NA,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.1",NA,0.1,3,-34327.0036291367,NA,TRUE,FALSE,NA,NA,NA
+"48h","welch","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.25",NA,0.25,3,-34329.5916644652,NA,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.375",NA,0.375,3,-34359.2830530676,NA,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.5",NA,0.5,3,-34412.3548915288,NA,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.625",NA,0.625,3,-34494.7241357944,NA,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.75",NA,0.75,3,-34623.4857946519,NA,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.9",NA,0.9,3,-34923.8758957149,NA,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_1",NA,1,3,-35513.5909454536,NA,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.1",NA,0.1,3,-34178.9999167646,NA,TRUE,FALSE,NA,NA,NA
+"48h","welch","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.25",NA,0.25,3,-34181.5798678148,NA,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.375",NA,0.375,3,-34211.2594013941,NA,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.5",NA,0.5,3,-34264.3122415948,NA,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.625",NA,0.625,3,-34346.6485841969,NA,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.75",NA,0.75,3,-34475.3393485083,NA,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.9",NA,0.9,3,-34775.3089817947,NA,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_1",NA,1,3,-35358.7878720161,NA,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","shrinkage","shrinkage_0.100",0,0.1,3,-34326.5214488983,-34271.145938543,TRUE,TRUE,-250795.655316062,NA,NA
+"48h","welch","early","shrinkage","shrinkage_0.250",0,0.25,3,-34329.1020677448,-34273.2576739471,FALSE,FALSE,-250291.378029813,NA,NA
+"48h","welch","early","shrinkage","shrinkage_0.375",0,0.375,3,-34358.7831841258,-34302.5935939556,FALSE,FALSE,-250054.086485113,NA,NA
+"48h","welch","early","shrinkage","shrinkage_0.500",0,0.5,3,-34411.838193241,-34355.2720894439,FALSE,FALSE,-250010.930497066,NA,NA
+"48h","welch","early","shrinkage","shrinkage_0.625",0,0.625,3,-34494.1772589994,-34437.1689371457,FALSE,FALSE,-250192.73441994,NA,NA
+"48h","welch","early","shrinkage","shrinkage_0.750",0,0.75,3,-34622.8713440848,-34565.4282891568,FALSE,FALSE,-250676.09588243,NA,NA
+"48h","welch","early","shrinkage","shrinkage_0.900",0,0.9,3,-34922.8456174977,-34865.7771340209,FALSE,FALSE,-252075.39054925,NA,NA
+"48h","welch","early","shrinkage","shrinkage_1.000",0,1,3,-35506.313017445,-35463.0820807143,FALSE,FALSE,-257237.130095487,NA,NA
+"48h","welch","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.1",NA,0.1,3,-34137.8317373723,NA,TRUE,FALSE,NA,NA,NA
+"48h","welch","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.25",NA,0.25,3,-34151.0264989997,NA,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.375",NA,0.375,3,-34187.0799498796,NA,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.5",NA,0.5,3,-34248.7487356809,NA,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.625",NA,0.625,3,-34344.9603523317,NA,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.75",NA,0.75,3,-34497.9419070064,NA,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.9",NA,0.9,3,-34860.7803476108,NA,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_1",NA,1,3,-35564.737213616,NA,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","two_param","two_param_0.25_0.25",0.25,0.25,3,-34317.3615395717,-34263.0769544029,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","two_param","two_param_0.25_0.50",0.25,0.5,3,-34402.041289589,-34347.1671894157,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","two_param","two_param_0.25_0.75",0.25,0.75,3,-34615.5960249089,-34559.7928028518,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","two_param","two_param_0.50_0.25",0.5,0.25,3,-34302.9819606747,-34250.3991057402,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","two_param","two_param_0.50_0.50",0.5,0.5,3,-34391.4754475016,-34338.2196766578,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","two_param","two_param_0.50_0.75",0.5,0.75,3,-34608.7041029536,-34554.295595345,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","two_param","two_param_0.75_0.25",0.75,0.25,3,-34288.9576259018,-34237.6765862937,TRUE,TRUE,NA,NA,NA
+"48h","welch","early","two_param","two_param_0.75_0.50",0.75,0.5,3,-34382.6976077314,-34330.4646679623,FALSE,FALSE,NA,NA,NA
+"48h","welch","early","two_param","two_param_0.75_0.75",0.75,0.75,3,-34604.1276572391,-34550.4646221149,FALSE,FALSE,NA,NA,NA
+"48h","welch","standard","cv","cv_factor_per_type",NA,NA,3,-33964.5144931319,-33916.2767578001,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","welch","standard","cv","cv_factor_shared_loadings",NA,NA,3,-34033.6128543953,-33983.6040304746,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","welch","standard","cv","cv_shrinkage_common",NA,NA,3,-34480.7583943572,-34435.8774486774,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","welch","standard","cv","cv_shrinkage_per_type",NA,NA,3,-33952.1500295155,-33905.7538037784,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","welch","standard","cv","cv_two_parameter_common",NA,NA,3,-34067.4220203882,-34021.3419870167,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","welch","standard","cv","cv_two_parameter_per_type",NA,NA,3,-33936.176313912,-33889.5075417115,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","welch","standard","factor","factor_01",NA,1,3,NA,NA,FALSE,FALSE,NA,NA,NA
+"48h","welch","standard","factor","factor_02",NA,2,3,-35273.9011349806,-35224.5470895262,FALSE,FALSE,NA,0.147958798490253,1.7957082671534
+"48h","welch","standard","factor","factor_03",NA,3,3,-34296.8992214259,-34241.4758126963,FALSE,FALSE,NA,0.0192217723574164,2.79489867975239
+"48h","welch","standard","factor","factor_05",NA,5,3,-34284.5987764121,-34228.2058828424,FALSE,FALSE,NA,0.0137870115825568,1.12814830809589
+"48h","welch","standard","factor","factor_08",NA,8,3,-34177.8445410337,-34130.6690944888,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","welch","standard","factor","factor_12",NA,12,3,-34175.3675866257,-34126.798994591,TRUE,TRUE,NA,0.0213104395588599,2.29721073912963
+"48h","welch","standard","raw factor, positive scales","raw_factor_positive_scales_1",NA,1,3,-35288.6916766645,NA,FALSE,FALSE,NA,0.0210726423930009,2.29721073912963
+"48h","welch","standard","raw factor, positive scales","raw_factor_positive_scales_12",NA,12,3,-34175.3675866257,NA,TRUE,FALSE,NA,0.0213104423196582,2.29721073912963
+"48h","welch","standard","raw factor, positive scales","raw_factor_positive_scales_2",NA,2,3,-35223.8590503987,NA,FALSE,FALSE,NA,0.00657709014338559,1.02235066350889
+"48h","welch","standard","raw factor, positive scales","raw_factor_positive_scales_3",NA,3,3,-34296.8992212181,NA,FALSE,FALSE,NA,0.0192221054982309,2.79481120217773
+"48h","welch","standard","raw factor, positive scales","raw_factor_positive_scales_5",NA,5,3,-34284.598776236,NA,FALSE,FALSE,NA,0.0137855233865286,1.12764569001114
+"48h","welch","standard","raw factor, positive scales","raw_factor_positive_scales_8",NA,8,3,-34177.8445410337,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","welch","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.1",NA,0.1,3,-33869.865490071,NA,TRUE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","welch","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.25",NA,0.25,3,-33873.5245497425,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","welch","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.375",NA,0.375,3,-33908.852675698,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","welch","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.5",NA,0.5,3,-33971.0509824975,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","welch","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.625",NA,0.625,3,-34066.5578280846,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","welch","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.75",NA,0.75,3,-34215.5181530799,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","welch","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.9",NA,0.9,3,-34565.7563869663,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","welch","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_1",NA,1,3,-35277.5797706723,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","welch","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.1",NA,0.1,3,-34176.4139588519,NA,TRUE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","welch","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.25",NA,0.25,3,-34180.0631175425,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","welch","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.375",NA,0.375,3,-34215.3785603657,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","welch","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.5",NA,0.5,3,-34277.5516263771,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","welch","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.625",NA,0.625,3,-34373.005525861,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","welch","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.75",NA,0.75,3,-34521.8404323651,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","welch","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.9",NA,0.9,3,-34871.451731201,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","welch","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_1",NA,1,3,-35573.0227311831,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","welch","standard","shrinkage","shrinkage_0.100",0,0.1,3,-33869.2651823412,-33821.6983369618,TRUE,TRUE,-248946.880776323,0.0213448246294739,2.29721073912963
+"48h","welch","standard","shrinkage","shrinkage_0.250",0,0.25,3,-33872.9161134544,-33825.8657563532,FALSE,FALSE,-247739.96399244,0.0213448246294739,2.29721073912963
+"48h","welch","standard","shrinkage","shrinkage_0.375",0,0.375,3,-33908.2331437368,-33861.5541975262,FALSE,FALSE,-247101.136214677,0.0213448246294739,2.29721073912963
+"48h","welch","standard","shrinkage","shrinkage_0.500",0,0.5,3,-33970.4081226437,-33924.109847824,FALSE,FALSE,-246971.954291742,0.0213448246294739,2.29721073912963
+"48h","welch","standard","shrinkage","shrinkage_0.625",0,0.625,3,-34065.8644646271,-34019.9878668843,FALSE,FALSE,-247226.189793918,0.0213448246294739,2.29721073912963
+"48h","welch","standard","shrinkage","shrinkage_0.750",0,0.75,3,-34214.7026162903,-34169.3078234429,FALSE,FALSE,-247908.099395358,0.0213448246294739,2.29721073912963
+"48h","welch","standard","shrinkage","shrinkage_0.900",0,0.9,3,-34564.3192853724,-34519.5347063914,FALSE,FALSE,-249863.010524391,0.0213448246294739,2.29721073912963
+"48h","welch","standard","shrinkage","shrinkage_1.000",0,1,3,-35265.8769925907,-35214.2543805447,FALSE,FALSE,-256489.496230848,0.0213448246294739,2.29721073912963
+"48h","welch","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.1",NA,0.1,3,-33603.3467721088,NA,TRUE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","welch","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.25",NA,0.25,3,-33632.0780272948,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","welch","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.375",NA,0.375,3,-33683.4080913306,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","welch","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.5",NA,0.5,3,-33763.6575835145,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","welch","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.625",NA,0.625,3,-33883.9173813222,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","welch","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.75",NA,0.75,3,-34071.0504550107,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","welch","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.9",NA,0.9,3,-34509.2707670115,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","welch","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_1",NA,1,3,-35370.4959431193,NA,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","welch","standard","two_param","two_param_0.25_0.25",0.25,0.25,3,-33872.6444220301,-33825.4747743546,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","welch","standard","two_param","two_param_0.25_0.50",0.25,0.5,3,-33970.6595899895,-33924.2787110474,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","welch","standard","two_param","two_param_0.25_0.75",0.25,0.75,3,-34215.3451093312,-34169.8942950648,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","welch","standard","two_param","two_param_0.50_0.25",0.5,0.25,3,-33872.5992165094,-33825.3144164457,TRUE,TRUE,NA,0.0213448246294739,2.29721073912963
+"48h","welch","standard","two_param","two_param_0.50_0.50",0.5,0.5,3,-33971.0126285862,-33924.5515946588,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","welch","standard","two_param","two_param_0.50_0.75",0.5,0.75,3,-34216.0261518172,-34170.5207436881,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","welch","standard","two_param","two_param_0.75_0.25",0.75,0.25,3,-33872.7511017737,-33825.3553523237,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","welch","standard","two_param","two_param_0.75_0.50",0.75,0.5,3,-33971.4598152689,-33924.9210323671,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"48h","welch","standard","two_param","two_param_0.75_0.75",0.75,0.75,3,-34216.7447248335,-34171.1860995163,FALSE,FALSE,NA,0.0213448246294739,2.29721073912963
+"72h","welch","early","cv","cv_factor_per_type",NA,NA,3,-81572.0028979813,-81524.8187621207,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","cv","cv_factor_shared_loadings",NA,NA,3,-81406.2063311814,-81338.8201871262,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","cv","cv_shrinkage_common",NA,NA,3,-82697.5414882516,-82647.0793270295,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","cv","cv_shrinkage_per_type",NA,NA,3,-82255.5529936899,-82184.8545015703,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","cv","cv_two_parameter_common",NA,NA,3,-81965.4082674185,-81917.406180255,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","cv","cv_two_parameter_per_type",NA,NA,3,-81918.081335876,-81872.6881652499,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","factor","factor_01",NA,1,3,-83565.411749924,-83510.7801727582,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","factor","factor_02",NA,2,3,-83433.9765223127,-83376.0192517762,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","factor","factor_03",NA,3,3,-82957.8200033321,-82873.0317344567,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","factor","factor_05",NA,5,3,-82658.7752385516,-82604.3490833441,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","factor","factor_08",NA,8,3,-81909.7334677324,-81861.4850880063,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","factor","factor_12",NA,12,3,-81663.7478972481,-81616.3170631726,TRUE,TRUE,NA,NA,NA
+"72h","welch","early","raw factor, positive scales","raw_factor_positive_scales_1",NA,1,3,-83565.4117002929,NA,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","raw factor, positive scales","raw_factor_positive_scales_12",NA,12,3,-81663.7477622171,NA,TRUE,FALSE,NA,NA,NA
+"72h","welch","early","raw factor, positive scales","raw_factor_positive_scales_2",NA,2,3,-83433.9765111446,NA,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","raw factor, positive scales","raw_factor_positive_scales_3",NA,3,3,-82957.8200016078,NA,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","raw factor, positive scales","raw_factor_positive_scales_5",NA,5,3,-82658.7752316598,NA,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","raw factor, positive scales","raw_factor_positive_scales_8",NA,8,3,-81909.7334765324,NA,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.1",NA,0.1,3,-82146.9894542417,NA,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.25",NA,0.25,3,-81842.7805434156,NA,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.375",NA,0.375,3,-81667.8001765231,NA,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.5",NA,0.5,3,-81611.5881104612,NA,TRUE,FALSE,NA,NA,NA
+"72h","welch","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.625",NA,0.625,3,-81673.8408615974,NA,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.75",NA,0.75,3,-81869.7716499654,NA,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.9",NA,0.9,3,-82434.6664230077,NA,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_1",NA,1,3,-83546.0449640019,NA,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.1",NA,0.1,3,-82077.3528928452,NA,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.25",NA,0.25,3,-81772.7151486705,NA,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.375",NA,0.375,3,-81596.9009812677,NA,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.5",NA,0.5,3,-81540.6862287711,NA,TRUE,FALSE,NA,NA,NA
+"72h","welch","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.625",NA,0.625,3,-81602.8045977156,NA,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.75",NA,0.75,3,-81798.4345095586,NA,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.9",NA,0.9,3,-82362.1215341533,NA,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_1",NA,1,3,-83442.7551281156,NA,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","shrinkage","shrinkage_0.100",0,0.1,3,-82145.5676282929,-82029.2799671098,FALSE,FALSE,-250795.655316062,NA,NA
+"72h","welch","early","shrinkage","shrinkage_0.250",0,0.25,3,-81840.9328728122,-81767.5301711095,FALSE,FALSE,-250291.378029813,NA,NA
+"72h","welch","early","shrinkage","shrinkage_0.375",0,0.375,3,-81665.124762791,-81607.7046095131,FALSE,FALSE,-250054.086485113,NA,NA
+"72h","welch","early","shrinkage","shrinkage_0.500",0,0.5,3,-81608.9104861054,-81550.0976106329,TRUE,TRUE,-250010.930497066,NA,NA
+"72h","welch","early","shrinkage","shrinkage_0.625",0,0.625,3,-81671.0289845094,-81610.2167308069,FALSE,FALSE,-250192.73441994,NA,NA
+"72h","welch","early","shrinkage","shrinkage_0.750",0,0.75,3,-81866.6589487942,-81804.2045669138,FALSE,FALSE,-250676.09588243,NA,NA
+"72h","welch","early","shrinkage","shrinkage_0.900",0,0.9,3,-82430.3449042913,-82373.0320129575,FALSE,FALSE,-252075.39054925,NA,NA
+"72h","welch","early","shrinkage","shrinkage_1.000",0,1,3,-83510.9691407201,-83462.0263561135,FALSE,FALSE,-257237.130095487,NA,NA
+"72h","welch","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.1",NA,0.1,3,-81850.1857494229,NA,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.25",NA,0.25,3,-81490.1911742803,NA,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.375",NA,0.375,3,-81234.6648834858,NA,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.5",NA,0.5,3,-81123.0577650882,NA,TRUE,FALSE,NA,NA,NA
+"72h","welch","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.625",NA,0.625,3,-81148.1608816263,NA,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.75",NA,0.75,3,-81340.2450813133,NA,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.9",NA,0.9,3,-82043.8764916909,NA,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_1",NA,1,3,-83646.8234003737,NA,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","two_param","two_param_0.25_0.25",0.25,0.25,3,-81800.3957325951,-81750.552297176,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","two_param","two_param_0.25_0.50",0.25,0.5,3,-81562.7506413226,-81511.7849986209,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","two_param","two_param_0.25_0.75",0.25,0.75,3,-81823.8088488923,-81770.7217577112,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","two_param","two_param_0.50_0.25",0.5,0.25,3,-81703.3387432982,-81648.5752043718,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","two_param","two_param_0.50_0.50",0.5,0.5,3,-81490.7975804148,-81443.6859025856,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","two_param","two_param_0.50_0.75",0.5,0.75,3,-81761.0623661964,-81714.6274426689,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","two_param","two_param_0.75_0.25",0.75,0.25,3,-81607.9747709855,-81549.1939827822,FALSE,FALSE,NA,NA,NA
+"72h","welch","early","two_param","two_param_0.75_0.50",0.75,0.5,3,-81391.1256798133,-81338.3370937399,TRUE,TRUE,NA,NA,NA
+"72h","welch","early","two_param","two_param_0.75_0.75",0.75,0.75,3,-81670.4585802585,-81621.5111282281,FALSE,FALSE,NA,NA,NA
+"72h","welch","standard","cv","cv_factor_per_type",NA,NA,3,-79493.3007543621,-79449.1101986316,FALSE,FALSE,NA,0.0538021367144355,2.96960785017065
+"72h","welch","standard","cv","cv_factor_shared_loadings",NA,NA,3,-79605.8558135067,-79561.6745820844,FALSE,FALSE,NA,0.0539043909268273,2.96960785017065
+"72h","welch","standard","cv","cv_shrinkage_common",NA,NA,3,-80800.8427428059,-80750.2483334262,FALSE,FALSE,NA,0.0536864938783582,2.96960785017065
+"72h","welch","standard","cv","cv_shrinkage_per_type",NA,NA,3,-80143.9545499393,-80097.2677367508,FALSE,FALSE,NA,0.0539043909268273,2.96960785017065
+"72h","welch","standard","cv","cv_two_parameter_common",NA,NA,3,-80137.1005530552,-80091.9646025412,FALSE,FALSE,NA,0.0539043909268273,2.96960785017065
+"72h","welch","standard","cv","cv_two_parameter_per_type",NA,NA,3,-80002.7862632711,-79957.9470952403,FALSE,FALSE,NA,0.0539043909268273,2.96960785017065
+"72h","welch","standard","factor","factor_01",NA,1,3,-81922.9646007641,-81879.2581255307,FALSE,FALSE,NA,0.0281085962571124,2.00882192175879
+"72h","welch","standard","factor","factor_02",NA,2,3,-81770.7588337988,-81658.9241633651,FALSE,FALSE,NA,0.0310439862991606,2.41112589265008
+"72h","welch","standard","factor","factor_03",NA,3,3,-81262.1232817175,-81148.5806083307,FALSE,FALSE,NA,0.0292069727563233,1.15502672234044
+"72h","welch","standard","factor","factor_05",NA,5,3,-80943.9665677415,-80882.3844805761,FALSE,FALSE,NA,0.00988435889216551,0.581463762596477
+"72h","welch","standard","factor","factor_08",NA,8,3,-79926.3127670135,-79879.7970270012,FALSE,FALSE,NA,0.0475387700730501,2.08095203384478
+"72h","welch","standard","factor","factor_12",NA,12,3,-79684.6201118458,-79639.7484910642,TRUE,TRUE,NA,0.0514329114867706,2.58557559942027
+"72h","welch","standard","raw factor, positive scales","raw_factor_positive_scales_1",NA,1,3,-81922.9646008147,NA,FALSE,FALSE,NA,0.0281123819024322,2.00878556932365
+"72h","welch","standard","raw factor, positive scales","raw_factor_positive_scales_12",NA,12,3,-79684.6200699991,NA,TRUE,FALSE,NA,0.0514366329489998,2.58618112530198
+"72h","welch","standard","raw factor, positive scales","raw_factor_positive_scales_2",NA,2,3,-81770.7588743075,NA,FALSE,FALSE,NA,0.0311317702286778,2.41162836569926
+"72h","welch","standard","raw factor, positive scales","raw_factor_positive_scales_3",NA,3,3,-81262.1233072782,NA,FALSE,FALSE,NA,0.0292699510655084,1.15521966223196
+"72h","welch","standard","raw factor, positive scales","raw_factor_positive_scales_5",NA,5,3,-80943.9665794771,NA,FALSE,FALSE,NA,0.00988878769453248,0.579999449452642
+"72h","welch","standard","raw factor, positive scales","raw_factor_positive_scales_8",NA,8,3,-79926.3127584628,NA,FALSE,FALSE,NA,0.0475471577911856,2.08170716538246
+"72h","welch","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.1",NA,0.1,3,-80373.3571059639,NA,FALSE,FALSE,NA,0.0261856275057172,0.812345604207625
+"72h","welch","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.25",NA,0.25,3,-79691.7863755016,NA,FALSE,FALSE,NA,0.0327524783221765,0.92809008162438
+"72h","welch","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.375",NA,0.375,3,-79508.6039167208,NA,FALSE,FALSE,NA,0.0376011149991162,1.2311268292307
+"72h","welch","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.5",NA,0.5,3,-79480.7594623995,NA,TRUE,FALSE,NA,0.0431865403477582,1.72872013296829
+"72h","welch","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.625",NA,0.625,3,-79573.8640445346,NA,FALSE,FALSE,NA,0.0489561723248807,2.43802099670391
+"72h","welch","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.75",NA,0.75,3,-79810.4225919405,NA,FALSE,FALSE,NA,0.0511740802344469,2.63252554773891
+"72h","welch","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.9",NA,0.9,3,-80476.2821971644,NA,FALSE,FALSE,NA,0.0533739600605337,2.83650234949286
+"72h","welch","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_1",NA,1,3,-81862.1062694039,NA,FALSE,FALSE,NA,0.0539043909268273,2.96960785017065
+"72h","welch","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.1",NA,0.1,3,-80951.5519426,NA,FALSE,FALSE,NA,0.026205402387851,0.811200680865027
+"72h","welch","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.25",NA,0.25,3,-80269.9282144717,NA,FALSE,FALSE,NA,0.0327776685296737,0.927950013450794
+"72h","welch","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.375",NA,0.375,3,-80086.702230138,NA,FALSE,FALSE,NA,0.0376234549550283,1.23787296680759
+"72h","welch","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.5",NA,0.5,3,-80058.8043166942,NA,TRUE,FALSE,NA,0.0431518635222473,1.69908934473253
+"72h","welch","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.625",NA,0.625,3,-80151.871476633,NA,FALSE,FALSE,NA,0.0490394402465976,2.42793125154953
+"72h","welch","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.75",NA,0.75,3,-80388.1916587966,NA,FALSE,FALSE,NA,0.0512670033226939,2.6343794286662
+"72h","welch","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.9",NA,0.9,3,-81053.2360609955,NA,FALSE,FALSE,NA,0.0532354503492352,2.79608567006505
+"72h","welch","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_1",NA,1,3,-82420.9483447902,NA,FALSE,FALSE,NA,0.0539043909268273,2.96960785017065
+"72h","welch","standard","shrinkage","shrinkage_0.100",0,0.1,3,-80372.1376291129,-80325.5602801238,FALSE,FALSE,-248946.880776323,0.0262475414861578,0.814991525277466
+"72h","welch","standard","shrinkage","shrinkage_0.250",0,0.25,3,-79690.5228419479,-79645.7699685433,FALSE,FALSE,-247739.96399244,0.0327428385109589,0.928046438187267
+"72h","welch","standard","shrinkage","shrinkage_0.375",0,0.375,3,-79507.3018838377,-79463.3881334667,FALSE,FALSE,-247101.136214677,0.0376245461764667,1.23967500395951
+"72h","welch","standard","shrinkage","shrinkage_0.500",0,0.5,3,-79479.4069838052,-79436.0580543671,TRUE,TRUE,-246971.954291742,0.0431425453443481,1.70130423209909
+"72h","welch","standard","shrinkage","shrinkage_0.625",0,0.625,3,-79572.4722537005,-79529.1928245184,FALSE,FALSE,-247226.189793918,0.0490311530033012,2.43003024661391
+"72h","welch","standard","shrinkage","shrinkage_0.750",0,0.75,3,-79808.8001201374,-79764.5574972917,FALSE,FALSE,-247908.099395358,0.0512573989172861,2.63417873397401
+"72h","welch","standard","shrinkage","shrinkage_0.900",0,0.9,3,-80473.8459465675,-80425.2776058311,FALSE,FALSE,-249863.010524391,0.0532344219440339,2.79582759257031
+"72h","welch","standard","shrinkage","shrinkage_1.000",0,1,3,-81841.3963518267,-81795.2970665957,FALSE,FALSE,-256489.496230848,0.0539043909268273,2.96960785017065
+"72h","welch","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.1",NA,0.1,3,-80096.5545020574,NA,FALSE,FALSE,NA,0.0216736163441568,0.7624975743823
+"72h","welch","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.25",NA,0.25,3,-79279.9901946361,NA,FALSE,FALSE,NA,0.0299453313528905,0.879076345587406
+"72h","welch","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.375",NA,0.375,3,-79010.5363543781,NA,FALSE,FALSE,NA,0.0371066109920176,1.06573501525121
+"72h","welch","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.5",NA,0.5,3,-78911.526412322,NA,TRUE,FALSE,NA,0.045820801082961,1.62336466036112
+"72h","welch","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.625",NA,0.625,3,-78948.728180209,NA,FALSE,FALSE,NA,0.0526165664228029,2.8255968536414
+"72h","welch","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.75",NA,0.75,3,-79158.7185932859,NA,FALSE,FALSE,NA,0.0535389011356103,2.95256299376017
+"72h","welch","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.9",NA,0.9,3,-79917.4858806817,NA,FALSE,FALSE,NA,0.0539043909268273,2.96960785017065
+"72h","welch","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_1",NA,1,3,-81906.2208654767,NA,FALSE,FALSE,NA,0.0539043909268273,2.96960785017065
+"72h","welch","standard","two_param","two_param_0.25_0.25",0.25,0.25,3,-79676.8908203751,-79632.3047605296,FALSE,FALSE,NA,0.0456583370793259,1.89129314688327
+"72h","welch","standard","two_param","two_param_0.25_0.50",0.25,0.5,3,-79466.8509124182,-79423.4713151935,FALSE,FALSE,NA,0.0518930850828763,2.65324452328218
+"72h","welch","standard","two_param","two_param_0.25_0.75",0.25,0.75,3,-79802.546146791,-79758.2254484279,FALSE,FALSE,NA,0.0539043909268273,2.96960785017065
+"72h","welch","standard","two_param","two_param_0.50_0.25",0.5,0.25,3,-79663.0231132773,-79618.4967368917,FALSE,FALSE,NA,0.0532302610871917,2.79478879180309
+"72h","welch","standard","two_param","two_param_0.50_0.50",0.5,0.5,3,-79458.4268299573,-79415.0882470492,FALSE,FALSE,NA,0.0539043909268273,2.96960785017065
+"72h","welch","standard","two_param","two_param_0.50_0.75",0.5,0.75,3,-79798.8419536543,-79754.9014004521,FALSE,FALSE,NA,0.0539043909268273,2.96960785017065
+"72h","welch","standard","two_param","two_param_0.75_0.25",0.75,0.25,3,-79658.0001053009,-79613.5033796811,FALSE,FALSE,NA,0.0539043909268273,2.96960785017065
+"72h","welch","standard","two_param","two_param_0.75_0.50",0.75,0.5,3,-79455.2434362256,-79412.0686312704,TRUE,TRUE,NA,0.0539043909268273,2.96960785017065
+"72h","welch","standard","two_param","two_param_0.75_0.75",0.75,0.75,3,-79797.5500485674,-79753.9070805749,FALSE,FALSE,NA,0.0539043909268273,2.96960785017065
+"96h","welch","early","cv","cv_factor_per_type",NA,NA,3,-134040.630968039,-133956.279023433,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","cv","cv_factor_shared_loadings",NA,NA,3,-133888.270723104,-133765.900939307,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","cv","cv_shrinkage_common",NA,NA,3,-134765.053107474,-134693.927616661,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","cv","cv_shrinkage_per_type",NA,NA,3,-134672.348479175,-134577.397893126,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","cv","cv_two_parameter_common",NA,NA,3,-133882.446153725,-133798.063580715,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","cv","cv_two_parameter_per_type",NA,NA,3,-133841.149622917,-133763.479585471,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","factor","factor_01",NA,1,3,NA,NA,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","factor","factor_02",NA,2,3,-134887.2992166,-134730.384066844,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","factor","factor_03",NA,3,3,-134891.330835881,-134753.62805564,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","factor","factor_05",NA,5,3,-134535.794320424,-134449.534631139,TRUE,TRUE,NA,NA,NA
+"96h","welch","early","factor","factor_08",NA,8,3,-134581.452711736,-134493.790646506,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","factor","factor_12",NA,12,3,-134570.118696605,-134487.351427648,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","raw factor, positive scales","raw_factor_positive_scales_1",NA,1,3,-137883.92950087,NA,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","raw factor, positive scales","raw_factor_positive_scales_12",NA,12,3,-134570.169749783,NA,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","raw factor, positive scales","raw_factor_positive_scales_2",NA,2,3,-134887.298281673,NA,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","raw factor, positive scales","raw_factor_positive_scales_3",NA,3,3,-134891.330813683,NA,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","raw factor, positive scales","raw_factor_positive_scales_5",NA,5,3,-134535.794328623,NA,TRUE,FALSE,NA,NA,NA
+"96h","welch","early","raw factor, positive scales","raw_factor_positive_scales_8",NA,8,3,-134581.452828847,NA,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.1",NA,0.1,3,-134550.787166422,NA,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.25",NA,0.25,3,-134124.093511836,NA,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.375",NA,0.375,3,-134032.317133375,NA,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.5",NA,0.5,3,-133991.885768823,NA,TRUE,FALSE,NA,NA,NA
+"96h","welch","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.625",NA,0.625,3,-134029.69700046,NA,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.75",NA,0.75,3,-134189.482922677,NA,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.9",NA,0.9,3,-134726.191987084,NA,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","raw shrinkage, linked scales","raw_shrinkage_linked_scales_1",NA,1,3,-138262.971178528,NA,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.1",NA,0.1,3,-133528.451590648,NA,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.25",NA,0.25,3,-133326.166849056,NA,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.375",NA,0.375,3,-133234.96402246,NA,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.5",NA,0.5,3,-133195.027279204,NA,TRUE,FALSE,NA,NA,NA
+"96h","welch","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.625",NA,0.625,3,-133232.334005669,NA,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.75",NA,0.75,3,-133391.338938497,NA,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.9",NA,0.9,3,-133926.977493844,NA,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_1",NA,1,3,-137426.246855086,NA,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","shrinkage","shrinkage_0.100",0,0.1,3,-134323.566238871,-134178.804596326,FALSE,FALSE,-250795.655316062,NA,NA
+"96h","welch","early","shrinkage","shrinkage_0.250",0,0.25,3,-134121.343089256,-133994.78579964,FALSE,FALSE,-250291.378029813,NA,NA
+"96h","welch","early","shrinkage","shrinkage_0.375",0,0.375,3,-134030.178538196,-133924.101831796,FALSE,FALSE,-250054.086485113,NA,NA
+"96h","welch","early","shrinkage","shrinkage_0.500",0,0.5,3,-133990.18181772,-133903.690819123,TRUE,TRUE,-250010.930497066,NA,NA
+"96h","welch","early","shrinkage","shrinkage_0.625",0,0.625,3,-134027.528176431,-133947.144754601,FALSE,FALSE,-250192.73441994,NA,NA
+"96h","welch","early","shrinkage","shrinkage_0.750",0,0.75,3,-134186.565589551,-134102.300341937,FALSE,FALSE,-250676.09588243,NA,NA
+"96h","welch","early","shrinkage","shrinkage_0.900",0,0.9,3,-134722.200027461,-134649.069347572,FALSE,FALSE,-252075.39054925,NA,NA
+"96h","welch","early","shrinkage","shrinkage_1.000",0,1,3,-138219.847937322,-138072.462437991,FALSE,FALSE,-257237.130095487,NA,NA
+"96h","welch","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.1",NA,0.1,3,-133219.015956045,NA,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.25",NA,0.25,3,-132972.018985103,NA,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.375",NA,0.375,3,-132836.170187769,NA,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.5",NA,0.5,3,-132746.724609513,NA,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.625",NA,0.625,3,-132734.334369952,NA,TRUE,FALSE,NA,NA,NA
+"96h","welch","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.75",NA,0.75,3,-132878.064070568,NA,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.9",NA,0.9,3,-133657.902692911,NA,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_1",NA,1,3,-138347.487433869,NA,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","two_param","two_param_0.25_0.25",0.25,0.25,3,-133806.325030729,-133642.610556962,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","two_param","two_param_0.25_0.50",0.25,0.5,3,-133699.835565358,-133596.447158131,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","two_param","two_param_0.25_0.75",0.25,0.75,3,-133967.073620578,-133890.328070545,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","two_param","two_param_0.50_0.25",0.5,0.25,3,-133829.104708178,-133688.707751758,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","two_param","two_param_0.50_0.50",0.5,0.5,3,-133450.515698809,-133345.891494568,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","two_param","two_param_0.50_0.75",0.5,0.75,3,-133712.865567909,-133634.505109442,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","two_param","two_param_0.75_0.25",0.75,0.25,3,-133869.641108087,-133741.388837508,FALSE,FALSE,NA,NA,NA
+"96h","welch","early","two_param","two_param_0.75_0.50",0.75,0.5,3,-133267.316905453,-133164.305222465,TRUE,TRUE,NA,NA,NA
+"96h","welch","early","two_param","two_param_0.75_0.75",0.75,0.75,3,-133519.517042011,-133432.539747391,FALSE,FALSE,NA,NA,NA
+"96h","welch","standard","cv","cv_factor_per_type",NA,NA,3,-134030.318156596,-133959.178101466,FALSE,FALSE,NA,0.0607155941984831,2.95668702044979
+"96h","welch","standard","cv","cv_factor_shared_loadings",NA,NA,3,-134425.92303845,-134355.346373033,FALSE,FALSE,NA,0.214382046212352,3.47038230097879
+"96h","welch","standard","cv","cv_shrinkage_common",NA,NA,3,-134897.296185538,-134802.880317038,FALSE,FALSE,NA,0.139751654624802,2.45352120804008
+"96h","welch","standard","cv","cv_shrinkage_per_type",NA,NA,3,-134517.700392681,-134413.060016651,FALSE,FALSE,NA,0.0996653915562679,3.50466199235886
+"96h","welch","standard","cv","cv_two_parameter_common",NA,NA,3,-134261.22807573,-134186.451896849,FALSE,FALSE,NA,0.212081328811096,3.62949829226557
+"96h","welch","standard","cv","cv_two_parameter_per_type",NA,NA,3,-134070.001704553,-133995.65584083,FALSE,FALSE,NA,0.203333449036318,3.61990400513392
+"96h","welch","standard","factor","factor_01",NA,1,3,NA,NA,FALSE,FALSE,NA,NA,NA
+"96h","welch","standard","factor","factor_02",NA,2,3,NA,NA,FALSE,FALSE,NA,NA,NA
+"96h","welch","standard","factor","factor_03",NA,3,3,-135350.457346663,-135206.522087989,FALSE,FALSE,NA,0.18218055116588,2.36296480166973
+"96h","welch","standard","factor","factor_05",NA,5,3,-135091.054190764,-135006.176406515,FALSE,TRUE,NA,0.159553999300614,1.78966422195628
+"96h","welch","standard","factor","factor_08",NA,8,3,-135105.546454453,-135021.676001697,FALSE,FALSE,NA,0.153548497374597,1.85697831156605
+"96h","welch","standard","factor","factor_12",NA,12,3,-135080.993294708,-135008.886918568,TRUE,FALSE,NA,0.163824332670828,1.65687787043917
+"96h","welch","standard","raw factor, positive scales","raw_factor_positive_scales_1",NA,1,3,-139426.415731704,NA,FALSE,FALSE,NA,0.14469295967731,3.43935616168111
+"96h","welch","standard","raw factor, positive scales","raw_factor_positive_scales_12",NA,12,3,-135080.991271831,NA,TRUE,FALSE,NA,0.164633797522425,1.66433958005969
+"96h","welch","standard","raw factor, positive scales","raw_factor_positive_scales_2",NA,2,3,-135421.626451079,NA,FALSE,FALSE,NA,0.182603946583185,2.22873132551919
+"96h","welch","standard","raw factor, positive scales","raw_factor_positive_scales_3",NA,3,3,-135350.462546463,NA,FALSE,FALSE,NA,0.181693638075173,2.36203513129929
+"96h","welch","standard","raw factor, positive scales","raw_factor_positive_scales_5",NA,5,3,-135091.039571113,NA,FALSE,FALSE,NA,0.160637143579399,1.79214910127243
+"96h","welch","standard","raw factor, positive scales","raw_factor_positive_scales_8",NA,8,3,-135105.527198481,NA,FALSE,FALSE,NA,0.154827906521199,1.86178567821687
+"96h","welch","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.1",NA,0.1,3,-134597.233785253,NA,FALSE,FALSE,NA,0.484325325044151,5.18146883203672
+"96h","welch","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.25",NA,0.25,3,-134145.509248873,NA,FALSE,FALSE,NA,0.285183850250671,3.85375941444501
+"96h","welch","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.375",NA,0.375,3,-133688.657520732,NA,FALSE,FALSE,NA,0.0336649715939673,1.34511901335902
+"96h","welch","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.5",NA,0.5,3,-133524.949353162,NA,TRUE,FALSE,NA,0.0337037172440067,1.69026970288622
+"96h","welch","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.625",NA,0.625,3,-133590.453388437,NA,FALSE,FALSE,NA,0.0429285200989971,1.74960645601468
+"96h","welch","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.75",NA,0.75,3,-133887.106733331,NA,FALSE,FALSE,NA,0.0667271395596057,1.87154387910311
+"96h","welch","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_0.9",NA,0.9,3,-134828.159958574,NA,FALSE,FALSE,NA,0.13477017999702,2.41559657724064
+"96h","welch","standard","raw shrinkage, linked scales","raw_shrinkage_linked_scales_1",NA,1,3,-139483.766862535,NA,FALSE,FALSE,NA,0.162212909848074,3.58299753165617
+"96h","welch","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.1",NA,0.1,3,-133956.924808503,NA,FALSE,FALSE,NA,0.446769438662462,5.41330238041015
+"96h","welch","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.25",NA,0.25,3,-133388.316329035,NA,FALSE,FALSE,NA,0.286988486734082,3.86307836115103
+"96h","welch","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.375",NA,0.375,3,-132931.605654766,NA,FALSE,FALSE,NA,0.0327709224191322,1.35615870883715
+"96h","welch","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.5",NA,0.5,3,-132767.988704645,NA,TRUE,FALSE,NA,0.033298769331417,1.69057693266576
+"96h","welch","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.625",NA,0.625,3,-132833.538990029,NA,FALSE,FALSE,NA,0.0428274157272069,1.74900612376481
+"96h","welch","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.75",NA,0.75,3,-133130.105809354,NA,FALSE,FALSE,NA,0.0667082040913166,1.86839946004488
+"96h","welch","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_0.9",NA,0.9,3,-134070.212979609,NA,FALSE,FALSE,NA,0.134679674665784,2.42646431797213
+"96h","welch","standard","raw shrinkage, shared_c scales","raw_shrinkage_shared_c_scales_1",NA,1,3,-138627.224140852,NA,FALSE,FALSE,NA,0.159713896422941,3.58087779043399
+"96h","welch","standard","shrinkage","shrinkage_0.100",0,0.1,3,-134705.477964869,-134486.376079127,FALSE,FALSE,-248946.880776323,0.437087030052241,5.35753003028265
+"96h","welch","standard","shrinkage","shrinkage_0.250",0,0.25,3,-134176.525037037,-134026.403341629,FALSE,FALSE,-247739.96399244,0.194156472175654,3.4329054656592
+"96h","welch","standard","shrinkage","shrinkage_0.375",0,0.375,3,-133685.601187103,-133604.915230542,FALSE,FALSE,-247101.136214677,0.0333164363428416,1.353305335755
+"96h","welch","standard","shrinkage","shrinkage_0.500",0,0.5,3,-133522.139185293,-133438.383491508,TRUE,TRUE,-246971.954291742,0.0335394759903392,1.69029169088171
+"96h","welch","standard","shrinkage","shrinkage_0.625",0,0.625,3,-133587.85307559,-133499.971657,FALSE,FALSE,-247226.189793918,0.0428948651622887,1.74922290568847
+"96h","welch","standard","shrinkage","shrinkage_0.750",0,0.75,3,-133884.596658931,-133791.463425907,FALSE,FALSE,-247908.099395358,0.0667032674954929,1.8682120607783
+"96h","welch","standard","shrinkage","shrinkage_0.900",0,0.9,3,-134824.845292452,-134729.915522939,FALSE,FALSE,-249863.010524391,0.134858549333075,2.42301994594922
+"96h","welch","standard","shrinkage","shrinkage_1.000",0,1,3,-139382.222886431,-139300.659534071,FALSE,FALSE,-256489.496230848,0.159755190183462,3.58071165676217
+"96h","welch","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.1",NA,0.1,3,-133666.449854334,NA,FALSE,FALSE,NA,0.479449501488222,5.64585842871888
+"96h","welch","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.25",NA,0.25,3,-133192.708545501,NA,FALSE,FALSE,NA,0.327326436359827,4.12624414148799
+"96h","welch","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.375",NA,0.375,3,-132730.790967652,NA,FALSE,FALSE,NA,0.0717801448835848,1.48338949776152
+"96h","welch","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.5",NA,0.5,3,-132361.119962135,NA,FALSE,FALSE,NA,0.0368528472267048,1.28278741152798
+"96h","welch","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.625",NA,0.625,3,-132239.351902194,NA,TRUE,FALSE,NA,0.0347471089194056,1.77404603967262
+"96h","welch","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.75",NA,0.75,3,-132403.096251679,NA,FALSE,FALSE,NA,0.036341318969928,1.74730427098711
+"96h","welch","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_0.9",NA,0.9,3,-133460.7556238,NA,FALSE,FALSE,NA,0.041622064195843,1.72060252928767
+"96h","welch","standard","size-normalised shrinkage, free scales","size_normalised_shrinkage_free_scales_1",NA,1,3,-139718.814630531,NA,FALSE,FALSE,NA,0.0847560937476722,3.22084131646992
+"96h","welch","standard","two_param","two_param_0.25_0.25",0.25,0.25,3,-134164.490929832,-134082.602363871,FALSE,FALSE,NA,0.0637294431591531,2.58093797118983
+"96h","welch","standard","two_param","two_param_0.25_0.50",0.25,0.5,3,-133497.482189137,-133418.31762984,FALSE,FALSE,NA,0.0538356241670569,2.30546400036942
+"96h","welch","standard","two_param","two_param_0.25_0.75",0.25,0.75,3,-133860.016852086,-133773.815919504,FALSE,FALSE,NA,0.0951337708447971,2.75906690066383
+"96h","welch","standard","two_param","two_param_0.50_0.25",0.5,0.25,3,-134117.534698507,-134044.401404176,FALSE,FALSE,NA,0.0836640654227603,2.62786456656555
+"96h","welch","standard","two_param","two_param_0.50_0.50",0.5,0.5,3,-133463.142981613,-133388.21341677,FALSE,FALSE,NA,0.0914730395379384,3.02782265130405
+"96h","welch","standard","two_param","two_param_0.50_0.75",0.5,0.75,3,-133828.511832882,-133749.342170073,FALSE,FALSE,NA,0.135223398099845,3.02042382080038
+"96h","welch","standard","two_param","two_param_0.75_0.25",0.75,0.25,3,-134062.586441154,-133988.176133754,FALSE,FALSE,NA,0.134691616749044,2.98752321273045
+"96h","welch","standard","two_param","two_param_0.75_0.50",0.75,0.5,3,-133419.157860138,-133347.149635265,TRUE,TRUE,NA,0.149968229025162,3.42744160564975
+"96h","welch","standard","two_param","two_param_0.75_0.75",0.75,0.75,3,-133791.838567794,-133718.24067874,FALSE,FALSE,NA,0.188749582971959,3.60387731837464

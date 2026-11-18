@@ -1,8 +1,201 @@
 ---
 title: "Covariance estimation"
 date: last-modified
-description: "Per-type means and covariances estimated on the Suppinger reference."
+description: "Per-type means and regularised covariances of the Suppinger reference, tuned on held-out cells."
 ---
+
+```{r}
+#| label: glossary-setup
+#| include: false
+if (!requireNamespace("glossary", quietly = TRUE)) {
+  owd <- setwd("..")
+  on.exit(setwd(owd), add = TRUE)
+  source("renv/activate.R")
+  setwd(owd)
+}
+library(glossary)
+glossary_path(file.path("..", "glossary", "glossary.yml"))
+glossary_popup("hover")
+```
+
+```{r}
+#| label: glossary-style
+#| echo: false
+#| results: asis
+glossary::glossary_style(
+  color = "#0e4d3a",
+  text_decoration = "underline",
+  def_bg = "#f7f4ef",
+  def_color = "#1c2b24"
+)
+```
+
+```{r}
+#| label: cov-values
+#| include: false
+# Numbers quoted in the prose, read from the output files.
+read_out <- function(...) {
+  utils::read.csv(
+    here::here("..", "output", ...),
+    stringsAsFactors = FALSE,
+    fileEncoding = "UTF-8"
+  )
+}
+f1 <- function(x) formatC(x, format = "f", digits = 1)
+f2 <- function(x) formatC(x, format = "f", digits = 2)
+f3 <- function(x) formatC(x, format = "f", digits = 3)
+big <- function(x) format(round(x), big.mark = ",", trim = TRUE)
+span <- function(x, f = f2) {
+  if (length(unique(f(x))) == 1L) f(x[[1L]]) else paste(f(min(x)), "to", f(max(x)))
+}
+and_list <- function(x) {
+  if (length(x) < 2L) return(paste(x))
+  paste(paste(x[-length(x)], collapse = ", "), "and", x[[length(x)]])
+}
+hours <- function(t) sub("h$", " h", t)
+pct <- function(x) paste0(round(100 * x), "%")
+rule_label <- c(
+  "shrinkage, per type" = "per-type shrinkage",
+  "shrinkage, common" = "common shrinkage",
+  "two-parameter, per type" = "the per-type two-parameter arm",
+  "two-parameter, common" = "the common two-parameter arm",
+  "factor, per type" = "per-type factor analysis",
+  "factor, shared loadings" = "shared loadings"
+)
+
+# Panels and units (output/grn/plugin/)
+gene_sets <- read_out("grn", "plugin", "gene_sets.csv")
+panel_n <- function(gs) {
+  table(factor(gene_sets$time_point[gene_sets$gene_set == gs], c("48h", "72h", "96h")))
+}
+n_welch <- panel_n("welch")
+n_r2_01 <- panel_n("r2_01")
+n_r2_05 <- panel_n("r2_05")
+pairs_m <- n_welch * (n_welch - 1) / 2 / 1e6
+units_w <- read_out("grn", "plugin", "plugin_summary.csv")
+units_w <- unique(units_w[units_w$gene_set == "welch", c("time_point", "cell_type", "cells")])
+cells_time <- tapply(units_w$cells, units_w$time_point, sum)
+rank_w_96 <- cells_time[["96h"]] - sum(units_w$time_point == "96h")
+unit_name <- function(time, type) paste0(tolower(type), " (", hours(time), ")")
+unit_the <- function(time, type) paste0("the ", hours(time), " ", tolower(type))
+
+# Tuning values chosen on held-out cells, Welch panel
+cv_date <- format(
+  file.mtime(here::here("..", "output", "grn", "cv", "cv_selected_tuning.csv")),
+  "%d %B %Y, %H:%M"
+)
+sel_w <- read_out("grn", "cv", "cv_selected_tuning.csv")
+sel_w <- merge(
+  sel_w[sel_w$gene_set == "welch", ], units_w,
+  by.x = c("time", "cell_type"), by.y = c("time_point", "cell_type")
+)
+rule_of <- function(r) sel_w[sel_w$rule == r, , drop = FALSE]
+shr_w <- rule_of("shrinkage, per type")
+is_epi48 <- shr_w$time == "48h" & shr_w$cell_type == "Epiblast"
+epi48 <- shr_w$tuning[is_epi48]
+shr_rest <- shr_w[!is_epi48, ]
+lam_big <- shr_rest$tuning[shr_rest$cells >= 1000]
+lam_small <- shr_rest$tuning[shr_rest$cells < 1000]
+common_w <- unique(rule_of("shrinkage, common")[c("time", "tuning")])
+common_w <- common_w[order(common_w$time), ]
+one_se_diag <- rule_of("shrinkage, per type, 1se")
+one_se_diag <- one_se_diag[one_se_diag$tuning >= 1, ]
+tp_type <- rule_of("two-parameter, per type")
+tp_all <- rbind(tp_type, unique(rule_of("two-parameter, common")))
+fa_w <- rule_of("factor, per type")
+fa_top <- fa_w[fa_w$tuning == max(fa_w$tuning), ]
+fa_small <- fa_w[fa_w$cells < 1000, ]
+shared_w <- unique(rule_of("factor, shared loadings")[c("time", "tuning")])
+shared_w <- shared_w[order(shared_w$time), ]
+
+# Nested comparison, Welch panel
+nested_w <- read_out("grn", "cv", "nested_cv_summary.csv")
+nested_w <- merge(
+  nested_w[nested_w$gene_set == "welch" & nested_w$rule != "diagonal", ], units_w,
+  by.x = c("time", "cell_type"), by.y = c("time_point", "cell_type")
+)
+n_positive <- sum(nested_w$mean_gain_over_diagonal > 0)
+n_two_se <- sum(nested_w$mean_gain_over_diagonal > 2 * nested_w$se_gain)
+weak <- nested_w[nested_w$mean_gain_over_diagonal <= 2 * nested_w$se_gain, ]
+weak_txt <- and_list(paste0(
+  rule_label[weak$rule], " for ", unit_the(weak$time, weak$cell_type),
+  " (", round(weak$mean_gain_over_diagonal), ", se ", round(weak$se_gain), ")"
+))
+best_w <- do.call(rbind, lapply(
+  split(nested_w, paste(nested_w$time, nested_w$cell_type)),
+  function(d) d[which.max(d$mean_gain_over_diagonal), ]
+))
+best_w <- best_w[order(-best_w$cells), ]
+borrow <- best_w$rule %in% c(
+  "factor, shared loadings", "two-parameter, per type", "two-parameter, common"
+)
+by_fold <- read_out("grn", "cv", "nested_cv_by_fold.csv")
+by_fold <- by_fold[
+  by_fold$gene_set == "welch" &
+    by_fold$rule %in% c("shrinkage, common", "two-parameter, common"),
+]
+n_common_choices <- nrow(unique(by_fold[c("time", "rule", "outer_fold")]))
+diag_folds <- unique(by_fold[by_fold$tuning >= 1, c("time", "rule", "outer_fold")])
+best_txt <- function(d) {
+  and_list(paste0(
+    unit_name(d$time, d$cell_type), ", ", rule_label[d$rule],
+    " (", round(d$mean_gain_over_diagonal), ")"
+  ))
+}
+
+# Search comparison (archived stage; output/grn/cv/search_comparison.csv)
+search <- read_out("grn", "cv", "search_comparison.csv")
+s_of <- function(a, s, d = search) d[d$arm == a & d$strategy == s, , drop = FALSE]
+s_med <- function(a, s, k, d = search) stats::median(s_of(a, s, d)[[k]])
+grid_d <- s_of("shrinkage", "grid, one factorisation per value")
+grid_worst <- grid_d[which.max(grid_d$score_loss), ]
+opt_d <- s_of("shrinkage", "optimiser on the path")
+search_w <- search[search$gene_set == "welch", ]
+scores <- read_out("grn", "cv", "cv_tuning_scores.csv")
+n_levels <- length(unique(scores$tuning[scores$arm == "shrinkage"]))
+
+# Information criteria, Welch panel
+ic <- read_out("grn", "cv", "information_criteria.csv")
+ic <- ic[ic$gene_set == "welch", ]
+ic_best <- function(d) {
+  data.frame(
+    time = d$time[[1L]], cell_type = d$cell_type[[1L]],
+    aic = d$rank[which.min(d$aic)], bic = d$rank[which.min(d$bic)],
+    top = max(d$rank)
+  )
+}
+ic_fa <- ic[ic$arm == "factor", ]
+ic_type <- do.call(rbind, lapply(split(ic_fa, paste(ic_fa$time, ic_fa$cell_type)), ic_best))
+ic_sh <- ic[ic$arm != "factor", ]
+ic_shared <- do.call(rbind, lapply(split(ic_sh, ic_sh$time), ic_best))
+bic_high <- ic_type[ic_type$bic > 8, ]
+
+# Deconvolution at the chosen levels (output/deconvolution/lambda_selection.csv)
+lsel <- read_out("deconvolution", "lambda_selection.csv")
+lsel <- lsel[lsel$arm == "standard" & lsel$gene_set == "welch" & lsel$time == "96h", ]
+rmse_id <- function(id) lsel$rmse[lsel$id == id][1L]
+bulk_pick <- lsel[lsel$family == "shrinkage" & lsel$selected_profile, ][1L, ]
+
+# Choices made once per time, three panels
+sel_all <- read_out("grn", "cv", "cv_selected_tuning.csv")
+shared_all <- unique(sel_all[sel_all$rule == "factor, shared loadings", c("gene_set", "time", "tuning")])
+common_all <- unique(sel_all[sel_all$rule == "shrinkage, common", c("gene_set", "time", "tuning")])
+shared_top <- max(scores$tuning[scores$arm == "factor_shared"])
+bulk_lam <- read_out("deconvolution", "lambda_selection.csv")
+bulk_lam <- bulk_lam[bulk_lam$arm == "standard" & bulk_lam$family == "shrinkage" &
+  bulk_lam$selected_profile %in% TRUE, c("gene_set", "time", "tuning")]
+bulk_wr <- bulk_lam$tuning[bulk_lam$gene_set %in% c("welch", "r2_01")]
+bulk_05 <- bulk_lam[bulk_lam$gene_set == "r2_05", ]
+bulk_05 <- bulk_05[order(bulk_05$time), ]
+
+# Second-pass results (output/deconvolution/second_pass/)
+sp <- read_out("deconvolution", "second_pass", "benchmark_metrics.csv")
+denoised_96 <- mean(sp$rmse[
+  sp$method == "DeCovarT denoised (bio only) | lbfgsb | b_g none | welch" & sp$time == "96h"
+])
+first_pass <- read_out("deconvolution", "second_pass", "plugin_summary_first_pass.csv")
+first_pass <- first_pass[first_pass$gene_set == "welch", ]
+```
 
 ## Scope and status {#sec-cov-scope}
 
@@ -27,27 +220,26 @@ mechanistic gene network; a dense estimate is therefore an acceptable
 plug-in
 ([3.2, why a regularised covariance](https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#nte-cov-why)).
 
-**Plug-in and sensitivity analyses.** The exported plug-in is the
-shrinkage covariance (@sec-shrinkage). Four arms are sensitivity
-analyses of that choice: the graphical lasso (@sec-glasso), the
-`SILGGM` support with a refit (@sec-silggm), `PLNnetwork` (@sec-pln)
-and the shrinkage of the denoised covariance (@sec-cov-denoised). All
-five are scored by the same nested cross-validation (@sec-cov-cv-run);
-their theory is summarised in
+**What is run.** `scripts/03_05_stats_plugin_covariance.R` stores the
+sample moments of every type; it regularises nothing. The deconvolution
+builds each covariance from these moments with `build_sigma()`, for one
+`r glossary("arm")` and one tuning value. Every arm keeps the sample
+variances and regularises the correlation (@sec-cov-estimators). The
+tuning values are chosen here, on held-out cells (@sec-cov-cv-run), or
+by the bulk likelihood (@sec-deconv-selection), always by
+`r glossary("grid search")`. The sparse-precision arms and the
+denoised covariance are archived (@sec-cov-archived). The theory is in
 [3.2, estimators](https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#tbl-cov-estimators).
 
-| Item | Code | Status |
+| Step | Code | Output |
 |---|---|---|
-| Panel input | `R/03_01_stats_covariance_estimation.R`: `read_panel_slot()` | written, not run |
-| Five arms, one fit wrapper per estimator | same file: `fit_cov_shrinkage()`, `fit_cov_glasso()`, `fit_cov_silggm_refit()`, `fit_cov_plnnetwork()`; `preprocess = "denoised"` for the first three | written, not run |
-| Denoising and extrinsic noise | same file: `denoise_covariance()`, `reconstruct_count_covariance()`, `extrinsic_noise_nu()`; `pln_linear_moments(size_term, poisson_diag)` | written, not run |
-| Held-out score, tuning, nested comparison | same file: `heldout_gaussian_logscore()`, `score_fit()`, `cv_select_tuning()`, `nested_cv_compare()` | written, not run |
-| Driver for the five arms | `scripts/03_04_cv_covariance.R` | written, not run |
-| Graphical lasso EBIC path (diagnostic) | `scripts/03_01_grn_glasso.R`, `R/03_02_stats_regularisation_path.R` | input moved to the gated panel; not re-run |
-| `SILGGM` fit | `scripts/03_02_grn_silggm.R` | input moved to the gated panel; never run |
-| `PLNnetwork` fit | `scripts/03_03_grn_plnnetwork.R` | input moved to the gated panel; full-library offset; never run |
+| Estimators, held-out scores, `build_sigma()` | `R/03_01_stats_covariance_estimation.R` | functions only |
+| Sample moments per time × gene set | `scripts/03_05_stats_plugin_covariance.R` | `output/grn/plugin/`: `gene_sets.csv`, `plugin_summary.csv`, `moments_<time>_<gene_set>.rds` (not in Git) |
+| Tuning on held-out cells, nested comparison, factor fits | `scripts/03_04_cv_covariance.R` | `output/grn/cv/`: five CSV tables (@sec-cov-cv-run), `factors_<time>_<gene_set>.rds` (not in Git) |
+| Search comparison (archived stage) | `scripts/archives/search_comparison/` | `output/grn/cv/search_comparison.csv`, kept and read by @tbl-cov-search |
+| Archived arms | `scripts/archives/sparse_precision_arms/`, `scripts/archives/denoised_covariance/` | not run |
 
-: Covariance-estimation code and status. {#tbl-cov-status}
+: Covariance-estimation code and outputs. {#tbl-cov-status}
 
 ### Inputs and scales {#sec-cov-inputs}
 
@@ -57,11 +249,25 @@ Every arm reads the raw UMI counts of the scored cells, element
 and `library_size`, the full RNA library of each cell. The counts are
 restricted to the genes of
 `output/feature_selection/tier_02/selected_<time>.csv`, the panel gated
-by the permuted Welch $G$ at BH 0.05 (@sec-fs-consistency): 1,417 genes
-at 48 h, 3,420 at 72 h and 5,821 at 96 h, with no cap.
+by the permuted Welch $G$ at BH 0.05 (@sec-fs-consistency), the
+`r glossary("Welch panel")`: `r big(n_welch[["48h"]])` genes
+at 48 h, `r big(n_welch[["72h"]])` at 72 h and
+`r big(n_welch[["96h"]])` at 96 h, with no cap.
 `read_panel_slot()` does the subset and returns cells × genes. The
-500-gene legacy export of @sec-fs-export is no longer read. A
-transformation belongs to one arm only.
+500-gene legacy export of @sec-fs-export is no longer read.
+
+Three gene sets per time are listed in `output/grn/plugin/gene_sets.csv`:
+`welch`, the whole gated panel; `r2_01`, its genes with a
+`r glossary("deviance share")` $R^2_D\ge 1\%$
+(`r and_list(big(n_r2_01))` genes at 48, 72 and 96 h); and `r2_05`,
+those with $R^2_D\ge 5\%$ (`r and_list(big(n_r2_05))` genes). Results in
+this chapter are on the Welch panel unless stated. For each time and gene set,
+`sample_moments()` writes the mean of each type (`mu`), its unbiased
+sample covariance, not regularised (`sigma_sample`), its number of
+cells (`n_cells`), and the pooled within-type correlation of the time
+(`r_pool`, @sec-cov-two-param). `plugin_summary.csv` lists, per unit,
+the cells, the genes and the genes constant within the type; on the
+Welch panel no gene is constant within a type.
 
 **Normalisation.** The exported means and covariances are computed on
 raw per-cell UMI counts, with no per-cell library division
@@ -69,48 +275,37 @@ raw per-cell UMI counts, with no per-cell library division
 the type-level transcriptome size $S_j$: signatures become mRNA
 fractions, and the proportions are estimated as
 $q_j\propto p_jS_j$ instead of $p_j$
-[@luTranscriptomeSizeMatters2025]. It also removes the biological size
-variation between cells of one type, which the bulk accumulates.
-Without spike-ins the technical size factor cannot be separated from
-the biological one, so the size term of the covariance is bracketed by
-the coefficient $\kappa$ of the denoised estimator (@sec-cov-denoised):
+[@luTranscriptomeSizeMatters2025, p. 13]. It also removes the biological
+`r glossary("cell size")` variation between cells of one type, which
+the bulk accumulates. Without spike-ins the technical
+`r glossary("size factor")` cannot be separated from
+the biological one, so the size term of the covariance was bracketed by
+the coefficient $\kappa$ of the denoised estimator, now archived
+(@sec-cov-archived):
 $\kappa=0$ treats all size variation as biological;
 $\kappa=\hat\nu/(1+\hat\nu)$ treats it all as technical, which matches
 library normalisation for the covariance. The argument is in
 [3.2, raw or denoised](https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-raw-vs-denoised).
 The earlier per-cell division, `X <- y / (lib / ref_lib)` with
-`ref_lib` the median library of the time point, is kept only as a
-sensitivity variant (`normalise = "library"`). `PLNnetwork` keeps its
-full-library offset $\log s_c$ in both cases.
+`ref_lib` the median library of the time point, was a sensitivity
+variant (`normalise = "library"`) of the archived code. The archived
+`PLNnetwork` arm kept its full-library offset $\log s_c$ in both cases.
 
-| Arm | What is passed in | Scale of the export |
-|---|---|---|
-| Shrinkage (`corpcor`), plug-in | raw per-cell UMI counts | linear, raw counts |
-| Graphical lasso (`glasso`) | correlation matrix of the same counts | linear, after rescaling by the sample standard deviations |
-| `SILGGM` | nonparanormal scores, for the support only | linear, refit under the support |
-| `PLNnetwork` | raw UMI counts, offset $\log s_c$ (full library) | linear, through the moment map of @sec-pln; the two denoised brackets are exported beside it |
-| Denoised shrinkage, $\kappa=0$ | raw counts, @eq-cov-denoised with $\kappa=0$ (Poisson diagonal removed), eigenvalues clipped at zero | $\widehat{\boldsymbol{\Sigma}}^{\mathrm{bio}}_{j}$; scored through @eq-cov-renoise |
-| Denoised shrinkage, $\kappa=\hat\kappa_{\max}$ (variant) | raw counts, @eq-cov-denoised with $\kappa=\hat\nu/(1+\hat\nu)$, eigenvalues clipped at zero | $\widehat{\boldsymbol{\Sigma}}^{\mathrm{bio}}_{j}$; tuned by cross-validation, outside the nested comparison |
-| Library-divided counts (variant, `normalise = "library"`) | `y / (lib / ref_lib)` for the first four arms; the denoised arm is left out | linear, library-divided counts |
+**Size term removed alone.** `sample_moments(..., library_size = )`
+gives the "all technical" end of the $\kappa$ bracket without the rest
+of the denoised estimator. The mean is kept on raw counts; the
+covariance is computed on the cells of type $j$ divided by their size
+factor $L_c/\bar L_j$, with $L_c$ the full library of cell $c$ and
+$\bar L_j$ its mean over the type. That removes the size term
+$\nu\,\mu_g\mu_h$ and keeps the Poisson diagonal, which the archived
+denoised covariance also removed. This is the size-normalised input of
+the scale screen of chapter 4 (@sec-deconv-scale-screen).
 
-: What each arm sees and what it exports. The first row is the plug-in. {#tbl-cov-inputs}
-
-Earlier choices reverted, in code that has not been re-run:
-
-- **Scale of the export.** `scripts/03_01_grn_glasso.R` (then named
-  `03_01_grn_huge.R`) used to fit and export on $\log(1+x)$
-  (`x <- log1p(x)`, then `mu <- colMeans(x)`). The convolution is
-  linear only on an additive scale
-  ([2.1, normalisation](https://bastienchassagnol.github.io/DeCovarT/articles/02-1-single-cell-generative-optimisation.html#sec-norm-linear)),
-  so $\widehat{\boldsymbol{\mu}}_{\cdot j}$ and
-  $\widehat{\boldsymbol{\Sigma}}_{j}$ are now computed on the linear
-  counts. A $\log(1+x)$ table may still be used to detect a support,
-  never to export a moment.
-- **Per-cell library division.** `scripts/03_04_cv_covariance.R`
-  divided each cell by its library (`X <- y / (lib / ref_lib)`), which
-  is option (b) of
-  [3.2, raw or denoised](https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-raw-vs-denoised).
-  It is now the `normalise = "library"` variant.
+Means and covariances are computed on the linear counts, never on
+$\log(1+x)$: the convolution is linear only on an additive scale
+([2.1, normalisation](https://bastienchassagnol.github.io/DeCovarT/articles/02-1-single-cell-generative-optimisation.html#sec-norm-linear)).
+An earlier glasso script fitted and exported on $\log(1+x)$; that
+choice was reverted before it was archived.
 
 ### Units and regimes {#sec-cov-units}
 
@@ -184,18 +379,32 @@ tinytable::tt(tab) |>
       "Neighbourhood selection" = 8:9
     )
   ) |>
-  tinytable::format_tt(i = 0, quarto = TRUE) |>
+  tinytable::format_tt(quarto = TRUE) |>
   tinytable::style_tt(j = c(3, 4, 6, 8), align = "r") |>
   tinytable::style_tt(i = singular, background = "#fbe3d6")
 ```
 
-In nine of the eleven units $C_j\le G_t$: the sample covariance is
-singular, and only a regularised estimate exists. Only the 48 h
-epiblast (10,590 cells against 1,417 genes) and the 72 h primitive
-streak (4,279 against 3,420) have a maximum-likelihood estimate. Four
-units exceed the graphical-lasso order and eight the
-neighbourhood-selection order; the 48 h and 72 h naïve pluripotency and
-the somite differentiation front exceed neither. The cross-validated
+```{r}
+#| label: cov-units-values
+#| include: false
+mle <- units$cells >= g + 1
+neither <- units$cells <= neighbour_order & units$cells <= glasso_order
+units_txt <- function(i) {
+  and_list(paste0(
+    tolower(units$cell_type[i]), " at ", hours(units$time_point[i]),
+    " (", big(units$cells[i]), " cells against ", big(g[i]), " genes)"
+  ))
+}
+```
+
+In `r sum(units$cells <= g)` of the `r nrow(units)` units
+$C_j\le G_t$: the sample covariance is singular, and only a regularised
+estimate exists. Only the `r units_txt(which(mle))` have a
+maximum-likelihood estimate. The graphical-lasso order is exceeded by
+`r sum(units$cells > glasso_order)` units and the
+neighbourhood-selection order by `r sum(units$cells > neighbour_order)`;
+`r and_list(unit_the(units$time_point[neither], units$cell_type[neither]))`
+exceed neither. The cross-validated
 score of @sec-cov-cv-run is defined in every regime because each arm
 returns a positive definite matrix.
 
@@ -212,16 +421,20 @@ $$ {#eq-cov-bulk-depth}
 
 <!-- chk: V45 -->
 
-with $y_{+i}$ the total counts of the bulk sample, $n_i$ the number of
-cells in it, and $\bar s_{\mathrm{ref}}$ the median UMIs per reference
-cell at the matched time. $a_i<1$ is expected: the bulk library is
+with $y_{+i}$ the total counts of the bulk sample, $n_i$ the
+`r glossary("cell count", "number of cells")` in it, and
+$\bar s_{\mathrm{ref}}$ the median UMIs per reference cell at the
+matched time; $a_i$ is the `r glossary("capture ratio")` of the
+sample. $a_i<1$ is expected: the bulk library is
 deeper in total than one droplet, but it spreads that depth over every
 cell of the pooled sample. Bulk counts are reads, not UMIs, so their
 sampling noise is overdispersed, with a dispersion $\omega_i\ge1$ that
 lowers the effective depth to $a_i/\omega_i$. The raw plug-in, the
 implemented default, assumes $a_i=1$. $n_i$ is
 [TODO: cells per gastruloid × gastruloids per bulk sample, from the Suppinger et al. 2023 methods]{.highlight}
-[@suppingerMultimodalCharacterizationMurine2023].
+[@suppingerMultimodalCharacterizationMurine2023, STAR Methods, p. 25].
+How a count $n_i$ would enter the scale models of the deconvolution is
+in @sec-deconv-scale-models.
 
 ::: {.highlight}
 **TODO: number of cells per bulk sample, $n_i$.**
@@ -257,7 +470,7 @@ Candidate sources for $N_t$:
   600 cells). It gives no counts against time in the text read so far.
 
 Neither key is in Zotero.
-[TODO-cite: Frenster et al. 2026; fluctuation-test paper, Cell 2026]
+[TODO-cite: Frenster et al. 2026, Nat. Cell Biol. 28:875–889, Fig. 2m–n, p. to check; fluctuation-test paper, Cell 2026, p. to check]{.highlight}
 
 Proxies until a count is found:
 
@@ -271,7 +484,8 @@ Proxies until a count is found:
   From 300 cells at 0 h to about 15,000–20,000 at 120 h, the doubling
   time is about 20 h. That gives $N_t$ of roughly 1,400–1,600 at 48 h,
   3,100–3,700 at 72 h and 6,900–8,600 at 96 h.
-- **No external value.** With $c_i=a_in_i$ and $\phi_i=a_i^{2}n_i$
+- **No external value.** With the `r glossary("mean scale")`
+  $c_i=a_in_i$ and the `r glossary("variance scale")` $\phi_i=a_i^{2}n_i$
   fitted, $\hat n_i=c_i^{2}/\phi_i$ and $\hat a_i=\phi_i/c_i$. An
   external $n_i$ then checks the fitted within-type covariance rather
   than entering the fit.
@@ -377,286 +591,157 @@ bulk_depth <- do.call(
 
 ## Estimators as run {#sec-cov-estimators}
 
-None of the five arms penalises the diagonal: the three sparse
-estimators leave the diagonal of the precision unpenalised, and the
-shrinkage target D keeps the variances. Why the diagonal must not be
-penalised is in
+Every arm keeps the sample variances and regularises the correlation
+only. With $\boldsymbol{D}_j$ the sample variances and
+$\boldsymbol{R}_j$ the sample correlation of type $j$ at one time,
+
+$$
+\widehat{\boldsymbol{\Sigma}}_{j}
+=
+\boldsymbol{D}_j^{1/2}\,\widetilde{\boldsymbol{R}}_j\,\boldsymbol{D}_j^{1/2},
+$$ {#eq-cov-correlation-scale}
+
+with $\widetilde{\boldsymbol{R}}_j$ one of the forms of
+@tbl-cov-estimators. No arm penalises the diagonal; the reason is in
 [3.2, diagonal](https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-cov-diagonal).
-Each arm has exactly one tuning parameter, chosen by @sec-cov-cv-run.
+`build_sigma()` builds @eq-cov-correlation-scale from the stored
+moments. In the shrinkage arms a gene with no variance in a type gets
+$10^{-4}$ times the median variance of that type. The factor arm uses
+the scale of its own fit, the `r glossary("Poisson floor")` of
+@sec-cov-cv-run, so that $\boldsymbol{B}_j\boldsymbol{B}_j^{\top}+\boldsymbol{\Psi}_j$
+maps back to the variances the factors were fitted on. The shrinkage
+plug-in of the deconvolution is unchanged by that floor.
 
-| Arm | Wrapper | Underlying call | Tuning parameter | Grid |
+| Arm | $\widetilde{\boldsymbol{R}}_j$ | Tuning value | Grid | Free covariance parameters, $G$ genes |
 |---|---|---|---|---|
-| Shrinkage (plug-in) | `fit_cov_shrinkage()` | `corpcor::cov.shrink(x, lambda, lambda.var = 0)` | intensity $\lambda\in[0,1]$ | around the closed-form $\hat\lambda^{\ast}$ |
-| Graphical lasso | `fit_cov_glasso()` | `glasso::glasso(R, rho = lambda, penalize.diagonal = FALSE)` | $\lambda$ | log-spaced between $\lambda_{\min}$ and $\lambda_{\max}$ |
-| `SILGGM` refit | `fit_cov_silggm_refit()` | `SILGGM::SILGGM(npn, method = "D-S_GL", global = TRUE, alpha)`, then `glasso::glasso(..., zero = ...)` | FDR level $\alpha$ | a short grid containing 0.05 |
-| `PLNnetwork` | `fit_cov_plnnetwork()` | `PLNmodels::PLNnetwork(Abundance ~ 1 + offset(log_library), control = PLNnetwork_param(...))` | penalty | the family's own penalty grid |
-| Denoised shrinkage | `fit_cov_shrinkage(preprocess = "denoised", kappa)` | `denoise_covariance(x, kappa)`, then target D on the denoised variances | intensity $\lambda$; $\kappa$ bracketed, not tuned | the shrinkage grid |
+| Diagonal | $\boldsymbol{I}$ | none ($\lambda=1$, or rank 0) | — | $G$ |
+| Shrinkage | $(1-\lambda)\boldsymbol{R}_j+\lambda\boldsymbol{I}$ | $\lambda$, per type or one per time | 43 values: 13 log-spaced from $10^{-3}$ to 0.1, then 0.125 to 1 by $1/32$, and 0.9 | no count |
+| Two-parameter | $(1-\lambda)\{(1-\alpha)\boldsymbol{R}_j+\alpha\bar{\boldsymbol{R}}\}+\lambda\boldsymbol{I}$ | $(\alpha,\lambda)$, per type or one pair per time | $\alpha\in\{0.25,0.5,0.75\}$ × the 43 levels | no count |
+| Factor analysis, per type | $\boldsymbol{B}_j\boldsymbol{B}_j^{\top}+\boldsymbol{\Psi}_j$ | rank $q_j$ | $\{0,1,2,3,5,8,12,20,30\}$ | $G+q_jG-q_j(q_j-1)/2$ |
+| Factor analysis, shared loadings | $\boldsymbol{B}\boldsymbol{B}^{\top}+\boldsymbol{\Psi}_j$ | rank $q$, one per time | $\{0,1,2,3,5,8,12,20\}$ | $JG+qG-q(q-1)/2$ for the $J$ types |
 
-: The five arms, their calls and their tuning parameter. The first row is the plug-in; the other four are sensitivity analyses. The grids are set in `scripts/03_04_cv_covariance.R`. {#tbl-cov-estimators}
+: The arms, on the correlation scale of @eq-cov-correlation-scale. $\bar{\boldsymbol{R}}$: pooled within-type correlation of the time. The grids are set in `scripts/03_04_cv_covariance.R`. {#tbl-cov-estimators}
 
 ### Shrinkage covariance {#sec-shrinkage}
 
-`fit_cov_shrinkage()` calls `corpcor::cov.shrink()` [@R-corpcor] with
-the Schäfer–Strimmer target D: variances kept, correlations shrunk
-towards zero by a common factor
-[@schäferShrinkageApproachLargescale2005]. `corpcor` 1.6.10 also
-shrinks the variances towards their median by default;
-`lambda.var = 0` switches that off, so the target is exactly D. The
-closed-form intensity $\hat\lambda^{\ast}$ (`corpcor::estimate.lambda()`)
-is the centre of the grid, and cross-validation picks the value used.
-The estimate is positive definite for any $C_j$ and $G_t$, so it is the
-plug-in, and the estimator used when the others fail. The theory is in
+$(1-\lambda)\boldsymbol{R}_j+\lambda\boldsymbol{I}$ is the
+Schäfer–Strimmer target D: variances kept, every correlation multiplied
+by $1-\lambda$ [@schäferShrinkageApproachLargescale2005]
+[TODO-cite: Schäfer and Strimmer 2005, target D; p. to check]{.highlight}.
+$\lambda$, the `r glossary("shrinkage intensity")`, is
+chosen on held-out cells (@sec-cov-cv-run), either per type or as one
+level common to the types of a time. The closed-form level is archived
+(@sec-cov-archived). The estimate is positive definite for every
+$\lambda>0$, whatever $C_j$ and $G_t$; the smallest level of the grid
+is $10^{-3}$. The theory is in
 [3.2, shrinkage](https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-cov-shrinkage).
 
-### Denoised shrinkage {#sec-cov-denoised}
+### Two-parameter shrinkage {#sec-cov-two-param}
 
-`fit_cov_shrinkage(preprocess = "denoised", kappa)` applies the moment
-correction of
-[3.2, raw or denoised](https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-raw-vs-denoised)
-before the shrinkage. With $\boldsymbol{V}_j$ the unbiased sample
-covariance of the raw counts of the $C_j$ cells and
-$\bar{\boldsymbol{x}}_j$ their mean (`denoise_covariance()`),
+$\bar{\boldsymbol{R}}$ is the correlation of
+$\boldsymbol{W}=\sum_j (C_j-1)\boldsymbol{V}_j/(N-J)$, with
+$\boldsymbol{V}_j$ the sample covariance of type $j$ and $N$ the cells
+of the $J$ types of one time and one gene set
+(`pooled_correlation()`). $\boldsymbol{W}$ is the tied covariance of
+linear discriminant analysis. $\alpha$ moves $\boldsymbol{R}_j$ towards
+$\bar{\boldsymbol{R}}$; $\lambda$ then moves the result towards
+$\boldsymbol{I}$. This is the family of regularised discriminant
+analysis
+[TODO-cite: Friedman 1989, Regularized discriminant analysis, Journal of the American Statistical Association; p. to check]{.highlight}
+[TODO-cite: Hastie, Tibshirani and Friedman 2009, The Elements of Statistical Learning, 2nd ed., Springer; ch. 4, sec. 4.3.1, p. 112, eqs. 4.13–4.14]{.highlight}.
+In cross-validation $\bar{\boldsymbol{R}}$ never contains the held-out
+cells of the type being scored.
 
-$$
-\widetilde{\boldsymbol{V}}_j
-=
-\boldsymbol{V}_j-\operatorname{diag}(\bar{\boldsymbol{x}}_j)
--\kappa\Bigl[\boldsymbol{V}_j-\operatorname{diag}(\bar{\boldsymbol{x}}_j)
-+\bar{\boldsymbol{x}}_j\bar{\boldsymbol{x}}_j^{\top}
--\frac{\boldsymbol{V}_j}{C_j}\Bigr].
-$$ {#eq-cov-denoised}
+$\bar{\boldsymbol{R}}$ alone is not an arm. It has $G_t(G_t-1)/2$ free
+correlations, `r f1(min(pairs_m))` to `r f1(max(pairs_m))` million,
+for `r big(min(cells_time))` to `r big(max(cells_time))` cells per time.
+At 96 h it is singular: $\boldsymbol{W}$ has rank at most
+$N-J$ = `r big(rank_w_96)`, for `r big(n_welch[["96h"]])` genes. It
+enters only as a target, with $\alpha<1$ and $\lambda>0$.
 
-<!-- chk: V38b, V14a, V14b, V14c, V14e -->
+### Factor analysis {#sec-cov-factor}
 
-1. The eigenvalues of $\widetilde{\boldsymbol{V}}_j$ below zero are
-   raised to zero, the nearest positive semi-definite matrix in
-   Frobenius norm
-   [TODO-cite: Datta & Zou 2017 (CoCoLasso); Loh & Wainwright 2012; keys not in bibliography/REFERENCES.bib]{.highlight}.
-   This costs one eigen-decomposition of a $G_t\times G_t$ matrix per
-   training set.
-2. A gene whose denoised variance is not positive is a Poisson gene at
-   this depth. Its variance is floored at $10^{-4}$ times the median
-   positive denoised variance, its correlations are set to zero, and it
-   is listed in `floored_genes`.
-3. Target D is applied to the projected matrix:
-   $\widehat{\boldsymbol{\Sigma}}^{\mathrm{bio}}_{j}=\boldsymbol{D}^{1/2}\{(1-\lambda)\boldsymbol{R}+\lambda\boldsymbol{I}\}\boldsymbol{D}^{1/2}$,
-   with $\boldsymbol{R}$ and $\boldsymbol{D}$ its correlation and
-   variances, and $\lambda$ chosen on the grid of @sec-shrinkage.
+`fit_factor_correlation()` fits
+$\boldsymbol{R}_j\approx\boldsymbol{B}_j\boldsymbol{B}_j^{\top}+\boldsymbol{\Psi}_j$
+with $q_j$ factors by maximum likelihood, with the EM steps of Rubin and
+Thayer [TODO-cite: Rubin and Thayer 1982, EM algorithms for ML factor analysis, Psychometrika; p. to check]{.highlight}.
+The columns of $\boldsymbol{B}_j$ are the
+`r glossary("factor loading", "factor loadings")` and the diagonal
+$\boldsymbol{\Psi}_j$ holds the `r glossary("uniqueness", "uniquenesses")`.
+The steps are written on the cells, so the $G\times G$ correlation is
+never formed. The cells are standardised with the Poisson floor of
+@sec-cov-cv-run. The start is the probabilistic PCA solution; EM stops
+after 200 steps. Uniquenesses are floored at 0.01: with fewer cells
+than genes the likelihood is unbounded when one of them tends to zero.
+Rank 0 is the diagonal model.
 
-The exported matrix is $\widehat{\boldsymbol{\Sigma}}^{\mathrm{bio}}_{j}$.
-The held-out cells are raw counts and carry the Poisson noise and the
-size term that the correction removed, so the arm is scored through the
-raw count covariance rebuilt from the estimate, with
-$\nu^{\mathrm{tech}}=\kappa/(1-\kappa)$:
+`fit_factor_shared()` fits
+$\boldsymbol{R}_j\approx\boldsymbol{B}\boldsymbol{B}^{\top}+\boldsymbol{\Psi}_j$:
+the types of one time share the loadings and keep their own
+uniquenesses ("same axes, own volumes"). It alternates closed-form
+updates of the rows of $\boldsymbol{B}$ and of each
+$\boldsymbol{\Psi}_j$, for at most 100 steps.
 
-$$
-\widehat{\boldsymbol{\Sigma}}^{\mathrm{score}}_{j}
-=
-\widehat{\boldsymbol{\Sigma}}^{\mathrm{bio}}_{j}
-+\operatorname{diag}(\widehat{\boldsymbol{\mu}}_{\cdot j})
-+\frac{\kappa}{1-\kappa}
-\bigl(\widehat{\boldsymbol{\Sigma}}^{\mathrm{bio}}_{j}
-+\widehat{\boldsymbol{\mu}}_{\cdot j}\widehat{\boldsymbol{\mu}}_{\cdot j}^{\top}\bigr)
-$$ {#eq-cov-renoise}
+A factor model on $G$ genes has $G+qG-q(q-1)/2$ free covariance
+parameters: loadings up to rotation, plus uniquenesses
+[TODO-cite: Murphy 2012, Machine Learning: A Probabilistic Perspective, MIT Press; ch. 12, sec. 12.1.3, p. 384]{.highlight}.
+Shared loadings are counted once, plus one uniqueness vector per type.
+A rank is used only if it is at most the training cells minus two, at
+most the rank of the training correlation, and leaves no more
+parameters than the $G(G+1)/2$ entries of the matrix. Rank 30 is
+therefore never fitted for the 29-cell somite differentiation front.
 
-<!-- chk: V38c -->
+### Archived arms {#sec-cov-archived}
 
-(`reconstruct_count_covariance()`, element `score_sigma` of the fit,
-used by `score_fit()` when present). With $\kappa=0$ it is
-$\widehat{\boldsymbol{\Sigma}}^{\mathrm{bio}}_{j}+\operatorname{diag}(\widehat{\boldsymbol{\mu}}_{\cdot j})$.
-The cross-validation therefore compares only how the biological part is
-regularised; it cannot choose $\kappa$, because every $\kappa$ rebuilds
-the same raw moments up to regularisation. $\kappa$ stays a bracket:
-the nested comparison uses $\kappa=0$, which needs no estimate, and the
-upper end $\hat\kappa_{\max}=\hat\nu/(1+\hat\nu)$ is exported as a
-variant (`shrinkage_denoised_kappa_max`), tuned but not compared.
+These arms are not run in the current pipeline. Their code and a
+README are in `scripts/archives/sparse_precision_arms/` and
+`scripts/archives/denoised_covariance/`.
 
-$\hat\nu$ comes from `extrinsic_noise_nu()`: the mode of the normalised
-covariances $\widehat{\operatorname{Cov}}(x_g,x_h)/(\bar x_g\bar x_h)$
-over pairs of genes with a mean of at least one count (at most 2,000
-genes, largest means first), after Fang and Pachter
-[TODO-cite: Fang & Pachter 2025, extrinsic biological stochasticity; key fangExtrinsicBiologicalStochasticity2025 is in the DeCovarT bibliography, not in bibliography/REFERENCES.bib]{.highlight}.
-The estimate assumes that most gene pairs are intrinsically
-uncorrelated; co-regulated modules bias $\hat\nu$ upwards. Without
-spike-ins $\hat\nu$ mixes the biological and technical size factors,
-so $\hat\kappa_{\max}$ is the all-technical end of the bracket. The
-estimates are written per unit to `output/grn/cv/extrinsic_noise.csv`.
-
-The graphical lasso and the `SILGGM` refit accept the same
-preprocessing (`preprocess = "denoised"`). The graphical lasso then
-fits the correlation of the projected matrix. For `SILGGM`, ranks
-cannot be denoised: the support still comes from the nonparanormal
-scores, and only the linear-scale refit on that support uses the
-projected matrix. Neither variant is an arm of the nested comparison.
-
-### Graphical lasso with an unpenalised diagonal {#sec-glasso}
-
-`fit_cov_glasso()` standardises the panel, fits
-`glasso::glasso(R, rho = lambda, penalize.diagonal = FALSE)` [@R-glasso]
-on the sample correlation $\boldsymbol{R}_j$ by block coordinate
-descent [@friedmanSparseInverseCovariance2008], and rescales:
-$\widehat{\boldsymbol{\Omega}}_{j}=\Delta_j^{-1/2}\widehat{\boldsymbol{\Omega}}_{R}\Delta_j^{-1/2}$
-with $\Delta_j=\operatorname{diag}(\boldsymbol{V}_j)$
-(`rescale_correlation_fit()`). With the diagonal unpenalised the fitted
-correlation keeps a unit diagonal, so $\widehat{\boldsymbol{\Sigma}}_{j}$
-matches the sample variances.
-
-- `penalize.diagonal` defaults to `TRUE` in `glasso` 1.11; it is set
-  explicitly.
-- `huge` [@R-huge] is not used: `huge.glasso()` always penalises the
-  diagonal and has no switch for it (checked in the `huge` 1.5.1
-  sources). The reasons are in
-  [3.2, graphical lasso](https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-cov-glasso).
-- Grid endpoints come from `lambda_endpoints()`: at
-  $\lambda_{\max}=\max_{g\neq g'}|R_{gg'}|$ the off-diagonal precision
-  is zero; the lower end is of order $\sqrt{\log G_t/C_j}$.
-- A gene constant across the cells of a type is left out of that
-  type's fit and listed in `excluded_genes`, instead of forcing a
-  diagonal covariance for all genes.
-- A penalty whose solve fails is dropped from the grid and listed in
-  `failed_lambda`, instead of being replaced by a diagonal precision.
-
-The earlier selector, a safeguarded EBIC interval search
-(`ebic_adaptive_path()`, at most `n_solves = 40` solves,
-$\gamma=0.5$ [@foygelExtendedBayesianInformation2010]), is kept in
-`scripts/03_01_grn_glasso.R` as a diagnostic path. It no longer chooses
-$\lambda$.
-
-### `SILGGM` support, then a refit {#sec-silggm}
-
-`fit_cov_silggm_refit()` runs in three steps:
-
-1. Nonparanormal scores with `huge::huge.npn(x, npn.func = "shrinkage")`
-   (rank $R_{gc}$ mapped to $\Phi^{-1}\{R_{gc}/(C_j+1)\}$, then
-   standardised). The choice of shrinkage over truncation is argued in
-   [3.2, nonparanormal](https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-cov-npn).
-2. `SILGGM::SILGGM(npn, method = "D-S_GL", global = TRUE, alpha)`
-   [@R-SILGGM; @zhangSILGGMExtensivePackage2018]: de-sparsified
-   graphical lasso with the global FDR rule of
-   @liuGaussianGraphicalModel2013. The object kept is the support at
-   level $\alpha$ (`global_decision`), not the dense de-sparsified
-   matrix.
-3. An SPD refit on the linear-scale panel under the zeros of that
-   support, with `glasso::glasso(V, rho = 0, zero = ..., penalize.diagonal = FALSE)`;
-   with `preprocess = "denoised"`, on the projected denoised matrix of
-   @sec-cov-denoised.
-
-The script `scripts/03_02_grn_silggm.R` (seed 1, $\alpha=0.05$) stops
-after step 2 and has never been run; the refit lives in the wrapper.
-
-### `PLNnetwork` {#sec-pln}
-
-`fit_cov_plnnetwork()` fits the Poisson-lognormal network of `PLNmodels`
-[@R-PLNmodels; @chiquetVariationalInferenceSparse2018] to the raw
-counts of one unit, with the full-library offset:
+**Sparse precisions.** The graphical lasso with an unpenalised
+diagonal (`glasso`, EBIC path), the `SILGGM` support with a refit, and
+`PLNnetwork`, a Poisson log-normal model with the full-library offset
+$\log s_c$ and a latent precision $\boldsymbol{\Sigma}_z^{-1}$
+penalised off the diagonal:
 
 $$
-x_{gc}\mid\boldsymbol{z}_{\cdot c}
-\sim
-\mathrm{Poisson}\bigl(s_{c}\,e^{z_{gc}}\bigr),
+x_{gc}\mid\boldsymbol{z}_{\cdot c}\sim\mathrm{Poisson}\bigl(s_{c}e^{z_{gc}}\bigr),
 \qquad
-\boldsymbol{z}_{\cdot c}
-\sim
-\mathcal{N}_{G}(\boldsymbol{\mu}_{z},\boldsymbol{\Sigma}_{z}),
-\qquad
-\boldsymbol{\Omega}_{z}=\boldsymbol{\Sigma}_{z}^{-1}\ \text{penalised off the diagonal}.
+\boldsymbol{z}_{\cdot c}\sim\mathcal{N}_{G}(\boldsymbol{\mu}_{z},\boldsymbol{\Sigma}_{z}).
 $$ {#eq-pln}
 
-| Argument | Value |
-|---|---|
-| formula | `Abundance ~ 1 + offset(log_library)`, one fit per unit, no further design |
-| `log_library` | $\log s_c$, full RNA library (`library_size` of the slot, @sec-cov-inputs) |
-| `n_penalties` | 40 |
-| `min_ratio` | 0.1 |
-| `penalize_diagonal` | `FALSE` |
-| optimiser settings | defaults of `PLNnetwork_param()` (`PLNmodels` 1.3.1 in `renv.lock`) |
-
-: `PLNnetwork` settings. Earlier versions of the script passed `control_init` / `control_main`, which `PLNmodels` 1.x no longer accepts; the rewrite uses `control = PLNnetwork_param(...)`. {#tbl-pln-hyperparameters}
-
-```pseudocode
-#| label: algo-plnnetwork
-#| html-line-number: true
-#| pdf-line-number: true
-
-\begin{algorithm}
-\caption{PLNnetwork: alternating graphical lasso and variational updates}
-\begin{algorithmic}
-\Require counts $X$, offsets $O=\log s$, penalty $\lambda$, weights $W$
-\State initialise the variational means $M$, variances $S$ and $\Sigma$
-\For{$h = 1,\ldots,$ maxit\_out}
-  \State $\Omega^{(h)} \gets$ \Call{GraphicalLasso}{$\Sigma^{(h-1)}, \lambda W$}
-  \State $(B^{(h)},M^{(h)},S^{(h)}) \gets$ \Call{NLopt}{$B^{(h-1)},M^{(h-1)},S^{(h-1)};\Omega^{(h)}$}
-  \State $\Sigma^{(h)} \gets C^{-1}\left[{M^{(h)}}^\top M^{(h)} + \sum_c S_c^{(h)}\right]$
-  \State $F_h \gets -\mathrm{ELBO}(B^{(h)},M^{(h)},S^{(h)},\Omega^{(h)}) + \lambda\|\Omega^{(h)}\|_{1,W}$
-  \If{$|F_h-F_{h-1}|/|F_h| <$ ftol\_out}
-    \State \textbf{break}
-  \EndIf
-\EndFor
-\State \Return $(B,M,S,\Omega,\Sigma)$
-\end{algorithmic}
-\end{algorithm}
-```
-
-@algo-plnnetwork is the block-coordinate scheme of
-@chiquetVariationalInferenceSparse2018. The model, the variational
-bound and the role of the offset are in
+None was run on the gated panel. The pipeline now regularises
+covariances only; these precision estimators may return as a
+sensitivity analysis. Theory:
+[3.2, graphical lasso](https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-cov-glasso),
 [3.2, PLN](https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-cov-pln).
 
-The latent moments $(\boldsymbol{\mu}_{z},\boldsymbol{\Sigma}_{z})$ are
-not on DeCovarT's scale. Given the library $s_c$ of a cell, the moments
-of its counts are
-
-$$
-\mathbb{E}\,x_{gc}=s_{c}\,e^{\mu_{z,g}+\sigma_{z,gg}/2},
-\qquad
-\operatorname{Cov}\boldsymbol{x}_{\cdot c}
-=
-\operatorname{diag}(\mathbb{E}\,\boldsymbol{x}_{\cdot c})
-+
-\bigl(\mathbb{E}\,\boldsymbol{x}_{\cdot c}\,\mathbb{E}\,\boldsymbol{x}_{\cdot c}^{\top}\bigr)
-\circ
-\bigl(e^{\boldsymbol{\Sigma}_{z}}-\mathbf{1}\mathbf{1}^{\top}\bigr),
-$$ {#eq-pln-linear}
-
-with $e^{\boldsymbol{\Sigma}_{z}}$ taken entrywise. <!-- chk: V3 -->
-On raw counts (`normalise = "none"`), `pln_linear_moments(scale = "counts")`
-averages @eq-pln-linear over the libraries of the cells being scored,
-by the law of total covariance:
-
-$$
-\bar{\boldsymbol{x}}=\bar s\,\boldsymbol{m},
-\qquad
-\operatorname{Cov}\boldsymbol{x}
-=
-\bar s\operatorname{diag}(\boldsymbol{m})
-+\overline{s^{2}}\,(\boldsymbol{m}\boldsymbol{m}^{\top})
-\circ\bigl(e^{\boldsymbol{\Sigma}_{z}}-\mathbf{1}\mathbf{1}^{\top}\bigr)
-+\operatorname{Var}(s)\,\boldsymbol{m}\boldsymbol{m}^{\top},
-\qquad
-\boldsymbol{m}=e^{\boldsymbol{\mu}_{z}+\operatorname{diag}(\boldsymbol{\Sigma}_{z})/2},
-$$ {#eq-pln-linear-avg}
-
-<!-- chk: V3 -->
-
-with $\bar s$, $\overline{s^{2}}$ and $\operatorname{Var}(s)$ the mean,
-mean square and variance of those libraries. This is the matrix that
-is scored, comparable with the raw sample covariance. The offset
-removes every size variation from $\boldsymbol{\Sigma}_{z}$, biological
-size included, so `PLNnetwork` needs no moment correction, only a
-choice of what to put back at export. Beside the scored moments, the
-driver exports the two brackets without the Poisson diagonal
-(`poisson_diag = FALSE`): $\kappa=0$ keeps the depth terms
-(`size_term = "keep"`), and the all-technical end gives every cell the
-mean library, so $\operatorname{Var}(s)=0$ and
-$\overline{s^{2}}=\bar s^{2}$ (`size_term = "drop"`). With
-`normalise = "library"` the moments are divided by the size factor
-instead (`scale = "normalised"`).
+- **Denoised covariance.** The Poisson diagonal and a share $\kappa$
+  of the size term removed from the sample covariance, $\kappa$
+  bracketed between 0 and $\hat\nu/(1+\hat\nu)$, with $\hat\nu$ from
+  `extrinsic_noise_nu()`
+  ([3.2, raw or denoised](https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-raw-vs-denoised)).
+  It gave the worst deconvolution of the second pass: RMSE
+  `r f2(denoised_96)` at 96 h, Welch panel. These second-pass results
+  are kept in `output/deconvolution/second_pass/` and are still read by
+  @sec-deconv-fixed-results.
+- **Closed-form shrinkage level.** The Schäfer–Strimmer
+  $\hat\lambda^{\ast}$ of `corpcor` minimises a
+  `r glossary("Frobenius risk")`, not the Gaussian likelihood that
+  DeCovarT evaluates. In the first pass it was
+  `r span(first_pass$lambda_star[first_pass$cells >= 3000], f3)` for the
+  `r sum(first_pass$cells >= 3000)` units with
+  `r big(min(first_pass$cells[first_pass$cells >= 3000]))` cells or more,
+  and `r span(first_pass$lambda_star[first_pass$cells < 100])` for the
+  units with `r min(first_pass$cells)` to
+  `r max(first_pass$cells[first_pass$cells < 100])` cells
+  (`output/deconvolution/second_pass/plugin_summary_first_pass.csv`).
 
 ## Cross-validation and outputs {#sec-cov-cv-run}
 
-The same loss selects the tuning parameter of every arm and compares
-the five: the held-out Gaussian log-likelihood on the linear scale. For
-held-out cells $\mathcal{T}$ and an estimate
+One loss selects every tuning value and compares the arms: the
+`r glossary("held-out log-score", "held-out Gaussian log-score")` on
+the linear scale. For held-out cells
+$\mathcal{T}$ and an estimate
 $(\widehat{\boldsymbol{\mu}},\widehat{\boldsymbol{\Sigma}})$ fitted
 without them,
 
@@ -664,17 +749,140 @@ $$
 \ell(\widehat{\boldsymbol{\mu}},\widehat{\boldsymbol{\Sigma}};\mathcal{T})
 =
 \frac{1}{|\mathcal{T}|}\sum_{c\in\mathcal{T}}
-\log\phi_{G}\bigl(\boldsymbol{x}_{\cdot c};\widehat{\boldsymbol{\mu}},\widehat{\boldsymbol{\Sigma}}\bigr),
+\log\phi_{G}\bigl(\boldsymbol{x}_{\cdot c};\widehat{\boldsymbol{\mu}},\widehat{\boldsymbol{\Sigma}}\bigr).
 $$ {#eq-heldout-loglik}
 
-computed by `heldout_gaussian_logscore()` through a Cholesky factor of
-$\widehat{\boldsymbol{\Sigma}}$; for the denoised arm,
-$\widehat{\boldsymbol{\Sigma}}$ is @eq-cov-renoise. Why this score is a
-legitimate loss for the covariance even though cells are not Gaussian
-is in
-[3.2, Gaussian log-score](https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#prp-gaussian-logscore),
-and why it replaces AIC, BIC and EBIC as the selector in
+Its expectation is maximised at the true mean and covariance whatever
+the law of the cells (Stein's loss), so it is a legitimate loss even
+though cells are not Gaussian
+([3.2, Gaussian log-score](https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#prp-gaussian-logscore)).
+Why it replaces AIC, BIC and EBIC as the selector is in
 [3.2, cross-validation](https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-cov-cv).
+The bulk samples are never read.
+
+**Folds.** Leave-one-out under 100 cells (the 36 and 66 naïve cells at
+48 h and 72 h, the 29-cell somite front), 5-fold otherwise. The
+two-parameter arm uses 5 folds in every unit. Shared loadings use 5
+joint folds, each type split into 5. Folds split the cells of one unit:
+the score measures generalisation to new cells of this specimen, not
+to new specimens (@nte-pseudoreplication).
+
+**Poisson floor.** `split_standardise()`
+(`R/03_01_stats_covariance_estimation.R`) standardises the training and
+test cells with the training mean $\bar x_g$ and standard deviation
+$s_g$ of each gene, with the variance floored at its Poisson level plus
+one count over the $C_{\mathrm{tr}}$ training cells:
+
+$$
+s_g^{2}=\max\Bigl(v_g,\ \bar x_g+\tfrac{1}{C_{\mathrm{tr}}}\Bigr),
+$$ {#eq-cov-poisson-floor}
+
+with $v_g$ the sample variance. A count cannot vary less than a Poisson
+count; a smaller variance means too few cells, or the fractional counts
+left by ambient-RNA correction. The floor replaced a defect found in the
+shared-loadings arm. Before it, the held-out score of the 29-cell somite
+differentiation front at 96 h (outer fold 2 of the nested comparison)
+was about $-5\times10^{10}$. The gene *Fnbp1* has fractional
+ambient-corrected counts in that type: training mean $4\times10^{-7}$,
+standard deviation $1.9\times10^{-6}$. One count in a test cell then cost
+about $6\times10^{11}$. With the floor that fold scores −9,260, and the
+other types move by less than 0.3%. These values come from the
+diagnosis of the defect, not from the tables below. The factor fits use
+the same scale (`build_sigma()`, @sec-cov-estimators); the shrinkage
+plug-in of the deconvolution is unchanged. The tables of
+@sec-cov-results-discussion come from the rerun with the floor
+(`r cv_date`).
+
+**One spectral decomposition per training set.** The test cells are
+standardised with the training means and the floored standard
+deviations $s_g$ of @eq-cov-poisson-floor. Let
+$\boldsymbol{R}=\sum_{i\le r}\ell_i\boldsymbol{v}_i\boldsymbol{v}_i^{\top}$
+be the training correlation, of rank $r$ on $G$ genes. The eigenvectors
+of $(1-\lambda)\boldsymbol{R}+\lambda\boldsymbol{I}$ do not depend on
+$\lambda$; its eigenvalues are $e_i=(1-\lambda)\ell_i+\lambda$ on the
+range and $\lambda$ on the null space. For a standardised test cell
+$\boldsymbol{z}$,
+
+$$
+\log\phi
+=
+-\tfrac12\Bigl[
+G\log 2\pi+2\sum_g\log s_g
++\sum_{i\le r}\log e_i+(G-r)\log\lambda
++\sum_{i\le r}\frac{(\boldsymbol{v}_i^{\top}\boldsymbol{z})^{2}}{e_i}
++\frac{\lVert\boldsymbol{z}\rVert^{2}-\sum_{i\le r}(\boldsymbol{v}_i^{\top}\boldsymbol{z})^{2}}{\lambda}
+\Bigr].
+$$ {#eq-cov-path-score}
+
+<!-- chk: R1, R2 -->
+
+One decomposition therefore scores the `r n_levels` levels
+(`spectral_path_core()`). It is taken on the smaller of
+$\boldsymbol{Z}\boldsymbol{Z}^{\top}$ and
+$\boldsymbol{Z}^{\top}\boldsymbol{Z}$, with $\boldsymbol{Z}$ the
+standardised training cells. The two-parameter arm needs one
+decomposition per $\alpha$.
+
+**Factor scores.** With
+$\boldsymbol{M}=\boldsymbol{I}+\boldsymbol{B}^{\top}\boldsymbol{\Psi}^{-1}\boldsymbol{B}$,
+of size $q\times q$,
+
+$$
+(\boldsymbol{B}\boldsymbol{B}^{\top}+\boldsymbol{\Psi})^{-1}
+=
+\boldsymbol{\Psi}^{-1}-\boldsymbol{\Psi}^{-1}\boldsymbol{B}\boldsymbol{M}^{-1}\boldsymbol{B}^{\top}\boldsymbol{\Psi}^{-1},
+\qquad
+\det(\boldsymbol{B}\boldsymbol{B}^{\top}+\boldsymbol{\Psi})
+=
+\det\boldsymbol{\Psi}\,\det\boldsymbol{M}
+$$ {#eq-cov-woodbury}
+
+<!-- chk: R3 -->
+
+(`factor_core()`). No $G\times G$ matrix is factorised.
+
+**Constant genes.** A gene constant in a training set is scored apart,
+as an independent Gaussian with the variance of
+@eq-cov-poisson-floor. That part of the score is the same for every
+tuning value; it is left out of the fold-to-fold spread.
+
+**Rules.**
+
+- *Per type:* the value with the highest mean held-out score (`min`).
+  The one-standard-error choice, the most regularised value within one
+  standard error of that maximum, is reported beside it (`1se`).
+- *Common:* one value per time, the one with the highest sum over types
+  of the mean held-out score. For shared loadings this is the only rule.
+
+**Nested comparison.** A `r glossary("nested cross-validation")`: the
+cells of each time are split into 5 outer folds, stratified by type. Each rule chooses its tuning value on the
+outer training cells only, with the folds above, and is scored on the
+outer test cells. Scores are paired by fold and type; the gain is
+reported against the diagonal model.
+
+**Information criteria.** The factor models are refitted on all cells
+of each unit (stage `fit`; these fits enter the deconvolution). AIC
+and BIC are computed from the free-parameter counts of
+@tbl-cov-estimators, plus $G$ means per type. They are reported, not
+used to select.
+
+**Grid search only.** Every tuning value is chosen on a fixed grid.
+With one or two tuning parameters a grid is as reliable as random
+search, whose advantage appears when few of many hyperparameters matter
+[TODO-cite: Bergstra and Bengio 2012, Random search for
+hyper-parameter optimization, Journal of Machine Learning Research
+13:281–305; p. 283]{.highlight}. Here the shrinkage "path" is itself a
+grid, of `r n_levels` levels, scored from one spectral decomposition
+per fold (@eq-cov-path-score); the two-parameter arm adds one
+decomposition per $\alpha$. The former `search` stage compared, on 5
+folds, the exact path on 200 levels, a 10-value grid with one Cholesky
+factor per value, `optimize()` on the path over $[10^{-3},1]$ and 10
+random levels; for the two-parameter arm, on panels of at most 1,500
+genes, a $5\times8$ grid in $(\alpha,\lambda)$ against 40 random pairs.
+It is archived in `scripts/archives/search_comparison/` (see its
+README); its table, `output/grn/cv/search_comparison.csv`, is still read
+here (@sec-cov-search-results). The loss of a strategy is the held-out
+score of the best path value minus that of its choice.
 
 ```pseudocode
 #| label: algo-cv-covariance
@@ -682,248 +890,243 @@ and why it replaces AIC, BIC and EBIC as the selector in
 #| pdf-line-number: true
 
 \begin{algorithm}
-\caption{Tuning by K-fold cross-validation, and nested comparison of the five arms}
+\caption{Held-out scores along the paths, selection, and nested comparison}
 \begin{algorithmic}
-\Procedure{CVSelect}{$X, f, \Lambda, K$}
-  \State split the cells of $X$ into $K$ folds at random, with a fixed seed
+\Procedure{PathScores}{$X_{\mathrm{train}}, X_{\mathrm{test}}, \Lambda, Q, A$}
+  \State standardise both sets with the training means and standard deviations
+  \State $(\ell, V) \gets$ non-zero spectrum of the training correlation $R$
   \For{$\lambda \in \Lambda$}
-    \For{$k = 1,\ldots,K$}
-      \State $(\hat\mu,\hat\Sigma) \gets f(X_{-k};\lambda)$
-      \State $\ell_k(\lambda) \gets$ \Call{HeldOutLogScore}{$\hat\mu,\hat\Sigma,X_k$}
-    \EndFor
-    \State $m(\lambda) \gets$ mean of $\ell_k(\lambda)$; $\mathrm{se}(\lambda) \gets$ its standard error
+    \State $s(\lambda) \gets$ mean path score of the test cells, from $(\ell, V)$
   \EndFor
-  \State $\lambda_{\min} \gets \arg\max_{\lambda} m(\lambda)$
-  \State $\lambda_{1\mathrm{se}} \gets$ most regularised $\lambda$ with $m(\lambda) \ge m(\lambda_{\min}) - \mathrm{se}(\lambda_{\min})$
-  \State \Return $(m, \mathrm{se}, \lambda_{\min}, \lambda_{1\mathrm{se}})$
+  \For{$q \in Q$}
+    \State $(B, \Psi) \gets$ \Call{FactorEM}{$X_{\mathrm{train}}, q$}, started from $(\ell, V)$
+    \State $s(q) \gets$ mean test score through the Woodbury identity
+  \EndFor
+  \For{$\alpha \in A$}
+    \State spectrum of $(1-\alpha)R + \alpha\bar R$; $s(\alpha,\lambda)$ for every $\lambda \in \Lambda$
+  \EndFor
+  \State \Return $s$
 \EndProcedure
-\Procedure{NestedCompare}{$X, \{(f_e,\Lambda_e)\}_{e=1}^{5}, K_{\mathrm{out}}, K_{\mathrm{in}}$}
-  \For{$k = 1,\ldots,K_{\mathrm{out}}$}
-    \For{$e = 1,\ldots,5$}
-      \State $\lambda_e \gets \lambda_{\min}$ of \Call{CVSelect}{$X_{-k}, f_e, \Lambda_e, K_{\mathrm{in}}$}
-      \State $(\hat\mu,\hat\Sigma) \gets f_e(X_{-k};\lambda_e)$
-      \State $s_{ek} \gets$ \Call{HeldOutLogScore}{$\hat\mu,\hat\Sigma,X_k$}
+\Procedure{Select}{$X$, folds}
+  \For{each fold $k$}
+    \State $s_k \gets$ \Call{PathScores}{$X_{-k}, X_k, \Lambda, Q, A$}
+  \EndFor
+  \State $m \gets$ mean of $s_k$ over folds
+  \State \Return $\arg\max m$ per type; $\arg\max \sum_j m_j$ for a common value
+\EndProcedure
+\Procedure{NestedCompare}{$X_1,\ldots,X_J$}
+  \State split each $X_j$ into 5 outer folds
+  \For{$k = 1,\ldots,5$}
+    \For{each rule $e$}
+      \State choose its value by \Call{Select}{} on the outer training cells
+      \State $g_{ek} \gets$ test score of rule $e$ $-$ test score of the diagonal
     \EndFor
   \EndFor
-  \State \Return $(s_{ek})$, paired by outer fold
+  \State \Return $(g_{ek})$, paired by fold
 \EndProcedure
 \end{algorithmic}
 \end{algorithm}
 ```
 
-Settings in `scripts/03_04_cv_covariance.R`:
+Outputs in `output/grn/cv/`:
 
-- `cv_select_tuning(X, fit_fun, grid, K = 5, seed)` returns the mean and
-  standard error per grid value and the `min` and `1se` choices. The
-  exported fit uses `min`; `1se` is reported beside it.
-- `nested_cv_compare(X, estimators, K_outer = 5, K_inner = 5, seed)` is
-  run only to compare the five arms. The inner loop chooses the tuning
-  parameter, the outer loop scores the chosen fit on cells it never
-  saw. The denoised arm enters with $\kappa=0$; the
-  $\hat\kappa_{\max}$ variant is tuned by `cv_select_tuning()` alone
-  (@sec-cov-denoised).
-- Folds split cells of one unit. The score measures generalisation to
-  new cells of this specimen, not to new specimens
-  (@nte-pseudoreplication).
-- In units with very few cells (29 cells for the somite
-  differentiation front, against 5,821 panel genes) each training fold
-  has about 23 cells; the shrinkage estimate is the only one expected
-  to be stable there.
-- **Run time.** At 96 h the panel has 5,821 genes. `SILGGM` (D-S_GL)
-  then tests about $1.7\times10^{7}$ gene pairs per unit and
-  `PLNnetwork` updates a $5{,}821\times5{,}821$ latent covariance at
-  every step, each refitted $K$ times for selection and
-  $K_{\mathrm{out}}(K_{\mathrm{in}}+1)$ times for the comparison; these
-  two arms dominate the cost. No cap on the panel is imposed to save
-  time.
+- `cv_tuning_scores.csv`: mean and standard error of the held-out
+  score for each unit, arm and tuning value;
+- `cv_selected_tuning.csv`: the value chosen by each rule
+  (@tbl-cov-lambda);
+- `nested_cv_by_fold.csv`, `nested_cv_summary.csv`: outer-fold scores
+  and gains over the diagonal (@tbl-cov-nested);
+- `information_criteria.csv`: log-likelihood, parameters, AIC, BIC and
+  EM convergence per factor rank;
+- `search_comparison.csv`: choice, loss and time of each search
+  strategy (@tbl-cov-search), written by the archived `search` stage and
+  not rewritten by the current script.
 
-**Diagnostics that are computed but do not select.** The held-out
-log-score of @eq-heldout-loglik is the only selector. The diagnostics
-of
-[3.2, diagnostics](https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#nte-cov-criteria)
-describe a fit; none of them chooses a tuning value or an arm.
+Every file covers the three panels. @tbl-cov-lambda and
+@tbl-cov-nested show the Welch panel; @tbl-cov-panels gives the
+choices made once per time on all three.
 
-- For every arm: the condition number and the eigen-spectrum of
-  $\widehat{\boldsymbol{\Sigma}}_{j}$ against the Marchenko–Pastur band
-  of the sample covariance
-  [TODO-cite: Marchenko & Pastur 1967; key not in bibliography/REFERENCES.bib]{.highlight};
-  the bootstrap spread of $\widehat{\boldsymbol{\Sigma}}_{j}$ in
-  Frobenius and Bures distance (@sec-cov-evaluation); and the
-  Hellinger distance and `MixSim` overlap between types
-  [@melnykovMixSimPackageSimulating2012] (@sec-cov-plots). Only the
-  last two are coded (`gaussian_hellinger()`,
-  `gaussian_mixsim_overlap()`); the spectrum and the bootstrap spread
-  are planned.
-- For the sparse arms only: EBIC along the graphical-lasso path
-  (@sec-glasso) and edge stability under subsampling. Both count edges,
-  so they do not apply to the shrinkage arms. StARS
-  [@liuStabilityApproachRegularization2010] is not run: with 20
-  subsamples and 40 penalties it costs about 800 graphical-lasso solves
-  per unit, against 40 for the EBIC path.
-
-> For the arm retained for a unit,
+> For the arm and tuning value retained,
 $\widehat{\boldsymbol{\mu}}_{\cdot j}$ is the mean of the raw counts of
-its cells and $\widehat{\boldsymbol{\Sigma}}_{j}$ is the selected
-covariance, both on the scale of @sec-cov-inputs; @eq-grn-export holds
-by construction. For `PLNnetwork` both come from @eq-pln-linear-avg;
-for the denoised arm the exported covariance is
-$\widehat{\boldsymbol{\Sigma}}^{\mathrm{bio}}_{j}$. Which covariance
-layer these cell-level moments identify, and how the sample scales are
-estimated inside the DeCovarT fit, is in
+the cells of type $j$, and $\widehat{\boldsymbol{\Sigma}}_{j}$ is
+@eq-cov-correlation-scale, both on the scale of @sec-cov-inputs. It is
+positive definite because $\lambda>0$ or $\boldsymbol{\Psi}_j\succ0$,
+so @eq-grn-export holds by construction. Which covariance layer these
+cell-level moments identify, and how the sample scales are estimated
+inside the DeCovarT fit, is in
 [2.1, three regimes](https://bastienchassagnol.github.io/DeCovarT/articles/02-1-single-cell-generative-optimisation.html#sec-three-regimes)
 and
 [2.1, profile Newton](https://bastienchassagnol.github.io/DeCovarT/articles/02-1-single-cell-generative-optimisation.html#sec-profile-newton).
 
-### Displays {#sec-cov-plots}
-
-Plot functions are in `R/03_02_vis_regularisation_path.R`. Each display
-answers one question.
-
-**Choosing the tuning parameter (one unit, one arm).**
-
-- Cross-validation curve: $m(\lambda)\pm\mathrm{se}(\lambda)$ against
-  the tuning parameter, with the `min` and `1se` choices marked
-  (new; not produced yet).
-- Regularisation path: each off-diagonal entry of
-  $\widehat{\boldsymbol{\Omega}}(\lambda)$ against $\log\lambda$,
-  five edges that survive at the selected $\lambda$ and five that are
-  driven to zero (graphical lasso, `PLNnetwork`).
-- EBIC against $\log\lambda$, and EBIC against edge density
-  $|E|/\{G(G-1)/2\}$ (diagnostic only).
-
-**Comparing arms (one unit).**
-
-- Outer-fold held-out scores $s_{ek}$ of @algo-cv-covariance, one line
-  per fold across the five arms, so that the comparison is paired.
-- Partial-correlation heatmaps at the selected tuning parameter, with
-  one gene order frozen across estimators and types,
-  $$
-  \rho_{gg'\mid\mathrm{rest}}
-  =
-  -\frac{\omega_{gg'}}{\sqrt{\omega_{gg}\omega_{g'g'}}},
-  $$ {#eq-partial}
-  on a diverging scale centred at zero.
-- For the three sparse estimators: UpSet plots of edge presence and of
-  signed edges.
-
-**Comparing types (one time).** Pairwise Hellinger distance and
-`MixSim` overlap between the exported Gaussians on the linear scale
-(`gaussian_hellinger()`, `gaussian_mixsim_overlap()` in
-`R/03_02_stats_regularisation_path.R`). Distances computed on another scale
-(nonparanormal scores, $\log(1+x)$) do not describe what DeCovarT has
-to separate.
-
-### Evaluation {#sec-cov-evaluation}
-
-There is no ground-truth network for murine gastruloids, and the
-estimand is a covariance. The scores are therefore relative, in this
-order of weight:
-
-1. **Held-out likelihood**, outer folds of @algo-cv-covariance: the
-   selector, and the only score that compares all five arms on one
-   scale.
-2. **Downstream deconvolution**: DeCovarT error on the matched 48 h
-   bulk and in the misspecification sweep of @sec-sensitivity, with
-   $\widehat{\boldsymbol{\Sigma}}_{j}$ from each arm. This is the
-   score tied to the paper's estimand.
-3. **Technical stability**: a bootstrap of cells within type, labels
-   fixed (@nte-pseudoreplication). Edge-inclusion frequencies for the
-   sparse estimators and the Frobenius spread of
-   $\widehat{\boldsymbol{\Sigma}}_{j}$ for every arm. Conditional on
-   this specimen.
-4. **Separation of types**: Hellinger and `MixSim` overlap of
-   @sec-cov-plots.
-5. **Concordance of the sparse estimators**: overlap of edge sets
-   (intersection over the smaller set) and Hamming distance between
-   skeletons, raw and divided by $G(G-1)/2$. Agreement is a robustness
-   number, not a validation.
-
-Scores that need a known skeleton, curated transcription-factor
-targets, other assays or perturbations are perspectives
-([3.2, perspectives](https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#sec-cov-perspectives)).
-
-
 ## Results and discussion {#sec-cov-results-discussion}
-
 
 ### Regularisation shrinks covariance terms without setting them to zero {#sec-cov-shrinkage-reading}
 
-**Status.** The plug-in covariances of the first deconvolution pass
-exist (`scripts/03_05_stats_plugin_covariance.R`, outputs in
-`output/grn/plugin/`). They use the closed-form intensity
-$\hat\lambda^{\ast}$, floored at $10^{-3}$, on the Welch-gated panel
-and on its subset with a deviance share $R^2_D\ge 5\%$. The
-cross-validation of @sec-cov-cv-run has not been run, so the intensity
-is not the cross-validated one that @sec-shrinkage announces.
-
-**What the estimator returns.** With $\boldsymbol{R}_j$ the sample
-correlation and $\boldsymbol{D}_j$ the sample variances, the estimate
-is
+**What the shrinkage arm returns.** The estimate is
 $\boldsymbol{D}_j^{1/2}\{(1-\lambda)\boldsymbol{R}_j+\lambda\boldsymbol{I}\}\boldsymbol{D}_j^{1/2}$
 (@sec-shrinkage). Three readings follow.
 
 - **Variances are untouched.** Only the correlations move.
 - **Every correlation is multiplied by $1-\lambda$; none becomes
   zero.** The estimate has as many non-zero off-diagonal terms as the
-  sample covariance: all $G_t(G_t-1)/2$ pairs, that is 1.0 million at
-  48 h, 5.8 million at 72 h and 16.9 million at 96 h on the Welch-gated
-  panel. Its inverse is dense as well, so no graph can be read from
-  either matrix.
+  sample covariance: all $G_t(G_t-1)/2$ pairs, that is
+  `r and_list(paste(f1(pairs_m), "million at", hours(names(pairs_m))))`
+  on the Welch panel. Its inverse is dense as well, so no graph can be read from
+  either matrix. The factor models are dense too: each off-diagonal
+  term is an entry of $\boldsymbol{B}_j\boldsymbol{B}_j^{\top}$.
 - **$\lambda$ is a floor on the spectrum.** Each eigenvalue $\ell$ of
   $\boldsymbol{R}_j$ becomes $(1-\lambda)\ell+\lambda$, so the smallest
   eigenvalue of the shrunk correlation is at least $\lambda$. That
-  floor is what makes the estimate positive definite when $C_j\le G_t$.
-
-**Reading $\hat\lambda^{\ast}$.** The closed-form intensity is the
-estimated share of the squared sample correlations that is sampling
-variance [@schäferShrinkageApproachLargescale2005]. It rises when a
-unit has few cells for its number of genes (@tbl-cov-lambda).
+  floor makes the estimate positive definite when $C_j\le G_t$.
 
 ```{r}
 #| label: tbl-cov-lambda
-#| tbl-cap: "Closed-form shrinkage intensity per type × time unit, Welch-gated panel (`output/grn/plugin/plugin_summary.csv`). $C_j$: scored cells; $G_t$: panel genes; $1-\\hat\\lambda^{\\ast}$: factor applied to every sample correlation; last column: share of the $G_t$ eigenvalues of the denoised matrix of @eq-cov-denoised ($\\kappa=0$) that were negative and raised to zero."
+#| tbl-cap: "Tuning values chosen on held-out cells, Welch panel (`output/grn/cv/cv_selected_tuning.csv`). $C_j$: scored cells. Shrinkage: level $\\lambda$ per type (`min` and `1se`) and common to the types of a time. Two-parameter: $(\\alpha,\\lambda)$ per type and common. Factor rank: per type, and shared by the types of a time. Leave-one-out for $C_j<100$, 5-fold otherwise."
 #| echo: false
-plugin <- utils::read.csv(
+cv_dir <- here::here("..", "output", "grn", "cv")
+sel <- utils::read.csv(
+  file.path(cv_dir, "cv_selected_tuning.csv"),
+  stringsAsFactors = FALSE,
+  fileEncoding = "UTF-8"
+)
+sel <- sel[sel$gene_set == "welch", , drop = FALSE]
+units <- utils::read.csv(
   here::here("..", "output", "grn", "plugin", "plugin_summary.csv"),
   stringsAsFactors = FALSE,
   fileEncoding = "UTF-8"
 )
-plugin <- plugin[plugin$gene_set == "welch", , drop = FALSE]
-plugin <- plugin[order(plugin$time_point, -plugin$cells), , drop = FALSE]
-big <- function(x) format(x, big.mark = ",", trim = TRUE)
+units <- unique(units[units$gene_set == "welch", , drop = FALSE])
+units <- units[order(units$time_point, -units$cells), , drop = FALSE]
+unit_key <- paste(units$time_point, units$cell_type)
+pick <- function(rule, column = "tuning") {
+  d <- sel[sel$rule == rule, , drop = FALSE]
+  d[[column]][match(unit_key, paste(d$time, d$cell_type))]
+}
+f2 <- function(x) formatC(x, format = "f", digits = 2)
+pair <- function(rule) {
+  paste0("(", f2(pick(rule, "alpha")), ", ", f2(pick(rule)), ")")
+}
 tab <- data.frame(
-  sub("h$", " h", plugin$time_point),
-  plugin$cell_type,
-  big(plugin$cells),
-  big(plugin$genes),
-  formatC(plugin$lambda_used, format = "f", digits = 3),
-  formatC(1 - plugin$lambda_used, format = "f", digits = 2),
-  paste0(floor(100 * plugin$clipped_eigenvalues / plugin$genes), "%")
+  sub("h$", " h", units$time_point),
+  units$cell_type,
+  format(units$cells, big.mark = ",", trim = TRUE),
+  f2(pick("shrinkage, per type")),
+  f2(pick("shrinkage, per type, 1se")),
+  f2(pick("shrinkage, common")),
+  pair("two-parameter, per type"),
+  pair("two-parameter, common"),
+  as.character(pick("factor, per type")),
+  as.character(pick("factor, shared loadings"))
 )
 colnames(tab) <- c(
   "Time",
   "Cell type",
   "$C_j$",
-  "$G_t$",
-  "$\\hat\\lambda^{\\ast}$",
-  "$1-\\hat\\lambda^{\\ast}$",
-  "Eigenvalues raised to zero"
+  "Per type",
+  "Per type, 1se",
+  "Common",
+  "Per type",
+  "Common",
+  "Per type",
+  "Shared"
 )
 tinytable::tt(tab) |>
-  tinytable::format_tt(i = 0, quarto = TRUE) |>
-  tinytable::style_tt(j = 3:7, align = "r")
+  tinytable::group_tt(
+    j = list(
+      "Shrinkage $\\lambda$" = 4:6,
+      "Two-parameter $(\\alpha,\\lambda)$" = 7:8,
+      "Factor rank" = 9:10
+    )
+  ) |>
+  tinytable::format_tt(quarto = TRUE) |>
+  tinytable::style_tt(j = 3:10, align = "r")
 ```
 
-- **Abundant types are barely shrunk.** In the three units with 3,589
-  cells or more, $\hat\lambda^{\ast}$ is 0.006 to 0.03: the estimate
-  is the sample correlation to within 3%, with all its sampling noise,
-  and the floor on the correlation eigenvalues is only 0.006 to 0.03.
-- **Rare types are shrunk towards independence.** With 29 to 66 cells,
-  $\hat\lambda^{\ast}$ is 0.60 to 0.74: about 40% or less of each
-  sample correlation is kept, and the estimate is close to a diagonal matrix.
-- **One number for all pairs.** The same factor applies to a pair of
-  co-regulated genes and to a pair of unrelated genes. The estimator
-  cannot keep one and remove the other.
+- **Held-out cells choose strong shrinkage.** The per-type level is
+  `r f2(epi48)` for the 48 h epiblast, `r span(lam_big)` for the other
+  types with 1,000 cells or more, and `r span(lam_small)` for the types
+  with fewer. Except in the 48 h epiblast, each sample correlation keeps
+  `r span(1 - shr_rest$tuning, pct)` of its value. The common level is
+  `r and_list(paste(f2(common_w$tuning), "at", hours(common_w$time)))`.
+  The `1se` rule picks $\lambda=1$, the diagonal, for
+  `r if (nrow(one_se_diag)) and_list(unit_the(one_se_diag$time, one_se_diag$cell_type)) else "no unit"`.
+- **The two-parameter arm pools as much as the grid allows.**
+  $\alpha=0.75$, the largest value of the grid, in
+  `r sum(tp_all$alpha == 0.75)` of the `r nrow(tp_all)` Welch choices,
+  per type and common. Its $\lambda$ is no higher than that of plain
+  shrinkage: `r span(tp_type$tuning)` per type.
+- **Factor ranks follow the number of cells.** Rank
+  `r max(fa_w$tuning)`, the edge of the grid, for
+  `r and_list(unit_the(fa_top$time, fa_top$cell_type))`; ranks
+  `r min(fa_small$tuning)` to `r max(fa_small$tuning)` for the types
+  with fewer than 1,000 cells. Shared loadings choose rank
+  `r and_list(paste(shared_w$tuning, "at", hours(shared_w$time)))`.
+- **The shared rank and the Poisson floor.** Before the floor of
+  @eq-cov-poisson-floor, the shared-loadings scores of the two rarest
+  types were of order $-10^{7}$ (36 naïve cells, 48 h) and $-10^{10}$
+  (somite front, 96 h) at every rank, rank 0 included, against
+  $-2.4\times10^{3}$ and $-2.2\times10^{4}$ for the same diagonal model
+  scored by leave-one-out. The somite front then decided the sum over
+  types and set the 96 h shared rank. The cause at 96 h was one gene
+  with fractional counts (@sec-cov-cv-run); the 48 h case was not traced
+  separately. With the floor (tables of `r cv_date`) shared loadings
+  choose rank `r shared_top`, the largest of their grid, at
+  `r and_list(unique(hours(shared_all$time[shared_all$gene_set %in% c("welch", "r2_01") & shared_all$tuning == shared_top])))`
+  on the Welch and $R^2_D\ge 1\%$ panels (@tbl-cov-panels). The rank
+  is not interior there; the grid must be extended before the shared
+  loadings are compared with the other arms.
+
+```{r}
+#| label: tbl-cov-panels
+#| tbl-cap: "Choices made once per time, on the three panels (`output/grn/cv/cv_selected_tuning.csv`). $G_t$: panel genes. Common: the level, or pair, with the highest held-out score summed over the types of the time; shared: rank of the shared loadings; per type: range of the per-type factor ranks. Last column: shrinkage level chosen by the bulk likelihood summed over the three standard-Wnt replicates (`output/deconvolution/lambda_selection.csv`, @sec-deconv-selection)."
+#| echo: false
+panel_name <- c(welch = "Welch", r2_01 = "$R^2_D\\ge 1\\%$", r2_05 = "$R^2_D\\ge 5\\%$")
+slot_tab <- unique(sel_all[c("gene_set", "time")])
+slot_tab <- slot_tab[order(match(slot_tab$gene_set, names(panel_name)), slot_tab$time), ]
+one <- function(rule, gs, tm, k = "tuning") {
+  sel_all[[k]][sel_all$rule == rule & sel_all$gene_set == gs & sel_all$time == tm][[1L]]
+}
+tab <- do.call(rbind, lapply(seq_len(nrow(slot_tab)), function(i) {
+  gs <- slot_tab$gene_set[[i]]
+  tm <- slot_tab$time[[i]]
+  fr <- sel_all$tuning[sel_all$rule == "factor, per type" & sel_all$gene_set == gs & sel_all$time == tm]
+  data.frame(
+    panel_name[[gs]], hours(tm),
+    big(sum(gene_sets$gene_set == gs & gene_sets$time_point == tm)),
+    f2(one("shrinkage, common", gs, tm)),
+    paste0("(", f2(one("two-parameter, common", gs, tm, "alpha")), ", ",
+           f2(one("two-parameter, common", gs, tm)), ")"),
+    format(one("factor, shared loadings", gs, tm)),
+    paste(min(fr), "to", max(fr)),
+    format(bulk_lam$tuning[bulk_lam$gene_set == gs & bulk_lam$time == tm])
+  )
+}))
+colnames(tab) <- c(
+  "Panel", "Time", "$G_t$", "Common $\\lambda$", "Common $(\\alpha,\\lambda)$",
+  "Shared", "Per type", "Bulk likelihood $\\lambda$"
+)
+tinytable::tt(tab) |>
+  tinytable::group_tt(j = list("Shrinkage" = 4:5, "Factor rank" = 6:7)) |>
+  tinytable::format_tt(quarto = TRUE) |>
+  tinytable::style_tt(j = 3:8, align = "r")
+```
+
+- **The common level is far above what the bulk chooses.** Held-out
+  cells choose a common shrinkage level of
+  `r span(common_all$tuning)` across panels and times
+  (@tbl-cov-panels). The bulk likelihood chooses `r span(bulk_wr)` on
+  the Welch and $R^2_D\ge 1\%$ panels, and
+  `r and_list(paste(format(bulk_05$tuning), "at", hours(bulk_05$time)))`
+  on the $R^2_D\ge 5\%$ panel, whose 48 h slot has
+  `r n_r2_05[["48h"]]` genes.
+- **Shared loadings sit at the top of their grid**, rank
+  `r shared_top`, in `r sum(shared_all$tuning == shared_top)` of the
+  `r nrow(shared_all)` slots; the per-type rank is
+  `r max(sel_all$tuning[sel_all$rule == "factor, per type"])`, the top
+  of its grid, in
+  `r sum(sel_all$rule == "factor, per type" & sel_all$tuning == max(scores$tuning[scores$arm == "factor"]))`
+  of the `r sum(sel_all$rule == "factor, per type")` type × time × panel
+  units.
 
 **A dense estimate is not evidence that every pair of genes
 interacts.** Three mechanisms give a non-zero covariance to a pair
@@ -936,33 +1139,245 @@ with no direct link.
   of the precision matrix. Two genes linked only through other genes
   still have a non-zero covariance. A covariance block is zero only
   between groups of genes with no path between them. Isolated groups
-  can be looked for with the sparse arms (@sec-glasso, @sec-silggm),
-  not with this one.
+  could be looked for with the archived sparse arms
+  (@sec-cov-archived), not with these.
 - **Raw counts share a cell-size factor.** The covariances are computed
   on raw counts (@sec-cov-inputs), so every pair of genes receives the
   size term $\nu\,\mu_g\mu_h$, positive for all pairs. This is the
-  extrinsic noise that `extrinsic_noise_nu()` estimates
-  (@sec-cov-denoised).
+  extrinsic noise that the archived `extrinsic_noise_nu()` estimated.
 
-**Denoised arm.** Removing the Poisson diagonal leaves a matrix with
-many negative eigenvalues, raised to zero before shrinkage (last
-column of @tbl-cov-lambda). For the rarest types the count equals
-$G_t-(C_j-1)$, the null space of the sample covariance (1,382 of 1,417
-for the 36 naïve-pluripotency cells at 48 h): before shrinkage,
-$\widehat{\boldsymbol{\Sigma}}^{\mathrm{bio}}_{j}$ has rank at most
-$C_j-1$, and $\lambda$ alone makes it invertible.
+### Nested comparison {#sec-cov-nested-results}
 
-**What this implies for the deconvolution.** The acceptance of a dense
-plug-in (@sec-cov-scope) concerns the likelihood, not the
-interpretation. In the first pass the Newton failure rate did not
-differ between the four covariance inputs (22 to 28 of 48 fits each),
-so the level of regularisation is not what stops the optimiser. Its
-effect on the accuracy of $\hat{\boldsymbol{p}}$ is large: on the
-Welch-gated panel at 96 h, the RMSE of DeCovarT on the raw covariance
-goes from 0.36 at $\hat\lambda^{\ast}$ to 0.034 at a common
-$\lambda=0.5$ (@sec-deconv-96h-diagnosis). The closed-form intensity
-minimises the error of the covariance, not that of the composition.
+```{r}
+#| label: tbl-cov-nested
+#| tbl-cap: "Gain of each rule over the diagonal model in held-out log-score per cell, Welch panel: mean over the 5 outer folds (standard error), paired by fold (`output/grn/cv/nested_cv_summary.csv`). The tuning value of each rule is chosen on the outer training cells only. Bold: highest mean gain of the unit."
+#| echo: false
+nested <- utils::read.csv(
+  here::here("..", "output", "grn", "cv", "nested_cv_summary.csv"),
+  stringsAsFactors = FALSE,
+  fileEncoding = "UTF-8"
+)
+nested <- nested[nested$gene_set == "welch", , drop = FALSE]
+units <- utils::read.csv(
+  here::here("..", "output", "grn", "plugin", "plugin_summary.csv"),
+  stringsAsFactors = FALSE,
+  fileEncoding = "UTF-8"
+)
+units <- unique(units[units$gene_set == "welch", , drop = FALSE])
+units <- units[order(units$time_point, -units$cells), , drop = FALSE]
+rules <- c(
+  "shrinkage, per type",
+  "shrinkage, common",
+  "two-parameter, per type",
+  "two-parameter, common",
+  "factor, per type",
+  "factor, shared loadings"
+)
+gain <- sapply(rules, function(r) {
+  d <- nested[nested$rule == r, , drop = FALSE]
+  i <- match(
+    paste(units$time_point, units$cell_type),
+    paste(d$time, d$cell_type)
+  )
+  d$mean_gain_over_diagonal[i]
+})
+se <- sapply(rules, function(r) {
+  d <- nested[nested$rule == r, , drop = FALSE]
+  i <- match(
+    paste(units$time_point, units$cell_type),
+    paste(d$time, d$cell_type)
+  )
+  d$se_gain[i]
+})
+cells_txt <- matrix(
+  paste0(round(gain), " (", round(se), ")"),
+  nrow = nrow(gain)
+)
+tab <- data.frame(
+  sub("h$", " h", units$time_point),
+  units$cell_type,
+  format(units$cells, big.mark = ",", trim = TRUE),
+  cells_txt
+)
+colnames(tab) <- c(
+  "Time",
+  "Cell type",
+  "$C_j$",
+  "Per type",
+  "Common",
+  "Per type",
+  "Common",
+  "Per type",
+  "Shared loadings"
+)
+out <- tinytable::tt(tab) |>
+  tinytable::group_tt(
+    j = list("Shrinkage" = 4:5, "Two-parameter" = 6:7, "Factor analysis" = 8:9)
+  ) |>
+  tinytable::format_tt(quarto = TRUE) |>
+  tinytable::style_tt(j = 3:9, align = "r")
+best <- apply(gain, 1L, which.max)
+for (i in seq_along(best)) {
+  out <- tinytable::style_tt(out, i = i, j = 3L + best[[i]], bold = TRUE)
+}
+out
+```
 
-[TODO: select $\lambda$ without the observed composition, and compare
-with the sparse arms on deconvolution accuracy; planned as a factor of
-the sweep in @sec-sens-panel-size.]{.highlight}
+- **Every rule beats the diagonal on average.** The mean gain is
+  positive in `r n_positive` of the `r nrow(nested_w)` unit × rule
+  cells, and exceeds two standard errors in `r n_two_se`. The
+  exceptions are `r if (nrow(weak)) weak_txt else "none"`.
+- **Abundant types.** In the units with 1,000 cells or more the rule
+  with the highest mean gain is: `r best_txt(best_w[best_w$cells >= 1000, ])`.
+- **Rare types.** In the units with fewer than 1,000 cells:
+  `r best_txt(best_w[best_w$cells < 1000, ])`. In
+  `r sum(borrow[best_w$cells < 1000])` of these
+  `r sum(best_w$cells < 1000)` units the best rule borrows across types
+  (shared loadings or the two-parameter arm).
+- **Common rules and the diagonal.** The common shrinkage and
+  two-parameter rules choose $\lambda=1$, the diagonal, in
+  `r nrow(diag_folds)` of their `r n_common_choices` time × rule ×
+  outer-fold choices (`nested_cv_by_fold.csv`); such a fold widens
+  their standard errors.
+
+### Search strategies {#sec-cov-search-results}
+
+```{r}
+#| label: tbl-cov-search
+#| tbl-cap: "Search strategies for the tuning value, both gene sets pooled (`output/grn/cv/search_comparison.csv`; shrinkage: 22 type × time × gene-set units; two-parameter: the 14 units with at most 1,500 genes). Loss: held-out log-score per cell of the best value found by the reference (the exact path for shrinkage; the better of the two strategies for the two-parameter arm) minus that of the strategy's choice. Time: wall-clock seconds per unit, path preparation included."
+#| echo: false
+search <- utils::read.csv(
+  here::here("..", "output", "grn", "cv", "search_comparison.csv"),
+  stringsAsFactors = FALSE,
+  fileEncoding = "UTF-8"
+)
+plan <- data.frame(
+  arm = c(rep("shrinkage", 4L), rep("two_param", 2L)),
+  strategy = c(
+    "exact path",
+    "optimiser on the path",
+    "random values on the path",
+    "grid, one factorisation per value",
+    "grid, path in lambda",
+    "random pairs"
+  ),
+  label = c(
+    "Exact path, 200 levels",
+    "`optimize()` on the path",
+    "10 random levels on the path",
+    "10-value grid, one Cholesky factor per value",
+    "5 × 8 grid, path in $\\lambda$",
+    "40 random pairs"
+  ),
+  stringsAsFactors = FALSE
+)
+loss_fmt <- function(x) {
+  ifelse(
+    abs(x) >= 1000,
+    format(round(x), big.mark = ",", trim = TRUE),
+    formatC(x, format = "fg", digits = 2)
+  )
+}
+rows <- lapply(seq_len(nrow(plan)), function(i) {
+  d <- search[
+    search$arm == plan$arm[[i]] & search$strategy == plan$strategy[[i]],
+    ,
+    drop = FALSE
+  ]
+  data.frame(
+    ifelse(plan$arm[[i]] == "shrinkage", "Shrinkage", "Two-parameter"),
+    plan$label[[i]],
+    nrow(d),
+    formatC(stats::median(d$elapsed_sec), format = "f", digits = 2),
+    loss_fmt(stats::median(d$score_loss)),
+    loss_fmt(max(d$score_loss)),
+    sum(d$score_loss > 0.1)
+  )
+})
+tab <- do.call(rbind, rows)
+colnames(tab) <- c(
+  "Arm",
+  "Strategy",
+  "Units",
+  "Median time (s)",
+  "Median loss",
+  "Largest loss",
+  "Units with loss > 0.1"
+)
+tinytable::tt(tab) |>
+  tinytable::format_tt(quarto = TRUE) |>
+  tinytable::style_tt(j = 3:7, align = "r")
+```
+
+- **The exact path is the cheapest and the reference.** Median
+  `r f2(s_med("shrinkage", "exact path", "elapsed_sec"))` s per unit,
+  against `r f1(s_med("shrinkage", "grid, one factorisation per value", "elapsed_sec"))` s
+  for a 10-value grid refitted value by value. The refitted grid loses
+  `r f2(s_med("shrinkage", "grid, one factorisation per value", "score_loss"))`
+  log-score units per cell (median); it loses more than 0.1 in
+  `r sum(grid_d$score_loss > 0.1)` of `r nrow(grid_d)` units. Its
+  largest loss, `r format(signif(grid_worst$score_loss, 2), big.mark = ",")`,
+  is for `r unit_the(grid_worst$time, grid_worst$cell_type)`
+  (`r grid_worst$gene_set` panel), whose best level is 1 while that grid
+  stops at 0.9. The loss comes from the coarse grid, not from grid
+  search: the path is a finer grid.
+- **Random levels lose
+  `r f2(s_med("shrinkage", "random values on the path", "score_loss"))`
+  (median)** for the same cost as the path.
+- **`optimize()` on the path matches the path** in
+  `r sum(opt_d$score_loss <= 0.01)` of `r nrow(opt_d)` units (loss at
+  most 0.01; a negative loss is a level between two path values).
+- **Two-parameter arm.** 40 random pairs take
+  `r f1(s_med("two_param", "random pairs", "elapsed_sec"))` s per unit
+  against `r f1(s_med("two_param", "grid, path in lambda", "elapsed_sec"))` s
+  for the $5\times8$ grid, and lose
+  `r f2(s_med("two_param", "random pairs", "score_loss"))` (median).
+- On the Welch panel alone the times are larger (median
+  `r f2(s_med("shrinkage", "exact path", "elapsed_sec", search_w))` s
+  for the path,
+  `r round(s_med("shrinkage", "grid, one factorisation per value", "elapsed_sec", search_w))` s
+  for the refitted grid) and so are the losses (median
+  `r f1(s_med("shrinkage", "grid, one factorisation per value", "score_loss", search_w))`
+  for the refitted grid).
+
+### Information criteria {#sec-cov-ic-results}
+
+On the Welch panel (`information_criteria.csv`), AIC chooses the
+largest fitted rank for `r sum(ic_type$aic == ic_type$top)` of
+`r nrow(ic_type)` types, and rank
+`r and_list(paste(ic_shared$aic, "at", hours(ic_shared$time)))` for the
+shared loadings. BIC chooses ranks `r min(ic_type$bic)` to 8 for
+`r sum(ic_type$bic <= 8)` types`r if (nrow(bic_high)) paste0(", and ", and_list(paste(bic_high$bic, "for", unit_the(bic_high$time, bic_high$cell_type))))`.
+For the shared loadings BIC chooses
+`r and_list(paste(ic_shared$bic, "at", hours(ic_shared$time)))`. Of the
+`r sum(ic$arm == "factor")` per-type fits on all cells,
+`r sum(ic$arm == "factor" & !ic$converged)` stopped at the 200-step
+limit; `r sum(ic$arm != "factor" & ic$converged)` of the
+`r sum(ic$arm != "factor")` shared fits converged.
+
+### What this implies for the deconvolution {#sec-cov-deconv-implication}
+
+The acceptance of a dense plug-in (@sec-cov-scope) concerns the
+likelihood, not the interpretation. The levels that predict held-out
+cells best are too strong for the bulk (@sec-deconv-selection). On the
+Welch panel at 96 h the `r glossary("RMSE")` of the proportions is
+`r f3(rmse_id("cv_shrinkage_per_type"))` with the per-type levels and
+`r f3(rmse_id("cv_shrinkage_common"))` with the common level, against
+`r f3(bulk_pick$rmse)` at $\lambda=`r bulk_pick$tuning`$, the level
+chosen by the bulk likelihood (`output/deconvolution/lambda_selection.csv`).
+
+[TODO: compare a precision estimator (@sec-cov-archived) with the
+shrinkage arm on deconvolution accuracy, as a factor of the sweep in
+@sec-sens-panel-size.]{.highlight}
+
+## Glossary {#sec-cov-glossary}
+
+The terms underlined in this chapter, with the definitions of
+`glossary/glossary.yml`.
+
+```{r}
+#| label: tbl-cov-glossary
+#| tbl-cap: "Glossary of the terms used in this chapter."
+#| echo: false
+glossary::glossary_table()
+```

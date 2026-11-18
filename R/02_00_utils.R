@@ -255,3 +255,39 @@ save_figure <- function(
   )
   invisible(c(pdf = pdf_path, png = png_path))
 }
+
+#' Append one line to the progress file of a background run.
+#'
+#' Tab-separated: timestamp, `kind`, `slot`, then `...`. The main process
+#' writes `plan` lines (slot, number of tasks, workers) and the workers
+#' `done` lines (slot, task, elapsed seconds, status, message); one short
+#' `cat(append = TRUE)` per line, so forked workers do not interleave.
+#' Read by `scripts/utils/progress_report.R`.
+#'
+#' @param file Path of the progress file; `NULL` does nothing.
+#' @param kind `"plan"` or `"done"`.
+#' @param slot Slot label, e.g. `"96h / welch"`.
+#' @param ... Further fields.
+#' @return `NULL`, invisibly.
+log_progress <- function(file, kind, slot, ...) {
+  if (is.null(file)) {
+    return(invisible(NULL))
+  }
+  fields <- vapply(
+    c(format(Sys.time(), "%Y-%m-%d %H:%M:%S"), kind, slot, list(...)),
+    function(x) gsub("[\t\n]", " ", paste(as.character(x), collapse = " ")),
+    character(1)
+  )
+  # One string, one write: forked workers then do not split a line.
+  cat(paste0(paste(fields, collapse = "\t"), "\n"), file = file, append = TRUE)
+  invisible(NULL)
+}
+
+#' Progress file of a script run started today, in `logs/`.
+#'
+#' @param script Script name without extension.
+#' @return The path, after creating `logs/`.
+progress_path <- function(script) {
+  dir.create("logs", showWarnings = FALSE)
+  file.path("logs", paste0(script, "_", Sys.Date(), ".progress.tsv"))
+}

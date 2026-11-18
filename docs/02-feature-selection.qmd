@@ -715,6 +715,58 @@ least two donors. What the plug-in costs is in
 [TODO-cite: deMixSC (Eq. 4, PDF p. 12), iterated W-NNLS weights]{.highlight}
 [TODO-cite: Lawson & Hanson (1974), Solving Least Squares Problems, ch. 23]{.highlight}
 
+::: {#nte-fs-plugin-choice .callout-note}
+## Why deMixSC, among the univariate deconvolutions
+
+The plug-in must give a usable composition at each of the three
+matched times, and it must not be pulled by the genes under test. The
+benchmark of chapter 4 (@sec-deconv-comparators) ran ten univariate
+methods: deMixSC, DWLS, RLM, BayesPrism, ReDeconv, RNA-Sieve, SCDC,
+MEAD, DECALS and NNLS. It also ran deMixSC with its bulk/pseudo-bulk
+alignment. MuSiC was not run, because it needs two donors or more.
+The figures below are RMSEs against the scored composition of the
+reference (`benchmark_metrics*.csv`).
+
+- **Lowest pooled error.** deMixSC weighted NNLS has the lowest pooled
+  RMSE on the Welch panel and on the R²_D ≥ 1 % panel.
+  - Welch: 0.054, against 0.097 (DWLS), 0.100 (MEAD), 0.113
+    (ReDeconv), 0.117 (RNA-Sieve) and 0.354 (NNLS).
+  - R²_D ≥ 1 %: 0.069, against 0.141 (DWLS).
+- **Not the best at every time.**
+  - At 48 h most methods put all of the composition on epiblast and tie
+    at 0.021.
+  - On the Welch panel, ReDeconv is best at 72 h (0.026 against 0.035)
+    and MEAD at 96 h (0.048 against 0.071).
+- **The smallest worst-time error.** What deMixSC does have is the
+  smallest worst-time error. That is the property a filter applied at
+  every time needs.
+  - Welch: 0.071, against 0.135 (DWLS) to 0.479 (NNLS) for the other methods.
+  - R²_D ≥ 1 %: 0.091, against 0.185 (DWLS) to 0.479 (NNLS).
+- **Aitchison distance.** Measured by the Aitchison distance with zeros
+  replaced at 0.001, ReDeconv is better on the Welch panel (2.03
+  against 2.41).
+  - The gap is at 72 h (0.55 against 2.35). There 44 % of the deMixSC
+    shares are exactly 0, an NNLS boundary solution, and none of
+    ReDeconv's are (`proportions_long.csv`).
+  - The log-ratio geometry puts a zero infinitely far away, so the
+    distance depends on the replacement value. With zeros replaced at
+    0.01, deMixSC is better pooled (0.84 against 1.25).
+  - ReDeconv maximises a Gaussian likelihood whose variance is linear
+    in the composition
+    [@luTranscriptomeSizeMatters2025, Eq. 5, p. 14]. This is the
+    diagonal of DeCovarT's model with the variance scale tied to the
+    mean scale. Its estimates stay inside the simplex, which the
+    Aitchison distance rewards.
+- **Theory did not decide the choice.** ReDeconv and RNA-Sieve are the
+  methods closest in theory to DeCovarT, but neither keeps a low error
+  at all three times. Two properties of deMixSC count for the filter:
+  - its weights follow the fitted mean, as the variance of DeCovarT
+    does;
+  - its residual term down-weights the genes under test.
+- **Alignment does not help.** With its bulk/pseudo-bulk alignment
+  (other times), deMixSC is worse (0.266, Welch), so $G_2$ stays empty.
+:::
+
 **Statistic.** With $\hat{\tilde\mu}_{gj}$ the mean raw count per cell
 of type $j$ over its $C_j$ reference cells, and $\hat\psi_{gj}$ the
 negative-binomial size matched to their mean and variance
@@ -851,10 +903,61 @@ gate at any time, united with the mapped markers: 6,616 genes, of which
   a ratio that depends on the type as well as the gene, which is not
   identified without paired measurements; biological differences
   between the gastruloids profiled in bulk and in single cell, which
-  are different specimens; and errors of the plug-in composition. Our
-  reading is that the tail statements need an extra between-platform
-  overdispersion, fixed at 1 (none) here, before their flags can single
-  out genes.
+  are different specimens; and errors of the plug-in composition. In
+  these three variants the bulk cell count is fixed at $a_i$, so no
+  between-platform overdispersion enters $\operatorname{sd}D_{gi}$; the
+  fourth variant below estimates one per replicate.
+- **Effective cell count.** With the gene-wise ratio, the deMixSC
+  plug-in fitted on the Welch panel and $a_i$ replaced by $n_{\text{eff},i}$,
+  the median $n_{\text{eff},i}$ is 62 (48 h), 51 (72 h) and 41 (96 h),
+  against $a_i$ of 1,150 to 1,930: $n_{\text{eff},i}/a_i$ is 0.027 to
+  0.033, a bulk variance 30 to 37 times the negative-binomial one
+  (`a3_shift_summary.csv`, columns `median_n_bulk`, `median_n_over_a`).
+  The median $|z|$ is 0.674 at every time by construction
+  ($n_{\text{eff}}$ solves $\operatorname{median}z^{2}=0.455$), so it says
+  nothing about fit; the tails do. 7.1, 5.4 and 6.4 % of the (gene,
+  replicate) values lie beyond $\pm2.33$, against 2 % expected
+  (@fig-fs-a3-shift). T4 flags 472, 362 and 399 genes (7.1, 5.5 and
+  6.0 % of the panel), T1 658, 547 and 687, instead of 4,628 to 4,751
+  with $n_i=a_i$ (@fig-fs-tail-flags). These flags now mean a tail
+  heavier than that of the typical gene of the replicate, not a failure
+  of A3. The range and MAD rules use no cell count and do not change;
+  the quantile band flags 195 to 204 genes.
+- **Multivariate test.** The selected DeCovarT model of
+  @sec-deconv-strategy-ranking (Welch panel, raw shrinkage at
+  $\hat\lambda=0.1$, 0.5 and 0.5, free $c_i$ and $\varphi_i$) fitted to
+  each replicate, without a gene-wise ratio, gives
+  $\hat n_i=\hat c_i^{2}/\hat\varphi_i$ of 1.3 to 1.4 (48 h), 1.2 (72 h)
+  and 1.4 to 2.0 (96 h); with the robust scale $\tilde\varphi_i$,
+  $\hat c_i^{2}/\tilde\varphi_i$ is 2.7 to 4.1 (`multivariate_scales.csv`).
+  The maximum-likelihood $\hat\varphi_i$ is two to three times the
+  robust one ($\kappa$ of 0.36 to 0.53): a minority of genes with large
+  residuals sets it. Both counts are about 15 to 40 times smaller than
+  $n_{\text{eff},i}$. Our reading, not tested: the gene-wise ratio,
+  absent from the multivariate model, is absorbed by $\varphi_i$; under
+  A3 the univariate variance was about 300 times the negative-binomial
+  one, which corresponds to a count of about 6.
+- **Multivariate flags.** With the robust scale, 7.5, 6.9 and 6.4 % of
+  the conditional statistics $z_{gi}$ lie beyond $\pm2.33$ (diagonal
+  statistic: 6.1, 5.9 and 5.6 %), against 2 % expected. A gene is
+  flagged in at least one replicate in 115 of 1,417 (48 h), 275 of 3,420
+  (72 h) and 467 of 5,821 (96 h) Welch genes, 8.0 to 8.1 %, where 5.9 %
+  is expected under the model ($1-0.98^{3}$; `multivariate_flags.csv`,
+  @fig-fs-multivariate). The conditional and diagonal flags share 41 to
+  46 % of their union (Jaccard index); the conditional and univariate T4
+  flags share 4 to 7 % (`multivariate_overlap.csv`). The two tests ask
+  different questions: the univariate one tests the residual left by the
+  gene-wise ratio, the multivariate one tests the raw bulk against the
+  correlated genes of the same replicate. Few dictionary modules are
+  tested on the Welch genes (none at 48 h, four at 72 h, two at 96 h);
+  none is flagged.
+- **Power.** For a shift of three marginal standard deviations in one
+  gene, the conditional statistic moves $\sqrt{\Sigma_{gg}W_{gg}}$ times
+  as far as the diagonal one: median 1.15 (48 h), 1.11 (72 h) and 1.15
+  (96 h), 10 % and 90 % quantiles 1.09 and 1.37. The mean power at
+  0.01 per tail rises from 0.75 to 0.88, 0.85 and 0.88, and is higher
+  for every gene (`multivariate_power.csv`). These are computed under the
+  fitted covariance, not from injected shifts in the data.
 - **Two side effects.** The MAD rules flag more genes with the ratio
   (587 to 720 against 299 to 463), because one of their summaries is a
   bulk-to-reference ratio. The model-free quantile band flags 191 to
@@ -874,7 +977,12 @@ gate at any time, united with the mapped markers: 6,616 genes, of which
   mesoderm 0.72, pre-somitic mesoderm 0.25 (@fig-fs-plugin). The ratio
   used at 96 h was learnt at 48 and 72 h, where neither mesoderm type
   exists, so the genes that separate the two types carry ratios
-  estimated from other cell states. No ground truth exists for these
+  estimated from other cell states. Fitting the plug-in on the Welch
+  genes only does not undo the inversion: caudal mesoderm 0.70,
+  pre-somitic mesoderm 0.26 (ochre in @fig-fs-plugin). The selected
+  DeCovarT model, without a ratio, gives pre-somitic mesoderm 0.70 and
+  caudal mesoderm 0.26 at 96 h, close to the scored-cell shares of 0.73
+  and 0.21 (`observed_proportions.csv`). No ground truth exists for these
   bulk samples: the inversion shows that the plug-in composition is not
   robust to the platform model, not which composition is right.
 - **Cook's distance.** No gene is flagged in the weighted bulk fit at
@@ -927,24 +1035,53 @@ As applied here:
   to the variance of $D_{gi}$ in $z$ and in T1; T1-log, T3, T4 and the
   module statements treat $\hat b_g$ as known. The RNA-Sieve range and
   MAD rules need no composition and run on $y_{gi}/\hat b_g$ as well.
+- **Fourth variant: effective cell count.** The gene-wise ratio of (iii),
+  with the plug-in fitted on the Welch genes of the slot
+  (`plugin_genes`, `output/grn/plugin/gene_sets.csv`; 1,417, 3,420 and
+  5,821 of the 6,615 panel genes, so the plug-in still shares genes with
+  the tested set) and `n_bulk = "moment"`: `estimate_effective_cells()`
+  solves $\operatorname{median}_g z_{gi}^{2}(n)=0.455$ on
+  $(10^{-3},a_i]$ with `uniroot()`, and $n_{\text{eff},i}$ replaces $a_i$
+  in every statement. The quantile band still divides by $a_i$. Theory:
+  [3.1, effective cell count](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-effective-cells).
+  T3 (Poisson) keeps no dispersion and is a reference row only.
+- **Multivariate test.** `scripts/02_03_stats_multivariate_consistency.R`
+  rebuilds $\hat\Sigma_j(\hat\lambda)$ with `build_sigma()` from
+  `moments_<time>_welch.rds`, takes $\hat\lambda$ from
+  `lambda_selection.csv` (Welch, standard arm, shrinkage, selected
+  level), fits each replicate with `fit_decovart_once(..., "lbfgsb")`
+  and calls `multivariate_tail_filter()` at 0.01 per tail with the robust
+  scale. Bulk counts enter raw, with no gene-wise ratio. Theory:
+  [3.1, multivariate discrepancy](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-multivariate-discrepancy).
+  Self-checks on simulated data, seed 20261118, run first: $n_{\text{eff}}$
+  recovers a known count within 10 %, and under the model the flag share
+  is within 0.005 of 2 % and the module variance within 0.25 of 1.
 
 What this changes: no gene is removed at this tier. A cross-fitted
 gene-wise ratio removes most of the platform shift, so it belongs in
-the model of tier (iv) rather than in a filter; the tail statements
-become usable as a filter only once a between-platform overdispersion
-is added for what the ratio leaves.
+the model of tier (iv) rather than in a filter. With an effective cell
+count per replicate, the univariate tail statements flag 5 to 7 % of
+the panel rather than 70 %, and become usable as a screen for genes
+with heavy tails. The multivariate test flags 8 % of the Welch genes,
+where 5.9 % is expected, and its flags barely overlap the univariate
+ones (Jaccard index 0.04 to 0.07). Neither set is removed: without a
+paired measurement, a flag cannot be told apart from a gene-specific
+platform effect that the multivariate model leaves in
+$\varphi_i$.
 
 ![Platform ratio against transcript length. Per time, the log2 ratio of bulk per cell to the fitted reference under A3, one value per panel gene (mean over three replicates), against the log2 mean transcript length (exonic, UCSC knownGene mm10, averaged over isoforms), as 2D bins with counts on a log scale. Orange: median regression; dashed: line of slope 1 through the medians, the prediction for a full-length bulk against 3′ UMI counts. The label gives the slope with its gene-bootstrap 95 % interval (1,000 resamples), Spearman's correlation and the share of variance explained by a loess. Source: `cross_platform.rds`, elements `log_ratio`, `lengths` and `length_test`; `scripts/02_03_vis_cross_platform.R`.](images/feature_selection/fs_tier3_length.png){#fig-fs-length}
 
-![Distribution of the standardised discrepancy $z=D/\operatorname{sd}D$ over panel genes and the three replicates, per time, under three models: A3 (grey), a cross-fitted ratio from transcript length (blue) and a cross-fitted gene-wise ratio (orange), with N(0, 1) draws (dark) as the law of $z$ when the model holds. Signed $\log_{10}(1+|z|)$ axis; grey band: $|z|\le2.33$, the T1 threshold at 0.01 per tail. The label gives the share of values beyond the band. Source: `cross_platform.rds`, element `variants`.](images/feature_selection/fs_tier3_a3_shift.png){#fig-fs-a3-shift}
+![Distribution of the standardised discrepancy $z=D/\operatorname{sd}D$ over panel genes and the three replicates, per time, under four variants: A3 (grey), a cross-fitted ratio from transcript length (blue), a cross-fitted gene-wise ratio (orange) and the same ratio with the Welch plug-in and the effective cell count $n_{\text{eff}}$ (ochre), with N(0, 1) draws (dark) as the law of $z$ when the model holds. Signed $\log_{10}(1+|z|)$ axis; grey band: $|z|\le2.33$, the T1 threshold at 0.01 per tail. The label gives the share of values beyond the band. Source: `cross_platform.rds`, element `variants`.](images/feature_selection/fs_tier3_a3_shift.png){#fig-fs-a3-shift}
 
 ![Observed bulk per cell $y/(a\hat b)$ against the fitted $\sum_j\hat p_j\hat\mu_{gj}$, both as $\log_{10}(1+x)$, under A3 ($\hat b=1$, top row) and with the cross-fitted gene-wise ratio (bottom row); 2D bins over genes and the three replicates, counts on a log scale; dashed line: identity. The label gives the median absolute $\log_{10}$ ratio. Source: `cross_platform.rds`, element `variants`.](images/feature_selection/fs_tier3_bulk_fit.png){#fig-fs-bulk-fit}
 
-![Genes flagged in at least one replicate by each statement, per time, under the three models: tail statements T1, T1-log, T3 and T4 of @tbl-fs-tail-statements, the quantile band and the two RNA-Sieve rules; statements ranked by their count under A3. Source: `cross_platform.rds`, element `variants`; `a3_shift_summary.csv`.](images/feature_selection/fs_tier3_tail_flags.png){#fig-fs-tail-flags}
+![Genes flagged in at least one replicate by each statement, per time, under the four variants of @fig-fs-a3-shift: tail statements T1, T1-log, T3 and T4 of @tbl-fs-tail-statements, the quantile band and the two RNA-Sieve rules; statements ranked by their count under A3. Source: `cross_platform.rds`, element `variants`; `a3_shift_summary.csv`.](images/feature_selection/fs_tier3_tail_flags.png){#fig-fs-tail-flags}
 
 ![Gene-wise bulk-to-reference ratio under A3, one matched time against another: mean over the three replicates of $\log_2\{(y/a)/\sum_j\hat p_j\hat\mu_{gj}\}$ (pseudo-count 0.01 per cell), one point per panel gene; orange: genes flagged by T4 at two or three times with one sign; grey: other genes. Dashed line: identity; under A3 the points would gather at (0, 0). Panel titles give the Spearman correlation. Source: `cross_platform.rds`, elements `log_ratio` and `drift`.](images/feature_selection/fs_tier3_drift.png){#fig-fs-drift}
 
-![Plug-in composition $\hat p$ of each standard-Wnt bulk replicate (deMixSC weights, $c=2$), per time, under A3 (grey) and with the cross-fitted gene-wise ratio (orange), one point per replicate; types ranked by mean share. Source: `cross_platform.rds`, element `variants`.](images/feature_selection/fs_tier3_plugin_composition.png){#fig-fs-plugin}
+![Plug-in composition $\hat p$ of each standard-Wnt bulk replicate (deMixSC weights, $c=2$), per time, under A3 (grey), with the cross-fitted gene-wise ratio (orange), and with the same ratio and the plug-in fitted on the Welch genes only (ochre), one point per replicate; types ranked by mean share. Source: `cross_platform.rds`, element `variants`.](images/feature_selection/fs_tier3_plugin_composition.png){#fig-fs-plugin}
+
+![Multivariate bulk test under the selected DeCovarT model (Welch panel, raw shrinkage at the level chosen by the bulk likelihood, free $c_i$ and $\varphi_i$, no gene-wise ratio). Per time, conditional statistic $z_{gi}=(W_ir_i)_g/\sqrt{(W_i)_{gg}}$ against diagonal statistic $r_{gi}/\sqrt{\hat\varphi_i(S_i)_{gg}}$, each rescaled so that its median square is 0.455 (robust scale); 2D bins over Welch genes and three replicates, counts on a log scale; signed log axes. Dashed lines: $\pm2.33$, the threshold at 0.01 per tail; grey line: identity. The label gives the share of each statistic beyond the threshold. Source: `multivariate_consistency.rds`, element `gene`; `scripts/02_03_vis_cross_platform.R`.](images/feature_selection/fs_tier3_multivariate.png){#fig-fs-multivariate}
 
 ![Cook diagnostics. (a) Leverage (log scale) against standardised residual of each panel gene in the weighted bulk-on-reference fit under A3, three replicates per time; dashed lines at $\pm3$; no gene is flagged. (b) (Gene, cell) pairs flagged in the $M_1$ fits (leverage above three times its mean and $|r|>3$) per cell of each type and time, types ranked; labels give the number of pairs, axis labels the number of cells. Source: `cross_platform.rds`, elements `outlier_genes` and `outlier_cells`.](images/feature_selection/fs_tier3_cook.png){#fig-fs-cook}
 
@@ -966,6 +1103,8 @@ for an edge of the dependency graph (`min_abs_cor = 0.1`,
 # bulk[[tm]]: the three standard-Wnt replicates at tm from GSE229386
 # (raw counts, genes x samples), same gene identifiers; panel: genes
 # selected by tier (ii) and the markers of tier (i).
+# welch[[tm]]: Welch panel of slot tm; lambda_selected[[tm]]: shrinkage
+# level chosen by the bulk likelihood (output/deconvolution/lambda_selection.csv).
 source("R/02_00_utils.R")
 source("R/02_01_stats_quality_control.R")
 source("R/02_03_stats_tail_bounds.R")
@@ -1038,6 +1177,45 @@ tail_gene <- lapply(times, function(tm) {
     modules = modules,
     platform_ratio = setNames(exp(r$log_b), r$gene),
     platform_var = setNames(r$var_log_b, r$gene)
+  )
+})
+
+# Step 6: same ratio, deMixSC plug-in fitted on the Welch panel only
+# (welch[[tm]], output/grn/plugin/gene_sets.csv) and the bulk cell count
+# a_i replaced by the effective count n_eff (estimate_effective_cells()).
+tail_neff <- lapply(times, function(tm) {
+  r <- ratio_gene[[tm]]
+  bulk_tail_filter(
+    bulk = bulk[[tm]][panel, , drop = FALSE],
+    counts = sc[[tm]][panel, , drop = FALSE],
+    cell_type = cell_type[[tm]],
+    modules = modules,
+    platform_ratio = setNames(exp(r$log_b), r$gene),
+    platform_var = setNames(r$var_log_b, r$gene),
+    plugin_genes = welch[[tm]],
+    n_bulk = "moment"
+  )
+})
+n_eff <- lapply(tail_neff, function(r) r$plugin$scale) # a_hat, n_bulk
+
+# Step 7: multivariate test under the selected DeCovarT model (Welch
+# panel, shrinkage at the level chosen by the bulk likelihood, free c and
+# phi), no gene-wise ratio (scripts/02_03_stats_multivariate_consistency.R).
+source("R/03_01_stats_covariance_estimation.R")
+source("R/04_01_stats_deconvolution.R")
+mv <- lapply(times, function(tm) {
+  mom <- readRDS(sprintf("output/grn/plugin/moments_%s_welch.rds", tm))
+  sigma <- build_sigma(mom, "shrinkage", lambda = lambda_selected[[tm]])
+  y <- bulk[[tm]][mom$genes, , drop = FALSE]
+  fits <- lapply(colnames(y), function(s) {
+    fit_decovart_once(y[, s], mom$mu, sigma, "lbfgsb")
+  })
+  multivariate_tail_filter(
+    y, mom$mu, sigma,
+    p_hat = sapply(fits, function(f) f$p),
+    c_hat = sapply(fits, function(f) f$diagnostics$mean_scale),
+    phi_hat = sapply(fits, function(f) f$diagnostics$variance_scale),
+    modules = modules
   )
 })
 ```
@@ -1280,7 +1458,7 @@ $r_{gc}=(x_{gc}-\hat\mu_{gc})/\sqrt{\hat\mu_{gc}+\hat\mu_{gc}^{2}/\hat\psi_{g}}$
 | `seed.use` | 1 |
 | Residual clip | $\pm\sqrt{n/30}$: $\pm 19.05$ (48 h), $\pm 12.41$ (72 h), $\pm 12.83$ (96 h) |
 
-: `SCTransform` settings as run (`model_card.csv`, `scripts/legacy/02_90_stats_rank_sctransform.R`). {#tbl-fs-sct-settings}
+: `SCTransform` settings as run (`model_card.csv`, `scripts/archives/sctransform_panel/02_90_stats_rank_sctransform.R`). {#tbl-fs-sct-settings}
 
 Cell type is left out of the fit on purpose. The count models of
 @sec-fs-glm fit the type effect directly, without regularising the

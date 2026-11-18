@@ -1,96 +1,95 @@
-# mkdir -p logs output/grn/cv
-# nohup Rscript --vanilla \
+# mkdir -p logs
+# OPENBLAS_NUM_THREADS=1 nohup Rscript --no-save --no-restore \
 #   scripts/03_04_cv_covariance.R \
 #   > "logs/03_04_cv_covariance_$(date +%F).log" 2>&1 &
 #
-# Cross-validated within-type covariance for DeCovarT, per scored type
-# and time. Run from the repository root. Written, not yet run.
+# Optional arguments, `key=value`, comma-separated values; each defaults
+# to everything:
+#   times=48h,72h,96h   gene_sets=r2_05,r2_01,welch
+#   stages=select,nested,fit,tables
 #
-# Input. Raw UMI counts of the scored cells (`scored_slots.rds`, tier
-# (i)) restricted to the gated panel of each time (`selected_<time>.csv`,
-# tier (ii): permuted Welch G at BH 0.05, no cap): 1,417 genes at 48 h,
-# 3,420 at 72 h, 5,821 at 96 h. `L_c` is the full RNA library of the
-# cell (`slot$library_size`).
+# Cell-wise choice of the covariance regularisation of each scored type,
+# on the held-out Gaussian log-score of cells. The bulk samples are never
+# read. Arms (R/03_01_stats_covariance_estimation.R), all on the
+# correlation scale with the sample variances kept:
+#   shrinkage   (1 - lambda) R_j + lambda I
+#   two_param   (1 - lambda) {(1 - alpha) R_j + alpha Rbar} + lambda I,
+#               Rbar the pooled within-type correlation of the time point
+#   factor      B_j B_j' + Psi_j, rank q_j
+#   factor_shared  B B' + Psi_j, loadings shared by the types of a time
+#   diagonal    lambda = 1 (also rank 0)
 #
-# Scale (`normalise`). "none" (default): raw per-cell counts, no per-cell
-# library division. Dividing by the library removes the type-level
-# transcriptome size and the biological size variation that the bulk
-# accumulates; see 03-2, #sec-raw-vs-denoised. "library": the earlier
-# `x_cg = y_cg / (L_c / median L)`, kept as a sensitivity variant.
-# PLNnetwork always fits the raw counts with offset log L_c.
+# Stages:
+#   select  cross-validated score of every tuning value, per type x time
+#           x gene set. Leave-one-out under 100 cells, 5-fold otherwise
+#           (5-fold for the two-parameter arm, 5 joint folds stratified by
+#           type for the shared loadings).
+#   nested  outer 5 folds stratified by type; each rule chooses its tuning
+#           value on the outer training cells only and is scored on the
+#           outer test cells. Scores are paired by fold and type.
+#   fit     factor models on all cells (used by the deconvolution), with
+#           AIC and BIC from their free-parameter counts.
+#   tables  CSV tables from the checkpoints.
 #
-# Arms, one tuning parameter each, all scored by the same loss: the
-# K-fold held-out Gaussian log-score of the cells on the scale of X.
-# - shrinkage (the plug-in): Schäfer–Strimmer, correlation intensity
-#   lambda, empirical variances (`corpcor::cov.shrink(lambda.var = 0)`);
-#   the closed-form lambda* is one grid point;
-# - glasso: graphical lasso on the correlation, unpenalised diagonal,
-#   penalty lambda;
-# - silggm_refit: SILGGM (de-sparsified graphical lasso on the
-#   nonparanormal transform) FDR support at level alpha, then the
-#   covariance refitted under those zeros;
-# - plnnetwork: PLNnetwork with offset log L_c, penalty from the
-#   package's own grid; latent moments mapped to the scale of X;
-# - shrinkage_denoised: the shrinkage of the denoised covariance
-#   (`denoise_covariance()`: V - diag(xbar), then the kappa term, then
-#   eigenvalues clipped at 0). It is scored through `score_sigma`, the
-#   count covariance rebuilt from the denoised estimate; the exported
-#   `sigma` is the denoised estimate. Only with normalise = "none".
-# The four arms after the first are sensitivity analyses.
-#
-# kappa. The score cannot choose kappa: every kappa rebuilds the same
-# count moments up to regularisation. kappa is therefore a bracket, not
-# a tuning parameter. Choice made here: the nested comparison uses
-# kappa = 0 (all size variation treated as biological), which needs no
-# estimate and so leaks nothing across folds. The other end,
-# kappa_max = nu_hat / (1 + nu_hat) with nu_hat from
-# `extrinsic_noise_nu()` on all cells of the unit, is a variant:
-# `cv_select_tuning()` chooses its lambda and its fit is exported as
-# `shrinkage_denoised_kappa_max`, outside the nested comparison. nu_hat
-# and kappa_max are written per unit to `extrinsic_noise.csv`.
-#
-# PLN brackets. Beside the scored PLN moments (Poisson diagonal kept,
-# depth variation kept), the PLN entry also exports the two denoised
-# brackets of `pln_linear_moments()`: kappa = 0 (size term kept, no
-# Poisson diagonal) and the all-technical end (size term dropped, no
-# Poisson diagonal).
-#
-# Selection: `cv_select_tuning()` on all cells of the type (rule set by
-# `selection_rule`). Comparison: `nested_cv_compare()` (inner loop
-# chooses the tuning value, outer loop estimates the held-out risk).
-# Fold assignments share one seed, so per-fold scores are paired across
-# arms. Cost: SILGGM and PLNnetwork are refitted K (selection) and
-# K_outer * (K_inner + 1) (comparison) times per type; at 96 h the panel
-# has 5,821 genes, so these two arms dominate the run time. No cap on
-# the panel is imposed to save time. The denoised arm costs one
-# eigen-decomposition of a G x G matrix per training set.
+# Inputs:
+#   output/feature_selection/tier_01/scored_slots.rds
+#   output/grn/plugin/gene_sets.csv
+# Outputs, output/grn/cv/:
+#   cv_tuning_scores.csv      one row per unit x arm x tuning value
+#   cv_selected_tuning.csv    one row per unit x rule
+#   nested_cv_by_fold.csv     one row per unit x outer fold x rule
+#   nested_cv_summary.csv     one row per unit x rule
+#   information_criteria.csv  one row per unit x factor rank
+#   factors_<time>_<gene_set>.rds  factor fits on all cells (not in Git)
+#   fits/                     checkpoints (not in Git)
 
 # ==========================================================================
-# SECTION 0 · Dependencies, hyperparameters, paths ----
+# SECTION 0 · Dependencies, settings, paths ----
 # ==========================================================================
 
 root <- getwd()
+suppressPackageStartupMessages(library(Matrix))
 source(file.path(root, "R", "02_00_utils.R"))
-source(file.path(root, "R", "03_02_stats_regularisation_path.R"))
 source(file.path(root, "R", "03_01_stats_covariance_estimation.R"))
+check_blas_kernel()
 
 time_levels <- c("48h", "72h", "96h")
-normalise <- "none" # "none" (default) or "library" (sensitivity variant)
-min_cells <- 20L
+gene_set_levels <- c("r2_05", "r2_01", "welch")
+stage_levels <- c("select", "nested", "fit", "tables")
+
+# 13 levels on a log scale up to 0.1, then steps of 1/32, and 0.9.
+lambda_grid <- sort(unique(c(
+  10^seq(-3, -1, length.out = 13L),
+  seq(0.125, 1, by = 1 / 32),
+  0.9
+)))
+alpha_grid <- c(0.25, 0.5, 0.75)
+ranks <- c(0L, 1L, 2L, 3L, 5L, 8L, 12L, 20L, 30L)
+ranks_shared <- c(0L, 1L, 2L, 3L, 5L, 8L, 12L, 20L)
 K <- 5L
 K_outer <- 5L
-K_inner <- 5L
-seed <- 20261030L
-selection_rule <- "min"
-run_nested <- TRUE
-n_lambda_glasso <- 12L
-alpha_grid_silggm <- c(0.01, 0.02, 0.05, 0.1, 0.2, 0.3)
-n_penalties_pln <- 12L
-min_ratio_pln <- 0.1
-kappa_arm <- 0 # kappa of the shrinkage_denoised arm in the nested comparison
-nu_min_mean <- 1 # genes entering extrinsic_noise_nu()
+loo_below <- 100L
+seed <- 20261116L
+n_workers <- 24L
+# A task holds a few genes x genes matrices and the cells of its time.
+memory_budget_gb <- 150
 
-normalise <- match.arg(normalise, c("none", "library"))
+cli <- commandArgs(trailingOnly = TRUE)
+cli_value <- function(key, default) {
+  hit <- grep(paste0("^", key, "="), cli, value = TRUE)
+  if (length(hit) == 0L) {
+    return(default)
+  }
+  strsplit(sub(paste0("^", key, "="), "", hit[[1L]]), ",", fixed = TRUE)[[1L]]
+}
+run_times <- match.arg(cli_value("times", time_levels), time_levels, TRUE)
+run_gene_sets <- match.arg(
+  cli_value("gene_sets", gene_set_levels),
+  gene_set_levels,
+  TRUE
+)
+run_stages <- match.arg(cli_value("stages", stage_levels), stage_levels, TRUE)
+
 slots_path <- file.path(
   root,
   "output",
@@ -99,376 +98,760 @@ slots_path <- file.path(
   "scored_slots.rds"
 )
 selected_dir <- file.path(root, "output", "feature_selection", "tier_02")
+gene_sets_path <- file.path(root, "output", "grn", "plugin", "gene_sets.csv")
 out_dir <- file.path(root, "output", "grn", "cv")
-dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
-
-# ==========================================================================
-# SECTION 1 · Inputs ----
-# ==========================================================================
-
-if (!file.exists(slots_path)) {
-  stop(
-    "Missing ",
-    slots_path,
-    ". From the repository root run: dvc pull ",
-    "output/feature_selection/tier_01/scored_slots.rds.dvc"
-  )
-}
-slots <- readRDS(slots_path)
-
-#' Estimator specifications for one type.
-#'
-#' @param y Cells by genes, raw counts of the type.
-#' @param lib Full library sizes of the same cells.
-#' @param ref_lib Reference library of the time point.
-#' @param pln_grid Penalties of the PLNnetwork family fitted on `y`.
-#' @param pln_scale Scale of `X` for [pln_linear_moments()].
-#' @param kappa `kappa` of the denoised shrinkage arm, or `NULL` to leave
-#'   that arm out (library-divided `X`).
-#' @return Named list for [cv_select_tuning()] and [nested_cv_compare()].
-estimator_specs <- function(y, lib, ref_lib, pln_grid, pln_scale, kappa) {
-  specs <- list(
-    shrinkage = list(
-      fit = fit_cov_shrinkage,
-      grid = shrinkage_lambda_grid,
-      regularisation = "increasing",
-      path_fit = FALSE
-    ),
-    glasso = list(
-      fit = fit_cov_glasso,
-      grid = function(X, rows) {
-        glasso_lambda_grid(X, n_lambda = n_lambda_glasso)
-      },
-      regularisation = "increasing",
-      path_fit = FALSE
-    ),
-    silggm_refit = list(
-      fit = fit_cov_silggm_refit,
-      grid = alpha_grid_silggm,
-      regularisation = "decreasing",
-      path_fit = TRUE
-    ),
-    plnnetwork = list(
-      fit = make_pln_fit_fun(y, lib, ref_lib, scale = pln_scale),
-      grid = pln_grid,
-      regularisation = "increasing",
-      path_fit = TRUE
-    )
-  )
-  if (!is.null(kappa)) {
-    specs$shrinkage_denoised <- denoised_shrinkage_spec(kappa)
-  }
-  specs
+fits_dir <- file.path(out_dir, "fits")
+dir.create(fits_dir, recursive = TRUE, showWarnings = FALSE)
+progress <- progress_path("03_04_cv_covariance")
+if (!file.exists(file.path(out_dir, ".gitignore"))) {
+  writeLines(c("/fits/", "/factors_*.rds"), file.path(out_dir, ".gitignore"))
 }
 
-#' Specification of the denoised shrinkage arm at one `kappa`.
-#'
-#' @param kappa Passed to [fit_cov_shrinkage()].
-#' @return One estimator specification (path fit: the denoising is done
-#'   once per training set).
-denoised_shrinkage_spec <- function(kappa) {
-  force(kappa)
-  list(
-    fit = function(X_train, grid, train_rows) {
-      fit_cov_shrinkage(
-        X_train,
-        grid,
-        train_rows,
-        preprocess = "denoised",
-        kappa = kappa,
-        as_path = TRUE
-      )
-    },
-    grid = shrinkage_lambda_grid,
-    regularisation = "increasing",
-    path_fit = TRUE
-  )
+if (!file.exists(gene_sets_path)) {
+  stop("Missing ", gene_sets_path, ". Run scripts/03_05 first.")
+}
+gene_sets <- utils::read.csv(
+  gene_sets_path,
+  stringsAsFactors = FALSE,
+  fileEncoding = "UTF-8"
+)
+slots <- if (any(run_stages != "tables")) readRDS(slots_path) else NULL
+
+#' Cells of every scored type of one time, on one gene set.
+read_units <- function(time_level, gene_set) {
+  genes <- gene_sets$gene[
+    gene_sets$time_point == time_level & gene_sets$gene_set == gene_set
+  ]
+  panel <- read_panel_slot(slots, selected_dir, time_level, genes = genes)
+  types <- sort(unique(panel$cell_type[!is.na(panel$cell_type)]))
+  X <- lapply(types, function(tp) {
+    panel$y[which(panel$cell_type %in% tp), , drop = FALSE]
+  })
+  names(X) <- types
+  X
 }
 
-# ==========================================================================
-# SECTION 2 · Selection and comparison per type and time ----
-# ==========================================================================
-
-tuning_rows <- list()
-selected_rows <- list()
-nested_rows <- list()
-nested_summary_rows <- list()
-nu_rows <- list()
-
-#' Select one arm's tuning value on all cells and refit it.
-#'
-#' @return A list with `row` (one row of `cv_selected_tuning.csv`),
-#'   `table` (the CV table) and `entry` (the exported moments), or `NULL`.
-select_and_refit <- function(spec, est_name, X, n, p, time_level, tp) {
-  grid <- if (is.function(spec$grid)) spec$grid(X, seq_len(n)) else spec$grid
-  message("  ", est_name, ": ", length(grid), " grid values")
-  sel <- tryCatch(
-    cv_select_tuning(
-      X,
-      fit_fun = spec$fit,
-      grid = grid,
-      K = K,
-      seed = seed,
-      regularisation = spec$regularisation,
-      path_fit = spec$path_fit
-    ),
-    error = function(e) {
-      message("  CV failed: ", conditionMessage(e))
-      NULL
-    }
-  )
-  if (is.null(sel)) {
-    return(NULL)
-  }
-  chosen <- sel[[paste0("tuning_", selection_rule)]]
-  final <- if (!is.finite(chosen)) {
-    list(failed = TRUE)
-  } else if (spec$path_fit) {
-    spec$fit(X, chosen, seq_len(n))[[1L]]
-  } else {
-    spec$fit(X, chosen, seq_len(n))
-  }
-  moments <- if (isTRUE(final$failed)) {
-    NULL
-  } else {
-    fit_moments(final, seq_len(n))
-  }
-  list(
-    table = data.frame(
-      time_point = time_level,
-      cell_type = tp,
-      estimator = est_name,
-      sel$table,
-      stringsAsFactors = FALSE
-    ),
-    row = data.frame(
-      time_point = time_level,
-      cell_type = tp,
-      estimator = est_name,
-      n_cells = n,
-      n_genes = p,
-      tuning_min = sel$tuning_min,
-      tuning_1se = sel$tuning_1se,
-      rule = selection_rule,
-      tuning = chosen,
-      n_edges = final$n_edges %||% NA_integer_,
-      kappa = final$kappa %||% NA_real_,
-      n_clipped = final$n_clipped %||% NA_integer_,
-      n_floored = length(final$floored_genes),
-      final_failed = is.null(moments),
-      stringsAsFactors = FALSE
-    ),
-    entry = list(
-      tuning = chosen,
-      cv = sel,
-      mu = moments$mu,
-      # Exported covariance: the denoised estimate for a denoised arm.
-      sigma = moments$sigma,
-      # Count covariance rebuilt for scoring (denoised arms only).
-      score_sigma = moments$score_sigma,
-      kappa = final$kappa,
-      floored_genes = final$floored_genes,
-      final = final
+workers_for <- function(n_tasks, n_genes, copies = 10) {
+  max(
+    1L,
+    min(
+      n_workers,
+      n_tasks,
+      floor(memory_budget_gb * 1e9 / (copies * 8 * n_genes^2 + 2e8))
     )
   )
 }
 
-results <- lapply(time_levels, function(time_level) {
-  panel <- read_panel_slot(slots, selected_dir, time_level)
-  labels <- panel$cell_type
-  lib_size <- panel$library_size
-  ref_lib <- stats::median(lib_size)
-  types <- sort(unique(labels[!is.na(labels) & nzchar(labels)]))
-  fits <- list()
-  for (tp in types) {
-    cells <- which(labels %in% tp)
-    if (length(cells) < max(min_cells, K_outer * K_inner)) {
-      message(
-        "Skipping ",
-        time_level,
-        " / ",
-        tp,
-        " (n = ",
-        length(cells),
-        " cells)"
-      )
-      next
-    }
-    y <- panel$y[cells, , drop = FALSE]
-    lib <- as.numeric(lib_size[cells])
-    X <- if (identical(normalise, "none")) y else y / (lib / ref_lib)
-    constant <- apply(y, 2L, function(v) all(v == v[[1L]]))
-    excluded <- colnames(y)[constant]
-    y <- y[, !constant, drop = FALSE]
-    X <- X[, !constant, drop = FALSE]
-    n <- nrow(X)
-    p <- ncol(X)
-    message(
-      "CV covariance: ",
-      time_level,
-      " / ",
-      tp,
-      " (n = ",
-      n,
-      " cells, p = ",
-      p,
-      " genes, ",
-      length(excluded),
-      " constant genes left out; normalise = ",
-      normalise,
-      ")"
-    )
+checkpoint <- function(stage, time_level, gene_set) {
+  file.path(
+    fits_dir,
+    paste0(paste(stage, time_level, gene_set, sep = "__"), ".rds")
+  )
+}
 
-    # Upper end of the kappa bracket, on raw counts of all cells of the
-    # unit. Used only by the variant outside the nested comparison.
-    nu_fit <- tryCatch(
-      extrinsic_noise_nu(y, min_mean = nu_min_mean),
-      error = function(e) {
-        message("  nu estimate failed: ", conditionMessage(e))
-        NULL
-      }
+#' Stop on the first failed task of an mclapply() result.
+check_tasks <- function(results, what) {
+  failed <- vapply(results, inherits, logical(1), "try-error")
+  empty <- vapply(results, is.null, logical(1))
+  if (any(failed | empty)) {
+    stop(
+      what,
+      ": ",
+      sum(failed | empty),
+      " task(s) failed. First message: ",
+      if (any(failed)) as.character(results[[which(failed)[[1L]]]]) else
+        "worker killed (memory?)"
     )
-    nu_rows[[length(nu_rows) + 1L]] <<- data.frame(
-      time_point = time_level,
-      cell_type = tp,
-      nu_hat = nu_fit$nu %||% NA_real_,
-      kappa_max = nu_fit$kappa_max %||% NA_real_,
-      n_genes_nu = nu_fit$n_genes %||% NA_integer_,
-      n_pairs_nu = nu_fit$n_pairs %||% NA_integer_,
-      stringsAsFactors = FALSE
-    )
+  }
+  results
+}
 
-    pln_grid <- tryCatch(
-      pln_penalty_grid(y, lib, n_penalties_pln, min_ratio_pln),
-      error = function(e) {
-        message("  PLNnetwork grid failed: ", conditionMessage(e))
-        NULL
-      }
-    )
-    pln_scale <- if (identical(normalise, "none")) "counts" else "normalised"
-    specs <- estimator_specs(
-      y,
-      lib,
-      ref_lib,
-      pln_grid,
-      pln_scale,
-      kappa = if (identical(normalise, "none")) kappa_arm else NULL
-    )
-    if (is.null(pln_grid)) {
-      specs$plnnetwork <- NULL
-    }
-    # The kappa_max variant is selected and exported, not compared.
-    variants <- list()
-    if (identical(normalise, "none") && !is.null(nu_fit)) {
-      variants$shrinkage_denoised_kappa_max <-
-        denoised_shrinkage_spec(nu_fit$kappa_max)
-    }
+#' Joint folds: every type is split into K folds.
+stratified_folds <- function(X, K, seed) {
+  lapply(seq_along(X), function(j) make_cv_folds(nrow(X[[j]]), K, seed + j))
+}
 
-    per_estimator <- list()
-    for (est_name in c(names(specs), names(variants))) {
-      spec <- if (est_name %in% names(specs)) {
-        specs[[est_name]]
-      } else {
-        variants[[est_name]]
-      }
-      res <- select_and_refit(spec, est_name, X, n, p, time_level, tp)
-      if (is.null(res)) {
+#' Wrap a task function so that each task writes a progress line.
+logged <- function(slot, n_tasks, workers, fun) {
+  log_progress(progress, "plan", slot, n_tasks, workers)
+  function(i) {
+    started <- proc.time()[["elapsed"]]
+    out <- try(fun(i), silent = TRUE)
+    failed <- inherits(out, "try-error")
+    log_progress(progress, "done", slot, i,
+                 round(proc.time()[["elapsed"]] - started, 1),
+                 if (failed) "failed" else "ok",
+                 if (failed) as.character(out) else "")
+    out
+  }
+}
+
+which_max <- function(x) {
+  ok <- which(is.finite(x))
+  ok[[which.max(x[ok])]]
+}
+
+# ==========================================================================
+# SECTION 1 · Selection on all cells of each unit ----
+# ==========================================================================
+
+if ("select" %in% run_stages) {
+  for (tm in run_times) {
+    for (gs in run_gene_sets) {
+      path <- checkpoint("select", tm, gs)
+      if (file.exists(path)) {
         next
       }
-      tuning_rows[[length(tuning_rows) + 1L]] <<- res$table
-      selected_rows[[length(selected_rows) + 1L]] <<- res$row
-      entry <- res$entry
-      final <- entry$final
-      entry$final <- NULL
-      if (identical(est_name, "plnnetwork") && !isTRUE(final$failed)) {
-        # The two denoised brackets of the PLN moments (no Poisson
-        # diagonal), on the scale of X.
-        entry$brackets <- list(
-          kappa_0 = pln_linear_moments(
-            final$mu_z,
-            final$sigma_z,
-            lib,
-            ref_lib,
-            scale = pln_scale,
-            size_term = "keep",
-            poisson_diag = FALSE
-          ),
-          all_technical = pln_linear_moments(
-            final$mu_z,
-            final$sigma_z,
-            lib,
-            ref_lib,
-            scale = pln_scale,
-            size_term = "drop",
-            poisson_diag = FALSE
-          )
-        )
-      }
-      per_estimator[[est_name]] <- entry
+      started <- proc.time()[["elapsed"]]
+      X <- read_units(tm, gs)
+      types <- names(X)
+      n_genes <- ncol(X[[1L]])
+      scatter <- lapply(X, centred_scatter)
+      total <- Reduce(`+`, scatter)
+      joint <- stratified_folds(X, K, seed)
+      tasks <- rbind(
+        data.frame(kind = "unit", j = seq_along(X), k = NA_integer_),
+        data.frame(kind = "two_param", j = seq_along(X), k = NA_integer_),
+        data.frame(kind = "shared", j = NA_integer_, k = seq_len(K))
+      )
+      message(
+        "Select ",
+        tm,
+        " / ",
+        gs,
+        ": ",
+        n_genes,
+        " genes, ",
+        nrow(tasks),
+        " tasks."
+      )
+      results <- parallel::mclapply(
+        seq_len(nrow(tasks)),
+        logged(
+          paste("select", tm, gs),
+          nrow(tasks),
+          workers_for(nrow(tasks), n_genes),
+          function(i) {
+          task <- tasks[i, ]
+          if (task$kind == "unit") {
+            folds <- unit_folds(nrow(X[[task$j]]), seed, K, loo_below)
+            cv_unit_arms(X[[task$j]], folds, lambda_grid, ranks)
+          } else if (task$kind == "two_param") {
+            folds <- make_cv_folds(nrow(X[[task$j]]), K, seed + 100L)
+            cv_unit_arms(
+              X[[task$j]],
+              folds,
+              lambda_grid,
+              ranks = NULL,
+              alpha_grid = alpha_grid,
+              other_scatter = total - scatter[[task$j]]
+            )[c("two_param", "const")]
+          } else {
+            score_shared_factor(
+              Map(function(x, f) x[f != task$k, , drop = FALSE], X, joint),
+              Map(function(x, f) x[f == task$k, , drop = FALSE], X, joint),
+              ranks_shared
+            )
+          }
+        }
+        ),
+        mc.cores = workers_for(nrow(tasks), n_genes),
+        mc.preschedule = FALSE
+      )
+      check_tasks(results, paste("select", tm, gs))
+      names(results) <- paste(tasks$kind, tasks$j, tasks$k)
+      saveRDS(
+        list(
+          time = tm,
+          gene_set = gs,
+          types = types,
+          n_cells = vapply(X, nrow, integer(1)),
+          n_genes = n_genes,
+          unit = results[tasks$kind == "unit"],
+          two_param = results[tasks$kind == "two_param"],
+          shared = results[tasks$kind == "shared"],
+          elapsed_sec = proc.time()[["elapsed"]] - started
+        ),
+        path
+      )
+      message(
+        "  done in ",
+        round(proc.time()[["elapsed"]] - started),
+        " s."
+      )
+      rm(X, scatter, total, results)
+      invisible(gc())
     }
+  }
+}
 
-    if (run_nested && length(specs) > 0L) {
-      nested <- nested_cv_compare(
-        X,
-        specs,
-        K_outer = K_outer,
-        K_inner = K_inner,
-        seed = seed,
-        rule = selection_rule
-      )
-      nested_rows[[length(nested_rows) + 1L]] <<- data.frame(
-        time_point = time_level,
-        cell_type = tp,
-        nested$by_fold,
-        stringsAsFactors = FALSE
-      )
-      nested_summary_rows[[length(nested_summary_rows) + 1L]] <<- data.frame(
-        time_point = time_level,
-        cell_type = tp,
-        nested$summary,
-        stringsAsFactors = FALSE
-      )
-    }
-
-    fits[[tp]] <- list(
-      genes = colnames(X),
-      excluded_genes = excluded,
-      n = n,
-      ref_lib = ref_lib,
-      normalise = normalise,
-      scale = if (identical(normalise, "none")) {
-        "raw UMI counts (no per-cell library division)"
-      } else {
-        "library-divided counts (full library / median)"
-      },
-      nu = nu_fit,
-      estimators = per_estimator
+#' Curves and choices of one `select` checkpoint.
+#'
+#' @return A list with `curves` (one row per unit, arm and tuning value)
+#'   and `selected` (one row per unit and rule).
+read_selection <- function(path) {
+  res <- readRDS(path)
+  types <- res$types
+  curve <- function(tp, arm, alpha, tuning, scores, const, scheme) {
+    data.frame(
+      time = res$time,
+      gene_set = res$gene_set,
+      cell_type = tp,
+      arm = arm,
+      alpha = alpha,
+      tuning = tuning,
+      mean_score = colMeans(scores) + mean(const),
+      se_score = apply(scores, 2L, stats::sd) / sqrt(nrow(scores)),
+      folds = nrow(scores),
+      scheme = scheme,
+      stringsAsFactors = FALSE
     )
   }
-  fits
-})
-names(results) <- time_levels
-
-# ==========================================================================
-# SECTION 3 · Outputs ----
-# ==========================================================================
-
-suffix <- if (identical(normalise, "none")) "" else paste0("_", normalise)
-out_rds <- file.path(out_dir, paste0("cv_covariance_by_type_time", suffix, ".rds"))
-saveRDS(results, out_rds)
-message("Wrote ", out_rds)
-
-write_table <- function(rows, filename) {
-  if (length(rows) == 0L) {
-    message("Nothing to write for ", filename)
-    return(invisible(NULL))
+  pick <- function(tp, rule, arm, alpha, tuning, score) {
+    data.frame(
+      time = res$time,
+      gene_set = res$gene_set,
+      cell_type = tp,
+      rule = rule,
+      arm = arm,
+      alpha = alpha,
+      tuning = tuning,
+      mean_score = score,
+      stringsAsFactors = FALSE
+    )
   }
-  path <- file.path(out_dir, sub("\\.csv$", paste0(suffix, ".csv"), filename))
-  utils::write.csv(do.call(rbind, rows), path, row.names = FALSE)
-  message("Wrote ", path)
+  curves <- list()
+  selected <- list()
+  for (j in seq_along(types)) {
+    tp <- types[[j]]
+    unit <- res$unit[[j]]
+    scheme <- if (res$n_cells[[j]] < loo_below) "leave-one-out" else "5-fold"
+    full <- function(scores, at) mean(scores[, at]) + mean(unit$const)
+    shr <- summarise_path(unit$shrinkage, lambda_grid, "larger")
+    curves[[length(curves) + 1L]] <- curve(
+      tp,
+      "shrinkage",
+      0,
+      lambda_grid,
+      unit$shrinkage,
+      unit$const,
+      scheme
+    )
+    at <- function(value) match(value, lambda_grid)
+    selected[[length(selected) + 1L]] <- rbind(
+      pick(tp, "shrinkage, per type", "shrinkage", 0, shr$min, full(unit$shrinkage, at(shr$min))),
+      pick(tp, "shrinkage, per type, 1se", "shrinkage", 0, shr$one_se, full(unit$shrinkage, at(shr$one_se))),
+      pick(tp, "diagonal", "shrinkage", 0, 1, full(unit$shrinkage, at(1)))
+    )
+    fac <- summarise_path(unit$factor, ranks, "smaller")
+    curves[[length(curves) + 1L]] <- curve(
+      tp,
+      "factor",
+      NA_real_,
+      ranks,
+      unit$factor,
+      unit$const,
+      scheme
+    )
+    selected[[length(selected) + 1L]] <- rbind(
+      pick(tp, "factor, per type", "factor", NA_real_, fac$min, full(unit$factor, match(fac$min, ranks))),
+      pick(tp, "factor, per type, 1se", "factor", NA_real_, fac$one_se, full(unit$factor, match(fac$one_se, ranks)))
+    )
+    two <- res$two_param[[j]]
+    pairs <- expand.grid(lambda = lambda_grid, alpha = alpha_grid)
+    curves[[length(curves) + 1L]] <- curve(
+      tp,
+      "two_param",
+      pairs$alpha,
+      pairs$lambda,
+      two$two_param,
+      two$const,
+      "5-fold"
+    )
+    best <- which_max(colMeans(two$two_param))
+    selected[[length(selected) + 1L]] <- pick(
+      tp,
+      "two-parameter, per type",
+      "two_param",
+      pairs$alpha[[best]],
+      pairs$lambda[[best]],
+      mean(two$two_param[, best]) + mean(two$const)
+    )
+  }
+  # Shared loadings: folds in the list, types by ranks in each.
+  shared_scores <- simplify2array(lapply(res$shared, `[[`, "scores"))
+  shared_const <- vapply(res$shared, `[[`, numeric(length(types)), "const")
+  for (j in seq_along(types)) {
+    scores <- t(shared_scores[j, , ])
+    curves[[length(curves) + 1L]] <- curve(
+      types[[j]],
+      "factor_shared",
+      NA_real_,
+      ranks_shared,
+      scores,
+      matrix(shared_const, nrow = length(types))[j, ],
+      "5 joint folds"
+    )
+  }
+  curves <- do.call(rbind, curves)
+  selected <- do.call(rbind, selected)
+  # Common choices: the value with the highest sum over types of the
+  # mean held-out score (one vote per type).
+  common <- function(arm, rule) {
+    d <- curves[curves$arm == arm, ]
+    key <- paste(d$alpha, d$tuning)
+    total <- tapply(d$mean_score, key, sum)
+    best <- names(total)[[which_max(total)]]
+    hit <- d[key == best, ]
+    pick(hit$cell_type, rule, arm, hit$alpha, hit$tuning, hit$mean_score)
+  }
+  selected <- rbind(
+    selected,
+    common("shrinkage", "shrinkage, common"),
+    common("two_param", "two-parameter, common"),
+    common("factor_shared", "factor, shared loadings")
+  )
+  rownames(curves) <- NULL
+  rownames(selected) <- NULL
+  list(curves = curves, selected = selected)
 }
-write_table(tuning_rows, "cv_tuning_scores.csv")
-write_table(selected_rows, "cv_selected_tuning.csv")
-write_table(nested_rows, "nested_cv_by_fold.csv")
-write_table(nested_summary_rows, "nested_cv_summary.csv")
-write_table(nu_rows, "extrinsic_noise.csv")
+
+# ==========================================================================
+# SECTION 2 · Nested comparison of the rules ----
+# ==========================================================================
+
+if ("nested" %in% run_stages) {
+  for (tm in run_times) {
+    for (gs in run_gene_sets) {
+      path <- checkpoint("nested", tm, gs)
+      if (file.exists(path)) {
+        next
+      }
+      started <- proc.time()[["elapsed"]]
+      X <- read_units(tm, gs)
+      types <- names(X)
+      n_genes <- ncol(X[[1L]])
+      outer <- stratified_folds(X, K_outer, seed + 1000L)
+      tasks <- rbind(
+        expand.grid(kind = "unit", j = seq_along(X), k = seq_len(K_outer)),
+        data.frame(kind = "shared", j = NA_integer_, k = seq_len(K_outer))
+      )
+      message(
+        "Nested ",
+        tm,
+        " / ",
+        gs,
+        ": ",
+        n_genes,
+        " genes, ",
+        nrow(tasks),
+        " tasks."
+      )
+      results <- parallel::mclapply(
+        seq_len(nrow(tasks)),
+        logged(
+          paste("nested", tm, gs),
+          nrow(tasks),
+          workers_for(nrow(tasks), n_genes, copies = 14),
+          function(i) {
+          task <- tasks[i, ]
+          k <- task$k
+          train <- Map(function(x, f) x[f != k, , drop = FALSE], X, outer)
+          test <- Map(function(x, f) x[f == k, , drop = FALSE], X, outer)
+          if (task$kind == "shared") {
+            inner <- stratified_folds(train, K, seed + 2000L + k)
+            inner_scores <- lapply(seq_len(K), function(m) {
+              score_shared_factor(
+                Map(function(x, f) x[f != m, , drop = FALSE], train, inner),
+                Map(function(x, f) x[f == m, , drop = FALSE], train, inner),
+                ranks_shared
+              )$scores
+            })
+            return(list(
+              inner = Reduce(`+`, inner_scores) / K,
+              outer = score_shared_factor(train, test, ranks_shared)
+            ))
+          }
+          j <- task$j
+          other <- Reduce(`+`, lapply(train[-j], centred_scatter))
+          n_train <- nrow(train[[j]])
+          inner <- cv_unit_arms(
+            train[[j]],
+            unit_folds(n_train, seed + 3000L + k, K, loo_below),
+            lambda_grid,
+            ranks
+          )
+          inner_two <- cv_unit_arms(
+            train[[j]],
+            make_cv_folds(n_train, K, seed + 4000L + k),
+            lambda_grid,
+            ranks = NULL,
+            alpha_grid = alpha_grid,
+            other_scatter = other
+          )
+          list(
+            inner = list(
+              shrinkage = colMeans(inner$shrinkage),
+              factor = colMeans(inner$factor),
+              two_param = colMeans(inner_two$two_param)
+            ),
+            outer = score_unit_arms(
+              train[[j]],
+              test[[j]],
+              lambda_grid,
+              ranks,
+              alpha_grid,
+              other
+            )
+          )
+        }
+        ),
+        mc.cores = workers_for(nrow(tasks), n_genes, copies = 14),
+        mc.preschedule = FALSE
+      )
+      check_tasks(results, paste("nested", tm, gs))
+      saveRDS(
+        list(
+          time = tm,
+          gene_set = gs,
+          types = types,
+          tasks = tasks,
+          results = results,
+          elapsed_sec = proc.time()[["elapsed"]] - started
+        ),
+        path
+      )
+      message(
+        "  done in ",
+        round(proc.time()[["elapsed"]] - started),
+        " s."
+      )
+      rm(X, results)
+      invisible(gc())
+    }
+  }
+}
+
+#' Outer-fold scores of every rule from one `nested` checkpoint.
+read_nested <- function(path) {
+  res <- readRDS(path)
+  types <- res$types
+  pairs <- expand.grid(lambda = lambda_grid, alpha = alpha_grid)
+  rows <- list()
+  add <- function(tp, k, rule, alpha, tuning, score, n_test) {
+    rows[[length(rows) + 1L]] <<- data.frame(
+      time = res$time,
+      gene_set = res$gene_set,
+      cell_type = tp,
+      outer_fold = k,
+      rule = rule,
+      alpha = alpha,
+      tuning = tuning,
+      score = score,
+      n_test = n_test,
+      stringsAsFactors = FALSE
+    )
+  }
+  for (k in seq_len(K_outer)) {
+    units <- lapply(seq_along(types), function(j) {
+      res$results[[which(
+        res$tasks$kind == "unit" & res$tasks$j == j & res$tasks$k == k
+      )]]
+    })
+    shared <- res$results[[which(
+      res$tasks$kind == "shared" & res$tasks$k == k
+    )]]
+    common_lambda <- which_max(Reduce(
+      `+`,
+      lapply(units, function(u) u$inner$shrinkage)
+    ))
+    common_pair <- which_max(Reduce(
+      `+`,
+      lapply(units, function(u) u$inner$two_param)
+    ))
+    shared_rank <- which_max(colSums(shared$inner))
+    for (j in seq_along(types)) {
+      u <- units[[j]]
+      tp <- types[[j]]
+      const <- u$outer$const
+      n_test <- u$outer$n_test
+      two_outer <- as.numeric(t(u$outer$two_param))
+      own <- which_max(u$inner$shrinkage)
+      add(tp, k, "diagonal", 0, 1, u$outer$shrinkage[[match(1, lambda_grid)]] + const, n_test)
+      add(tp, k, "shrinkage, per type", 0, lambda_grid[[own]], u$outer$shrinkage[[own]] + const, n_test)
+      add(tp, k, "shrinkage, common", 0, lambda_grid[[common_lambda]], u$outer$shrinkage[[common_lambda]] + const, n_test)
+      own <- which_max(u$inner$two_param)
+      add(tp, k, "two-parameter, per type", pairs$alpha[[own]], pairs$lambda[[own]], two_outer[[own]] + const, n_test)
+      add(tp, k, "two-parameter, common", pairs$alpha[[common_pair]], pairs$lambda[[common_pair]], two_outer[[common_pair]] + const, n_test)
+      own <- which_max(u$inner$factor)
+      add(tp, k, "factor, per type", NA_real_, ranks[[own]], u$outer$factor[[own]] + const, n_test)
+      add(
+        tp,
+        k,
+        "factor, shared loadings",
+        NA_real_,
+        ranks_shared[[shared_rank]],
+        shared$outer$scores[j, shared_rank] + shared$outer$const[[j]],
+        n_test
+      )
+    }
+  }
+  do.call(rbind, rows)
+}
+
+# ==========================================================================
+# SECTION 3 · Factor models on all cells, AIC and BIC ----
+# ==========================================================================
+
+if ("fit" %in% run_stages) {
+  for (tm in run_times) {
+    for (gs in run_gene_sets) {
+      path <- file.path(out_dir, paste0("factors_", tm, "_", gs, ".rds"))
+      if (file.exists(path)) {
+        next
+      }
+      started <- proc.time()[["elapsed"]]
+      X <- read_units(tm, gs)
+      types <- names(X)
+      n_genes <- ncol(X[[1L]])
+      splits <- lapply(X, function(x) split_standardise(x, x))
+      per_type <- parallel::mclapply(
+        seq_along(X),
+        logged(
+          paste("fit per type", tm, gs),
+          length(X),
+          workers_for(length(X), n_genes),
+          function(j) {
+          sp <- splits[[j]]
+          spectrum <- right_spectrum(sp$Z)
+          ok <- usable_ranks(ranks, sp$n, length(spectrum$values), ncol(sp$Z))
+          lapply(stats::setNames(ok, ok), function(q) {
+            fit <- fit_factor_correlation(sp$Z, q, spectrum)
+            # In-sample log-likelihood of the cells of the type.
+            fit$loglik <- sp$n *
+              (sp$base + mean(factor_core(sp$Zt, fit$B, fit$psi)) + mean(sp$const))
+            B <- matrix(0, n_genes, ncol(fit$B))
+            B[sp$varying, ] <- fit$B
+            psi <- rep(1, n_genes)
+            psi[sp$varying] <- fit$psi
+            fit$B <- B
+            fit$psi <- psi
+            fit
+          })
+        }
+        ),
+        mc.cores = workers_for(length(X), n_genes),
+        mc.preschedule = FALSE
+      )
+      check_tasks(per_type, paste("fit", tm, gs))
+      names(per_type) <- types
+      Z_list <- lapply(splits, function(sp) {
+        Z <- matrix(0, sp$n, n_genes)
+        Z[, sp$varying] <- sp$Z
+        Z
+      })
+      varying_list <- lapply(splits, `[[`, "varying")
+      shared_ok <- usable_ranks(
+        ranks_shared,
+        sum(vapply(X, nrow, integer(1))) - length(X),
+        n_genes,
+        min(vapply(varying_list, sum, numeric(1)))
+      )
+      shared <- parallel::mclapply(
+        shared_ok,
+        logged(
+          paste("fit shared", tm, gs),
+          length(shared_ok),
+          workers_for(length(shared_ok), n_genes),
+          function(q) {
+          fit <- fit_factor_shared(Z_list, varying_list, q)
+          fit$loglik <- vapply(
+            seq_along(splits),
+            function(j) {
+              sp <- splits[[j]]
+              sp$n *
+                (sp$base +
+                  mean(factor_core(
+                    sp$Zt,
+                    fit$B[sp$varying, , drop = FALSE],
+                    fit$psi[sp$varying, j]
+                  )) +
+                  mean(sp$const))
+            },
+            numeric(1)
+          )
+          colnames(fit$psi) <- types
+          fit
+        }
+        ),
+        mc.cores = workers_for(length(shared_ok), n_genes),
+        mc.preschedule = FALSE
+      )
+      check_tasks(shared, paste("fit shared", tm, gs))
+      names(shared) <- shared_ok
+      saveRDS(
+        list(
+          time = tm,
+          gene_set = gs,
+          types = types,
+          n_cells = vapply(X, nrow, integer(1)),
+          n_genes = n_genes,
+          per_type = per_type,
+          shared = shared
+        ),
+        path
+      )
+      message(
+        "Factor fits ",
+        tm,
+        " / ",
+        gs,
+        ": ",
+        round(proc.time()[["elapsed"]] - started),
+        " s."
+      )
+      rm(X, splits, Z_list, per_type, shared)
+      invisible(gc())
+    }
+  }
+}
+
+#' AIC and BIC of the factor fits of one slot. The mean adds one
+#' parameter per gene and type.
+read_criteria <- function(path) {
+  res <- readRDS(path)
+  p <- res$n_genes
+  n_types <- length(res$types)
+  row <- function(tp, arm, q, loglik, k, n, fit) {
+    ic <- information_criteria(loglik, k, n)
+    data.frame(
+      time = res$time,
+      gene_set = res$gene_set,
+      cell_type = tp,
+      arm = arm,
+      rank = q,
+      loglik = loglik,
+      parameters = k,
+      cells = n,
+      aic = ic[["aic"]],
+      bic = ic[["bic"]],
+      iterations = fit$iterations,
+      converged = fit$converged,
+      stringsAsFactors = FALSE
+    )
+  }
+  per_type <- do.call(
+    rbind,
+    lapply(res$types, function(tp) {
+      do.call(
+        rbind,
+        lapply(names(res$per_type[[tp]]), function(q) {
+          fit <- res$per_type[[tp]][[q]]
+          q <- as.integer(q)
+          row(
+            tp,
+            "factor",
+            q,
+            fit$loglik,
+            p + factor_parameter_count(p, q),
+            res$n_cells[[tp]],
+            fit
+          )
+        })
+      )
+    })
+  )
+  shared <- do.call(
+    rbind,
+    lapply(names(res$shared), function(q) {
+      fit <- res$shared[[q]]
+      q <- as.integer(q)
+      row(
+        "all types",
+        "factor_shared",
+        q,
+        sum(fit$loglik),
+        n_types * p + factor_parameter_count(p, q, n_types),
+        sum(res$n_cells),
+        fit
+      )
+    })
+  )
+  rbind(per_type, shared)
+}
+
+# ==========================================================================
+# SECTION 4 · Tables ----
+# ==========================================================================
+
+if ("tables" %in% run_stages) {
+  write_table <- function(x, name) {
+    utils::write.csv(
+      x,
+      file.path(out_dir, name),
+      row.names = FALSE,
+      fileEncoding = "UTF-8"
+    )
+  }
+  stage_files <- function(stage) {
+    list.files(fits_dir, paste0("^", stage, "__.*\\.rds$"), full.names = TRUE)
+  }
+  selections <- lapply(stage_files("select"), read_selection)
+  if (length(selections) > 0L) {
+    write_table(
+      do.call(rbind, lapply(selections, `[[`, "curves")),
+      "cv_tuning_scores.csv"
+    )
+    write_table(
+      do.call(rbind, lapply(selections, `[[`, "selected")),
+      "cv_selected_tuning.csv"
+    )
+  }
+  nested <- do.call(rbind, lapply(stage_files("nested"), read_nested))
+  if (!is.null(nested)) {
+    write_table(nested, "nested_cv_by_fold.csv")
+    # Paired difference to the diagonal model, per unit and rule.
+    reference <- nested[nested$rule == "diagonal", ]
+    key <- function(d) paste(d$time, d$gene_set, d$cell_type, d$outer_fold)
+    nested$gain <- nested$score - reference$score[match(key(nested), key(reference))]
+    groups <- split(
+      nested,
+      list(nested$time, nested$gene_set, nested$cell_type, nested$rule),
+      drop = TRUE
+    )
+    write_table(
+      do.call(
+        rbind,
+        lapply(groups, function(d) {
+          data.frame(
+            time = d$time[[1L]],
+            gene_set = d$gene_set[[1L]],
+            cell_type = d$cell_type[[1L]],
+            rule = d$rule[[1L]],
+            mean_score = mean(d$score),
+            se_score = stats::sd(d$score) / sqrt(nrow(d)),
+            mean_gain_over_diagonal = mean(d$gain),
+            se_gain = stats::sd(d$gain) / sqrt(nrow(d)),
+            tuning_values = paste(unique(signif(d$tuning, 3)), collapse = " "),
+            alpha_values = paste(unique(d$alpha), collapse = " "),
+            outer_folds = nrow(d),
+            stringsAsFactors = FALSE
+          )
+        })
+      ),
+      "nested_cv_summary.csv"
+    )
+  }
+  factor_files <- list.files(out_dir, "^factors_.*\\.rds$", full.names = TRUE)
+  if (length(factor_files) > 0L) {
+    write_table(
+      do.call(rbind, lapply(factor_files, read_criteria)),
+      "information_criteria.csv"
+    )
+  }
+  writeLines(
+    utils::capture.output(utils::sessionInfo()),
+    file.path(out_dir, "session_info.txt")
+  )
+  message("Tables written to ", out_dir, ".")
+}

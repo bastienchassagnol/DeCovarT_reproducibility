@@ -57,7 +57,7 @@ slots <- readRDS(
 # 1 · Bulk against the reference at the observed composition ----------------
 agreement <- list()
 for (tm in c("48h", "72h", "96h")) {
-  for (gs in c("r2_05", "welch")) {
+  for (gs in c("r2_05", "r2_01", "welch")) {
     moments <- readRDS(
       file.path(
         root,
@@ -159,9 +159,7 @@ descriptors <- unique(late[, c(
   "family",
   "algorithm",
   "gene_set",
-  "covariance",
-  "platform_ratio",
-  "optimiser"
+  "covariance"
 )])
 collapsed <- merge(collapsed, descriptors, by = "method")
 collapsed$observed_psm_share <- obs_late$observed[

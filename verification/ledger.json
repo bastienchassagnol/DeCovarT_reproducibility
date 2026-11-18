@@ -1,8 +1,48 @@
 {
-  "date": "2026-11-11",
+  "date": "2026-11-18",
   "engine": "sympy==1.14.0 (mpmath for numeric rows)",
   "lean": "not configured for this repository",
   "rows": [
+    {
+      "id": "R1",
+      "claim": "(1 - lambda) M + lambda I has the eigenvectors of M and eigenvalues (1 - lambda) ell + lambda",
+      "kind": "exact",
+      "status": "pass",
+      "detail": "generic symmetric 2 x 2 M, eigenpairs from sympy",
+      "file": "check_covariance_selection.py"
+    },
+    {
+      "id": "R2",
+      "claim": "With M of rank r in p dimensions, det K = prod(e_i) lambda^(p - r) and z' K^-1 z = sum (v_i' z)^2 / e_i + (|z|^2 - sum (v_i' z)^2) / lambda",
+      "kind": "exact",
+      "status": "pass",
+      "detail": "p = 3, r = 1, v = (1, 2, 2) / 3, symbolic ell, lambda and z",
+      "file": "check_covariance_selection.py"
+    },
+    {
+      "id": "R3",
+      "claim": "(B B' + Psi)^-1 = Psi^-1 - Psi^-1 B (I + B' Psi^-1 B)^-1 B' Psi^-1 and det(B B' + Psi) = det(Psi) det(I + B' Psi^-1 B)",
+      "kind": "exact",
+      "status": "pass",
+      "detail": "three genes, one factor, symbolic loadings and uniquenesses",
+      "file": "check_covariance_selection.py"
+    },
+    {
+      "id": "R4",
+      "claim": "Restricted log-likelihood -1/2 [(n - p) log phi + log det V + log det(X' V^-1 X) + r' V^-1 r / phi], maximised at phi = r' V^-1 r / (n - p)",
+      "kind": "exact",
+      "status": "pass",
+      "detail": "n = 2, p = 1, diagonal V: Gaussian integral over beta by sympy; conditional on V not depending on beta",
+      "file": "check_covariance_selection.py"
+    },
+    {
+      "id": "R5",
+      "claim": "Linked scales phi = a c, a fixed: the score in c does not contain N; its root c = (-G a + sqrt(G^2 a^2 + 4 D Q)) / (2 D) is positive and a maximum",
+      "kind": "exact",
+      "status": "pass",
+      "detail": "symbolic in G, a, D, Q > 0 and real N; positivity because G^2 a^2 + 4 D Q - (G a)^2 = 4 D Q > 0; second derivative times 2 a c^3 equals G a c - 2 Q = -(Q + D c^2) < 0 at the root",
+      "file": "check_covariance_selection.py"
+    },
     {
       "id": "C1",
       "claim": "Bulk covariance with multinomial cell-type counts is n S_T(p)",
@@ -114,6 +154,62 @@
       "status": "pass",
       "detail": "symbolic 2 x 2, estimator D^1/2 {(1 - lambda) R + lambda I} D^1/2",
       "file": "check_sieve.py"
+    },
+    {
+      "id": "TS1",
+      "claim": "With Var D = v / n, z^2 scales linearly in n, so n_eff = a * qchisq(0.5, 1) / median z^2(a)",
+      "kind": "exact",
+      "status": "pass",
+      "detail": "z^2(n) - z^2(a) n / a simplified to 0; the median scales with every z^2, root from sympy.solve",
+      "file": "check_tail_scale.py"
+    },
+    {
+      "id": "TS2",
+      "claim": "Under c = a n and phi = a^2 n, the cell count is c^2 / phi",
+      "kind": "exact",
+      "status": "pass",
+      "detail": "direct substitution",
+      "file": "check_tail_scale.py"
+    },
+    {
+      "id": "TS3",
+      "claim": "Var r = W^{-1} implies Var(W r) = W and Var z_g = 1 for z_g = (W r)_g / sqrt(W_gg)",
+      "kind": "exact",
+      "status": "pass",
+      "detail": "generic symmetric 3 x 3 W; Gaussianity of z_g follows from linearity, not checked here",
+      "file": "check_tail_scale.py"
+    },
+    {
+      "id": "TS4",
+      "claim": "(W r)_g / W_gg = y_g - E(y_g | y_-g) and 1 / W_gg = Var(y_g | y_-g) (Schur complement)",
+      "kind": "exact",
+      "status": "pass",
+      "detail": "generic symmetric 3 x 3 Sigma, gene 1 against genes 2 and 3",
+      "file": "check_tail_scale.py"
+    },
+    {
+      "id": "TS5",
+      "claim": "W_gg >= 1 / Sigma_gg (equality iff Sigma_{g,-g} = 0); a one-gene shift of k SDs moves z_cond by k sqrt(Sigma_gg W_gg) >= k",
+      "kind": "exact",
+      "status": "pass",
+      "detail": "2 x 2: W_11 - 1/Sigma_11 = Sigma_12^2 / (Sigma_11 det Sigma) >= 0 (exact); 5 x 5: 25 random rational SPD matrices and their block-diagonal versions (rational-sampling)",
+      "file": "check_tail_scale.py"
+    },
+    {
+      "id": "TS6",
+      "claim": "Var(sum_{g in M} z_g) = 1' C_M 1 with C the correlation matrix of W",
+      "kind": "exact",
+      "status": "pass",
+      "detail": "generic symmetric 3 x 3 W, module {1, 2}; uses Var(W r) = W (TS3)",
+      "file": "check_tail_scale.py"
+    },
+    {
+      "id": "TS7",
+      "claim": "Shared shift of k SDs on two genes of correlation rho > 0: per-gene z_cond moves by k sqrt((1 - rho)/(1 + rho)) < k; both module sums move by sqrt(2) k / sqrt(1 + rho)",
+      "kind": "rational-sampling",
+      "status": "pass",
+      "detail": "diagonal sum exact in rho; conditional forms at 25 rational rho in (0, 1) plus rho = 1/2 and 3/10",
+      "file": "check_tail_scale.py"
     }
   ]
 }

@@ -14,6 +14,11 @@
 #   none   assumption A3, the same per-cell mean on both platforms;
 #   length A3 relaxed by a ratio b_g = f(transcript length), cross-fitted;
 #   gene   A3 relaxed by a free gene-wise ratio b_g, cross-fitted.
+#   gene_neff  as gene, with the deMixSC plug-in fitted on the Welch
+#          panel of the slot (output/grn/plugin/gene_sets.csv, where
+#          deMixSC is the best univariate deconvolution of chapter 4) and
+#          the bulk cell count a_i replaced by the effective count n_eff
+#          (estimate_effective_cells()): one extra dispersion per replicate.
 # Cross-fitted: the ratio used at one time is estimated on the bulk
 # replicates of the two other times only.
 
@@ -339,7 +344,16 @@ ratios <- list(
   )
 )
 
-run_variant <- function(ratio) {
+welch_path <- file.path(root, "output", "grn", "plugin", "gene_sets.csv")
+if (!file.exists(welch_path)) {
+  stop("Missing ", welch_path, ". Run scripts/03_05_stats_plugin_covariance.R first.")
+}
+gene_sets <- utils::read.csv(welch_path, stringsAsFactors = FALSE)
+welch_genes <- lapply(stats::setNames(times, times), function(tm) {
+  gene_sets$gene[gene_sets$time_point == tm & gene_sets$gene_set == "welch"]
+})
+
+run_variant <- function(ratio, plugin_sets = NULL, n_bulk = "plugin") {
   rng <- list()
   tails <- list()
   for (tm in times) {
@@ -369,7 +383,9 @@ run_variant <- function(ratio) {
       mean_degree = mean_degree,
       min_abs_cor = min_abs_cor,
       platform_ratio = b,
-      platform_var = v
+      platform_var = v,
+      plugin_genes = plugin_sets[[tm]],
+      n_bulk = n_bulk
     )
   }
   ov <- lapply(times, function(tm) {
@@ -388,6 +404,11 @@ run_variant <- function(ratio) {
   )
 }
 variants <- lapply(ratios, run_variant)
+variants$gene_neff <- run_variant(
+  ratios$gene,
+  plugin_sets = welch_genes,
+  n_bulk = "moment"
+)
 variants <- c(
   list(
     none = list(

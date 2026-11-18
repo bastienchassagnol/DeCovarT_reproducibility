@@ -1,4 +1,4 @@
-#' Deconvolution of the Suppinger bulk samples: DeCovarT flavours and
+#' Deconvolution of the Suppinger bulk samples: DeCovarT and
 #' comparators, on one gene panel and one single-cell reference.
 #'
 #' Every function takes the bulk on raw counts (genes by samples) and a
@@ -9,7 +9,9 @@
 #' `lower`, `upper` (`NA` when the method gives no interval).
 #'
 #' Requires `R/02_00_utils.R` and, for the DeMixSC weights,
-#' `R/02_03_stats_tail_bounds.R` (`plugin_composition_demixsc()`).
+#' `R/02_03_stats_tail_bounds.R` (`plugin_composition_demixsc()`); for
+#' the DeMixSC benchmark pairs, `R/03_01_stats_covariance_estimation.R`
+#' (`read_panel_slot()`).
 
 # ==========================================================================
 # Inputs: design, observed proportions, platform ratio ----
@@ -112,43 +114,8 @@ read_platform_ratio <- function(
 }
 
 # ==========================================================================
-# DeCovarT: single-cell model, four covariance inputs ----
+# DeCovarT: single-cell model ----
 # ==========================================================================
-
-#' Denoised covariance plus the bulk Poisson term, per type.
-#'
-#' The bulk law with a denoised within-type covariance is
-#' `Cov y = phi * {S_bio(p) + diag(mu p) / a}`, with `a = phi / c` the
-#' bulk depth per cell (DeCovarT vignette 3.2, eq-bulk-plugin). The
-#' diagonal term is linear in `p`, so it can be carried by the per-type
-#' matrices: `Sigma_j = Sigma_bio_j + diag(mu_j) / a`.
-#'
-#' When the bulk was divided by a gene-wise platform ratio `b`, the mean
-#' is unchanged and the Poisson variance of gene `g` is divided by `b_g`:
-#' `Sigma_j = Sigma_bio_j + diag(mu_j / b) / a`. This second form is
-#' derived here from the first; it is not in the vignette.
-#'
-#' @param sigma_bio Denoised covariances, genes by genes by types.
-#' @param mu Mean raw counts per cell, genes by types.
-#' @param a Positive bulk depth per cell.
-#' @param b Optional gene-wise platform ratio the bulk was divided by.
-#' @return An array like `sigma_bio`.
-add_bulk_poisson_term <- function(sigma_bio, mu, a, b = NULL) {
-  n_genes <- nrow(mu)
-  if (!is.finite(a) || a <= 0) {
-    stop("`a` must be one positive number.")
-  }
-  if (is.null(b)) {
-    b <- rep(1, n_genes)
-  }
-  out <- sigma_bio
-  on_diagonal <- (seq_len(n_genes) - 1L) * n_genes + seq_len(n_genes)
-  for (j in seq_len(ncol(mu))) {
-    idx <- (j - 1) * n_genes^2 + on_diagonal
-    out[idx] <- out[idx] + mu[, j] / (b * a)
-  }
-  out
-}
 
 #' One DeCovarT single-cell fit, with its Wald interval and diagnostics.
 #'
@@ -239,157 +206,6 @@ fit_decovart_once <- function(
     ),
     p = p
   )
-}
-
-#' The four covariance inputs of DeCovarT for one bulk sample.
-#'
-#' Fits, in this order:
-#' - `raw`: the regularised raw covariance, which assumes a bulk depth
-#'   per cell `a = 1`;
-#' - `denoised_bio`: the denoised covariance alone, with no bulk
-#'   sampling term;
-#' - `denoised_plugin`: the denoised covariance plus the bulk Poisson
-#'   term ([add_bulk_poisson_term()]) at `a = phi / c` of the `raw` fit;
-#' - `denoised_fixed`: the same form, with `a` replaced by `phi / c` of
-#'   the previous fit until `|log(a_new / a)| < tol` or `max_passes`
-#'   fits. Its first pass is the `denoised_plugin` fit. The limit is a
-#'   fixed point, not the joint maximum-likelihood estimate.
-#'
-#' With `b`, the bulk is divided by the gene-wise platform ratio before
-#' every fit; the reference moments are unchanged.
-#'
-#' @param y Bulk vector on raw counts, named by gene.
-#' @param mu Mean signature, genes by types.
-#' @param sigma_raw,sigma_bio Covariances, genes by genes by types.
-#' @param optimiser `"newton"` or `"lbfgsb"`.
-#' @param b Optional named gene-wise platform ratio.
-#' @param max_passes Largest number of fits of the fixed point. Default 5.
-#' @param tol Tolerance on `|log(a_new / a)|`. Default `0.01`.
-#' @return A list with `estimates` (`covariance`, `cell_type`,
-#'   `proportion`, `lower`, `upper`) and `diagnostics` (one row per
-#'   covariance input, with `a_used`, `passes` and `fixed_point_reached`).
-fit_decovart_chain <- function(
-  y,
-  mu,
-  sigma_raw,
-  sigma_bio,
-  optimiser,
-  b = NULL,
-  max_passes = 5L,
-  tol = 0.01
-) {
-  genes <- rownames(mu)
-  if (
-    is.null(genes) ||
-      !identical(dimnames(sigma_raw)[[1L]], genes) ||
-      !identical(dimnames(sigma_bio)[[1L]], genes) ||
-      !all(genes %in% names(y))
-  ) {
-    stop("`y`, `mu` and the covariances must share their gene names.")
-  }
-  y <- as.numeric(y[genes])
-  if (!is.null(b)) {
-    b <- as.numeric(b[genes])
-    y <- y / b
-  }
-  # One entry per covariance input: the fit, the depth used in the
-  # Poisson term, the number of fits and whether the fixed point was
-  # reached.
-  entry <- function(fit, a_used, passes, reached) {
-    list(fit = fit, a_used = a_used, passes = passes, reached = reached)
-  }
-  skipped <- list(
-    estimates = data.frame(
-      cell_type = colnames(mu),
-      proportion = NA_real_,
-      lower = NA_real_,
-      upper = NA_real_,
-      stringsAsFactors = FALSE
-    ),
-    diagnostics = data.frame(
-      mean_scale = NA_real_,
-      variance_scale = NA_real_,
-      platform_scale = NA_real_,
-      n_cells_hat = NA_real_,
-      loglik = NA_real_,
-      convergence = NA_integer_,
-      iterations = NA_integer_,
-      elapsed_sec = 0,
-      message = "No bulk depth per cell from the raw fit.",
-      stringsAsFactors = FALSE
-    ),
-    p = NULL
-  )
-
-  raw <- fit_decovart_once(y, mu, sigma_raw, optimiser)
-  bio <- fit_decovart_once(y, mu, sigma_bio, optimiser)
-  fits <- list(
-    raw = entry(raw, NA_real_, 1L, NA),
-    denoised_bio = entry(bio, NA_real_, 1L, NA)
-  )
-
-  a <- raw$diagnostics$platform_scale
-  if (!is.finite(a) || a <= 0) {
-    fits$denoised_plugin <- entry(skipped, NA_real_, 0L, NA)
-    fits$denoised_fixed <- entry(skipped, NA_real_, 0L, NA)
-  } else {
-    current <- fit_decovart_once(
-      y,
-      mu,
-      add_bulk_poisson_term(sigma_bio, mu, a, b),
-      optimiser
-    )
-    fits$denoised_plugin <- entry(current, a, 1L, NA)
-    passes <- 1L
-    reached <- FALSE
-    repeat {
-      a_new <- current$diagnostics$platform_scale
-      if (!is.finite(a_new) || a_new <= 0) {
-        break
-      }
-      if (abs(log(a_new / a)) < tol) {
-        reached <- TRUE
-        break
-      }
-      if (passes >= max_passes) {
-        break
-      }
-      a <- a_new
-      current <- fit_decovart_once(
-        y,
-        mu,
-        add_bulk_poisson_term(sigma_bio, mu, a, b),
-        optimiser,
-        initial_p = current$p
-      )
-      passes <- passes + 1L
-    }
-    fits$denoised_fixed <- entry(current, a, passes, reached)
-  }
-  estimates <- lapply(names(fits), function(covariance) {
-    cbind(
-      covariance = covariance,
-      fits[[covariance]]$fit$estimates,
-      stringsAsFactors = FALSE
-    )
-  })
-  diagnostics <- lapply(names(fits), function(covariance) {
-    cbind(
-      covariance = covariance,
-      a_used = fits[[covariance]]$a_used,
-      passes = fits[[covariance]]$passes,
-      fixed_point_reached = fits[[covariance]]$reached,
-      fits[[covariance]]$fit$diagnostics,
-      stringsAsFactors = FALSE
-    )
-  })
-  out <- list(
-    estimates = do.call(rbind, estimates),
-    diagnostics = do.call(rbind, diagnostics)
-  )
-  rownames(out$estimates) <- NULL
-  rownames(out$diagnostics) <- NULL
-  out
 }
 
 # ==========================================================================
@@ -582,8 +398,10 @@ deconvolute_bayesprism <- function(
 #'
 #' Writes the bulk and one reference file per cell type, runs
 #' `scripts/python/run_rnasieve.py` with `uv run --script`, and reads the
-#' estimates. The intervals of `rnasieve` are not computed (the runner
-#' has an `--intervals` switch), so `lower` and `upper` are `NA`. The
+#' estimates and the marginal Godambe intervals of `rnasieve` (the
+#' paper's default, Erdmann-Pham et al. 2021, pp. 1804-1805). The runner
+#' corrects the proportion update of `rnasieve` 0.1.4, which never moves
+#' under the pinned `cvxpy` (see the runner). The
 #' preprocessing
 #' of `rnasieve` keeps its defaults for the cell trimming (2% per type)
 #' and the sparsity filter (0.2). Its library-size normalisation is
@@ -593,14 +411,15 @@ deconvolute_bayesprism <- function(
 #' @param bulk Bulk raw counts, genes by samples.
 #' @param counts Reference raw counts, cells by genes.
 #' @param cell_type Cell-type label of each reference cell.
-#' @param work_dir Folder for the exchange files (created, kept).
+#' @param work_dir Folder for the exchange files; a temporary folder, removed
+#'   on exit, by default.
 #' @param script Path to the Python runner.
 #' @return Long table, see [proportions_long()].
 deconvolute_rnasieve <- function(
   bulk,
   counts,
   cell_type,
-  work_dir,
+  work_dir = withr::local_tempdir(),
   script = file.path("scripts", "python", "run_rnasieve.py")
 ) {
   genes <- colnames(counts)
@@ -631,7 +450,14 @@ deconvolute_rnasieve <- function(
   }
   status <- system2(
     "uv",
-    c("run", "--script", shQuote(script), shQuote(in_dir), shQuote(out_dir))
+    c(
+      "run",
+      "--script",
+      shQuote(script),
+      shQuote(in_dir),
+      shQuote(out_dir),
+      "--intervals"
+    )
   )
   if (status != 0L) {
     stop("RNA-Sieve runner failed with status ", status, ".")
@@ -660,20 +486,15 @@ deconvolute_rnasieve <- function(
 #' ([plugin_composition_demixsc()]) on the mean signature. DeMixSC
 #' calibrates a gene-wise platform adjustment on bulk and pseudo-bulk of
 #' the same samples; no such pair exists for Suppinger, so that step is
-#' absent. With `b`, the bulk is divided by the cross-fitted gene-wise
-#' platform ratio instead.
+#' absent.
 #'
 #' @param bulk Bulk raw counts, genes by samples.
 #' @param mu Mean signature, genes by types.
-#' @param b Optional named gene-wise platform ratio.
 #' @param c_reg Constant of the DeMixSC weights. Default `2`.
 #' @return Long table, see [proportions_long()].
-deconvolute_demixsc_wnnls <- function(bulk, mu, b = NULL, c_reg = 2) {
+deconvolute_demixsc_wnnls <- function(bulk, mu, c_reg = 2) {
   genes <- rownames(mu)
   bulk <- as.matrix(bulk)[genes, , drop = FALSE]
-  if (!is.null(b)) {
-    bulk <- bulk / as.numeric(b[genes])
-  }
   fit <- plugin_composition_demixsc(bulk, mu, c_reg = c_reg)
   data.frame(
     sample_id = fit$composition$sample,
@@ -785,14 +606,15 @@ deconvolute_mead <- function(
 #' @param bulk Bulk raw counts, genes by samples.
 #' @param mu Mean signature, genes by types.
 #' @param sd Standard deviations, genes by types.
-#' @param work_dir Folder for the exchange files (created, kept).
+#' @param work_dir Folder for the exchange files; a temporary folder, removed
+#'   on exit, by default.
 #' @param script Path to the Python runner.
 #' @return Long table, see [proportions_long()].
 deconvolute_redeconv <- function(
   bulk,
   mu,
   sd,
-  work_dir,
+  work_dir = withr::local_tempdir(),
   script = file.path("scripts", "python", "run_redeconv.py")
 ) {
   genes <- rownames(mu)
@@ -898,6 +720,36 @@ deconvolute_rlm <- function(bulk, mu) {
   out
 }
 
+#' Non-negative least squares of the bulk on the signature.
+#'
+#' `DeCovarT::deconvolute_ratios_nnls()`: Lawson-Hanson non-negative
+#' least squares (`nnls::nnls()`), every gene with the same weight, no
+#' covariance; the coefficients are then divided by their sum. The
+#' attribute `note` counts the samples with a single non-zero type.
+#'
+#' @param bulk Bulk raw counts, genes by samples.
+#' @param mu Mean signature, genes by types.
+#' @return Long table, see [proportions_long()], with the attribute
+#'   `note`.
+deconvolute_nnls <- function(bulk, mu) {
+  genes <- rownames(mu)
+  bulk <- as.matrix(bulk)[genes, , drop = FALSE]
+  est <- vapply(
+    colnames(bulk),
+    function(s) as.numeric(DeCovarT::deconvolute_ratios_nnls(bulk[, s], mu)),
+    numeric(ncol(mu))
+  )
+  dimnames(est) <- list(colnames(mu), colnames(bulk))
+  vertex <- sum(colSums(est > 0) == 1L)
+  out <- proportions_long(t(est))
+  attr(out, "note") <- if (vertex > 0L) {
+    paste0(vertex, " of ", ncol(bulk), " samples have one non-zero type")
+  } else {
+    ""
+  }
+  out
+}
+
 # ==========================================================================
 # Benchmark metrics ----
 # ==========================================================================
@@ -982,4 +834,369 @@ benchmark_metrics <- function(estimates, observed) {
   out <- do.call(rbind, out)
   rownames(out) <- NULL
   out
+}
+
+# ==========================================================================
+# Comparators with a published interval or alignment: DECALS, DeMixSC ----
+# ==========================================================================
+
+#' DECALS: constrained least squares and its sandwich interval.
+#'
+#' Cai et al. (2024, JASA; no public code). Pages: `p. n` of the PMC
+#' author manuscript, `p. Sn` of the supplementary material
+#' (`deconvolution_models/decals_supplementary_material.pdf`). Point
+#' estimate: the constrained ordinary least squares of their eq. (3),
+#' `min ||x - W q||^2` subject to `q >= 0` and `sum(q) = 1` (p. 6),
+#' solved by the Goldfarb-Idnani dual method as in the paper
+#' (`quadprog::solve.QP()`). Interval: the sandwich of Theorem 1,
+#' `V = U D U^T`, `D = (W'W/p)^-1 (W' Sigma_i W/p) (W'W/p)^-1`,
+#' `U = I - (W'W)^-1 1 {1'(W'W)^-1 1}^-1 1'` (eq. S6, p. S22; proof
+#' pp. S25-S26 via Lemma S1, eq. S7, p. S23), divided by the number of
+#' genes `p`, with `Sigma_i = sum_j q_j^2 Sigma^(j)` (eq. 5, p. 7),
+#' carried to cell fractions by the delta method; Wald interval clipped
+#' to `[0, 1]` (the paper does not clip). No bias correction of `q` or
+#' `V`: the paper's corrections B1, B2 (eqs. 7-9, pp. 8-9; proof
+#' pp. S27-S28) act on the covariance regression only.
+#'
+#' Scale. The paper puts bulk and each reference profile on FPKM, each
+#' divided by its own total over all genes, so `q` is a share of
+#' transcripts (p. S1, eq. S1). Here the bulk and each mean profile are
+#' divided by their panel totals (`W = mu / s`, `s_j = sum_g mu_gj`; no
+#' gene-length factor, UMI reference), and
+#' `p_j = (q_j / s_j) / sum_k (q_k / s_k)`, as for MEAD.
+#'
+#' Covariance. The paper estimates `Sigma^(j)` by regressing residual
+#' cross-products on squared proportions over many bulks, bias-corrected
+#' (eqs. 6-7, Algorithm 1, pp. 8-9), then SCAD-thresholds the
+#' correlations with a cross-validated threshold and takes the nearest
+#' positive semi-definite matrix (pp. S1-S2); three bulks per time
+#' cannot support it. Here `Sigma^(j)` is the reference covariance of
+#' type `j` carried to the relative scale by the delta method,
+#' `P_j sigma_j P_j^T / s_j^2` with `P_j = I - W_j 1^T`, times one scale
+#' per sample, `phi_i = ||z_i||^2 / tr((I - H) Sigma_i)`: the trace of
+#' the paper's moment identity `E[z z^T] = Sigma_i` (p. 7), `H` the
+#' projection of the sum-to-one fit. Without `sigma`,
+#' `Sigma_i = sigma_i^2 I` with `sigma_i^2 = ||z_i||^2 / (p - 1)`, the
+#' starting value of the paper (Algorithm 1, Step 2, p. 9). Theorem 1
+#' needs every proportion positive (p. S22); for a zero proportion the
+#' supplement offers the equality-only fit, whose law is still (S6)
+#' (p. S22). Here, as in Algorithm 1, the point estimate stays the
+#' constrained fit of eq. (3) and the variance is (S6) at that fit.
+#'
+#' @param bulk Bulk raw counts, genes by samples.
+#' @param mu Mean signature, genes by types.
+#' @param sigma Optional covariances, genes by genes by types (as from
+#'   [build_sigma()]), dimnames as `mu`.
+#' @param level Confidence level. Default `0.95`.
+#' @return Long table, see [proportions_long()], with the attribute
+#'   `note`.
+deconvolute_decals <- function(bulk, mu, sigma = NULL, level = 0.95) {
+  genes <- rownames(mu)
+  types <- colnames(mu)
+  k <- length(types)
+  s <- colSums(mu)
+  w <- sweep(mu, 2L, s, "/")
+  x <- as.matrix(bulk)[genes, , drop = FALSE]
+  x <- sweep(x, 2L, colSums(x), "/")
+  gram <- crossprod(w)
+  m <- solve(gram)
+  u <- diag(k) - m %*% matrix(1, k, k) / sum(m)
+  a <- u %*% m %*% t(w)
+  # Per type: Sigma~_j W and tr(Sigma~_j), Sigma~_j = P_j sigma_j P_j^T / s_j^2.
+  parts <- lapply(types, function(tp) {
+    if (is.null(sigma)) {
+      return(list(sw = w, tr = length(genes)))
+    }
+    sj <- sigma[genes, genes, tp]
+    v <- rowSums(sj)
+    wj <- w[, tp]
+    sw <- sj %*% w
+    sw <- sw - outer(wj, colSums(v * w)) - outer(v, colSums(wj * w))
+    sw <- sw + sum(v) * outer(wj, colSums(wj * w))
+    list(
+      sw = sw / s[[tp]]^2,
+      tr = (sum(diag(sj)) - 2 * sum(wj * v) + sum(v) * sum(wj^2)) / s[[tp]]^2
+    )
+  })
+  z <- stats::qnorm(1 - (1 - level) / 2)
+  fits <- lapply(colnames(x), function(i) {
+    q <- quadprog::solve.QP(
+      gram,
+      crossprod(w, x[, i]),
+      cbind(1, diag(k)),
+      c(1, rep(0, k)),
+      meq = 1L
+    )$solution
+    q <- pmax(q, 0)
+    sw <- Reduce(`+`, Map(function(pt, q2) q2 * pt$sw, parts, q^2))
+    tr <- sum(q^2 * vapply(parts, `[[`, numeric(1), "tr"))
+    # Without sigma, sw = sum(q^2) W, so phi * sum(q^2) = RSS / (p - 1):
+    # the sigma_i^2 of Algorithm 1, Step 2 (p. 9).
+    den <- if (is.null(sigma)) {
+      (length(genes) - 1) * sum(q^2)
+    } else {
+      tr - sum(diag(a %*% sw))
+    }
+    phi <- sum((x[, i] - drop(w %*% q))^2) / den
+    vq <- phi * u %*% m %*% crossprod(w, sw) %*% m %*% t(u)
+    tot <- sum(q / s)
+    p <- (q / s) / tot
+    jac <- (diag(1 / s, k) - outer(p, 1 / s)) / tot
+    se <- sqrt(pmax(diag(jac %*% vq %*% t(jac)), 0))
+    list(p = p, lower = pmax(p - z * se, 0), upper = pmin(p + z * se, 1))
+  })
+  pick <- function(key) {
+    out <- t(vapply(fits, `[[`, numeric(k), key))
+    dimnames(out) <- list(colnames(x), types)
+    out
+  }
+  est <- pick("p")
+  out <- proportions_long(est, pick("lower"), pick("upper"))
+  face <- sum(rowSums(est <= 1e-10) > 0)
+  attr(out, "note") <- paste0(
+    if (is.null(sigma)) "identity covariance" else "reference covariance",
+    "; ",
+    face,
+    " of ",
+    nrow(est),
+    " samples on a face of the simplex"
+  )
+  out
+}
+
+#' Benchmark pairs for DeMixSC, leaving one time out.
+#'
+#' DeMixSC calibrates on bulk and single-nucleus libraries of the same
+#' aliquot (Guo et al. 2025, Genome Res., pp. 149, 156). Suppinger has no
+#' such pair. Here each standard-Wnt bulk replicate of a time other than
+#' `held_out_time` is paired with a pseudo-bulk of reference cells of its
+#' own time: the scored cells of each type are split at random into as
+#' many groups as there are replicates, and each group is summed
+#' (DeMixSC's pseudo-bulk is the sum of the UMI counts of the annotated
+#' cells, p. 156). Each pseudo-bulk has the observed scored composition
+#' of its time, up to one cell per type. Bulk and pseudo-bulk come from
+#' different gastruloids of the same time, not from one aliquot.
+#'
+#' Requires `R/03_01_stats_covariance_estimation.R` ([read_panel_slot()]).
+#'
+#' @param bulk Bulk raw counts, genes by samples (every bulk sample).
+#' @param slots,selected_dir As for [read_panel_slot()].
+#' @param observed Output of [observed_scored_fractions()].
+#' @param held_out_time Time whose bulks are deconvolved; its replicates
+#'   are not used.
+#' @param seed Seed of the random split.
+#' @return A list with `bulk` and `pseudo`, genes by pairs, columns in
+#'   the same order.
+demixsc_benchmark_pairs <- function(
+  bulk,
+  slots,
+  selected_dir,
+  observed,
+  held_out_time,
+  seed = 20261110L
+) {
+  design <- bulk_sample_design(colnames(bulk))
+  times <- setdiff(intersect(slots$time_levels, design$time), held_out_time)
+  pairs <- lapply(times, function(tm) {
+    reps <- design[design$time == tm & design$arm == "standard", ]
+    reps <- reps[order(reps$replicate), ]
+    panel <- read_panel_slot(slots, selected_dir, tm, genes = rownames(bulk))
+    scored <- which(
+      panel$cell_type %in% observed$cell_type[observed$time == tm]
+    )
+    group <- withr::with_seed(seed, {
+      out <- integer(length(scored))
+      for (ty in unique(panel$cell_type[scored])) {
+        idx <- which(panel$cell_type[scored] == ty)
+        out[idx] <- sample(rep_len(seq_len(nrow(reps)), length(idx)))
+      }
+      out
+    })
+    pseudo <- t(rowsum(panel$y[scored, , drop = FALSE], group))
+    colnames(pseudo) <- paste0(reps$sample_id, "_pseudo")
+    list(bulk = bulk[, reps$sample_id, drop = FALSE], pseudo = pseudo)
+  })
+  list(
+    bulk = do.call(cbind, lapply(pairs, `[[`, "bulk")),
+    pseudo = do.call(cbind, lapply(pairs, `[[`, "pseudo"))
+  )
+}
+
+#' DeMixSC with its benchmark alignment, through the DeMixSC package.
+#'
+#' `DeMixSC::DeMixSC.preprocessing()` then
+#' `DeMixSC::DeMixSC.wnnls.parallel()` (GitHub wwylab/DeMixSC@697cc95,
+#' version 0.9.0, defaults), which is what `DeMixSC(option =
+#' "user.defined", mat.target = ...)` runs. The package
+#' quantile-normalises the target bulks with the benchmark bulks, removes
+#' the difference between the two with ComBat, quantile-normalises again
+#' with the benchmark pseudo-bulks, takes as discrepancy genes `G2` those
+#' of a paired t-test of benchmark bulk against pseudo-bulk (BH 0.05,
+#' |log2 fold change| >= 0.75, the 5000 most expressed), scales each
+#' target column to 1e5 and divides the `G2` rows of bulk and reference by
+#' `a = 1000`; the weighted NNLS uses `c = 2` (Guo et al. 2025, eqs. 3-4,
+#' p. 157; Fig. 2B, p. 150; p. 151).
+#'
+#' The benchmark is [demixsc_benchmark_pairs()]: the standard-Wnt bulks
+#' of the other two times and their pseudo-bulks, so nothing of the
+#' deconvolved time enters the alignment. ComBat then aligns the bulks of
+#' one time to those of the other times: the paper assumes the benchmark
+#' and the target share a tissue microenvironment (p. 151), which
+#' gastruloids at different times do not. Every function works on the
+#' common panel, not on the whole transcriptome. The package calls its
+#' dependencies unqualified, so it is attached for the call and detached
+#' afterwards.
+#'
+#' @param bulk Bulk raw counts, genes by samples.
+#' @param mu Mean signature, genes by types (raw counts per cell, the
+#'   `DeMixSC.ref()` reference).
+#' @param pair_bulk,pair_pseudo Benchmark bulks and pseudo-bulks, genes
+#'   by pairs, columns paired ([demixsc_benchmark_pairs()]).
+#' @param c_reg Constant of the DeMixSC weights. Default `2`.
+#' @param n_threads Workers of the package. Default `1`.
+#' @return Long table, see [proportions_long()], with the attribute
+#'   `note` (size of `G2`, convergence).
+deconvolute_demixsc_aligned <- function(
+  bulk,
+  mu,
+  pair_bulk,
+  pair_pseudo,
+  c_reg = 2,
+  n_threads = 1L
+) {
+  genes <- rownames(mu)
+  types <- colnames(mu)
+  attached <- search()
+  suppressPackageStartupMessages(library("DeMixSC", character.only = TRUE))
+  on.exit(
+    for (pkg in setdiff(search(), attached)) {
+      detach(pkg, character.only = TRUE)
+    },
+    add = TRUE
+  )
+  suppressMessages(utils::capture.output(
+    input <- DeMixSC::DeMixSC.preprocessing(
+      mat.target = as.matrix(bulk)[genes, , drop = FALSE],
+      mat.a = as.matrix(pair_bulk)[genes, , drop = FALSE],
+      mat.b = as.matrix(pair_pseudo)[genes, , drop = FALSE],
+      reference = mu
+    ),
+    fit <- DeMixSC::DeMixSC.wnnls.parallel(
+      input$mat.target.adj,
+      input$reference.adj,
+      c = c_reg,
+      nthread = n_threads,
+      print.sample = NULL,
+      output.file = NULL
+    )
+  ))
+  est <- t(fit$cell.type.proportions[types, colnames(bulk), drop = FALSE])
+  out <- proportions_long(est)
+  attr(out, "note") <- paste0(
+    length(input$discrepancy.genes),
+    " of ",
+    nrow(input$mat.target.adj),
+    " genes in G2 from ",
+    ncol(pair_bulk),
+    " pairs; ",
+    sum(startsWith(fit$converge, "converge")),
+    " of ",
+    ncol(bulk),
+    " samples converged"
+  )
+  out
+}
+
+# Fit store ---------------------------------------------------------------------
+# output/deconvolution/fits/<time>/<strategy>.rds holds every fit of one
+# time and one strategy as a named list of tidy data frames, one per
+# observational unit (estimates, diagnostics, status, ...).
+
+#' Row-bind data frames, filling absent columns with `NA`.
+#'
+#' @param parts List of data frames; `NULL` entries are dropped.
+#' @return One data frame, or `NULL` when `parts` is empty.
+bind_fill <- function(parts) {
+  parts <- Filter(Negate(is.null), parts)
+  if (length(parts) == 0L) {
+    return(NULL)
+  }
+  columns <- unique(unlist(lapply(parts, names)))
+  out <- do.call(rbind, lapply(parts, function(d) {
+    d[setdiff(columns, names(d))] <- NA
+    d[columns]
+  }))
+  rownames(out) <- NULL
+  out
+}
+
+#' Strategy of a DeCovarT level id: `shrinkage`, `factor` or `two_parameter`.
+#'
+#' @param id Level ids, e.g. `shrinkage_0.500`, `cv_factor_per_type`,
+#'   `raw_shrinkage_linked_scales_0.1`.
+#' @return Character vector of the same length.
+fit_strategy <- function(id) {
+  ifelse(
+    grepl("two_param", id),
+    "two_parameter",
+    ifelse(grepl("factor", id), "factor", "shrinkage")
+  )
+}
+
+#' Path of one fit store file.
+#'
+#' @param fits_dir Root of the store.
+#' @param time_level Time point, e.g. `"48h"`.
+#' @param strategy Strategy, see [fit_strategy()], or `"comparators"`,
+#'   `"scale_screen"`.
+#' @return File path.
+fit_store_path <- function(fits_dir, time_level, strategy) {
+  file.path(fits_dir, time_level, paste0(strategy, ".rds"))
+}
+
+#' Merge new rows into a fit store file.
+#'
+#' Stored rows whose `key` matches a new row are replaced in every table
+#' that `new` carries. The file is written under a temporary name, then
+#' renamed, so an interrupted write leaves the previous file intact.
+#'
+#' @param path Store file, see [fit_store_path()].
+#' @param new Named list of data frames, each with the `key` columns.
+#' @param key Columns identifying one fit.
+#' @return `path`, invisibly.
+update_fit_store <- function(path, new, key) {
+  store <- if (file.exists(path)) readRDS(path) else list()
+  id <- function(d) do.call(paste, c(d[key], sep = "\r"))
+  for (tab in names(new)) {
+    add <- new[[tab]]
+    if (is.null(add) || nrow(add) == 0L) next
+    kept <- store[[tab]]
+    if (!is.null(kept)) {
+      kept <- kept[!id(kept) %in% id(add), , drop = FALSE]
+    }
+    store[[tab]] <- bind_fill(list(kept, add))
+  }
+  dir.create(dirname(path), recursive = TRUE, showWarnings = FALSE)
+  tmp <- paste0(path, ".tmp")
+  saveRDS(store, tmp)
+  if (!file.rename(tmp, path)) {
+    stop("Could not write ", path, ".")
+  }
+  invisible(path)
+}
+
+#' Read one table of a strategy across the time folders of the store.
+#'
+#' @param fits_dir Root of the store.
+#' @param strategy One or more strategies.
+#' @param table Table name, e.g. `"estimates"`.
+#' @return Data frame, or `NULL` when nothing is stored.
+read_fit_store <- function(fits_dir, strategy, table) {
+  files <- list.files(
+    fits_dir,
+    paste0("^(", paste(strategy, collapse = "|"), ")\\.rds$"),
+    recursive = TRUE,
+    full.names = TRUE
+  )
+  bind_fill(lapply(files, function(f) readRDS(f)[[table]]))
 }

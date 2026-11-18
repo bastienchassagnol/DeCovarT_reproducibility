@@ -1,0 +1,12 @@
+# second_pass_variants
+
+This folder holds the deconvolution driver, function files and figure scripts as run on 2026-11-11: four covariance inputs, platform ratio b_g, Newton and L-BFGS-B optimisers, multivariate RNA-Sieve stages, the between-type covariance term and the Firth penalty. They are archived because the model is now fixed (raw covariance, two profiled scales, L-BFGS-B, bulk as is) and only the covariance regularisation moves. Their tables are frozen in `output/deconvolution/second_pass/` (CSV files; checkpoints in its `fits/` subfolder, not in Git).
+
+To rerun: copy the files back to scripts/ and R/ under their original names (drop the `_second_pass` suffix and the R_ prefix), and regenerate the first-pass moments with `../denoised_covariance/`.
+
+- `scripts/04_01_stats_deconvolution.R` (archived as `04_01_stats_deconvolution_second_pass.R`): driver of the quick deconvolution benchmark of the Suppinger bulk samples: DeCovarT with four covariance inputs, two platform ratios and two optimisers, the comparators, the multivariate RNA-Sieve stages, the between-type term and the Firth penalty, with checkpoints. archived at commit 64f1454 (working tree of 2026-11-16).
+- `scripts/04_01_vis_deconvolution.R` (archived as `04_01_vis_deconvolution_second_pass.R`): figures of that benchmark (observed against estimated proportions, RMSE, Pearson and Aitchison metrics, RNA-Sieve stages, shrinkage sweep). archived at commit 64f1454 (working tree of 2026-11-16).
+- `scripts/04_02_stats_likelihood_terms.R`: splits the DeCovarT profile log-likelihood into its quadratic and log-determinant terms at the observed, DeCovarT and RNA-Sieve quadratic-programme compositions; writes `output/deconvolution/likelihood_terms.csv`. archived at commit 64f1454 (working tree of 2026-11-16).
+- `R/04_01_stats_deconvolution.R` (archived as `R_04_01_stats_deconvolution.R`): functions for the DeCovarT flavours and the comparators on one gene panel and one single-cell reference. archived at commit 64f1454 (working tree of 2026-11-16).
+- `R/04_01_vis_deconvolution.R` (archived as `R_04_01_vis_deconvolution.R`): ggplot functions and display labels of the deconvolution benchmark. archived at commit 64f1454 (working tree of 2026-11-16).
+- `R/04_02_stats_sieve_multivariate.R` (archived as `R_04_02_stats_sieve_multivariate.R`): multivariate RNA-Sieve (`fit_sieve_chain()`), DeCovarT with the between-type covariance term (`fit_decovart_total()`) and with the Firth penalty (`fit_decovart_firth()`). archived at commit 64f1454 (working tree of 2026-11-16).

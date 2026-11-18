@@ -1,0 +1,13 @@
+# sparse_precision_arms
+
+This folder holds the graphical lasso, SILGGM and PLNnetwork covariance arms, their EBIC path diagnostics and the generic five-arm cross-validation. They were never run on the gated panel (03_01 ran once on an older panel; its outputs are gone). They are archived because the pipeline now regularises covariances only (shrinkage, two-parameter shrinkage, factor analysis). Precision estimators may return as a sensitivity analysis.
+
+To rerun: copy the R_* files back to R/ under their original names (drop the R_ prefix and keep the rest of the name), and the 03_* scripts back to scripts/.
+
+- `scripts/03_01_grn_glasso.R`: independent graphical lasso per scored type and time, EBIC path with an unpenalised diagonal (`glasso::glasso`, on the correlation matrix). Diagnostic path only. archived at commit 64f1454 (working tree of 2026-11-16).
+- `scripts/03_02_grn_silggm.R`: independent SILGGM fit per scored type and time (nonparanormal shrinkage, de-sparsified graphical lasso, global FDR); stops at the support. archived at commit 64f1454 (working tree of 2026-11-16).
+- `scripts/03_03_grn_plnnetwork.R`: independent PLNnetwork fit per scored type and time, with a library-size offset (log of the full RNA library). archived at commit 64f1454 (working tree of 2026-11-16).
+- `scripts/03_04_cv_covariance.R` (archived as `03_04_cv_covariance_five_arms.R`): cross-validated within-type covariance with five arms (shrinkage, glasso, SILGGM refit, PLNnetwork, denoised shrinkage), scored by the held-out Gaussian log-score. Its header says "Written, not yet run". The current script of the same name in scripts/ is a different, later version. archived at commit 64f1454 (working tree of 2026-11-16).
+- `R/03_01_stats_covariance_estimation.R` (archived as `R_03_01_stats_covariance_estimation.R`): estimators, cross-validation and scoring of within-type covariances. It also holds the denoised-covariance functions `denoise_covariance()`, `reconstruct_count_covariance()` and `extrinsic_noise_nu()`, and the closed-form shrinkage `shrinkage_lambda_closed_form()`. A new file of the same name now exists in R/. archived at commit 64f1454 (working tree of 2026-11-16).
+- `R/03_02_stats_regularisation_path.R` (archived as `R_03_02_stats_regularisation_path.R`): endpoints of a graphical-lasso penalty path (`lambda_endpoints()`) and related path helpers. archived at commit 64f1454 (working tree of 2026-11-16).
+- `R/03_02_vis_regularisation_path.R` (archived as `R_03_02_vis_regularisation_path.R`): plots of the graphical-lasso regularisation path (helpers such as `offdiag_abs_max()`, `fit_has_offdiag()`). archived at commit 64f1454 (working tree of 2026-11-16).

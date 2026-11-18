@@ -1,71 +1,71 @@
 # mkdir -p logs
-# nohup Rscript --no-save --no-restore \
+# OPENBLAS_NUM_THREADS=1 nohup Rscript --no-save --no-restore \
 #   scripts/04_01_stats_deconvolution.R \
 #   > "logs/04_01_stats_deconvolution_$(date +%F).log" 2>&1 &
 #
 # Optional arguments, `key=value`, comma-separated values; each defaults
 # to everything:
-#   gene_sets=r2_05,welch   times=48h,72h,96h   samples=48h_CTL_rep1
-#   stages=decovart,comparators,sieve,lambda,total,firth,tables
-#   covariances=diag_raw,full_raw,full_bio   (stage sieve only)
-#   ratios=none,gene       platform ratios of the stages decovart, total
-#                          and firth
-#   firth_budget=3600      seconds; a Firth slot whose projected time per
-#                          fit is above it is recorded as not run
-# A partial run writes checkpoints; `stages=tables` rebuilds the tables
-# from every checkpoint on disk.
+#   gene_sets=r2_05,r2_01,welch   times=48h,72h,96h   samples=48h_CTL_rep1
+#   stages=comparators,sweep,tables
+#   families=shrinkage,two_param,factor,cv,scale
 #
-# Quick deconvolution benchmark of the Suppinger bulk samples
-# (GSE229386: 3 standard-Wnt and 3 early-Wnt replicates at 48, 72 and
-# 96 h). Each bulk sample is deconvolved against the single-cell
-# reference of its own time, on two gene sets (welch, r2_05; see
-# scripts/03_05_stats_plugin_covariance.R). Hyperparameters are set
-# here and in R/04_01_stats_deconvolution.R; there is no configuration
-# file.
+# Deconvolution benchmark of the Suppinger bulk samples (GSE229386: 3
+# standard-Wnt and 3 early-Wnt replicates at 48, 72 and 96 h), each
+# against the single-cell reference of its own time, on three gene sets
+# (welch, r2_01, r2_05; scripts/03_05_stats_plugin_covariance.R).
 #
-# DeCovarT, single-cell model, profile fit, per sample and gene set:
-#   4 covariance inputs  raw, denoised_bio, denoised_plugin, denoised_fixed
-#                        (fit_decovart_chain())
-#   2 platform ratios    none, or the bulk divided by the cross-fitted
-#                        gene-wise ratio b_g of tier (iii)
-#   2 optimisers         trust-region Newton, L-BFGS-B
+# DeCovarT is one model throughout: single-cell law, raw-count
+# covariance, mean scale and variance scale profiled out, L-BFGS-B, bulk
+# as is. Only the regularisation of the within-type covariance moves
+# (build_sigma(), R/03_01_stats_covariance_estimation.R):
+#   shrinkage  one level for all types, 8 values
+#   two_param  pooling weight x level, 3 x 3 values
+#   factor     per-type factor analysis, 6 ranks
+#   cv         the tuning values chosen on held-out cells by
+#              scripts/03_04_cv_covariance.R (6 rules)
+#   scale      the five strategies of lowest error in the light screen
+#              (scripts/04_04_stats_scale_screen.R): covariance input
+#              (raw or size-normalised cells) x arm x scale model
+#              (positive, linked or shared c), fitted jointly on the three
+#              replicates of a protocol (fit_decovart_scales()); those
+#              equal to a family above (raw cells, free scales) are not
+#              repeated
+# Selection without the observed composition: per time, protocol, gene
+# set and family, the level with the highest profile likelihood summed
+# over the three replicates, and the same with the restricted
+# likelihood (decovart_likelihood_at()).
+#
 # Comparators, on the same gene sets and reference cells: DWLS, SCDC,
-# BayesPrism, RNA-Sieve, the DeMixSC weights with and without b_g, MEAD
-# (pseudo-individuals), ReDeconv and robust linear regression.
-#
-# Diagnostic estimators (R/04_02_stats_sieve_multivariate.R), L-BFGS-B
-# or quadratic programming, bulk as is unless stated:
-#   sieve   multivariate RNA-Sieve in six stored stages, on three
-#           covariance inputs (diagonal of the raw covariance, full raw,
-#           full denoised)
-#   lambda  DeCovarT on the raw covariance moved to a shrinkage level of
-#           0.25, 0.5, 0.75 and 1
-#   total   DeCovarT with the between-type covariance term, raw and
-#           denoised covariance, with and without b_g
-#   firth   Firth-penalised DeCovarT from interior starts, same grid;
-#           skipped with its timing when one fit is projected over 1 h
+# BayesPrism, RNA-Sieve (simplex-constrained update repaired), the DeMixSC
+# weights, unaligned and aligned on pseudo-bulks of the other times, MEAD
+# (pseudo-individuals), ReDeconv, DECALS, robust linear regression and
+# non-negative least squares.
 #
 # The observed proportions are the fractions of scored cells in the
-# single-cell annotation at each time (observed_scored_fractions()), not
-# flow cytometry. Metrics use the standard-Wnt samples only.
+# single-cell annotation at each time, not flow cytometry. Metrics use
+# the standard-Wnt samples only. The variants of the second pass
+# (denoised covariance, platform ratio, Newton, between-type term, Firth,
+# quadratic programme) are in scripts/archives/second_pass_variants/;
+# their tables are in output/deconvolution/second_pass/.
 #
 # Inputs:
 #   data/raw/GSE229386_AllHTSeqCountsWithGeneNames.txt.gz
 #   output/feature_selection/tier_01/{scored_slots.rds, cell_counts.csv}
-#   output/feature_selection/tier_03/platform_ratio.csv
 #   output/grn/plugin/moments_<time>_<gene_set>.rds
+#   output/grn/cv/{cv_selected_tuning.csv, factors_<time>_<gene_set>.rds}
+#   output/deconvolution/scale_screen_summary.csv
 # Outputs, output/deconvolution/:
 #   proportions_long.csv      one row per method x sample x cell type
-#   fit_diagnostics.csv       one row per DeCovarT fit
+#   sweep_diagnostics.csv     one row per DeCovarT fit
+#   lambda_selection.csv      one row per time x gene set x protocol x level
 #   comparator_status.csv     one row per comparator x time x gene set
 #   observed_proportions.csv  scored-cell fractions per time
 #   benchmark_metrics.csv     per method x standard-Wnt sample
 #   benchmark_metrics_pooled.csv  per method, all standard-Wnt samples
 #   profile_correlation.csv   correlation between cell-type mean profiles
-#   session_info.txt
-#   extra_diagnostics.csv     one row per fit of the diagnostic stages
-#   fits/, rnasieve/, redeconv/  checkpoints and exchange files (not in
-#                             Git)
+#   fits/<time>/<strategy>.rds   fit store (not in Git): comparators,
+#                             shrinkage, factor, two_parameter; each a list
+#                             of tidy tables (estimates, diagnostics, status)
 
 # ==========================================================================
 # SECTION 0 · Dependencies, settings, paths ----
@@ -76,35 +76,34 @@ suppressPackageStartupMessages(library(Matrix))
 source(file.path(root, "R", "02_00_utils.R"))
 source(file.path(root, "R", "02_01_stats_quality_control.R"))
 source(file.path(root, "R", "02_03_stats_tail_bounds.R"))
-source(file.path(root, "R", "03_02_stats_regularisation_path.R"))
 source(file.path(root, "R", "03_01_stats_covariance_estimation.R"))
 source(file.path(root, "R", "04_01_stats_deconvolution.R"))
 source(file.path(root, "R", "04_02_stats_sieve_multivariate.R"))
 check_blas_kernel()
 
 time_levels <- c("48h", "72h", "96h")
-gene_set_levels <- c("r2_05", "welch")
-stage_levels <- c(
-  "decovart",
-  "comparators",
-  "sieve",
-  "lambda",
-  "total",
-  "firth",
-  "tables"
+gene_set_levels <- c("r2_05", "r2_01", "welch")
+stage_levels <- c("comparators", "sweep", "tables")
+family_levels <- c("shrinkage", "two_param", "factor", "cv", "scale")
+scale_screen_top <- 5L
+lambda_levels <- c(0.1, 0.25, 0.375, 0.5, 0.625, 0.75, 0.9, 1)
+two_param_levels <- expand.grid(
+  alpha = c(0.25, 0.5, 0.75),
+  tuning = c(0.25, 0.5, 0.75)
 )
-sieve_inputs <- c("diag_raw", "full_raw", "full_bio")
-lambda_levels <- c(0.25, 0.5, 0.75, 1)
-variant_covariances <- c("raw", "denoised_bio")
-firth_budget_default <- 3600 # projected seconds of one Firth fit
+factor_ranks <- c(1L, 2L, 3L, 5L, 8L, 12L)
+cv_rules <- c(
+  "shrinkage, per type",
+  "shrinkage, common",
+  "two-parameter, per type",
+  "two-parameter, common",
+  "factor, per type",
+  "factor, shared loadings"
+)
 mead_pseudo_individuals <- 4L
-optimisers <- c("newton", "lbfgsb")
-platform_ratios <- c("none", "gene")
-max_passes <- 5L # fits of the fixed point on the bulk depth per cell
-fixed_point_tol <- 0.01 # on |log(a_new / a)|
-n_workers <- 16L # forked DeCovarT chains
-# A chain holds about six copies of one G x G x J array at its peak.
-memory_budget_gb <- 120
+n_workers <- 24L
+# A fit holds about seven copies of one G x G x J array at its peak.
+memory_budget_gb <- 160
 bayesprism_cores <- 6L
 seed <- 20261110L
 
@@ -123,18 +122,12 @@ run_gene_sets <- match.arg(
   TRUE
 )
 run_stages <- match.arg(cli_value("stages", stage_levels), stage_levels, TRUE)
+run_families <- match.arg(
+  cli_value("families", family_levels),
+  family_levels,
+  TRUE
+)
 run_samples <- cli_value("samples", NULL)
-platform_ratios <- match.arg(
-  cli_value("ratios", platform_ratios),
-  platform_ratios,
-  TRUE
-)
-firth_budget_sec <- as.numeric(cli_value("firth_budget", firth_budget_default))
-run_sieve_inputs <- match.arg(
-  cli_value("covariances", sieve_inputs),
-  sieve_inputs,
-  TRUE
-)
 
 bulk_path <- file.path(
   root,
@@ -145,19 +138,12 @@ bulk_path <- file.path(
 tier_01 <- file.path(root, "output", "feature_selection", "tier_01")
 slots_path <- file.path(tier_01, "scored_slots.rds")
 selected_dir <- file.path(root, "output", "feature_selection", "tier_02")
-ratio_path <- file.path(
-  root,
-  "output",
-  "feature_selection",
-  "tier_03",
-  "platform_ratio.csv"
-)
 moments_dir <- file.path(root, "output", "grn", "plugin")
+cv_dir <- file.path(root, "output", "grn", "cv")
 out_dir <- file.path(root, "output", "deconvolution")
 fits_dir <- file.path(out_dir, "fits")
-rnasieve_dir <- file.path(out_dir, "rnasieve")
-redeconv_dir <- file.path(out_dir, "redeconv")
 dir.create(fits_dir, recursive = TRUE, showWarnings = FALSE)
+progress <- progress_path("04_01_stats_deconvolution")
 
 # ==========================================================================
 # SECTION 1 · Inputs ----
@@ -199,138 +185,8 @@ samples_of <- function(time_level) {
 }
 
 # ==========================================================================
-# SECTION 2 · DeCovarT: 4 covariance inputs x 2 ratios x 2 optimisers ----
+# SECTION 2 · Comparators ----
 # ==========================================================================
-
-chain_file <- function(time_level, gene_set, sample_id, ratio, optimiser) {
-  file.path(
-    fits_dir,
-    paste0(
-      paste(
-        "decovart",
-        time_level,
-        gene_set,
-        sample_id,
-        ratio,
-        optimiser,
-        sep = "__"
-      ),
-      ".rds"
-    )
-  )
-}
-
-if ("decovart" %in% run_stages) {
-  for (tm in run_times) {
-    for (gs in run_gene_sets) {
-      tasks <- expand.grid(
-        sample_id = samples_of(tm),
-        ratio = platform_ratios,
-        optimiser = optimisers,
-        stringsAsFactors = FALSE
-      )
-      tasks$file <- mapply(
-        chain_file,
-        tm,
-        gs,
-        tasks$sample_id,
-        tasks$ratio,
-        tasks$optimiser
-      )
-      tasks <- tasks[!file.exists(tasks$file), , drop = FALSE]
-      if (nrow(tasks) == 0L) {
-        message("DeCovarT ", tm, " / ", gs, ": every chain is on disk.")
-        next
-      }
-      moments <- read_moments(tm, gs)
-      genes <- moments$genes
-      bulk <- bulk_symbol_counts(htseq, slots$shared, genes)
-      ratio_b <- read_platform_ratio(ratio_path, tm, genes, method = "gene")
-      chain_bytes <- 6 * 8 * length(genes)^2 * length(moments$types)
-      workers <- max(
-        1L,
-        min(n_workers, nrow(tasks), floor(memory_budget_gb * 1e9 / chain_bytes))
-      )
-      message(
-        "DeCovarT ",
-        tm,
-        " / ",
-        gs,
-        ": ",
-        nrow(tasks),
-        " chains, ",
-        length(genes),
-        " genes, ",
-        length(moments$types),
-        " types, ",
-        workers,
-        " workers."
-      )
-      # Forked workers share the moment arrays read above.
-      done <- parallel::mclapply(
-        seq_len(nrow(tasks)),
-        function(k) {
-          task <- tasks[k, ]
-          started <- proc.time()[["elapsed"]]
-          res <- tryCatch(
-            fit_decovart_chain(
-              y = bulk[, task$sample_id],
-              mu = moments$mu,
-              sigma_raw = moments$sigma_raw,
-              sigma_bio = moments$sigma_bio,
-              optimiser = task$optimiser,
-              b = if (task$ratio == "gene") ratio_b else NULL,
-              max_passes = max_passes,
-              tol = fixed_point_tol
-            ),
-            error = function(e) conditionMessage(e)
-          )
-          elapsed <- proc.time()[["elapsed"]] - started
-          if (is.character(res)) {
-            return(paste0(basename(task$file), ": ", res))
-          }
-          res$meta <- data.frame(
-            time = tm,
-            gene_set = gs,
-            sample_id = task$sample_id,
-            platform_ratio = task$ratio,
-            optimiser = task$optimiser,
-            genes = length(genes),
-            stringsAsFactors = FALSE
-          )
-          saveRDS(res, task$file)
-          message(
-            "  ",
-            basename(task$file),
-            ": ",
-            round(elapsed, 1),
-            " s"
-          )
-          NULL
-        },
-        mc.cores = workers,
-        mc.preschedule = FALSE
-      )
-      problems <- Filter(Negate(is.null), done)
-      for (p in problems) {
-        message("  FAILED chain: ", if (is.character(p)) p else format(p))
-      }
-      rm(moments)
-      invisible(gc())
-    }
-  }
-}
-
-# ==========================================================================
-# SECTION 3 · Comparators ----
-# ==========================================================================
-
-comparator_file <- function(name, time_level, gene_set) {
-  file.path(
-    fits_dir,
-    paste0(paste("comparator", name, time_level, gene_set, sep = "__"), ".rds")
-  )
-}
 
 if ("comparators" %in% run_stages) {
   for (tm in run_times) {
@@ -338,13 +194,12 @@ if ("comparators" %in% run_stages) {
       moments <- read_moments(tm, gs)
       genes <- moments$genes
       mu <- moments$mu
-      sd_ref <- sqrt(apply(moments$sigma_raw, 3, diag))
+      sd_ref <- sqrt(apply(moments$sigma_sample, 3, diag))
       dimnames(sd_ref) <- dimnames(mu)
       rm(moments)
       panel <- read_panel_slot(slots, selected_dir, tm, genes = genes)
       bulk <- bulk_symbol_counts(htseq, slots$shared, genes)
       bulk <- bulk[, samples_of(tm), drop = FALSE]
-      ratio_b <- read_platform_ratio(ratio_path, tm, genes, method = "gene")
       runners <- list(
         dwls = function() deconvolute_dwls(bulk, mu),
         scdc = function() deconvolute_scdc(bulk, panel$y, panel$cell_type),
@@ -358,17 +213,9 @@ if ("comparators" %in% run_stages) {
           )
         },
         rnasieve = function() {
-          deconvolute_rnasieve(
-            bulk,
-            panel$y,
-            panel$cell_type,
-            work_dir = file.path(rnasieve_dir, paste0(tm, "_", gs))
-          )
+          deconvolute_rnasieve(bulk, panel$y, panel$cell_type)
         },
         demixsc_wnnls = function() deconvolute_demixsc_wnnls(bulk, mu),
-        demixsc_wnnls_b = function() {
-          deconvolute_demixsc_wnnls(bulk, mu, b = ratio_b)
-        },
         mead = function() {
           deconvolute_mead(
             bulk,
@@ -380,22 +227,38 @@ if ("comparators" %in% run_stages) {
           )
         },
         redeconv = function() {
-          deconvolute_redeconv(
-            bulk,
-            mu,
-            sd_ref,
-            work_dir = file.path(redeconv_dir, paste0(tm, "_", gs))
-          )
+          deconvolute_redeconv(bulk, mu, sd_ref)
         },
-        rlm = function() deconvolute_rlm(bulk, mu)
+        rlm = function() deconvolute_rlm(bulk, mu),
+        nnls = function() deconvolute_nnls(bulk, mu),
+        decals = function() {
+          deconvolute_decals(bulk, mu, read_moments(tm, gs)$sigma_sample)
+        },
+        demixsc_aligned = function() {
+          pairs <- demixsc_benchmark_pairs(
+            bulk_symbol_counts(htseq, slots$shared, genes),
+            slots,
+            selected_dir,
+            observed,
+            held_out_time = tm,
+            seed = seed
+          )
+          deconvolute_demixsc_aligned(bulk, mu, pairs$bulk, pairs$pseudo)
+        }
       )
+      path <- fit_store_path(fits_dir, tm, "comparators")
       for (name in names(runners)) {
-        path <- comparator_file(name, tm, gs)
-        # A checkpoint from a run on fewer samples is fitted again.
-        if (
-          file.exists(path) &&
-            all(colnames(bulk) %in% readRDS(path)$estimates$sample_id)
-        ) {
+        # A fit stored for fewer samples, or failed, is fitted again.
+        stored <- if (file.exists(path)) readRDS(path)
+        fitted <- stored$estimates$sample_id[
+          stored$estimates$comparator == name & stored$estimates$gene_set == gs
+        ]
+        ok <- any(
+          stored$status$comparator == name &
+            stored$status$gene_set == gs &
+            stored$status$status == "ok"
+        )
+        if (ok && all(colnames(bulk) %in% fitted)) {
           next
         }
         started <- proc.time()[["elapsed"]]
@@ -436,607 +299,406 @@ if ("comparators" %in% run_stages) {
           " s",
           if (nzchar(status$message)) paste0(" (", status$message, ")")
         )
-        # An error is kept under another name, so a rerun tries the
-        # method again.
-        error_path <- sub("\\.rds$", "__error.rds", path)
-        if (failed) {
-          saveRDS(list(status = status), error_path)
-        } else {
-          saveRDS(list(estimates = est, status = status), path)
-          unlink(error_path)
-        }
+        # A failed fit stores its status only, so a rerun tries again.
+        update_fit_store(
+          path,
+          list(
+            estimates = if (!failed) {
+              data.frame(comparator = name, time = tm, gene_set = gs, est)
+            },
+            status = status
+          ),
+          key = c("comparator", "gene_set")
+        )
       }
     }
   }
 }
 
 # ==========================================================================
-# SECTION 4 · Diagnostic estimators ----
+# SECTION 3 · DeCovarT along the regularisation of the covariance ----
 # ==========================================================================
 
-extra_file <- function(stage, ...) {
-  file.path(fits_dir, paste0(paste("extra", stage, ..., sep = "__"), ".rds"))
+# Keys of the DeCovarT fits already stored for one time and gene set:
+# "<id>\r<sample_id>". A fit whose likelihood is missing counts as stored,
+# as a failed checkpoint did before.
+stored_sweep_keys <- function(time_level, gene_set) {
+  d <- read_fit_store(file.path(fits_dir, time_level), c("shrinkage", "factor", "two_parameter"), "diagnostics")
+  d <- d[d$gene_set == gene_set, , drop = FALSE]
+  paste(d$id, d$sample_id, sep = "\r")
 }
 
-#' Rows of an `extra` checkpoint: the columns of the DeCovarT chains,
-#' plus `family` and `algorithm`.
-extra_rows <- function(
-  est,
-  time_level,
-  gene_set,
-  n_genes,
-  family,
-  algorithm,
-  covariance,
-  ratio,
-  optimiser
-) {
-  data.frame(
-    time = time_level,
-    gene_set = gene_set,
-    sample_id = est$sample_id,
-    platform_ratio = ratio,
-    optimiser = optimiser,
-    genes = n_genes,
-    covariance = covariance,
-    cell_type = est$cell_type,
-    proportion = est$proportion,
-    lower = est$lower %||% NA_real_,
-    upper = est$upper %||% NA_real_,
-    family = family,
-    algorithm = algorithm,
-    stringsAsFactors = FALSE
-  )
+# Merges the fits returned by the workers into the store, one file per
+# strategy. Each task catches its own errors (tryCatch), so a failed fit
+# never loses the others; only a killed R process loses the fits of the
+# current time x gene set loop.
+store_sweep <- function(results, time_level) {
+  results <- Filter(is.list, results)
+  if (length(results) == 0L) {
+    return(invisible(NULL))
+  }
+  estimates <- bind_fill(lapply(results, `[[`, "estimates"))
+  diagnostics <- bind_fill(lapply(results, `[[`, "diagnostics"))
+  for (st in unique(fit_strategy(diagnostics$id))) {
+    update_fit_store(
+      fit_store_path(fits_dir, time_level, st),
+      list(
+        estimates = estimates[fit_strategy(estimates$id) == st, , drop = FALSE],
+        diagnostics = diagnostics[fit_strategy(diagnostics$id) == st, , drop = FALSE]
+      ),
+      key = c("gene_set", "id", "sample_id")
+    )
+  }
+  invisible(NULL)
 }
 
-#' Workers for a stage that factorises one G x G matrix per task and
-#' holds about `copies` such matrices.
-stage_workers <- function(n_tasks, n_genes, copies = 12) {
-  max(
-    1L,
-    min(
-      n_workers,
-      n_tasks,
-      floor(memory_budget_gb * 1e9 / (copies * 8 * n_genes^2))
+cv_table <- function() {
+  path <- file.path(cv_dir, "cv_selected_tuning.csv")
+  if (!file.exists(path)) {
+    stop("Missing ", path, ". Run scripts/03_04_cv_covariance.R first.")
+  }
+  utils::read.csv(path, stringsAsFactors = FALSE, fileEncoding = "UTF-8")
+}
+
+#' Levels of one slot: `id`, `family`, `alpha`, `tuning` (level or rank;
+#' `NA` for a rule chosen per type).
+sweep_levels <- function() {
+  slug <- function(x) gsub("[^a-z0-9]+", "_", tolower(x))
+  rbind(
+    data.frame(
+      id = sprintf("shrinkage_%.3f", lambda_levels),
+      family = "shrinkage",
+      alpha = 0,
+      tuning = lambda_levels
+    ),
+    data.frame(
+      id = sprintf("two_param_%.2f_%.2f", two_param_levels$alpha, two_param_levels$tuning),
+      family = "two_param",
+      two_param_levels
+    ),
+    data.frame(
+      id = sprintf("factor_%02d", factor_ranks),
+      family = "factor",
+      alpha = NA_real_,
+      tuning = factor_ranks
+    ),
+    data.frame(
+      id = paste0("cv_", slug(cv_rules)),
+      family = "cv",
+      alpha = NA_real_,
+      tuning = NA_real_
     )
   )
 }
 
-# 4a · Multivariate RNA-Sieve, six stages per covariance input --------------
-if ("sieve" %in% run_stages) {
+#' Covariance array of one level.
+build_level <- function(level, moments, factors, cv) {
+  types <- moments$types
+  # Largest fitted rank of the type that does not exceed `q`.
+  factor_of <- function(tp, q) {
+    fits <- factors$per_type[[tp]]
+    ranks <- as.integer(names(fits))
+    fits[[as.character(max(ranks[ranks <= q]))]]
+  }
+  if (level$family == "shrinkage") {
+    return(build_sigma(moments, "shrinkage", lambda = level$tuning))
+  }
+  if (level$family == "two_param") {
+    return(build_sigma(moments, "two_param", lambda = level$tuning, alpha = level$alpha))
+  }
+  if (level$family == "factor") {
+    return(build_sigma(
+      moments,
+      "factor",
+      factors = lapply(stats::setNames(types, types), factor_of, q = level$tuning)
+    ))
+  }
+  rule <- cv_rules[[match(level$id, sweep_levels()$id[sweep_levels()$family == "cv"])]]
+  chosen <- cv[
+    cv$time == moments$time_point & cv$gene_set == moments$gene_set & cv$rule == rule,
+  ]
+  chosen <- chosen[match(types, chosen$cell_type), ]
+  if (anyNA(chosen$tuning)) {
+    stop("No cross-validated value for rule '", rule, "'.")
+  }
+  tuning <- stats::setNames(chosen$tuning, types)
+  if (rule == "factor, per type") {
+    return(build_sigma(
+      moments,
+      "factor",
+      factors = lapply(stats::setNames(types, types), function(tp) factor_of(tp, tuning[[tp]]))
+    ))
+  }
+  if (rule == "factor, shared loadings") {
+    fit <- factors$shared[[as.character(tuning[[1L]])]]
+    return(build_sigma(
+      moments,
+      "factor",
+      factors = lapply(stats::setNames(types, types), function(tp) {
+        list(B = fit$B, psi = fit$psi[, tp])
+      })
+    ))
+  }
+  if (grepl("^two-parameter", rule)) {
+    return(build_sigma(
+      moments,
+      "two_param",
+      lambda = tuning,
+      alpha = stats::setNames(chosen$alpha, types)
+    ))
+  }
+  build_sigma(moments, "shrinkage", lambda = tuning)
+}
+
+if ("sweep" %in% run_stages) {
+  levels_all <- sweep_levels()
+  levels_all <- levels_all[levels_all$family %in% run_families, ]
+  cv <- if ("cv" %in% run_families) cv_table()
   for (tm in run_times) {
     for (gs in run_gene_sets) {
-      todo <- run_sieve_inputs[
-        !file.exists(extra_file("sieve", tm, gs, run_sieve_inputs))
-      ]
-      if (length(todo) == 0L) {
+      tasks <- merge(levels_all, data.frame(sample_id = samples_of(tm)))
+      tasks$file <- paste(tasks$id, tasks$sample_id, sep = "__")
+      tasks <- tasks[!paste(tasks$id, tasks$sample_id, sep = "\r") %in% stored_sweep_keys(tm, gs), , drop = FALSE]
+      if (nrow(tasks) == 0L) {
         next
       }
       moments <- read_moments(tm, gs)
       genes <- moments$genes
-      bulk <- bulk_symbol_counts(htseq, slots$shared, genes)
-      bulk <- bulk[, samples_of(tm), drop = FALSE]
-      for (input in todo) {
-        sigma <- switch(
-          input,
-          diag_raw = {
-            v <- apply(moments$sigma_raw, 3, diag)
-            dimnames(v) <- dimnames(moments$mu)
-            v
-          },
-          full_raw = moments$sigma_raw,
-          full_bio = moments$sigma_bio
-        )
-        started <- proc.time()[["elapsed"]]
-        chain <- tryCatch(
-          fit_sieve_chain(
-            bulk,
-            moments$mu,
-            sigma,
-            moments$n_cells,
-            workers = stage_workers(ncol(bulk), length(genes))
-          ),
-          error = function(e) e
-        )
-        elapsed <- proc.time()[["elapsed"]] - started
-        if (inherits(chain, "error")) {
-          message(
-            "Sieve ",
-            tm,
-            " / ",
-            gs,
-            " / ",
-            input,
-            ": FAILED, ",
-            conditionMessage(chain)
-          )
-          next
-        }
-        diag_rows <- chain$diagnostics
-        diag_rows$optimiser <- diag_rows$stage
-        diag_rows$stage <- "sieve"
-        saveRDS(
-          list(
-            estimates = do.call(
-              rbind,
-              lapply(
-                split(chain$estimates, chain$estimates$stage),
-                function(est) {
-                  extra_rows(
-                    est,
-                    tm,
-                    gs,
-                    length(genes),
-                    family = "sieve",
-                    algorithm = "RNA-Sieve (R)",
-                    covariance = input,
-                    ratio = "none",
-                    optimiser = est$stage[[1L]]
-                  )
-                }
-              )
-            ),
-            diagnostics = cbind(
-              time = tm,
-              gene_set = gs,
-              covariance = input,
-              platform_ratio = "none",
-              diag_rows,
-              d_median = stats::median(chain$d),
-              d_q05 = stats::quantile(chain$d, 0.05, names = FALSE),
-              d_q95 = stats::quantile(chain$d, 0.95, names = FALSE),
-              elapsed_sec = elapsed,
-              stringsAsFactors = FALSE
-            )
-          ),
-          extra_file("sieve", tm, gs, input)
-        )
-        message(
-          "Sieve ",
-          tm,
-          " / ",
-          gs,
-          " / ",
-          input,
-          ": ",
-          round(elapsed, 1),
-          " s"
-        )
-        rm(sigma)
-        invisible(gc())
+      factors <- if (any(c("factor", "cv") %in% tasks$family)) {
+        readRDS(file.path(cv_dir, paste0("factors_", tm, "_", gs, ".rds")))
       }
-      rm(moments)
-      invisible(gc())
-    }
-  }
-}
-
-# 4b · DeCovarT on the raw covariance at other shrinkage levels -------------
-if ("lambda" %in% run_stages) {
-  for (tm in run_times) {
-    for (gs in run_gene_sets) {
-      levels_todo <- lambda_levels[
-        !file.exists(extra_file("lambda", tm, gs, lambda_levels))
-      ]
-      if (length(levels_todo) == 0L) {
-        next
-      }
-      moments <- read_moments(tm, gs)
-      genes <- moments$genes
-      bulk <- bulk_symbol_counts(htseq, slots$shared, genes)
-      bulk <- bulk[genes, samples_of(tm), drop = FALSE]
-      for (lam in levels_todo) {
-        sigma <- rescale_shrinkage(
-          moments$sigma_raw,
-          moments$lambda[moments$types],
-          lam
-        )
-        started <- proc.time()[["elapsed"]]
-        fits <- parallel::mclapply(
-          colnames(bulk),
-          function(s) {
-            fit <- fit_decovart_once(bulk[, s], moments$mu, sigma, "lbfgsb")
-            fit$estimates$sample_id <- s
-            fit$diagnostics$sample_id <- s
-            fit
-          },
-          mc.cores = stage_workers(ncol(bulk), length(genes)),
-          mc.preschedule = FALSE
-        )
-        label <- paste0("lambda_", format(lam, nsmall = 2))
-        saveRDS(
-          list(
-            estimates = extra_rows(
-              do.call(rbind, lapply(fits, `[[`, "estimates")),
-              tm,
-              gs,
-              length(genes),
-              family = "DeCovarT variant",
-              algorithm = "DeCovarT shrinkage",
-              covariance = label,
-              ratio = "none",
-              optimiser = "lbfgsb"
-            ),
-            diagnostics = cbind(
-              time = tm,
-              gene_set = gs,
-              stage = "lambda",
-              covariance = label,
-              platform_ratio = "none",
-              optimiser = "lbfgsb",
-              do.call(rbind, lapply(fits, `[[`, "diagnostics")),
-              stringsAsFactors = FALSE
-            )
-          ),
-          extra_file("lambda", tm, gs, lam)
-        )
-        message(
-          "Shrinkage ",
-          lam,
-          " ",
-          tm,
-          " / ",
-          gs,
-          ": ",
-          round(proc.time()[["elapsed"]] - started, 1),
-          " s"
-        )
-        rm(sigma)
-        invisible(gc())
-      }
-      rm(moments)
-      invisible(gc())
-    }
-  }
-}
-
-# 4c, 4d · DeCovarT with the between-type term; Firth-penalised DeCovarT ----
-#' L-BFGS-B estimate of the main DeCovarT chain, for the Firth start.
-chain_estimate <- function(time_level, gene_set, sample_id, ratio, covariance) {
-  path <- chain_file(time_level, gene_set, sample_id, ratio, "lbfgsb")
-  if (!file.exists(path)) {
-    return(NULL)
-  }
-  est <- readRDS(path)$estimates
-  est <- est[est$covariance == covariance, , drop = FALSE]
-  if (nrow(est) == 0L || anyNA(est$proportion)) {
-    return(NULL)
-  }
-  stats::setNames(est$proportion, est$cell_type)
-}
-
-for (stage in intersect(c("total", "firth"), run_stages)) {
-  for (tm in run_times) {
-    for (gs in run_gene_sets) {
-      tasks <- expand.grid(
-        sample_id = samples_of(tm),
-        covariance = variant_covariances,
-        ratio = platform_ratios,
-        stringsAsFactors = FALSE
+      bulk <- bulk_symbol_counts(htseq, slots$shared, genes)[genes, , drop = FALSE]
+      fit_bytes <- 7 * 8 * length(genes)^2 * length(moments$types)
+      workers <- max(
+        1L,
+        min(n_workers, nrow(tasks), floor(memory_budget_gb * 1e9 / fit_bytes))
       )
-      tasks$file <- extra_file(
-        stage,
+      message(
+        "Sweep ",
         tm,
+        " / ",
         gs,
-        tasks$sample_id,
-        tasks$covariance,
-        tasks$ratio
+        ": ",
+        nrow(tasks),
+        " fits, ",
+        length(genes),
+        " genes, ",
+        workers,
+        " workers."
       )
-      tasks <- tasks[!file.exists(tasks$file), , drop = FALSE]
-      gate_path <- extra_file(stage, tm, gs, "not_run")
-      # A slot recorded as not run is tried again only with a larger
-      # budget than the default.
-      if (
-        nrow(tasks) == 0L ||
-          (file.exists(gate_path) && firth_budget_sec <= firth_budget_default)
-      ) {
+      log_progress(progress, "plan", paste("sweep", tm, gs), nrow(tasks), workers)
+      # Forked workers share the sample moments read above.
+      done <- parallel::mclapply(
+        seq_len(nrow(tasks)),
+        function(k) {
+          task <- tasks[k, ]
+          res <- tryCatch(
+            {
+              sigma <- build_level(task, moments, factors, cv)
+              y <- bulk[, task$sample_id]
+              fit <- fit_decovart_once(y, moments$mu, sigma, "lbfgsb")
+              lik <- if (is.null(fit$p)) {
+                list(profile = NA_real_, restricted = NA_real_)
+              } else {
+                decovart_likelihood_at(fit$p, y, moments$mu, sigma)
+              }
+              meta <- data.frame(
+                time = tm,
+                gene_set = gs,
+                genes = length(genes),
+                task[c("id", "family", "alpha", "tuning", "sample_id")],
+                stringsAsFactors = FALSE
+              )
+              list(
+                estimates = cbind(meta, fit$estimates),
+                diagnostics = cbind(
+                  meta,
+                  fit$diagnostics,
+                  profile = lik$profile,
+                  restricted = lik$restricted
+                )
+              )
+            },
+            error = function(e) conditionMessage(e)
+          )
+          if (is.character(res)) {
+            log_progress(progress, "done", paste("sweep", tm, gs), task$file, NA, "failed", res)
+            return(paste0(task$file, ": ", res))
+          }
+          log_progress(progress, "done", paste("sweep", tm, gs), task$file,
+                       round(res$diagnostics$elapsed_sec, 1),
+                       if (is.na(res$diagnostics$loglik)) "failed" else "ok",
+                       res$diagnostics$message)
+          message("  ", task$file, ": ", round(res$diagnostics$elapsed_sec), " s")
+          res
+        },
+        mc.cores = workers,
+        mc.preschedule = FALSE
+      )
+      store_sweep(done, tm)
+      for (p in Filter(Negate(is.list), done)) {
+        message("  FAILED fit: ", if (is.character(p)) p else format(p))
+      }
+      rm(moments, factors)
+      invisible(gc())
+    }
+  }
+}
+
+#' Strategies carried from the light screen: the `scale_screen_top`
+#' distinct strategies of lowest error, less those equal to a per-sample
+#' family (raw cells, free scales). A `positive` strategy that never hit
+#' its bound in the screen is the `free` estimator (same c, same fit), so
+#' it counts as its `free` counterpart, which is faster.
+scale_strategies <- function() {
+  path <- file.path(out_dir, "scale_screen_summary.csv")
+  if (!file.exists(path)) {
+    stop("Missing ", path, ". Run scripts/04_04_stats_scale_screen.R first.")
+  }
+  s <- utils::read.csv(path, stringsAsFactors = FALSE, fileEncoding = "UTF-8")
+  s <- s[order(s$rank), , drop = FALSE]
+  same_as_free <- grepl("\\| positive$", s$strategy) & s$boundary == 0
+  s$strategy[same_as_free] <- sub("positive$", "free", s$strategy[same_as_free])
+  s <- s[!duplicated(s$strategy), , drop = FALSE][seq_len(scale_screen_top), , drop = FALSE]
+  parts <- do.call(rbind, strsplit(s$strategy, " | ", fixed = TRUE))
+  out <- data.frame(input = parts[, 1L], arm = parts[, 2L], scale = parts[, 3L], stringsAsFactors = FALSE)
+  out <- out[!(out$input == "raw" & out$scale == "free"), , drop = FALSE]
+  out$family <- sprintf("%s %s, %s scales", out$input, out$arm, out$scale)
+  out
+}
+
+if ("sweep" %in% run_stages && "scale" %in% run_families) {
+  strategies <- scale_strategies()
+  message("Scale strategies: ", paste(strategies$family, collapse = "; "))
+  depth <- colSums(htseq$counts)
+  for (tm in run_times) {
+    for (gs in run_gene_sets) {
+      levels <- do.call(rbind, lapply(seq_len(nrow(strategies)), function(k) {
+        st <- strategies[k, ]
+        tuning <- if (st$arm == "factor") factor_ranks else lambda_levels
+        data.frame(
+          st,
+          tuning = tuning,
+          id = paste0(gsub("[^a-z0-9]+", "_", st$family), "_", tuning),
+          row.names = NULL
+        )
+      }))
+      tasks <- merge(levels, data.frame(protocol = unique(design$arm[design$time == tm])))
+      tasks$file <- paste(tasks$id, tasks$protocol, sep = "__")
+      # A protocol is fitted jointly, so its first replicate stands for it.
+      first_of <- design$sample_id[design$time == tm][match(tasks$protocol, design$arm[design$time == tm])]
+      tasks <- tasks[!paste(tasks$id, first_of, sep = "\r") %in% stored_sweep_keys(tm, gs), , drop = FALSE]
+      if (nrow(tasks) == 0L) {
         next
       }
       moments <- read_moments(tm, gs)
       genes <- moments$genes
       types <- moments$types
-      mu <- moments$mu
-      bulk <- bulk_symbol_counts(htseq, slots$shared, genes)
-      ratio_b <- read_platform_ratio(ratio_path, tm, genes, method = "gene")
-      sigma_of <- function(covariance) {
-        if (covariance == "raw") moments$sigma_raw else moments$sigma_bio
+      panel <- if (any(tasks$input != "raw")) {
+        read_panel_slot(slots, selected_dir, tm, genes = genes)
       }
-      bulk_of <- function(task) {
-        y <- as.numeric(bulk[genes, task$sample_id])
-        if (task$ratio == "gene") y / as.numeric(ratio_b[genes]) else y
+      moments_size <- if (!is.null(panel)) {
+        sample_moments(panel$y, panel$cell_type, types, library_size = panel$library_size)
       }
-      if (stage == "firth") {
-        # One Hessian of the profile likelihood, timed. An objective
-        # value costs one, a gradient 2 (J - 1); about 20 iterations
-        # from each of two starts.
-        task <- tasks[1L, ]
-        z0 <- DeCovarT::isometric_log_ratio(
-          rep(1 / length(types), length(types))
-        )
-        hessian_sec <- system.time(
-          DeCovarT::hessian_profile_loglik_single_cell_ilr(
-            z0,
-            bulk_of(task),
-            mu,
-            sigma_of(task$covariance)
-          )
-        )[["elapsed"]]
-        projected <- hessian_sec * (2 * (length(types) - 1) + 2) * 20 * 2
-        message(
-          "Firth ",
-          tm,
-          " / ",
-          gs,
-          ": one Hessian ",
-          round(hessian_sec, 2),
-          " s, one fit projected at ",
-          round(projected),
-          " s."
-        )
-        if (projected > firth_budget_sec) {
-          saveRDS(
-            list(
-              estimates = NULL,
-              diagnostics = data.frame(
-                time = tm,
-                gene_set = gs,
-                stage = "firth",
-                message = "not run: projected time over the budget",
-                hessian_sec = hessian_sec,
-                projected_sec = projected,
-                stringsAsFactors = FALSE
-              )
-            ),
-            gate_path
-          )
-          rm(moments)
-          invisible(gc())
-          next
+      fits <- list(
+        raw = if (any(tasks$arm == "factor" & tasks$input == "raw")) {
+          readRDS(file.path(cv_dir, paste0("factors_", tm, "_", gs, ".rds")))$per_type
+        },
+        `size-normalised` = if (any(tasks$arm == "factor" & tasks$input != "raw")) {
+          fit_factor_types(panel$y, panel$cell_type, types, factor_ranks, panel$library_size)
         }
-        unlink(gate_path)
-      }
+      )
+      rm(panel)
+      bulk <- bulk_symbol_counts(htseq, slots$shared, genes)[genes, , drop = FALSE]
+      fit_bytes <- 7 * 8 * length(genes)^2 * length(types)
+      workers <- max(1L, min(n_workers, nrow(tasks), floor(memory_budget_gb * 1e9 / fit_bytes)))
+      slot <- paste("scale", tm, gs)
+      message("Scale ", tm, " / ", gs, ": ", nrow(tasks), " triplet fits, ", workers, " workers.")
+      log_progress(progress, "plan", slot, nrow(tasks), workers)
       done <- parallel::mclapply(
         seq_len(nrow(tasks)),
         function(k) {
           task <- tasks[k, ]
-          y <- bulk_of(task)
-          sigma <- sigma_of(task$covariance)
-          started <- proc.time()[["elapsed"]]
+          ids <- design$sample_id[design$time == tm & design$arm == task$protocol]
+          # A failed fit is stored as such (NA estimates, its message), so
+          # one error does not lose the other fits of the loop.
           fit <- tryCatch(
-            if (stage == "total") {
-              fit_decovart_total(y, mu, sigma, between = TRUE)
-            } else {
-              start <- chain_estimate(
-                tm,
-                gs,
-                task$sample_id,
-                task$ratio,
-                task$covariance
-              )
-              starts <- rbind(
-                if (!is.null(start)) {
-                  floored <- pmax(start[types], 0.001)
-                  floored / sum(floored)
-                },
-                rep(1 / length(types), length(types))
-              )
-              fit_decovart_firth(y, mu, sigma, starts)
+            {
+              mom <- if (task$input == "raw") moments else moments_size
+              sigma <- if (task$arm == "shrinkage") {
+                build_sigma(mom, "shrinkage", lambda = task$tuning)
+              } else {
+                f <- fits[[task$input]]
+                build_sigma(mom, "factor", factors = lapply(stats::setNames(types, types), function(tp) {
+                  r <- as.integer(names(f[[tp]]))
+                  f[[tp]][[as.character(max(r[r <= task$tuning]))]]
+                }))
+              }
+              fit_decovart_scales(bulk[, ids, drop = FALSE], moments$mu, sigma, task$scale, depth = depth[ids])
             },
-            error = function(e) e
+            error = function(e) {
+              list(status = "failed", message = conditionMessage(e), P = NULL, elapsed_sec = NA_real_)
+            }
           )
-          elapsed <- proc.time()[["elapsed"]] - started
-          if (inherits(fit, "error")) {
-            return(paste0(basename(task$file), ": ", conditionMessage(fit)))
+          meta <- data.frame(
+            time = tm, gene_set = gs, genes = length(genes), id = task$id,
+            family = task$family, alpha = NA_real_, tuning = task$tuning,
+            sample_id = ids, stringsAsFactors = FALSE
+          )
+          ok <- !is.null(fit$P)
+          estimates <- do.call(rbind, lapply(seq_along(ids), function(i) {
+            data.frame(meta[i, ], cell_type = types,
+                       proportion = if (ok) fit$P[types, i] else NA_real_,
+                       lower = NA_real_, upper = NA_real_, row.names = NULL)
+          }))
+          diagnostics <- if (ok) {
+            data.frame(meta, fit$samples[, -1L], convergence = NA_integer_,
+                       iterations = fit$iterations, elapsed_sec = fit$elapsed_sec,
+                       message = fit$status, profile = fit$samples$loglik,
+                       restricted = NA_real_, input = task$input, scale = task$scale)
+          } else {
+            data.frame(meta, loglik = NA_real_, elapsed_sec = fit$elapsed_sec,
+                       message = fit$message, profile = NA_real_, restricted = NA_real_,
+                       input = task$input, scale = task$scale)
           }
-          saveRDS(
-            list(
-              estimates = extra_rows(
-                data.frame(
-                  sample_id = task$sample_id,
-                  cell_type = types,
-                  proportion = as.numeric(fit$p[types]),
-                  stringsAsFactors = FALSE
-                ),
-                tm,
-                gs,
-                length(genes),
-                family = "DeCovarT variant",
-                algorithm = if (stage == "total") {
-                  "DeCovarT total covariance"
-                } else {
-                  "DeCovarT Firth"
-                },
-                covariance = task$covariance,
-                ratio = task$ratio,
-                optimiser = if (stage == "total") "lbfgsb" else "bfgs"
-              ),
-              diagnostics = data.frame(
-                time = tm,
-                gene_set = gs,
-                stage = stage,
-                covariance = task$covariance,
-                platform_ratio = task$ratio,
-                optimiser = if (stage == "total") "lbfgsb" else "bfgs",
-                sample_id = task$sample_id,
-                loglik = fit$loglik,
-                mean_scale = fit$mean_scale %||% NA_real_,
-                variance_scale = fit$variance_scale %||% NA_real_,
-                penalty = fit$penalty %||% NA_real_,
-                start_kept = fit$start %||% NA_integer_,
-                convergence = as.integer(fit$convergence),
-                evaluations = fit$evaluations %||% fit$hessians,
-                elapsed_sec = elapsed,
-                stringsAsFactors = FALSE
-              )
-            ),
-            task$file
-          )
-          message("  ", basename(task$file), ": ", round(elapsed, 1), " s")
-          NULL
+          log_progress(progress, "done", slot, task$file,
+                       round(fit$elapsed_sec, 1), fit$status, fit$message)
+          list(estimates = estimates, diagnostics = diagnostics)
         },
-        mc.cores = stage_workers(nrow(tasks), length(genes)),
+        mc.cores = workers,
         mc.preschedule = FALSE
       )
-      for (p in Filter(Negate(is.null), done)) {
-        message("  FAILED ", stage, ": ", if (is.character(p)) p else format(p))
-      }
-      rm(moments)
+      store_sweep(done, tm)
+      rm(moments, moments_size, fits)
       invisible(gc())
     }
   }
 }
 
 # ==========================================================================
-# SECTION 5 · Tables and metrics, from every checkpoint on disk ----
+# SECTION 4 · Selection, tables and metrics, from every checkpoint ----
 # ==========================================================================
 
 if ("tables" %in% run_stages) {
-  covariance_label <- c(
-    raw = "raw",
-    denoised_bio = "denoised (bio only)",
-    denoised_plugin = "denoised + Poisson (plug-in a)",
-    denoised_fixed = "denoised + Poisson (fixed-point a)"
-  )
   comparator_label <- c(
     dwls = "DWLS",
     scdc = "SCDC",
     bayesprism = "BayesPrism",
     rnasieve = "RNA-Sieve",
     demixsc_wnnls = "DeMixSC wNNLS",
-    demixsc_wnnls_b = "DeMixSC wNNLS",
     mead = "MEAD (pseudo-individuals)",
     redeconv = "ReDeconv",
-    rlm = "RLM"
+    rlm = "RLM",
+    nnls = "NNLS",
+    decals = "DECALS",
+    demixsc_aligned = "DeMixSC aligned (other times)"
   )
-
-  chain_files <- list.files(fits_dir, "^decovart__.*\\.rds$", full.names = TRUE)
-  chains <- lapply(chain_files, readRDS)
-  decovart_estimates <- do.call(
-    rbind,
-    lapply(chains, function(res) {
-      cbind(res$meta, res$estimates, stringsAsFactors = FALSE)
-    })
+  family_label <- c(
+    shrinkage = "shrinkage",
+    two_param = "two-parameter",
+    factor = "factor analysis",
+    cv = "cell CV"
   )
-  diagnostics <- do.call(
-    rbind,
-    lapply(chains, function(res) {
-      cbind(res$meta, res$diagnostics, stringsAsFactors = FALSE)
-    })
-  )
-  if (!is.null(decovart_estimates)) {
-    decovart_estimates$family <- "DeCovarT"
-    decovart_estimates$algorithm <- "DeCovarT"
-    decovart_estimates$method <- paste0(
-      "DeCovarT ",
-      covariance_label[decovart_estimates$covariance],
-      " | ",
-      decovart_estimates$optimiser,
-      " | b_g ",
-      decovart_estimates$platform_ratio,
-      " | ",
-      decovart_estimates$gene_set
-    )
-  }
-
-  comparator_files <- list.files(
-    fits_dir,
-    "^comparator__.*\\.rds$",
-    full.names = TRUE
-  )
-  comparators <- lapply(comparator_files, readRDS)
-  comparator_status <- do.call(rbind, lapply(comparators, `[[`, "status"))
-  comparator_estimates <- do.call(
-    rbind,
-    lapply(comparators, function(res) {
-      if (is.null(res$estimates)) {
-        return(NULL)
-      }
-      st <- res$status
-      with_ratio <- st$comparator == "demixsc_wnnls_b"
-      data.frame(
-        time = st$time,
-        gene_set = st$gene_set,
-        sample_id = res$estimates$sample_id,
-        platform_ratio = if (with_ratio) "gene" else "none",
-        optimiser = NA_character_,
-        genes = st$genes,
-        covariance = NA_character_,
-        cell_type = res$estimates$cell_type,
-        proportion = res$estimates$proportion,
-        lower = res$estimates$lower,
-        upper = res$estimates$upper,
-        family = "comparator",
-        algorithm = comparator_label[[st$comparator]],
-        method = paste0(
-          comparator_label[[st$comparator]],
-          if (with_ratio) " + b_g",
-          " | ",
-          st$gene_set
-        ),
-        stringsAsFactors = FALSE
-      )
-    })
-  )
-
-  extras <- lapply(
-    list.files(fits_dir, "^extra__.*\\.rds$", full.names = TRUE),
-    readRDS
-  )
-  extra_estimates <- do.call(rbind, lapply(extras, `[[`, "estimates"))
-  if (!is.null(extra_estimates)) {
-    extra_estimates$method <- paste0(
-      extra_estimates$algorithm,
-      " ",
-      extra_estimates$covariance,
-      " | ",
-      extra_estimates$optimiser,
-      " | b_g ",
-      extra_estimates$platform_ratio,
-      " | ",
-      extra_estimates$gene_set
-    )
-  }
-  extra_diagnostics <- data.table::rbindlist(
-    lapply(extras, `[[`, "diagnostics"),
-    fill = TRUE
-  )
-
-  estimates <- rbind(decovart_estimates, comparator_estimates, extra_estimates)
-  if (is.null(estimates)) {
-    stop("No checkpoint in ", fits_dir, ".")
-  }
-  at <- match(estimates$sample_id, design$sample_id)
-  estimates$arm <- design$arm[at]
-  estimates$replicate <- design$replicate[at]
-  estimates$reference_slot <- estimates$time
-  estimates <- estimates[
-    order(
-      estimates$family,
-      estimates$method,
-      estimates$time,
-      estimates$sample_id,
-      estimates$cell_type
-    ),
-    c(
-      "method",
-      "sample_id",
-      "arm",
-      "time",
-      "replicate",
-      "reference_slot",
-      "cell_type",
-      "proportion",
-      "lower",
-      "upper",
-      "family",
-      "algorithm",
-      "gene_set",
-      "covariance",
-      "platform_ratio",
-      "optimiser",
-      "genes"
-    )
-  ]
   write_table <- function(x, name) {
     utils::write.csv(
       x,
@@ -1045,31 +707,201 @@ if ("tables" %in% run_stages) {
       fileEncoding = "UTF-8"
     )
   }
-  write_table(estimates, "proportions_long.csv")
-  write_table(observed, "observed_proportions.csv")
-  if (!is.null(diagnostics)) {
-    write_table(diagnostics, "fit_diagnostics.csv")
+
+  # Rows keep the order of the former one-file-per-fit checkpoints, sorted
+  # by name, so the tables below do not change with the storage.
+  checkpoint_order <- function(...) order(paste0(paste(..., sep = "__"), ".rds"))
+  comparator_status <- read_fit_store(fits_dir, "comparators", "status")
+  comparator_status <- comparator_status[comparator_status$status == "ok", , drop = FALSE]
+  comparator_status <- comparator_status[checkpoint_order(
+    "comparator", comparator_status$comparator, comparator_status$time, comparator_status$gene_set
+  ), , drop = FALSE]
+  est <- read_fit_store(fits_dir, "comparators", "estimates")
+  st <- comparator_status[match(
+    paste(est$comparator, est$time, est$gene_set),
+    paste(comparator_status$comparator, comparator_status$time, comparator_status$gene_set)
+  ), ]
+  keep <- !is.na(st$comparator)
+  est <- est[keep, , drop = FALSE]
+  st <- st[keep, , drop = FALSE]
+  comparator_estimates <- data.frame(
+    time = st$time,
+    gene_set = st$gene_set,
+    sample_id = est$sample_id,
+    genes = st$genes,
+    covariance = NA_character_,
+    cell_type = est$cell_type,
+    proportion = est$proportion,
+    lower = est$lower,
+    upper = est$upper,
+    family = "comparator",
+    algorithm = unname(comparator_label[st$comparator]),
+    method = paste0(unname(comparator_label[st$comparator]), " | ", st$gene_set),
+    stringsAsFactors = FALSE
+  )[checkpoint_order("comparator", st$comparator, st$time, st$gene_set), , drop = FALSE]
+  rownames(comparator_status) <- rownames(comparator_estimates) <- NULL
+
+  # A scale-family fit covers the replicates of one protocol.
+  sweep_order <- function(d) {
+    unit <- ifelse(
+      grepl("_scales_", d$id),
+      design$arm[match(d$sample_id, design$sample_id)],
+      d$sample_id
+    )
+    checkpoint_order("sweep", d$time, d$gene_set, d$id, unit)
   }
-  if (!is.null(comparator_status)) {
-    write_table(comparator_status, "comparator_status.csv")
+  sweep_strategies <- c("shrinkage", "factor", "two_parameter")
+  sweep_estimates <- read_fit_store(fits_dir, sweep_strategies, "estimates")
+  sweep_diagnostics <- read_fit_store(fits_dir, sweep_strategies, "diagnostics")
+  if (!is.null(sweep_diagnostics)) {
+    sweep_estimates <- sweep_estimates[sweep_order(sweep_estimates), , drop = FALSE]
+    sweep_diagnostics <- sweep_diagnostics[sweep_order(sweep_diagnostics), , drop = FALSE]
+    rownames(sweep_estimates) <- rownames(sweep_diagnostics) <- NULL
   }
-  if (nrow(extra_diagnostics) > 0L) {
-    write_table(as.data.frame(extra_diagnostics), "extra_diagnostics.csv")
+  label_of <- function(f) ifelse(f %in% names(family_label), family_label[f], f)
+  selection <- NULL
+  if (!is.null(sweep_diagnostics)) {
+    sweep_diagnostics$arm <- design$arm[
+      match(sweep_diagnostics$sample_id, design$sample_id)
+    ]
+    write_table(sweep_diagnostics, "sweep_diagnostics.csv")
+    # Per time, gene set, protocol and level: likelihoods summed over the
+    # replicates. A level with a failed fit is not eligible.
+    by_level <- c("time", "gene_set", "arm", "family", "id", "alpha", "tuning")
+    key <- interaction(sweep_diagnostics[by_level[1:5]], drop = TRUE)
+    first <- !duplicated(key)
+    selection <- data.frame(
+      sweep_diagnostics[first, by_level],
+      replicates = as.integer(table(key)[key[first]]),
+      sum_profile = as.numeric(tapply(sweep_diagnostics$profile, key, sum)[key[first]]),
+      sum_restricted = as.numeric(
+        tapply(sweep_diagnostics$restricted, key, sum)[key[first]]
+      ),
+      stringsAsFactors = FALSE
+    )
+    group <- interaction(selection[c("time", "gene_set", "arm", "family")], drop = TRUE)
+    is_best <- function(x) {
+      as.logical(stats::ave(x, group, FUN = function(v) {
+        seq_along(v) == if (all(is.na(v))) 0L else which.max(v)
+      }))
+    }
+    selection$selected_profile <- selection$family != "cv" &
+      is_best(selection$sum_profile)
+    selection$selected_restricted <- selection$family != "cv" &
+      is_best(selection$sum_restricted)
+    # One shrinkage level for the three times of a gene set and protocol.
+    shr <- selection$family == "shrinkage"
+    selection$sum_profile_all_times <- NA_real_
+    across <- interaction(selection[shr, c("gene_set", "arm", "id")], drop = TRUE)
+    complete <- tapply(selection$time[shr], across, length) == length(time_levels)
+    total <- tapply(selection$sum_profile[shr], across, sum)
+    total[!complete] <- NA_real_
+    selection$sum_profile_all_times[shr] <- as.numeric(total[across])
+
+    at <- match(
+      paste(sweep_estimates$time, sweep_estimates$gene_set, sweep_estimates$id),
+      paste(selection$time, selection$gene_set, selection$id)
+    )
+    label <- ifelse(
+      sweep_estimates$family == "cv",
+      cv_rules[match(sweep_estimates$id, sweep_levels()$id[sweep_levels()$family == "cv"])],
+      ifelse(
+        sweep_estimates$family == "two_param",
+        sprintf("alpha %.2f, lambda %.2f", sweep_estimates$alpha, sweep_estimates$tuning),
+        ifelse(
+          grepl("factor", sweep_estimates$family),
+          sprintf("rank %d", as.integer(sweep_estimates$tuning)),
+          sprintf("lambda %.3f", sweep_estimates$tuning)
+        )
+      )
+    )
+    sweep_rows <- data.frame(
+      sweep_estimates[c(
+        "time",
+        "gene_set",
+        "sample_id",
+        "genes",
+        "cell_type",
+        "proportion",
+        "lower",
+        "upper"
+      )],
+      covariance = label,
+      family = ifelse(sweep_estimates$family == "cv", "DeCovarT, cell CV", "DeCovarT sweep"),
+      algorithm = paste("DeCovarT", label_of(sweep_estimates$family)),
+      stringsAsFactors = FALSE
+    )
+    sweep_rows$method <- paste0(
+      sweep_rows$algorithm,
+      ": ",
+      label,
+      " | ",
+      sweep_rows$gene_set
+    )
+    # The level chosen by the bulk likelihood, per sample's own protocol.
+    chosen <- function(flag, rule) {
+      arm <- design$arm[match(sweep_estimates$sample_id, design$sample_id)]
+      hit <- match(
+        paste(sweep_estimates$time, sweep_estimates$gene_set, arm, sweep_estimates$id),
+        paste(selection$time, selection$gene_set, selection$arm, selection$id)
+      )
+      keep <- selection[[flag]][hit]
+      out <- sweep_rows[keep, ]
+      out$family <- "DeCovarT, bulk likelihood"
+      out$method <- paste0(out$algorithm, ", ", rule, " | ", out$gene_set)
+      out
+    }
+    sweep_rows <- rbind(
+      sweep_rows,
+      chosen("selected_profile", "bulk likelihood"),
+      chosen("selected_restricted", "restricted bulk likelihood")
+    )
   }
 
-  # Metrics: standard-Wnt samples, whose protocol the reference follows.
-  standard <- estimates[estimates$arm == "standard", , drop = FALSE]
-  metrics <- benchmark_metrics(standard, observed)
-  descriptors <- unique(standard[, c(
+  columns <- c(
     "method",
+    "sample_id",
+    "time",
+    "cell_type",
+    "proportion",
+    "lower",
+    "upper",
     "family",
     "algorithm",
     "gene_set",
     "covariance",
-    "platform_ratio",
-    "optimiser"
+    "genes"
+  )
+  estimates <- rbind(
+    comparator_estimates[columns],
+    if (!is.null(selection)) sweep_rows[columns]
+  )
+  at <- match(estimates$sample_id, design$sample_id)
+  estimates$arm <- design$arm[at]
+  estimates$replicate <- design$replicate[at]
+  estimates <- estimates[
+    order(estimates$family, estimates$method, estimates$time, estimates$sample_id, estimates$cell_type),
+  ]
+  write_table(estimates, "proportions_long.csv")
+  write_table(observed, "observed_proportions.csv")
+  write_table(comparator_status, "comparator_status.csv")
+
+  # Metrics: standard-Wnt samples, whose protocol the reference follows.
+  standard <- estimates[estimates$arm == "standard", , drop = FALSE]
+  metrics <- benchmark_metrics(standard, observed)
+  # A selected method can sit at a different level at each time: the
+  # level is a descriptor of method x time, not of the method.
+  by_time <- unique(standard[, c(
+    "method",
+    "time",
+    "family",
+    "algorithm",
+    "gene_set",
+    "covariance"
   )])
-  metrics <- merge(metrics, descriptors, by = "method", sort = FALSE)
+  descriptors <- unique(by_time[c("method", "family", "algorithm", "gene_set")])
+  stopifnot(!anyDuplicated(by_time[c("method", "time")]), !anyDuplicated(descriptors$method))
+  metrics <- merge(metrics, by_time, by = c("method", "time"), sort = FALSE)
   metrics$replicate <- design$replicate[
     match(metrics$sample_id, design$sample_id)
   ]
@@ -1077,6 +909,35 @@ if ("tables" %in% run_stages) {
     metrics[order(metrics$method, metrics$time, metrics$sample_id), ],
     "benchmark_metrics.csv"
   )
+  if (!is.null(selection)) {
+    # Error of each level, beside the likelihoods that select it. The
+    # error is not used by the selection.
+    level_method <- paste0(
+      "DeCovarT ",
+      label_of(selection$family),
+      ": ",
+      sweep_rows$covariance[match(
+        paste(selection$time, selection$gene_set, selection$id),
+        paste(sweep_estimates$time, sweep_estimates$gene_set, sweep_estimates$id)
+      )],
+      " | ",
+      selection$gene_set
+    )
+    mean_of <- function(column) {
+      m <- tapply(metrics[[column]], paste(metrics$method, metrics$time), mean)
+      ifelse(
+        selection$arm == "standard",
+        as.numeric(m[paste(level_method, selection$time)]),
+        NA_real_
+      )
+    }
+    selection$rmse <- mean_of("rmse")
+    selection$aitchison <- mean_of("aitchison")
+    write_table(
+      selection[order(selection$gene_set, selection$time, selection$arm, selection$id), ],
+      "lambda_selection.csv"
+    )
+  }
 
   standard$observed <- observed$observed[match(
     paste(standard$time, standard$cell_type),

@@ -1,0 +1,20 @@
+<!-- KaTeX auto-render for tinytable tables. Quarto passes tinytable HTML
+     through raw, so `$...$` in its cells is not turned into math by the
+     book's KaTeX (html-math-method in _quarto.yml). This renders it with
+     the same KaTeX version, only inside tinytable tables. In R strings,
+     write the backslashes doubled: "$\\lambda$". -->
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script>
+window.addEventListener("load", function () {
+  if (typeof renderMathInElement !== "function") return;
+  document.querySelectorAll('table[id^="tinytable"]').forEach(function (el) {
+    renderMathInElement(el, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false }
+      ],
+      throwOnError: false
+    });
+  });
+});
+</script>

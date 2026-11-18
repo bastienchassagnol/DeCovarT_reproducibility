@@ -1,0 +1,1156 @@
+"time","gene_set","cell_type","outer_fold","rule","alpha","tuning","score","n_test"
+"48h","r2_01","Epiblast",1,"diagonal",0,1,-279.676730109281,2118
+"48h","r2_01","Epiblast",1,"shrinkage, per type",0,0.1,-262.301359692317,2118
+"48h","r2_01","Epiblast",1,"shrinkage, common",0,0.78125,-267.626347940988,2118
+"48h","r2_01","Epiblast",1,"two-parameter, per type",0.25,0.0681292069057961,-262.236743463622,2118
+"48h","r2_01","Epiblast",1,"two-parameter, common",0.75,0.40625,-263.746894056487,2118
+"48h","r2_01","Epiblast",1,"factor, per type",NA,20,-261.931020041205,2118
+"48h","r2_01","Epiblast",1,"factor, shared loadings",NA,20,-261.917991316103,2118
+"48h","r2_01","Exiting naïve pluripotency",1,"diagonal",0,1,-363.259464343737,53
+"48h","r2_01","Exiting naïve pluripotency",1,"shrinkage, per type",0,0.65625,-348.709414798647,53
+"48h","r2_01","Exiting naïve pluripotency",1,"shrinkage, common",0,0.78125,-349.001785174377,53
+"48h","r2_01","Exiting naïve pluripotency",1,"two-parameter, per type",0.75,0.25,-345.397672849026,53
+"48h","r2_01","Exiting naïve pluripotency",1,"two-parameter, common",0.75,0.40625,-345.194349758029,53
+"48h","r2_01","Exiting naïve pluripotency",1,"factor, per type",NA,3,-352.584616373664,53
+"48h","r2_01","Exiting naïve pluripotency",1,"factor, shared loadings",NA,20,-347.354578035879,53
+"48h","r2_01","Naïve pluripotency",1,"diagonal",0,1,-401.841378980116,8
+"48h","r2_01","Naïve pluripotency",1,"shrinkage, per type",0,0.875,-386.566713721465,8
+"48h","r2_01","Naïve pluripotency",1,"shrinkage, common",0,0.78125,-388.750462462836,8
+"48h","r2_01","Naïve pluripotency",1,"two-parameter, per type",0.75,0.65625,-381.700073013813,8
+"48h","r2_01","Naïve pluripotency",1,"two-parameter, common",0.75,0.40625,-385.358386632558,8
+"48h","r2_01","Naïve pluripotency",1,"factor, per type",NA,1,-390.793781106674,8
+"48h","r2_01","Naïve pluripotency",1,"factor, shared loadings",NA,20,-388.129746555424,8
+"48h","r2_01","Epiblast",2,"diagonal",0,1,-281.111157356524,2118
+"48h","r2_01","Epiblast",2,"shrinkage, per type",0,0.0681292069057961,-264.0194467926,2118
+"48h","r2_01","Epiblast",2,"shrinkage, common",0,0.78125,-269.101875786228,2118
+"48h","r2_01","Epiblast",2,"two-parameter, per type",0.25,0.0681292069057961,-264.000163036781,2118
+"48h","r2_01","Epiblast",2,"two-parameter, common",0.75,0.4375,-265.534408343408,2118
+"48h","r2_01","Epiblast",2,"factor, per type",NA,20,-263.707442473852,2118
+"48h","r2_01","Epiblast",2,"factor, shared loadings",NA,20,-263.702671186363,2118
+"48h","r2_01","Exiting naïve pluripotency",2,"diagonal",0,1,-342.147080315797,53
+"48h","r2_01","Exiting naïve pluripotency",2,"shrinkage, per type",0,0.6875,-328.973444517381,53
+"48h","r2_01","Exiting naïve pluripotency",2,"shrinkage, common",0,0.78125,-330.024435699927,53
+"48h","r2_01","Exiting naïve pluripotency",2,"two-parameter, per type",0.75,0.28125,-324.755958057669,53
+"48h","r2_01","Exiting naïve pluripotency",2,"two-parameter, common",0.75,0.4375,-325.809760689488,53
+"48h","r2_01","Exiting naïve pluripotency",2,"factor, per type",NA,5,-327.120305468673,53
+"48h","r2_01","Exiting naïve pluripotency",2,"factor, shared loadings",NA,20,-323.76074744285,53
+"48h","r2_01","Naïve pluripotency",2,"diagonal",0,1,-352.228680748669,7
+"48h","r2_01","Naïve pluripotency",2,"shrinkage, per type",0,0.875,-346.581991555228,7
+"48h","r2_01","Naïve pluripotency",2,"shrinkage, common",0,0.78125,-346.545573249525,7
+"48h","r2_01","Naïve pluripotency",2,"two-parameter, per type",0.75,0.65625,-343.506898962899,7
+"48h","r2_01","Naïve pluripotency",2,"two-parameter, common",0.75,0.4375,-342.736094443209,7
+"48h","r2_01","Naïve pluripotency",2,"factor, per type",NA,1,-342.466585514662,7
+"48h","r2_01","Naïve pluripotency",2,"factor, shared loadings",NA,20,-340.144597966568,7
+"48h","r2_01","Epiblast",3,"diagonal",0,1,-279.859560031455,2118
+"48h","r2_01","Epiblast",3,"shrinkage, per type",0,0.0681292069057961,-263.026494831385,2118
+"48h","r2_01","Epiblast",3,"shrinkage, common",0,0.78125,-268.074834725474,2118
+"48h","r2_01","Epiblast",3,"two-parameter, per type",0.25,0.0681292069057961,-263.010423004072,2118
+"48h","r2_01","Epiblast",3,"two-parameter, common",0.75,0.4375,-264.555713297875,2118
+"48h","r2_01","Epiblast",3,"factor, per type",NA,20,-262.654601211989,2118
+"48h","r2_01","Epiblast",3,"factor, shared loadings",NA,20,-262.646850459868,2118
+"48h","r2_01","Exiting naïve pluripotency",3,"diagonal",0,1,-339.569490850252,53
+"48h","r2_01","Exiting naïve pluripotency",3,"shrinkage, per type",0,0.6875,-326.69413616286,53
+"48h","r2_01","Exiting naïve pluripotency",3,"shrinkage, common",0,0.78125,-327.692318926701,53
+"48h","r2_01","Exiting naïve pluripotency",3,"two-parameter, per type",0.75,0.25,-323.58145390061,53
+"48h","r2_01","Exiting naïve pluripotency",3,"two-parameter, common",0.75,0.4375,-324.632835375898,53
+"48h","r2_01","Exiting naïve pluripotency",3,"factor, per type",NA,3,-325.349141764009,53
+"48h","r2_01","Exiting naïve pluripotency",3,"factor, shared loadings",NA,20,-323.900038189652,53
+"48h","r2_01","Naïve pluripotency",3,"diagonal",0,1,-373.352089517648,7
+"48h","r2_01","Naïve pluripotency",3,"shrinkage, per type",0,0.9,-360.48047489428,7
+"48h","r2_01","Naïve pluripotency",3,"shrinkage, common",0,0.78125,-360.060433893762,7
+"48h","r2_01","Naïve pluripotency",3,"two-parameter, per type",0.75,0.65625,-353.447177390302,7
+"48h","r2_01","Naïve pluripotency",3,"two-parameter, common",0.75,0.4375,-353.698098376694,7
+"48h","r2_01","Naïve pluripotency",3,"factor, per type",NA,1,-362.468301524152,7
+"48h","r2_01","Naïve pluripotency",3,"factor, shared loadings",NA,20,-356.538418414546,7
+"48h","r2_01","Epiblast",4,"diagonal",0,1,-281.385488880802,2118
+"48h","r2_01","Epiblast",4,"shrinkage, per type",0,0.1,-263.384918032648,2118
+"48h","r2_01","Epiblast",4,"shrinkage, common",0,0.78125,-268.522470228416,2118
+"48h","r2_01","Epiblast",4,"two-parameter, per type",0.25,0.0681292069057961,-263.364451029799,2118
+"48h","r2_01","Epiblast",4,"two-parameter, common",0.75,0.40625,-264.685962077974,2118
+"48h","r2_01","Epiblast",4,"factor, per type",NA,20,-263.067512115983,2118
+"48h","r2_01","Epiblast",4,"factor, shared loadings",NA,20,-263.065861270937,2118
+"48h","r2_01","Exiting naïve pluripotency",4,"diagonal",0,1,-356.731081852289,53
+"48h","r2_01","Exiting naïve pluripotency",4,"shrinkage, per type",0,0.6875,-339.579463388686,53
+"48h","r2_01","Exiting naïve pluripotency",4,"shrinkage, common",0,0.78125,-340.211718341058,53
+"48h","r2_01","Exiting naïve pluripotency",4,"two-parameter, per type",0.75,0.25,-335.988601853773,53
+"48h","r2_01","Exiting naïve pluripotency",4,"two-parameter, common",0.75,0.40625,-336.254497839377,53
+"48h","r2_01","Exiting naïve pluripotency",4,"factor, per type",NA,3,-339.796913097493,53
+"48h","r2_01","Exiting naïve pluripotency",4,"factor, shared loadings",NA,20,-336.060578754604,53
+"48h","r2_01","Naïve pluripotency",4,"diagonal",0,1,-368.936309517042,7
+"48h","r2_01","Naïve pluripotency",4,"shrinkage, per type",0,0.875,-365.229720926674,7
+"48h","r2_01","Naïve pluripotency",4,"shrinkage, common",0,0.78125,-367.044254660788,7
+"48h","r2_01","Naïve pluripotency",4,"two-parameter, per type",0.75,0.65625,-362.320345755532,7
+"48h","r2_01","Naïve pluripotency",4,"two-parameter, common",0.75,0.40625,-362.695305656721,7
+"48h","r2_01","Naïve pluripotency",4,"factor, per type",NA,1,-365.343619722922,7
+"48h","r2_01","Naïve pluripotency",4,"factor, shared loadings",NA,20,-364.342465349397,7
+"48h","r2_01","Epiblast",5,"diagonal",0,1,-280.338422106815,2118
+"48h","r2_01","Epiblast",5,"shrinkage, per type",0,0.1,-262.469739791637,2118
+"48h","r2_01","Epiblast",5,"shrinkage, common",0,0.78125,-267.799726301182,2118
+"48h","r2_01","Epiblast",5,"two-parameter, per type",0.25,0.0681292069057961,-262.423013630635,2118
+"48h","r2_01","Epiblast",5,"two-parameter, common",0.75,0.375,-263.673952620919,2118
+"48h","r2_01","Epiblast",5,"factor, per type",NA,20,-262.101935899534,2118
+"48h","r2_01","Epiblast",5,"factor, shared loadings",NA,20,-262.092731700402,2118
+"48h","r2_01","Exiting naïve pluripotency",5,"diagonal",0,1,-348.439616515381,53
+"48h","r2_01","Exiting naïve pluripotency",5,"shrinkage, per type",0,0.6875,-334.682361854986,53
+"48h","r2_01","Exiting naïve pluripotency",5,"shrinkage, common",0,0.78125,-335.358168774558,53
+"48h","r2_01","Exiting naïve pluripotency",5,"two-parameter, per type",0.75,0.25,-331.023312890078,53
+"48h","r2_01","Exiting naïve pluripotency",5,"two-parameter, common",0.75,0.375,-331.439314501952,53
+"48h","r2_01","Exiting naïve pluripotency",5,"factor, per type",NA,5,-333.725478527013,53
+"48h","r2_01","Exiting naïve pluripotency",5,"factor, shared loadings",NA,20,-330.587981817783,53
+"48h","r2_01","Naïve pluripotency",5,"diagonal",0,1,-348.259349418628,7
+"48h","r2_01","Naïve pluripotency",5,"shrinkage, per type",0,0.875,-345.917629388823,7
+"48h","r2_01","Naïve pluripotency",5,"shrinkage, common",0,0.78125,-346.682707501432,7
+"48h","r2_01","Naïve pluripotency",5,"two-parameter, per type",0.75,0.59375,-344.277188279327,7
+"48h","r2_01","Naïve pluripotency",5,"two-parameter, common",0.75,0.375,-344.667940522497,7
+"48h","r2_01","Naïve pluripotency",5,"factor, per type",NA,1,-344.884604594566,7
+"48h","r2_01","Naïve pluripotency",5,"factor, shared loadings",NA,20,-344.455584681155,7
+"48h","r2_05","Epiblast",1,"diagonal",0,1,-31.3623241513028,2118
+"48h","r2_05","Epiblast",1,"shrinkage, per type",0,0.0215443469003188,-29.9607601338811,2118
+"48h","r2_05","Epiblast",1,"shrinkage, common",0,0.53125,-30.2718939466694,2118
+"48h","r2_05","Epiblast",1,"two-parameter, per type",0.25,0.0215443469003188,-29.9601267957801,2118
+"48h","r2_05","Epiblast",1,"two-parameter, common",0.75,0.15625,-30.0040601049175,2118
+"48h","r2_05","Epiblast",1,"factor, per type",NA,5,-29.9654432388483,2118
+"48h","r2_05","Epiblast",1,"factor, shared loadings",NA,5,-29.9650363317232,2118
+"48h","r2_05","Exiting naïve pluripotency",1,"diagonal",0,1,-59.0589098088049,53
+"48h","r2_05","Exiting naïve pluripotency",1,"shrinkage, per type",0,0.3125,-59.447145656884,53
+"48h","r2_05","Exiting naïve pluripotency",1,"shrinkage, common",0,0.53125,-58.3892849688762,53
+"48h","r2_05","Exiting naïve pluripotency",1,"two-parameter, per type",0.75,0.0464158883361278,-58.7337512661762,53
+"48h","r2_05","Exiting naïve pluripotency",1,"two-parameter, common",0.75,0.15625,-58.4267252585293,53
+"48h","r2_05","Exiting naïve pluripotency",1,"factor, per type",NA,1,-60.783649252565,53
+"48h","r2_05","Exiting naïve pluripotency",1,"factor, shared loadings",NA,5,-59.9796904739224,53
+"48h","r2_05","Naïve pluripotency",1,"diagonal",0,1,-63.1682756169435,8
+"48h","r2_05","Naïve pluripotency",1,"shrinkage, per type",0,0.71875,-63.5217070488267,8
+"48h","r2_05","Naïve pluripotency",1,"shrinkage, common",0,0.53125,-65.2053490599032,8
+"48h","r2_05","Naïve pluripotency",1,"two-parameter, per type",0.75,0.375,-63.6525927818144,8
+"48h","r2_05","Naïve pluripotency",1,"two-parameter, common",0.75,0.15625,-64.8657177448398,8
+"48h","r2_05","Naïve pluripotency",1,"factor, per type",NA,0,-63.1682756169435,8
+"48h","r2_05","Naïve pluripotency",1,"factor, shared loadings",NA,5,-64.3795779118558,8
+"48h","r2_05","Epiblast",2,"diagonal",0,1,-31.7087602173883,2118
+"48h","r2_05","Epiblast",2,"shrinkage, per type",0,0.0215443469003188,-30.4435710972941,2118
+"48h","r2_05","Epiblast",2,"shrinkage, common",0,0.71875,-30.8743027239349,2118
+"48h","r2_05","Epiblast",2,"two-parameter, per type",0.25,0.0215443469003188,-30.446087441364,2118
+"48h","r2_05","Epiblast",2,"two-parameter, common",0.75,0.34375,-30.526250632801,2118
+"48h","r2_05","Epiblast",2,"factor, per type",NA,8,-30.4526607049326,2118
+"48h","r2_05","Epiblast",2,"factor, shared loadings",NA,3,-30.4783921030218,2118
+"48h","r2_05","Exiting naïve pluripotency",2,"diagonal",0,1,-49.0636564579294,53
+"48h","r2_05","Exiting naïve pluripotency",2,"shrinkage, per type",0,0.53125,-48.1955615171467,53
+"48h","r2_05","Exiting naïve pluripotency",2,"shrinkage, common",0,0.71875,-48.3556969965617,53
+"48h","r2_05","Exiting naïve pluripotency",2,"two-parameter, per type",0.75,0.21875,-48.0012083341351,53
+"48h","r2_05","Exiting naïve pluripotency",2,"two-parameter, common",0.75,0.34375,-48.0669069013852,53
+"48h","r2_05","Exiting naïve pluripotency",2,"factor, per type",NA,1,-48.5366536368742,53
+"48h","r2_05","Exiting naïve pluripotency",2,"factor, shared loadings",NA,3,-48.2485816131663,53
+"48h","r2_05","Naïve pluripotency",2,"diagonal",0,1,-50.6804884630282,7
+"48h","r2_05","Naïve pluripotency",2,"shrinkage, per type",0,0.9,-50.5538383903741,7
+"48h","r2_05","Naïve pluripotency",2,"shrinkage, common",0,0.71875,-50.5399774613459,7
+"48h","r2_05","Naïve pluripotency",2,"two-parameter, per type",0.75,0.5625,-50.3472589828229,7
+"48h","r2_05","Naïve pluripotency",2,"two-parameter, common",0.75,0.34375,-50.3631660948216,7
+"48h","r2_05","Naïve pluripotency",2,"factor, per type",NA,0,-50.6804884630283,7
+"48h","r2_05","Naïve pluripotency",2,"factor, shared loadings",NA,3,-50.2596165813632,7
+"48h","r2_05","Epiblast",3,"diagonal",0,1,-31.3821383950466,2118
+"48h","r2_05","Epiblast",3,"shrinkage, per type",0,0.0215443469003188,-30.1283270289719,2118
+"48h","r2_05","Epiblast",3,"shrinkage, common",0,0.6875,-30.5383162100049,2118
+"48h","r2_05","Epiblast",3,"two-parameter, per type",0.25,0.0215443469003188,-30.1275813497313,2118
+"48h","r2_05","Epiblast",3,"two-parameter, common",0.75,0.3125,-30.2138318698323,2118
+"48h","r2_05","Epiblast",3,"factor, per type",NA,8,-30.129327543899,2118
+"48h","r2_05","Epiblast",3,"factor, shared loadings",NA,3,-30.1558950122607,2118
+"48h","r2_05","Exiting naïve pluripotency",3,"diagonal",0,1,-47.2329397533738,53
+"48h","r2_05","Exiting naïve pluripotency",3,"shrinkage, per type",0,0.5625,-46.2601209406943,53
+"48h","r2_05","Exiting naïve pluripotency",3,"shrinkage, common",0,0.6875,-46.4024110911011,53
+"48h","r2_05","Exiting naïve pluripotency",3,"two-parameter, per type",0.75,0.1875,-45.970501476644,53
+"48h","r2_05","Exiting naïve pluripotency",3,"two-parameter, common",0.75,0.3125,-46.0473504037189,53
+"48h","r2_05","Exiting naïve pluripotency",3,"factor, per type",NA,3,-46.031786470235,53
+"48h","r2_05","Exiting naïve pluripotency",3,"factor, shared loadings",NA,3,-46.0075658075123,53
+"48h","r2_05","Naïve pluripotency",3,"diagonal",0,1,-52.4966842892277,7
+"48h","r2_05","Naïve pluripotency",3,"shrinkage, per type",0,0.875,-52.1182305041396,7
+"48h","r2_05","Naïve pluripotency",3,"shrinkage, common",0,0.6875,-52.0768428850332,7
+"48h","r2_05","Naïve pluripotency",3,"two-parameter, per type",0.75,0.5625,-51.2856795975046,7
+"48h","r2_05","Naïve pluripotency",3,"two-parameter, common",0.75,0.3125,-51.2778906613265,7
+"48h","r2_05","Naïve pluripotency",3,"factor, per type",NA,0,-52.4966842892277,7
+"48h","r2_05","Naïve pluripotency",3,"factor, shared loadings",NA,3,-51.0497557601535,7
+"48h","r2_05","Epiblast",4,"diagonal",0,1,-31.8784956562725,2118
+"48h","r2_05","Epiblast",4,"shrinkage, per type",0,0.0215443469003188,-30.3764632577107,2118
+"48h","r2_05","Epiblast",4,"shrinkage, common",0,0.71875,-30.9167632721173,2118
+"48h","r2_05","Epiblast",4,"two-parameter, per type",0.25,0.0215443469003188,-30.382997477148,2118
+"48h","r2_05","Epiblast",4,"two-parameter, common",0.75,0.3125,-30.4966814699715,2118
+"48h","r2_05","Epiblast",4,"factor, per type",NA,8,-30.3815686135718,2118
+"48h","r2_05","Epiblast",4,"factor, shared loadings",NA,8,-30.3877169364301,2118
+"48h","r2_05","Exiting naïve pluripotency",4,"diagonal",0,1,-47.7288151078353,53
+"48h","r2_05","Exiting naïve pluripotency",4,"shrinkage, per type",0,0.59375,-46.2197855764309,53
+"48h","r2_05","Exiting naïve pluripotency",4,"shrinkage, common",0,0.71875,-46.4900524458864,53
+"48h","r2_05","Exiting naïve pluripotency",4,"two-parameter, per type",0.75,0.25,-45.7045145222349,53
+"48h","r2_05","Exiting naïve pluripotency",4,"two-parameter, common",0.75,0.3125,-45.7723574565851,53
+"48h","r2_05","Exiting naïve pluripotency",4,"factor, per type",NA,2,-45.924488779963,53
+"48h","r2_05","Exiting naïve pluripotency",4,"factor, shared loadings",NA,8,-45.4083795934987,53
+"48h","r2_05","Naïve pluripotency",4,"diagonal",0,1,-49.6991933786467,7
+"48h","r2_05","Naïve pluripotency",4,"shrinkage, per type",0,0.875,-49.4996160006541,7
+"48h","r2_05","Naïve pluripotency",4,"shrinkage, common",0,0.71875,-49.4069969243808,7
+"48h","r2_05","Naïve pluripotency",4,"two-parameter, per type",0.75,0.5,-49.2878124059244,7
+"48h","r2_05","Naïve pluripotency",4,"two-parameter, common",0.75,0.3125,-49.2337424552437,7
+"48h","r2_05","Naïve pluripotency",4,"factor, per type",NA,0,-49.6991933786467,7
+"48h","r2_05","Naïve pluripotency",4,"factor, shared loadings",NA,8,-50.1046482816358,7
+"48h","r2_05","Epiblast",5,"diagonal",0,1,-31.2116575462968,2118
+"48h","r2_05","Epiblast",5,"shrinkage, per type",0,0.0215443469003188,-29.8021555915849,2118
+"48h","r2_05","Epiblast",5,"shrinkage, common",0,0.6875,-30.3139350193175,2118
+"48h","r2_05","Epiblast",5,"two-parameter, per type",0.25,0.0215443469003188,-29.800380414589,2118
+"48h","r2_05","Epiblast",5,"two-parameter, common",0.75,0.3125,-29.9360829658757,2118
+"48h","r2_05","Epiblast",5,"factor, per type",NA,5,-29.8086167702766,2118
+"48h","r2_05","Epiblast",5,"factor, shared loadings",NA,3,-29.8295780627267,2118
+"48h","r2_05","Exiting naïve pluripotency",5,"diagonal",0,1,-47.7365811673349,53
+"48h","r2_05","Exiting naïve pluripotency",5,"shrinkage, per type",0,0.53125,-46.5442091874965,53
+"48h","r2_05","Exiting naïve pluripotency",5,"shrinkage, common",0,0.6875,-46.7509112294226,53
+"48h","r2_05","Exiting naïve pluripotency",5,"two-parameter, per type",0.75,0.25,-46.3878466589996,53
+"48h","r2_05","Exiting naïve pluripotency",5,"two-parameter, common",0.75,0.3125,-46.4256073927954,53
+"48h","r2_05","Exiting naïve pluripotency",5,"factor, per type",NA,1,-46.8013107657455,53
+"48h","r2_05","Exiting naïve pluripotency",5,"factor, shared loadings",NA,3,-46.5174250935989,53
+"48h","r2_05","Naïve pluripotency",5,"diagonal",0,1,-48.0717055861328,7
+"48h","r2_05","Naïve pluripotency",5,"shrinkage, per type",0,0.84375,-47.8419788858276,7
+"48h","r2_05","Naïve pluripotency",5,"shrinkage, common",0,0.6875,-47.6881838091565,7
+"48h","r2_05","Naïve pluripotency",5,"two-parameter, per type",0.75,0.53125,-47.5423696506099,7
+"48h","r2_05","Naïve pluripotency",5,"two-parameter, common",0.75,0.3125,-47.3361459622166,7
+"48h","r2_05","Naïve pluripotency",5,"factor, per type",NA,0,-48.0717055861328,7
+"48h","r2_05","Naïve pluripotency",5,"factor, shared loadings",NA,3,-47.4504696964431,7
+"48h","welch","Epiblast",1,"diagonal",0,1,-2503.08647348065,2118
+"48h","welch","Epiblast",1,"shrinkage, per type",0,0.5,-2353.56951953458,2118
+"48h","welch","Epiblast",1,"shrinkage, common",0,0.875,-2376.69137514692,2118
+"48h","welch","Epiblast",1,"two-parameter, per type",0.5,0.5,-2353.53575753088,2118
+"48h","welch","Epiblast",1,"two-parameter, common",0.75,0.65625,-2358.67349255834,2118
+"48h","welch","Epiblast",1,"factor, per type",NA,30,-2331.56329644086,2118
+"48h","welch","Epiblast",1,"factor, shared loadings",NA,20,-2333.63477429731,2118
+"48h","welch","Exiting naïve pluripotency",1,"diagonal",0,1,-2567.14168160393,53
+"48h","welch","Exiting naïve pluripotency",1,"shrinkage, per type",0,0.9,-2436.92140825731,53
+"48h","welch","Exiting naïve pluripotency",1,"shrinkage, common",0,0.875,-2437.34787902248,53
+"48h","welch","Exiting naïve pluripotency",1,"two-parameter, per type",0.75,0.65625,-2406.63922063704,53
+"48h","welch","Exiting naïve pluripotency",1,"two-parameter, common",0.75,0.65625,-2406.63922063704,53
+"48h","welch","Exiting naïve pluripotency",1,"factor, per type",NA,5,-2426.09132097232,53
+"48h","welch","Exiting naïve pluripotency",1,"factor, shared loadings",NA,20,-2395.49627936885,53
+"48h","welch","Naïve pluripotency",1,"diagonal",0,1,-2634.01494557861,8
+"48h","welch","Naïve pluripotency",1,"shrinkage, per type",0,0.9375,-2527.64727856499,8
+"48h","welch","Naïve pluripotency",1,"shrinkage, common",0,0.875,-2548.00327331099,8
+"48h","welch","Naïve pluripotency",1,"two-parameter, per type",0.75,0.78125,-2464.85120909894,8
+"48h","welch","Naïve pluripotency",1,"two-parameter, common",0.75,0.65625,-2478.57705938482,8
+"48h","welch","Naïve pluripotency",1,"factor, per type",NA,1,-2551.03037078728,8
+"48h","welch","Naïve pluripotency",1,"factor, shared loadings",NA,20,-2466.62146444633,8
+"48h","welch","Epiblast",2,"diagonal",0,1,-2506.188370689,2118
+"48h","welch","Epiblast",2,"shrinkage, per type",0,0.5,-2360.78812898488,2118
+"48h","welch","Epiblast",2,"shrinkage, common",0,0.875,-2383.55865807223,2118
+"48h","welch","Epiblast",2,"two-parameter, per type",0.5,0.5,-2360.73614655429,2118
+"48h","welch","Epiblast",2,"two-parameter, common",0.75,0.65625,-2365.61639818751,2118
+"48h","welch","Epiblast",2,"factor, per type",NA,30,-2339.53989253199,2118
+"48h","welch","Epiblast",2,"factor, shared loadings",NA,20,-2341.50590094324,2118
+"48h","welch","Exiting naïve pluripotency",2,"diagonal",0,1,-2463.07654753031,53
+"48h","welch","Exiting naïve pluripotency",2,"shrinkage, per type",0,0.9,-2358.27765865967,53
+"48h","welch","Exiting naïve pluripotency",2,"shrinkage, common",0,0.875,-2357.53603072686,53
+"48h","welch","Exiting naïve pluripotency",2,"two-parameter, per type",0.75,0.65625,-2329.04429930572,53
+"48h","welch","Exiting naïve pluripotency",2,"two-parameter, common",0.75,0.65625,-2329.04429930572,53
+"48h","welch","Exiting naïve pluripotency",2,"factor, per type",NA,5,-2334.17236560277,53
+"48h","welch","Exiting naïve pluripotency",2,"factor, shared loadings",NA,20,-2305.91855941393,53
+"48h","welch","Naïve pluripotency",2,"diagonal",0,1,-2187.60781772446,7
+"48h","welch","Naïve pluripotency",2,"shrinkage, per type",0,0.9375,-2147.15467000541,7
+"48h","welch","Naïve pluripotency",2,"shrinkage, common",0,0.875,-2141.09032061187,7
+"48h","welch","Naïve pluripotency",2,"two-parameter, per type",0.75,0.75,-2126.07231710537,7
+"48h","welch","Naïve pluripotency",2,"two-parameter, common",0.75,0.65625,-2121.55228608537,7
+"48h","welch","Naïve pluripotency",2,"factor, per type",NA,1,-2120.55218114068,7
+"48h","welch","Naïve pluripotency",2,"factor, shared loadings",NA,20,-2104.35230525926,7
+"48h","welch","Epiblast",3,"diagonal",0,1,-2508.98528183892,2118
+"48h","welch","Epiblast",3,"shrinkage, per type",0,0.5,-2362.1962338104,2118
+"48h","welch","Epiblast",3,"shrinkage, common",0,0.875,-2384.16721033251,2118
+"48h","welch","Epiblast",3,"two-parameter, per type",0.5,0.5,-2362.1681809077,2118
+"48h","welch","Epiblast",3,"two-parameter, common",0.75,0.65625,-2366.73431450338,2118
+"48h","welch","Epiblast",3,"factor, per type",NA,30,-2341.51901326797,2118
+"48h","welch","Epiblast",3,"factor, shared loadings",NA,20,-2343.40196788561,2118
+"48h","welch","Exiting naïve pluripotency",3,"diagonal",0,1,-2438.91323510703,53
+"48h","welch","Exiting naïve pluripotency",3,"shrinkage, per type",0,0.9,-2365.18654655514,53
+"48h","welch","Exiting naïve pluripotency",3,"shrinkage, common",0,0.875,-2364.97168291875,53
+"48h","welch","Exiting naïve pluripotency",3,"two-parameter, per type",0.75,0.625,-2341.54398140212,53
+"48h","welch","Exiting naïve pluripotency",3,"two-parameter, common",0.75,0.65625,-2341.95454655972,53
+"48h","welch","Exiting naïve pluripotency",3,"factor, per type",NA,5,-2341.99179755479,53
+"48h","welch","Exiting naïve pluripotency",3,"factor, shared loadings",NA,20,-2320.86729143845,53
+"48h","welch","Naïve pluripotency",3,"diagonal",0,1,-2398.6217350472,7
+"48h","welch","Naïve pluripotency",3,"shrinkage, per type",0,0.9375,-2313.36535914767,7
+"48h","welch","Naïve pluripotency",3,"shrinkage, common",0,0.875,-2318.74465855085,7
+"48h","welch","Naïve pluripotency",3,"two-parameter, per type",0.75,0.78125,-2254.8211226741,7
+"48h","welch","Naïve pluripotency",3,"two-parameter, common",0.75,0.65625,-2256.3073800029,7
+"48h","welch","Naïve pluripotency",3,"factor, per type",NA,1,-2336.93283738261,7
+"48h","welch","Naïve pluripotency",3,"factor, shared loadings",NA,20,-2249.48732036745,7
+"48h","welch","Epiblast",4,"diagonal",0,1,-2509.94059710756,2118
+"48h","welch","Epiblast",4,"shrinkage, per type",0,0.5,-2361.7036826475,2118
+"48h","welch","Epiblast",4,"shrinkage, common",0,0.875,-2384.04113111169,2118
+"48h","welch","Epiblast",4,"two-parameter, per type",0.5,0.5,-2361.65996112471,2118
+"48h","welch","Epiblast",4,"two-parameter, common",0.75,0.65625,-2366.32601713917,2118
+"48h","welch","Epiblast",4,"factor, per type",NA,30,-2341.16941686667,2118
+"48h","welch","Epiblast",4,"factor, shared loadings",NA,20,-2342.98158366768,2118
+"48h","welch","Exiting naïve pluripotency",4,"diagonal",0,1,-2496.05721320301,53
+"48h","welch","Exiting naïve pluripotency",4,"shrinkage, per type",0,0.9,-2405.58040496269,53
+"48h","welch","Exiting naïve pluripotency",4,"shrinkage, common",0,0.875,-2405.81973176451,53
+"48h","welch","Exiting naïve pluripotency",4,"two-parameter, per type",0.75,0.65625,-2381.16039743989,53
+"48h","welch","Exiting naïve pluripotency",4,"two-parameter, common",0.75,0.65625,-2381.16039743989,53
+"48h","welch","Exiting naïve pluripotency",4,"factor, per type",NA,5,-2393.79729028476,53
+"48h","welch","Exiting naïve pluripotency",4,"factor, shared loadings",NA,20,-2366.79551673156,53
+"48h","welch","Naïve pluripotency",4,"diagonal",0,1,-2294.61075897651,7
+"48h","welch","Naïve pluripotency",4,"shrinkage, per type",0,0.9375,-2262.33352761595,7
+"48h","welch","Naïve pluripotency",4,"shrinkage, common",0,0.875,-2265.99079491626,7
+"48h","welch","Naïve pluripotency",4,"two-parameter, per type",0.75,0.75,-2238.09918446893,7
+"48h","welch","Naïve pluripotency",4,"two-parameter, common",0.75,0.65625,-2238.05010305926,7
+"48h","welch","Naïve pluripotency",4,"factor, per type",NA,1,-2256.32360963084,7
+"48h","welch","Naïve pluripotency",4,"factor, shared loadings",NA,20,-2229.91065481125,7
+"48h","welch","Epiblast",5,"diagonal",0,1,-2518.5261118756,2118
+"48h","welch","Epiblast",5,"shrinkage, per type",0,0.5,-2364.39455398542,2118
+"48h","welch","Epiblast",5,"shrinkage, common",0,0.875,-2386.33271997533,2118
+"48h","welch","Epiblast",5,"two-parameter, per type",0.5,0.5,-2364.32457252631,2118
+"48h","welch","Epiblast",5,"two-parameter, common",0.75,0.65625,-2368.75848220483,2118
+"48h","welch","Epiblast",5,"factor, per type",NA,30,-2344.23146171315,2118
+"48h","welch","Epiblast",5,"factor, shared loadings",NA,20,-2346.0580564869,2118
+"48h","welch","Exiting naïve pluripotency",5,"diagonal",0,1,-2486.26368087549,53
+"48h","welch","Exiting naïve pluripotency",5,"shrinkage, per type",0,0.9,-2404.51906239382,53
+"48h","welch","Exiting naïve pluripotency",5,"shrinkage, common",0,0.875,-2405.1747979919,53
+"48h","welch","Exiting naïve pluripotency",5,"two-parameter, per type",0.75,0.65625,-2379.16878505263,53
+"48h","welch","Exiting naïve pluripotency",5,"two-parameter, common",0.75,0.65625,-2379.16878505263,53
+"48h","welch","Exiting naïve pluripotency",5,"factor, per type",NA,5,-2389.76219448125,53
+"48h","welch","Exiting naïve pluripotency",5,"factor, shared loadings",NA,20,-2360.35709957267,53
+"48h","welch","Naïve pluripotency",5,"diagonal",0,1,-2276.16676416104,7
+"48h","welch","Naïve pluripotency",5,"shrinkage, per type",0,0.9375,-2261.11228755281,7
+"48h","welch","Naïve pluripotency",5,"shrinkage, common",0,0.875,-2265.81790503886,7
+"48h","welch","Naïve pluripotency",5,"two-parameter, per type",0.75,0.75,-2249.64031218567,7
+"48h","welch","Naïve pluripotency",5,"two-parameter, common",0.75,0.65625,-2252.35709212436,7
+"48h","welch","Naïve pluripotency",5,"factor, per type",NA,1,-2263.2815565034,7
+"48h","welch","Naïve pluripotency",5,"factor, shared loadings",NA,20,-2249.18911839877,7
+"72h","r2_01","Ectopic pluripotency",1,"diagonal",0,1,-1551.68565692334,54
+"72h","r2_01","Ectopic pluripotency",1,"shrinkage, per type",0,0.875,-1508.94883161654,54
+"72h","r2_01","Ectopic pluripotency",1,"shrinkage, common",0,0.875,-1508.94883161654,54
+"72h","r2_01","Ectopic pluripotency",1,"two-parameter, per type",0.75,0.6875,-1498.5557924404,54
+"72h","r2_01","Ectopic pluripotency",1,"two-parameter, common",0.75,0.71875,-1498.74557039659,54
+"72h","r2_01","Ectopic pluripotency",1,"factor, per type",NA,5,-1499.51268450975,54
+"72h","r2_01","Ectopic pluripotency",1,"factor, shared loadings",NA,20,-1490.56568130951,54
+"72h","r2_01","Naïve pluripotency",1,"diagonal",0,1,-1683.80236867039,14
+"72h","r2_01","Naïve pluripotency",1,"shrinkage, per type",0,0.9375,-1602.4464261321,14
+"72h","r2_01","Naïve pluripotency",1,"shrinkage, common",0,0.875,-1610.69303563698,14
+"72h","r2_01","Naïve pluripotency",1,"two-parameter, per type",0.75,0.78125,-1572.73938578775,14
+"72h","r2_01","Naïve pluripotency",1,"two-parameter, common",0.75,0.71875,-1574.56464779216,14
+"72h","r2_01","Naïve pluripotency",1,"factor, per type",NA,1,-1614.93430625984,14
+"72h","r2_01","Naïve pluripotency",1,"factor, shared loadings",NA,20,-1578.29843120221,14
+"72h","r2_01","Primitive streak",1,"diagonal",0,1,-1398.17959274856,856
+"72h","r2_01","Primitive streak",1,"shrinkage, per type",0,0.625,-1329.57500996574,856
+"72h","r2_01","Primitive streak",1,"shrinkage, common",0,0.875,-1338.1942623042,856
+"72h","r2_01","Primitive streak",1,"two-parameter, per type",0.5,0.625,-1329.3114503179,856
+"72h","r2_01","Primitive streak",1,"two-parameter, common",0.75,0.71875,-1331.00311769517,856
+"72h","r2_01","Primitive streak",1,"factor, per type",NA,20,-1316.29759499556,856
+"72h","r2_01","Primitive streak",1,"factor, shared loadings",NA,20,-1316.22820537066,856
+"72h","r2_01","Ectopic pluripotency",2,"diagonal",0,1,-1548.13663361605,53
+"72h","r2_01","Ectopic pluripotency",2,"shrinkage, per type",0,0.875,-1500.80623617524,53
+"72h","r2_01","Ectopic pluripotency",2,"shrinkage, common",0,0.875,-1500.80623617524,53
+"72h","r2_01","Ectopic pluripotency",2,"two-parameter, per type",0.75,0.6875,-1490.50710870913,53
+"72h","r2_01","Ectopic pluripotency",2,"two-parameter, common",0.75,0.6875,-1490.50710870913,53
+"72h","r2_01","Ectopic pluripotency",2,"factor, per type",NA,5,-1490.78669395033,53
+"72h","r2_01","Ectopic pluripotency",2,"factor, shared loadings",NA,20,-1482.55262793696,53
+"72h","r2_01","Naïve pluripotency",2,"diagonal",0,1,-1457.07561072797,13
+"72h","r2_01","Naïve pluripotency",2,"shrinkage, per type",0,0.9375,-1418.60967134112,13
+"72h","r2_01","Naïve pluripotency",2,"shrinkage, common",0,0.875,-1417.27461764597,13
+"72h","r2_01","Naïve pluripotency",2,"two-parameter, per type",0.75,0.75,-1405.90054669225,13
+"72h","r2_01","Naïve pluripotency",2,"two-parameter, common",0.75,0.6875,-1404.99299363945,13
+"72h","r2_01","Naïve pluripotency",2,"factor, per type",NA,1,-1404.49407180845,13
+"72h","r2_01","Naïve pluripotency",2,"factor, shared loadings",NA,20,-1387.29818719688,13
+"72h","r2_01","Primitive streak",2,"diagonal",0,1,-1403.25511054085,856
+"72h","r2_01","Primitive streak",2,"shrinkage, per type",0,0.625,-1332.77844833739,856
+"72h","r2_01","Primitive streak",2,"shrinkage, common",0,0.875,-1341.43562995532,856
+"72h","r2_01","Primitive streak",2,"two-parameter, per type",0.5,0.625,-1332.54651782354,856
+"72h","r2_01","Primitive streak",2,"two-parameter, common",0.75,0.6875,-1333.55593229884,856
+"72h","r2_01","Primitive streak",2,"factor, per type",NA,20,-1319.72644726114,856
+"72h","r2_01","Primitive streak",2,"factor, shared loadings",NA,20,-1319.61006261384,856
+"72h","r2_01","Ectopic pluripotency",3,"diagonal",0,1,-1551.69870471477,53
+"72h","r2_01","Ectopic pluripotency",3,"shrinkage, per type",0,0.875,-1506.74756808339,53
+"72h","r2_01","Ectopic pluripotency",3,"shrinkage, common",0,0.875,-1506.74756808339,53
+"72h","r2_01","Ectopic pluripotency",3,"two-parameter, per type",0.75,0.6875,-1495.58018142281,53
+"72h","r2_01","Ectopic pluripotency",3,"two-parameter, common",0.75,0.6875,-1495.58018142281,53
+"72h","r2_01","Ectopic pluripotency",3,"factor, per type",NA,5,-1497.42729751471,53
+"72h","r2_01","Ectopic pluripotency",3,"factor, shared loadings",NA,20,-1487.19687941259,53
+"72h","r2_01","Naïve pluripotency",3,"diagonal",0,1,-1475.73985745101,13
+"72h","r2_01","Naïve pluripotency",3,"shrinkage, per type",0,0.90625,-1432.79420563629,13
+"72h","r2_01","Naïve pluripotency",3,"shrinkage, common",0,0.875,-1433.20614529037,13
+"72h","r2_01","Naïve pluripotency",3,"two-parameter, per type",0.75,0.78125,-1419.05521605676,13
+"72h","r2_01","Naïve pluripotency",3,"two-parameter, common",0.75,0.6875,-1417.96594224497,13
+"72h","r2_01","Naïve pluripotency",3,"factor, per type",NA,1,-1417.52538691013,13
+"72h","r2_01","Naïve pluripotency",3,"factor, shared loadings",NA,20,-1400.22798189315,13
+"72h","r2_01","Primitive streak",3,"diagonal",0,1,-1403.32738237829,856
+"72h","r2_01","Primitive streak",3,"shrinkage, per type",0,0.625,-1336.03922323249,856
+"72h","r2_01","Primitive streak",3,"shrinkage, common",0,0.875,-1344.01816946851,856
+"72h","r2_01","Primitive streak",3,"two-parameter, per type",0.5,0.625,-1335.59890696502,856
+"72h","r2_01","Primitive streak",3,"two-parameter, common",0.75,0.6875,-1336.40650829269,856
+"72h","r2_01","Primitive streak",3,"factor, per type",NA,20,-1323.66779334399,856
+"72h","r2_01","Primitive streak",3,"factor, shared loadings",NA,20,-1323.55401201301,856
+"72h","r2_01","Ectopic pluripotency",4,"diagonal",0,1,-1537.78405203757,53
+"72h","r2_01","Ectopic pluripotency",4,"shrinkage, per type",0,0.875,-1491.74367579108,53
+"72h","r2_01","Ectopic pluripotency",4,"shrinkage, common",0,0.875,-1491.74367579108,53
+"72h","r2_01","Ectopic pluripotency",4,"two-parameter, per type",0.75,0.6875,-1479.9896163648,53
+"72h","r2_01","Ectopic pluripotency",4,"two-parameter, common",0.75,0.6875,-1479.9896163648,53
+"72h","r2_01","Ectopic pluripotency",4,"factor, per type",NA,3,-1480.33617123461,53
+"72h","r2_01","Ectopic pluripotency",4,"factor, shared loadings",NA,20,-1469.82607095794,53
+"72h","r2_01","Naïve pluripotency",4,"diagonal",0,1,-1522.28249667098,13
+"72h","r2_01","Naïve pluripotency",4,"shrinkage, per type",0,0.90625,-1472.20615851385,13
+"72h","r2_01","Naïve pluripotency",4,"shrinkage, common",0,0.875,-1473.77144930397,13
+"72h","r2_01","Naïve pluripotency",4,"two-parameter, per type",0.75,0.75,-1453.82782098501,13
+"72h","r2_01","Naïve pluripotency",4,"two-parameter, common",0.75,0.6875,-1453.89818353721,13
+"72h","r2_01","Naïve pluripotency",4,"factor, per type",NA,1,-1461.5397823697,13
+"72h","r2_01","Naïve pluripotency",4,"factor, shared loadings",NA,20,-1439.83329112856,13
+"72h","r2_01","Primitive streak",4,"diagonal",0,1,-1405.12027078763,856
+"72h","r2_01","Primitive streak",4,"shrinkage, per type",0,0.625,-1336.52599648806,856
+"72h","r2_01","Primitive streak",4,"shrinkage, common",0,0.875,-1344.95582877794,856
+"72h","r2_01","Primitive streak",4,"two-parameter, per type",0.5,0.625,-1336.27714832125,856
+"72h","r2_01","Primitive streak",4,"two-parameter, common",0.75,0.6875,-1337.21755071273,856
+"72h","r2_01","Primitive streak",4,"factor, per type",NA,20,-1323.82867965274,856
+"72h","r2_01","Primitive streak",4,"factor, shared loadings",NA,20,-1323.68654489166,856
+"72h","r2_01","Ectopic pluripotency",5,"diagonal",0,1,-1620.64395618769,53
+"72h","r2_01","Ectopic pluripotency",5,"shrinkage, per type",0,0.9,-1566.69958185438,53
+"72h","r2_01","Ectopic pluripotency",5,"shrinkage, common",0,0.875,-1566.87813695568,53
+"72h","r2_01","Ectopic pluripotency",5,"two-parameter, per type",0.75,0.6875,-1554.62760691351,53
+"72h","r2_01","Ectopic pluripotency",5,"two-parameter, common",0.75,0.6875,-1554.62760691351,53
+"72h","r2_01","Ectopic pluripotency",5,"factor, per type",NA,5,-1567.04393832375,53
+"72h","r2_01","Ectopic pluripotency",5,"factor, shared loadings",NA,20,-1552.13028066564,53
+"72h","r2_01","Naïve pluripotency",5,"diagonal",0,1,-1490.34093972229,13
+"72h","r2_01","Naïve pluripotency",5,"shrinkage, per type",0,0.9375,-1440.7751442704,13
+"72h","r2_01","Naïve pluripotency",5,"shrinkage, common",0,0.875,-1440.42126475364,13
+"72h","r2_01","Naïve pluripotency",5,"two-parameter, per type",0.75,0.75,-1427.56349296971,13
+"72h","r2_01","Naïve pluripotency",5,"two-parameter, common",0.75,0.6875,-1427.39026398998,13
+"72h","r2_01","Naïve pluripotency",5,"factor, per type",NA,1,-1435.72929368628,13
+"72h","r2_01","Naïve pluripotency",5,"factor, shared loadings",NA,20,-1418.64219834321,13
+"72h","r2_01","Primitive streak",5,"diagonal",0,1,-1376.99310867573,855
+"72h","r2_01","Primitive streak",5,"shrinkage, per type",0,0.625,-1321.96422235401,855
+"72h","r2_01","Primitive streak",5,"shrinkage, common",0,0.875,-1330.30996585443,855
+"72h","r2_01","Primitive streak",5,"two-parameter, per type",0.5,0.625,-1321.78239637839,855
+"72h","r2_01","Primitive streak",5,"two-parameter, common",0.75,0.6875,-1322.90486535837,855
+"72h","r2_01","Primitive streak",5,"factor, per type",NA,20,-1307.17487484662,855
+"72h","r2_01","Primitive streak",5,"factor, shared loadings",NA,20,-1307.12337179549,855
+"72h","r2_05","Ectopic pluripotency",1,"diagonal",0,1,-289.726306849356,54
+"72h","r2_05","Ectopic pluripotency",1,"shrinkage, per type",0,0.71875,-283.873344309071,54
+"72h","r2_05","Ectopic pluripotency",1,"shrinkage, common",0,0.78125,-284.092719511737,54
+"72h","r2_05","Ectopic pluripotency",1,"two-parameter, per type",0.75,0.40625,-282.277637922577,54
+"72h","r2_05","Ectopic pluripotency",1,"two-parameter, common",0.75,0.46875,-282.335477650819,54
+"72h","r2_05","Ectopic pluripotency",1,"factor, per type",NA,3,-282.657707703104,54
+"72h","r2_05","Ectopic pluripotency",1,"factor, shared loadings",NA,12,-282.349866219556,54
+"72h","r2_05","Naïve pluripotency",1,"diagonal",0,1,-338.56811349308,14
+"72h","r2_05","Naïve pluripotency",1,"shrinkage, per type",0,0.84375,-325.121479772612,14
+"72h","r2_05","Naïve pluripotency",1,"shrinkage, common",0,0.78125,-325.912431818363,14
+"72h","r2_05","Naïve pluripotency",1,"two-parameter, per type",0.75,0.5625,-320.199150255311,14
+"72h","r2_05","Naïve pluripotency",1,"two-parameter, common",0.75,0.46875,-320.695001727052,14
+"72h","r2_05","Naïve pluripotency",1,"factor, per type",NA,1,-327.853128693844,14
+"72h","r2_05","Naïve pluripotency",1,"factor, shared loadings",NA,12,-323.133795544613,14
+"72h","r2_05","Primitive streak",1,"diagonal",0,1,-201.898727339133,856
+"72h","r2_05","Primitive streak",1,"shrinkage, per type",0,0.28125,-192.4356989355,856
+"72h","r2_05","Primitive streak",1,"shrinkage, common",0,0.78125,-194.899652871784,856
+"72h","r2_05","Primitive streak",1,"two-parameter, per type",0.25,0.28125,-192.387220411221,856
+"72h","r2_05","Primitive streak",1,"two-parameter, common",0.75,0.46875,-192.993566892187,856
+"72h","r2_05","Primitive streak",1,"factor, per type",NA,12,-191.674272470339,856
+"72h","r2_05","Primitive streak",1,"factor, shared loadings",NA,12,-191.625384861273,856
+"72h","r2_05","Ectopic pluripotency",2,"diagonal",0,1,-298.017135407097,53
+"72h","r2_05","Ectopic pluripotency",2,"shrinkage, per type",0,0.71875,-288.9182520576,53
+"72h","r2_05","Ectopic pluripotency",2,"shrinkage, common",0,0.75,-289.084705862307,53
+"72h","r2_05","Ectopic pluripotency",2,"two-parameter, per type",0.75,0.4375,-286.960151992363,53
+"72h","r2_05","Ectopic pluripotency",2,"two-parameter, common",0.75,0.46875,-287.017964836842,53
+"72h","r2_05","Ectopic pluripotency",2,"factor, per type",NA,3,-287.859853345406,53
+"72h","r2_05","Ectopic pluripotency",2,"factor, shared loadings",NA,12,-287.667867132727,53
+"72h","r2_05","Naïve pluripotency",2,"diagonal",0,1,-298.026756090677,13
+"72h","r2_05","Naïve pluripotency",2,"shrinkage, per type",0,0.84375,-291.922888356096,13
+"72h","r2_05","Naïve pluripotency",2,"shrinkage, common",0,0.75,-292.112305618399,13
+"72h","r2_05","Naïve pluripotency",2,"two-parameter, per type",0.75,0.53125,-289.750355220315,13
+"72h","r2_05","Naïve pluripotency",2,"two-parameter, common",0.75,0.46875,-289.659344052384,13
+"72h","r2_05","Naïve pluripotency",2,"factor, per type",NA,1,-291.111771539797,13
+"72h","r2_05","Naïve pluripotency",2,"factor, shared loadings",NA,12,-288.732072109725,13
+"72h","r2_05","Primitive streak",2,"diagonal",0,1,-203.599437914798,856
+"72h","r2_05","Primitive streak",2,"shrinkage, per type",0,0.28125,-193.946497189459,856
+"72h","r2_05","Primitive streak",2,"shrinkage, common",0,0.75,-195.995441945745,856
+"72h","r2_05","Primitive streak",2,"two-parameter, per type",0.25,0.28125,-193.898568007008,856
+"72h","r2_05","Primitive streak",2,"two-parameter, common",0.75,0.46875,-194.478597724957,856
+"72h","r2_05","Primitive streak",2,"factor, per type",NA,12,-193.342138954572,856
+"72h","r2_05","Primitive streak",2,"factor, shared loadings",NA,12,-193.336960294106,856
+"72h","r2_05","Ectopic pluripotency",3,"diagonal",0,1,-297.695305367803,53
+"72h","r2_05","Ectopic pluripotency",3,"shrinkage, per type",0,0.71875,-290.55763570517,53
+"72h","r2_05","Ectopic pluripotency",3,"shrinkage, common",0,0.75,-290.632492825195,53
+"72h","r2_05","Ectopic pluripotency",3,"two-parameter, per type",0.75,0.4375,-288.517073152192,53
+"72h","r2_05","Ectopic pluripotency",3,"two-parameter, common",0.75,0.46875,-288.547402347364,53
+"72h","r2_05","Ectopic pluripotency",3,"factor, per type",NA,5,-290.376437161841,53
+"72h","r2_05","Ectopic pluripotency",3,"factor, shared loadings",NA,12,-289.359181053156,53
+"72h","r2_05","Naïve pluripotency",3,"diagonal",0,1,-292.095682798831,13
+"72h","r2_05","Naïve pluripotency",3,"shrinkage, per type",0,0.8125,-286.926908982036,13
+"72h","r2_05","Naïve pluripotency",3,"shrinkage, common",0,0.75,-287.053843130468,13
+"72h","r2_05","Naïve pluripotency",3,"two-parameter, per type",0.75,0.5625,-283.8524396488,13
+"72h","r2_05","Naïve pluripotency",3,"two-parameter, common",0.75,0.46875,-283.495956994269,13
+"72h","r2_05","Naïve pluripotency",3,"factor, per type",NA,2,-283.616769687826,13
+"72h","r2_05","Naïve pluripotency",3,"factor, shared loadings",NA,12,-280.5471224876,13
+"72h","r2_05","Primitive streak",3,"diagonal",0,1,-203.94913585611,856
+"72h","r2_05","Primitive streak",3,"shrinkage, per type",0,0.28125,-194.439794559271,856
+"72h","r2_05","Primitive streak",3,"shrinkage, common",0,0.75,-196.377556375426,856
+"72h","r2_05","Primitive streak",3,"two-parameter, per type",0.25,0.28125,-194.359509425256,856
+"72h","r2_05","Primitive streak",3,"two-parameter, common",0.75,0.46875,-194.850206423299,856
+"72h","r2_05","Primitive streak",3,"factor, per type",NA,12,-193.832604854362,856
+"72h","r2_05","Primitive streak",3,"factor, shared loadings",NA,12,-193.811493285751,856
+"72h","r2_05","Ectopic pluripotency",4,"diagonal",0,1,-292.172400210488,53
+"72h","r2_05","Ectopic pluripotency",4,"shrinkage, per type",0,0.71875,-285.323971482805,53
+"72h","r2_05","Ectopic pluripotency",4,"shrinkage, common",0,0.75,-285.412156999999,53
+"72h","r2_05","Ectopic pluripotency",4,"two-parameter, per type",0.75,0.40625,-283.009393703257,53
+"72h","r2_05","Ectopic pluripotency",4,"two-parameter, common",0.75,0.4375,-283.047978221161,53
+"72h","r2_05","Ectopic pluripotency",4,"factor, per type",NA,5,-283.820939196109,53
+"72h","r2_05","Ectopic pluripotency",4,"factor, shared loadings",NA,12,-282.524807148961,53
+"72h","r2_05","Naïve pluripotency",4,"diagonal",0,1,-294.626084451063,13
+"72h","r2_05","Naïve pluripotency",4,"shrinkage, per type",0,0.84375,-287.964536450982,13
+"72h","r2_05","Naïve pluripotency",4,"shrinkage, common",0,0.75,-287.736361279877,13
+"72h","r2_05","Naïve pluripotency",4,"two-parameter, per type",0.75,0.53125,-285.644933171165,13
+"72h","r2_05","Naïve pluripotency",4,"two-parameter, common",0.75,0.4375,-285.579251950199,13
+"72h","r2_05","Naïve pluripotency",4,"factor, per type",NA,2,-286.820505908258,13
+"72h","r2_05","Naïve pluripotency",4,"factor, shared loadings",NA,12,-284.861525736736,13
+"72h","r2_05","Primitive streak",4,"diagonal",0,1,-203.735496696278,856
+"72h","r2_05","Primitive streak",4,"shrinkage, per type",0,0.28125,-194.368912096865,856
+"72h","r2_05","Primitive streak",4,"shrinkage, common",0,0.75,-196.387428180713,856
+"72h","r2_05","Primitive streak",4,"two-parameter, per type",0.25,0.28125,-194.345072647127,856
+"72h","r2_05","Primitive streak",4,"two-parameter, common",0.75,0.4375,-194.864401069394,856
+"72h","r2_05","Primitive streak",4,"factor, per type",NA,12,-193.650580645052,856
+"72h","r2_05","Primitive streak",4,"factor, shared loadings",NA,12,-193.649089402325,856
+"72h","r2_05","Ectopic pluripotency",5,"diagonal",0,1,-297.385759069284,53
+"72h","r2_05","Ectopic pluripotency",5,"shrinkage, per type",0,0.71875,-291.189874201068,53
+"72h","r2_05","Ectopic pluripotency",5,"shrinkage, common",0,0.75,-291.196895955768,53
+"72h","r2_05","Ectopic pluripotency",5,"two-parameter, per type",0.75,0.40625,-289.709389822135,53
+"72h","r2_05","Ectopic pluripotency",5,"two-parameter, common",0.75,0.4375,-289.673723924195,53
+"72h","r2_05","Ectopic pluripotency",5,"factor, per type",NA,3,-291.366669859559,53
+"72h","r2_05","Ectopic pluripotency",5,"factor, shared loadings",NA,12,-290.775031326123,53
+"72h","r2_05","Naïve pluripotency",5,"diagonal",0,1,-305.717808221818,13
+"72h","r2_05","Naïve pluripotency",5,"shrinkage, per type",0,0.84375,-296.554616525158,13
+"72h","r2_05","Naïve pluripotency",5,"shrinkage, common",0,0.75,-296.749927856874,13
+"72h","r2_05","Naïve pluripotency",5,"two-parameter, per type",0.75,0.5,-294.201966546756,13
+"72h","r2_05","Naïve pluripotency",5,"two-parameter, common",0.75,0.4375,-294.279670009177,13
+"72h","r2_05","Naïve pluripotency",5,"factor, per type",NA,2,-295.390835957566,13
+"72h","r2_05","Naïve pluripotency",5,"factor, shared loadings",NA,12,-294.182642518627,13
+"72h","r2_05","Primitive streak",5,"diagonal",0,1,-199.258916564238,855
+"72h","r2_05","Primitive streak",5,"shrinkage, per type",0,0.28125,-191.339054853037,855
+"72h","r2_05","Primitive streak",5,"shrinkage, common",0,0.75,-193.190275414569,855
+"72h","r2_05","Primitive streak",5,"two-parameter, per type",0.25,0.25,-191.295966705242,855
+"72h","r2_05","Primitive streak",5,"two-parameter, common",0.75,0.4375,-191.806111842216,855
+"72h","r2_05","Primitive streak",5,"factor, per type",NA,12,-190.570669737477,855
+"72h","r2_05","Primitive streak",5,"factor, shared loadings",NA,12,-190.566205421807,855
+"72h","welch","Ectopic pluripotency",1,"diagonal",0,1,-5283.06918942961,54
+"72h","welch","Ectopic pluripotency",1,"shrinkage, per type",0,0.9375,-5152.10255628411,54
+"72h","welch","Ectopic pluripotency",1,"shrinkage, common",0,0.9375,-5152.10255628411,54
+"72h","welch","Ectopic pluripotency",1,"two-parameter, per type",0.75,0.84375,-5124.30561254631,54
+"72h","welch","Ectopic pluripotency",1,"two-parameter, common",0.75,0.84375,-5124.30561254631,54
+"72h","welch","Ectopic pluripotency",1,"factor, per type",NA,5,-5126.97023130361,54
+"72h","welch","Ectopic pluripotency",1,"factor, shared loadings",NA,20,-5085.41220586109,54
+"72h","welch","Naïve pluripotency",1,"diagonal",0,1,-5617.42738378555,14
+"72h","welch","Naïve pluripotency",1,"shrinkage, per type",0,0.96875,-5319.09014548696,14
+"72h","welch","Naïve pluripotency",1,"shrinkage, common",0,0.9375,-5330.56765650097,14
+"72h","welch","Naïve pluripotency",1,"two-parameter, per type",0.75,0.875,-5211.93943233595,14
+"72h","welch","Naïve pluripotency",1,"two-parameter, common",0.75,0.84375,-5216.48315732114,14
+"72h","welch","Naïve pluripotency",1,"factor, per type",NA,1,-5370.166274538,14
+"72h","welch","Naïve pluripotency",1,"factor, shared loadings",NA,20,-5226.90324479453,14
+"72h","welch","Primitive streak",1,"diagonal",0,1,-5073.01209490305,856
+"72h","welch","Primitive streak",1,"shrinkage, per type",0,0.84375,-4862.0668267425,856
+"72h","welch","Primitive streak",1,"shrinkage, common",0,0.9375,-4876.0321120484,856
+"72h","welch","Primitive streak",1,"two-parameter, per type",0.5,0.84375,-4861.82977113901,856
+"72h","welch","Primitive streak",1,"two-parameter, common",0.75,0.84375,-4862.04913221291,856
+"72h","welch","Primitive streak",1,"factor, per type",NA,20,-4809.5699225674,856
+"72h","welch","Primitive streak",1,"factor, shared loadings",NA,20,-4809.10191090681,856
+"72h","welch","Ectopic pluripotency",2,"diagonal",0,1,-5275.08627131012,53
+"72h","welch","Ectopic pluripotency",2,"shrinkage, per type",0,0.9375,-5131.29263163011,53
+"72h","welch","Ectopic pluripotency",2,"shrinkage, common",0,0.9375,-5131.29263163011,53
+"72h","welch","Ectopic pluripotency",2,"two-parameter, per type",0.75,0.875,-5102.19872915207,53
+"72h","welch","Ectopic pluripotency",2,"two-parameter, common",0.75,0.84375,-5101.49837095827,53
+"72h","welch","Ectopic pluripotency",2,"factor, per type",NA,5,-5103.36262051153,53
+"72h","welch","Ectopic pluripotency",2,"factor, shared loadings",NA,20,-5061.65843446176,53
+"72h","welch","Naïve pluripotency",2,"diagonal",0,1,-4774.01500568825,13
+"72h","welch","Naïve pluripotency",2,"shrinkage, per type",0,0.9375,-4659.33365015058,13
+"72h","welch","Naïve pluripotency",2,"shrinkage, common",0,0.9375,-4659.33365015058,13
+"72h","welch","Naïve pluripotency",2,"two-parameter, per type",0.75,0.84375,-4625.28484971939,13
+"72h","welch","Naïve pluripotency",2,"two-parameter, common",0.75,0.84375,-4625.28484971939,13
+"72h","welch","Naïve pluripotency",2,"factor, per type",NA,1,-4630.02993837783,13
+"72h","welch","Naïve pluripotency",2,"factor, shared loadings",NA,20,-4562.30894764115,13
+"72h","welch","Primitive streak",2,"diagonal",0,1,-5088.73565469247,856
+"72h","welch","Primitive streak",2,"shrinkage, per type",0,0.84375,-4867.16144805844,856
+"72h","welch","Primitive streak",2,"shrinkage, common",0,0.9375,-4881.60177847479,856
+"72h","welch","Primitive streak",2,"two-parameter, per type",0.5,0.84375,-4866.82397494644,856
+"72h","welch","Primitive streak",2,"two-parameter, common",0.75,0.84375,-4867.01461400486,856
+"72h","welch","Primitive streak",2,"factor, per type",NA,20,-4815.6238657394,856
+"72h","welch","Primitive streak",2,"factor, shared loadings",NA,20,-4814.80940412709,856
+"72h","welch","Ectopic pluripotency",3,"diagonal",0,1,-5260.12649912849,53
+"72h","welch","Ectopic pluripotency",3,"shrinkage, per type",0,0.9375,-5118.34164025788,53
+"72h","welch","Ectopic pluripotency",3,"shrinkage, common",0,0.9375,-5118.34164025788,53
+"72h","welch","Ectopic pluripotency",3,"two-parameter, per type",0.75,0.875,-5089.77878689549,53
+"72h","welch","Ectopic pluripotency",3,"two-parameter, common",0.75,0.84375,-5089.33259496581,53
+"72h","welch","Ectopic pluripotency",3,"factor, per type",NA,5,-5091.07373987696,53
+"72h","welch","Ectopic pluripotency",3,"factor, shared loadings",NA,20,-5051.07321928484,53
+"72h","welch","Naïve pluripotency",3,"diagonal",0,1,-4758.45358874435,13
+"72h","welch","Naïve pluripotency",3,"shrinkage, per type",0,0.9375,-4610.0304612869,13
+"72h","welch","Naïve pluripotency",3,"shrinkage, common",0,0.9375,-4610.0304612869,13
+"72h","welch","Naïve pluripotency",3,"two-parameter, per type",0.75,0.84375,-4570.86013179398,13
+"72h","welch","Naïve pluripotency",3,"two-parameter, common",0.75,0.84375,-4570.86013179398,13
+"72h","welch","Naïve pluripotency",3,"factor, per type",NA,1,-4572.00042765016,13
+"72h","welch","Naïve pluripotency",3,"factor, shared loadings",NA,20,-4507.56268158472,13
+"72h","welch","Primitive streak",3,"diagonal",0,1,-5090.20220657478,856
+"72h","welch","Primitive streak",3,"shrinkage, per type",0,0.84375,-4878.46774710914,856
+"72h","welch","Primitive streak",3,"shrinkage, common",0,0.9375,-4891.77140663096,856
+"72h","welch","Primitive streak",3,"two-parameter, per type",0.5,0.84375,-4877.99460432205,856
+"72h","welch","Primitive streak",3,"two-parameter, common",0.75,0.84375,-4878.13262305393,856
+"72h","welch","Primitive streak",3,"factor, per type",NA,20,-4829.30264456562,856
+"72h","welch","Primitive streak",3,"factor, shared loadings",NA,20,-4828.80495118167,856
+"72h","welch","Ectopic pluripotency",4,"diagonal",0,1,-5230.49697281531,53
+"72h","welch","Ectopic pluripotency",4,"shrinkage, per type",0,0.9375,-5090.56415170848,53
+"72h","welch","Ectopic pluripotency",4,"shrinkage, common",0,0.9375,-5090.56415170848,53
+"72h","welch","Ectopic pluripotency",4,"two-parameter, per type",0.75,0.875,-5061.11052703372,53
+"72h","welch","Ectopic pluripotency",4,"two-parameter, common",0.75,0.84375,-5059.99123265651,53
+"72h","welch","Ectopic pluripotency",4,"factor, per type",NA,5,-5050.309412082,53
+"72h","welch","Ectopic pluripotency",4,"factor, shared loadings",NA,20,-5013.12746486832,53
+"72h","welch","Naïve pluripotency",4,"diagonal",0,1,-4891.30829872491,13
+"72h","welch","Naïve pluripotency",4,"shrinkage, per type",0,0.9375,-4711.78429228568,13
+"72h","welch","Naïve pluripotency",4,"shrinkage, common",0,0.9375,-4711.78429228568,13
+"72h","welch","Naïve pluripotency",4,"two-parameter, per type",0.75,0.84375,-4661.12986412683,13
+"72h","welch","Naïve pluripotency",4,"two-parameter, common",0.75,0.84375,-4661.12986412683,13
+"72h","welch","Naïve pluripotency",4,"factor, per type",NA,1,-4678.22317604798,13
+"72h","welch","Naïve pluripotency",4,"factor, shared loadings",NA,20,-4603.80867830568,13
+"72h","welch","Primitive streak",4,"diagonal",0,1,-5099.12448848046,856
+"72h","welch","Primitive streak",4,"shrinkage, per type",0,0.84375,-4884.35231194401,856
+"72h","welch","Primitive streak",4,"shrinkage, common",0,0.9375,-4898.22678424096,856
+"72h","welch","Primitive streak",4,"two-parameter, per type",0.5,0.84375,-4883.9282205213,856
+"72h","welch","Primitive streak",4,"two-parameter, common",0.75,0.84375,-4884.09362950791,856
+"72h","welch","Primitive streak",4,"factor, per type",NA,20,-4834.98684550962,856
+"72h","welch","Primitive streak",4,"factor, shared loadings",NA,20,-4834.16727171517,856
+"72h","welch","Ectopic pluripotency",5,"diagonal",0,1,-5532.27873636635,53
+"72h","welch","Ectopic pluripotency",5,"shrinkage, per type",0,0.9375,-5371.24011645653,53
+"72h","welch","Ectopic pluripotency",5,"shrinkage, common",0,0.9375,-5371.24011645653,53
+"72h","welch","Ectopic pluripotency",5,"two-parameter, per type",0.75,0.875,-5332.7577698579,53
+"72h","welch","Ectopic pluripotency",5,"two-parameter, common",0.75,0.84375,-5334.4946674428,53
+"72h","welch","Ectopic pluripotency",5,"factor, per type",NA,3,-5373.95852170585,53
+"72h","welch","Ectopic pluripotency",5,"factor, shared loadings",NA,20,-5315.63687113114,53
+"72h","welch","Naïve pluripotency",5,"diagonal",0,1,-4878.20265056405,13
+"72h","welch","Naïve pluripotency",5,"shrinkage, per type",0,0.9375,-4734.98663045486,13
+"72h","welch","Naïve pluripotency",5,"shrinkage, common",0,0.9375,-4734.98663045486,13
+"72h","welch","Naïve pluripotency",5,"two-parameter, per type",0.75,0.84375,-4702.09992892287,13
+"72h","welch","Naïve pluripotency",5,"two-parameter, common",0.75,0.84375,-4702.09992892287,13
+"72h","welch","Naïve pluripotency",5,"factor, per type",NA,1,-4718.77767346729,13
+"72h","welch","Naïve pluripotency",5,"factor, shared loadings",NA,20,-4660.40091929016,13
+"72h","welch","Primitive streak",5,"diagonal",0,1,-4996.1851167695,855
+"72h","welch","Primitive streak",5,"shrinkage, per type",0,0.84375,-4831.44720455961,855
+"72h","welch","Primitive streak",5,"shrinkage, common",0,0.9375,-4844.55615090742,855
+"72h","welch","Primitive streak",5,"two-parameter, per type",0.5,0.84375,-4831.24715021481,855
+"72h","welch","Primitive streak",5,"two-parameter, common",0.75,0.84375,-4831.4539272765,855
+"72h","welch","Primitive streak",5,"factor, per type",NA,20,-4772.88418638726,855
+"72h","welch","Primitive streak",5,"factor, shared loadings",NA,20,-4772.38458592132,855
+"96h","r2_01","Caudal mesoderm",1,"diagonal",0,1,-4821.39895446202,213
+"96h","r2_01","Caudal mesoderm",1,"shrinkage, per type",0,0.875,-4512.1168400146,213
+"96h","r2_01","Caudal mesoderm",1,"shrinkage, common",0,0.90625,-4515.84827573787,213
+"96h","r2_01","Caudal mesoderm",1,"two-parameter, per type",0.75,0.75,-4491.08427872734,213
+"96h","r2_01","Caudal mesoderm",1,"two-parameter, common",0.75,0.78125,-4491.53168010179,213
+"96h","r2_01","Caudal mesoderm",1,"factor, per type",NA,20,-4465.27645665695,213
+"96h","r2_01","Caudal mesoderm",1,"factor, shared loadings",NA,20,-4454.19427973622,213
+"96h","r2_01","Ectopic pluripotency",1,"diagonal",0,1,-5319.86566979565,24
+"96h","r2_01","Ectopic pluripotency",1,"shrinkage, per type",0,0.90625,-5030.20369769636,24
+"96h","r2_01","Ectopic pluripotency",1,"shrinkage, common",0,0.90625,-5030.20369769636,24
+"96h","r2_01","Ectopic pluripotency",1,"two-parameter, per type",0.75,0.78125,-4959.47750048368,24
+"96h","r2_01","Ectopic pluripotency",1,"two-parameter, common",0.75,0.78125,-4959.47750048368,24
+"96h","r2_01","Ectopic pluripotency",1,"factor, per type",NA,3,-5077.81658992167,24
+"96h","r2_01","Ectopic pluripotency",1,"factor, shared loadings",NA,20,-4955.90916612275,24
+"96h","r2_01","Gut",1,"diagonal",0,1,-4425.39607701327,28
+"96h","r2_01","Gut",1,"shrinkage, per type",0,0.9375,-4275.24062331887,28
+"96h","r2_01","Gut",1,"shrinkage, common",0,0.90625,-4275.07891030953,28
+"96h","r2_01","Gut",1,"two-parameter, per type",0.75,0.8125,-4233.02006617681,28
+"96h","r2_01","Gut",1,"two-parameter, common",0.75,0.78125,-4232.57027210383,28
+"96h","r2_01","Gut",1,"factor, per type",NA,1,-4250.81122746155,28
+"96h","r2_01","Gut",1,"factor, shared loadings",NA,20,-4184.01818562778,28
+"96h","r2_01","Pre-somitic mesoderm",1,"diagonal",0,1,-4529.59109844682,718
+"96h","r2_01","Pre-somitic mesoderm",1,"shrinkage, per type",0,0.78125,-4259.99545999292,718
+"96h","r2_01","Pre-somitic mesoderm",1,"shrinkage, common",0,0.90625,-4277.61502081219,718
+"96h","r2_01","Pre-somitic mesoderm",1,"two-parameter, per type",0.5,0.75,-4255.55536218568,718
+"96h","r2_01","Pre-somitic mesoderm",1,"two-parameter, common",0.75,0.78125,-4257.53935168379,718
+"96h","r2_01","Pre-somitic mesoderm",1,"factor, per type",NA,30,-4182.11117006932,718
+"96h","r2_01","Pre-somitic mesoderm",1,"factor, shared loadings",NA,20,-4183.77745587063,718
+"96h","r2_01","Somite differentiation front",1,"diagonal",0,1,-5956.24820294399,6
+"96h","r2_01","Somite differentiation front",1,"shrinkage, per type",0,0.96875,-5426.6334810031,6
+"96h","r2_01","Somite differentiation front",1,"shrinkage, common",0,0.90625,-5459.12279907916,6
+"96h","r2_01","Somite differentiation front",1,"two-parameter, per type",0.75,0.78125,-5128.27706450118,6
+"96h","r2_01","Somite differentiation front",1,"two-parameter, common",0.75,0.78125,-5128.27706450118,6
+"96h","r2_01","Somite differentiation front",1,"factor, per type",NA,1,-5668.85100290477,6
+"96h","r2_01","Somite differentiation front",1,"factor, shared loadings",NA,20,-5139.64650266062,6
+"96h","r2_01","Caudal mesoderm",2,"diagonal",0,1,-4731.65148254105,212
+"96h","r2_01","Caudal mesoderm",2,"shrinkage, per type",0,0.84375,-4494.3896544057,212
+"96h","r2_01","Caudal mesoderm",2,"shrinkage, common",0,0.90625,-4500.41664495073,212
+"96h","r2_01","Caudal mesoderm",2,"two-parameter, per type",0.75,0.75,-4476.19854506087,212
+"96h","r2_01","Caudal mesoderm",2,"two-parameter, common",0.75,0.75,-4476.19854506087,212
+"96h","r2_01","Caudal mesoderm",2,"factor, per type",NA,20,-4437.37945763139,212
+"96h","r2_01","Caudal mesoderm",2,"factor, shared loadings",NA,20,-4440.36971772339,212
+"96h","r2_01","Ectopic pluripotency",2,"diagonal",0,1,-5068.2103129271,23
+"96h","r2_01","Ectopic pluripotency",2,"shrinkage, per type",0,0.90625,-4889.62004618597,23
+"96h","r2_01","Ectopic pluripotency",2,"shrinkage, common",0,0.90625,-4889.62004618597,23
+"96h","r2_01","Ectopic pluripotency",2,"two-parameter, per type",0.75,0.78125,-4850.41515760458,23
+"96h","r2_01","Ectopic pluripotency",2,"two-parameter, common",0.75,0.75,-4851.67140244155,23
+"96h","r2_01","Ectopic pluripotency",2,"factor, per type",NA,3,-4876.93205841702,23
+"96h","r2_01","Ectopic pluripotency",2,"factor, shared loadings",NA,20,-4839.37768919799,23
+"96h","r2_01","Gut",2,"diagonal",0,1,-4330.76013723118,28
+"96h","r2_01","Gut",2,"shrinkage, per type",0,0.9375,-4192.61892012217,28
+"96h","r2_01","Gut",2,"shrinkage, common",0,0.90625,-4190.26729132256,28
+"96h","r2_01","Gut",2,"two-parameter, per type",0.75,0.8125,-4159.6531653122,28
+"96h","r2_01","Gut",2,"two-parameter, common",0.75,0.75,-4157.33577179716,28
+"96h","r2_01","Gut",2,"factor, per type",NA,1,-4152.01149976067,28
+"96h","r2_01","Gut",2,"factor, shared loadings",NA,20,-4092.48840006653,28
+"96h","r2_01","Pre-somitic mesoderm",2,"diagonal",0,1,-4535.27298961838,718
+"96h","r2_01","Pre-somitic mesoderm",2,"shrinkage, per type",0,0.78125,-4252.0667845383,718
+"96h","r2_01","Pre-somitic mesoderm",2,"shrinkage, common",0,0.90625,-4269.70226855735,718
+"96h","r2_01","Pre-somitic mesoderm",2,"two-parameter, per type",0.5,0.75,-4247.4569549994,718
+"96h","r2_01","Pre-somitic mesoderm",2,"two-parameter, common",0.75,0.75,-4247.60866377698,718
+"96h","r2_01","Pre-somitic mesoderm",2,"factor, per type",NA,20,-4174.17414046978,718
+"96h","r2_01","Pre-somitic mesoderm",2,"factor, shared loadings",NA,20,-4173.72188074053,718
+"96h","r2_01","Somite differentiation front",2,"diagonal",0,1,-4597.01108476981,6
+"96h","r2_01","Somite differentiation front",2,"shrinkage, per type",0,0.9375,-4428.92030385492,6
+"96h","r2_01","Somite differentiation front",2,"shrinkage, common",0,0.90625,-4415.92640125882,6
+"96h","r2_01","Somite differentiation front",2,"two-parameter, per type",0.75,0.78125,-4363.25687164319,6
+"96h","r2_01","Somite differentiation front",2,"two-parameter, common",0.75,0.75,-4356.68958372022,6
+"96h","r2_01","Somite differentiation front",2,"factor, per type",NA,1,-4356.89239671679,6
+"96h","r2_01","Somite differentiation front",2,"factor, shared loadings",NA,20,-4236.79421705043,6
+"96h","r2_01","Caudal mesoderm",3,"diagonal",0,1,-4673.32173523181,212
+"96h","r2_01","Caudal mesoderm",3,"shrinkage, per type",0,0.84375,-4429.88954379201,212
+"96h","r2_01","Caudal mesoderm",3,"shrinkage, common",0,0.90625,-4435.84162853064,212
+"96h","r2_01","Caudal mesoderm",3,"two-parameter, per type",0.75,0.75,-4409.33552388315,212
+"96h","r2_01","Caudal mesoderm",3,"two-parameter, common",0.75,0.78125,-4410.93283223888,212
+"96h","r2_01","Caudal mesoderm",3,"factor, per type",NA,20,-4358.51477076433,212
+"96h","r2_01","Caudal mesoderm",3,"factor, shared loadings",NA,20,-4352.75575029929,212
+"96h","r2_01","Ectopic pluripotency",3,"diagonal",0,1,-4781.48779847497,23
+"96h","r2_01","Ectopic pluripotency",3,"shrinkage, per type",0,0.90625,-4607.68039396852,23
+"96h","r2_01","Ectopic pluripotency",3,"shrinkage, common",0,0.90625,-4607.68039396852,23
+"96h","r2_01","Ectopic pluripotency",3,"two-parameter, per type",0.75,0.78125,-4571.37980721635,23
+"96h","r2_01","Ectopic pluripotency",3,"two-parameter, common",0.75,0.78125,-4571.37980721635,23
+"96h","r2_01","Ectopic pluripotency",3,"factor, per type",NA,3,-4549.74817665072,23
+"96h","r2_01","Ectopic pluripotency",3,"factor, shared loadings",NA,20,-4514.32829493475,23
+"96h","r2_01","Gut",3,"diagonal",0,1,-4534.34756309301,28
+"96h","r2_01","Gut",3,"shrinkage, per type",0,0.9375,-4335.40046180061,28
+"96h","r2_01","Gut",3,"shrinkage, common",0,0.90625,-4336.71518585945,28
+"96h","r2_01","Gut",3,"two-parameter, per type",0.75,0.8125,-4288.99706914665,28
+"96h","r2_01","Gut",3,"two-parameter, common",0.75,0.78125,-4289.02898107707,28
+"96h","r2_01","Gut",3,"factor, per type",NA,1,-4318.94945815444,28
+"96h","r2_01","Gut",3,"factor, shared loadings",NA,20,-4242.68611131361,28
+"96h","r2_01","Pre-somitic mesoderm",3,"diagonal",0,1,-4538.45023825047,718
+"96h","r2_01","Pre-somitic mesoderm",3,"shrinkage, per type",0,0.78125,-4252.85638394512,718
+"96h","r2_01","Pre-somitic mesoderm",3,"shrinkage, common",0,0.90625,-4271.06999565711,718
+"96h","r2_01","Pre-somitic mesoderm",3,"two-parameter, per type",0.5,0.75,-4247.49547124211,718
+"96h","r2_01","Pre-somitic mesoderm",3,"two-parameter, common",0.75,0.78125,-4249.59091074707,718
+"96h","r2_01","Pre-somitic mesoderm",3,"factor, per type",NA,30,-4172.79198324037,718
+"96h","r2_01","Pre-somitic mesoderm",3,"factor, shared loadings",NA,20,-4174.36394020352,718
+"96h","r2_01","Somite differentiation front",3,"diagonal",0,1,-4615.13809455667,6
+"96h","r2_01","Somite differentiation front",3,"shrinkage, per type",0,0.9375,-4536.45469091982,6
+"96h","r2_01","Somite differentiation front",3,"shrinkage, common",0,0.90625,-4527.76864450786,6
+"96h","r2_01","Somite differentiation front",3,"two-parameter, per type",0.75,0.78125,-4492.36782244497,6
+"96h","r2_01","Somite differentiation front",3,"two-parameter, common",0.75,0.78125,-4492.36782244497,6
+"96h","r2_01","Somite differentiation front",3,"factor, per type",NA,1,-4432.55724131202,6
+"96h","r2_01","Somite differentiation front",3,"factor, shared loadings",NA,20,-4375.47885951284,6
+"96h","r2_01","Caudal mesoderm",4,"diagonal",0,1,-4587.33691079032,212
+"96h","r2_01","Caudal mesoderm",4,"shrinkage, per type",0,0.84375,-4369.98345014056,212
+"96h","r2_01","Caudal mesoderm",4,"shrinkage, common",0,0.90625,-4377.85794180078,212
+"96h","r2_01","Caudal mesoderm",4,"two-parameter, per type",0.75,0.75,-4351.53455018306,212
+"96h","r2_01","Caudal mesoderm",4,"two-parameter, common",0.75,0.78125,-4353.90260717251,212
+"96h","r2_01","Caudal mesoderm",4,"factor, per type",NA,20,-4286.17870640959,212
+"96h","r2_01","Caudal mesoderm",4,"factor, shared loadings",NA,20,-4282.18665480682,212
+"96h","r2_01","Ectopic pluripotency",4,"diagonal",0,1,-5186.16813842781,23
+"96h","r2_01","Ectopic pluripotency",4,"shrinkage, per type",0,0.90625,-4950.4937338314,23
+"96h","r2_01","Ectopic pluripotency",4,"shrinkage, common",0,0.90625,-4950.4937338314,23
+"96h","r2_01","Ectopic pluripotency",4,"two-parameter, per type",0.75,0.78125,-4889.51410821696,23
+"96h","r2_01","Ectopic pluripotency",4,"two-parameter, common",0.75,0.78125,-4889.51410821696,23
+"96h","r2_01","Ectopic pluripotency",4,"factor, per type",NA,3,-4965.42476376043,23
+"96h","r2_01","Ectopic pluripotency",4,"factor, shared loadings",NA,20,-4887.29496578835,23
+"96h","r2_01","Gut",4,"diagonal",0,1,-4951.83228488203,28
+"96h","r2_01","Gut",4,"shrinkage, per type",0,0.9375,-4655.28625076334,28
+"96h","r2_01","Gut",4,"shrinkage, common",0,0.90625,-4666.21030245682,28
+"96h","r2_01","Gut",4,"two-parameter, per type",0.75,0.8125,-4578.08454981371,28
+"96h","r2_01","Gut",4,"two-parameter, common",0.75,0.78125,-4582.84272617444,28
+"96h","r2_01","Gut",4,"factor, per type",NA,2,-4675.90717360317,28
+"96h","r2_01","Gut",4,"factor, shared loadings",NA,20,-4555.5751313321,28
+"96h","r2_01","Pre-somitic mesoderm",4,"diagonal",0,1,-4542.04951460702,718
+"96h","r2_01","Pre-somitic mesoderm",4,"shrinkage, per type",0,0.78125,-4285.13641777535,718
+"96h","r2_01","Pre-somitic mesoderm",4,"shrinkage, common",0,0.90625,-4302.13510591975,718
+"96h","r2_01","Pre-somitic mesoderm",4,"two-parameter, per type",0.5,0.75,-4280.43204154969,718
+"96h","r2_01","Pre-somitic mesoderm",4,"two-parameter, common",0.75,0.78125,-4282.24822393112,718
+"96h","r2_01","Pre-somitic mesoderm",4,"factor, per type",NA,20,-4213.33606044327,718
+"96h","r2_01","Pre-somitic mesoderm",4,"factor, shared loadings",NA,20,-4213.2956626713,718
+"96h","r2_01","Somite differentiation front",4,"diagonal",0,1,-5298.88159340085,6
+"96h","r2_01","Somite differentiation front",4,"shrinkage, per type",0,0.9375,-5064.29027842379,6
+"96h","r2_01","Somite differentiation front",4,"shrinkage, common",0,0.90625,-5076.93507400581,6
+"96h","r2_01","Somite differentiation front",4,"two-parameter, per type",0.75,0.78125,-4919.24992326976,6
+"96h","r2_01","Somite differentiation front",4,"two-parameter, common",0.75,0.78125,-4919.24992326976,6
+"96h","r2_01","Somite differentiation front",4,"factor, per type",NA,1,-5155.97400738672,6
+"96h","r2_01","Somite differentiation front",4,"factor, shared loadings",NA,20,-4899.29857012988,6
+"96h","r2_01","Caudal mesoderm",5,"diagonal",0,1,-4645.71546028514,212
+"96h","r2_01","Caudal mesoderm",5,"shrinkage, per type",0,0.84375,-4428.54248511672,212
+"96h","r2_01","Caudal mesoderm",5,"shrinkage, common",0,0.90625,-4434.17874466099,212
+"96h","r2_01","Caudal mesoderm",5,"two-parameter, per type",0.75,0.71875,-4408.8787673124,212
+"96h","r2_01","Caudal mesoderm",5,"two-parameter, common",0.75,0.78125,-4410.8285372483,212
+"96h","r2_01","Caudal mesoderm",5,"factor, per type",NA,20,-4360.50064985558,212
+"96h","r2_01","Caudal mesoderm",5,"factor, shared loadings",NA,20,-4351.95311917226,212
+"96h","r2_01","Ectopic pluripotency",5,"diagonal",0,1,-5143.03841261942,23
+"96h","r2_01","Ectopic pluripotency",5,"shrinkage, per type",0,0.9375,-4861.01661104466,23
+"96h","r2_01","Ectopic pluripotency",5,"shrinkage, common",0,0.90625,-4860.15097950401,23
+"96h","r2_01","Ectopic pluripotency",5,"two-parameter, per type",0.75,0.78125,-4801.96815063303,23
+"96h","r2_01","Ectopic pluripotency",5,"two-parameter, common",0.75,0.78125,-4801.96815063303,23
+"96h","r2_01","Ectopic pluripotency",5,"factor, per type",NA,3,-4867.37265940032,23
+"96h","r2_01","Ectopic pluripotency",5,"factor, shared loadings",NA,20,-4788.83716753761,23
+"96h","r2_01","Gut",5,"diagonal",0,1,-4478.74832966799,28
+"96h","r2_01","Gut",5,"shrinkage, per type",0,0.9375,-4320.78166870789,28
+"96h","r2_01","Gut",5,"shrinkage, common",0,0.90625,-4322.12559823763,28
+"96h","r2_01","Gut",5,"two-parameter, per type",0.75,0.8125,-4284.57979560664,28
+"96h","r2_01","Gut",5,"two-parameter, common",0.75,0.78125,-4285.00436912161,28
+"96h","r2_01","Gut",5,"factor, per type",NA,1,-4307.58547566107,28
+"96h","r2_01","Gut",5,"factor, shared loadings",NA,20,-4237.36531236894,28
+"96h","r2_01","Pre-somitic mesoderm",5,"diagonal",0,1,-4581.13416869566,717
+"96h","r2_01","Pre-somitic mesoderm",5,"shrinkage, per type",0,0.78125,-4291.7720198348,717
+"96h","r2_01","Pre-somitic mesoderm",5,"shrinkage, common",0,0.90625,-4308.53455236427,717
+"96h","r2_01","Pre-somitic mesoderm",5,"two-parameter, per type",0.5,0.75,-4287.05491199765,717
+"96h","r2_01","Pre-somitic mesoderm",5,"two-parameter, common",0.75,0.78125,-4288.68017733236,717
+"96h","r2_01","Pre-somitic mesoderm",5,"factor, per type",NA,20,-4225.42538298231,717
+"96h","r2_01","Pre-somitic mesoderm",5,"factor, shared loadings",NA,20,-4224.75720052648,717
+"96h","r2_01","Somite differentiation front",5,"diagonal",0,1,-5678.37146206549,5
+"96h","r2_01","Somite differentiation front",5,"shrinkage, per type",0,0.9375,-5369.28109750756,5
+"96h","r2_01","Somite differentiation front",5,"shrinkage, common",0,0.90625,-5389.35661766692,5
+"96h","r2_01","Somite differentiation front",5,"two-parameter, per type",0.75,0.8125,-5220.33125244286,5
+"96h","r2_01","Somite differentiation front",5,"two-parameter, common",0.75,0.78125,-5224.99114450151,5
+"96h","r2_01","Somite differentiation front",5,"factor, per type",NA,1,-5542.70073157393,5
+"96h","r2_01","Somite differentiation front",5,"factor, shared loadings",NA,20,-5272.33178934435,5
+"96h","r2_05","Caudal mesoderm",1,"diagonal",0,1,-1236.09386792373,213
+"96h","r2_05","Caudal mesoderm",1,"shrinkage, per type",0,0.65625,-1152.16120980268,213
+"96h","r2_05","Caudal mesoderm",1,"shrinkage, common",0,0.84375,-1159.00421089047,213
+"96h","r2_05","Caudal mesoderm",1,"two-parameter, per type",0.75,0.4375,-1145.9084376274,213
+"96h","r2_05","Caudal mesoderm",1,"two-parameter, common",0.75,0.5625,-1147.06669428024,213
+"96h","r2_05","Caudal mesoderm",1,"factor, per type",NA,20,-1141.15849497613,213
+"96h","r2_05","Caudal mesoderm",1,"factor, shared loadings",NA,20,-1141.80284477476,213
+"96h","r2_05","Ectopic pluripotency",1,"diagonal",0,1,-1397.59448166687,24
+"96h","r2_05","Ectopic pluripotency",1,"shrinkage, per type",0,0.84375,-1312.6907751161,24
+"96h","r2_05","Ectopic pluripotency",1,"shrinkage, common",0,0.84375,-1312.6907751161,24
+"96h","r2_05","Ectopic pluripotency",1,"two-parameter, per type",0.75,0.59375,-1288.92291983249,24
+"96h","r2_05","Ectopic pluripotency",1,"two-parameter, common",0.75,0.5625,-1289.50530662013,24
+"96h","r2_05","Ectopic pluripotency",1,"factor, per type",NA,3,-1346.34171949838,24
+"96h","r2_05","Ectopic pluripotency",1,"factor, shared loadings",NA,20,-1307.87394019929,24
+"96h","r2_05","Gut",1,"diagonal",0,1,-1127.19843920614,28
+"96h","r2_05","Gut",1,"shrinkage, per type",0,0.875,-1091.51089463966,28
+"96h","r2_05","Gut",1,"shrinkage, common",0,0.84375,-1091.37174165929,28
+"96h","r2_05","Gut",1,"two-parameter, per type",0.75,0.65625,-1079.89375734342,28
+"96h","r2_05","Gut",1,"two-parameter, common",0.75,0.5625,-1079.97476579196,28
+"96h","r2_05","Gut",1,"factor, per type",NA,1,-1086.18638541656,28
+"96h","r2_05","Gut",1,"factor, shared loadings",NA,20,-1094.23072007497,28
+"96h","r2_05","Pre-somitic mesoderm",1,"diagonal",0,1,-1097.27764160467,718
+"96h","r2_05","Pre-somitic mesoderm",1,"shrinkage, per type",0,0.46875,-1020.62089246103,718
+"96h","r2_05","Pre-somitic mesoderm",1,"shrinkage, common",0,0.84375,-1035.72827675373,718
+"96h","r2_05","Pre-somitic mesoderm",1,"two-parameter, per type",0.5,0.375,-1018.53925216507,718
+"96h","r2_05","Pre-somitic mesoderm",1,"two-parameter, common",0.75,0.5625,-1023.01081331537,718
+"96h","r2_05","Pre-somitic mesoderm",1,"factor, per type",NA,12,-1009.21197318304,718
+"96h","r2_05","Pre-somitic mesoderm",1,"factor, shared loadings",NA,20,-1007.07633046354,718
+"96h","r2_05","Somite differentiation front",1,"diagonal",0,1,-1474.55830251739,6
+"96h","r2_05","Somite differentiation front",1,"shrinkage, per type",0,0.9375,-1335.69243403722,6
+"96h","r2_05","Somite differentiation front",1,"shrinkage, common",0,0.84375,-1354.25723518103,6
+"96h","r2_05","Somite differentiation front",1,"two-parameter, per type",0.75,0.6875,-1259.68174008052,6
+"96h","r2_05","Somite differentiation front",1,"two-parameter, common",0.75,0.5625,-1269.15656403601,6
+"96h","r2_05","Somite differentiation front",1,"factor, per type",NA,1,-1420.16386016585,6
+"96h","r2_05","Somite differentiation front",1,"factor, shared loadings",NA,20,-1282.53008366632,6
+"96h","r2_05","Caudal mesoderm",2,"diagonal",0,1,-1224.88824426469,212
+"96h","r2_05","Caudal mesoderm",2,"shrinkage, per type",0,0.65625,-1157.40374450158,212
+"96h","r2_05","Caudal mesoderm",2,"shrinkage, common",0,0.84375,-1164.47023199234,212
+"96h","r2_05","Caudal mesoderm",2,"two-parameter, per type",0.75,0.4375,-1151.18229541924,212
+"96h","r2_05","Caudal mesoderm",2,"two-parameter, common",0.75,0.5625,-1152.66877651525,212
+"96h","r2_05","Caudal mesoderm",2,"factor, per type",NA,20,-1144.69433367519,212
+"96h","r2_05","Caudal mesoderm",2,"factor, shared loadings",NA,20,-1148.45277779727,212
+"96h","r2_05","Ectopic pluripotency",2,"diagonal",0,1,-1392.50102953756,23
+"96h","r2_05","Ectopic pluripotency",2,"shrinkage, per type",0,0.84375,-1353.50646943515,23
+"96h","r2_05","Ectopic pluripotency",2,"shrinkage, common",0,0.84375,-1353.50646943515,23
+"96h","r2_05","Ectopic pluripotency",2,"two-parameter, per type",0.75,0.5625,-1344.46328945247,23
+"96h","r2_05","Ectopic pluripotency",2,"two-parameter, common",0.75,0.5625,-1344.46328945247,23
+"96h","r2_05","Ectopic pluripotency",2,"factor, per type",NA,3,-1333.44472418858,23
+"96h","r2_05","Ectopic pluripotency",2,"factor, shared loadings",NA,20,-1340.98799839883,23
+"96h","r2_05","Gut",2,"diagonal",0,1,-1103.29669081821,28
+"96h","r2_05","Gut",2,"shrinkage, per type",0,0.9,-1071.42463076089,28
+"96h","r2_05","Gut",2,"shrinkage, common",0,0.84375,-1069.80331385967,28
+"96h","r2_05","Gut",2,"two-parameter, per type",0.75,0.625,-1060.78240232074,28
+"96h","r2_05","Gut",2,"two-parameter, common",0.75,0.5625,-1059.99626229451,28
+"96h","r2_05","Gut",2,"factor, per type",NA,1,-1062.83325119186,28
+"96h","r2_05","Gut",2,"factor, shared loadings",NA,20,-1047.70848335218,28
+"96h","r2_05","Pre-somitic mesoderm",2,"diagonal",0,1,-1101.69938477645,718
+"96h","r2_05","Pre-somitic mesoderm",2,"shrinkage, per type",0,0.46875,-1022.17954027082,718
+"96h","r2_05","Pre-somitic mesoderm",2,"shrinkage, common",0,0.84375,-1037.0896573057,718
+"96h","r2_05","Pre-somitic mesoderm",2,"two-parameter, per type",0.5,0.375,-1020.23765778027,718
+"96h","r2_05","Pre-somitic mesoderm",2,"two-parameter, common",0.75,0.5625,-1024.45668282249,718
+"96h","r2_05","Pre-somitic mesoderm",2,"factor, per type",NA,12,-1010.44244018767,718
+"96h","r2_05","Pre-somitic mesoderm",2,"factor, shared loadings",NA,20,-1008.16670257119,718
+"96h","r2_05","Somite differentiation front",2,"diagonal",0,1,-1064.46164989037,6
+"96h","r2_05","Somite differentiation front",2,"shrinkage, per type",0,0.9375,-1028.93327207453,6
+"96h","r2_05","Somite differentiation front",2,"shrinkage, common",0,0.84375,-1019.86410264721,6
+"96h","r2_05","Somite differentiation front",2,"two-parameter, per type",0.75,0.6875,-1007.59608238817,6
+"96h","r2_05","Somite differentiation front",2,"two-parameter, common",0.75,0.5625,-1000.28673327601,6
+"96h","r2_05","Somite differentiation front",2,"factor, per type",NA,1,-994.543980352612,6
+"96h","r2_05","Somite differentiation front",2,"factor, shared loadings",NA,20,-971.405387555259,6
+"96h","r2_05","Caudal mesoderm",3,"diagonal",0,1,-1201.1588695552,212
+"96h","r2_05","Caudal mesoderm",3,"shrinkage, per type",0,0.65625,-1133.16511307081,212
+"96h","r2_05","Caudal mesoderm",3,"shrinkage, common",0,0.84375,-1140.94962292148,212
+"96h","r2_05","Caudal mesoderm",3,"two-parameter, per type",0.75,0.4375,-1125.39265602079,212
+"96h","r2_05","Caudal mesoderm",3,"two-parameter, common",0.75,0.59375,-1128.67401489259,212
+"96h","r2_05","Caudal mesoderm",3,"factor, per type",NA,20,-1118.59929532942,212
+"96h","r2_05","Caudal mesoderm",3,"factor, shared loadings",NA,20,-1120.29397383711,212
+"96h","r2_05","Ectopic pluripotency",3,"diagonal",0,1,-1240.59662363036,23
+"96h","r2_05","Ectopic pluripotency",3,"shrinkage, per type",0,0.84375,-1192.56343020367,23
+"96h","r2_05","Ectopic pluripotency",3,"shrinkage, common",0,0.84375,-1192.56343020367,23
+"96h","r2_05","Ectopic pluripotency",3,"two-parameter, per type",0.75,0.5625,-1179.46237729765,23
+"96h","r2_05","Ectopic pluripotency",3,"two-parameter, common",0.75,0.59375,-1180.58701582699,23
+"96h","r2_05","Ectopic pluripotency",3,"factor, per type",NA,3,-1172.93718460228,23
+"96h","r2_05","Ectopic pluripotency",3,"factor, shared loadings",NA,20,-1168.63002020226,23
+"96h","r2_05","Gut",3,"diagonal",0,1,-1160.9234714829,28
+"96h","r2_05","Gut",3,"shrinkage, per type",0,0.9,-1110.19836655212,28
+"96h","r2_05","Gut",3,"shrinkage, common",0,0.84375,-1109.67040679566,28
+"96h","r2_05","Gut",3,"two-parameter, per type",0.75,0.71875,-1096.28006235249,28
+"96h","r2_05","Gut",3,"two-parameter, common",0.75,0.59375,-1095.17461910291,28
+"96h","r2_05","Gut",3,"factor, per type",NA,1,-1108.03713411049,28
+"96h","r2_05","Gut",3,"factor, shared loadings",NA,20,-1088.89819679851,28
+"96h","r2_05","Pre-somitic mesoderm",3,"diagonal",0,1,-1107.03974176041,718
+"96h","r2_05","Pre-somitic mesoderm",3,"shrinkage, per type",0,0.46875,-1025.11635671118,718
+"96h","r2_05","Pre-somitic mesoderm",3,"shrinkage, common",0,0.84375,-1040.08759495639,718
+"96h","r2_05","Pre-somitic mesoderm",3,"two-parameter, per type",0.5,0.375,-1022.73382570194,718
+"96h","r2_05","Pre-somitic mesoderm",3,"two-parameter, common",0.75,0.59375,-1027.89689514755,718
+"96h","r2_05","Pre-somitic mesoderm",3,"factor, per type",NA,20,-1021.00858356656,718
+"96h","r2_05","Pre-somitic mesoderm",3,"factor, shared loadings",NA,20,-1021.31250837333,718
+"96h","r2_05","Somite differentiation front",3,"diagonal",0,1,-1075.53685145261,6
+"96h","r2_05","Somite differentiation front",3,"shrinkage, per type",0,0.9375,-1060.5543352282,6
+"96h","r2_05","Somite differentiation front",3,"shrinkage, common",0,0.84375,-1056.6869182065,6
+"96h","r2_05","Somite differentiation front",3,"two-parameter, per type",0.75,0.6875,-1047.75556400389,6
+"96h","r2_05","Somite differentiation front",3,"two-parameter, common",0.75,0.59375,-1044.62480253786,6
+"96h","r2_05","Somite differentiation front",3,"factor, per type",NA,1,-1030.01060613555,6
+"96h","r2_05","Somite differentiation front",3,"factor, shared loadings",NA,20,-1014.9323246456,6
+"96h","r2_05","Caudal mesoderm",4,"diagonal",0,1,-1184.63448091203,212
+"96h","r2_05","Caudal mesoderm",4,"shrinkage, per type",0,0.65625,-1121.5410084264,212
+"96h","r2_05","Caudal mesoderm",4,"shrinkage, common",0,0.84375,-1129.65462005096,212
+"96h","r2_05","Caudal mesoderm",4,"two-parameter, per type",0.75,0.4375,-1114.69290373364,212
+"96h","r2_05","Caudal mesoderm",4,"two-parameter, common",0.75,0.5625,-1117.39837697291,212
+"96h","r2_05","Caudal mesoderm",4,"factor, per type",NA,20,-1100.98705038136,212
+"96h","r2_05","Caudal mesoderm",4,"factor, shared loadings",NA,20,-1103.39213385161,212
+"96h","r2_05","Ectopic pluripotency",4,"diagonal",0,1,-1371.89105910694,23
+"96h","r2_05","Ectopic pluripotency",4,"shrinkage, per type",0,0.84375,-1310.83877676538,23
+"96h","r2_05","Ectopic pluripotency",4,"shrinkage, common",0,0.84375,-1310.83877676538,23
+"96h","r2_05","Ectopic pluripotency",4,"two-parameter, per type",0.75,0.59375,-1285.30446378613,23
+"96h","r2_05","Ectopic pluripotency",4,"two-parameter, common",0.75,0.5625,-1285.28269544638,23
+"96h","r2_05","Ectopic pluripotency",4,"factor, per type",NA,3,-1320.42869211868,23
+"96h","r2_05","Ectopic pluripotency",4,"factor, shared loadings",NA,20,-1291.40979120764,23
+"96h","r2_05","Gut",4,"diagonal",0,1,-1369.36708808506,28
+"96h","r2_05","Gut",4,"shrinkage, per type",0,0.875,-1285.78804682467,28
+"96h","r2_05","Gut",4,"shrinkage, common",0,0.84375,-1289.51710381594,28
+"96h","r2_05","Gut",4,"two-parameter, per type",0.75,0.6875,-1247.58433341925,28
+"96h","r2_05","Gut",4,"two-parameter, common",0.75,0.5625,-1254.56710947958,28
+"96h","r2_05","Gut",4,"factor, per type",NA,1,-1297.54224176348,28
+"96h","r2_05","Gut",4,"factor, shared loadings",NA,20,-1249.19371534505,28
+"96h","r2_05","Pre-somitic mesoderm",4,"diagonal",0,1,-1105.91167564838,718
+"96h","r2_05","Pre-somitic mesoderm",4,"shrinkage, per type",0,0.46875,-1030.18909770045,718
+"96h","r2_05","Pre-somitic mesoderm",4,"shrinkage, common",0,0.84375,-1044.78451200382,718
+"96h","r2_05","Pre-somitic mesoderm",4,"two-parameter, per type",0.5,0.375,-1028.05947906455,718
+"96h","r2_05","Pre-somitic mesoderm",4,"two-parameter, common",0.75,0.5625,-1032.01386923283,718
+"96h","r2_05","Pre-somitic mesoderm",4,"factor, per type",NA,12,-1019.85270002963,718
+"96h","r2_05","Pre-somitic mesoderm",4,"factor, shared loadings",NA,20,-1017.39976253864,718
+"96h","r2_05","Somite differentiation front",4,"diagonal",0,1,-1269.11548712633,6
+"96h","r2_05","Somite differentiation front",4,"shrinkage, per type",0,0.90625,-1220.82369072481,6
+"96h","r2_05","Somite differentiation front",4,"shrinkage, common",0,0.84375,-1230.30982093998,6
+"96h","r2_05","Somite differentiation front",4,"two-parameter, per type",0.75,0.65625,-1182.67573242966,6
+"96h","r2_05","Somite differentiation front",4,"two-parameter, common",0.75,0.5625,-1186.58344739555,6
+"96h","r2_05","Somite differentiation front",4,"factor, per type",NA,1,-1251.97994881168,6
+"96h","r2_05","Somite differentiation front",4,"factor, shared loadings",NA,20,-1170.48552370606,6
+"96h","r2_05","Caudal mesoderm",5,"diagonal",0,1,-1196.49853519851,212
+"96h","r2_05","Caudal mesoderm",5,"shrinkage, per type",0,0.65625,-1132.00687532875,212
+"96h","r2_05","Caudal mesoderm",5,"shrinkage, common",0,0.875,-1142.41142902582,212
+"96h","r2_05","Caudal mesoderm",5,"two-parameter, per type",0.75,0.4375,-1125.49411354785,212
+"96h","r2_05","Caudal mesoderm",5,"two-parameter, common",0.75,0.59375,-1128.56737173,212
+"96h","r2_05","Caudal mesoderm",5,"factor, per type",NA,20,-1117.07164758882,212
+"96h","r2_05","Caudal mesoderm",5,"factor, shared loadings",NA,20,-1117.75076571243,212
+"96h","r2_05","Ectopic pluripotency",5,"diagonal",0,1,-1340.81865014716,23
+"96h","r2_05","Ectopic pluripotency",5,"shrinkage, per type",0,0.875,-1267.81972066106,23
+"96h","r2_05","Ectopic pluripotency",5,"shrinkage, common",0,0.875,-1267.81972066106,23
+"96h","r2_05","Ectopic pluripotency",5,"two-parameter, per type",0.75,0.625,-1247.70149393727,23
+"96h","r2_05","Ectopic pluripotency",5,"two-parameter, common",0.75,0.59375,-1247.43273186156,23
+"96h","r2_05","Ectopic pluripotency",5,"factor, per type",NA,3,-1268.61585217917,23
+"96h","r2_05","Ectopic pluripotency",5,"factor, shared loadings",NA,20,-1248.96464637319,23
+"96h","r2_05","Gut",5,"diagonal",0,1,-1125.62934071455,28
+"96h","r2_05","Gut",5,"shrinkage, per type",0,0.9,-1088.3609901313,28
+"96h","r2_05","Gut",5,"shrinkage, common",0,0.875,-1087.51975465343,28
+"96h","r2_05","Gut",5,"two-parameter, per type",0.75,0.6875,-1078.48716486947,28
+"96h","r2_05","Gut",5,"two-parameter, common",0.75,0.59375,-1077.47525950258,28
+"96h","r2_05","Gut",5,"factor, per type",NA,1,-1085.342515975,28
+"96h","r2_05","Gut",5,"factor, shared loadings",NA,20,-1066.88918992286,28
+"96h","r2_05","Pre-somitic mesoderm",5,"diagonal",0,1,-1116.51795215968,717
+"96h","r2_05","Pre-somitic mesoderm",5,"shrinkage, per type",0,0.46875,-1033.86419768824,717
+"96h","r2_05","Pre-somitic mesoderm",5,"shrinkage, common",0,0.875,-1051.17960377255,717
+"96h","r2_05","Pre-somitic mesoderm",5,"two-parameter, per type",0.5,0.375,-1032.05860158377,717
+"96h","r2_05","Pre-somitic mesoderm",5,"two-parameter, common",0.75,0.59375,-1036.48961175063,717
+"96h","r2_05","Pre-somitic mesoderm",5,"factor, per type",NA,12,-1024.5308425946,717
+"96h","r2_05","Pre-somitic mesoderm",5,"factor, shared loadings",NA,20,-1021.79554677032,717
+"96h","r2_05","Somite differentiation front",5,"diagonal",0,1,-1304.95359366951,5
+"96h","r2_05","Somite differentiation front",5,"shrinkage, per type",0,0.9375,-1239.64903813528,5
+"96h","r2_05","Somite differentiation front",5,"shrinkage, common",0,0.875,-1245.2874673315,5
+"96h","r2_05","Somite differentiation front",5,"two-parameter, per type",0.75,0.71875,-1216.04476355737,5
+"96h","r2_05","Somite differentiation front",5,"two-parameter, common",0.75,0.59375,-1221.22335632877,5
+"96h","r2_05","Somite differentiation front",5,"factor, per type",NA,1,-1282.68255371837,5
+"96h","r2_05","Somite differentiation front",5,"factor, shared loadings",NA,20,-1234.91824787001,5
+"96h","welch","Caudal mesoderm",1,"diagonal",0,1,-9228.74622368033,213
+"96h","welch","Caudal mesoderm",1,"shrinkage, per type",0,0.90625,-8668.43598572732,213
+"96h","welch","Caudal mesoderm",1,"shrinkage, common",0,0.9375,-8671.62574932644,213
+"96h","welch","Caudal mesoderm",1,"two-parameter, per type",0.75,0.84375,-8637.34433121283,213
+"96h","welch","Caudal mesoderm",1,"two-parameter, common",0.75,0.84375,-8637.34433121283,213
+"96h","welch","Caudal mesoderm",1,"factor, per type",NA,20,-8599.56179382151,213
+"96h","welch","Caudal mesoderm",1,"factor, shared loadings",NA,20,-8566.01430120944,213
+"96h","welch","Ectopic pluripotency",1,"diagonal",0,1,-10125.2240221424,24
+"96h","welch","Ectopic pluripotency",1,"shrinkage, per type",0,0.9375,-9619.4660077853,24
+"96h","welch","Ectopic pluripotency",1,"shrinkage, common",0,0.9375,-9619.4660077853,24
+"96h","welch","Ectopic pluripotency",1,"two-parameter, per type",0.75,0.84375,-9508.41408019091,24
+"96h","welch","Ectopic pluripotency",1,"two-parameter, common",0.75,0.84375,-9508.41408019091,24
+"96h","welch","Ectopic pluripotency",1,"factor, per type",NA,3,-9681.86360341445,24
+"96h","welch","Ectopic pluripotency",1,"factor, shared loadings",NA,20,-9478.91848677817,24
+"96h","welch","Gut",1,"diagonal",0,1,-8438.08768753113,28
+"96h","welch","Gut",1,"shrinkage, per type",0,0.9375,-8146.23327166975,28
+"96h","welch","Gut",1,"shrinkage, common",0,0.9375,-8146.23327166975,28
+"96h","welch","Gut",1,"two-parameter, per type",0.75,0.875,-8078.27398017547,28
+"96h","welch","Gut",1,"two-parameter, common",0.75,0.84375,-8078.07508181902,28
+"96h","welch","Gut",1,"factor, per type",NA,1,-8110.1184489318,28
+"96h","welch","Gut",1,"factor, shared loadings",NA,20,-7974.52942876943,28
+"96h","welch","Pre-somitic mesoderm",1,"diagonal",0,1,-8740.67716979233,718
+"96h","welch","Pre-somitic mesoderm",1,"shrinkage, per type",0,0.875,-8267.29259146536,718
+"96h","welch","Pre-somitic mesoderm",1,"shrinkage, common",0,0.9375,-8285.07713805751,718
+"96h","welch","Pre-somitic mesoderm",1,"two-parameter, per type",0.75,0.84375,-8260.53223587658,718
+"96h","welch","Pre-somitic mesoderm",1,"two-parameter, common",0.75,0.84375,-8260.53223587658,718
+"96h","welch","Pre-somitic mesoderm",1,"factor, per type",NA,20,-8133.78504430009,718
+"96h","welch","Pre-somitic mesoderm",1,"factor, shared loadings",NA,20,-8131.17837717414,718
+"96h","welch","Somite differentiation front",1,"diagonal",0,1,-11160.876122193,6
+"96h","welch","Somite differentiation front",1,"shrinkage, per type",0,0.96875,-10210.3879985454,6
+"96h","welch","Somite differentiation front",1,"shrinkage, common",0,0.9375,-10232.6070236235,6
+"96h","welch","Somite differentiation front",1,"two-parameter, per type",0.75,0.84375,-9665.35921436741,6
+"96h","welch","Somite differentiation front",1,"two-parameter, common",0.75,0.84375,-9665.35921436741,6
+"96h","welch","Somite differentiation front",1,"factor, per type",NA,1,-10583.2835377865,6
+"96h","welch","Somite differentiation front",1,"factor, shared loadings",NA,20,-9675.92315471468,6
+"96h","welch","Caudal mesoderm",2,"diagonal",0,1,-9047.39273116612,212
+"96h","welch","Caudal mesoderm",2,"shrinkage, per type",0,0.90625,-8625.40798879298,212
+"96h","welch","Caudal mesoderm",2,"shrinkage, common",0,0.9375,-8631.71664491026,212
+"96h","welch","Caudal mesoderm",2,"two-parameter, per type",0.75,0.84375,-8598.29046975841,212
+"96h","welch","Caudal mesoderm",2,"two-parameter, common",0.75,0.84375,-8598.29046975841,212
+"96h","welch","Caudal mesoderm",2,"factor, per type",NA,20,-8535.11796254377,212
+"96h","welch","Caudal mesoderm",2,"factor, shared loadings",NA,20,-8522.06596523281,212
+"96h","welch","Ectopic pluripotency",2,"diagonal",0,1,-9719.86976740229,23
+"96h","welch","Ectopic pluripotency",2,"shrinkage, per type",0,0.9375,-9415.26854609804,23
+"96h","welch","Ectopic pluripotency",2,"shrinkage, common",0,0.9375,-9415.26854609804,23
+"96h","welch","Ectopic pluripotency",2,"two-parameter, per type",0.75,0.84375,-9347.87775765967,23
+"96h","welch","Ectopic pluripotency",2,"two-parameter, common",0.75,0.84375,-9347.87775765967,23
+"96h","welch","Ectopic pluripotency",2,"factor, per type",NA,3,-9402.01087879459,23
+"96h","welch","Ectopic pluripotency",2,"factor, shared loadings",NA,20,-9306.10386035552,23
+"96h","welch","Gut",2,"diagonal",0,1,-8271.26898512645,28
+"96h","welch","Gut",2,"shrinkage, per type",0,0.9375,-8001.74860166929,28
+"96h","welch","Gut",2,"shrinkage, common",0,0.9375,-8001.74860166929,28
+"96h","welch","Gut",2,"two-parameter, per type",0.75,0.875,-7952.79825528174,28
+"96h","welch","Gut",2,"two-parameter, common",0.75,0.84375,-7950.86720386962,28
+"96h","welch","Gut",2,"factor, per type",NA,2,-7925.30753141391,28
+"96h","welch","Gut",2,"factor, shared loadings",NA,20,-7826.00093610268,28
+"96h","welch","Pre-somitic mesoderm",2,"diagonal",0,1,-8743.24672627706,718
+"96h","welch","Pre-somitic mesoderm",2,"shrinkage, per type",0,0.875,-8244.3091717299,718
+"96h","welch","Pre-somitic mesoderm",2,"shrinkage, common",0,0.9375,-8262.12106149089,718
+"96h","welch","Pre-somitic mesoderm",2,"two-parameter, per type",0.75,0.84375,-8237.35947242671,718
+"96h","welch","Pre-somitic mesoderm",2,"two-parameter, common",0.75,0.84375,-8237.35947242671,718
+"96h","welch","Pre-somitic mesoderm",2,"factor, per type",NA,20,-8106.68416289875,718
+"96h","welch","Pre-somitic mesoderm",2,"factor, shared loadings",NA,20,-8103.40934686645,718
+"96h","welch","Somite differentiation front",2,"diagonal",0,1,-8978.65332248572,6
+"96h","welch","Somite differentiation front",2,"shrinkage, per type",0,0.96875,-8690.54392596022,6
+"96h","welch","Somite differentiation front",2,"shrinkage, common",0,0.9375,-8663.92155992838,6
+"96h","welch","Somite differentiation front",2,"two-parameter, per type",0.75,0.84375,-8555.84064859643,6
+"96h","welch","Somite differentiation front",2,"two-parameter, common",0.75,0.84375,-8555.84064859643,6
+"96h","welch","Somite differentiation front",2,"factor, per type",NA,1,-8541.38604672694,6
+"96h","welch","Somite differentiation front",2,"factor, shared loadings",NA,20,-8312.27095838329,6
+"96h","welch","Caudal mesoderm",3,"diagonal",0,1,-8922.43722816965,212
+"96h","welch","Caudal mesoderm",3,"shrinkage, per type",0,0.90625,-8486.91651000363,212
+"96h","welch","Caudal mesoderm",3,"shrinkage, common",0,0.9375,-8492.59481490754,212
+"96h","welch","Caudal mesoderm",3,"two-parameter, per type",0.75,0.84375,-8457.42492017959,212
+"96h","welch","Caudal mesoderm",3,"two-parameter, common",0.75,0.84375,-8457.42492017959,212
+"96h","welch","Caudal mesoderm",3,"factor, per type",NA,20,-8366.84303496614,212
+"96h","welch","Caudal mesoderm",3,"factor, shared loadings",NA,20,-8346.03924185768,212
+"96h","welch","Ectopic pluripotency",3,"diagonal",0,1,-9276.59457614102,23
+"96h","welch","Ectopic pluripotency",3,"shrinkage, per type",0,0.9375,-8983.78529537642,23
+"96h","welch","Ectopic pluripotency",3,"shrinkage, common",0,0.9375,-8983.78529537642,23
+"96h","welch","Ectopic pluripotency",3,"two-parameter, per type",0.75,0.84375,-8922.76586890992,23
+"96h","welch","Ectopic pluripotency",3,"two-parameter, common",0.75,0.84375,-8922.76586890992,23
+"96h","welch","Ectopic pluripotency",3,"factor, per type",NA,3,-8886.51041596657,23
+"96h","welch","Ectopic pluripotency",3,"factor, shared loadings",NA,20,-8809.1230612491,23
+"96h","welch","Gut",3,"diagonal",0,1,-8646.53367167736,28
+"96h","welch","Gut",3,"shrinkage, per type",0,0.9375,-8284.06697865051,28
+"96h","welch","Gut",3,"shrinkage, common",0,0.9375,-8284.06697865051,28
+"96h","welch","Gut",3,"two-parameter, per type",0.75,0.875,-8207.75104458751,28
+"96h","welch","Gut",3,"two-parameter, common",0.75,0.84375,-8209.3679793127,28
+"96h","welch","Gut",3,"factor, per type",NA,2,-8249.69181473815,28
+"96h","welch","Gut",3,"factor, shared loadings",NA,20,-8112.66269856439,28
+"96h","welch","Pre-somitic mesoderm",3,"diagonal",0,1,-8738.51180770872,718
+"96h","welch","Pre-somitic mesoderm",3,"shrinkage, per type",0,0.875,-8236.32327399051,718
+"96h","welch","Pre-somitic mesoderm",3,"shrinkage, common",0,0.9375,-8254.98196350543,718
+"96h","welch","Pre-somitic mesoderm",3,"two-parameter, per type",0.75,0.84375,-8228.16379396989,718
+"96h","welch","Pre-somitic mesoderm",3,"two-parameter, common",0.75,0.84375,-8228.16379396989,718
+"96h","welch","Pre-somitic mesoderm",3,"factor, per type",NA,20,-8097.7253288306,718
+"96h","welch","Pre-somitic mesoderm",3,"factor, shared loadings",NA,20,-8094.2824047142,718
+"96h","welch","Somite differentiation front",3,"diagonal",0,1,-8995.74092180804,6
+"96h","welch","Somite differentiation front",3,"shrinkage, per type",0,0.96875,-8857.6482480198,6
+"96h","welch","Somite differentiation front",3,"shrinkage, common",0,0.9375,-8838.71713056918,6
+"96h","welch","Somite differentiation front",3,"two-parameter, per type",0.75,0.84375,-8782.21955615711,6
+"96h","welch","Somite differentiation front",3,"two-parameter, common",0.75,0.84375,-8782.21955615711,6
+"96h","welch","Somite differentiation front",3,"factor, per type",NA,1,-8677.1693185127,6
+"96h","welch","Somite differentiation front",3,"factor, shared loadings",NA,20,-8560.77747637056,6
+"96h","welch","Caudal mesoderm",4,"diagonal",0,1,-8755.96189363676,212
+"96h","welch","Caudal mesoderm",4,"shrinkage, per type",0,0.90625,-8375.59490138337,212
+"96h","welch","Caudal mesoderm",4,"shrinkage, common",0,0.9375,-8383.26263656969,212
+"96h","welch","Caudal mesoderm",4,"two-parameter, per type",0.75,0.84375,-8347.48238399807,212
+"96h","welch","Caudal mesoderm",4,"two-parameter, common",0.75,0.84375,-8347.48238399807,212
+"96h","welch","Caudal mesoderm",4,"factor, per type",NA,20,-8226.59229769224,212
+"96h","welch","Caudal mesoderm",4,"factor, shared loadings",NA,20,-8210.3283612983,212
+"96h","welch","Ectopic pluripotency",4,"diagonal",0,1,-10024.893172353,23
+"96h","welch","Ectopic pluripotency",4,"shrinkage, per type",0,0.9375,-9585.21246457642,23
+"96h","welch","Ectopic pluripotency",4,"shrinkage, common",0,0.9375,-9585.21246457642,23
+"96h","welch","Ectopic pluripotency",4,"two-parameter, per type",0.75,0.84375,-9483.90373356131,23
+"96h","welch","Ectopic pluripotency",4,"two-parameter, common",0.75,0.84375,-9483.90373356131,23
+"96h","welch","Ectopic pluripotency",4,"factor, per type",NA,3,-9608.15318385619,23
+"96h","welch","Ectopic pluripotency",4,"factor, shared loadings",NA,20,-9447.37881176687,23
+"96h","welch","Gut",4,"diagonal",0,1,-9264.41525876283,28
+"96h","welch","Gut",4,"shrinkage, per type",0,0.9375,-8721.49724664535,28
+"96h","welch","Gut",4,"shrinkage, common",0,0.9375,-8721.49724664535,28
+"96h","welch","Gut",4,"two-parameter, per type",0.75,0.875,-8589.74614725357,28
+"96h","welch","Gut",4,"two-parameter, common",0.75,0.84375,-8596.56924820806,28
+"96h","welch","Gut",4,"factor, per type",NA,2,-8747.14679322614,28
+"96h","welch","Gut",4,"factor, shared loadings",NA,20,-8548.10112395646,28
+"96h","welch","Pre-somitic mesoderm",4,"diagonal",0,1,-8752.0361179739,718
+"96h","welch","Pre-somitic mesoderm",4,"shrinkage, per type",0,0.875,-8305.68426412844,718
+"96h","welch","Pre-somitic mesoderm",4,"shrinkage, common",0,0.9375,-8322.48243563401,718
+"96h","welch","Pre-somitic mesoderm",4,"two-parameter, per type",0.75,0.84375,-8299.10935007587,718
+"96h","welch","Pre-somitic mesoderm",4,"two-parameter, common",0.75,0.84375,-8299.10935007587,718
+"96h","welch","Pre-somitic mesoderm",4,"factor, per type",NA,20,-8179.94843866324,718
+"96h","welch","Pre-somitic mesoderm",4,"factor, shared loadings",NA,20,-8176.8337031524,718
+"96h","welch","Somite differentiation front",4,"diagonal",0,1,-10314.0800641265,6
+"96h","welch","Somite differentiation front",4,"shrinkage, per type",0,0.96875,-9847.29643071044,6
+"96h","welch","Somite differentiation front",4,"shrinkage, common",0,0.9375,-9864.67499639489,6
+"96h","welch","Somite differentiation front",4,"two-parameter, per type",0.75,0.84375,-9581.61831579554,6
+"96h","welch","Somite differentiation front",4,"two-parameter, common",0.75,0.84375,-9581.61831579554,6
+"96h","welch","Somite differentiation front",4,"factor, per type",NA,1,-10069.6992284638,6
+"96h","welch","Somite differentiation front",4,"factor, shared loadings",NA,20,-9594.08406717775,6
+"96h","welch","Caudal mesoderm",5,"diagonal",0,1,-8890.98996496175,212
+"96h","welch","Caudal mesoderm",5,"shrinkage, per type",0,0.90625,-8504.49637201544,212
+"96h","welch","Caudal mesoderm",5,"shrinkage, common",0,0.9375,-8509.7896260932,212
+"96h","welch","Caudal mesoderm",5,"two-parameter, per type",0.75,0.84375,-8477.24618730036,212
+"96h","welch","Caudal mesoderm",5,"two-parameter, common",0.75,0.84375,-8477.24618730036,212
+"96h","welch","Caudal mesoderm",5,"factor, per type",NA,20,-8389.57773128485,212
+"96h","welch","Caudal mesoderm",5,"factor, shared loadings",NA,20,-8366.06939264272,212
+"96h","welch","Ectopic pluripotency",5,"diagonal",0,1,-9906.58895900549,23
+"96h","welch","Ectopic pluripotency",5,"shrinkage, per type",0,0.9375,-9395.81350991863,23
+"96h","welch","Ectopic pluripotency",5,"shrinkage, common",0,0.9375,-9395.81350991863,23
+"96h","welch","Ectopic pluripotency",5,"two-parameter, per type",0.75,0.84375,-9299.86534741203,23
+"96h","welch","Ectopic pluripotency",5,"two-parameter, common",0.75,0.84375,-9299.86534741203,23
+"96h","welch","Ectopic pluripotency",5,"factor, per type",NA,3,-9399.20698989219,23
+"96h","welch","Ectopic pluripotency",5,"factor, shared loadings",NA,20,-9256.82509674145,23
+"96h","welch","Gut",5,"diagonal",0,1,-8540.31627125709,28
+"96h","welch","Gut",5,"shrinkage, per type",0,0.9375,-8256.23819186346,28
+"96h","welch","Gut",5,"shrinkage, common",0,0.9375,-8256.23819186346,28
+"96h","welch","Gut",5,"two-parameter, per type",0.75,0.875,-8192.93361829477,28
+"96h","welch","Gut",5,"two-parameter, common",0.75,0.84375,-8194.72247622516,28
+"96h","welch","Gut",5,"factor, per type",NA,1,-8236.24200308356,28
+"96h","welch","Gut",5,"factor, shared loadings",NA,20,-8101.49468489032,28
+"96h","welch","Pre-somitic mesoderm",5,"diagonal",0,1,-8838.63807941012,717
+"96h","welch","Pre-somitic mesoderm",5,"shrinkage, per type",0,0.875,-8326.6732031841,717
+"96h","welch","Pre-somitic mesoderm",5,"shrinkage, common",0,0.9375,-8343.67880314623,717
+"96h","welch","Pre-somitic mesoderm",5,"two-parameter, per type",0.75,0.84375,-8319.70163925385,717
+"96h","welch","Pre-somitic mesoderm",5,"two-parameter, common",0.75,0.84375,-8319.70163925385,717
+"96h","welch","Pre-somitic mesoderm",5,"factor, per type",NA,20,-8212.37775605594,717
+"96h","welch","Pre-somitic mesoderm",5,"factor, shared loadings",NA,20,-8208.46090444353,717
+"96h","welch","Somite differentiation front",5,"diagonal",0,1,-10979.7689495988,5
+"96h","welch","Somite differentiation front",5,"shrinkage, per type",0,0.96875,-10334.5668359175,5
+"96h","welch","Somite differentiation front",5,"shrinkage, common",0,0.9375,-10362.6112706374,5
+"96h","welch","Somite differentiation front",5,"two-parameter, per type",0.75,0.84375,-10036.4991851779,5
+"96h","welch","Somite differentiation front",5,"two-parameter, common",0.75,0.84375,-10036.4991851779,5
+"96h","welch","Somite differentiation front",5,"factor, per type",NA,1,-10718.0720186826,5
+"96h","welch","Somite differentiation front",5,"factor, shared loadings",NA,20,-10145.0901606126,5

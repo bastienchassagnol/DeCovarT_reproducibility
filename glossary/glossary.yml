@@ -16,3 +16,47 @@
   A gene is kept when at least 5 percent of the cells of every scored type detect it and its count varies inside every type.
 "aliquot": |
   A physical split of one specimen, so a bulk library and a single-cell library measure the same material.
+"arm": |
+  One way of regularising the covariance of each cell type, with its own tuning value: shrinkage towards the variances, the two-parameter family, or a factor model. The deconvolution model stays the same in every arm.
+"coefficient of variation": |
+  Standard deviation divided by the mean. For a count it falls as the mean grows, so it compares the spread of genes or samples measured on different scales.
+"size factor": |
+  The multiplier of a cell's whole library: the number of transcripts the cell holds (biological) times the fraction of them that the protocol captures and sequences (technical). It moves every gene of the cell together.
+"cell size": |
+  The total transcript content of a cell. Its counts are the biological size times the technical capture, so the two cannot be told apart from counts alone.
+"mean scale": |
+  The number c that takes the reference mixture mean to the scale of the bulk. Physically, the capture ratio times the number of cells in the bulk, c = a n.
+"variance scale": |
+  The number phi that multiplies the mixture covariance of the reference to give the covariance of the bulk. Physically, phi = a squared times n.
+"cell count": |
+  The number n of cells whose transcripts make up one bulk sample. It is not measured for the Suppinger bulks, so it is only known through c and phi.
+"held-out log-score": |
+  The Gaussian log-density of cells left out of the fit, averaged over them. A higher value means the covariance estimated without them predicts them better.
+"nested cross-validation": |
+  Two loops of cross-validation: the inner loop chooses the tuning value on the training cells only, and the outer loop scores that choice on cells the inner loop never saw.
+"profile likelihood": |
+  The likelihood maximised over the nuisance parameters, here the two scales c and phi, at each value of the parameters of interest.
+"restricted likelihood": |
+  The likelihood of the residuals once the mean coefficients are integrated out. Its variance estimate divides by the number of genes minus the number of types.
+"factor loading": |
+  A column of the matrix B in the covariance B B' + Psi: the weights with which one latent factor moves the genes together.
+"uniqueness": |
+  The diagonal Psi of a factor model: the variance of each gene that the shared factors do not explain.
+"pseudo-bulk": |
+  A sum of reference cells drawn at a chosen composition. It has the capture of the single-cell platform and a known composition.
+"platform ratio": |
+  The gene-wise ratio of a bulk count to the reference mixture at the observed composition. It measures how differently the two protocols capture each gene.
+"whitened cosine": |
+  The cosine between the bulk and the mixture mean after both are multiplied by the inverse square root of the bulk covariance. A negative value gives a negative mean scale even when the covariance is positive definite.
+"Poisson floor": |
+  The smallest variance accepted for a gene in a held-out score: its mean plus one count over the number of training cells, since a count cannot vary less than a Poisson count.
+"deviance share": |
+  The fraction of a gene's Poisson deviance explained by the cell types, written R2_D. The panels keep the Welch-gated genes with R2_D of at least 1% or 5%.
+"Welch panel": |
+  The genes that differ between cell types by a permuted Welch test at a false discovery rate of 5%, after the presence gate. The largest of the three gene panels.
+"grid search": |
+  Scoring every value of a fixed list of tuning values and keeping the best. With one or two tuning parameters it is as reliable as random search.
+"Aitchison distance": |
+  The Euclidean distance between two compositions after the centred log-ratio transform. It weighs relative errors, so a small type counts as much as a large one.
+"RMSE": |
+  Root mean squared error between estimated and observed proportions, over the cell types of a sample.

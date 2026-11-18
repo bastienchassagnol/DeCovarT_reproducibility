@@ -13,12 +13,16 @@ signed_log <- function(z) sign(z) * log10(1 + abs(z))
 variant_labels <- c(
   none = "A3: no platform ratio",
   length = "Ratio from transcript length",
-  gene = "Gene-wise ratio"
+  gene = "Gene-wise ratio",
+  gene_neff = "Gene-wise ratio, n_eff, Welch plug-in"
 )
 variant_colours <- c(
   "A3: no platform ratio" = "#9a9286",
   "Ratio from transcript length" = "#1d4e89",
-  "Gene-wise ratio" = "#c45c26"
+  "Gene-wise ratio" = "#c45c26",
+  # Ochre: the fourth hue that stays apart from the other three under
+  # deutan and protan simulation (colorspace, CIELAB distance >= 24).
+  "Gene-wise ratio, n_eff, Welch plug-in" = "#d9a521"
 )
 
 #' Cook diagnostics for genes (bulk fit) and cells (M1 fits).
@@ -592,6 +596,73 @@ plot_platform_ratio <- function(log_ratio, drift, title = NULL, subtitle = NULL)
       subtitle = subtitle,
       x = "log2 bulk / reference ratio, earlier time",
       y = "log2 ratio, later time"
+    ) +
+    theme_slide()
+}
+
+#' Conditional against diagonal statistic of the multivariate test.
+#'
+#' One point per gene and replicate as 2D bins (#61), one facet per time,
+#' shared signed-log axes (#47); dashed guides at the Gaussian threshold,
+#' a pre-specified split. The label gives the share of values beyond the
+#' threshold for each statistic.
+#'
+#' @param gene The `gene` table of [multivariate_tail_filter()], with
+#'   `time_point`.
+#' @param level Tail probability per side. Default `0.01`.
+#' @param title,subtitle Plot title (the finding) and subtitle.
+#' @return A ggplot.
+plot_multivariate_z <- function(gene, level = 0.01, title = NULL, subtitle = NULL) {
+  z_cut <- stats::qnorm(1 - level)
+  d <- data.frame(
+    time_point = gene$time_point,
+    x = signed_log(gene$z_diag),
+    y = signed_log(gene$z_cond)
+  )
+  stat <- do.call(rbind, lapply(split(gene, gene$time_point), function(g) {
+    data.frame(
+      time_point = g$time_point[1L],
+      label = sprintf(
+        "beyond %.2f: conditional %.1f %%, diagonal %.1f %%\n%s genes x 3 replicates",
+        z_cut,
+        100 * mean(g$flag_cond),
+        100 * mean(g$flag_diag),
+        fmt_n(length(unique(g$gene)))
+      )
+    )
+  }))
+  lim <- max(abs(c(d$x, d$y)))
+  breaks_z <- c(-100, -10, -2.33, 0, 2.33, 10, 100)
+  breaks_z <- breaks_z[abs(signed_log(breaks_z)) <= lim]
+  ggplot2::ggplot(d, ggplot2::aes(x = x, y = y)) +
+    ggplot2::geom_bin_2d(bins = 70) +
+    ggplot2::geom_hline(yintercept = c(-1, 1) * signed_log(z_cut), colour = "#1c2b24", linetype = "dashed", linewidth = 0.3) +
+    ggplot2::geom_vline(xintercept = c(-1, 1) * signed_log(z_cut), colour = "#1c2b24", linetype = "dashed", linewidth = 0.3) +
+    ggplot2::geom_abline(colour = "grey60", linewidth = 0.3) +
+    ggplot2::geom_text(
+      data = stat,
+      ggplot2::aes(x = -lim, y = lim, label = label),
+      hjust = 0,
+      vjust = 1,
+      size = 2.8,
+      lineheight = 0.95,
+      colour = "#1c2b24"
+    ) +
+    ggplot2::scale_fill_gradient(
+      low = "#dfe7f1",
+      high = "#1d4e89",
+      transform = "log10",
+      name = "Genes x replicates per bin"
+    ) +
+    ggplot2::scale_x_continuous(breaks = signed_log(breaks_z), labels = breaks_z) +
+    ggplot2::scale_y_continuous(breaks = signed_log(breaks_z), labels = breaks_z) +
+    ggplot2::coord_equal(xlim = c(-lim, lim), ylim = c(-lim, lim)) +
+    ggplot2::facet_wrap(ggplot2::vars(time_point), nrow = 1L) +
+    ggplot2::labs(
+      title = title,
+      subtitle = subtitle,
+      x = "Diagonal statistic r / sd (signed log scale)",
+      y = "Conditional statistic (W r) / sqrt(W_gg)"
     ) +
     theme_slide()
 }

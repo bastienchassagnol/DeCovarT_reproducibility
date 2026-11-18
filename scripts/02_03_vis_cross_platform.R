@@ -5,7 +5,7 @@
 #
 # Tier (iii) figures from output/feature_selection/tier_03/cross_platform.rds:
 # Cook diagnostics, platform ratio against transcript length, A3 shift under
-# three models, observed against fitted bulk, tail-statement flags, plug-in
+# four models, observed against fitted bulk, tail-statement flags, plug-in
 # composition, stability of the ratio across times. Titles are computed
 # from the outputs. PDFs in output/feature_selection/tier_03/figures/, PNG
 # copies in docs/images/feature_selection/.
@@ -90,16 +90,17 @@ save_figure(
     level = 0.01,
     seed = 20261109L,
     title = sprintf(
-      "A cross-fitted gene-wise ratio cuts the share of |z| > 2.33 from %s to %s; 2 %% is expected",
+      "A gene-wise ratio cuts the share of |z| > 2.33 from %s to %s; an effective cell count, to %s",
       pct_range(share("none")),
-      pct_range(share("gene"))
+      pct_range(share("gene")),
+      pct_range(share("gene_neff"))
     ),
     subtitle = "Distribution of z = D / sd(D) over panel genes and the three replicates, T4 standardisation; grey band: |z| <= 2.33"
   ),
   "fs_tier3_a3_shift",
   fig_dir,
   width = 11,
-  height = 5
+  height = 6
 )
 
 # Observed against fitted bulk ---------------------------------------------------
@@ -122,9 +123,10 @@ save_figure(
   plot_tail_flags(
     res$variants,
     title = sprintf(
-      "T4 flags %s genes per time under A3, %s with the gene-wise ratio",
+      "T4 flags %s genes per time under A3, %s with the gene-wise ratio, %s with n_eff",
       paste(fmt_n(range(t4("none"))), collapse = " to "),
-      paste(fmt_n(range(t4("gene"))), collapse = " to ")
+      paste(fmt_n(range(t4("gene"))), collapse = " to "),
+      paste(fmt_n(range(t4("gene_neff"))), collapse = " to ")
     ),
     subtitle = sprintf(
       "Genes flagged in at least one replicate, of %s panel genes; statements ranked by their count under A3",
@@ -151,18 +153,21 @@ comp_title <- if (identical(t_none$type, t_gene$type)) {
 } else {
   sprintf("At %s the largest plug-in type changes with the gene-wise ratio", last)
 }
+t_welch <- top_of("gene_neff", last)
 comp_subtitle <- sprintf(
-  "%s: %s %.0f %% under A3, %s %.0f %% with the ratio\ndeMixSC weights (c = 2), one point per replicate; types ranked by mean share",
+  "Largest type at %s: %s %.0f %% under A3, %s %.0f %% with the ratio,\n%s %.0f %% with the ratio on the Welch plug-in; deMixSC weights (c = 2), one point per replicate",
   last,
   t_none$type,
   100 * t_none$share,
   t_gene$type,
-  100 * t_gene$share
+  100 * t_gene$share,
+  t_welch$type,
+  100 * t_welch$share
 )
 save_figure(
   plot_plugin_composition(
     res$variants,
-    which = c("none", "gene"),
+    which = c("none", "gene", "gene_neff"),
     title = comp_title,
     subtitle = comp_subtitle
   ),
@@ -190,4 +195,26 @@ save_figure(
   width = 11,
   height = 4.8
 )
+# Multivariate test (scripts/02_03_stats_multivariate_consistency.R) --------
+mv_path <- file.path(tier_dir, "multivariate_consistency.rds")
+if (file.exists(mv_path)) {
+  mv <- readRDS(mv_path)
+  pw <- mv$power[mv$power$unit == "gene", ]
+  save_figure(
+    plot_multivariate_z(
+      mv$gene,
+      level = mv$settings$level,
+      title = sprintf(
+        "A one-gene defect moves the conditional z %.2f to %.2f times as far as the diagonal z",
+        min(pw$median_gain),
+        max(pw$median_gain)
+      ),
+      subtitle = "Selected DeCovarT model (Welch panel, shrinkage, free c and phi), no gene-wise ratio; robust phi; dashed: +/- 2.33; grey: identity"
+    ),
+    "fs_tier3_multivariate",
+    fig_dir,
+    width = 11,
+    height = 4.8
+  )
+}
 message("Wrote ", fig_dir)

@@ -1,3 +1,11 @@
+---
+description: Plate notation for probabilistic models in Quarto TikZ and LaTeX
+globs: "**/*.{qmd,Rmd,tex},**/_quarto.yml"
+alwaysApply: false
+paths:
+  - "**/*.{qmd,Rmd,tex}"
+  - "**/_quarto.yml"
+---
 # Probabilistic graphical models
 
 Draw a DAG or a generative model in TikZ, with plate notation. A workflow that
@@ -116,9 +124,31 @@ Set `TIKZ_BIN` to the wrapper's absolute path in `_environment.local`. The
 diagram cache key is the picture source only. After editing the shared styles,
 delete the cache directory and render again.
 
-## LaTeX articles
+## LaTeX articles: prefer bayesnet
 
-Use the same node styles and the same `\plate` macro. The picture is a
-`tikzpicture` in the article, compiled by LuaLaTeX (XeLaTeX acceptable), so it
-stays a vector in the PDF. The Ghostscript outline step is only for the Quarto
-SVG path.
+The picture is a `tikzpicture` in the article, compiled by LuaLaTeX (XeLaTeX
+acceptable), so it stays a vector in the PDF. The Ghostscript outline step is
+only for the Quarto SVG path.
+
+In a LaTeX article, draw DAGs with the TikZ `bayesnet` library
+(`\usetikzlibrary{bayesnet,positioning,fit,calc}`) rather than the RevBayes
+styles above. Do not load both: each defines `\plate` and `obs`.
+
+| bayesnet | Use |
+| --- | --- |
+| `latent` | latent random variable (white circle) |
+| `obs` | observed random variable (grey circle) |
+| `det` | deterministic quantity (diamond) |
+| `const` | fixed quantity; add `draw` for a framed square |
+| `\plate[opts]{name}{(fit)(list)}{label}` | repeated subgraph; caption at the bottom right |
+
+- Draw edges with `\draw[->]`, not `\edge`, which can raise nullfont `;`
+  warnings.
+- Put shared additions (a framed-parameter style, a note style, a coloured
+  measurement-layer style) once in the article's macros file; do not redefine a
+  bayesnet style.
+- Equations go in small note labels beside nodes, never inside a node.
+- Reuse a colour the article already defines for a highlighted layer; do not
+  add a palette.
+- The RevBayes styles above stay the convention for Quarto documents and
+  slides.

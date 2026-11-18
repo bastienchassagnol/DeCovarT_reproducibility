@@ -32,14 +32,43 @@ and <out_dir>/genes_kept.csv. `lower`/`upper` are empty unless
 `--intervals` is given; they are then the released
 `compute_marginal_confidence_intervals()`, which rnasieve 0.1.4 sets to
 [0, 1] when its averaged Hessian is ill-conditioned.
+
+One fix to the release: `rnasieve.algo._minimize_alpha` passes its
+simplex constraints to `cp.Minimize()` instead of `cp.Problem()`. Under
+cvxpy 1.6.0 that raises a TypeError, which the package catches and then
+returns the previous proportions, so the proportions never move in the
+alternating maximisation (Erdmann-Pham et al. 2021, Algorithm 1, lines 6
+and 12, p. 1804). The corrected update below is installed unless
+`--release` is given.
 """
 
 import argparse
 from pathlib import Path
 
+import cvxpy as cp
 import numpy as np
 import pandas as pd
+import rnasieve.algo as rnasieve_algo
+from rnasieve.helper import CLIP_VALUE, compute_mixture_sigma
 from rnasieve.preprocessing import model_from_raw_counts
+
+
+def minimize_alpha_constrained(alpha_prev, sigma, phi, psi, n):
+    """`rnasieve.algo._minimize_alpha` with the constraints in `cp.Problem`."""
+    alpha_next = cp.Variable(alpha_prev.shape)
+    coef = n / np.clip(compute_mixture_sigma(alpha_prev, sigma, phi), CLIP_VALUE, None)
+    prob = cp.Problem(
+        cp.Minimize(coef.T @ (phi @ alpha_next.T - psi / n) ** 2),
+        [alpha_next >= 0, cp.sum(alpha_next) == 1],
+    )
+    try:
+        prob.solve()
+    except cp.SolverError:
+        return alpha_prev
+    if alpha_next.value is None:
+        return alpha_prev
+    alpha = np.clip(alpha_next.value, 0, None)
+    return alpha / np.sum(alpha)
 
 
 def fit(in_dir: Path, level: float, intervals: bool) -> dict[str, pd.DataFrame]:
@@ -83,7 +112,10 @@ def main() -> None:
     parser.add_argument("out_dir", type=Path)
     parser.add_argument("--level", type=float, default=0.95)
     parser.add_argument("--intervals", action="store_true")
+    parser.add_argument("--release", action="store_true")
     args = parser.parse_args()
+    if not args.release:
+        rnasieve_algo._minimize_alpha = minimize_alpha_constrained
     args.out_dir.mkdir(parents=True, exist_ok=True)
     for name, table in fit(args.in_dir, args.level, args.intervals).items():
         table.to_csv(args.out_dir / f"{name}.csv", index=name != "genes_kept")

@@ -1,0 +1,319 @@
+"method","sample_id","rmse_five_parts","rmse_three_parts","psm_share_of_lineage","family","algorithm","gene_set","covariance","platform_ratio","optimiser","observed_psm_share"
+"BayesPrism | r2_05","96h_CTL_rep1",0.250591614142197,0.025575567172523,0.35859366159445,"comparator","BayesPrism","r2_05",NA,"none",NA,0.76704424022227
+"BayesPrism | r2_05","96h_CTL_rep2",0.221893291795921,0.0278423184925371,0.405375624704098,"comparator","BayesPrism","r2_05",NA,"none",NA,0.76704424022227
+"BayesPrism | r2_05","96h_CTL_rep3",0.430253197586797,0.0313255764804752,2.04310515706449e-05,"comparator","BayesPrism","r2_05",NA,"none",NA,0.76704424022227
+"BayesPrism | welch","96h_CTL_rep1",0.141176243931438,0.0360414204308604,0.536273384342025,"comparator","BayesPrism","welch",NA,"none",NA,0.76704424022227
+"BayesPrism | welch","96h_CTL_rep2",0.107949586476349,0.036404741802544,0.589946886344143,"comparator","BayesPrism","welch",NA,"none",NA,0.76704424022227
+"BayesPrism | welch","96h_CTL_rep3",0.238369257261167,0.0367079117129053,0.381071679439657,"comparator","BayesPrism","welch",NA,"none",NA,0.76704424022227
+"DeCovarT denoised (bio only) | lbfgsb | b_g gene | r2_05","96h_CTL_rep1",0.185462491245714,0.0387952937169111,0.41845127164871,"DeCovarT","DeCovarT","r2_05","denoised_bio","gene","lbfgsb",0.76704424022227
+"DeCovarT denoised (bio only) | lbfgsb | b_g gene | r2_05","96h_CTL_rep2",0.185746968403643,0.0272885829480809,0.413277548115761,"DeCovarT","DeCovarT","r2_05","denoised_bio","gene","lbfgsb",0.76704424022227
+"DeCovarT denoised (bio only) | lbfgsb | b_g gene | r2_05","96h_CTL_rep3",0.261328269955191,0.0887376225594251,0.307276034099097,"DeCovarT","DeCovarT","r2_05","denoised_bio","gene","lbfgsb",0.76704424022227
+"DeCovarT denoised (bio only) | lbfgsb | b_g gene | welch","96h_CTL_rep1",0.474107555023866,0.0334661054868149,0.00346488520417683,"DeCovarT","DeCovarT","welch","denoised_bio","gene","lbfgsb",0.76704424022227
+"DeCovarT denoised (bio only) | lbfgsb | b_g gene | welch","96h_CTL_rep2",0.474144568286369,0.0332852742008213,0.00341012261205702,"DeCovarT","DeCovarT","welch","denoised_bio","gene","lbfgsb",0.76704424022227
+"DeCovarT denoised (bio only) | lbfgsb | b_g gene | welch","96h_CTL_rep3",0.473680395662071,0.0323941159842085,0.00315101071693341,"DeCovarT","DeCovarT","welch","denoised_bio","gene","lbfgsb",0.76704424022227
+"DeCovarT denoised (bio only) | lbfgsb | b_g none | r2_05","96h_CTL_rep1",0.116395862863581,0.0715143305909694,0.584215644997774,"DeCovarT","DeCovarT","r2_05","denoised_bio","none","lbfgsb",0.76704424022227
+"DeCovarT denoised (bio only) | lbfgsb | b_g none | r2_05","96h_CTL_rep2",0.0916338576687465,0.0480094277770421,0.61749187461341,"DeCovarT","DeCovarT","r2_05","denoised_bio","none","lbfgsb",0.76704424022227
+"DeCovarT denoised (bio only) | lbfgsb | b_g none | r2_05","96h_CTL_rep3",0.288643443652991,0.218465175520518,0.301152146760243,"DeCovarT","DeCovarT","r2_05","denoised_bio","none","lbfgsb",0.76704424022227
+"DeCovarT denoised (bio only) | lbfgsb | b_g none | welch","96h_CTL_rep1",0.470575365000624,0.0332790078117822,0.00856843684157597,"DeCovarT","DeCovarT","welch","denoised_bio","none","lbfgsb",0.76704424022227
+"DeCovarT denoised (bio only) | lbfgsb | b_g none | welch","96h_CTL_rep2",0.470512933421763,0.0333740866375474,0.00877097320300177,"DeCovarT","DeCovarT","welch","denoised_bio","none","lbfgsb",0.76704424022227
+"DeCovarT denoised (bio only) | lbfgsb | b_g none | welch","96h_CTL_rep3",0.470138102904383,0.0322166943253441,0.00815263191899995,"DeCovarT","DeCovarT","welch","denoised_bio","none","lbfgsb",0.76704424022227
+"DeCovarT denoised (bio only) | newton | b_g gene | r2_05","96h_CTL_rep1",0.124508634180175,0.124876809005922,0.638601151177943,"DeCovarT","DeCovarT","r2_05","denoised_bio","gene","newton",0.76704424022227
+"DeCovarT denoised (bio only) | newton | b_g gene | r2_05","96h_CTL_rep2",0.106527765963476,0.0271181017674876,0.596766602691979,"DeCovarT","DeCovarT","r2_05","denoised_bio","gene","newton",0.76704424022227
+"DeCovarT denoised (bio only) | newton | b_g gene | r2_05","96h_CTL_rep3",0.439546110616956,0.027523722358368,2.25336494953833e-14,"DeCovarT","DeCovarT","r2_05","denoised_bio","gene","newton",0.76704424022227
+"DeCovarT denoised (bio only) | newton | b_g gene | welch","96h_CTL_rep1",0.476029993682767,0.0335027798916258,2.23121311916781e-14,"DeCovarT","DeCovarT","welch","denoised_bio","gene","newton",0.76704424022227
+"DeCovarT denoised (bio only) | newton | b_g gene | welch","96h_CTL_rep2",0.4759317268063,0.0333802491517598,2.23163371260893e-14,"DeCovarT","DeCovarT","welch","denoised_bio","gene","newton",0.76704424022227
+"DeCovarT denoised (bio only) | newton | b_g gene | welch","96h_CTL_rep3",0.475532577625805,0.0326192500467376,2.23426966189647e-14,"DeCovarT","DeCovarT","welch","denoised_bio","gene","newton",0.76704424022227
+"DeCovarT denoised (bio only) | newton | b_g none | r2_05","96h_CTL_rep1",0.414896244039511,0.0367344087330719,4.09301215661663e-14,"DeCovarT","DeCovarT","r2_05","denoised_bio","none","newton",0.76704424022227
+"DeCovarT denoised (bio only) | newton | b_g none | r2_05","96h_CTL_rep2",0.41227681092918,0.0346285579820458,1.15586629885931e-13,"DeCovarT","DeCovarT","r2_05","denoised_bio","none","newton",0.76704424022227
+"DeCovarT denoised (bio only) | newton | b_g none | r2_05","96h_CTL_rep3",0.423656212913099,0.0773949991255535,4.08763738998126e-14,"DeCovarT","DeCovarT","r2_05","denoised_bio","none","newton",0.76704424022227
+"DeCovarT denoised (bio only) | newton | b_g none | welch","96h_CTL_rep1",0.478857726554716,0.0367344087330455,6.124269571373e-14,"DeCovarT","DeCovarT","welch","denoised_bio","none","newton",0.76704424022227
+"DeCovarT denoised (bio only) | newton | b_g none | welch","96h_CTL_rep2",0.478857726554716,0.0367344087330457,6.1507828612668e-14,"DeCovarT","DeCovarT","welch","denoised_bio","none","newton",0.76704424022227
+"DeCovarT denoised (bio only) | newton | b_g none | welch","96h_CTL_rep3",0.478857726554717,0.0367344087330448,5.98960659916232e-14,"DeCovarT","DeCovarT","welch","denoised_bio","none","newton",0.76704424022227
+"DeCovarT denoised + Poisson (fixed-point a) | lbfgsb | b_g gene | r2_05","96h_CTL_rep1",0.182678527839453,0.0386667566826807,0.424115095205477,"DeCovarT","DeCovarT","r2_05","denoised_fixed","gene","lbfgsb",0.76704424022227
+"DeCovarT denoised + Poisson (fixed-point a) | lbfgsb | b_g gene | r2_05","96h_CTL_rep2",0.181330502146158,0.0273675464350157,0.421995052060437,"DeCovarT","DeCovarT","r2_05","denoised_fixed","gene","lbfgsb",0.76704424022227
+"DeCovarT denoised + Poisson (fixed-point a) | lbfgsb | b_g gene | r2_05","96h_CTL_rep3",0.260575403386137,0.0876766909962183,0.309517370252038,"DeCovarT","DeCovarT","r2_05","denoised_fixed","gene","lbfgsb",0.76704424022227
+"DeCovarT denoised + Poisson (fixed-point a) | lbfgsb | b_g gene | welch","96h_CTL_rep1",0.451342507778035,0.026432539864961,0.0268873580136216,"DeCovarT","DeCovarT","welch","denoised_fixed","gene","lbfgsb",0.76704424022227
+"DeCovarT denoised + Poisson (fixed-point a) | lbfgsb | b_g gene | welch","96h_CTL_rep2",0.444332659660484,0.0236378773983557,0.0313982462905679,"DeCovarT","DeCovarT","welch","denoised_fixed","gene","lbfgsb",0.76704424022227
+"DeCovarT denoised + Poisson (fixed-point a) | lbfgsb | b_g gene | welch","96h_CTL_rep3",0.399802959780832,0.0551157820948262,0.0533819358460889,"DeCovarT","DeCovarT","welch","denoised_fixed","gene","lbfgsb",0.76704424022227
+"DeCovarT denoised + Poisson (fixed-point a) | lbfgsb | b_g none | r2_05","96h_CTL_rep1",0.116314017027003,0.0713947091880899,0.584308310970878,"DeCovarT","DeCovarT","r2_05","denoised_fixed","none","lbfgsb",0.76704424022227
+"DeCovarT denoised + Poisson (fixed-point a) | lbfgsb | b_g none | r2_05","96h_CTL_rep2",0.0914283581103869,0.0479475249634721,0.617874833632945,"DeCovarT","DeCovarT","r2_05","denoised_fixed","none","lbfgsb",0.76704424022227
+"DeCovarT denoised + Poisson (fixed-point a) | lbfgsb | b_g none | r2_05","96h_CTL_rep3",0.288640463695554,0.217940387500352,0.300880883397122,"DeCovarT","DeCovarT","r2_05","denoised_fixed","none","lbfgsb",0.76704424022227
+"DeCovarT denoised + Poisson (fixed-point a) | lbfgsb | b_g none | welch","96h_CTL_rep1",0.470215430381081,0.0331786639685027,0.00900945663932944,"DeCovarT","DeCovarT","welch","denoised_fixed","none","lbfgsb",0.76704424022227
+"DeCovarT denoised + Poisson (fixed-point a) | lbfgsb | b_g none | welch","96h_CTL_rep2",0.470032888261514,0.0332499721651655,0.00936840630868951,"DeCovarT","DeCovarT","welch","denoised_fixed","none","lbfgsb",0.76704424022227
+"DeCovarT denoised + Poisson (fixed-point a) | lbfgsb | b_g none | welch","96h_CTL_rep3",0.469464285916352,0.0319604990786631,0.00890118520285092,"DeCovarT","DeCovarT","welch","denoised_fixed","none","lbfgsb",0.76704424022227
+"DeCovarT denoised + Poisson (fixed-point a) | newton | b_g gene | r2_05","96h_CTL_rep1",0.119328261262237,0.118781247099324,0.643722944983548,"DeCovarT","DeCovarT","r2_05","denoised_fixed","gene","newton",0.76704424022227
+"DeCovarT denoised + Poisson (fixed-point a) | newton | b_g gene | r2_05","96h_CTL_rep2",0.100808179118427,0.0230831977127242,0.604763519798859,"DeCovarT","DeCovarT","r2_05","denoised_fixed","gene","newton",0.76704424022227
+"DeCovarT denoised + Poisson (fixed-point a) | newton | b_g gene | r2_05","96h_CTL_rep3",0.43994171257415,0.0279086166559362,2.29622924868826e-14,"DeCovarT","DeCovarT","r2_05","denoised_fixed","gene","newton",0.76704424022227
+"DeCovarT denoised + Poisson (fixed-point a) | newton | b_g gene | welch","96h_CTL_rep1",0.468502331217149,0.0292050622340668,2.2778035020936e-14,"DeCovarT","DeCovarT","welch","denoised_fixed","gene","newton",0.76704424022227
+"DeCovarT denoised + Poisson (fixed-point a) | newton | b_g gene | welch","96h_CTL_rep2",0.466551892618828,0.0286428058760842,2.27553313216125e-14,"DeCovarT","DeCovarT","welch","denoised_fixed","gene","newton",0.76704424022227
+"DeCovarT denoised + Poisson (fixed-point a) | newton | b_g gene | welch","96h_CTL_rep3",0.462137761657317,0.022610174496925,2.35150649351028e-14,"DeCovarT","DeCovarT","welch","denoised_fixed","gene","newton",0.76704424022227
+"DeCovarT denoised + Poisson (fixed-point a) | newton | b_g none | r2_05","96h_CTL_rep1",0.418306142790563,0.0367344087330728,4.04235437720522e-14,"DeCovarT","DeCovarT","r2_05","denoised_fixed","none","newton",0.76704424022227
+"DeCovarT denoised + Poisson (fixed-point a) | newton | b_g none | r2_05","96h_CTL_rep2",0.412332892734207,0.0345039397584863,1.1731412003384e-13,"DeCovarT","DeCovarT","r2_05","denoised_fixed","none","newton",0.76704424022227
+"DeCovarT denoised + Poisson (fixed-point a) | newton | b_g none | r2_05","96h_CTL_rep3",0.42375684115536,0.0770607220062556,4.09975613890359e-14,"DeCovarT","DeCovarT","r2_05","denoised_fixed","none","newton",0.76704424022227
+"DeCovarT denoised + Poisson (fixed-point a) | newton | b_g none | welch","96h_CTL_rep1",0.470221555195378,0.0331769393430229,0.00899677625422661,"DeCovarT","DeCovarT","welch","denoised_fixed","none","newton",0.76704424022227
+"DeCovarT denoised + Poisson (fixed-point a) | newton | b_g none | welch","96h_CTL_rep2",0.525336538878325,0.743603890328937,0.572348532993631,"DeCovarT","DeCovarT","welch","denoised_fixed","none","newton",0.76704424022227
+"DeCovarT denoised + Poisson (fixed-point a) | newton | b_g none | welch","96h_CTL_rep3",0.469473546218588,0.0319620410311199,0.00888832167704108,"DeCovarT","DeCovarT","welch","denoised_fixed","none","newton",0.76704424022227
+"DeCovarT denoised + Poisson (plug-in a) | lbfgsb | b_g gene | r2_05","96h_CTL_rep1",0.180657517074813,0.0385012185314511,0.428246218004068,"DeCovarT","DeCovarT","r2_05","denoised_plugin","gene","lbfgsb",0.76704424022227
+"DeCovarT denoised + Poisson (plug-in a) | lbfgsb | b_g gene | r2_05","96h_CTL_rep2",0.178539525805286,0.027145455342455,0.427389332426937,"DeCovarT","DeCovarT","r2_05","denoised_plugin","gene","lbfgsb",0.76704424022227
+"DeCovarT denoised + Poisson (plug-in a) | lbfgsb | b_g gene | r2_05","96h_CTL_rep3",0.260470186626749,0.0866908365434803,0.310361364032381,"DeCovarT","DeCovarT","r2_05","denoised_plugin","gene","lbfgsb",0.76704424022227
+"DeCovarT denoised + Poisson (plug-in a) | lbfgsb | b_g gene | welch","96h_CTL_rep1",0.423101617657651,0.0156102942121988,0.0501863105944527,"DeCovarT","DeCovarT","welch","denoised_plugin","gene","lbfgsb",0.76704424022227
+"DeCovarT denoised + Poisson (plug-in a) | lbfgsb | b_g gene | welch","96h_CTL_rep2",0.413329539468273,0.00976316537808075,0.056936596778575,"DeCovarT","DeCovarT","welch","denoised_plugin","gene","lbfgsb",0.76704424022227
+"DeCovarT denoised + Poisson (plug-in a) | lbfgsb | b_g gene | welch","96h_CTL_rep3",0.381213488947996,0.0836691810116822,0.0690506174502422,"DeCovarT","DeCovarT","welch","denoised_plugin","gene","lbfgsb",0.76704424022227
+"DeCovarT denoised + Poisson (plug-in a) | lbfgsb | b_g none | r2_05","96h_CTL_rep1",0.11629978937554,0.0713911988952329,0.584342901721799,"DeCovarT","DeCovarT","r2_05","denoised_plugin","none","lbfgsb",0.76704424022227
+"DeCovarT denoised + Poisson (plug-in a) | lbfgsb | b_g none | r2_05","96h_CTL_rep2",0.0914169650772741,0.047938513110075,0.617884190615954,"DeCovarT","DeCovarT","r2_05","denoised_plugin","none","lbfgsb",0.76704424022227
+"DeCovarT denoised + Poisson (plug-in a) | lbfgsb | b_g none | r2_05","96h_CTL_rep3",0.288642424260387,0.217933608378198,0.300879511284616,"DeCovarT","DeCovarT","r2_05","denoised_plugin","none","lbfgsb",0.76704424022227
+"DeCovarT denoised + Poisson (plug-in a) | lbfgsb | b_g none | welch","96h_CTL_rep1",0.467741243163122,0.0325505056899073,0.0120942664878385,"DeCovarT","DeCovarT","welch","denoised_plugin","none","lbfgsb",0.76704424022227
+"DeCovarT denoised + Poisson (plug-in a) | lbfgsb | b_g none | welch","96h_CTL_rep2",0.46695260867728,0.0325373886734948,0.0132719509909076,"DeCovarT","DeCovarT","welch","denoised_plugin","none","lbfgsb",0.76704424022227
+"DeCovarT denoised + Poisson (plug-in a) | lbfgsb | b_g none | welch","96h_CTL_rep3",0.464625172669505,0.0304210845553961,0.0145527342842137,"DeCovarT","DeCovarT","welch","denoised_plugin","none","lbfgsb",0.76704424022227
+"DeCovarT denoised + Poisson (plug-in a) | newton | b_g gene | r2_05","96h_CTL_rep1",0.112526513400372,0.110454375208314,0.649886897174452,"DeCovarT","DeCovarT","r2_05","denoised_plugin","gene","newton",0.76704424022227
+"DeCovarT denoised + Poisson (plug-in a) | newton | b_g gene | r2_05","96h_CTL_rep2",0.0922819767393767,0.0201707573535262,0.617135212205964,"DeCovarT","DeCovarT","r2_05","denoised_plugin","gene","newton",0.76704424022227
+"DeCovarT denoised + Poisson (plug-in a) | newton | b_g gene | r2_05","96h_CTL_rep3",0.440330477447282,0.0283060258455786,2.25021803613708e-14,"DeCovarT","DeCovarT","r2_05","denoised_plugin","gene","newton",0.76704424022227
+"DeCovarT denoised + Poisson (plug-in a) | newton | b_g gene | welch","96h_CTL_rep1",0.460225263966236,0.0264137234618412,3.15518447106178e-14,"DeCovarT","DeCovarT","welch","denoised_plugin","gene","newton",0.76704424022227
+"DeCovarT denoised + Poisson (plug-in a) | newton | b_g gene | welch","96h_CTL_rep2",0.456569242192645,0.0253484108719535,3.21758235844052e-14,"DeCovarT","DeCovarT","welch","denoised_plugin","gene","newton",0.76704424022227
+"DeCovarT denoised + Poisson (plug-in a) | newton | b_g gene | welch","96h_CTL_rep3",0.456992566131233,0.0207236910926581,2.29223169877829e-14,"DeCovarT","DeCovarT","welch","denoised_plugin","gene","newton",0.76704424022227
+"DeCovarT denoised + Poisson (plug-in a) | newton | b_g none | r2_05","96h_CTL_rep1",0.416346468772437,0.0367344087330733,4.02223015338694e-14,"DeCovarT","DeCovarT","r2_05","denoised_plugin","none","newton",0.76704424022227
+"DeCovarT denoised + Poisson (plug-in a) | newton | b_g none | r2_05","96h_CTL_rep2",0.41234253784486,0.034482552432986,1.16333686409961e-13,"DeCovarT","DeCovarT","r2_05","denoised_plugin","none","newton",0.76704424022227
+"DeCovarT denoised + Poisson (plug-in a) | newton | b_g none | r2_05","96h_CTL_rep3",0.423860334402144,0.0767177539029739,4.07552783640146e-14,"DeCovarT","DeCovarT","r2_05","denoised_plugin","none","newton",0.76704424022227
+"DeCovarT denoised + Poisson (plug-in a) | newton | b_g none | welch","96h_CTL_rep1",0.478857726554715,0.0367344087330465,6.29238793104032e-14,"DeCovarT","DeCovarT","welch","denoised_plugin","none","newton",0.76704424022227
+"DeCovarT denoised + Poisson (plug-in a) | newton | b_g none | welch","96h_CTL_rep2",0.478857726554715,0.0367344087330469,6.34349047858293e-14,"DeCovarT","DeCovarT","welch","denoised_plugin","none","newton",0.76704424022227
+"DeCovarT denoised + Poisson (plug-in a) | newton | b_g none | welch","96h_CTL_rep3",0.478857726554716,0.0367344087330457,6.23087662201121e-14,"DeCovarT","DeCovarT","welch","denoised_plugin","none","newton",0.76704424022227
+"DeCovarT Firth denoised_bio | bfgs | b_g gene | r2_05","96h_CTL_rep1",0.183371282100176,0.0399471843053503,0.422782515461375,"DeCovarT variant","DeCovarT Firth","r2_05","denoised_bio","gene","bfgs",0.76704424022227
+"DeCovarT Firth denoised_bio | bfgs | b_g gene | r2_05","96h_CTL_rep2",0.182656345247178,0.0280542160601022,0.419992923361907,"DeCovarT variant","DeCovarT Firth","r2_05","denoised_bio","gene","bfgs",0.76704424022227
+"DeCovarT Firth denoised_bio | bfgs | b_g gene | r2_05","96h_CTL_rep3",0.259274152550139,0.0886679571458283,0.309762256100035,"DeCovarT variant","DeCovarT Firth","r2_05","denoised_bio","gene","bfgs",0.76704424022227
+"DeCovarT Firth denoised_bio | bfgs | b_g none | r2_05","96h_CTL_rep1",0.114877482315444,0.0708470491172608,0.586801433091623,"DeCovarT variant","DeCovarT Firth","r2_05","denoised_bio","none","bfgs",0.76704424022227
+"DeCovarT Firth denoised_bio | bfgs | b_g none | r2_05","96h_CTL_rep2",0.090681556469652,0.047931125625296,0.61997604798636,"DeCovarT variant","DeCovarT Firth","r2_05","denoised_bio","none","bfgs",0.76704424022227
+"DeCovarT Firth denoised_bio | bfgs | b_g none | r2_05","96h_CTL_rep3",0.275261493242009,0.20223821197145,0.321429224429128,"DeCovarT variant","DeCovarT Firth","r2_05","denoised_bio","none","bfgs",0.76704424022227
+"DeCovarT Firth raw | bfgs | b_g gene | r2_05","96h_CTL_rep1",0.167117407623567,0.0202764524839328,0.478442126785319,"DeCovarT variant","DeCovarT Firth","r2_05","raw","gene","bfgs",0.76704424022227
+"DeCovarT Firth raw | bfgs | b_g gene | r2_05","96h_CTL_rep2",0.140059251356142,0.0192406480380361,0.514120715087571,"DeCovarT variant","DeCovarT Firth","r2_05","raw","gene","bfgs",0.76704424022227
+"DeCovarT Firth raw | bfgs | b_g gene | r2_05","96h_CTL_rep3",0.281994520908236,0.0436169255724269,0.287486139739167,"DeCovarT variant","DeCovarT Firth","r2_05","raw","gene","bfgs",0.76704424022227
+"DeCovarT Firth raw | bfgs | b_g none | r2_05","96h_CTL_rep1",0.170318419408497,0.0224175648094414,0.476413664502618,"DeCovarT variant","DeCovarT Firth","r2_05","raw","none","bfgs",0.76704424022227
+"DeCovarT Firth raw | bfgs | b_g none | r2_05","96h_CTL_rep2",0.131027158529044,0.0261959720087522,0.539481948769542,"DeCovarT variant","DeCovarT Firth","r2_05","raw","none","bfgs",0.76704424022227
+"DeCovarT Firth raw | bfgs | b_g none | r2_05","96h_CTL_rep3",0.338289917213956,0.0438409471739146,0.190770634616426,"DeCovarT variant","DeCovarT Firth","r2_05","raw","none","bfgs",0.76704424022227
+"DeCovarT raw | lbfgsb | b_g gene | r2_05","96h_CTL_rep1",0.164589655510238,0.0169350792343059,0.489844570229061,"DeCovarT","DeCovarT","r2_05","raw","gene","lbfgsb",0.76704424022227
+"DeCovarT raw | lbfgsb | b_g gene | r2_05","96h_CTL_rep2",0.137628790564463,0.0171725494014986,0.522101993554638,"DeCovarT","DeCovarT","r2_05","raw","gene","lbfgsb",0.76704424022227
+"DeCovarT raw | lbfgsb | b_g gene | r2_05","96h_CTL_rep3",0.282213696675256,0.0378867711749275,0.2946012392424,"DeCovarT","DeCovarT","r2_05","raw","gene","lbfgsb",0.76704424022227
+"DeCovarT raw | lbfgsb | b_g gene | welch","96h_CTL_rep1",0.275556597516073,0.221387779301421,0.292929115051244,"DeCovarT","DeCovarT","welch","raw","gene","lbfgsb",0.76704424022227
+"DeCovarT raw | lbfgsb | b_g gene | welch","96h_CTL_rep2",0.278568778662491,0.235934513525203,0.311769031326543,"DeCovarT","DeCovarT","welch","raw","gene","lbfgsb",0.76704424022227
+"DeCovarT raw | lbfgsb | b_g gene | welch","96h_CTL_rep3",0.307907515342458,0.267642331122629,0.220531794907787,"DeCovarT","DeCovarT","welch","raw","gene","lbfgsb",0.76704424022227
+"DeCovarT raw | lbfgsb | b_g none | r2_05","96h_CTL_rep1",0.166757688460928,0.0367344087331297,0.491504316720211,"DeCovarT","DeCovarT","r2_05","raw","none","lbfgsb",0.76704424022227
+"DeCovarT raw | lbfgsb | b_g none | r2_05","96h_CTL_rep2",0.126785945874029,0.0367344087331301,0.55471595992158,"DeCovarT","DeCovarT","r2_05","raw","none","lbfgsb",0.76704424022227
+"DeCovarT raw | lbfgsb | b_g none | r2_05","96h_CTL_rep3",0.34286425961777,0.0371779051363187,0.190670538459834,"DeCovarT","DeCovarT","r2_05","raw","none","lbfgsb",0.76704424022227
+"DeCovarT raw | lbfgsb | b_g none | welch","96h_CTL_rep1",0.381072819141889,0.541367077405634,0.76389051577427,"DeCovarT","DeCovarT","welch","raw","none","lbfgsb",0.76704424022227
+"DeCovarT raw | lbfgsb | b_g none | welch","96h_CTL_rep2",0.379740655953497,0.539870580361631,0.771624436817522,"DeCovarT","DeCovarT","welch","raw","none","lbfgsb",0.76704424022227
+"DeCovarT raw | lbfgsb | b_g none | welch","96h_CTL_rep3",0.316669570222515,0.401400482905227,0.545050443892535,"DeCovarT","DeCovarT","welch","raw","none","lbfgsb",0.76704424022227
+"DeCovarT raw | newton | b_g gene | r2_05","96h_CTL_rep1",0.157813054724624,0.0172736395238211,0.507971239749931,"DeCovarT","DeCovarT","r2_05","raw","gene","newton",0.76704424022227
+"DeCovarT raw | newton | b_g gene | r2_05","96h_CTL_rep2",0.126263661395228,0.0367344045718869,0.560357939056136,"DeCovarT","DeCovarT","r2_05","raw","gene","newton",0.76704424022227
+"DeCovarT raw | newton | b_g gene | r2_05","96h_CTL_rep3",0.431934907413352,0.0317390549313249,2.23737377792535e-14,"DeCovarT","DeCovarT","r2_05","raw","gene","newton",0.76704424022227
+"DeCovarT raw | newton | b_g gene | welch","96h_CTL_rep1",0.395384053539696,0.09750900792284,1.10811838061315e-13,"DeCovarT","DeCovarT","welch","raw","gene","newton",0.76704424022227
+"DeCovarT raw | newton | b_g gene | welch","96h_CTL_rep2",0.383032534458076,0.140139368686262,1.23914098407594e-13,"DeCovarT","DeCovarT","welch","raw","gene","newton",0.76704424022227
+"DeCovarT raw | newton | b_g gene | welch","96h_CTL_rep3",0.416398039813988,0.051023998582901,3.25199326569908e-14,"DeCovarT","DeCovarT","welch","raw","gene","newton",0.76704424022227
+"DeCovarT raw | newton | b_g none | r2_05","96h_CTL_rep1",0.423247138845208,0.0367344087330771,3.76909182293477e-14,"DeCovarT","DeCovarT","r2_05","raw","none","newton",0.76704424022227
+"DeCovarT raw | newton | b_g none | r2_05","96h_CTL_rep2",0.415610888347559,0.0359197490625559,3.12873388709108e-14,"DeCovarT","DeCovarT","r2_05","raw","none","newton",0.76704424022227
+"DeCovarT raw | newton | b_g none | r2_05","96h_CTL_rep3",0.457314383936555,0.0332411172911986,2.23211254331761e-14,"DeCovarT","DeCovarT","r2_05","raw","none","newton",0.76704424022227
+"DeCovarT raw | newton | b_g none | welch","96h_CTL_rep1",0.478857726554715,0.0367344087330532,7.45550201338183e-14,"DeCovarT","DeCovarT","welch","raw","none","newton",0.76704424022227
+"DeCovarT raw | newton | b_g none | welch","96h_CTL_rep2",0.478857726554715,0.0367344087330544,7.4947352990904e-14,"DeCovarT","DeCovarT","welch","raw","none","newton",0.76704424022227
+"DeCovarT raw | newton | b_g none | welch","96h_CTL_rep3",0.478857726554714,0.036734408733048,7.03914075095638e-14,"DeCovarT","DeCovarT","welch","raw","none","newton",0.76704424022227
+"DeCovarT shrinkage lambda_0.25 | lbfgsb | b_g none | r2_05","96h_CTL_rep1",0.232729906671568,0.0367344087331298,0.390235821702044,"DeCovarT variant","DeCovarT shrinkage","r2_05","lambda_0.25","none","lbfgsb",0.76704424022227
+"DeCovarT shrinkage lambda_0.25 | lbfgsb | b_g none | r2_05","96h_CTL_rep2",0.18411765892057,0.0367344087331298,0.46765338353199,"DeCovarT variant","DeCovarT shrinkage","r2_05","lambda_0.25","none","lbfgsb",0.76704424022227
+"DeCovarT shrinkage lambda_0.25 | lbfgsb | b_g none | r2_05","96h_CTL_rep3",0.426897576067918,0.0367344087331298,0.082279444874178,"DeCovarT variant","DeCovarT shrinkage","r2_05","lambda_0.25","none","lbfgsb",0.76704424022227
+"DeCovarT shrinkage lambda_0.25 | lbfgsb | b_g none | welch","96h_CTL_rep1",0.154455777955357,0.225483574135281,0.810545150358336,"DeCovarT variant","DeCovarT shrinkage","welch","lambda_0.25","none","lbfgsb",0.76704424022227
+"DeCovarT shrinkage lambda_0.25 | lbfgsb | b_g none | welch","96h_CTL_rep2",0.146573632615578,0.215522862695625,0.824233519486097,"DeCovarT variant","DeCovarT shrinkage","welch","lambda_0.25","none","lbfgsb",0.76704424022227
+"DeCovarT shrinkage lambda_0.25 | lbfgsb | b_g none | welch","96h_CTL_rep3",0.281470811442643,0.396385390739688,0.741078058469358,"DeCovarT variant","DeCovarT shrinkage","welch","lambda_0.25","none","lbfgsb",0.76704424022227
+"DeCovarT shrinkage lambda_0.50 | lbfgsb | b_g none | r2_05","96h_CTL_rep1",0.264580060010511,0.0367344087331298,0.339624203828609,"DeCovarT variant","DeCovarT shrinkage","r2_05","lambda_0.50","none","lbfgsb",0.76704424022227
+"DeCovarT shrinkage lambda_0.50 | lbfgsb | b_g none | r2_05","96h_CTL_rep2",0.216611991709551,0.0367344087331294,0.41587656895449,"DeCovarT variant","DeCovarT shrinkage","r2_05","lambda_0.50","none","lbfgsb",0.76704424022227
+"DeCovarT shrinkage lambda_0.50 | lbfgsb | b_g none | r2_05","96h_CTL_rep3",0.447809407792864,0.0367344087331299,0.0491618928094892,"DeCovarT variant","DeCovarT shrinkage","r2_05","lambda_0.50","none","lbfgsb",0.76704424022227
+"DeCovarT shrinkage lambda_0.50 | lbfgsb | b_g none | welch","96h_CTL_rep1",0.0101740329868273,0.0125003327042013,0.759506591782874,"DeCovarT variant","DeCovarT shrinkage","welch","lambda_0.50","none","lbfgsb",0.76704424022227
+"DeCovarT shrinkage lambda_0.50 | lbfgsb | b_g none | welch","96h_CTL_rep2",0.014000407926301,0.0145011549544144,0.77890822369046,"DeCovarT variant","DeCovarT shrinkage","welch","lambda_0.50","none","lbfgsb",0.76704424022227
+"DeCovarT shrinkage lambda_0.50 | lbfgsb | b_g none | welch","96h_CTL_rep3",0.0764438077030232,0.0138643739333078,0.644110332549931,"DeCovarT variant","DeCovarT shrinkage","welch","lambda_0.50","none","lbfgsb",0.76704424022227
+"DeCovarT shrinkage lambda_0.75 | lbfgsb | b_g none | r2_05","96h_CTL_rep1",0.274086347334879,0.0367344087331298,0.324529627170235,"DeCovarT variant","DeCovarT shrinkage","r2_05","lambda_0.75","none","lbfgsb",0.76704424022227
+"DeCovarT shrinkage lambda_0.75 | lbfgsb | b_g none | r2_05","96h_CTL_rep2",0.228900297343141,0.0367344087331298,0.396326042895968,"DeCovarT variant","DeCovarT shrinkage","r2_05","lambda_0.75","none","lbfgsb",0.76704424022227
+"DeCovarT shrinkage lambda_0.75 | lbfgsb | b_g none | r2_05","96h_CTL_rep3",0.455117354644663,0.0367344087331297,0.0375896296440678,"DeCovarT variant","DeCovarT shrinkage","r2_05","lambda_0.75","none","lbfgsb",0.76704424022227
+"DeCovarT shrinkage lambda_0.75 | lbfgsb | b_g none | welch","96h_CTL_rep1",0.0437074013893981,0.0129864870984455,0.695718378802836,"DeCovarT variant","DeCovarT shrinkage","welch","lambda_0.75","none","lbfgsb",0.76704424022227
+"DeCovarT shrinkage lambda_0.75 | lbfgsb | b_g none | welch","96h_CTL_rep2",0.0282494999180694,0.0155273171468416,0.722307884086083,"DeCovarT variant","DeCovarT shrinkage","welch","lambda_0.75","none","lbfgsb",0.76704424022227
+"DeCovarT shrinkage lambda_0.75 | lbfgsb | b_g none | welch","96h_CTL_rep3",0.128152952331044,0.0139587916253678,0.557062934326496,"DeCovarT variant","DeCovarT shrinkage","welch","lambda_0.75","none","lbfgsb",0.76704424022227
+"DeCovarT shrinkage lambda_1.00 | lbfgsb | b_g none | r2_05","96h_CTL_rep1",0.260218932260905,0.0367344087331298,0.346550599549932,"DeCovarT variant","DeCovarT shrinkage","r2_05","lambda_1.00","none","lbfgsb",0.76704424022227
+"DeCovarT shrinkage lambda_1.00 | lbfgsb | b_g none | r2_05","96h_CTL_rep2",0.21904710046641,0.0367344087331298,0.412001255271389,"DeCovarT variant","DeCovarT shrinkage","r2_05","lambda_1.00","none","lbfgsb",0.76704424022227
+"DeCovarT shrinkage lambda_1.00 | lbfgsb | b_g none | r2_05","96h_CTL_rep3",0.441588802025687,0.0367344087331297,0.0590127865320987,"DeCovarT variant","DeCovarT shrinkage","r2_05","lambda_1.00","none","lbfgsb",0.76704424022227
+"DeCovarT shrinkage lambda_1.00 | lbfgsb | b_g none | welch","96h_CTL_rep1",0.126672077420863,0.0367344087331298,0.559699458566353,"DeCovarT variant","DeCovarT shrinkage","welch","lambda_1.00","none","lbfgsb",0.76704424022227
+"DeCovarT shrinkage lambda_1.00 | lbfgsb | b_g none | welch","96h_CTL_rep2",0.0916328585035881,0.0367344087331298,0.616624316430476,"DeCovarT variant","DeCovarT shrinkage","welch","lambda_1.00","none","lbfgsb",0.76704424022227
+"DeCovarT shrinkage lambda_1.00 | lbfgsb | b_g none | welch","96h_CTL_rep3",0.260960634727476,0.0367344087331298,0.345372545485836,"DeCovarT variant","DeCovarT shrinkage","welch","lambda_1.00","none","lbfgsb",0.76704424022227
+"DeCovarT total covariance denoised_bio | lbfgsb | b_g gene | r2_05","96h_CTL_rep1",0.180095164257309,0.0374067582340836,0.427361709634496,"DeCovarT variant","DeCovarT total covariance","r2_05","denoised_bio","gene","lbfgsb",0.76704424022227
+"DeCovarT total covariance denoised_bio | lbfgsb | b_g gene | r2_05","96h_CTL_rep2",0.189248630383129,0.023950532301761,0.406517053237728,"DeCovarT variant","DeCovarT total covariance","r2_05","denoised_bio","gene","lbfgsb",0.76704424022227
+"DeCovarT total covariance denoised_bio | lbfgsb | b_g gene | r2_05","96h_CTL_rep3",0.23726083762387,0.120812545249002,0.363625353741777,"DeCovarT variant","DeCovarT total covariance","r2_05","denoised_bio","gene","lbfgsb",0.76704424022227
+"DeCovarT total covariance denoised_bio | lbfgsb | b_g gene | welch","96h_CTL_rep1",0.47286199691874,0.030965343293461,0.00390337077653993,"DeCovarT variant","DeCovarT total covariance","welch","denoised_bio","gene","lbfgsb",0.76704424022227
+"DeCovarT total covariance denoised_bio | lbfgsb | b_g gene | welch","96h_CTL_rep2",0.472552698494586,0.0306635586454791,0.00432712265244219,"DeCovarT variant","DeCovarT total covariance","welch","denoised_bio","gene","lbfgsb",0.76704424022227
+"DeCovarT total covariance denoised_bio | lbfgsb | b_g gene | welch","96h_CTL_rep3",0.472075738621336,0.0298624798897949,0.00399481602394857,"DeCovarT variant","DeCovarT total covariance","welch","denoised_bio","gene","lbfgsb",0.76704424022227
+"DeCovarT total covariance denoised_bio | lbfgsb | b_g none | r2_05","96h_CTL_rep1",0.115231318684014,0.0647526304637951,0.581370311507678,"DeCovarT variant","DeCovarT total covariance","r2_05","denoised_bio","none","lbfgsb",0.76704424022227
+"DeCovarT total covariance denoised_bio | lbfgsb | b_g none | r2_05","96h_CTL_rep2",0.090469662148798,0.0429248542358307,0.615626828722965,"DeCovarT variant","DeCovarT total covariance","r2_05","denoised_bio","none","lbfgsb",0.76704424022227
+"DeCovarT total covariance denoised_bio | lbfgsb | b_g none | r2_05","96h_CTL_rep3",0.289920434289554,0.207256505776764,0.290959105331796,"DeCovarT variant","DeCovarT total covariance","r2_05","denoised_bio","none","lbfgsb",0.76704424022227
+"DeCovarT total covariance denoised_bio | lbfgsb | b_g none | welch","96h_CTL_rep1",0.469109423327215,0.032660443302131,0.0107069796261936,"DeCovarT variant","DeCovarT total covariance","welch","denoised_bio","none","lbfgsb",0.76704424022227
+"DeCovarT total covariance denoised_bio | lbfgsb | b_g none | welch","96h_CTL_rep2",0.468977265438813,0.0327478556574309,0.0110434023759759,"DeCovarT variant","DeCovarT total covariance","welch","denoised_bio","none","lbfgsb",0.76704424022227
+"DeCovarT total covariance denoised_bio | lbfgsb | b_g none | welch","96h_CTL_rep3",0.468645193018439,0.0315262922015698,0.0102951580947297,"DeCovarT variant","DeCovarT total covariance","welch","denoised_bio","none","lbfgsb",0.76704424022227
+"DeCovarT total covariance raw | lbfgsb | b_g gene | r2_05","96h_CTL_rep1",0.142510019009142,0.017116998620247,0.524443041186134,"DeCovarT variant","DeCovarT total covariance","r2_05","raw","gene","lbfgsb",0.76704424022227
+"DeCovarT total covariance raw | lbfgsb | b_g gene | r2_05","96h_CTL_rep2",0.117922904995826,0.0193584951979188,0.549548382055873,"DeCovarT variant","DeCovarT total covariance","r2_05","raw","gene","lbfgsb",0.76704424022227
+"DeCovarT total covariance raw | lbfgsb | b_g gene | r2_05","96h_CTL_rep3",0.263199816034366,0.0420721287424603,0.327342690820777,"DeCovarT variant","DeCovarT total covariance","r2_05","raw","gene","lbfgsb",0.76704424022227
+"DeCovarT total covariance raw | lbfgsb | b_g gene | welch","96h_CTL_rep1",0.329078364483074,0.337764599965356,0.291887068776312,"DeCovarT variant","DeCovarT total covariance","welch","raw","gene","lbfgsb",0.76704424022227
+"DeCovarT total covariance raw | lbfgsb | b_g gene | welch","96h_CTL_rep2",0.330002661066037,0.316094066438338,0.276315098531699,"DeCovarT variant","DeCovarT total covariance","welch","raw","gene","lbfgsb",0.76704424022227
+"DeCovarT total covariance raw | lbfgsb | b_g gene | welch","96h_CTL_rep3",0.360738727936309,0.41158345683246,0.2534205147318,"DeCovarT variant","DeCovarT total covariance","welch","raw","gene","lbfgsb",0.76704424022227
+"DeCovarT total covariance raw | lbfgsb | b_g none | r2_05","96h_CTL_rep1",0.156664718577731,0.0364601525222097,0.509525873965512,"DeCovarT variant","DeCovarT total covariance","r2_05","raw","none","lbfgsb",0.76704424022227
+"DeCovarT total covariance raw | lbfgsb | b_g none | r2_05","96h_CTL_rep2",0.116947441578466,0.0364470980687424,0.572452574782663,"DeCovarT variant","DeCovarT total covariance","r2_05","raw","none","lbfgsb",0.76704424022227
+"DeCovarT total covariance raw | lbfgsb | b_g none | r2_05","96h_CTL_rep3",0.342711902075927,0.0308763114191612,0.193377487854138,"DeCovarT variant","DeCovarT total covariance","r2_05","raw","none","lbfgsb",0.76704424022227
+"DeCovarT total covariance raw | lbfgsb | b_g none | welch","96h_CTL_rep1",0.285492913112929,0.389126997746188,0.697779970682329,"DeCovarT variant","DeCovarT total covariance","welch","raw","none","lbfgsb",0.76704424022227
+"DeCovarT total covariance raw | lbfgsb | b_g none | welch","96h_CTL_rep2",0.277719991016595,0.370073429250457,0.67519433993158,"DeCovarT variant","DeCovarT total covariance","welch","raw","none","lbfgsb",0.76704424022227
+"DeCovarT total covariance raw | lbfgsb | b_g none | welch","96h_CTL_rep3",0.32041823454311,0.408351907959861,0.550772425223529,"DeCovarT variant","DeCovarT total covariance","welch","raw","none","lbfgsb",0.76704424022227
+"DeMixSC wNNLS + b_g | r2_05","96h_CTL_rep1",0.288980280104354,0.0069082901094283,0.290282050350798,"comparator","DeMixSC wNNLS","r2_05",NA,"gene",NA,0.76704424022227
+"DeMixSC wNNLS + b_g | r2_05","96h_CTL_rep2",0.268248500262523,0.0124870503214449,0.32630028934189,"comparator","DeMixSC wNNLS","r2_05",NA,"gene",NA,0.76704424022227
+"DeMixSC wNNLS + b_g | r2_05","96h_CTL_rep3",0.399706046129319,0.00835635569739268,0.104433507869876,"comparator","DeMixSC wNNLS","r2_05",NA,"gene",NA,0.76704424022227
+"DeMixSC wNNLS + b_g | welch","96h_CTL_rep1",0.284544600513544,0.0200671701673802,0.299489601770902,"comparator","DeMixSC wNNLS","welch",NA,"gene",NA,0.76704424022227
+"DeMixSC wNNLS + b_g | welch","96h_CTL_rep2",0.25803887028599,0.0209804633127061,0.344210964807622,"comparator","DeMixSC wNNLS","welch",NA,"gene",NA,0.76704424022227
+"DeMixSC wNNLS + b_g | welch","96h_CTL_rep3",0.360035269360958,0.0201424006958311,0.164741326486053,"comparator","DeMixSC wNNLS","welch",NA,"gene",NA,0.76704424022227
+"DeMixSC wNNLS | r2_05","96h_CTL_rep1",0.23990297039903,0.00324427324675121,0.309468926012442,"comparator","DeMixSC wNNLS","r2_05",NA,"none",NA,0.76704424022227
+"DeMixSC wNNLS | r2_05","96h_CTL_rep2",0.26080406490891,0.0161460279158751,0.26777356403718,"comparator","DeMixSC wNNLS","r2_05",NA,"none",NA,0.76704424022227
+"DeMixSC wNNLS | r2_05","96h_CTL_rep3",0.372978366781458,0.0165614158058218,0.0542819107492055,"comparator","DeMixSC wNNLS","r2_05",NA,"none",NA,0.76704424022227
+"DeMixSC wNNLS | welch","96h_CTL_rep1",0.0653970423111839,0.0282023450206571,0.859258928762066,"comparator","DeMixSC wNNLS","welch",NA,"none",NA,0.76704424022227
+"DeMixSC wNNLS | welch","96h_CTL_rep2",0.0914255458409087,0.028828879430619,0.90178587781732,"comparator","DeMixSC wNNLS","welch",NA,"none",NA,0.76704424022227
+"DeMixSC wNNLS | welch","96h_CTL_rep3",0.0553738691425616,0.0338628152583786,0.837175649769904,"comparator","DeMixSC wNNLS","welch",NA,"none",NA,0.76704424022227
+"DWLS | r2_05","96h_CTL_rep1",0.228453426019065,0.0197246863802396,0.392737629168541,"comparator","DWLS","r2_05",NA,"none",NA,0.76704424022227
+"DWLS | r2_05","96h_CTL_rep2",0.178588807035844,0.023399648400747,0.472896402414979,"comparator","DWLS","r2_05",NA,"none",NA,0.76704424022227
+"DWLS | r2_05","96h_CTL_rep3",0.3874089580404,0.0176620331986284,0.0937726394474387,"comparator","DWLS","r2_05",NA,"none",NA,0.76704424022227
+"DWLS | welch","96h_CTL_rep1",0.13000780172573,0.0328952748660834,0.553908158175361,"comparator","DWLS","welch",NA,"none",NA,0.76704424022227
+"DWLS | welch","96h_CTL_rep2",0.0973984462091865,0.0325973833417763,0.606772778244913,"comparator","DWLS","welch",NA,"none",NA,0.76704424022227
+"DWLS | welch","96h_CTL_rep3",0.178375551776646,0.0336085500339019,0.476295573841987,"comparator","DWLS","welch",NA,"none",NA,0.76704424022227
+"MEAD (pseudo-individuals) | r2_05","96h_CTL_rep1",0.244968404984145,0.0367344087331298,0.370780370590043,"comparator","MEAD (pseudo-individuals)","r2_05",NA,"none",NA,0.76704424022227
+"MEAD (pseudo-individuals) | r2_05","96h_CTL_rep2",0.190086050531541,0.0367344087331298,0.458132936373571,"comparator","MEAD (pseudo-individuals)","r2_05",NA,"none",NA,0.76704424022227
+"MEAD (pseudo-individuals) | r2_05","96h_CTL_rep3",0.412133540637469,0.0394199618614893,0,"comparator","MEAD (pseudo-individuals)","r2_05",NA,"none",NA,0.76704424022227
+"MEAD (pseudo-individuals) | welch","96h_CTL_rep1",0.0280180872639416,0.0367344087331298,0.735325136978589,"comparator","MEAD (pseudo-individuals)","welch",NA,"none",NA,0.76704424022227
+"MEAD (pseudo-individuals) | welch","96h_CTL_rep2",0.0295349959651392,0.0367344087331298,0.781646076499343,"comparator","MEAD (pseudo-individuals)","welch",NA,"none",NA,0.76704424022227
+"MEAD (pseudo-individuals) | welch","96h_CTL_rep3",0.0863947248371103,0.0367344087331298,0.625246465369354,"comparator","MEAD (pseudo-individuals)","welch",NA,"none",NA,0.76704424022227
+"ReDeconv | r2_05","96h_CTL_rep1",0.309930455588845,0.0167234152997263,0.229417226449802,"comparator","ReDeconv","r2_05",NA,"none",NA,0.76704424022227
+"ReDeconv | r2_05","96h_CTL_rep2",0.283535241850179,0.0169333490092719,0.267846497681917,"comparator","ReDeconv","r2_05",NA,"none",NA,0.76704424022227
+"ReDeconv | r2_05","96h_CTL_rep3",0.42380300827853,0.0297973007157321,0,"comparator","ReDeconv","r2_05",NA,"none",NA,0.76704424022227
+"ReDeconv | welch","96h_CTL_rep1",0.0803148194748347,0.033810917482707,0.634954413963057,"comparator","ReDeconv","welch",NA,"none",NA,0.76704424022227
+"ReDeconv | welch","96h_CTL_rep2",0.0595300985356381,0.0357045890926627,0.670292222578896,"comparator","ReDeconv","welch",NA,"none",NA,0.76704424022227
+"ReDeconv | welch","96h_CTL_rep3",0.167675717367989,0.033328159196934,0.493395664874082,"comparator","ReDeconv","welch",NA,"none",NA,0.76704424022227
+"RLM | r2_05","96h_CTL_rep1",0.414653670324533,0.0367344087331303,0,"comparator","RLM","r2_05",NA,"none",NA,0.76704424022227
+"RLM | r2_05","96h_CTL_rep2",0.411435728353159,0.0367344087331298,0,"comparator","RLM","r2_05",NA,"none",NA,0.76704424022227
+"RLM | r2_05","96h_CTL_rep3",0.409637764895701,0.0367344087331298,0,"comparator","RLM","r2_05",NA,"none",NA,0.76704424022227
+"RLM | welch","96h_CTL_rep1",0.163372761645764,0.0367344087331297,0.481799293785116,"comparator","RLM","welch",NA,"none",NA,0.76704424022227
+"RLM | welch","96h_CTL_rep2",0.173594535888725,0.0367344087331294,0.45289041264441,"comparator","RLM","welch",NA,"none",NA,0.76704424022227
+"RLM | welch","96h_CTL_rep3",0.322001810094232,0.0367344087331304,0.174223876247577,"comparator","RLM","welch",NA,"none",NA,0.76704424022227
+"RNA-Sieve (R) diag_raw | full_lik | b_g none | r2_05","96h_CTL_rep1",0.549555268713795,0.0215498284507111,1.02389211337685e-08,"sieve","RNA-Sieve (R)","r2_05","diag_raw","none","full_lik",0.76704424022227
+"RNA-Sieve (R) diag_raw | full_lik | b_g none | r2_05","96h_CTL_rep2",0.554916229003023,0.0287209451365115,1.00449118505398e-08,"sieve","RNA-Sieve (R)","r2_05","diag_raw","none","full_lik",0.76704424022227
+"RNA-Sieve (R) diag_raw | full_lik | b_g none | r2_05","96h_CTL_rep3",0.552164882571799,0.0367343946988836,9.93823677780013e-09,"sieve","RNA-Sieve (R)","r2_05","diag_raw","none","full_lik",0.76704424022227
+"RNA-Sieve (R) diag_raw | full_lik | b_g none | welch","96h_CTL_rep1",0.207046911056208,0.038949971207491,0.419875528077532,"sieve","RNA-Sieve (R)","welch","diag_raw","none","full_lik",0.76704424022227
+"RNA-Sieve (R) diag_raw | full_lik | b_g none | welch","96h_CTL_rep2",0.175761891001331,0.0283877188232218,0.477923393407766,"sieve","RNA-Sieve (R)","welch","diag_raw","none","full_lik",0.76704424022227
+"RNA-Sieve (R) diag_raw | full_lik | b_g none | welch","96h_CTL_rep3",0.335252400694592,0.0256324537170073,0.15316669554842,"sieve","RNA-Sieve (R)","welch","diag_raw","none","full_lik",0.76704424022227
+"RNA-Sieve (R) diag_raw | qp | b_g none | r2_05","96h_CTL_rep1",0.268744335132552,0.0177405936478099,0.310882918821067,"sieve","RNA-Sieve (R)","r2_05","diag_raw","none","qp",0.76704424022227
+"RNA-Sieve (R) diag_raw | qp | b_g none | r2_05","96h_CTL_rep2",0.242414525228656,0.0171168878271092,0.352775001681854,"sieve","RNA-Sieve (R)","r2_05","diag_raw","none","qp",0.76704424022227
+"RNA-Sieve (R) diag_raw | qp | b_g none | r2_05","96h_CTL_rep3",0.408057486437623,0.0349552826832214,0.0291342291557538,"sieve","RNA-Sieve (R)","r2_05","diag_raw","none","qp",0.76704424022227
+"RNA-Sieve (R) diag_raw | qp | b_g none | welch","96h_CTL_rep1",0.0978310085489937,0.0342556187164512,0.606210192177628,"sieve","RNA-Sieve (R)","welch","diag_raw","none","qp",0.76704424022227
+"RNA-Sieve (R) diag_raw | qp | b_g none | welch","96h_CTL_rep2",0.070518891568469,0.035250619259898,0.651479480677222,"sieve","RNA-Sieve (R)","welch","diag_raw","none","qp",0.76704424022227
+"RNA-Sieve (R) diag_raw | qp | b_g none | welch","96h_CTL_rep3",0.146072264086534,0.0311084857435146,0.527834823909873,"sieve","RNA-Sieve (R)","welch","diag_raw","none","qp",0.76704424022227
+"RNA-Sieve (R) diag_raw | qp_huber | b_g none | r2_05","96h_CTL_rep1",0.275412156021732,0.0358686586431296,0.258483693013261,"sieve","RNA-Sieve (R)","r2_05","diag_raw","none","qp_huber",0.76704424022227
+"RNA-Sieve (R) diag_raw | qp_huber | b_g none | r2_05","96h_CTL_rep2",0.267093154301203,0.0312674026075184,0.269675336383809,"sieve","RNA-Sieve (R)","r2_05","diag_raw","none","qp_huber",0.76704424022227
+"RNA-Sieve (R) diag_raw | qp_huber | b_g none | r2_05","96h_CTL_rep3",0.374513073674549,0.0525284150528717,0.0392794685217613,"sieve","RNA-Sieve (R)","r2_05","diag_raw","none","qp_huber",0.76704424022227
+"RNA-Sieve (R) diag_raw | qp_huber | b_g none | welch","96h_CTL_rep1",0.0394896397550541,0.0310179106433003,0.705044947665348,"sieve","RNA-Sieve (R)","welch","diag_raw","none","qp_huber",0.76704424022227
+"RNA-Sieve (R) diag_raw | qp_huber | b_g none | welch","96h_CTL_rep2",0.0238372822309965,0.032673026917098,0.743680144173282,"sieve","RNA-Sieve (R)","welch","diag_raw","none","qp_huber",0.76704424022227
+"RNA-Sieve (R) diag_raw | qp_huber | b_g none | welch","96h_CTL_rep3",0.0536536658733558,0.0326977220437994,0.679904592407049,"sieve","RNA-Sieve (R)","welch","diag_raw","none","qp_huber",0.76704424022227
+"RNA-Sieve (R) diag_raw | qp_means | b_g none | r2_05","96h_CTL_rep1",0.536999506119394,0.0264899563233923,0,"sieve","RNA-Sieve (R)","r2_05","diag_raw","none","qp_means",0.76704424022227
+"RNA-Sieve (R) diag_raw | qp_means | b_g none | r2_05","96h_CTL_rep2",0.5471739335702,0.0249742382742341,0,"sieve","RNA-Sieve (R)","r2_05","diag_raw","none","qp_means",0.76704424022227
+"RNA-Sieve (R) diag_raw | qp_means | b_g none | r2_05","96h_CTL_rep3",0.547475081702147,0.0174976414453796,1.76349574259501e-20,"sieve","RNA-Sieve (R)","r2_05","diag_raw","none","qp_means",0.76704424022227
+"RNA-Sieve (R) diag_raw | qp_means | b_g none | welch","96h_CTL_rep1",0.478857726554816,0.0367344087331298,0,"sieve","RNA-Sieve (R)","welch","diag_raw","none","qp_means",0.76704424022227
+"RNA-Sieve (R) diag_raw | qp_means | b_g none | welch","96h_CTL_rep2",0.478857726554816,0.0367344087331298,0,"sieve","RNA-Sieve (R)","welch","diag_raw","none","qp_means",0.76704424022227
+"RNA-Sieve (R) diag_raw | qp_means | b_g none | welch","96h_CTL_rep3",0.478857726554816,0.0367344087331298,0,"sieve","RNA-Sieve (R)","welch","diag_raw","none","qp_means",0.76704424022227
+"RNA-Sieve (R) diag_raw | qp_means_var | b_g none | r2_05","96h_CTL_rep1",0.548685633587346,0.0209912215352931,2.56417005412755e-19,"sieve","RNA-Sieve (R)","r2_05","diag_raw","none","qp_means_var",0.76704424022227
+"RNA-Sieve (R) diag_raw | qp_means_var | b_g none | r2_05","96h_CTL_rep2",0.551728483870737,0.0240454830444112,0,"sieve","RNA-Sieve (R)","r2_05","diag_raw","none","qp_means_var",0.76704424022227
+"RNA-Sieve (R) diag_raw | qp_means_var | b_g none | r2_05","96h_CTL_rep3",0.553813555422406,0.0271356732532251,9.12863628196356e-20,"sieve","RNA-Sieve (R)","r2_05","diag_raw","none","qp_means_var",0.76704424022227
+"RNA-Sieve (R) diag_raw | qp_means_var | b_g none | welch","96h_CTL_rep1",0.203061975847373,0.03842437414373,0.432966849975464,"sieve","RNA-Sieve (R)","welch","diag_raw","none","qp_means_var",0.76704424022227
+"RNA-Sieve (R) diag_raw | qp_means_var | b_g none | welch","96h_CTL_rep2",0.176237017986493,0.0312510424346509,0.478538976685985,"sieve","RNA-Sieve (R)","welch","diag_raw","none","qp_means_var",0.76704424022227
+"RNA-Sieve (R) diag_raw | qp_means_var | b_g none | welch","96h_CTL_rep3",0.342978566803335,0.0291574179579786,0.132626642155492,"sieve","RNA-Sieve (R)","welch","diag_raw","none","qp_means_var",0.76704424022227
+"RNA-Sieve (R) diag_raw | qp_within | b_g none | r2_05","96h_CTL_rep1",0.259371636638651,0.016806442994433,0.326933129502539,"sieve","RNA-Sieve (R)","r2_05","diag_raw","none","qp_within",0.76704424022227
+"RNA-Sieve (R) diag_raw | qp_within | b_g none | r2_05","96h_CTL_rep2",0.233961479818459,0.0166241658731336,0.366856024849702,"sieve","RNA-Sieve (R)","r2_05","diag_raw","none","qp_within",0.76704424022227
+"RNA-Sieve (R) diag_raw | qp_within | b_g none | r2_05","96h_CTL_rep3",0.406457429471906,0.0310455189511364,0.0312452110383325,"sieve","RNA-Sieve (R)","r2_05","diag_raw","none","qp_within",0.76704424022227
+"RNA-Sieve (R) diag_raw | qp_within | b_g none | welch","96h_CTL_rep1",0.106318335254713,0.0338113644787256,0.592342119015453,"sieve","RNA-Sieve (R)","welch","diag_raw","none","qp_within",0.76704424022227
+"RNA-Sieve (R) diag_raw | qp_within | b_g none | welch","96h_CTL_rep2",0.079058803738346,0.0349045516133319,0.63716172384783,"sieve","RNA-Sieve (R)","welch","diag_raw","none","qp_within",0.76704424022227
+"RNA-Sieve (R) diag_raw | qp_within | b_g none | welch","96h_CTL_rep3",0.158919372139966,0.0298560086452254,0.507008567665862,"sieve","RNA-Sieve (R)","welch","diag_raw","none","qp_within",0.76704424022227
+"RNA-Sieve (R) full_bio | full_lik | b_g none | r2_05","96h_CTL_rep1",0.473145795760571,0.64443061241173,0.199620256004501,"sieve","RNA-Sieve (R)","r2_05","full_bio","none","full_lik",0.76704424022227
+"RNA-Sieve (R) full_bio | full_lik | b_g none | r2_05","96h_CTL_rep2",0.469781252658561,0.641485400471309,0.256668883538217,"sieve","RNA-Sieve (R)","r2_05","full_bio","none","full_lik",0.76704424022227
+"RNA-Sieve (R) full_bio | full_lik | b_g none | r2_05","96h_CTL_rep3",0.498700865037894,0.686171430644257,0.0855719301686066,"sieve","RNA-Sieve (R)","r2_05","full_bio","none","full_lik",0.76704424022227
+"RNA-Sieve (R) full_bio | full_lik | b_g none | welch","96h_CTL_rep1",0.363424537294034,0.280969347881536,0.193740701569703,"sieve","RNA-Sieve (R)","welch","full_bio","none","full_lik",0.76704424022227
+"RNA-Sieve (R) full_bio | full_lik | b_g none | welch","96h_CTL_rep2",0.365923017892634,0.349207330294093,0.217322020020551,"sieve","RNA-Sieve (R)","welch","full_bio","none","full_lik",0.76704424022227
+"RNA-Sieve (R) full_bio | full_lik | b_g none | welch","96h_CTL_rep3",0.398477605821741,0.22573295782748,0.0989185650953563,"sieve","RNA-Sieve (R)","welch","full_bio","none","full_lik",0.76704424022227
+"RNA-Sieve (R) full_bio | qp | b_g none | r2_05","96h_CTL_rep1",0.29356497231824,0.310999932971858,0.366919983215156,"sieve","RNA-Sieve (R)","r2_05","full_bio","none","qp",0.76704424022227
+"RNA-Sieve (R) full_bio | qp | b_g none | r2_05","96h_CTL_rep2",0.151249695505126,0.202971670802886,1,"sieve","RNA-Sieve (R)","r2_05","full_bio","none","qp",0.76704424022227
+"RNA-Sieve (R) full_bio | qp | b_g none | r2_05","96h_CTL_rep3",0.371033593056311,0.281713524882434,0.0793590147240855,"sieve","RNA-Sieve (R)","r2_05","full_bio","none","qp",0.76704424022227
+"RNA-Sieve (R) full_bio | qp | b_g none | welch","96h_CTL_rep1",0.132262150746769,0.0364760933423208,0.907721462522821,"sieve","RNA-Sieve (R)","welch","full_bio","none","qp",0.76704424022227
+"RNA-Sieve (R) full_bio | qp | b_g none | welch","96h_CTL_rep2",0.136146129739159,0.0363700042791162,0.93040348428374,"sieve","RNA-Sieve (R)","welch","full_bio","none","qp",0.76704424022227
+"RNA-Sieve (R) full_bio | qp | b_g none | welch","96h_CTL_rep3",0.129866655245971,0.0352480480988291,0.891632414734012,"sieve","RNA-Sieve (R)","welch","full_bio","none","qp",0.76704424022227
+"RNA-Sieve (R) full_bio | qp_huber | b_g none | r2_05","96h_CTL_rep1",0.43105492361525,0.440246987413133,0.070195698125923,"sieve","RNA-Sieve (R)","r2_05","full_bio","none","qp_huber",0.76704424022227
+"RNA-Sieve (R) full_bio | qp_huber | b_g none | r2_05","96h_CTL_rep2",0.151249695505126,0.202971670802886,1,"sieve","RNA-Sieve (R)","r2_05","full_bio","none","qp_huber",0.76704424022227
+"RNA-Sieve (R) full_bio | qp_huber | b_g none | r2_05","96h_CTL_rep3",0.559421253345474,0.0367344087331299,1.85859154476856e-16,"sieve","RNA-Sieve (R)","r2_05","full_bio","none","qp_huber",0.76704424022227
+"RNA-Sieve (R) full_bio | qp_huber | b_g none | welch","96h_CTL_rep1",0.298348895151231,0.113519993303795,0.188920300117624,"sieve","RNA-Sieve (R)","welch","full_bio","none","qp_huber",0.76704424022227
+"RNA-Sieve (R) full_bio | qp_huber | b_g none | welch","96h_CTL_rep2",0.403065099303382,0.265649617644636,0.0491437311935931,"sieve","RNA-Sieve (R)","welch","full_bio","none","qp_huber",0.76704424022227
+"RNA-Sieve (R) full_bio | qp_huber | b_g none | welch","96h_CTL_rep3",0.403504601012772,0.142712533268722,0.0148834417300418,"sieve","RNA-Sieve (R)","welch","full_bio","none","qp_huber",0.76704424022227
+"RNA-Sieve (R) full_bio | qp_means | b_g none | r2_05","96h_CTL_rep1",0.384090459416534,0.221199097281075,0,"sieve","RNA-Sieve (R)","r2_05","full_bio","none","qp_means",0.76704424022227
+"RNA-Sieve (R) full_bio | qp_means | b_g none | r2_05","96h_CTL_rep2",0.551321302153561,0.783913670452401,NA,"sieve","RNA-Sieve (R)","r2_05","full_bio","none","qp_means",0.76704424022227
+"RNA-Sieve (R) full_bio | qp_means | b_g none | r2_05","96h_CTL_rep3",0.384591958834054,0.247408127332696,0,"sieve","RNA-Sieve (R)","r2_05","full_bio","none","qp_means",0.76704424022227
+"RNA-Sieve (R) full_bio | qp_means | b_g none | welch","96h_CTL_rep1",0.388872032838395,0.129657210862195,1.15676905329458e-18,"sieve","RNA-Sieve (R)","welch","full_bio","none","qp_means",0.76704424022227
+"RNA-Sieve (R) full_bio | qp_means | b_g none | welch","96h_CTL_rep2",0.48913228055548,0.136340746275294,0,"sieve","RNA-Sieve (R)","welch","full_bio","none","qp_means",0.76704424022227
+"RNA-Sieve (R) full_bio | qp_means | b_g none | welch","96h_CTL_rep3",0.559421253345474,0.0367344087331298,0,"sieve","RNA-Sieve (R)","welch","full_bio","none","qp_means",0.76704424022227
+"RNA-Sieve (R) full_bio | qp_means_var | b_g none | r2_05","96h_CTL_rep1",0.49401402246668,0.669615099667248,0,"sieve","RNA-Sieve (R)","r2_05","full_bio","none","qp_means_var",0.76704424022227
+"RNA-Sieve (R) full_bio | qp_means_var | b_g none | r2_05","96h_CTL_rep2",0.494801850416322,0.669683285889396,0,"sieve","RNA-Sieve (R)","r2_05","full_bio","none","qp_means_var",0.76704424022227
+"RNA-Sieve (R) full_bio | qp_means_var | b_g none | r2_05","96h_CTL_rep3",0.517693151710639,0.721545173143811,0,"sieve","RNA-Sieve (R)","r2_05","full_bio","none","qp_means_var",0.76704424022227
+"RNA-Sieve (R) full_bio | qp_means_var | b_g none | welch","96h_CTL_rep1",0.368412183980452,0.2866993092744,0.19705502478431,"sieve","RNA-Sieve (R)","welch","full_bio","none","qp_means_var",0.76704424022227
+"RNA-Sieve (R) full_bio | qp_means_var | b_g none | welch","96h_CTL_rep2",0.373654841846888,0.3661455721638,0.238279990427902,"sieve","RNA-Sieve (R)","welch","full_bio","none","qp_means_var",0.76704424022227
+"RNA-Sieve (R) full_bio | qp_means_var | b_g none | welch","96h_CTL_rep3",0.430267558976423,0.265104228909025,0,"sieve","RNA-Sieve (R)","welch","full_bio","none","qp_means_var",0.76704424022227
+"RNA-Sieve (R) full_bio | qp_within | b_g none | r2_05","96h_CTL_rep1",0.318139228211794,0.327663141753366,0.290277329442203,"sieve","RNA-Sieve (R)","r2_05","full_bio","none","qp_within",0.76704424022227
+"RNA-Sieve (R) full_bio | qp_within | b_g none | r2_05","96h_CTL_rep2",0.266073003113745,0.305295433359746,0.475266358145751,"sieve","RNA-Sieve (R)","r2_05","full_bio","none","qp_within",0.76704424022227
+"RNA-Sieve (R) full_bio | qp_within | b_g none | r2_05","96h_CTL_rep3",0.376219957332751,0.30596835112711,0.0748906172043519,"sieve","RNA-Sieve (R)","r2_05","full_bio","none","qp_within",0.76704424022227
+"RNA-Sieve (R) full_bio | qp_within | b_g none | welch","96h_CTL_rep1",0.131144205848671,0.0365300862592835,0.898874094397195,"sieve","RNA-Sieve (R)","welch","full_bio","none","qp_within",0.76704424022227
+"RNA-Sieve (R) full_bio | qp_within | b_g none | welch","96h_CTL_rep2",0.130863901789017,0.0347674904806733,0.902715070845615,"sieve","RNA-Sieve (R)","welch","full_bio","none","qp_within",0.76704424022227
+"RNA-Sieve (R) full_bio | qp_within | b_g none | welch","96h_CTL_rep3",0.129058435540142,0.0361856975044698,0.847890903585106,"sieve","RNA-Sieve (R)","welch","full_bio","none","qp_within",0.76704424022227
+"RNA-Sieve (R) full_raw | full_lik | b_g none | r2_05","96h_CTL_rep1",0.439159701586281,0.309752023419921,1.89958496831251e-08,"sieve","RNA-Sieve (R)","r2_05","full_raw","none","full_lik",0.76704424022227
+"RNA-Sieve (R) full_raw | full_lik | b_g none | r2_05","96h_CTL_rep2",0.446204390040894,0.256563650431359,1.72163400387871e-08,"sieve","RNA-Sieve (R)","r2_05","full_raw","none","full_lik",0.76704424022227
+"RNA-Sieve (R) full_raw | full_lik | b_g none | r2_05","96h_CTL_rep3",0.476008239013487,0.125677381612679,1.39138221703495e-08,"sieve","RNA-Sieve (R)","r2_05","full_raw","none","full_lik",0.76704424022227
+"RNA-Sieve (R) full_raw | full_lik | b_g none | welch","96h_CTL_rep1",0.446654092863888,0.0220121262428671,0.0368384476596626,"sieve","RNA-Sieve (R)","welch","full_raw","none","full_lik",0.76704424022227
+"RNA-Sieve (R) full_raw | full_lik | b_g none | welch","96h_CTL_rep2",0.440700774264662,0.0195518991957717,0.0419122508728432,"sieve","RNA-Sieve (R)","welch","full_raw","none","full_lik",0.76704424022227
+"RNA-Sieve (R) full_raw | full_lik | b_g none | welch","96h_CTL_rep3",0.530378255815416,0.7467393309393,0.177259145004598,"sieve","RNA-Sieve (R)","welch","full_raw","none","full_lik",0.76704424022227
+"RNA-Sieve (R) full_raw | qp | b_g none | r2_05","96h_CTL_rep1",0.356261706439175,0.349787472765084,0.163213293776462,"sieve","RNA-Sieve (R)","r2_05","full_raw","none","qp",0.76704424022227
+"RNA-Sieve (R) full_raw | qp | b_g none | r2_05","96h_CTL_rep2",0.347903118151816,0.343612796567906,0.188717954237555,"sieve","RNA-Sieve (R)","r2_05","full_raw","none","qp",0.76704424022227
+"RNA-Sieve (R) full_raw | qp | b_g none | r2_05","96h_CTL_rep3",0.380935721410084,0.359949915518774,0.09237378429638,"sieve","RNA-Sieve (R)","r2_05","full_raw","none","qp",0.76704424022227
+"RNA-Sieve (R) full_raw | qp | b_g none | welch","96h_CTL_rep1",0.0293539053724195,0.0367344087331298,0.781118195741141,"sieve","RNA-Sieve (R)","welch","full_raw","none","qp",0.76704424022227
+"RNA-Sieve (R) full_raw | qp | b_g none | welch","96h_CTL_rep2",0.0407653420717918,0.0367344087331298,0.807362771001446,"sieve","RNA-Sieve (R)","welch","full_raw","none","qp",0.76704424022227
+"RNA-Sieve (R) full_raw | qp | b_g none | welch","96h_CTL_rep3",0.110762354427673,0.0330169169062547,0.592129233306872,"sieve","RNA-Sieve (R)","welch","full_raw","none","qp",0.76704424022227
+"RNA-Sieve (R) full_raw | qp_huber | b_g none | r2_05","96h_CTL_rep1",0.335070388456864,0.149983054263307,0.131896748489576,"sieve","RNA-Sieve (R)","r2_05","full_raw","none","qp_huber",0.76704424022227
+"RNA-Sieve (R) full_raw | qp_huber | b_g none | r2_05","96h_CTL_rep2",0.409655359501038,0.403120847015151,0.143035981999316,"sieve","RNA-Sieve (R)","r2_05","full_raw","none","qp_huber",0.76704424022227
+"RNA-Sieve (R) full_raw | qp_huber | b_g none | r2_05","96h_CTL_rep3",0.415130023970457,0.0125774948457039,0.143962900850117,"sieve","RNA-Sieve (R)","r2_05","full_raw","none","qp_huber",0.76704424022227
+"RNA-Sieve (R) full_raw | qp_huber | b_g none | welch","96h_CTL_rep1",0.0960232458036386,0.0201576458757744,0.929083528073255,"sieve","RNA-Sieve (R)","welch","full_raw","none","qp_huber",0.76704424022227
+"RNA-Sieve (R) full_raw | qp_huber | b_g none | welch","96h_CTL_rep2",0.0987606436593039,0.0206671975985,0.934123526212543,"sieve","RNA-Sieve (R)","welch","full_raw","none","qp_huber",0.76704424022227
+"RNA-Sieve (R) full_raw | qp_huber | b_g none | welch","96h_CTL_rep3",0.12541374488995,0.0353216965763539,0.951691376153521,"sieve","RNA-Sieve (R)","welch","full_raw","none","qp_huber",0.76704424022227
+"RNA-Sieve (R) full_raw | qp_means | b_g none | r2_05","96h_CTL_rep1",0.462553199293262,0.491477031258509,9.34926713900682e-18,"sieve","RNA-Sieve (R)","r2_05","full_raw","none","qp_means",0.76704424022227
+"RNA-Sieve (R) full_raw | qp_means | b_g none | r2_05","96h_CTL_rep2",0.455335931741737,0.399481841354201,0,"sieve","RNA-Sieve (R)","r2_05","full_raw","none","qp_means",0.76704424022227
+"RNA-Sieve (R) full_raw | qp_means | b_g none | r2_05","96h_CTL_rep3",0.457073027166524,0.355828649497545,0,"sieve","RNA-Sieve (R)","r2_05","full_raw","none","qp_means",0.76704424022227
+"RNA-Sieve (R) full_raw | qp_means | b_g none | welch","96h_CTL_rep1",0.478857726554816,0.0367344087331298,0,"sieve","RNA-Sieve (R)","welch","full_raw","none","qp_means",0.76704424022227
+"RNA-Sieve (R) full_raw | qp_means | b_g none | welch","96h_CTL_rep2",0.478857726554816,0.0367344087331298,0,"sieve","RNA-Sieve (R)","welch","full_raw","none","qp_means",0.76704424022227
+"RNA-Sieve (R) full_raw | qp_means | b_g none | welch","96h_CTL_rep3",0.551321302153561,0.783913670452401,0.345616443500573,"sieve","RNA-Sieve (R)","welch","full_raw","none","qp_means",0.76704424022227
+"RNA-Sieve (R) full_raw | qp_means_var | b_g none | r2_05","96h_CTL_rep1",0.443321458812417,0.32449138631541,0,"sieve","RNA-Sieve (R)","r2_05","full_raw","none","qp_means_var",0.76704424022227
+"RNA-Sieve (R) full_raw | qp_means_var | b_g none | r2_05","96h_CTL_rep2",0.448481510535822,0.276793851764813,0,"sieve","RNA-Sieve (R)","r2_05","full_raw","none","qp_means_var",0.76704424022227
+"RNA-Sieve (R) full_raw | qp_means_var | b_g none | r2_05","96h_CTL_rep3",0.482679896119259,0.142781638778828,0,"sieve","RNA-Sieve (R)","r2_05","full_raw","none","qp_means_var",0.76704424022227
+"RNA-Sieve (R) full_raw | qp_means_var | b_g none | welch","96h_CTL_rep1",0.478857726554816,0.0367344087331298,0,"sieve","RNA-Sieve (R)","welch","full_raw","none","qp_means_var",0.76704424022227
+"RNA-Sieve (R) full_raw | qp_means_var | b_g none | welch","96h_CTL_rep2",0.478857726554816,0.0367344087331298,0,"sieve","RNA-Sieve (R)","welch","full_raw","none","qp_means_var",0.76704424022227
+"RNA-Sieve (R) full_raw | qp_means_var | b_g none | welch","96h_CTL_rep3",0.551321302153561,0.783913670452401,NA,"sieve","RNA-Sieve (R)","welch","full_raw","none","qp_means_var",0.76704424022227
+"RNA-Sieve (R) full_raw | qp_within | b_g none | r2_05","96h_CTL_rep1",0.36556063662463,0.375280499235044,0.157398405353916,"sieve","RNA-Sieve (R)","r2_05","full_raw","none","qp_within",0.76704424022227
+"RNA-Sieve (R) full_raw | qp_within | b_g none | r2_05","96h_CTL_rep2",0.36191212619161,0.380403339880125,0.180855359515576,"sieve","RNA-Sieve (R)","r2_05","full_raw","none","qp_within",0.76704424022227
+"RNA-Sieve (R) full_raw | qp_within | b_g none | r2_05","96h_CTL_rep3",0.380037983598391,0.372934570732592,0.110321964503324,"sieve","RNA-Sieve (R)","r2_05","full_raw","none","qp_within",0.76704424022227
+"RNA-Sieve (R) full_raw | qp_within | b_g none | welch","96h_CTL_rep1",0.0293544042726304,0.0367344087331298,0.781119660850988,"sieve","RNA-Sieve (R)","welch","full_raw","none","qp_within",0.76704424022227
+"RNA-Sieve (R) full_raw | qp_within | b_g none | welch","96h_CTL_rep2",0.0407641438809288,0.0367344087331298,0.807360387528019,"sieve","RNA-Sieve (R)","welch","full_raw","none","qp_within",0.76704424022227
+"RNA-Sieve (R) full_raw | qp_within | b_g none | welch","96h_CTL_rep3",0.110764393653922,0.033015600233799,0.592125148797212,"sieve","RNA-Sieve (R)","welch","full_raw","none","qp_within",0.76704424022227
+"RNA-Sieve | r2_05","96h_CTL_rep1",0.215440965151291,0.0175980879283227,0.397695027065545,"comparator","RNA-Sieve","r2_05",NA,"none",NA,0.76704424022227
+"RNA-Sieve | r2_05","96h_CTL_rep2",0.187294059223015,0.018462451538719,0.440983186301426,"comparator","RNA-Sieve","r2_05",NA,"none",NA,0.76704424022227
+"RNA-Sieve | r2_05","96h_CTL_rep3",0.406784368741659,0.0229554416367177,0,"comparator","RNA-Sieve","r2_05",NA,"none",NA,0.76704424022227
+"RNA-Sieve | welch","96h_CTL_rep1",0.0379635990299019,0.0364147699021714,0.710413905056034,"comparator","RNA-Sieve","welch",NA,"none",NA,0.76704424022227
+"RNA-Sieve | welch","96h_CTL_rep2",0.0247709115147121,0.0367344087331298,0.754058124940981,"comparator","RNA-Sieve","welch",NA,"none",NA,0.76704424022227
+"RNA-Sieve | welch","96h_CTL_rep3",0.106208134249158,0.0367344087331299,0.569806140654621,"comparator","RNA-Sieve","welch",NA,"none",NA,0.76704424022227
+"SCDC | r2_05","96h_CTL_rep1",0.419718517850225,0.0289938058501384,0,"comparator","SCDC","r2_05",NA,"none",NA,0.76704424022227
+"SCDC | r2_05","96h_CTL_rep2",0.409336317856728,0.0241448862833519,0,"comparator","SCDC","r2_05",NA,"none",NA,0.76704424022227
+"SCDC | r2_05","96h_CTL_rep3",0.416237883871265,0.0277041447368793,0,"comparator","SCDC","r2_05",NA,"none",NA,0.76704424022227
+"SCDC | welch","96h_CTL_rep1",0.26819188901244,0.0228067859913198,0.320105921380877,"comparator","SCDC","welch",NA,"none",NA,0.76704424022227
+"SCDC | welch","96h_CTL_rep2",0.281576949884098,0.0304020374322503,0.299264595529651,"comparator","SCDC","welch",NA,"none",NA,0.76704424022227
+"SCDC | welch","96h_CTL_rep3",0.370378549533932,0.0274775654777045,0.164297935529185,"comparator","SCDC","welch",NA,"none",NA,0.76704424022227

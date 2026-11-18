@@ -1,0 +1,55 @@
+"comparator","time","gene_set","genes","samples","status","message","elapsed_sec"
+"bayesprism","48h","r2_05",17,6,"ok","Warning: very few gene from reference and mixture match! Please double check your gene names. | Warning: pseudo.min does not match min(phi)",252.647
+"bayesprism","48h","welch",1417,6,"ok","Warning: pseudo.min does not match min(phi)",291.427
+"bayesprism","72h","r2_05",140,6,"ok","Warning: pseudo.min does not match min(phi)",262.678
+"bayesprism","72h","welch",3420,6,"ok","Warning: pseudo.min does not match min(phi)",275.849
+"bayesprism","96h","r2_05",635,6,"ok","Warning: pseudo.min does not match min(phi)",249.388
+"bayesprism","96h","welch",5821,6,"ok","Warning: pseudo.min does not match min(phi)",302.271
+"demixsc_wnnls","48h","r2_05",17,6,"ok","",0.101000000000003
+"demixsc_wnnls","48h","welch",1417,6,"ok","",0.0810000000000173
+"demixsc_wnnls","72h","r2_05",140,6,"ok","",0.0359999999999445
+"demixsc_wnnls","72h","welch",3420,6,"ok","",0.0559999999999263
+"demixsc_wnnls","96h","r2_05",635,6,"ok","",0.0190000000000055
+"demixsc_wnnls","96h","welch",5821,6,"ok","",0.307999999999993
+"demixsc_wnnls_b","48h","r2_05",17,6,"ok","",0.00800000000000267
+"demixsc_wnnls_b","48h","welch",1417,6,"ok","",0.02800000000002
+"demixsc_wnnls_b","72h","r2_05",140,6,"ok","",0.0080000000000382
+"demixsc_wnnls_b","72h","welch",3420,6,"ok","",0.0340000000001055
+"demixsc_wnnls_b","96h","r2_05",635,6,"ok","",0.0170000000000528
+"demixsc_wnnls_b","96h","welch",5821,6,"ok","",0.0950000000000273
+"dwls","48h","r2_05",17,6,"ok","",11.257
+"dwls","48h","welch",1417,6,"ok","",19.484
+"dwls","72h","r2_05",140,6,"ok","",5.66499999999996
+"dwls","72h","welch",3420,6,"ok","",37.409
+"dwls","96h","r2_05",635,6,"ok","",6.16000000000008
+"dwls","96h","welch",5821,6,"ok","",139.607
+"mead","48h","r2_05",17,6,"ok","R01 from get_R01(alpha = 0.1); 0 reference cells without a count on the panel",4.6
+"mead","48h","welch",1417,6,"ok","R01 from get_R01(alpha = 0.1); 0 reference cells without a count on the panel",11.49
+"mead","72h","r2_05",140,6,"ok","R01 from get_R01(alpha = 0.1); 0 reference cells without a count on the panel | Production de NaN",4.614
+"mead","72h","welch",3420,6,"ok","R01 from get_R01(alpha = 0.1); 0 reference cells without a count on the panel",12.249
+"mead","96h","r2_05",635,6,"ok","R01 from get_R01(alpha = 0.1); 0 reference cells without a count on the panel | Production de NaN",0.792999999999999
+"mead","96h","welch",5821,6,"ok","R01 from get_R01(alpha = 0.1); 0 reference cells without a count on the panel | Production de NaN",19.313
+"redeconv","48h","r2_05",17,6,"ok","",3.003
+"redeconv","48h","welch",1417,6,"ok","",1.297
+"redeconv","72h","r2_05",140,6,"ok","",0.701999999999998
+"redeconv","72h","welch",3420,6,"ok","",1.529
+"redeconv","96h","r2_05",635,6,"ok","",0.681999999999999
+"redeconv","96h","welch",5821,6,"ok","",2.371
+"rlm","48h","r2_05",17,6,"ok","6 of 6 samples had a negative coefficient, set to zero | la convergence de 'rlm' a échoué après 20 étapes",0.0449999999999999
+"rlm","48h","welch",1417,6,"ok","6 of 6 samples had a negative coefficient, set to zero | la convergence de 'rlm' a échoué après 20 étapes",0.103999999999999
+"rlm","72h","r2_05",140,6,"ok","6 of 6 samples had a negative coefficient, set to zero | la convergence de 'rlm' a échoué après 20 étapes",0.0570000000000022
+"rlm","72h","welch",3420,6,"ok","6 of 6 samples had a negative coefficient, set to zero | la convergence de 'rlm' a échoué après 20 étapes",0.106000000000002
+"rlm","96h","r2_05",635,6,"ok","6 of 6 samples had a negative coefficient, set to zero | la convergence de 'rlm' a échoué après 20 étapes",0.0330000000000013
+"rlm","96h","welch",5821,6,"ok","6 of 6 samples had a negative coefficient, set to zero | la convergence de 'rlm' a échoué après 20 étapes",0.188000000000002
+"rnasieve","48h","r2_05",17,6,"ok","",1.792
+"rnasieve","48h","welch",1417,6,"ok","",7.21600000000001
+"rnasieve","72h","r2_05",140,6,"ok","",2.1160000000001
+"rnasieve","72h","welch",3420,6,"ok","",7.322
+"rnasieve","96h","r2_05",635,6,"ok","",3.84199999999998
+"rnasieve","96h","welch",5821,6,"ok","",13.3490000000002
+"scdc","48h","r2_05",17,6,"ok","",0.858000000000001
+"scdc","48h","welch",1417,6,"ok","",5.123
+"scdc","72h","r2_05",140,6,"ok","",0.69399999999996
+"scdc","72h","welch",3420,6,"ok","",1.91800000000001
+"scdc","96h","r2_05",635,6,"ok","",0.324999999999932
+"scdc","96h","welch",5821,6,"ok","",4.72700000000009

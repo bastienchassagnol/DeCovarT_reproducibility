@@ -1,55 +1,100 @@
 "comparator","time","gene_set","genes","samples","status","message","elapsed_sec"
+"bayesprism","48h","r2_01",151,6,"ok","Warning: pseudo.min does not match min(phi)",333.207
 "bayesprism","48h","r2_05",17,6,"ok","Warning: very few gene from reference and mixture match! Please double check your gene names. | Warning: pseudo.min does not match min(phi)",252.647
 "bayesprism","48h","welch",1417,6,"ok","Warning: pseudo.min does not match min(phi)",291.427
+"bayesprism","72h","r2_01",864,6,"ok","Warning: pseudo.min does not match min(phi)",313.849
 "bayesprism","72h","r2_05",140,6,"ok","Warning: pseudo.min does not match min(phi)",262.678
 "bayesprism","72h","welch",3420,6,"ok","Warning: pseudo.min does not match min(phi)",275.849
+"bayesprism","96h","r2_01",2856,6,"ok","Warning: pseudo.min does not match min(phi)",270.532
 "bayesprism","96h","r2_05",635,6,"ok","Warning: pseudo.min does not match min(phi)",249.388
 "bayesprism","96h","welch",5821,6,"ok","Warning: pseudo.min does not match min(phi)",302.271
+"decals","48h","r2_01",151,6,"ok","reference covariance; 6 of 6 samples on a face of the simplex",0.007000000000005
+"decals","48h","r2_05",17,6,"ok","reference covariance; 4 of 6 samples on a face of the simplex",0.0629999999999988
+"decals","48h","welch",1417,6,"ok","reference covariance; 1 of 6 samples on a face of the simplex",0.12700000000001
+"decals","72h","r2_01",864,6,"ok","reference covariance; 6 of 6 samples on a face of the simplex",0.0399999999999636
+"decals","72h","r2_05",140,6,"ok","reference covariance; 3 of 6 samples on a face of the simplex",0.00599999999997181
+"decals","72h","welch",3420,6,"ok","reference covariance; 6 of 6 samples on a face of the simplex",0.689000000000078
+"decals","96h","r2_01",2856,6,"ok","reference covariance; 6 of 6 samples on a face of the simplex",0.705999999999904
+"decals","96h","r2_05",635,6,"ok","reference covariance; 6 of 6 samples on a face of the simplex",0.0380000000000109
+"decals","96h","welch",5821,6,"ok","reference covariance; 6 of 6 samples on a face of the simplex",4.26499999999987
+"demixsc_aligned","48h","r2_01",151,6,"ok","102 of 151 genes in G2 from 6 pairs; 0 of 6 samples converged",12.088
+"demixsc_aligned","48h","r2_05",17,6,"ok","6 of 17 genes in G2 from 6 pairs; 6 of 6 samples converged",15.383
+"demixsc_aligned","48h","welch",1417,6,"ok","886 of 1414 genes in G2 from 6 pairs; 0 of 6 samples converged",11.513
+"demixsc_aligned","72h","r2_01",864,6,"ok","522 of 864 genes in G2 from 6 pairs; 6 of 6 samples converged",15.663
+"demixsc_aligned","72h","r2_05",140,6,"ok","77 of 140 genes in G2 from 6 pairs; 6 of 6 samples converged",9.66500000000002
+"demixsc_aligned","72h","welch",3420,6,"ok","2105 of 3414 genes in G2 from 6 pairs; 6 of 6 samples converged",7.20299999999997
+"demixsc_aligned","96h","r2_01",2856,6,"ok","1838 of 2851 genes in G2 from 6 pairs; 3 of 6 samples converged",13.627
+"demixsc_aligned","96h","r2_05",635,6,"ok","415 of 634 genes in G2 from 6 pairs; 6 of 6 samples converged",10.5060000000001
+"demixsc_aligned","96h","welch",5821,6,"ok","3696 of 5808 genes in G2 from 6 pairs; 6 of 6 samples converged",19.1569999999999
+"demixsc_wnnls","48h","r2_01",151,6,"ok","",0.0509999999999877
 "demixsc_wnnls","48h","r2_05",17,6,"ok","",0.101000000000003
 "demixsc_wnnls","48h","welch",1417,6,"ok","",0.0810000000000173
+"demixsc_wnnls","72h","r2_01",864,6,"ok","",0.0209999999999582
 "demixsc_wnnls","72h","r2_05",140,6,"ok","",0.0359999999999445
 "demixsc_wnnls","72h","welch",3420,6,"ok","",0.0559999999999263
+"demixsc_wnnls","96h","r2_01",2856,6,"ok","deMixSC reweighting did not converge for sample 96h_Early_rep2 in 100 steps.",0.120999999999867
 "demixsc_wnnls","96h","r2_05",635,6,"ok","",0.0190000000000055
 "demixsc_wnnls","96h","welch",5821,6,"ok","",0.307999999999993
-"demixsc_wnnls_b","48h","r2_05",17,6,"ok","",0.00800000000000267
-"demixsc_wnnls_b","48h","welch",1417,6,"ok","",0.02800000000002
-"demixsc_wnnls_b","72h","r2_05",140,6,"ok","",0.0080000000000382
-"demixsc_wnnls_b","72h","welch",3420,6,"ok","",0.0340000000001055
-"demixsc_wnnls_b","96h","r2_05",635,6,"ok","",0.0170000000000528
-"demixsc_wnnls_b","96h","welch",5821,6,"ok","",0.0950000000000273
+"dwls","48h","r2_01",151,6,"ok","",9.734
 "dwls","48h","r2_05",17,6,"ok","",11.257
 "dwls","48h","welch",1417,6,"ok","",19.484
+"dwls","72h","r2_01",864,6,"ok","",8.57099999999997
 "dwls","72h","r2_05",140,6,"ok","",5.66499999999996
 "dwls","72h","welch",3420,6,"ok","",37.409
+"dwls","96h","r2_01",2856,6,"ok","",27.9109999999999
 "dwls","96h","r2_05",635,6,"ok","",6.16000000000008
 "dwls","96h","welch",5821,6,"ok","",139.607
+"mead","48h","r2_01",151,6,"ok","R01 from get_R01(alpha = 0.1); 0 reference cells without a count on the panel",0.689000000000021
 "mead","48h","r2_05",17,6,"ok","R01 from get_R01(alpha = 0.1); 0 reference cells without a count on the panel",4.6
 "mead","48h","welch",1417,6,"ok","R01 from get_R01(alpha = 0.1); 0 reference cells without a count on the panel",11.49
+"mead","72h","r2_01",864,6,"ok","R01 from get_R01(alpha = 0.1); 0 reference cells without a count on the panel | Production de NaN",0.854000000000042
 "mead","72h","r2_05",140,6,"ok","R01 from get_R01(alpha = 0.1); 0 reference cells without a count on the panel | Production de NaN",4.614
 "mead","72h","welch",3420,6,"ok","R01 from get_R01(alpha = 0.1); 0 reference cells without a count on the panel",12.249
+"mead","96h","r2_01",2856,6,"ok","R01 from get_R01(alpha = 0.1); 0 reference cells without a count on the panel",5.15700000000015
 "mead","96h","r2_05",635,6,"ok","R01 from get_R01(alpha = 0.1); 0 reference cells without a count on the panel | Production de NaN",0.792999999999999
 "mead","96h","welch",5821,6,"ok","R01 from get_R01(alpha = 0.1); 0 reference cells without a count on the panel | Production de NaN",19.313
+"nnls","48h","r2_01",151,6,"ok","3 of 6 samples have one non-zero type",0.00899999999995771
+"nnls","48h","r2_05",17,6,"ok","",0.609000000000002
+"nnls","48h","welch",1417,6,"ok","",0.00200000000000244
+"nnls","72h","r2_01",864,6,"ok","3 of 6 samples have one non-zero type",0.000999999999976353
+"nnls","72h","r2_05",140,6,"ok","3 of 6 samples have one non-zero type",1.051
+"nnls","72h","welch",3420,6,"ok","3 of 6 samples have one non-zero type",0.00200000000000244
+"nnls","96h","r2_01",2856,6,"ok","3 of 6 samples have one non-zero type",0.00300000000015643
+"nnls","96h","r2_05",635,6,"ok","",0.00100000000000122
+"nnls","96h","welch",5821,6,"ok","3 of 6 samples have one non-zero type",0.00400000000000134
+"redeconv","48h","r2_01",151,6,"ok","",0.983000000000004
 "redeconv","48h","r2_05",17,6,"ok","",3.003
 "redeconv","48h","welch",1417,6,"ok","",1.297
+"redeconv","72h","r2_01",864,6,"ok","",0.807999999999993
 "redeconv","72h","r2_05",140,6,"ok","",0.701999999999998
 "redeconv","72h","welch",3420,6,"ok","",1.529
+"redeconv","96h","r2_01",2856,6,"ok","",1.29500000000007
 "redeconv","96h","r2_05",635,6,"ok","",0.681999999999999
 "redeconv","96h","welch",5821,6,"ok","",2.371
+"rlm","48h","r2_01",151,6,"ok","6 of 6 samples had a negative coefficient, set to zero | la convergence de 'rlm' a échoué après 20 étapes",0.0589999999999691
 "rlm","48h","r2_05",17,6,"ok","6 of 6 samples had a negative coefficient, set to zero | la convergence de 'rlm' a échoué après 20 étapes",0.0449999999999999
 "rlm","48h","welch",1417,6,"ok","6 of 6 samples had a negative coefficient, set to zero | la convergence de 'rlm' a échoué après 20 étapes",0.103999999999999
+"rlm","72h","r2_01",864,6,"ok","6 of 6 samples had a negative coefficient, set to zero",0.0430000000000064
 "rlm","72h","r2_05",140,6,"ok","6 of 6 samples had a negative coefficient, set to zero | la convergence de 'rlm' a échoué après 20 étapes",0.0570000000000022
 "rlm","72h","welch",3420,6,"ok","6 of 6 samples had a negative coefficient, set to zero | la convergence de 'rlm' a échoué après 20 étapes",0.106000000000002
+"rlm","96h","r2_01",2856,6,"ok","6 of 6 samples had a negative coefficient, set to zero | la convergence de 'rlm' a échoué après 20 étapes",0.0960000000000036
 "rlm","96h","r2_05",635,6,"ok","6 of 6 samples had a negative coefficient, set to zero | la convergence de 'rlm' a échoué après 20 étapes",0.0330000000000013
 "rlm","96h","welch",5821,6,"ok","6 of 6 samples had a negative coefficient, set to zero | la convergence de 'rlm' a échoué après 20 étapes",0.188000000000002
-"rnasieve","48h","r2_05",17,6,"ok","",1.792
-"rnasieve","48h","welch",1417,6,"ok","",7.21600000000001
-"rnasieve","72h","r2_05",140,6,"ok","",2.1160000000001
-"rnasieve","72h","welch",3420,6,"ok","",7.322
-"rnasieve","96h","r2_05",635,6,"ok","",3.84199999999998
-"rnasieve","96h","welch",5821,6,"ok","",13.3490000000002
+"rnasieve","48h","r2_01",151,6,"ok","",4.803
+"rnasieve","48h","r2_05",17,6,"ok","",3.614
+"rnasieve","48h","welch",1417,6,"ok","",17.62
+"rnasieve","72h","r2_01",864,6,"ok","",15.256
+"rnasieve","72h","r2_05",140,6,"ok","",4.988
+"rnasieve","72h","welch",3420,6,"ok","",44.602
+"rnasieve","96h","r2_01",2856,6,"ok","",45.1809999999998
+"rnasieve","96h","r2_05",635,6,"ok","",8.84199999999998
+"rnasieve","96h","welch",5821,6,"ok","",84.1369999999999
+"scdc","48h","r2_01",151,6,"ok","",0.385000000000005
 "scdc","48h","r2_05",17,6,"ok","",0.858000000000001
 "scdc","48h","welch",1417,6,"ok","",5.123
+"scdc","72h","r2_01",864,6,"ok","",0.378999999999962
 "scdc","72h","r2_05",140,6,"ok","",0.69399999999996
 "scdc","72h","welch",3420,6,"ok","",1.91800000000001
+"scdc","96h","r2_01",2856,6,"ok","",1.755
 "scdc","96h","r2_05",635,6,"ok","",0.324999999999932
 "scdc","96h","welch",5821,6,"ok","",4.72700000000009

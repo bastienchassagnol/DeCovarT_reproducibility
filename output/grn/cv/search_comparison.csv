@@ -1,0 +1,117 @@
+"time","gene_set","cell_type","cells","genes","arm","strategy","values_scored","alpha","lambda","score_loss","elapsed_sec"
+"48h","r2_05","Epiblast",10590,17,"shrinkage","grid, one factorisation per value",10,0,0.02,9.07407267547455e-06,0.0480000000000018
+"48h","r2_05","Epiblast",10590,17,"shrinkage","exact path",200,0,0.015,0,0.0949999999999989
+"48h","r2_05","Epiblast",10590,17,"shrinkage","optimiser on the path",NA,0,0.0169435694089919,-5.39051898940102e-06,0.036999999999999
+"48h","r2_05","Epiblast",10590,17,"shrinkage","random values on the path",10,0,0.0832243059033062,0.00603952251197626,0.0360000000000014
+"48h","r2_05","Epiblast",10590,17,"two_param","grid, path in lambda",40,0,0.05,0,0.234000000000002
+"48h","r2_05","Epiblast",10590,17,"two_param","random pairs",40,0.202999000134878,0.098173154599499,0.00762725551515686,1.039
+"48h","r2_05","Exiting naïve pluripotency",265,17,"shrinkage","grid, one factorisation per value",10,0,0.4,0.00287770012585042,0.00800000000000267
+"48h","r2_05","Exiting naïve pluripotency",265,17,"shrinkage","exact path",200,0,0.435,0,0.0180000000000007
+"48h","r2_05","Exiting naïve pluripotency",265,17,"shrinkage","optimiser on the path",NA,0,0.434832795144423,-1.32454431422957e-07,0.00400000000000489
+"48h","r2_05","Exiting naïve pluripotency",265,17,"shrinkage","random values on the path",10,0,0.470481581480941,0.00300249191326429,0.00500000000000256
+"48h","r2_05","Exiting naïve pluripotency",265,17,"two_param","grid, path in lambda",40,0.9,0.1,0,0.0339999999999989
+"48h","r2_05","Exiting naïve pluripotency",265,17,"two_param","random pairs",40,0.756712357909419,0.0866509517305531,0.0138233710348743,0.146999999999998
+"48h","r2_05","Naïve pluripotency",36,17,"shrinkage","grid, one factorisation per value",10,0,0.9,0.0118943930114455,0.00600000000000023
+"48h","r2_05","Naïve pluripotency",36,17,"shrinkage","exact path",200,0,0.86,0,0.0150000000000006
+"48h","r2_05","Naïve pluripotency",36,17,"shrinkage","optimiser on the path",NA,0,0.859399233209379,-2.7477711412871e-06,0.00399999999999778
+"48h","r2_05","Naïve pluripotency",36,17,"shrinkage","random values on the path",10,0,0.859217564160703,-2.58469223979318e-06,0.00399999999999778
+"48h","r2_05","Naïve pluripotency",36,17,"two_param","grid, path in lambda",40,0.9,0.4,0,0.0300000000000011
+"48h","r2_05","Naïve pluripotency",36,17,"two_param","random pairs",40,0.89316060631536,0.554379235999659,0.0344965554519945,0.109999999999999
+"48h","welch","Epiblast",10590,1417,"shrinkage","grid, one factorisation per value",10,0,0.5,0.204943392450787,11.7060000000001
+"48h","welch","Epiblast",10590,1417,"shrinkage","exact path",200,0,0.46,0,11.8760000000002
+"48h","welch","Epiblast",10590,1417,"shrinkage","optimiser on the path",NA,0,0.460473933328525,-3.43553888342285e-05,8.53999999999996
+"48h","welch","Epiblast",10590,1417,"shrinkage","random values on the path",10,0,0.493622718359111,0.144827984457606,8.53099999999995
+"48h","welch","Epiblast",10590,1417,"two_param","grid, path in lambda",40,0.75,0.5,0.24267563285548,79.4520000000002
+"48h","welch","Epiblast",10590,1417,"two_param","random pairs",40,0.611110032512806,0.467571972939186,0,624.956
+"48h","welch","Exiting naïve pluripotency",265,1417,"shrinkage","grid, one factorisation per value",10,0,0.9,0.0454629395462689,2.84299999999985
+"48h","welch","Exiting naïve pluripotency",265,1417,"shrinkage","exact path",200,0,0.895,0,0.163000000000466
+"48h","welch","Exiting naïve pluripotency",265,1417,"shrinkage","optimiser on the path",NA,0,0.893549039894268,-0.00241934350833617,0.143000000000939
+"48h","welch","Exiting naïve pluripotency",265,1417,"shrinkage","random values on the path",10,0,0.852519043243025,1.5669225892475,0.141999999999825
+"48h","welch","Exiting naïve pluripotency",265,1417,"two_param","grid, path in lambda",40,0.9,0.5,0,13.357
+"48h","welch","Exiting naïve pluripotency",265,1417,"two_param","random pairs",40,0.832964853686281,0.470812037307769,4.25626271595866,110.932
+"48h","welch","Naïve pluripotency",36,1417,"shrinkage","grid, one factorisation per value",10,0,0.9,1239910.63753682,2.65900000000056
+"48h","welch","Naïve pluripotency",36,1417,"shrinkage","exact path",200,0,1,0,0.0299999999997453
+"48h","welch","Naïve pluripotency",36,1417,"shrinkage","optimiser on the path",NA,0,0.999406615294986,216.597994551063,0.0189999999993233
+"48h","welch","Naïve pluripotency",36,1417,"shrinkage","random values on the path",10,0,0.859217564160703,1919712.56400103,0.0180000000000291
+"48h","welch","Naïve pluripotency",36,1417,"two_param","grid, path in lambda",40,0.9,0.9,0,12.6759999999995
+"48h","welch","Naïve pluripotency",36,1417,"two_param","random pairs",40,0.642185523197986,0.868504340492655,418941.618497562,109.182
+"72h","r2_05","Ectopic pluripotency",266,140,"shrinkage","grid, one factorisation per value",10,0,0.7,0.000794390209193807,0.0410000000000039
+"72h","r2_05","Ectopic pluripotency",266,140,"shrinkage","exact path",200,0,0.695,0,0.0429999999999993
+"72h","r2_05","Ectopic pluripotency",266,140,"shrinkage","optimiser on the path",NA,0,0.695355511570046,-5.60825293405287e-06,0.0229999999999961
+"72h","r2_05","Ectopic pluripotency",266,140,"shrinkage","random values on the path",10,0,0.580782915929332,0.499304647403619,0.0229999999999961
+"72h","r2_05","Ectopic pluripotency",266,140,"two_param","grid, path in lambda",40,0.9,0.3,0,0.186999999999998
+"72h","r2_05","Ectopic pluripotency",266,140,"two_param","random pairs",40,0.891855630115606,0.420338332769461,0.154222507371742,1.213
+"72h","r2_05","Naïve pluripotency",66,140,"shrinkage","grid, one factorisation per value",10,0,0.9,0.747157307551845,0.0319999999999965
+"72h","r2_05","Naïve pluripotency",66,140,"shrinkage","exact path",200,0,0.82,0,0.0240000000000009
+"72h","r2_05","Naïve pluripotency",66,140,"shrinkage","optimiser on the path",NA,0,0.820282546718394,-9.00963703998059e-06,0.00999999999999801
+"72h","r2_05","Naïve pluripotency",66,140,"shrinkage","random values on the path",10,0,0.840917967507383,0.0420576909655779,0.0100000000000051
+"72h","r2_05","Naïve pluripotency",66,140,"two_param","grid, path in lambda",40,0.9,0.4,0,0.109999999999999
+"72h","r2_05","Naïve pluripotency",66,140,"two_param","random pairs",40,0.832964853686281,0.470812037307769,0.144469821060511,0.745000000000005
+"72h","r2_05","Primitive streak",4279,140,"shrinkage","grid, one factorisation per value",10,0,0.2,0.0171165436798617,0.195999999999998
+"72h","r2_05","Primitive streak",4279,140,"shrinkage","exact path",200,0,0.245,0,0.201999999999998
+"72h","r2_05","Primitive streak",4279,140,"shrinkage","optimiser on the path",NA,0,0.2442806130414,-4.22225028273715e-06,0.121000000000002
+"72h","r2_05","Primitive streak",4279,140,"shrinkage","random values on the path",10,0,0.233660101076355,0.000954919485451455,0.119999999999997
+"72h","r2_05","Primitive streak",4279,140,"two_param","grid, path in lambda",40,0.25,0.2,0.000944894068425128,0.665000000000006
+"72h","r2_05","Primitive streak",4279,140,"two_param","random pairs",40,0.186603728262708,0.197318358777557,0,4.72499999999999
+"72h","welch","Ectopic pluripotency",266,3420,"shrinkage","grid, one factorisation per value",10,0,0.9,8.04655096029455,28.46
+"72h","welch","Ectopic pluripotency",266,3420,"shrinkage","exact path",200,0,0.95,0,0.302999999999884
+"72h","welch","Ectopic pluripotency",266,3420,"shrinkage","optimiser on the path",NA,0,0.947933459329242,-0.027473590855152,0.281000000000859
+"72h","welch","Ectopic pluripotency",266,3420,"shrinkage","random values on the path",10,0,0.894400145142572,9.65991096639209,0.281000000000859
+"72h","welch","Naïve pluripotency",66,3420,"shrinkage","grid, one factorisation per value",10,0,0.9,27.0894369721018,28.915
+"72h","welch","Naïve pluripotency",66,3420,"shrinkage","exact path",200,0,0.97,0,0.081000000000131
+"72h","welch","Naïve pluripotency",66,3420,"shrinkage","optimiser on the path",NA,0,0.969283550176711,-0.00962641425849142,0.0619999999998981
+"72h","welch","Naïve pluripotency",66,3420,"shrinkage","random values on the path",10,0,0.852519043243025,57.4241651800912,0.0630000000001019
+"72h","welch","Primitive streak",4279,3420,"shrinkage","grid, one factorisation per value",10,0,0.9,4.42655187164473,44.2610000000004
+"72h","welch","Primitive streak",4279,3420,"shrinkage","exact path",200,0,0.835,0,38.6669999999995
+"72h","welch","Primitive streak",4279,3420,"shrinkage","optimiser on the path",NA,0,0.835094977743675,-2.41556799664977e-05,36.1199999999999
+"72h","welch","Primitive streak",4279,3420,"shrinkage","random values on the path",10,0,0.859217564160703,0.544108725842307,36.0809999999992
+"96h","r2_05","Caudal mesoderm",1061,635,"shrinkage","grid, one factorisation per value",10,0,0.7,0.804768596751501,0.881999999999607
+"96h","r2_05","Caudal mesoderm",1061,635,"shrinkage","exact path",200,0,0.625,0,0.548000000000684
+"96h","r2_05","Caudal mesoderm",1061,635,"shrinkage","optimiser on the path",NA,0,0.627097151318014,-0.000734152855329739,0.460000000000036
+"96h","r2_05","Caudal mesoderm",1061,635,"shrinkage","random values on the path",10,0,0.580782915929332,0.351623461375539,0.458999999999833
+"96h","r2_05","Caudal mesoderm",1061,635,"two_param","grid, path in lambda",40,0.75,0.4,0,3.96000000000004
+"96h","r2_05","Caudal mesoderm",1061,635,"two_param","random pairs",40,0.611932578845881,0.384871727414429,0.537549576729589,30.0230000000001
+"96h","r2_05","Ectopic pluripotency",116,635,"shrinkage","grid, one factorisation per value",10,0,0.9,1.28158375790895,0.620999999999185
+"96h","r2_05","Ectopic pluripotency",116,635,"shrinkage","exact path",200,0,0.855,0,0.0470000000004802
+"96h","r2_05","Ectopic pluripotency",116,635,"shrinkage","optimiser on the path",NA,0,0.855586714004834,-0.000184670042017387,0.0300000000006548
+"96h","r2_05","Ectopic pluripotency",116,635,"shrinkage","random values on the path",10,0,0.852519043243025,0.00487635553236032,0.0300000000006548
+"96h","r2_05","Ectopic pluripotency",116,635,"two_param","grid, path in lambda",40,0.9,0.5,0,1.76800000000003
+"96h","r2_05","Ectopic pluripotency",116,635,"two_param","random pairs",40,0.832964853686281,0.470812037307769,0.0454478262661269,12.0889999999999
+"96h","r2_05","Gut",140,635,"shrinkage","grid, one factorisation per value",10,0,0.9,0.560831003680278,0.639000000000124
+"96h","r2_05","Gut",140,635,"shrinkage","exact path",200,0,0.87,0,0.0519999999996799
+"96h","r2_05","Gut",140,635,"shrinkage","optimiser on the path",NA,0,0.870070563528174,8.36920094116067e-06,0.0340000000005602
+"96h","r2_05","Gut",140,635,"shrinkage","random values on the path",10,0,0.859217564160703,0.0605615655808833,0.0340000000005602
+"96h","r2_05","Gut",140,635,"two_param","grid, path in lambda",40,0.9,0.5,0.276573782633704,1.96399999999994
+"96h","r2_05","Gut",140,635,"two_param","random pairs",40,0.89316060631536,0.554379235999659,0,12.2539999999999
+"96h","r2_05","Pre-somitic mesoderm",3589,635,"shrinkage","grid, one factorisation per value",10,0,0.4,0.00705902861272989,1.52099999999973
+"96h","r2_05","Pre-somitic mesoderm",3589,635,"shrinkage","exact path",200,0,0.41,0,1.24300000000039
+"96h","r2_05","Pre-somitic mesoderm",3589,635,"shrinkage","optimiser on the path",NA,0,0.408529169442231,-0.000207097561315095,0.984000000000378
+"96h","r2_05","Pre-somitic mesoderm",3589,635,"shrinkage","random values on the path",10,0,0.435313035916304,0.0679084681769382,0.981999999999971
+"96h","r2_05","Pre-somitic mesoderm",3589,635,"two_param","grid, path in lambda",40,0.5,0.3,0,7.34699999999975
+"96h","r2_05","Pre-somitic mesoderm",3589,635,"two_param","random pairs",40,0.322023876942694,0.375840486818925,0.0657264585406665,57.732
+"96h","r2_05","Somite differentiation front",29,635,"shrinkage","grid, one factorisation per value",10,0,0.9,4.068977976013,0.596999999999753
+"96h","r2_05","Somite differentiation front",29,635,"shrinkage","exact path",200,0,0.945,0,0.0259999999998399
+"96h","r2_05","Somite differentiation front",29,635,"shrinkage","optimiser on the path",NA,0,0.947535722414995,-0.0177178598348746,0.011000000000422
+"96h","r2_05","Somite differentiation front",29,635,"shrinkage","random values on the path",10,0,0.982370549046667,7.7875303075175,0.011000000000422
+"96h","r2_05","Somite differentiation front",29,635,"two_param","grid, path in lambda",40,0.9,0.7,0,1.65499999999975
+"96h","r2_05","Somite differentiation front",29,635,"two_param","random pairs",40,0.868783636763692,0.7421011628001,1.22430896467699,11.4809999999998
+"96h","welch","Caudal mesoderm",1061,5821,"shrinkage","grid, one factorisation per value",10,0,0.9,0.116073342864183,132.147
+"96h","welch","Caudal mesoderm",1061,5821,"shrinkage","exact path",200,0,0.905,0,3.9340000000002
+"96h","welch","Caudal mesoderm",1061,5821,"shrinkage","optimiser on the path",NA,0,0.905597197922631,-0.0010724092117016,3.82499999999982
+"96h","welch","Caudal mesoderm",1061,5821,"shrinkage","random values on the path",10,0,0.894400145142572,0.460442589004742,3.82200000000012
+"96h","welch","Ectopic pluripotency",116,5821,"shrinkage","grid, one factorisation per value",10,0,0.9,8.95406261858443,121.04
+"96h","welch","Ectopic pluripotency",116,5821,"shrinkage","exact path",200,0,0.945,0,0.225999999999658
+"96h","welch","Ectopic pluripotency",116,5821,"shrinkage","optimiser on the path",NA,0,0.946668705321593,-0.0189331233268604,0.210000000000036
+"96h","welch","Ectopic pluripotency",116,5821,"shrinkage","random values on the path",10,0,0.852519043243025,29.092483747183,0.210000000000036
+"96h","welch","Gut",140,5821,"shrinkage","grid, one factorisation per value",10,0,0.9,14.4020523574563,120.872
+"96h","welch","Gut",140,5821,"shrinkage","exact path",200,0,0.96,0,0.284999999999854
+"96h","welch","Gut",140,5821,"shrinkage","optimiser on the path",NA,0,0.957701282689463,-0.0546241474603448,0.268000000000029
+"96h","welch","Gut",140,5821,"shrinkage","random values on the path",10,0,0.859217564160703,33.440189169869,0.268000000000029
+"96h","welch","Pre-somitic mesoderm",3589,5821,"shrinkage","grid, one factorisation per value",10,0,0.9,4.23604493815947,165.127
+"96h","welch","Pre-somitic mesoderm",3589,5821,"shrinkage","exact path",200,0,0.855,0,41.6610000000001
+"96h","welch","Pre-somitic mesoderm",3589,5821,"shrinkage","optimiser on the path",NA,0,0.856677054670473,-0.00535724354995182,39.7660000000005
+"96h","welch","Pre-somitic mesoderm",3589,5821,"shrinkage","random values on the path",10,0,0.872870866217185,0.541416545005632,39.7560000000003
+"96h","welch","Somite differentiation front",29,5821,"shrinkage","grid, one factorisation per value",10,0,0.9,1020.08554830603,119.037
+"96h","welch","Somite differentiation front",29,5821,"shrinkage","exact path",200,0,0.995,0,0.0709999999999127
+"96h","welch","Somite differentiation front",29,5821,"shrinkage","optimiser on the path",NA,0,0.993981906443513,-2.06379292590645,0.0549999999993815
+"96h","welch","Somite differentiation front",29,5821,"shrinkage","random values on the path",10,0,0.982370549046667,73.4164730450975,0.055000000000291

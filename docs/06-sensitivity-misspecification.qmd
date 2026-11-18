@@ -6,7 +6,8 @@ description: "How the fit moves when the precision matrices are misspecified."
 
 ## Contaminating $\boldsymbol{\Omega}_{j}$ {#sec-sensitivity}
 
-Starting from the fitted sparse precisions (@eq-grn-export), apply the
+Starting from the regularised covariances (@eq-grn-export; the sparse
+precisions of the first plan are archived, @sec-cov-scope), apply the
 misspecification factors described in DeCovarT
 `vignettes/S5-misspecification.qmd`:
 
@@ -151,11 +152,14 @@ Design choices:
 
 The covariance has $G(G+1)/2$ entries per type. Above the number of
 reference cells of a type the sample covariance is singular, and only
-the shrinkage estimate of @sec-shrinkage is defined; the closed-form
-intensity is used in the sweep rather than cross-validation, to keep the
-cost linear in the number of panels.
+a regularised estimate of @sec-shrinkage is defined. The closed-form
+intensity of this sketch is archived; the sweep should use the level
+chosen on held-out cells or by the bulk likelihood
+(@sec-deconv-selection).
 
-[TODO: add the level of covariance regularisation as a factor of the
+[TODO, partly superseded by @sec-deconv-selection, which sweeps the
+shrinkage level, the two-parameter arm and factor ranks on the real
+bulks: add the level of covariance regularisation as a factor of the
 sweep. The shrinkage estimate is dense by construction: it multiplies
 every sample correlation by $1 - \lambda$ and sets none to zero, so it
 says nothing about isolated groups of genes. At the closed-form
