@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Bastien Chassagnol">
-<meta name="dcterms.date" content="2026-11-12">
+<meta name="dcterms.date" content="2026-11-18">
 <meta name="description" content="What this book runs on the Suppinger gastruloids, and where the theory lives.">
 
 <title>DeCovarT reproducibility</title>
@@ -238,7 +238,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">12 Nov 2026</p>
+        <p class="date">18 Nov 2026</p>
       </div>
     </div>
     
@@ -395,7 +395,7 @@ Table&nbsp;1: Book chapters and the vignette chapters that hold their theory.
 </tr>
 <tr class="odd">
 <td><a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a>, Covariance estimation</td>
-<td>shrinkage plug-in, four sensitivity arms, cross-validated tuning</td>
+<td>shrinkage, two-parameter shrinkage and factor analysis of the raw-count correlation; level chosen on held-out cells; sparse and denoised arms archived</td>
 <td><a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#tbl-cov-estimators">3.2 Covariance estimation</a></td>
 </tr>
 <tr class="even">
@@ -922,7 +922,27 @@ iframe.slides {
   </div>
 </nav>
 </div> <!-- /content -->
-    <footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/edit/main/docs/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/blob/main/docs/index.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script type="text/javascript">
+<!-- KaTeX auto-render for tinytable tables. Quarto passes tinytable HTML
+     through raw, so `$...$` in its cells is not turned into math by the
+     book's KaTeX (html-math-method in _quarto.yml). This renders it with
+     the same KaTeX version, only inside tinytable tables. In R strings,
+     write the backslashes doubled: "$\\lambda$". -->
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/edit/main/docs/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/blob/main/docs/index.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/bastienchassagnol/DeCovarT_reproducibility/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script defer="" src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script>
+window.addEventListener("load", function () {
+  if (typeof renderMathInElement !== "function") return;
+  document.querySelectorAll('table[id^="tinytable"]').forEach(function (el) {
+    renderMathInElement(el, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false }
+      ],
+      throwOnError: false
+    });
+  });
+});
+</script>
+    <script type="text/javascript">
     (function(d) {
       d.querySelectorAll(".pseudocode-container").forEach(function(el) {
         let pseudocodeOptions = {
