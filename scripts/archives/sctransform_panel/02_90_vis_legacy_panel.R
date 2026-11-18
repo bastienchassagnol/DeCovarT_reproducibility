@@ -11,7 +11,7 @@
 # SECTION 0 · Dependencies and paths ----
 # ==========================================================================
 
-root <- getwd()
+root <- here::here()
 out_dir <- file.path(root, "output", "naive_marker_selection")
 table_dir <- file.path(out_dir, "tables")
 dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
@@ -20,7 +20,8 @@ read_table <- function(name) {
   path <- file.path(table_dir, name)
   if (!file.exists(path)) {
     stop(
-      "Missing table ", path,
+      "Missing table ",
+      path,
       ". Run scripts/archives/sctransform_panel/02_90_stats_prepare_panel.R first."
     )
   }
@@ -234,9 +235,8 @@ circles <- rbind(
   circle_df(sct_x, 0, sct_r, "sct"),
   circle_df(marker_x, 0, marker_r, "marker")
 )
-lens_x <- (
-  (marker_x - sct_x)^2 + sct_r^2 - marker_r^2
-) / (2 * (marker_x - sct_x))
+lens_x <- ((marker_x - sct_x)^2 + sct_r^2 - marker_r^2) /
+  (2 * (marker_x - sct_x))
 both_sorted <- sort(in_both)
 n_left <- ceiling(length(both_sorted) / 2)
 marker_venn <- ggplot2::ggplot() +

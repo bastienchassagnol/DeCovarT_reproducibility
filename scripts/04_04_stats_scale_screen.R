@@ -40,7 +40,7 @@
 # Progress: logs/04_04_stats_scale_screen_<date>.progress.tsv
 #   (scripts/utils/progress_report.R).
 
-root <- getwd()
+root <- here::here()
 suppressPackageStartupMessages(library(Matrix))
 for (f in c(
   "02_00_utils",
@@ -57,10 +57,18 @@ time_levels <- c("72h", "96h")
 cli <- commandArgs(trailingOnly = TRUE)
 cli_value <- function(key, default) {
   hit <- grep(paste0("^", key, "="), cli, value = TRUE)
-  if (length(hit) == 0L) default else strsplit(sub(paste0("^", key, "="), "", hit[[1L]]), ",")[[1L]]
+  if (length(hit) == 0L) {
+    default
+  } else {
+    strsplit(sub(paste0("^", key, "="), "", hit[[1L]]), ",")[[1L]]
+  }
 }
 run_times <- match.arg(cli_value("times", time_levels), time_levels, TRUE)
-run_stages <- match.arg(cli_value("stages", c("fit", "tables")), c("fit", "tables"), TRUE)
+run_stages <- match.arg(
+  cli_value("stages", c("fit", "tables")),
+  c("fit", "tables"),
+  TRUE
+)
 
 n_genes_light <- 1000L
 lambda_levels <- c(0.25, 0.5, 0.75, 0.9)
@@ -75,7 +83,13 @@ n_workers <- 24L
 
 tier_01 <- file.path(root, "output", "feature_selection", "tier_01")
 selected_dir <- file.path(root, "output", "feature_selection", "tier_02")
-ratio_path <- file.path(root, "output", "feature_selection", "tier_03", "platform_ratio.csv")
+ratio_path <- file.path(
+  root,
+  "output",
+  "feature_selection",
+  "tier_03",
+  "platform_ratio.csv"
+)
 out_dir <- file.path(root, "output", "deconvolution")
 fits_dir <- file.path(out_dir, "fits")
 dir.create(fits_dir, recursive = TRUE, showWarnings = FALSE)
@@ -84,14 +98,23 @@ observed <- observed_scored_fractions(file.path(tier_01, "cell_counts.csv"))
 
 # 1 · Reference, covariances and pseudo-bulks of one time ----------------------
 prepare_time <- function(tm, slots) {
-  selected <- utils::read.csv(file.path(selected_dir, paste0("selected_", tm, ".csv")))
-  genes <- selected$gene[order(-selected$deviance_r2)][seq_len(min(n_genes_light, nrow(selected)))]
+  selected <- utils::read.csv(file.path(
+    selected_dir,
+    paste0("selected_", tm, ".csv")
+  ))
+  genes <- selected$gene[order(-selected$deviance_r2)][seq_len(min(
+    n_genes_light,
+    nrow(selected)
+  ))]
   panel <- read_panel_slot(slots, selected_dir, tm, genes = genes)
   types <- sort(unique(panel$cell_type[!is.na(panel$cell_type)]))
-  held_out <- withr::with_seed(seed, unlist(lapply(types, function(tp) {
-    rows <- which(panel$cell_type %in% tp)
-    sample(rows, ceiling(0.2 * length(rows)))
-  })))
+  held_out <- withr::with_seed(
+    seed,
+    unlist(lapply(types, function(tp) {
+      rows <- which(panel$cell_type %in% tp)
+      sample(rows, ceiling(0.2 * length(rows)))
+    }))
+  )
   train <- setdiff(which(panel$cell_type %in% types), held_out)
   moments <- list(
     raw = sample_moments(panel$y[train, ], panel$cell_type[train], types),
@@ -114,21 +137,34 @@ prepare_time <- function(tm, slots) {
   })
   covariances <- c(
     lapply(lambda_levels, function(l) {
-      stats::setNames(lapply(inputs, function(input) {
-        list(arm = "shrinkage", tuning = l, align = NA_real_,
-             sigma = build_sigma(moments[[input]], "shrinkage", lambda = l))
-      }), paste0(sprintf("shrinkage_%.2f", l), ".", inputs))
+      stats::setNames(
+        lapply(inputs, function(input) {
+          list(
+            arm = "shrinkage",
+            tuning = l,
+            align = NA_real_,
+            sigma = build_sigma(moments[[input]], "shrinkage", lambda = l)
+          )
+        }),
+        paste0(sprintf("shrinkage_%.2f", l), ".", inputs)
+      )
     }),
     lapply(factor_ranks, function(q) {
-      stats::setNames(lapply(inputs, function(input) {
-        chosen <- lapply(factor_fits[[input]], function(fits) {
-          r <- as.integer(names(fits))
-          fits[[as.character(max(r[r <= q]))]]
-        })
-        list(arm = "factor", tuning = q,
-             align = max(vapply(chosen, `[[`, numeric(1), "align")),
-             sigma = build_sigma(moments[[input]], "factor", factors = chosen))
-      }), paste0(sprintf("factor_%02d", q), ".", inputs))
+      stats::setNames(
+        lapply(inputs, function(input) {
+          chosen <- lapply(factor_fits[[input]], function(fits) {
+            r <- as.integer(names(fits))
+            fits[[as.character(max(r[r <= q]))]]
+          })
+          list(
+            arm = "factor",
+            tuning = q,
+            align = max(vapply(chosen, `[[`, numeric(1), "align")),
+            sigma = build_sigma(moments[[input]], "factor", factors = chosen)
+          )
+        }),
+        paste0(sprintf("factor_%02d", q), ".", inputs)
+      )
     })
   )
   covariances <- unlist(covariances, recursive = FALSE)
@@ -142,12 +178,20 @@ prepare_time <- function(tm, slots) {
         g <- stats::rgamma(length(types), concentration * obs)
         counts <- as.integer(stats::rmultinom(1L, n, g / sum(g)))
         replaced <- 0L
-        rows <- unlist(lapply(seq_along(types), function(j) {
+        rows_list <- vector("list", length(types))
+        for (j in seq_along(types)) {
           pool <- held_out[panel$cell_type[held_out] %in% types[[j]]]
           with_replacement <- counts[[j]] > length(pool)
-          if (with_replacement) replaced <<- replaced + counts[[j]]
-          pool[sample.int(length(pool), counts[[j]], replace = with_replacement)]
-        }))
+          if (with_replacement) {
+            replaced <- replaced + counts[[j]]
+          }
+          rows_list[[j]] <- pool[sample.int(
+            length(pool),
+            counts[[j]],
+            replace = with_replacement
+          )]
+        }
+        rows <- unlist(rows_list)
         list(
           y = colSums(panel$y[rows, , drop = FALSE]),
           truth = counts / n,
@@ -165,13 +209,26 @@ prepare_time <- function(tm, slots) {
       )
     })
   })
-  list(types = types, moments = moments, covariances = covariances, triplets = triplets, ratio = ratio)
+  list(
+    types = types,
+    moments = moments,
+    covariances = covariances,
+    triplets = triplets,
+    ratio = ratio
+  )
 }
 
 # Name of a fit, as its former checkpoint file; also the row order of the tables.
 task_file <- function(task) {
   paste0(
-    paste(task$time, paste0("s", task$seed), gsub(" ", "_", task$version), task$cov, task$scale, sep = "__"),
+    paste(
+      task$time,
+      paste0("s", task$seed),
+      gsub(" ", "_", task$version),
+      task$cov,
+      task$scale,
+      sep = "__"
+    ),
     ".rds"
   )
 }
@@ -190,10 +247,22 @@ if ("fit" %in% run_stages) {
       scale = scale_models,
       stringsAsFactors = FALSE
     )
-    tasks$file <- vapply(seq_len(nrow(tasks)), function(k) task_file(tasks[k, ]), "")
+    tasks$file <- vapply(
+      seq_len(nrow(tasks)),
+      function(k) task_file(tasks[k, ]),
+      ""
+    )
     stored <- read_fit_store(file.path(fits_dir, tm), "scale_screen", "rows")
     tasks <- tasks[!tasks$file %in% task_file(stored), , drop = FALSE]
-    message("Screen ", tm, ": ", length(prep$types), " types, ", nrow(tasks), " fits.")
+    message(
+      "Screen ",
+      tm,
+      ": ",
+      length(prep$types),
+      " types, ",
+      nrow(tasks),
+      " fits."
+    )
     log_progress(progress, "plan", tm, nrow(tasks), n_workers)
     done <- parallel::mclapply(
       seq_len(nrow(tasks)),
@@ -205,10 +274,24 @@ if ("fit" %in% run_stages) {
         trip <- prep$triplets[[task$seed]]
         Y <- if (task$version == "as is") trip$Y else trip$Y * prep$ratio
         fit <- tryCatch(
-          fit_decovart_scales(Y, mom$mu, cv$sigma, task$scale, depth = trip$depth),
-          error = function(e) list(status = "failed", message = conditionMessage(e),
-                                   P = NULL, samples = NULL, loglik = NA_real_,
-                                   iterations = NA_integer_, elapsed_sec = NA_real_)
+          fit_decovart_scales(
+            Y,
+            mom$mu,
+            cv$sigma,
+            task$scale,
+            depth = trip$depth
+          ),
+          error = function(e) {
+            list(
+              status = "failed",
+              message = conditionMessage(e),
+              P = NULL,
+              samples = NULL,
+              loglik = NA_real_,
+              iterations = NA_integer_,
+              elapsed_sec = NA_real_
+            )
+          }
         )
         rows <- data.frame(
           time = tm,
@@ -239,9 +322,19 @@ if ("fit" %in% run_stages) {
           )
         }
         rows$cov <- task$cov
-        log_progress(progress, "done", tm, task$file,
-                     round(fit$elapsed_sec %||% NA_real_, 1), fit$status, fit$message)
-        key <- data.frame(task[c("seed", "version", "cov", "scale")], row.names = NULL)
+        log_progress(
+          progress,
+          "done",
+          tm,
+          task$file,
+          round(fit$elapsed_sec %||% NA_real_, 1),
+          fit$status,
+          fit$message
+        )
+        key <- data.frame(
+          task[c("seed", "version", "cov", "scale")],
+          row.names = NULL
+        )
         list(
           rows = rows,
           compositions = if (!is.null(fit$P)) {
@@ -273,7 +366,9 @@ if ("fit" %in% run_stages) {
       )
     }
     errs <- Filter(Negate(is.list), done)
-    if (length(errs) > 0L) message("Worker errors: ", length(errs), "; first: ", format(errs[[1L]]))
+    if (length(errs) > 0L) {
+      message("Worker errors: ", length(errs), "; first: ", format(errs[[1L]]))
+    }
     rm(prep)
     invisible(gc())
   }
@@ -284,16 +379,46 @@ if ("tables" %in% run_stages) {
   fits <- read_fit_store(fits_dir, "scale_screen", "rows")
   fits <- fits[order(task_file(fits)), setdiff(names(fits), "cov")]
   rownames(fits) <- NULL
-  utils::write.csv(fits, file.path(out_dir, "scale_screen_fits.csv"), row.names = FALSE, fileEncoding = "UTF-8")
+  utils::write.csv(
+    fits,
+    file.path(out_dir, "scale_screen_fits.csv"),
+    row.names = FALSE,
+    fileEncoding = "UTF-8"
+  )
 
-  per_level <- unique(fits[c("time", "seed", "version", "input", "arm", "tuning", "scale", "status", "loglik_total")])
+  per_level <- unique(fits[c(
+    "time",
+    "seed",
+    "version",
+    "input",
+    "arm",
+    "tuning",
+    "scale",
+    "status",
+    "loglik_total"
+  )])
   per_level$triplet <- paste(per_level$time, per_level$seed, per_level$version)
-  per_level$strategy <- paste(per_level$input, per_level$arm, per_level$scale, sep = " | ")
+  per_level$strategy <- paste(
+    per_level$input,
+    per_level$arm,
+    per_level$scale,
+    sep = " | "
+  )
   eligible <- per_level$status != "failed" & is.finite(per_level$loglik_total)
-  chosen <- do.call(rbind, lapply(
-    split(per_level[eligible, ], interaction(per_level$triplet[eligible], per_level$strategy[eligible], drop = TRUE)),
-    function(d) d[which.max(d$loglik_total), ]
-  ))
+  chosen <- do.call(
+    rbind,
+    lapply(
+      split(
+        per_level[eligible, ],
+        interaction(
+          per_level$triplet[eligible],
+          per_level$strategy[eligible],
+          drop = TRUE
+        )
+      ),
+      function(d) d[which.max(d$loglik_total), ]
+    )
+  )
   key <- c("time", "seed", "version", "input", "arm", "tuning", "scale")
   at_choice <- merge(chosen[c(key, "triplet", "strategy")], fits, by = key)
   by_triplet <- stats::aggregate(
@@ -309,37 +434,62 @@ if ("tables" %in% run_stages) {
   rates <- stats::aggregate(cbind(failed, boundary) ~ strategy, per_level, mean)
   strategies <- sort(unique(per_level$strategy))
   n_triplets <- length(unique(per_level$triplet))
-  summary <- do.call(rbind, lapply(strategies, function(s) {
-    d <- by_triplet[by_triplet$strategy == s, ]
-    data.frame(
-      strategy = s,
-      triplets_chosen = nrow(d),
-      rmse = mean(d$rmse),
-      aitchison = mean(d$aitchison),
-      levels_chosen = paste(sort(unique(d$tuning)), collapse = ", ")
-    )
-  }))
-  summary <- merge(merge(summary, rates, by = "strategy", all.x = TRUE), recovery, by = "strategy", all.x = TRUE)
+  summary <- do.call(
+    rbind,
+    lapply(strategies, function(s) {
+      d <- by_triplet[by_triplet$strategy == s, ]
+      data.frame(
+        strategy = s,
+        triplets_chosen = nrow(d),
+        rmse = mean(d$rmse),
+        aitchison = mean(d$aitchison),
+        levels_chosen = paste(sort(unique(d$tuning)), collapse = ", ")
+      )
+    })
+  )
+  summary <- merge(
+    merge(summary, rates, by = "strategy", all.x = TRUE),
+    recovery,
+    by = "strategy",
+    all.x = TRUE
+  )
   # Standard error of the paired difference to the lowest-error strategy.
   complete <- summary$strategy[summary$triplets_chosen == n_triplets]
   best <- complete[which.min(summary$rmse[match(complete, summary$strategy)])]
-  wide <- stats::reshape(by_triplet[c("strategy", "triplet", "rmse")], idvar = "triplet",
-                         timevar = "strategy", direction = "wide")
-  summary$se_vs_best <- vapply(summary$strategy, function(s) {
-    d <- wide[[paste0("rmse.", s)]] - wide[[paste0("rmse.", best)]]
-    d <- d[is.finite(d)]
-    if (length(d) < 2L) NA_real_ else stats::sd(d) / sqrt(length(d))
-  }, numeric(1))
-  elapsed <- stats::aggregate(elapsed_sec ~ strategy, transform(
-    unique(fits[c(key, "elapsed_sec")]),
-    strategy = paste(input, arm, scale, sep = " | ")
-  ), stats::median)
+  wide <- stats::reshape(
+    by_triplet[c("strategy", "triplet", "rmse")],
+    idvar = "triplet",
+    timevar = "strategy",
+    direction = "wide"
+  )
+  summary$se_vs_best <- vapply(
+    summary$strategy,
+    function(s) {
+      d <- wide[[paste0("rmse.", s)]] - wide[[paste0("rmse.", best)]]
+      d <- d[is.finite(d)]
+      if (length(d) < 2L) NA_real_ else stats::sd(d) / sqrt(length(d))
+    },
+    numeric(1)
+  )
+  elapsed <- stats::aggregate(
+    elapsed_sec ~ strategy,
+    transform(
+      unique(fits[c(key, "elapsed_sec")]),
+      strategy = paste(input, arm, scale, sep = " | ")
+    ),
+    stats::median
+  )
   summary <- merge(summary, elapsed, by = "strategy", all.x = TRUE)
   # Strategies chosen on every triplet first, then by error. Ties within
   # one SE (se_vs_best) are read off the table: fewer failures, then
   # less time.
   summary <- summary[order(-summary$triplets_chosen, summary$rmse), ]
   summary$rank <- seq_len(nrow(summary))
-  utils::write.csv(summary, file.path(out_dir, "scale_screen_summary.csv"), row.names = FALSE, fileEncoding = "UTF-8")
+  utils::write.csv(
+    summary,
+    file.path(out_dir, "scale_screen_summary.csv"),
+    row.names = FALSE,
+    fileEncoding = "UTF-8"
+  )
   print(summary, digits = 3, row.names = FALSE)
 }

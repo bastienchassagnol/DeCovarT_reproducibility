@@ -14,7 +14,7 @@
 # SECTION 0 · Dependencies and paths ----
 # ==========================================================================
 
-root <- getwd()
+root <- here::here()
 suppressPackageStartupMessages(library(Matrix))
 source(file.path(root, "R", "02_00_utils.R"))
 source(file.path(root, "R", "02_01_stats_quality_control.R"))
@@ -125,7 +125,8 @@ cell_values$mad_flag <- stats::ave(
     s <- stats::mad(v)
     if (is.finite(s) && s > 0) abs(v - stats::median(v)) > 3 * s else 0
   }
-) == 1
+) ==
+  1
 
 # ==========================================================================
 # SECTION 3 · Cells, shared genes, fractional counts ----

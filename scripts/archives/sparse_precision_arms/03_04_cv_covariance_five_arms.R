@@ -69,7 +69,7 @@
 # SECTION 0 · Dependencies, hyperparameters, paths ----
 # ==========================================================================
 
-root <- getwd()
+root <- here::here()
 source(file.path(root, "R", "02_00_utils.R"))
 source(file.path(root, "R", "03_02_stats_regularisation_path.R"))
 source(file.path(root, "R", "03_01_stats_covariance_estimation.R"))
@@ -189,11 +189,13 @@ denoised_shrinkage_spec <- function(kappa) {
 # SECTION 2 · Selection and comparison per type and time ----
 # ==========================================================================
 
-tuning_rows <- list()
-selected_rows <- list()
-nested_rows <- list()
-nested_summary_rows <- list()
-nu_rows <- list()
+# Reference object so the lapply below can append with `<-`.
+collected <- new.env(parent = emptyenv())
+collected$tuning_rows <- list()
+collected$selected_rows <- list()
+collected$nested_rows <- list()
+collected$nested_summary_rows <- list()
+collected$nu_rows <- list()
 
 #' Select one arm's tuning value on all cells and refit it.
 #'
@@ -328,7 +330,7 @@ results <- lapply(time_levels, function(time_level) {
         NULL
       }
     )
-    nu_rows[[length(nu_rows) + 1L]] <<- data.frame(
+    collected$nu_rows[[length(collected$nu_rows) + 1L]] <- data.frame(
       time_point = time_level,
       cell_type = tp,
       nu_hat = nu_fit$nu %||% NA_real_,
@@ -375,8 +377,8 @@ results <- lapply(time_levels, function(time_level) {
       if (is.null(res)) {
         next
       }
-      tuning_rows[[length(tuning_rows) + 1L]] <<- res$table
-      selected_rows[[length(selected_rows) + 1L]] <<- res$row
+      collected$tuning_rows[[length(collected$tuning_rows) + 1L]] <- res$table
+      collected$selected_rows[[length(collected$selected_rows) + 1L]] <- res$row
       entry <- res$entry
       final <- entry$final
       entry$final <- NULL
@@ -416,13 +418,15 @@ results <- lapply(time_levels, function(time_level) {
         seed = seed,
         rule = selection_rule
       )
-      nested_rows[[length(nested_rows) + 1L]] <<- data.frame(
+      collected$nested_rows[[length(collected$nested_rows) + 1L]] <- data.frame(
         time_point = time_level,
         cell_type = tp,
         nested$by_fold,
         stringsAsFactors = FALSE
       )
-      nested_summary_rows[[length(nested_summary_rows) + 1L]] <<- data.frame(
+      collected$nested_summary_rows[[
+        length(collected$nested_summary_rows) + 1L
+      ]] <- data.frame(
         time_point = time_level,
         cell_type = tp,
         nested$summary,
@@ -454,7 +458,10 @@ names(results) <- time_levels
 # ==========================================================================
 
 suffix <- if (identical(normalise, "none")) "" else paste0("_", normalise)
-out_rds <- file.path(out_dir, paste0("cv_covariance_by_type_time", suffix, ".rds"))
+out_rds <- file.path(
+  out_dir,
+  paste0("cv_covariance_by_type_time", suffix, ".rds")
+)
 saveRDS(results, out_rds)
 message("Wrote ", out_rds)
 
@@ -467,8 +474,8 @@ write_table <- function(rows, filename) {
   utils::write.csv(do.call(rbind, rows), path, row.names = FALSE)
   message("Wrote ", path)
 }
-write_table(tuning_rows, "cv_tuning_scores.csv")
-write_table(selected_rows, "cv_selected_tuning.csv")
-write_table(nested_rows, "nested_cv_by_fold.csv")
-write_table(nested_summary_rows, "nested_cv_summary.csv")
-write_table(nu_rows, "extrinsic_noise.csv")
+write_table(collected$tuning_rows, "cv_tuning_scores.csv")
+write_table(collected$selected_rows, "cv_selected_tuning.csv")
+write_table(collected$nested_rows, "nested_cv_by_fold.csv")
+write_table(collected$nested_summary_rows, "nested_cv_summary.csv")
+write_table(collected$nu_rows, "extrinsic_noise.csv")

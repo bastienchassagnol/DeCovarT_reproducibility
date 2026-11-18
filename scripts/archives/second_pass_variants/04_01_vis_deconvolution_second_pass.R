@@ -35,7 +35,7 @@
 # SECTION 0 · Dependencies and paths ----
 # ==========================================================================
 
-root <- getwd()
+root <- here::here()
 source(file.path(root, "R", "02_00_utils.R"))
 source(file.path(root, "R", "04_01_vis_deconvolution.R"))
 

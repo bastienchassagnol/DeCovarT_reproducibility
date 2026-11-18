@@ -56,7 +56,7 @@
 
 stopifnot(requireNamespace("ggplot2", quietly = TRUE))
 
-root <- getwd()
+root <- here::here()
 in_file <- file.path(root, "output", "deconvolution", "proportions_long.csv")
 out_dir <- file.path(root, "output", "deconvolution", "early_wnt")
 fig_dir <- file.path(root, "docs", "images", "src", "early_wnt")

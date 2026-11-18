@@ -10,7 +10,7 @@
 # from the outputs. PDFs in output/feature_selection/tier_03/figures/, PNG
 # copies in docs/images/feature_selection/.
 
-root <- getwd()
+root <- here::here()
 suppressPackageStartupMessages(library(Matrix))
 source(file.path(root, "R", "02_00_utils.R"))
 source(file.path(root, "R", "02_03_vis_cross_platform.R"))
@@ -26,8 +26,16 @@ a3 <- res$a3_shift
 pct_range <- function(x) sprintf("%.0f to %.0f %%", 100 * min(x), 100 * max(x))
 
 # Cook ----------------------------------------------------------------------
-n_gene_flags <- sum(vapply(res$outlier_genes, function(g) sum(g$flag), numeric(1)))
-max_res <- max(vapply(res$outlier_genes, function(g) max(abs(g$std_residual), na.rm = TRUE), numeric(1)))
+n_gene_flags <- sum(vapply(
+  res$outlier_genes,
+  function(g) sum(g$flag),
+  numeric(1)
+))
+max_res <- max(vapply(
+  res$outlier_genes,
+  function(g) max(abs(g$std_residual), na.rm = TRUE),
+  numeric(1)
+))
 pairs <- vapply(res$outlier_cells, function(o) nrow(o$flagged), numeric(1))
 save_figure(
   plot_cook(
@@ -149,9 +157,15 @@ last <- tail(names(res$variants$none$tails), 1L)
 t_none <- top_of("none", last)
 t_gene <- top_of("gene", last)
 comp_title <- if (identical(t_none$type, t_gene$type)) {
-  sprintf("At %s the largest plug-in type is the same with the gene-wise ratio", last)
+  sprintf(
+    "At %s the largest plug-in type is the same with the gene-wise ratio",
+    last
+  )
 } else {
-  sprintf("At %s the largest plug-in type changes with the gene-wise ratio", last)
+  sprintf(
+    "At %s the largest plug-in type changes with the gene-wise ratio",
+    last
+  )
 }
 t_welch <- top_of("gene_neff", last)
 comp_subtitle <- sprintf(

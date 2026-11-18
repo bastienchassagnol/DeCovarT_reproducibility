@@ -47,7 +47,7 @@
 # SECTION 0 · Dependencies, settings, paths ----
 # ==========================================================================
 
-root <- getwd()
+root <- here::here()
 suppressPackageStartupMessages(library(Matrix))
 source(file.path(root, "R", "02_00_utils.R"))
 source(file.path(root, "R", "03_01_stats_covariance_estimation.R"))
@@ -159,8 +159,11 @@ check_tasks <- function(results, what) {
       ": ",
       sum(failed | empty),
       " task(s) failed. First message: ",
-      if (any(failed)) as.character(results[[which(failed)[[1L]]]]) else
+      if (any(failed)) {
+        as.character(results[[which(failed)[[1L]]]])
+      } else {
         "worker killed (memory?)"
+      }
     )
   }
   results
@@ -178,10 +181,15 @@ logged <- function(slot, n_tasks, workers, fun) {
     started <- proc.time()[["elapsed"]]
     out <- try(fun(i), silent = TRUE)
     failed <- inherits(out, "try-error")
-    log_progress(progress, "done", slot, i,
-                 round(proc.time()[["elapsed"]] - started, 1),
-                 if (failed) "failed" else "ok",
-                 if (failed) as.character(out) else "")
+    log_progress(
+      progress,
+      "done",
+      slot,
+      i,
+      round(proc.time()[["elapsed"]] - started, 1),
+      if (failed) "failed" else "ok",
+      if (failed) as.character(out) else ""
+    )
     out
   }
 }
@@ -232,28 +240,28 @@ if ("select" %in% run_stages) {
           nrow(tasks),
           workers_for(nrow(tasks), n_genes),
           function(i) {
-          task <- tasks[i, ]
-          if (task$kind == "unit") {
-            folds <- unit_folds(nrow(X[[task$j]]), seed, K, loo_below)
-            cv_unit_arms(X[[task$j]], folds, lambda_grid, ranks)
-          } else if (task$kind == "two_param") {
-            folds <- make_cv_folds(nrow(X[[task$j]]), K, seed + 100L)
-            cv_unit_arms(
-              X[[task$j]],
-              folds,
-              lambda_grid,
-              ranks = NULL,
-              alpha_grid = alpha_grid,
-              other_scatter = total - scatter[[task$j]]
-            )[c("two_param", "const")]
-          } else {
-            score_shared_factor(
-              Map(function(x, f) x[f != task$k, , drop = FALSE], X, joint),
-              Map(function(x, f) x[f == task$k, , drop = FALSE], X, joint),
-              ranks_shared
-            )
+            task <- tasks[i, ]
+            if (task$kind == "unit") {
+              folds <- unit_folds(nrow(X[[task$j]]), seed, K, loo_below)
+              cv_unit_arms(X[[task$j]], folds, lambda_grid, ranks)
+            } else if (task$kind == "two_param") {
+              folds <- make_cv_folds(nrow(X[[task$j]]), K, seed + 100L)
+              cv_unit_arms(
+                X[[task$j]],
+                folds,
+                lambda_grid,
+                ranks = NULL,
+                alpha_grid = alpha_grid,
+                other_scatter = total - scatter[[task$j]]
+              )[c("two_param", "const")]
+            } else {
+              score_shared_factor(
+                Map(function(x, f) x[f != task$k, , drop = FALSE], X, joint),
+                Map(function(x, f) x[f == task$k, , drop = FALSE], X, joint),
+                ranks_shared
+              )
+            }
           }
-        }
         ),
         mc.cores = workers_for(nrow(tasks), n_genes),
         mc.preschedule = FALSE
@@ -339,8 +347,22 @@ read_selection <- function(path) {
     )
     at <- function(value) match(value, lambda_grid)
     selected[[length(selected) + 1L]] <- rbind(
-      pick(tp, "shrinkage, per type", "shrinkage", 0, shr$min, full(unit$shrinkage, at(shr$min))),
-      pick(tp, "shrinkage, per type, 1se", "shrinkage", 0, shr$one_se, full(unit$shrinkage, at(shr$one_se))),
+      pick(
+        tp,
+        "shrinkage, per type",
+        "shrinkage",
+        0,
+        shr$min,
+        full(unit$shrinkage, at(shr$min))
+      ),
+      pick(
+        tp,
+        "shrinkage, per type, 1se",
+        "shrinkage",
+        0,
+        shr$one_se,
+        full(unit$shrinkage, at(shr$one_se))
+      ),
       pick(tp, "diagonal", "shrinkage", 0, 1, full(unit$shrinkage, at(1)))
     )
     fac <- summarise_path(unit$factor, ranks, "smaller")
@@ -354,8 +376,22 @@ read_selection <- function(path) {
       scheme
     )
     selected[[length(selected) + 1L]] <- rbind(
-      pick(tp, "factor, per type", "factor", NA_real_, fac$min, full(unit$factor, match(fac$min, ranks))),
-      pick(tp, "factor, per type, 1se", "factor", NA_real_, fac$one_se, full(unit$factor, match(fac$one_se, ranks)))
+      pick(
+        tp,
+        "factor, per type",
+        "factor",
+        NA_real_,
+        fac$min,
+        full(unit$factor, match(fac$min, ranks))
+      ),
+      pick(
+        tp,
+        "factor, per type, 1se",
+        "factor",
+        NA_real_,
+        fac$one_se,
+        full(unit$factor, match(fac$one_se, ranks))
+      )
     )
     two <- res$two_param[[j]]
     pairs <- expand.grid(lambda = lambda_grid, alpha = alpha_grid)
@@ -454,57 +490,57 @@ if ("nested" %in% run_stages) {
           nrow(tasks),
           workers_for(nrow(tasks), n_genes, copies = 14),
           function(i) {
-          task <- tasks[i, ]
-          k <- task$k
-          train <- Map(function(x, f) x[f != k, , drop = FALSE], X, outer)
-          test <- Map(function(x, f) x[f == k, , drop = FALSE], X, outer)
-          if (task$kind == "shared") {
-            inner <- stratified_folds(train, K, seed + 2000L + k)
-            inner_scores <- lapply(seq_len(K), function(m) {
-              score_shared_factor(
-                Map(function(x, f) x[f != m, , drop = FALSE], train, inner),
-                Map(function(x, f) x[f == m, , drop = FALSE], train, inner),
-                ranks_shared
-              )$scores
-            })
-            return(list(
-              inner = Reduce(`+`, inner_scores) / K,
-              outer = score_shared_factor(train, test, ranks_shared)
-            ))
-          }
-          j <- task$j
-          other <- Reduce(`+`, lapply(train[-j], centred_scatter))
-          n_train <- nrow(train[[j]])
-          inner <- cv_unit_arms(
-            train[[j]],
-            unit_folds(n_train, seed + 3000L + k, K, loo_below),
-            lambda_grid,
-            ranks
-          )
-          inner_two <- cv_unit_arms(
-            train[[j]],
-            make_cv_folds(n_train, K, seed + 4000L + k),
-            lambda_grid,
-            ranks = NULL,
-            alpha_grid = alpha_grid,
-            other_scatter = other
-          )
-          list(
-            inner = list(
-              shrinkage = colMeans(inner$shrinkage),
-              factor = colMeans(inner$factor),
-              two_param = colMeans(inner_two$two_param)
-            ),
-            outer = score_unit_arms(
+            task <- tasks[i, ]
+            k <- task$k
+            train <- Map(function(x, f) x[f != k, , drop = FALSE], X, outer)
+            test <- Map(function(x, f) x[f == k, , drop = FALSE], X, outer)
+            if (task$kind == "shared") {
+              inner <- stratified_folds(train, K, seed + 2000L + k)
+              inner_scores <- lapply(seq_len(K), function(m) {
+                score_shared_factor(
+                  Map(function(x, f) x[f != m, , drop = FALSE], train, inner),
+                  Map(function(x, f) x[f == m, , drop = FALSE], train, inner),
+                  ranks_shared
+                )$scores
+              })
+              return(list(
+                inner = Reduce(`+`, inner_scores) / K,
+                outer = score_shared_factor(train, test, ranks_shared)
+              ))
+            }
+            j <- task$j
+            other <- Reduce(`+`, lapply(train[-j], centred_scatter))
+            n_train <- nrow(train[[j]])
+            inner <- cv_unit_arms(
               train[[j]],
-              test[[j]],
+              unit_folds(n_train, seed + 3000L + k, K, loo_below),
               lambda_grid,
-              ranks,
-              alpha_grid,
-              other
+              ranks
             )
-          )
-        }
+            inner_two <- cv_unit_arms(
+              train[[j]],
+              make_cv_folds(n_train, K, seed + 4000L + k),
+              lambda_grid,
+              ranks = NULL,
+              alpha_grid = alpha_grid,
+              other_scatter = other
+            )
+            list(
+              inner = list(
+                shrinkage = colMeans(inner$shrinkage),
+                factor = colMeans(inner$factor),
+                two_param = colMeans(inner_two$two_param)
+              ),
+              outer = score_unit_arms(
+                train[[j]],
+                test[[j]],
+                lambda_grid,
+                ranks,
+                alpha_grid,
+                other
+              )
+            )
+          }
         ),
         mc.cores = workers_for(nrow(tasks), n_genes, copies = 14),
         mc.preschedule = FALSE
@@ -537,9 +573,12 @@ read_nested <- function(path) {
   res <- readRDS(path)
   types <- res$types
   pairs <- expand.grid(lambda = lambda_grid, alpha = alpha_grid)
-  rows <- list()
+  # A local environment, so the nested adder updates this list with `<-`
+  # and does not search enclosing frames.
+  rows <- new.env(parent = emptyenv())
+  rows$items <- list()
   add <- function(tp, k, rule, alpha, tuning, score, n_test) {
-    rows[[length(rows) + 1L]] <<- data.frame(
+    rows$items[[length(rows$items) + 1L]] <- data.frame(
       time = res$time,
       gene_set = res$gene_set,
       cell_type = tp,
@@ -577,14 +616,62 @@ read_nested <- function(path) {
       n_test <- u$outer$n_test
       two_outer <- as.numeric(t(u$outer$two_param))
       own <- which_max(u$inner$shrinkage)
-      add(tp, k, "diagonal", 0, 1, u$outer$shrinkage[[match(1, lambda_grid)]] + const, n_test)
-      add(tp, k, "shrinkage, per type", 0, lambda_grid[[own]], u$outer$shrinkage[[own]] + const, n_test)
-      add(tp, k, "shrinkage, common", 0, lambda_grid[[common_lambda]], u$outer$shrinkage[[common_lambda]] + const, n_test)
+      add(
+        tp,
+        k,
+        "diagonal",
+        0,
+        1,
+        u$outer$shrinkage[[match(1, lambda_grid)]] + const,
+        n_test
+      )
+      add(
+        tp,
+        k,
+        "shrinkage, per type",
+        0,
+        lambda_grid[[own]],
+        u$outer$shrinkage[[own]] + const,
+        n_test
+      )
+      add(
+        tp,
+        k,
+        "shrinkage, common",
+        0,
+        lambda_grid[[common_lambda]],
+        u$outer$shrinkage[[common_lambda]] + const,
+        n_test
+      )
       own <- which_max(u$inner$two_param)
-      add(tp, k, "two-parameter, per type", pairs$alpha[[own]], pairs$lambda[[own]], two_outer[[own]] + const, n_test)
-      add(tp, k, "two-parameter, common", pairs$alpha[[common_pair]], pairs$lambda[[common_pair]], two_outer[[common_pair]] + const, n_test)
+      add(
+        tp,
+        k,
+        "two-parameter, per type",
+        pairs$alpha[[own]],
+        pairs$lambda[[own]],
+        two_outer[[own]] + const,
+        n_test
+      )
+      add(
+        tp,
+        k,
+        "two-parameter, common",
+        pairs$alpha[[common_pair]],
+        pairs$lambda[[common_pair]],
+        two_outer[[common_pair]] + const,
+        n_test
+      )
       own <- which_max(u$inner$factor)
-      add(tp, k, "factor, per type", NA_real_, ranks[[own]], u$outer$factor[[own]] + const, n_test)
+      add(
+        tp,
+        k,
+        "factor, per type",
+        NA_real_,
+        ranks[[own]],
+        u$outer$factor[[own]] + const,
+        n_test
+      )
       add(
         tp,
         k,
@@ -596,7 +683,7 @@ read_nested <- function(path) {
       )
     }
   }
-  do.call(rbind, rows)
+  do.call(rbind, rows$items)
 }
 
 # ==========================================================================
@@ -622,23 +709,25 @@ if ("fit" %in% run_stages) {
           length(X),
           workers_for(length(X), n_genes),
           function(j) {
-          sp <- splits[[j]]
-          spectrum <- right_spectrum(sp$Z)
-          ok <- usable_ranks(ranks, sp$n, length(spectrum$values), ncol(sp$Z))
-          lapply(stats::setNames(ok, ok), function(q) {
-            fit <- fit_factor_correlation(sp$Z, q, spectrum)
-            # In-sample log-likelihood of the cells of the type.
-            fit$loglik <- sp$n *
-              (sp$base + mean(factor_core(sp$Zt, fit$B, fit$psi)) + mean(sp$const))
-            B <- matrix(0, n_genes, ncol(fit$B))
-            B[sp$varying, ] <- fit$B
-            psi <- rep(1, n_genes)
-            psi[sp$varying] <- fit$psi
-            fit$B <- B
-            fit$psi <- psi
-            fit
-          })
-        }
+            sp <- splits[[j]]
+            spectrum <- right_spectrum(sp$Z)
+            ok <- usable_ranks(ranks, sp$n, length(spectrum$values), ncol(sp$Z))
+            lapply(stats::setNames(ok, ok), function(q) {
+              fit <- fit_factor_correlation(sp$Z, q, spectrum)
+              # In-sample log-likelihood of the cells of the type.
+              fit$loglik <- sp$n *
+                (sp$base +
+                  mean(factor_core(sp$Zt, fit$B, fit$psi)) +
+                  mean(sp$const))
+              B <- matrix(0, n_genes, ncol(fit$B))
+              B[sp$varying, ] <- fit$B
+              psi <- rep(1, n_genes)
+              psi[sp$varying] <- fit$psi
+              fit$B <- B
+              fit$psi <- psi
+              fit
+            })
+          }
         ),
         mc.cores = workers_for(length(X), n_genes),
         mc.preschedule = FALSE
@@ -664,25 +753,25 @@ if ("fit" %in% run_stages) {
           length(shared_ok),
           workers_for(length(shared_ok), n_genes),
           function(q) {
-          fit <- fit_factor_shared(Z_list, varying_list, q)
-          fit$loglik <- vapply(
-            seq_along(splits),
-            function(j) {
-              sp <- splits[[j]]
-              sp$n *
-                (sp$base +
-                  mean(factor_core(
-                    sp$Zt,
-                    fit$B[sp$varying, , drop = FALSE],
-                    fit$psi[sp$varying, j]
-                  )) +
-                  mean(sp$const))
-            },
-            numeric(1)
-          )
-          colnames(fit$psi) <- types
-          fit
-        }
+            fit <- fit_factor_shared(Z_list, varying_list, q)
+            fit$loglik <- vapply(
+              seq_along(splits),
+              function(j) {
+                sp <- splits[[j]]
+                sp$n *
+                  (sp$base +
+                    mean(factor_core(
+                      sp$Zt,
+                      fit$B[sp$varying, , drop = FALSE],
+                      fit$psi[sp$varying, j]
+                    )) +
+                    mean(sp$const))
+              },
+              numeric(1)
+            )
+            colnames(fit$psi) <- types
+            fit
+          }
         ),
         mc.cores = workers_for(length(shared_ok), n_genes),
         mc.preschedule = FALSE
@@ -813,7 +902,8 @@ if ("tables" %in% run_stages) {
     # Paired difference to the diagonal model, per unit and rule.
     reference <- nested[nested$rule == "diagonal", ]
     key <- function(d) paste(d$time, d$gene_set, d$cell_type, d$outer_fold)
-    nested$gain <- nested$score - reference$score[match(key(nested), key(reference))]
+    nested$gain <- nested$score -
+      reference$score[match(key(nested), key(reference))]
     groups <- split(
       nested,
       list(nested$time, nested$gene_set, nested$cell_type, nested$rule),

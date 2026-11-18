@@ -14,9 +14,15 @@
 # SECTION 0 · Dependencies, hyperparameters, paths ----
 # ==========================================================================
 
-root <- getwd()
+root <- here::here()
 source(file.path(root, "R", "02_00_utils.R"))
-source(file.path(root, "scripts", "archives", "sctransform_panel", "02_90_stats_rank_sctransform.R"))
+source(file.path(
+  root,
+  "scripts",
+  "archives",
+  "sctransform_panel",
+  "02_90_stats_rank_sctransform.R"
+))
 source(file.path(root, "R", "02_01_stats_quality_control.R"))
 
 n_genes_global <- 500L

@@ -17,7 +17,7 @@
 # The figures of the second pass (scripts/archives/second_pass_variants/)
 # stay in docs/images/deconvolution/ under the prefix second_pass_.
 
-root <- getwd()
+root <- here::here()
 source(file.path(root, "R", "02_00_utils.R"))
 source(file.path(root, "R", "04_01_vis_deconvolution.R"))
 
@@ -51,8 +51,13 @@ short_label <- function(method) {
 }
 shown$label <- short_label(shown$method)
 shown$group <- ifelse(
-  shown$family == "DeCovarT, bulk likelihood", "DeCovarT, level by bulk likelihood",
-  ifelse(shown$family == "DeCovarT, cell CV", "DeCovarT, level by held-out cells", "Other methods")
+  shown$family == "DeCovarT, bulk likelihood",
+  "DeCovarT, level by bulk likelihood",
+  ifelse(
+    shown$family == "DeCovarT, cell CV",
+    "DeCovarT, level by held-out cells",
+    "Other methods"
+  )
 )
 at_96 <- shown[shown$time == "96h" & shown$gene_set == "welch", ]
 for (metric in c("rmse", "aitchison")) {
@@ -94,8 +99,10 @@ save_figure(
     agreement,
     title = paste0(
       "The bulk departs most from the reference mixture at ",
-      sub("h$", " h", names(which.max(off))), ": ",
-      round(100 * max(off)), "% of genes more than 4-fold off"
+      sub("h$", " h", names(which.max(off))),
+      ": ",
+      round(100 * max(off)),
+      "% of genes more than 4-fold off"
     ),
     subtitle = paste0(
       "Standard-Wnt bulk against the reference mean at the observed composition. ",
@@ -109,15 +116,21 @@ save_figure(
   height = 6
 )
 lineage <- read_table(out_dir, "lineage_collapsed_metrics.csv")
-lineage <- lineage[!grepl("restricted|DeCovarT sweep", paste(lineage$method, lineage$family)), ]
+lineage <- lineage[
+  !grepl("restricted|DeCovarT sweep", paste(lineage$method, lineage$family)),
+]
 lineage$label <- short_label(lineage$method)
-gain <- with(lineage[lineage$gene_set == "welch", ], mean(rmse_five_parts - rmse_three_parts))
+gain <- with(
+  lineage[lineage$gene_set == "welch", ],
+  mean(rmse_five_parts - rmse_three_parts)
+)
 save_figure(
   plot_lineage_collapse(
     lineage,
     title = paste0(
       "At 96 h most error is a split inside paraxial mesoderm: summing it removes ",
-      fmt(gain, 2), " RMSE on average (Welch)"
+      fmt(gain, 2),
+      " RMSE on average (Welch)"
     ),
     subtitle = paste0(
       "Mean over the standard-Wnt replicates; caudal mesoderm, pre-somitic mesoderm ",
@@ -168,7 +181,11 @@ error_points <- data.frame(
   value = sweep$rmse,
   replicate = sweep$replicate
 )
-error_mean <- stats::aggregate(value ~ time + tuning + quantity, error_points, mean)
+error_mean <- stats::aggregate(
+  value ~ time + tuning + quantity,
+  error_points,
+  mean
+)
 error_mean$replicate <- NA_integer_
 curves <- rbind(cell_curve, bulk_curve, error_points, error_mean)
 # The cell score falls by thousands at small levels; the window keeps
@@ -208,23 +225,48 @@ save_figure(
 screen_path <- file.path(out_dir, "scale_screen_fits.csv")
 if (file.exists(screen_path)) {
   screen <- read_table(out_dir, "scale_screen_fits.csv")
-  screen$strategy <- paste(screen$input, screen$arm, paste(screen$scale, "scales"), sep = ", ")
+  screen$strategy <- paste(
+    screen$input,
+    screen$arm,
+    paste(screen$scale, "scales"),
+    sep = ", "
+  )
   screen$triplet <- paste(screen$time, screen$seed, screen$version)
-  levels_tried <- unique(screen[c("triplet", "strategy", "tuning", "loglik_total", "status")])
-  levels_tried <- levels_tried[levels_tried$status != "failed" & is.finite(levels_tried$loglik_total), ]
-  best <- do.call(rbind, lapply(
-    split(levels_tried, paste(levels_tried$triplet, levels_tried$strategy)),
-    function(d) d[which.max(d$loglik_total), c("triplet", "strategy", "tuning")]
-  ))
+  levels_tried <- unique(screen[c(
+    "triplet",
+    "strategy",
+    "tuning",
+    "loglik_total",
+    "status"
+  )])
+  levels_tried <- levels_tried[
+    levels_tried$status != "failed" & is.finite(levels_tried$loglik_total),
+  ]
+  best <- do.call(
+    rbind,
+    lapply(
+      split(levels_tried, paste(levels_tried$triplet, levels_tried$strategy)),
+      function(d) {
+        d[which.max(d$loglik_total), c("triplet", "strategy", "tuning")]
+      }
+    )
+  )
   at_choice <- merge(best, screen, by = c("triplet", "strategy", "tuning"))
-  chosen <- stats::aggregate(rmse ~ strategy + time + version + seed, at_choice, mean)
+  chosen <- stats::aggregate(
+    rmse ~ strategy + time + version + seed,
+    at_choice,
+    mean
+  )
   ranking <- sort(tapply(chosen$rmse, chosen$strategy, mean))
   save_figure(
     plot_scale_screen(
       chosen,
       title = paste0(
-        "Lowest error on pseudo-bulks: ", names(ranking)[[1L]],
-        " (mean RMSE ", fmt(ranking[[1L]]), ")"
+        "Lowest error on pseudo-bulks: ",
+        names(ranking)[[1L]],
+        " (mean RMSE ",
+        fmt(ranking[[1L]]),
+        ")"
       ),
       subtitle = paste0(
         "Each strategy at the level its summed bulk likelihood chooses; ",

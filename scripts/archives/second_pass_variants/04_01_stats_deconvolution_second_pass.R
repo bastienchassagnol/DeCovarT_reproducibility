@@ -71,7 +71,7 @@
 # SECTION 0 · Dependencies, settings, paths ----
 # ==========================================================================
 
-root <- getwd()
+root <- here::here()
 suppressPackageStartupMessages(library(Matrix))
 source(file.path(root, "R", "02_00_utils.R"))
 source(file.path(root, "R", "02_01_stats_quality_control.R"))

@@ -8,7 +8,7 @@
 # overdispersion. PDFs in output/feature_selection/tier_02/figures/, PNG
 # copies in docs/images/feature_selection/.
 
-root <- getwd()
+root <- here::here()
 suppressPackageStartupMessages(library(Matrix))
 source(file.path(root, "R", "02_00_utils.R"))
 source(file.path(root, "R", "02_02_vis_cross_cell.R"))
@@ -27,7 +27,9 @@ names(gene_means) <- names(res$tests)
 
 calib <- res$calibration
 ratio_at <- function(tt, tm, lv = 0.01) {
-  calib$ratio_to_nominal[calib$test == tt & calib$time_point == tm & calib$level == lv]
+  calib$ratio_to_nominal[
+    calib$test == tt & calib$time_point == tm & calib$level == lv
+  ]
 }
 analytic <- c("lr", "anova_vst", "ql_f")
 r48 <- vapply(analytic, ratio_at, numeric(1), tm = "48h")
@@ -68,9 +70,13 @@ save_figure(
   height = 4.6
 )
 n_pass <- vapply(res$ranked, function(r) sum(r$pass_fdr %in% TRUE), numeric(1))
-small <- vapply(res$ranked, function(r) {
-  mean(r$deviance_r2[r$pass_fdr %in% TRUE] < 0.05)
-}, numeric(1))
+small <- vapply(
+  res$ranked,
+  function(r) {
+    mean(r$deviance_r2[r$pass_fdr %in% TRUE] < 0.05)
+  },
+  numeric(1)
+)
 save_figure(
   plot_gate_rank(
     res$ranked,

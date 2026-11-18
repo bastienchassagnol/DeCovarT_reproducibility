@@ -10,7 +10,7 @@
 # output/feature_selection/tier_01/figures/, PNG copies in
 # docs/images/feature_selection/.
 
-root <- getwd()
+root <- here::here()
 suppressPackageStartupMessages(library(Matrix))
 source(file.path(root, "R", "02_00_utils.R"))
 source(file.path(root, "R", "02_01_vis_quality_control.R"))
@@ -20,7 +20,8 @@ fig_dir <- file.path(tier_dir, "figures")
 slots_path <- file.path(tier_dir, "scored_slots.rds")
 if (!file.exists(slots_path)) {
   stop(
-    "Missing ", slots_path,
+    "Missing ",
+    slots_path,
     ". Run scripts/02_01_stats_quality_control.R first, or dvc pull its .dvc."
   )
 }
@@ -80,7 +81,10 @@ projections <- lapply(prepared$time_levels, function(tm) {
   drawn$pca <- drawn$pca +
     ggplot2::labs(
       title = sprintf("%s PCA", tm),
-      subtitle = sprintf("PC1 + PC2: %.1f %% of the residual variance", pca_share)
+      subtitle = sprintf(
+        "PC1 + PC2: %.1f %% of the residual variance",
+        pca_share
+      )
     ) +
     ggplot2::theme(legend.position = "none")
   drawn$plsda <- drawn$plsda +
@@ -132,18 +136,25 @@ save_figure(
 
 # Share of each cell line on either side of PC1, per type and time
 # (summary cited by the chapter).
-batch_split <- do.call(rbind, lapply(names(projections), function(tm) {
-  sc <- projections[[tm]]$scores
-  slot <- prepared$slots[[tm]]
-  sc$batch <- slot$batch
-  sc$pc1_positive <- sc$pc1 > 0
-  tab <- as.data.frame(
-    table(cell_type = sc$cell_type, batch = sc$batch, pc1_positive = sc$pc1_positive),
-    stringsAsFactors = FALSE
-  )
-  tab$time_point <- tm
-  tab[tab$Freq > 0, , drop = FALSE]
-}))
+batch_split <- do.call(
+  rbind,
+  lapply(names(projections), function(tm) {
+    sc <- projections[[tm]]$scores
+    slot <- prepared$slots[[tm]]
+    sc$batch <- slot$batch
+    sc$pc1_positive <- sc$pc1 > 0
+    tab <- as.data.frame(
+      table(
+        cell_type = sc$cell_type,
+        batch = sc$batch,
+        pc1_positive = sc$pc1_positive
+      ),
+      stringsAsFactors = FALSE
+    )
+    tab$time_point <- tm
+    tab[tab$Freq > 0, , drop = FALSE]
+  })
+)
 utils::write.csv(
   batch_split,
   file.path(tier_dir, "projection_pc1_by_batch.csv"),

@@ -22,7 +22,7 @@
 #   bulk_reference_agreement.csv
 #   lineage_collapsed_metrics.csv
 
-root <- getwd()
+root <- here::here()
 suppressPackageStartupMessages(library(Matrix))
 source(file.path(root, "R", "02_00_utils.R"))
 source(file.path(root, "R", "02_01_stats_quality_control.R"))
@@ -143,15 +143,20 @@ collapsed <- merge(
 within <- late[late$cell_type %in% lineage, ]
 share <- do.call(
   rbind,
-  lapply(split(within, list(within$method, within$sample_id), drop = TRUE), function(x) {
-    data.frame(
-      method = x$method[[1L]],
-      sample_id = x$sample_id[[1L]],
-      psm_share_of_lineage = x$proportion[x$cell_type == "Pre-somitic mesoderm"] /
-        sum(x$proportion),
-      stringsAsFactors = FALSE
-    )
-  })
+  lapply(
+    split(within, list(within$method, within$sample_id), drop = TRUE),
+    function(x) {
+      data.frame(
+        method = x$method[[1L]],
+        sample_id = x$sample_id[[1L]],
+        psm_share_of_lineage = x$proportion[
+          x$cell_type == "Pre-somitic mesoderm"
+        ] /
+          sum(x$proportion),
+        stringsAsFactors = FALSE
+      )
+    }
+  )
 )
 collapsed <- merge(collapsed, share, by = c("method", "sample_id"))
 descriptors <- unique(late[, c(
@@ -164,6 +169,7 @@ descriptors <- unique(late[, c(
 collapsed <- merge(collapsed, descriptors, by = "method")
 collapsed$observed_psm_share <- obs_late$observed[
   obs_late$cell_type == "Pre-somitic mesoderm"
-] / sum(obs_late$observed[obs_late$cell_type %in% lineage])
+] /
+  sum(obs_late$observed[obs_late$cell_type %in% lineage])
 write_table(collapsed, "lineage_collapsed_metrics.csv")
 message("Mixture diagnostics written.")

@@ -15,7 +15,7 @@
 # its current PNG for those figures (two inputs are DVC-tracked .rds
 # files: run `dvc pull` first to regenerate the feature-selection figures).
 
-root <- getwd()
+root <- here::here()
 requireNamespace("patchwork", quietly = TRUE) # the `&` operator below
 
 deck <- list(
@@ -69,7 +69,11 @@ for (job in deck) {
       return(invisible(NULL))
     }
     path <- file.path(
-      root, "slides", "images", job$folder, paste0(name, ".png")
+      root,
+      "slides",
+      "images",
+      job$folder,
+      paste0(name, ".png")
     )
     ggplot2::ggsave(
       path,
@@ -98,11 +102,17 @@ for (job in deck) {
 # Per-time PLS-DA and the detection UpSet. The wrapped book page is not
 # cropped. Stop when the scored cells are not on disk.
 slots_path <- file.path(
-  root, "output", "feature_selection", "tier_01", "scored_slots.rds"
+  root,
+  "output",
+  "feature_selection",
+  "tier_01",
+  "scored_slots.rds"
 )
 if (!file.exists(slots_path)) {
   stop(
-    "Missing ", slots_path, ". ",
+    "Missing ",
+    slots_path,
+    ". ",
     "The per-time PLS-DA and the detection UpSet are not drawn. ",
     "The DVC cache does not hold md5 9b1b1bf40efa4c5bedc15e04706e7d41."
   )

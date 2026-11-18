@@ -37,7 +37,7 @@
 # SECTION 0 · Dependencies, settings, paths ----
 # ==========================================================================
 
-root <- getwd()
+root <- here::here()
 source(file.path(root, "R", "02_00_utils.R"))
 source(file.path(root, "R", "03_02_stats_regularisation_path.R"))
 source(file.path(root, "R", "03_01_stats_covariance_estimation.R"))

@@ -71,7 +71,7 @@
 # SECTION 0 · Dependencies, settings, paths ----
 # ==========================================================================
 
-root <- getwd()
+root <- here::here()
 suppressPackageStartupMessages(library(Matrix))
 source(file.path(root, "R", "02_00_utils.R"))
 source(file.path(root, "R", "02_01_stats_quality_control.R"))
@@ -323,7 +323,11 @@ if ("comparators" %in% run_stages) {
 # "<id>\r<sample_id>". A fit whose likelihood is missing counts as stored,
 # as a failed checkpoint did before.
 stored_sweep_keys <- function(time_level, gene_set) {
-  d <- read_fit_store(file.path(fits_dir, time_level), c("shrinkage", "factor", "two_parameter"), "diagnostics")
+  d <- read_fit_store(
+    file.path(fits_dir, time_level),
+    c("shrinkage", "factor", "two_parameter"),
+    "diagnostics"
+  )
   d <- d[d$gene_set == gene_set, , drop = FALSE]
   paste(d$id, d$sample_id, sep = "\r")
 }
@@ -344,7 +348,11 @@ store_sweep <- function(results, time_level) {
       fit_store_path(fits_dir, time_level, st),
       list(
         estimates = estimates[fit_strategy(estimates$id) == st, , drop = FALSE],
-        diagnostics = diagnostics[fit_strategy(diagnostics$id) == st, , drop = FALSE]
+        diagnostics = diagnostics[
+          fit_strategy(diagnostics$id) == st,
+          ,
+          drop = FALSE
+        ]
       ),
       key = c("gene_set", "id", "sample_id")
     )
@@ -372,7 +380,11 @@ sweep_levels <- function() {
       tuning = lambda_levels
     ),
     data.frame(
-      id = sprintf("two_param_%.2f_%.2f", two_param_levels$alpha, two_param_levels$tuning),
+      id = sprintf(
+        "two_param_%.2f_%.2f",
+        two_param_levels$alpha,
+        two_param_levels$tuning
+      ),
       family = "two_param",
       two_param_levels
     ),
@@ -404,18 +416,32 @@ build_level <- function(level, moments, factors, cv) {
     return(build_sigma(moments, "shrinkage", lambda = level$tuning))
   }
   if (level$family == "two_param") {
-    return(build_sigma(moments, "two_param", lambda = level$tuning, alpha = level$alpha))
+    return(build_sigma(
+      moments,
+      "two_param",
+      lambda = level$tuning,
+      alpha = level$alpha
+    ))
   }
   if (level$family == "factor") {
     return(build_sigma(
       moments,
       "factor",
-      factors = lapply(stats::setNames(types, types), factor_of, q = level$tuning)
+      factors = lapply(
+        stats::setNames(types, types),
+        factor_of,
+        q = level$tuning
+      )
     ))
   }
-  rule <- cv_rules[[match(level$id, sweep_levels()$id[sweep_levels()$family == "cv"])]]
+  rule <- cv_rules[[match(
+    level$id,
+    sweep_levels()$id[sweep_levels()$family == "cv"]
+  )]]
   chosen <- cv[
-    cv$time == moments$time_point & cv$gene_set == moments$gene_set & cv$rule == rule,
+    cv$time == moments$time_point &
+      cv$gene_set == moments$gene_set &
+      cv$rule == rule,
   ]
   chosen <- chosen[match(types, chosen$cell_type), ]
   if (anyNA(chosen$tuning)) {
@@ -426,7 +452,9 @@ build_level <- function(level, moments, factors, cv) {
     return(build_sigma(
       moments,
       "factor",
-      factors = lapply(stats::setNames(types, types), function(tp) factor_of(tp, tuning[[tp]]))
+      factors = lapply(stats::setNames(types, types), function(tp) {
+        factor_of(tp, tuning[[tp]])
+      })
     ))
   }
   if (rule == "factor, shared loadings") {
@@ -458,7 +486,12 @@ if ("sweep" %in% run_stages) {
     for (gs in run_gene_sets) {
       tasks <- merge(levels_all, data.frame(sample_id = samples_of(tm)))
       tasks$file <- paste(tasks$id, tasks$sample_id, sep = "__")
-      tasks <- tasks[!paste(tasks$id, tasks$sample_id, sep = "\r") %in% stored_sweep_keys(tm, gs), , drop = FALSE]
+      tasks <- tasks[
+        !paste(tasks$id, tasks$sample_id, sep = "\r") %in%
+          stored_sweep_keys(tm, gs),
+        ,
+        drop = FALSE
+      ]
       if (nrow(tasks) == 0L) {
         next
       }
@@ -467,7 +500,11 @@ if ("sweep" %in% run_stages) {
       factors <- if (any(c("factor", "cv") %in% tasks$family)) {
         readRDS(file.path(cv_dir, paste0("factors_", tm, "_", gs, ".rds")))
       }
-      bulk <- bulk_symbol_counts(htseq, slots$shared, genes)[genes, , drop = FALSE]
+      bulk <- bulk_symbol_counts(htseq, slots$shared, genes)[
+        genes,
+        ,
+        drop = FALSE
+      ]
       fit_bytes <- 7 * 8 * length(genes)^2 * length(moments$types)
       workers <- max(
         1L,
@@ -486,7 +523,13 @@ if ("sweep" %in% run_stages) {
         workers,
         " workers."
       )
-      log_progress(progress, "plan", paste("sweep", tm, gs), nrow(tasks), workers)
+      log_progress(
+        progress,
+        "plan",
+        paste("sweep", tm, gs),
+        nrow(tasks),
+        workers
+      )
       # Forked workers share the sample moments read above.
       done <- parallel::mclapply(
         seq_len(nrow(tasks)),
@@ -522,14 +565,33 @@ if ("sweep" %in% run_stages) {
             error = function(e) conditionMessage(e)
           )
           if (is.character(res)) {
-            log_progress(progress, "done", paste("sweep", tm, gs), task$file, NA, "failed", res)
+            log_progress(
+              progress,
+              "done",
+              paste("sweep", tm, gs),
+              task$file,
+              NA,
+              "failed",
+              res
+            )
             return(paste0(task$file, ": ", res))
           }
-          log_progress(progress, "done", paste("sweep", tm, gs), task$file,
-                       round(res$diagnostics$elapsed_sec, 1),
-                       if (is.na(res$diagnostics$loglik)) "failed" else "ok",
-                       res$diagnostics$message)
-          message("  ", task$file, ": ", round(res$diagnostics$elapsed_sec), " s")
+          log_progress(
+            progress,
+            "done",
+            paste("sweep", tm, gs),
+            task$file,
+            round(res$diagnostics$elapsed_sec, 1),
+            if (is.na(res$diagnostics$loglik)) "failed" else "ok",
+            res$diagnostics$message
+          )
+          message(
+            "  ",
+            task$file,
+            ": ",
+            round(res$diagnostics$elapsed_sec),
+            " s"
+          )
           res
         },
         mc.cores = workers,
@@ -559,9 +621,18 @@ scale_strategies <- function() {
   s <- s[order(s$rank), , drop = FALSE]
   same_as_free <- grepl("\\| positive$", s$strategy) & s$boundary == 0
   s$strategy[same_as_free] <- sub("positive$", "free", s$strategy[same_as_free])
-  s <- s[!duplicated(s$strategy), , drop = FALSE][seq_len(scale_screen_top), , drop = FALSE]
+  s <- s[!duplicated(s$strategy), , drop = FALSE][
+    seq_len(scale_screen_top),
+    ,
+    drop = FALSE
+  ]
   parts <- do.call(rbind, strsplit(s$strategy, " | ", fixed = TRUE))
-  out <- data.frame(input = parts[, 1L], arm = parts[, 2L], scale = parts[, 3L], stringsAsFactors = FALSE)
+  out <- data.frame(
+    input = parts[, 1L],
+    arm = parts[, 2L],
+    scale = parts[, 3L],
+    stringsAsFactors = FALSE
+  )
   out <- out[!(out$input == "raw" & out$scale == "free"), , drop = FALSE]
   out$family <- sprintf("%s %s, %s scales", out$input, out$arm, out$scale)
   out
@@ -573,21 +644,34 @@ if ("sweep" %in% run_stages && "scale" %in% run_families) {
   depth <- colSums(htseq$counts)
   for (tm in run_times) {
     for (gs in run_gene_sets) {
-      levels <- do.call(rbind, lapply(seq_len(nrow(strategies)), function(k) {
-        st <- strategies[k, ]
-        tuning <- if (st$arm == "factor") factor_ranks else lambda_levels
-        data.frame(
-          st,
-          tuning = tuning,
-          id = paste0(gsub("[^a-z0-9]+", "_", st$family), "_", tuning),
-          row.names = NULL
-        )
-      }))
-      tasks <- merge(levels, data.frame(protocol = unique(design$arm[design$time == tm])))
+      levels <- do.call(
+        rbind,
+        lapply(seq_len(nrow(strategies)), function(k) {
+          st <- strategies[k, ]
+          tuning <- if (st$arm == "factor") factor_ranks else lambda_levels
+          data.frame(
+            st,
+            tuning = tuning,
+            id = paste0(gsub("[^a-z0-9]+", "_", st$family), "_", tuning),
+            row.names = NULL
+          )
+        })
+      )
+      tasks <- merge(
+        levels,
+        data.frame(protocol = unique(design$arm[design$time == tm]))
+      )
       tasks$file <- paste(tasks$id, tasks$protocol, sep = "__")
       # A protocol is fitted jointly, so its first replicate stands for it.
-      first_of <- design$sample_id[design$time == tm][match(tasks$protocol, design$arm[design$time == tm])]
-      tasks <- tasks[!paste(tasks$id, first_of, sep = "\r") %in% stored_sweep_keys(tm, gs), , drop = FALSE]
+      first_of <- design$sample_id[design$time == tm][match(
+        tasks$protocol,
+        design$arm[design$time == tm]
+      )]
+      tasks <- tasks[
+        !paste(tasks$id, first_of, sep = "\r") %in% stored_sweep_keys(tm, gs),
+        ,
+        drop = FALSE
+      ]
       if (nrow(tasks) == 0L) {
         next
       }
@@ -598,28 +682,63 @@ if ("sweep" %in% run_stages && "scale" %in% run_families) {
         read_panel_slot(slots, selected_dir, tm, genes = genes)
       }
       moments_size <- if (!is.null(panel)) {
-        sample_moments(panel$y, panel$cell_type, types, library_size = panel$library_size)
+        sample_moments(
+          panel$y,
+          panel$cell_type,
+          types,
+          library_size = panel$library_size
+        )
       }
       fits <- list(
         raw = if (any(tasks$arm == "factor" & tasks$input == "raw")) {
-          readRDS(file.path(cv_dir, paste0("factors_", tm, "_", gs, ".rds")))$per_type
+          readRDS(file.path(
+            cv_dir,
+            paste0("factors_", tm, "_", gs, ".rds")
+          ))$per_type
         },
-        `size-normalised` = if (any(tasks$arm == "factor" & tasks$input != "raw")) {
-          fit_factor_types(panel$y, panel$cell_type, types, factor_ranks, panel$library_size)
+        `size-normalised` = if (
+          any(tasks$arm == "factor" & tasks$input != "raw")
+        ) {
+          fit_factor_types(
+            panel$y,
+            panel$cell_type,
+            types,
+            factor_ranks,
+            panel$library_size
+          )
         }
       )
       rm(panel)
-      bulk <- bulk_symbol_counts(htseq, slots$shared, genes)[genes, , drop = FALSE]
+      bulk <- bulk_symbol_counts(htseq, slots$shared, genes)[
+        genes,
+        ,
+        drop = FALSE
+      ]
       fit_bytes <- 7 * 8 * length(genes)^2 * length(types)
-      workers <- max(1L, min(n_workers, nrow(tasks), floor(memory_budget_gb * 1e9 / fit_bytes)))
+      workers <- max(
+        1L,
+        min(n_workers, nrow(tasks), floor(memory_budget_gb * 1e9 / fit_bytes))
+      )
       slot <- paste("scale", tm, gs)
-      message("Scale ", tm, " / ", gs, ": ", nrow(tasks), " triplet fits, ", workers, " workers.")
+      message(
+        "Scale ",
+        tm,
+        " / ",
+        gs,
+        ": ",
+        nrow(tasks),
+        " triplet fits, ",
+        workers,
+        " workers."
+      )
       log_progress(progress, "plan", slot, nrow(tasks), workers)
       done <- parallel::mclapply(
         seq_len(nrow(tasks)),
         function(k) {
           task <- tasks[k, ]
-          ids <- design$sample_id[design$time == tm & design$arm == task$protocol]
+          ids <- design$sample_id[
+            design$time == tm & design$arm == task$protocol
+          ]
           # A failed fit is stored as such (NA estimates, its message), so
           # one error does not lose the other fits of the loop.
           fit <- tryCatch(
@@ -629,40 +748,91 @@ if ("sweep" %in% run_stages && "scale" %in% run_families) {
                 build_sigma(mom, "shrinkage", lambda = task$tuning)
               } else {
                 f <- fits[[task$input]]
-                build_sigma(mom, "factor", factors = lapply(stats::setNames(types, types), function(tp) {
-                  r <- as.integer(names(f[[tp]]))
-                  f[[tp]][[as.character(max(r[r <= task$tuning]))]]
-                }))
+                build_sigma(
+                  mom,
+                  "factor",
+                  factors = lapply(stats::setNames(types, types), function(tp) {
+                    r <- as.integer(names(f[[tp]]))
+                    f[[tp]][[as.character(max(r[r <= task$tuning]))]]
+                  })
+                )
               }
-              fit_decovart_scales(bulk[, ids, drop = FALSE], moments$mu, sigma, task$scale, depth = depth[ids])
+              fit_decovart_scales(
+                bulk[, ids, drop = FALSE],
+                moments$mu,
+                sigma,
+                task$scale,
+                depth = depth[ids]
+              )
             },
             error = function(e) {
-              list(status = "failed", message = conditionMessage(e), P = NULL, elapsed_sec = NA_real_)
+              list(
+                status = "failed",
+                message = conditionMessage(e),
+                P = NULL,
+                elapsed_sec = NA_real_
+              )
             }
           )
           meta <- data.frame(
-            time = tm, gene_set = gs, genes = length(genes), id = task$id,
-            family = task$family, alpha = NA_real_, tuning = task$tuning,
-            sample_id = ids, stringsAsFactors = FALSE
+            time = tm,
+            gene_set = gs,
+            genes = length(genes),
+            id = task$id,
+            family = task$family,
+            alpha = NA_real_,
+            tuning = task$tuning,
+            sample_id = ids,
+            stringsAsFactors = FALSE
           )
           ok <- !is.null(fit$P)
-          estimates <- do.call(rbind, lapply(seq_along(ids), function(i) {
-            data.frame(meta[i, ], cell_type = types,
-                       proportion = if (ok) fit$P[types, i] else NA_real_,
-                       lower = NA_real_, upper = NA_real_, row.names = NULL)
-          }))
+          estimates <- do.call(
+            rbind,
+            lapply(seq_along(ids), function(i) {
+              data.frame(
+                meta[i, ],
+                cell_type = types,
+                proportion = if (ok) fit$P[types, i] else NA_real_,
+                lower = NA_real_,
+                upper = NA_real_,
+                row.names = NULL
+              )
+            })
+          )
           diagnostics <- if (ok) {
-            data.frame(meta, fit$samples[, -1L], convergence = NA_integer_,
-                       iterations = fit$iterations, elapsed_sec = fit$elapsed_sec,
-                       message = fit$status, profile = fit$samples$loglik,
-                       restricted = NA_real_, input = task$input, scale = task$scale)
+            data.frame(
+              meta,
+              fit$samples[, -1L],
+              convergence = NA_integer_,
+              iterations = fit$iterations,
+              elapsed_sec = fit$elapsed_sec,
+              message = fit$status,
+              profile = fit$samples$loglik,
+              restricted = NA_real_,
+              input = task$input,
+              scale = task$scale
+            )
           } else {
-            data.frame(meta, loglik = NA_real_, elapsed_sec = fit$elapsed_sec,
-                       message = fit$message, profile = NA_real_, restricted = NA_real_,
-                       input = task$input, scale = task$scale)
+            data.frame(
+              meta,
+              loglik = NA_real_,
+              elapsed_sec = fit$elapsed_sec,
+              message = fit$message,
+              profile = NA_real_,
+              restricted = NA_real_,
+              input = task$input,
+              scale = task$scale
+            )
           }
-          log_progress(progress, "done", slot, task$file,
-                       round(fit$elapsed_sec, 1), fit$status, fit$message)
+          log_progress(
+            progress,
+            "done",
+            slot,
+            task$file,
+            round(fit$elapsed_sec, 1),
+            fit$status,
+            fit$message
+          )
           list(estimates = estimates, diagnostics = diagnostics)
         },
         mc.cores = workers,
@@ -710,17 +880,36 @@ if ("tables" %in% run_stages) {
 
   # Rows keep the order of the former one-file-per-fit checkpoints, sorted
   # by name, so the tables below do not change with the storage.
-  checkpoint_order <- function(...) order(paste0(paste(..., sep = "__"), ".rds"))
+  checkpoint_order <- function(...) {
+    order(paste0(paste(..., sep = "__"), ".rds"))
+  }
   comparator_status <- read_fit_store(fits_dir, "comparators", "status")
-  comparator_status <- comparator_status[comparator_status$status == "ok", , drop = FALSE]
-  comparator_status <- comparator_status[checkpoint_order(
-    "comparator", comparator_status$comparator, comparator_status$time, comparator_status$gene_set
-  ), , drop = FALSE]
+  comparator_status <- comparator_status[
+    comparator_status$status == "ok",
+    ,
+    drop = FALSE
+  ]
+  comparator_status <- comparator_status[
+    checkpoint_order(
+      "comparator",
+      comparator_status$comparator,
+      comparator_status$time,
+      comparator_status$gene_set
+    ),
+    ,
+    drop = FALSE
+  ]
   est <- read_fit_store(fits_dir, "comparators", "estimates")
-  st <- comparator_status[match(
-    paste(est$comparator, est$time, est$gene_set),
-    paste(comparator_status$comparator, comparator_status$time, comparator_status$gene_set)
-  ), ]
+  st <- comparator_status[
+    match(
+      paste(est$comparator, est$time, est$gene_set),
+      paste(
+        comparator_status$comparator,
+        comparator_status$time,
+        comparator_status$gene_set
+      )
+    ),
+  ]
   keep <- !is.na(st$comparator)
   est <- est[keep, , drop = FALSE]
   st <- st[keep, , drop = FALSE]
@@ -736,9 +925,17 @@ if ("tables" %in% run_stages) {
     upper = est$upper,
     family = "comparator",
     algorithm = unname(comparator_label[st$comparator]),
-    method = paste0(unname(comparator_label[st$comparator]), " | ", st$gene_set),
+    method = paste0(
+      unname(comparator_label[st$comparator]),
+      " | ",
+      st$gene_set
+    ),
     stringsAsFactors = FALSE
-  )[checkpoint_order("comparator", st$comparator, st$time, st$gene_set), , drop = FALSE]
+  )[
+    checkpoint_order("comparator", st$comparator, st$time, st$gene_set),
+    ,
+    drop = FALSE
+  ]
   rownames(comparator_status) <- rownames(comparator_estimates) <- NULL
 
   # A scale-family fit covers the replicates of one protocol.
@@ -754,8 +951,16 @@ if ("tables" %in% run_stages) {
   sweep_estimates <- read_fit_store(fits_dir, sweep_strategies, "estimates")
   sweep_diagnostics <- read_fit_store(fits_dir, sweep_strategies, "diagnostics")
   if (!is.null(sweep_diagnostics)) {
-    sweep_estimates <- sweep_estimates[sweep_order(sweep_estimates), , drop = FALSE]
-    sweep_diagnostics <- sweep_diagnostics[sweep_order(sweep_diagnostics), , drop = FALSE]
+    sweep_estimates <- sweep_estimates[
+      sweep_order(sweep_estimates),
+      ,
+      drop = FALSE
+    ]
+    sweep_diagnostics <- sweep_diagnostics[
+      sweep_order(sweep_diagnostics),
+      ,
+      drop = FALSE
+    ]
     rownames(sweep_estimates) <- rownames(sweep_diagnostics) <- NULL
   }
   label_of <- function(f) ifelse(f %in% names(family_label), family_label[f], f)
@@ -773,13 +978,18 @@ if ("tables" %in% run_stages) {
     selection <- data.frame(
       sweep_diagnostics[first, by_level],
       replicates = as.integer(table(key)[key[first]]),
-      sum_profile = as.numeric(tapply(sweep_diagnostics$profile, key, sum)[key[first]]),
+      sum_profile = as.numeric(tapply(sweep_diagnostics$profile, key, sum)[key[
+        first
+      ]]),
       sum_restricted = as.numeric(
         tapply(sweep_diagnostics$restricted, key, sum)[key[first]]
       ),
       stringsAsFactors = FALSE
     )
-    group <- interaction(selection[c("time", "gene_set", "arm", "family")], drop = TRUE)
+    group <- interaction(
+      selection[c("time", "gene_set", "arm", "family")],
+      drop = TRUE
+    )
     is_best <- function(x) {
       as.logical(stats::ave(x, group, FUN = function(v) {
         seq_along(v) == if (all(is.na(v))) 0L else which.max(v)
@@ -792,8 +1002,12 @@ if ("tables" %in% run_stages) {
     # One shrinkage level for the three times of a gene set and protocol.
     shr <- selection$family == "shrinkage"
     selection$sum_profile_all_times <- NA_real_
-    across <- interaction(selection[shr, c("gene_set", "arm", "id")], drop = TRUE)
-    complete <- tapply(selection$time[shr], across, length) == length(time_levels)
+    across <- interaction(
+      selection[shr, c("gene_set", "arm", "id")],
+      drop = TRUE
+    )
+    complete <- tapply(selection$time[shr], across, length) ==
+      length(time_levels)
     total <- tapply(selection$sum_profile[shr], across, sum)
     total[!complete] <- NA_real_
     selection$sum_profile_all_times[shr] <- as.numeric(total[across])
@@ -804,10 +1018,17 @@ if ("tables" %in% run_stages) {
     )
     label <- ifelse(
       sweep_estimates$family == "cv",
-      cv_rules[match(sweep_estimates$id, sweep_levels()$id[sweep_levels()$family == "cv"])],
+      cv_rules[match(
+        sweep_estimates$id,
+        sweep_levels()$id[sweep_levels()$family == "cv"]
+      )],
       ifelse(
         sweep_estimates$family == "two_param",
-        sprintf("alpha %.2f, lambda %.2f", sweep_estimates$alpha, sweep_estimates$tuning),
+        sprintf(
+          "alpha %.2f, lambda %.2f",
+          sweep_estimates$alpha,
+          sweep_estimates$tuning
+        ),
         ifelse(
           grepl("factor", sweep_estimates$family),
           sprintf("rank %d", as.integer(sweep_estimates$tuning)),
@@ -827,7 +1048,11 @@ if ("tables" %in% run_stages) {
         "upper"
       )],
       covariance = label,
-      family = ifelse(sweep_estimates$family == "cv", "DeCovarT, cell CV", "DeCovarT sweep"),
+      family = ifelse(
+        sweep_estimates$family == "cv",
+        "DeCovarT, cell CV",
+        "DeCovarT sweep"
+      ),
       algorithm = paste("DeCovarT", label_of(sweep_estimates$family)),
       stringsAsFactors = FALSE
     )
@@ -842,7 +1067,12 @@ if ("tables" %in% run_stages) {
     chosen <- function(flag, rule) {
       arm <- design$arm[match(sweep_estimates$sample_id, design$sample_id)]
       hit <- match(
-        paste(sweep_estimates$time, sweep_estimates$gene_set, arm, sweep_estimates$id),
+        paste(
+          sweep_estimates$time,
+          sweep_estimates$gene_set,
+          arm,
+          sweep_estimates$id
+        ),
         paste(selection$time, selection$gene_set, selection$arm, selection$id)
       )
       keep <- selection[[flag]][hit]
@@ -880,7 +1110,13 @@ if ("tables" %in% run_stages) {
   estimates$arm <- design$arm[at]
   estimates$replicate <- design$replicate[at]
   estimates <- estimates[
-    order(estimates$family, estimates$method, estimates$time, estimates$sample_id, estimates$cell_type),
+    order(
+      estimates$family,
+      estimates$method,
+      estimates$time,
+      estimates$sample_id,
+      estimates$cell_type
+    ),
   ]
   write_table(estimates, "proportions_long.csv")
   write_table(observed, "observed_proportions.csv")
@@ -900,7 +1136,10 @@ if ("tables" %in% run_stages) {
     "covariance"
   )])
   descriptors <- unique(by_time[c("method", "family", "algorithm", "gene_set")])
-  stopifnot(!anyDuplicated(by_time[c("method", "time")]), !anyDuplicated(descriptors$method))
+  stopifnot(
+    !anyDuplicated(by_time[c("method", "time")]),
+    !anyDuplicated(descriptors$method)
+  )
   metrics <- merge(metrics, by_time, by = c("method", "time"), sort = FALSE)
   metrics$replicate <- design$replicate[
     match(metrics$sample_id, design$sample_id)
@@ -918,7 +1157,11 @@ if ("tables" %in% run_stages) {
       ": ",
       sweep_rows$covariance[match(
         paste(selection$time, selection$gene_set, selection$id),
-        paste(sweep_estimates$time, sweep_estimates$gene_set, sweep_estimates$id)
+        paste(
+          sweep_estimates$time,
+          sweep_estimates$gene_set,
+          sweep_estimates$id
+        )
       )],
       " | ",
       selection$gene_set
@@ -934,7 +1177,9 @@ if ("tables" %in% run_stages) {
     selection$rmse <- mean_of("rmse")
     selection$aitchison <- mean_of("aitchison")
     write_table(
-      selection[order(selection$gene_set, selection$time, selection$arm, selection$id), ],
+      selection[
+        order(selection$gene_set, selection$time, selection$arm, selection$id),
+      ],
       "lambda_selection.csv"
     )
   }

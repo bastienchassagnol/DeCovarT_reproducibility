@@ -26,7 +26,7 @@
 # SECTION 0 · Dependencies and paths ----
 # ==========================================================================
 
-root <- getwd()
+root <- here::here()
 suppressPackageStartupMessages(library(Matrix))
 source(file.path(root, "R", "02_00_utils.R"))
 source(file.path(root, "R", "02_01_stats_quality_control.R"))
@@ -229,7 +229,10 @@ for (tm in times) {
 # property of the gene (high correlation across times)?
 log_ratio <- platform_log_ratio(tail_res)
 utils::write.csv(
-  cbind(log_ratio$summary, as.data.frame(log_ratio$cor)[log_ratio$summary$time_point, ]),
+  cbind(
+    log_ratio$summary,
+    as.data.frame(log_ratio$cor)[log_ratio$summary$time_point, ]
+  ),
   file.path(out_dir, "platform_log_ratio.csv"),
   row.names = FALSE,
   fileEncoding = "UTF-8"
@@ -346,7 +349,11 @@ ratios <- list(
 
 welch_path <- file.path(root, "output", "grn", "plugin", "gene_sets.csv")
 if (!file.exists(welch_path)) {
-  stop("Missing ", welch_path, ". Run scripts/03_05_stats_plugin_covariance.R first.")
+  stop(
+    "Missing ",
+    welch_path,
+    ". Run scripts/03_05_stats_plugin_covariance.R first."
+  )
 }
 gene_sets <- utils::read.csv(welch_path, stringsAsFactors = FALSE)
 welch_genes <- lapply(stats::setNames(times, times), function(tm) {
