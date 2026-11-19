@@ -1,0 +1,5 @@
+outs:
+- md5: e136d3dec729bbdad5448bdfc75cad11
+  size: 35589462
+  hash: md5
+  path: fs_tier3_plugin_composition.rds

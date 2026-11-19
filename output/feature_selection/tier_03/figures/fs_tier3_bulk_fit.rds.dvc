@@ -1,0 +1,5 @@
+outs:
+- md5: 6a45c296fe2aedcfd2955fad02b45844
+  size: 23945693
+  hash: md5
+  path: fs_tier3_bulk_fit.rds

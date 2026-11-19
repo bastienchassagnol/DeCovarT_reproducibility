@@ -1660,7 +1660,9 @@ tail_flag_overlap <- function(res_gene, band = NULL, unit = "gene") {
     res_gene[[unit]][res_gene$flag %in% TRUE],
     res_gene$statement[res_gene$flag %in% TRUE]
   )
-  statements <- unique(res_gene$statement)
+  # Rows with a zero variance of D carry an NA statement and NA thresholds
+  # (`.tail_na()`); they cannot be flagged, so they are left out here.
+  statements <- unique(res_gene$statement[!is.na(res_gene$statement)])
   sets <- lapply(statements, function(s) unique(flagged[[s]] %||% character()))
   names(sets) <- statements
   if (!is.null(band)) {
