@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2026-11-18">
+<meta name="dcterms.date" content="2026-11-19">
 <meta name="description" content="Single-cell and bulk counts from the Suppinger gastruloid resource.">
 
 <title>2&nbsp; Suppinger gastruloids – DeCovarT reproducibility</title>
@@ -250,7 +250,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">18 Nov 2026</p>
+        <p class="date">19 Nov 2026</p>
       </div>
     </div>
     
@@ -447,7 +447,7 @@ Table&nbsp;2.2: Single-cell counts per line at the bulk times, before the cultur
 </section>
 <section id="sec-seurat" class="level2" data-number="2.2">
 <h2 data-number="2.2" class="anchored" data-anchor-id="sec-seurat"><span class="header-section-number">2.2</span> Seurat processing</h2>
-<p>Embeddings, QC and clustering follow the Seurat workflow of the Suppinger resource <span class="citation" data-cites="suppingerMultimodalCharacterizationMurine2023">(<a href="#ref-suppingerMultimodalCharacterizationMurine2023" role="doc-biblioref">Suppinger et al. 2023</a>)</span>, drawn in <a href="#fig-seurat-workflow" class="quarto-xref">Figure&nbsp;<span>2.2</span></a>: Alevin counts, <code>scater</code> QC, <code>SCTransform</code> Pearson residuals per batch for integration, CCA, PCA, UMAP and Louvain clustering. The deposited object (Seurat 4.1.0) holds the raw counts (<code>RNA</code>, 27,027 genes, 71,005 cells), the <code>SCT</code> layer and the <code>integrated</code> assay. The <code>SCT</code> and <code>integrated</code> layers keep the same 71,005 cells and only 2,944 genes: the variable features of the CCA integration, chosen over all twelve time points and both batches. Two products of that workflow are used here: the cell-type labels (<code>celltypeannotation</code>), and that 2,944-gene list, which was the gene allow-list of the legacy panel only; the current tier (i) starts from the raw counts and records the list for comparison (<a href="02-feature-selection.html#sec-fs-qc" class="quarto-xref"><span>Section 3.2</span></a>). The authors’ residuals themselves are not used: the ranking fits its own negative-binomial GLMs per time slot (<a href="02-feature-selection.html#sec-fs-glm" class="quarto-xref"><span>Section 3.3.1</span></a>), the legacy panel refitted <code>SCTransform</code> v2 per slot (<a href="./02-feature-selection.html#sec-fs-sct">legacy SCTransform fit</a>), and the covariances are estimated from raw counts (<a href="03-covariance-estimation.html#sec-cov-inputs" class="quarto-xref"><span>Section 4.1.1</span></a>).</p>
+<p>Embeddings, QC and clustering follow the Seurat workflow of the Suppinger resource <span class="citation" data-cites="suppingerMultimodalCharacterizationMurine2023">(<a href="#ref-suppingerMultimodalCharacterizationMurine2023" role="doc-biblioref">Suppinger et al. 2023</a>)</span>, drawn in <a href="#fig-seurat-workflow" class="quarto-xref">Figure&nbsp;<span>2.2</span></a>: Alevin counts, <code>scater</code> QC, <code>SCTransform</code> Pearson residuals per batch for integration, CCA, PCA, UMAP and Louvain clustering. The deposited object (Seurat 4.1.0) holds the raw counts (<code>RNA</code>, 27,027 genes, 71,005 cells), the <code>SCT</code> layer and the <code>integrated</code> assay. The <code>SCT</code> and <code>integrated</code> layers keep the same 71,005 cells and only 2,944 genes: the variable features of the CCA integration, chosen over all twelve time points and both batches. Two products of that workflow are used here: the cell-type labels (<code>celltypeannotation</code>), and that 2,944-gene list, which was the gene allow-list of the legacy panel only; the current tier (i) starts from the raw counts and records the list for comparison (<a href="02-feature-selection.html#sec-fs-qc" class="quarto-xref"><span>Section 3.2</span></a>).</p>
 <div id="fig-seurat-workflow" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-seurat-workflow-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -461,7 +461,7 @@ Figure&nbsp;2.2: Seurat workflow used to extract embeddings and downstream analy
 </section>
 <section id="sec-bio-sc" class="level2" data-number="2.3">
 <h2 data-number="2.3" class="anchored" data-anchor-id="sec-bio-sc"><span class="header-section-number">2.3</span> Biological interpretation from single-cell compositions</h2>
-<p><a href="#fig-bio-lineage" class="quarto-xref">Figure&nbsp;<span>2.3</span></a> and <a href="#fig-bio-space" class="quarto-xref">Figure&nbsp;<span>2.4</span></a> summarise a <strong>putative</strong> reading of annotated type proportions along gastruloid time. They are not a reconstruction of embryonic lineages. Two annotated states are treated as technical artefacts of culture stress (Cd63+ ectoderm-like artefact and Zscan4+ artefact, <code>data/dictionaries/suppinger_celltype_crosswalk.csv</code>). The working caudal sequence after the Chir/Wnt pulse is pluripotency <span class="math inline">\to</span> epiblast <span class="math inline">\to</span> primitive streak <span class="math inline">\to</span> caudal mesoderm / NMP <span class="math inline">\to</span> pre-somitic mesoderm / somites, with a residual endoderm bias typical of gastruloids.</p>
+<p><a href="#fig-bio-lineage" class="quarto-xref">Figure&nbsp;<span>2.3</span></a> and <a href="#fig-bio-space" class="quarto-xref">Figure&nbsp;<span>2.4</span></a> summarise a <strong>putative</strong> reading of annotated type proportions along gastruloid time. They are not a reconstruction of embryonic lineages. Two annotated states are treated as technical artefacts of culture stress (Cd63+ ectoderm-like artefact and Zscan4+ artefact, <code>data/dictionaries/suppinger_celltype_markers.csv</code>). The working caudal sequence after the Chir/Wnt pulse is pluripotency <span class="math inline">\to</span> epiblast <span class="math inline">\to</span> primitive streak <span class="math inline">\to</span> caudal mesoderm / NMP <span class="math inline">\to</span> pre-somitic mesoderm / somites, with a residual endoderm bias typical of gastruloids.</p>
 <div id="fig-bio-lineage" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-bio-lineage-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
