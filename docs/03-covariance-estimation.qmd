@@ -199,6 +199,8 @@ first_pass <- first_pass[first_pass$gene_set == "welch", ]
 
 ## Scope and status {#sec-cov-scope}
 
+[Numbers to rerun: they were computed on the panel of the earlier tier (i), which dropped the 2,178 mostly fractional genes and used the 5 % presence gate. Tier (i) now keeps every gene and applies the gate of @eq-fs-presence (@sec-fs-qc-applied).]{.highlight}
+
 This chapter estimates, for each scored cell type $j$ at each
 bulk-matched time, the mean $\widehat{\boldsymbol{\mu}}_{\cdot j}$ and
 the within-type covariance $\widehat{\boldsymbol{\Sigma}}_{j}$ of the

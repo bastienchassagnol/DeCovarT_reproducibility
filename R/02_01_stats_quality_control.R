@@ -2,7 +2,7 @@
 #'
 #' Live fits do not call `Seurat::SCTransform()`. Cell filters, the
 #' bulk-single-cell symbol intersection, the mitochondrial-symbol guard,
-#' the fractional-count filter, the presence gate and the record of the
+#' the fractional-count record, the presence gate and the record of the
 #' literature QC rules live here. `glmGamPoi::glm_gp()` is the mean
 #' model of tiers (ii) and (iii), in `R/02_02_stats_cross_cell.R` and
 #' `R/02_03_stats_influence.R`.
@@ -458,6 +458,122 @@ fractional_count_share <- function(counts, tol = 1e-8) {
   )
 }
 
+#' Fractional entries per gene and group of cells.
+#'
+#' Same rule as [fractional_count_share()], counted within each group
+#' (for example the cell types of one time slot) instead of over all
+#' cells.
+#'
+#' @param counts Genes by cells, gene symbols as row names.
+#' @param group Group label per column.
+#' @param tol Tolerance for an entry to count as an integer.
+#' @return A long data frame with `gene`, `group`, `n_cells`,
+#'   `n_nonzero`, `n_fractional` and `fractional_share` (`NA` when the
+#'   gene is zero in the group).
+fractional_by_group <- function(counts, group, tol = 1e-8) {
+  if (length(group) != ncol(counts)) {
+    stop("`group` must have one value per column of `counts`.")
+  }
+  group <- factor(group)
+  counts <- methods::as(counts, "CsparseMatrix")
+  ind <- Matrix::sparse.model.matrix(~ 0 + group)
+  nonzero <- counts
+  nonzero@x <- as.numeric(counts@x != 0)
+  frac <- counts
+  frac@x <- as.numeric(counts@x != 0 & abs(counts@x - round(counts@x)) > tol)
+  n_nz <- as.matrix(nonzero %*% ind)
+  n_fr <- as.matrix(frac %*% ind)
+  out <- data.frame(
+    gene = rep(rownames(counts), nlevels(group)),
+    group = rep(levels(group), each = nrow(counts)),
+    n_cells = rep(as.integer(table(group)), each = nrow(counts)),
+    n_nonzero = as.vector(n_nz),
+    n_fractional = as.vector(n_fr),
+    stringsAsFactors = FALSE
+  )
+  out$fractional_share <- ifelse(
+    out$n_nonzero > 0,
+    out$n_fractional / out$n_nonzero,
+    NA_real_
+  )
+  out
+}
+
+#' Gene biotypes from `org.Mm.eg.db`, offline.
+#'
+#' NCBI gene type (`GENETYPE`) of each symbol, grouped as in
+#' `annotate_genes_local()` of the GastroDeconv2FateMap package, with
+#' pseudogenes kept as their own group (multi-copy loci are where
+#' multi-mapping UMIs are split).
+#'
+#' @param genes Character vector of mouse symbols.
+#' @return A data frame with `gene`, `gene_type_raw` (first type when a
+#'   symbol has several) and `gene_biotype`: `protein_coding`,
+#'   `pseudogene`, `lncRNA`, `miRNA`, `snRNA`, `snoRNA`, `rRNA`, `tRNA`,
+#'   `other_non_coding_RNA`, `other`, or `not_annotated` when the symbol
+#'   is not in `org.Mm.eg.db`.
+gene_biotypes <- function(genes) {
+  if (!requireNamespace("org.Mm.eg.db", quietly = TRUE)) {
+    stop("Package org.Mm.eg.db is required for the gene biotypes.")
+  }
+  genes <- unique(as.character(genes))
+  tab <- suppressMessages(AnnotationDbi::select(
+    org.Mm.eg.db::org.Mm.eg.db,
+    keys = genes,
+    keytype = "SYMBOL",
+    columns = "GENETYPE"
+  ))
+  tab <- tab[!duplicated(tab$SYMBOL), , drop = FALSE]
+  raw <- tab$GENETYPE[match(genes, tab$SYMBOL)]
+  biotype <- ifelse(
+    is.na(raw),
+    "not_annotated",
+    ifelse(
+      raw %in% c("protein-coding", "protein_coding"),
+      "protein_coding",
+      ifelse(
+        grepl("pseudo", raw, ignore.case = TRUE),
+        "pseudogene",
+        ifelse(
+          grepl("lnc|long non", raw, ignore.case = TRUE),
+          "lncRNA",
+          ifelse(
+            grepl("miRNA|microRNA", raw, ignore.case = TRUE),
+            "miRNA",
+            ifelse(
+              grepl("snoRNA", raw, ignore.case = TRUE),
+              "snoRNA",
+              ifelse(
+                grepl("snRNA", raw, ignore.case = TRUE),
+                "snRNA",
+                ifelse(
+                  grepl("rRNA", raw, ignore.case = TRUE),
+                  "rRNA",
+                  ifelse(
+                    grepl("tRNA", raw, ignore.case = TRUE),
+                    "tRNA",
+                    ifelse(
+                      grepl("ncRNA|non.?coding", raw, ignore.case = TRUE),
+                      "other_non_coding_RNA",
+                      "other"
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+  data.frame(
+    gene = genes,
+    gene_type_raw = raw,
+    gene_biotype = biotype,
+    stringsAsFactors = FALSE
+  )
+}
+
 #' Literature cell-QC rules, recorded on the cells kept by the authors.
 #'
 #' Nothing is removed: the authors' QC (more than 1,800 detected genes,
@@ -533,63 +649,60 @@ cell_qc_rules <- function(counts, time_point, cell_type, nmads = 3) {
   out
 }
 
-#' Literature gene filters on the cells of one time slot.
+#' Gene rules on the cells of one time slot.
 #'
-#' Records, for every gene of `counts`, the rules of the reviewed
-#' methods on the scored cells of one slot. Nothing is removed here; the
-#' presence gate ([presence_gate()]) is the rule that tier (ii) applies.
+#' Records, for every gene of `counts`, whether it is zero in the slot
+#' and whether it passes the presence gate ([presence_gate()]), the
+#' rule that tier (ii) applies.
 #'
 #' @param counts Genes by cells of one slot (all deposited genes).
 #' @param cell_type Cell-type label per column.
-#' @param min_frac Presence-gate threshold. Default `0.05`.
-#' @param demixsc_frac deMixSC: detected in fewer than this fraction of
-#'   all cells. Default `0.05`.
-#' @param rnasieve_frac RNA-Sieve: detected in fewer than this fraction
-#'   of the cells of every type. Default `0.2`.
+#' @param ... Passed to [presence_gate()] (`min_cells_total`,
+#'   `min_cells_type`).
 #' @return A data frame with `gene`, `detected_fraction` (all cells),
-#'   `max_type_detection`, `min_type_detection`, `all_zero`,
-#'   `fail_demixsc`, `fail_rnasieve` and `pass_presence`.
-gene_filter_rules <- function(
-  counts,
-  cell_type,
-  min_frac = 0.05,
-  demixsc_frac = 0.05,
-  rnasieve_frac = 0.2
-) {
-  gate <- presence_gate(counts, cell_type, min_frac = min_frac)
-  detection <- attr(gate, "detection")
-  detected_fraction <- Matrix::rowSums(counts > 0) / ncol(counts)
+#'   `n_detected`, `min_type_cells`, `all_zero` and `pass_presence`.
+gene_filter_rules <- function(counts, cell_type, ...) {
+  gate <- presence_gate(counts, cell_type, ...)
   data.frame(
     gene = gate$gene,
-    detected_fraction = as.numeric(detected_fraction),
-    max_type_detection = apply(detection, 1L, max),
-    min_type_detection = gate$min_detection,
-    all_zero = as.numeric(detected_fraction) == 0,
-    fail_demixsc = as.numeric(detected_fraction) < demixsc_frac,
-    fail_rnasieve = apply(detection, 1L, max) < rnasieve_frac,
+    detected_fraction = gate$n_detected / ncol(counts),
+    n_detected = gate$n_detected,
+    min_type_cells = gate$min_type_cells,
+    all_zero = gate$n_detected == 0,
     pass_presence = gate$pass,
     stringsAsFactors = FALSE
   )
 }
 
-#' Detection in every cell type.
+#' Presence gate: enough cells overall, and in every cell type.
 #'
-#' DeCovarT needs a non-singular within-type covariance for every type,
-#' so a gene must be detected in a minimum fraction of the cells of
-#' **every** type, not only in one, and must vary in every type. The gate
-#' also removes perfect markers (zero in some type), which break
-#' identifiability once gene-wise platform ratios are allowed.
+#' Two conditions, both fixed before any rank is computed:
+#'
+#' - the gene is non-zero in at least `min_cells_total` cells of the
+#'   slot, without labels (Luecken and Theis 2019: the threshold is the
+#'   size of the smallest cluster of interest, here `min_cells = 20`);
+#' - in **every** type, it is non-zero in at least `min_cells_type` cells
+#'   and its within-type variance is positive: the necessary condition
+#'   for a non-singular within-type covariance (vignette 3.1). This also
+#'   removes perfect markers (zero in some type).
 #'
 #' @param counts Genes by cells (dense or sparse `Matrix`).
 #' @param cell_type Cell-type label per column of `counts`.
-#' @param min_frac Minimum fraction of cells with a non-zero count, in
-#'   each type. Default `0.05`, the value of every call in the book.
-#' @return A data frame with `gene`, `min_detection` (smallest fraction
-#'   over types), `weakest_type`, `min_variance` (smallest within-type
-#'   variance of the counts), and `pass` (`min_detection >= min_frac` and
-#'   `min_variance > 0`), plus the attribute `detection` (genes by types
-#'   matrix of fractions).
-presence_gate <- function(counts, cell_type, min_frac = 0.05) {
+#' @param min_cells_total Minimum non-zero cells over the slot. Default
+#'   `20`.
+#' @param min_cells_type Minimum non-zero cells in each type. Default `2`.
+#' @return A data frame with `gene`, `n_detected` (non-zero cells in the
+#'   slot), `min_type_cells` (smallest number of non-zero cells over
+#'   types), `min_detection` (smallest fraction over types),
+#'   `weakest_type`, `min_variance` (smallest within-type variance) and
+#'   `pass`, plus the attribute `detection` (genes by types matrix of
+#'   fractions).
+presence_gate <- function(
+  counts,
+  cell_type,
+  min_cells_total = 20L,
+  min_cells_type = 2L
+) {
   cell_type <- droplevels(factor(cell_type))
   if (length(cell_type) != ncol(counts)) {
     stop("`cell_type` must have one label per column of `counts`.")
@@ -598,34 +711,37 @@ presence_gate <- function(counts, cell_type, min_frac = 0.05) {
     stop("`cell_type` has missing labels; drop those cells first.")
   }
   types <- levels(cell_type)
-  detection <- matrix(
+  n_nonzero <- matrix(
     NA_real_,
     nrow = nrow(counts),
     ncol = length(types),
     dimnames = list(rownames(counts), types)
   )
-  variance <- detection
-  for (tp in types) {
-    idx <- which(cell_type == tp)
+  variance <- n_nonzero
+  n_type <- as.numeric(table(cell_type)[types])
+  for (k in seq_along(types)) {
+    idx <- which(cell_type == types[k])
     x_j <- counts[, idx, drop = FALSE]
-    detection[, tp] <- Matrix::rowSums(x_j > 0) / length(idx)
+    n_nonzero[, k] <- Matrix::rowSums(x_j > 0)
     m1 <- Matrix::rowMeans(x_j)
     m2 <- Matrix::rowMeans(x_j * x_j)
     n_j <- length(idx)
-    variance[, tp] <- if (n_j > 1L) {
-      pmax(m2 - m1^2, 0) * n_j / (n_j - 1)
-    } else {
-      0
-    }
+    variance[, k] <- if (n_j > 1L) pmax(m2 - m1^2, 0) * n_j / (n_j - 1) else 0
   }
-  min_detection <- apply(detection, 1L, min)
+  detection <- sweep(n_nonzero, 2L, n_type, "/")
+  n_detected <- rowSums(n_nonzero)
+  min_type_cells <- apply(n_nonzero, 1L, min)
   min_variance <- apply(variance, 1L, min)
   out <- data.frame(
     gene = rownames(counts) %||% as.character(seq_len(nrow(counts))),
-    min_detection = min_detection,
-    weakest_type = types[max.col(-detection, ties.method = "first")],
+    n_detected = n_detected,
+    min_type_cells = min_type_cells,
+    min_detection = apply(detection, 1L, min),
+    weakest_type = types[max.col(-n_nonzero, ties.method = "first")],
     min_variance = min_variance,
-    pass = min_detection >= min_frac & min_variance > 0,
+    pass = n_detected >= min_cells_total &
+      min_type_cells >= min_cells_type &
+      min_variance > 0,
     stringsAsFactors = FALSE
   )
   rownames(out) <- NULL

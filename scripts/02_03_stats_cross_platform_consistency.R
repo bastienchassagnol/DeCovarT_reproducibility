@@ -110,9 +110,10 @@ dict <- utils::read.csv(
     root,
     "data",
     "dictionaries",
-    "mouse_gastruloid_signaling_markers.csv"
+    "suppinger_celltype_markers.csv"
   ),
   stringsAsFactors = FALSE,
+  na.strings = c("", "NA"),
   fileEncoding = "UTF-8"
 )
 dict$gene <- prepared$symbol_map$mouse_symbol[

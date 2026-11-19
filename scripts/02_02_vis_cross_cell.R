@@ -48,6 +48,7 @@ save_figure(
   ),
   "fs_tier2_null_calibration",
   fig_dir,
+  data = list(null_tests = res$null_tests, calibration = calib),
   width = 11,
   height = 4.4
 )
@@ -66,6 +67,7 @@ save_figure(
   ),
   "fs_tier2_test_agreement",
   fig_dir,
+  data = res$tau_all,
   width = 11,
   height = 4.6
 )
@@ -91,6 +93,9 @@ save_figure(
   ),
   "fs_tier2_gate_rank",
   fig_dir,
+  data = lapply(res$ranked, function(r) {
+    r[r$pass_presence, c("gene", "pval", "adj_pval", "pass_fdr", "deviance_r2"), drop = FALSE]
+  }),
   width = 11,
   height = 4.6
 )
@@ -103,6 +108,12 @@ save_figure(
   ),
   "fs_tier2_overdispersion",
   fig_dir,
+  data = list(
+    overdispersion = lapply(res$tests, function(r) {
+      r[r$pass_presence, c("gene", "overdispersion"), drop = FALSE]
+    }),
+    gene_means = gene_means
+  ),
   width = 11,
   height = 4.2
 )

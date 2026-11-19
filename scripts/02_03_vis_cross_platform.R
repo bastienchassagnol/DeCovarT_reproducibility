@@ -60,6 +60,7 @@ save_figure(
   ),
   "fs_tier3_cook",
   fig_dir,
+  data = list(outlier_genes = res$outlier_genes, outlier_cells = res$outlier_cells, cells = cells),
   width = 11,
   height = 10
 )
@@ -86,6 +87,7 @@ save_figure(
   ),
   "fs_tier3_length",
   fig_dir,
+  data = list(log_ratio = res$log_ratio, lengths = res$lengths, length_test = lt),
   width = 11,
   height = 4.9
 )
@@ -107,6 +109,7 @@ save_figure(
   ),
   "fs_tier3_a3_shift",
   fig_dir,
+  data = list(variants = res$variants, a3_shift = a3),
   width = 11,
   height = 6
 )
@@ -121,6 +124,7 @@ save_figure(
   ),
   "fs_tier3_bulk_fit",
   fig_dir,
+  data = list(variants = res$variants[c("none", "gene")]),
   width = 10,
   height = 7.6
 )
@@ -143,6 +147,7 @@ save_figure(
   ),
   "fs_tier3_tail_flags",
   fig_dir,
+  data = list(variants = res$variants, a3_shift = a3),
   width = 11,
   height = 4.6
 )
@@ -187,6 +192,7 @@ save_figure(
   ),
   "fs_tier3_plugin_composition",
   fig_dir,
+  data = list(variants = res$variants[c("none", "gene", "gene_neff")]),
   width = 11,
   height = 4.8
 )
@@ -206,6 +212,7 @@ save_figure(
   ),
   "fs_tier3_drift",
   fig_dir,
+  data = list(log_ratio = res$log_ratio, drift = res$drift),
   width = 11,
   height = 4.8
 )
@@ -227,6 +234,7 @@ if (file.exists(mv_path)) {
     ),
     "fs_tier3_multivariate",
     fig_dir,
+    data = list(gene = mv$gene, level = mv$settings$level, power = pw),
     width = 11,
     height = 4.8
   )

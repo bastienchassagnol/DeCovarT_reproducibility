@@ -1,0 +1,47 @@
+celltypeannotation,include_in_ranking,use_markers,cell_type_excel,cell_type_suppinger,gene_marker,note
+Anterior primitive streak/Def. endoderm,TRUE,TRUE,Anterior mesoderm,Anterior primitive streak / anterior mesoderm,EOMES,Label covers anterior mesoderm on the signalling map
+Anterior primitive streak/Def. endoderm,TRUE,TRUE,Anterior mesoderm,Anterior primitive streak / anterior mesoderm,GATA6,Label covers anterior mesoderm on the signalling map
+Anterior primitive streak/Def. endoderm,TRUE,TRUE,Anterior mesoderm,Anterior primitive streak / anterior mesoderm,MESP1,Label covers anterior mesoderm on the signalling map
+Anterior primitive streak/Def. endoderm,TRUE,TRUE,Definitive endoderm,Endoderm / gut,EOMES,The same label also names definitive endoderm
+Anterior primitive streak/Def. endoderm,TRUE,TRUE,Definitive endoderm,Endoderm / gut,GATA6,The same label also names definitive endoderm
+Anterior primitive streak/Def. endoderm,TRUE,TRUE,Definitive endoderm,Endoderm / gut,SOX17,The same label also names definitive endoderm
+Caudal epiblast,TRUE,FALSE,,,,No row in the signalling-marker dictionary
+Caudal epiblast/primitive streak,TRUE,FALSE,,,,No row in the signalling-marker dictionary
+Caudal mesoderm,TRUE,TRUE,Nascent/Posterior mesoderm,Caudal mesoderm,ALDH1A2,Dictionary cell_type_suppinger is Caudal mesoderm
+Caudal mesoderm,TRUE,TRUE,Nascent/Posterior mesoderm,Caudal mesoderm,CDX2,Dictionary cell_type_suppinger is Caudal mesoderm
+Caudal mesoderm,TRUE,TRUE,Nascent/Posterior mesoderm,Caudal mesoderm,T,Dictionary cell_type_suppinger is Caudal mesoderm
+Caudal mesoderm,TRUE,TRUE,Nascent/Posterior mesoderm,Caudal mesoderm,TBX6,Dictionary cell_type_suppinger is Caudal mesoderm
+Cd63+ ectoderm-like artefact,FALSE,FALSE,,,,Culture-stress artefact; excluded from residual ranking
+Ectopic pluripotency,TRUE,FALSE,,,,No row in the signalling-marker dictionary
+Epiblast,TRUE,FALSE,,,,No row in the signalling-marker dictionary
+Epiblast/primitive streak,TRUE,FALSE,,,,No row in the signalling-marker dictionary
+Exiting naïve pluripotency,TRUE,FALSE,,,,No row in the signalling-marker dictionary
+Gut,TRUE,TRUE,Definitive endoderm,Endoderm / gut,EOMES,Dictionary cell_type_suppinger is Endoderm / gut
+Gut,TRUE,TRUE,Definitive endoderm,Endoderm / gut,GATA6,Dictionary cell_type_suppinger is Endoderm / gut
+Gut,TRUE,TRUE,Definitive endoderm,Endoderm / gut,SOX17,Dictionary cell_type_suppinger is Endoderm / gut
+Hemogenic endothelium,TRUE,FALSE,Haemato-endothelium,NA,ETV2,cell_type_suppinger is NA; markers are not unioned
+Hemogenic endothelium,TRUE,FALSE,Haemato-endothelium,NA,KDR,cell_type_suppinger is NA; markers are not unioned
+Naïve pluripotency,TRUE,FALSE,,,,No row in the signalling-marker dictionary
+Neuromesodermal progenitors,TRUE,TRUE,Neuromesodermal progenitors NMP,NMP,CDX2,Dictionary cell_type_suppinger is NMP
+Neuromesodermal progenitors,TRUE,TRUE,Neuromesodermal progenitors NMP,NMP,SOX2,Dictionary cell_type_suppinger is NMP
+Neuromesodermal progenitors,TRUE,TRUE,Neuromesodermal progenitors NMP,NMP,T,Dictionary cell_type_suppinger is NMP
+Paraxial mesoderm,TRUE,FALSE,,,,No row in the signalling-marker dictionary
+Pre-somitic mesoderm,TRUE,TRUE,Presomitic mesoderm PSM,Pre-somitic mesoderm,ALDH1A2,Dictionary cell_type_suppinger is Pre-somitic mesoderm
+Pre-somitic mesoderm,TRUE,TRUE,Presomitic mesoderm PSM,Pre-somitic mesoderm,HES7,Dictionary cell_type_suppinger is Pre-somitic mesoderm
+Pre-somitic mesoderm,TRUE,TRUE,Presomitic mesoderm PSM,Pre-somitic mesoderm,TBX6,Dictionary cell_type_suppinger is Pre-somitic mesoderm
+Primitive streak,TRUE,TRUE,Primitive streak,Primitive streak,EOMES,Dictionary cell_type_suppinger is Primitive streak
+Primitive streak,TRUE,TRUE,Primitive streak,Primitive streak,T,Dictionary cell_type_suppinger is Primitive streak
+Somite,TRUE,TRUE,Somite endoderm,Somites,PAX3,Dictionary cell_type_suppinger is Somites
+Somite,TRUE,TRUE,Myogenic progenitor,Somite / myogenic progenitors,MYF5,Dictionary cell_type_suppinger is Somite / myogenic progenitors
+Somite,TRUE,TRUE,Myogenic progenitor,Somite / myogenic progenitors,MYOD,Dictionary cell_type_suppinger is Somite / myogenic progenitors
+Somite differentiation front,TRUE,FALSE,,,,Not the same label as Somite; no marker row
+Zscan4+ Artefact,FALSE,FALSE,,,,Culture-stress artefact; excluded from residual ranking
+,,,Cardiac Mesoderm,NA,NKX2-5,Marker group without a Suppinger label
+,,,Extraembryonic,NA,CDX2,Marker group without a Suppinger label
+,,,Extraembryonic,NA,EOMES,Marker group without a Suppinger label
+,,,Extraembryonic,NA,GATA6,Marker group without a Suppinger label
+,,,Extraembryonic,NA,SOX17,Marker group without a Suppinger label
+,,,Neural Tube progenitors,Neural progenitors,PAX6,Marker group without a Suppinger label
+,,,Neural Tube progenitors,Neural progenitors,SOX1,Marker group without a Suppinger label
+,,,Neural Tube progenitors,Neural progenitors,SOX2,Marker group without a Suppinger label
+,,,Non-neural ectoderm,NA,TFAP2A,Marker group without a Suppinger label

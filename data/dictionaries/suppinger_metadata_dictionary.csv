@@ -1,0 +1,22 @@
+file,variable,description,units,allowed_values,missing
+GSE229513 object,gene_name,Gene symbol used as row id after the one-to-one Ensembl map,NA,character,empty string not allowed
+GSE229513 object,ensembl_id,Ensembl gene id without version suffix,NA,ENSMUSG...,NA
+GSE229513 object,gene_biotype,Gene biotype from org.Mm.eg.db GENETYPE grouped by gene_biotypes(),NA,protein_coding; lncRNA; miRNA; snRNA; snoRNA; rRNA; tRNA; pseudogene; other_non_coding_RNA; other,NA when the symbol has no Entrez id
+GSE229513 object,celltypeannotation,Author cell-type label on GSE229513,NA,see suppinger_celltype_colours.csv,NA (cell not scored)
+GSE229513 object,timepoints,Gastruloid harvest time,hours,0h to 120h,NA
+GSE229513 object,batch,Cell line (protocol batch),NA,batch1 = B-S; batch2 = SBR,NA
+suppinger_batch_shapes.csv,batch_raw,Batch label as stored in the object,NA,batch1; batch2,not allowed
+suppinger_batch_shapes.csv,batch,Cell line,NA,B-S; SBR,not allowed
+suppinger_batch_shapes.csv,shape,ggplot2 point shape of the cell line,NA,integer,not allowed
+suppinger_celltype_colours.csv,celltypeannotation,Author cell-type label,NA,19 labels,not allowed
+suppinger_celltype_colours.csv,lineage,Coarse lineage family (first level of the nested colour scheme),NA,Pluripotency; Epiblast and streak; Mesoderm; Endoderm; Neuromesodermal; Artefact,not allowed
+suppinger_celltype_colours.csv,colour,Colour of the cell type (luminance step within its lineage hue),NA,hex,not allowed
+suppinger_celltype_colours.csv,colour_lineage,Colour of the lineage family (Okabe-Ito hue),NA,hex,not allowed
+suppinger_celltype_colours.csv,colour_suppinger,Colour of the type in Suppinger et al. (2023) Fig. 1B (sampled from the PDF),NA,hex,not allowed
+suppinger_celltype_markers.csv,celltypeannotation,Author cell-type label,NA,19 labels,empty for a marker group without a Suppinger label
+suppinger_celltype_markers.csv,include_in_ranking,Type may be scored (FALSE for the two culture-stress artefacts),NA,TRUE; FALSE,empty for a marker group without a Suppinger label
+suppinger_celltype_markers.csv,use_markers,Markers of the matched group are united with the panel for this type,NA,TRUE; FALSE,empty for a marker group without a Suppinger label
+suppinger_celltype_markers.csv,cell_type_excel,Lineage group of the signalling-marker list (module of the tier (iii) filter),NA,character,empty when the type has no marker group
+suppinger_celltype_markers.csv,cell_type_suppinger,Suppinger label named by the signalling-marker list,NA,character,NA or empty when the list names none
+suppinger_celltype_markers.csv,gene_marker,Curated marker (human-style symbol; mapped to mouse by map_marker_symbols()),NA,character,empty when the type has no marker group
+suppinger_celltype_markers.csv,note,Free-text justification of the match,NA,character,never empty

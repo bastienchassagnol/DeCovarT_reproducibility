@@ -204,8 +204,13 @@ fmt_n <- function(x) format(round(x), big.mark = ",", trim = TRUE)
 
 #' Cell-type colours of the Suppinger annotation.
 #'
-#' @param path CSV with columns `celltypeannotation` and `colour`.
-#' @return Named character vector of colours.
+#' Nested scheme: one hue per lineage family (`colour_lineage`), and a
+#' luminance step of that hue per type (`colour`).
+#'
+#' @param path CSV with columns `celltypeannotation`, `lineage` and
+#'   `colour`.
+#' @return Named character vector of colours, in the row order of the
+#'   file (lineages in differentiation order).
 celltype_colours <- function(
   path = file.path("data", "dictionaries", "suppinger_celltype_colours.csv")
 ) {
@@ -213,17 +218,34 @@ celltype_colours <- function(
   stats::setNames(tab$colour, tab$celltypeannotation)
 }
 
+#' Lineage family of each Suppinger cell type.
+#'
+#' @inheritParams celltype_colours
+#' @return Factor named by cell type, levels in the order of the file.
+celltype_lineages <- function(
+  path = file.path("data", "dictionaries", "suppinger_celltype_colours.csv")
+) {
+  tab <- utils::read.csv(path, stringsAsFactors = FALSE, fileEncoding = "UTF-8")
+  stats::setNames(
+    factor(tab$lineage, levels = unique(tab$lineage)),
+    tab$celltypeannotation
+  )
+}
+
 #' Save one figure as PDF (archive) and PNG (book).
 #'
 #' The PDF goes to `pdf_dir`, the PNG (`ragg`, white background) to
-#' `png_dir`, both named `name`.
+#' `png_dir`, both named `name`. When `data` is given it is saved as
+#' `<pdf_dir>/<name>.rds`: the minimal data needed to redraw the figure.
 #'
 #' @param plot A ggplot or patchwork object.
 #' @param name File name without extension.
 #' @param pdf_dir,png_dir Output folders, created when missing.
 #' @param width,height Size in inches.
 #' @param dpi PNG resolution. Default `300`.
-#' @return The two paths, invisibly.
+#' @param data Optional data behind the figure (a data frame, or a named
+#'   list of data frames and settings). Default `NULL`: no RDS.
+#' @return The paths written, invisibly.
 save_figure <- function(
   plot,
   name,
@@ -231,7 +253,8 @@ save_figure <- function(
   png_dir = file.path("docs", "images", "feature_selection"),
   width = 8,
   height = 6,
-  dpi = 300
+  dpi = 300,
+  data = NULL
 ) {
   dir.create(pdf_dir, recursive = TRUE, showWarnings = FALSE)
   dir.create(png_dir, recursive = TRUE, showWarnings = FALSE)
@@ -253,7 +276,12 @@ save_figure <- function(
     device = ragg::agg_png,
     bg = "white"
   )
-  invisible(c(pdf = pdf_path, png = png_path))
+  paths <- c(pdf = pdf_path, png = png_path)
+  if (!is.null(data)) {
+    paths[["rds"]] <- file.path(pdf_dir, paste0(name, ".rds"))
+    saveRDS(data, paths[["rds"]])
+  }
+  invisible(paths)
 }
 
 #' Append one line to the progress file of a background run.

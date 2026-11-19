@@ -20,7 +20,7 @@
 #   replicate       int  biological replicate within arm x time (1 to 3)
 #   reference_slot  chr  single-cell slot whose reference was used
 #   cell_type       chr  celltypeannotation, as in
-#                        data/dictionaries/suppinger_celltype_crosswalk.csv
+#                        data/dictionaries/suppinger_celltype_markers.csv
 #   proportion      dbl  estimated proportion in [0, 1]; sums to one over
 #                        cell_type within method x sample_id
 #   lower, upper    dbl  optional; the method's own interval for that

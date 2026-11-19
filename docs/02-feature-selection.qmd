@@ -4,32 +4,47 @@ date: last-modified
 description: "The gene panel built for the Suppinger reference, with the code."
 ---
 
-## Scope and status {#sec-fs-scope}
+```{r}
+#| label: fs-values
+#| include: false
+# Numbers quoted in tier (i), read from the committed output tables.
+read_out <- function(...) {
+  utils::read.csv(
+    here::here("..", "output", ...),
+    stringsAsFactors = FALSE,
+    fileEncoding = "UTF-8"
+  )
+}
+big <- function(x) format(round(x), big.mark = ",", trim = TRUE)
+cells <- read_out("feature_selection", "tier_01", "cell_counts.csv")
+audit <- read_out("feature_selection", "tier_01", "author_qc_audit.csv")
+genes <- read_out("feature_selection", "tier_01", "gene_filter_summary.csv")
+pc1 <- read_out("feature_selection", "tier_01", "projection_pc1_by_batch.csv")
+times <- c("48h", "72h", "96h")
+scored <- paste(audit$time_point, audit$cell_type) %in%
+  paste(cells$time_point, cells$cell_type)
+n_le_1800 <- sum(audit$n_le_1800_genes[scored])
+n_mad <- sum(audit$n_mad_library[scored])
+n_deposited <- genes$genes[genes$rule == "deposited genes"][1L]
+n_not_shared <- genes$genes[genes$rule == "not shared one-to-one with the bulk"][1L]
+n_enter <- sapply(times, function(tm) {
+  genes$genes[genes$time_point == tm & genes$rule == "enters tier (ii)"]
+})
+epi <- pc1[pc1$time_point == "48h" & pc1$cell_type == "Epiblast", ]
+epi_side <- sapply(c("batch1", "batch2"), function(b) {
+  x <- epi[epi$batch == b, ]
+  c(major = max(x$Freq), total = sum(x$Freq))
+})
+min_type <- min(cells$cells)
+```
+
+## Scope {#sec-fs-scope}
 
 This chapter builds the gene panel on which the covariances of
-@sec-cov-scope are estimated. It is the application that the
-feature-selection vignette
-([3.1](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html))
-leaves to this book: filters as applied, settings, rank tables and
-code. It runs on the single-cell counts of GSE229513 at the three
-bulk-matched times (@sec-geo-design), one time at a time. What the
-panel must achieve, and why each step is there, is stated in the
-vignette
-([3.1, what the genes are for](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#wrn-fs-estimand)):
-genes whose type-level moments can be estimated in every type and that
-carry information about $\boldsymbol{p}$. The sections follow the tiers
-of the vignette: (i) quality control and prior knowledge, (ii)
-cross-cell consistency and (iii) cross-platform consistency are
-implemented here; (iv), down-weighting by the model, is a remark: it
-takes place when DeCovarT itself is fitted (@sec-fs-weighting-pointer).
-
-The Suppinger reference is the one-specimen case of that callout. It is
-one technical scRNA-seq experiment
-[@suppingerMultimodalCharacterizationMurine2023], and its cells are
-draws from one specimen, not biological replicates (@sec-geo-design).
-Every ranking statistic below is therefore computed inside that
-specimen: it calibrates a screen, not a population-level claim of
-differential expression. 
+@sec-cov-scope are estimated, from the single-cell counts of GSE229513
+at the three bulk-matched times (@sec-geo-design), following the tiers
+of the feature-selection vignette
+([3.1](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html)).
 
 ::: {#nte-pseudoreplication .callout-note}
 ## :information_source: Cells are not biological replicates
@@ -47,135 +62,134 @@ is reported as such wherever it is used in this book
 (@sec-cov-scope, @sec-sens-scdesign3).
 :::
 
-The current panel (top 500 per time, @sec-fs-export) comes from the
-legacy between/within ratio
-([between/within ratio](#sec-fs-ms-ratio)). Once tiers (i) to (iii)
-have been run, their rank replaces it as steps 3 to 5 of
-@fig-pipeline, and every output of @sec-cov-scope has to be refitted.
-
 {{< pagebreak >}}
 
 ## Tier (i): quality control and prior knowledge {#sec-fs-qc}
 
-The vignette lists the quality-control rules of the reviewed methods
-as examples
-([3.1, QC](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-qc)).
-Here the authors' quality control is taken as given, and those rules
-are recorded against it rather than applied again. This tier also
-holds what is decided without the counts: the curated markers, forced
-into the panel, and the presence gate.
+The rules reviewed for this tier, and their reasons, are in
+[3.1, QC](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-qc).
 
 ### Cell and gene QC as applied {#sec-fs-qc-applied}
 
-The deposited object is the authors' filtered matrix: 27,027 genes and
-71,005 cells, with the same cells in the raw counts and in the `SCT`
-layer (@sec-seurat). `scripts/02_01_stats_quality_control.R` has been
-run on it. Its outputs in `output/feature_selection/tier_01/` are three
-summary tables (`cell_counts.csv`, `author_qc_audit.csv`,
-`gene_filter_summary.csv`) and `scored_slots.rds`, which holds every
-per-gene and per-cell table and is tracked with DVC
-(`dvc pull output/feature_selection/tier_01/scored_slots.rds.dvc`).
-The figures are drawn by `scripts/02_01_vis_quality_control.R`.
-@tbl-fs-qc-compare sets the authors' choices, the deposited counts,
-the examples of the vignette and this book side by side.
+The deposited object of @suppingerMultimodalCharacterizationMurine2023
+holds `r big(n_deposited)` genes and 71,005 cells, already filtered by
+the authors. @tbl-fs-qc-compare lists the filters that remove cells or
+genes, theirs and those added here; the notes under the table list the
+filters that were considered and not applied.
 
-| Item | Suppinger et al. | Deposited counts (scored cells) | Examples in the vignette | This book |
-|---|---|---|---|---|
-| Detected genes per cell | kept if > 1,800 | minimum 1,548; 65 of 20,437 cells at ≤ 1,800 | deMixSC: removed if < 200 | no new filter |
-| Mitochondrial counts | kept if < 10 % | not computable: no `mt-` gene deposited | deMixSC: removed if > 50 % | no new filter |
-| Library size | not reported | minimum 1,443; no cell below 500; 417 cells beyond 3 MAD of their type | deMixSC: removed if < 500; RNA-Sieve: 3 MAD from the type median (optional) | recorded, not applied |
-| Doublets, ambient RNA | not reported | — | — | none |
-| Mitochondrial, ribosomal, Gm genes | removed after the cell QC | no `mt-`, `Rpl` or `Rps` symbol | BayesPrism: ribosomal and mitochondrial genes removed | already absent |
-| Sex-chromosome genes | kept | present (*Xist*, *Ddx3y*, *Kdm5d*, *Uty*) | BayesPrism: removed | kept |
-| Low-detection genes | none on the raw counts (3,599 genes are zero in every cell); `SCTransform` models genes detected in ≥ 5 cells of a batch | 19,275 genes detected in ≥ 5 cells of both batches | RNA-Sieve: ≥ 20 % of the cells of one type; deMixSC: ≥ 5 % of all cells | presence gate: ≥ 5 % of the cells of every scored type, variance > 0 |
-| Variable genes | 3,000 integration features, 2,944 left in `SCT` | — | — | recorded, not a filter |
-| Multi-mapping UMIs | Salmon/Alevin 1.1.0 splits them | 12.8 % of non-zero entries fractional | — | genes > 90 % fractional dropped |
+```{r}
+#| label: tbl-fs-qc-compare
+#| tbl-cap: "Filters applied to the Suppinger reference. Authors: STAR Methods, \"Quality control and filtering\", of @suppingerMultimodalCharacterizationMurine2023, and the settings stored in the object."
+#| echo: false
+qc <- data.frame(
+  Item = c(
+    "Detected genes per cell",
+    "Cell types",
+    "Gene symbols",
+    "Low-detection genes"
+  ),
+  `Suppinger et al. (deposited object)` = c(
+    "Cells kept if more than 1,800 genes are detected",
+    "19 labels, two of them culture-stress artefacts",
+    paste(big(n_deposited), "symbols; mitochondrial, ribosomal and Gm genes removed"),
+    "None removed on the raw counts"
+  ),
+  `This book` = c(
+    "Authors' cells kept",
+    paste0(
+      "Artefact labels dropped; a type with fewer than 20 cells in a slot is ",
+      "dropped (exiting naïve pluripotency at 72 h, 8 cells)"
+    ),
+    paste(n_not_shared, "symbols with more than one Ensembl id in the bulk dropped"),
+    "Presence gate: non-zero in at least 20 cells of the slot, in at least 2 cells of every type, positive variance in every type"
+  ),
+  check.names = FALSE
+)
+tinytable::tt(
+  qc,
+  width = c(1, 2, 2),
+  notes = list(
+    a = list(
+      i = 1,
+      j = 2,
+      text = paste(
+        "Mitochondrial counts: the authors kept cells with less than 10 %,",
+        "then removed the mitochondrial, ribosomal and Gm genes. No `mt-`,",
+        "`Rpl` or `Rps` symbol is deposited, so neither the 10 % threshold",
+        "nor a mitochondrial-gene filter can be applied again."
+      )
+    ),
+    b = list(
+      i = 2,
+      j = 3,
+      text = paste0(
+        "Not applied: library-size outliers (", big(n_mad), " scored cells ",
+        "lie beyond 3 scaled MADs of the log library size of their type; ",
+        "recorded in `author_qc_audit.csv`), doublets and ambient RNA ",
+        "(not reported by the authors)."
+      )
+    ),
+    c = list(
+      i = 3,
+      j = 3,
+      text = paste(
+        "Kept: sex-chromosome genes (*Xist*, *Ddx3y*, *Kdm5d*, *Uty*), and",
+        "genes whose counts are fractional because Salmon/Alevin 1.1.0",
+        "splits multi-mapping UMIs (12.8 % of the non-zero entries)."
+      )
+    )
+  )
+) |>
+  tinytable::format_tt(quarto = TRUE, markdown = TRUE)
+```
 
-: Quality control of the Suppinger reference: the authors' choices (STAR Methods, "Quality control and filtering", and the settings stored in the object), what the deposited counts show on the 20,437 scored cells of the three slots (`author_qc_audit.csv`; element `gene_rules` of `scored_slots.rds`), the examples of the [review table of 3.1](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#tbl-fs-review), and what this book applies. {#tbl-fs-qc-compare}
+::: {.callout-note collapse="true"}
+## Cells as applied
 
-**Cells.**
+- **Thresholds of the authors.** Cells with more than 1,800 detected
+  genes and less than 10 % mitochondrial counts
+  [@suppingerMultimodalCharacterizationMurine2023]. The mitochondrial,
+  ribosomal and Gm genes were removed after that cut-off, so
+  `r n_le_1800` scored cells count at most 1,800 genes on the deposited
+  matrix (@fig-fs-low-quality).
+- **Slots.** Cells at 48, 72 or 96 h, with a cell-type label and a
+  positive library size; the library size is the column sum over all
+  deposited genes.
+- **Artefacts and small types.** The Cd63+ ectoderm-like and Zscan4+
+  artefacts are dropped, and so is a type with fewer than 20 cells in a
+  slot (@tbl-fs-cell-counts).
+:::
 
-- **The authors' thresholds stand.** They kept cells with more than
-  1,800 detected genes and less than 10 % mitochondrial counts
-  [@suppingerMultimodalCharacterizationMurine2023]. Both cut-offs are
-  stricter than the deMixSC examples (200 genes, 50 %), so no fixed
-  rule of the vignette removes a cell they kept. They were computed
-  before the mitochondrial, ribosomal and Gm genes were removed: the
-  mitochondrial fraction needs the chrM genes. That order is an
-  inference, not a statement of the paper. It explains why 65 scored
-  cells fall at or below 1,800 genes on the deposited genes, and why
-  the mitochondrial fraction cannot be recomputed:
-  `cell_mitochondrial_fraction()` returns `NA`, not 0, when no `mt-`
-  symbol is present.
-- **Library-size outliers are recorded, not removed.** 417 scored cells
-  (239 at 48 h, 69 at 72 h, 109 at 96 h) lie beyond 3 scaled MADs of
-  the log library size of their type (`cell_qc_rules()`). They pass
-  the authors' QC, which is taken as given.
-- **Slot filter.** `keep_bulk_matched_cells()` keeps cells with a time
-  slot in {48 h, 72 h, 96 h}, a non-missing `celltypeannotation` and a
-  library size above zero. The library size is the column sum of the
-  deposited counts over all 27,027 genes; it equals $10^{\texttt{log\_umi}}$
-  of the authors' `SCTransform` models, whereas the metadata column
-  `nCount_RNA` does not, and is not used.
-- **Artefacts and small types.** The culture-stress labels flagged
-  `include_in_ranking = FALSE` in
-  `data/dictionaries/suppinger_celltype_crosswalk.csv` (Cd63+
-  ectoderm-like artefact, Zscan4+ artefact) are dropped. A type with
-  fewer than `min_cells = 20` cells in a slot is left out of the
-  scores; exiting naïve pluripotency at 72 h (8 cells) is the only such
-  case.
+![Cells kept by the authors at the three bulk-matched times, artefact labels included. (a) Detected genes against library size, both on log scales, one point per cell coloured by cell type (legend grouped by lineage); the dashed line is the authors' cut-off of 1,800 detected genes. (b) Distribution of the log10 library size per type, types ranked by median (point), with the number of cells in the label. Data: `fs_tier1_low_quality_cells.rds`.](images/feature_selection/fs_tier1_low_quality_cells.png){#fig-fs-low-quality}
 
-![Cells kept by the authors at the three bulk-matched times, artefact labels included. (a) Detected genes against library size, both on log scales, one point per cell coloured by cell type; dashed lines mark the Suppinger cut-off (1,800 detected genes) and the deMixSC cut-offs (200 genes, 500 counts); circled cells lie beyond 3 scaled MADs of the log library size of their type. (b) Distribution of the log10 library size per type, types ranked by median, with the median (point), the ±3 MAD interval (bar) and the number of cells in the label. Source: `scored_slots.rds`, element `cell_values`; `scripts/02_01_vis_quality_control.R`.](images/feature_selection/fs_tier1_low_quality_cells.png){#fig-fs-low-quality}
+::: {.callout-note collapse="true"}
+## Genes as applied
 
-@fig-fs-low-quality shows the authors' cells against the cut-offs. Every
-cell sits far above the deMixSC lines. The cells below the 1,800-gene
-line are the low tail of a single library-size–gene trend, not a
-separate population, and the 3-MAD flags fall at both ends of that
-trend.
+- **Bulk symbols.** Every deposited symbol appears in the `gene_name`
+  column of the bulk HTSeq table; the `r n_not_shared` symbols whose
+  rows carry more than one Ensembl id are dropped.
+- **Fractional counts are kept.** A UMI compatible with several genes
+  is divided among them by Salmon/Alevin, so 12.8 % of the non-zero
+  entries are fractions such as 1/2, 1/3 or 1/4. They concentrate in
+  multi-copy loci (protocadherin-γ cluster, processed pseudogenes,
+  histone genes) (@fig-fs-fractional). Models that accept non-integer
+  counts (`glmGamPoi`, `mixOmics`) take them as they are. The reasons
+  and references are in
+  [3.1, multi-mapping counts](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-fractional).
+  The within-type correlations of genes that share UMIs are set by the
+  split, not measured, which matters for the covariances of
+  @sec-cov-scope.
+- **Presence gate.** `r big(n_enter[["48h"]])` (48 h),
+  `r big(n_enter[["72h"]])` (72 h) and `r big(n_enter[["96h"]])` (96 h)
+  genes pass it and enter tier (ii) (@fig-fs-gene-filters,
+  @fig-fs-density-filter).
+:::
 
-**Genes.**
+![Gene filters at the three bulk-matched times. (a) Genes removed by each applied rule, ranked by count; a gene can fail several rules. (b) Genes entering tier (ii) and in the authors' `SCT` layer (2,944 genes), in tier (ii) only, and in the `SCT` layer only. Data: `fs_tier1_gene_filters.rds`.](images/feature_selection/fs_tier1_gene_filters.png){#fig-fs-gene-filters}
 
-- **Bulk symbols.** Every one of the 27,027 symbols appears in the bulk
-  HTSeq `gene_name` column; `shared_bulk_single_cell_genes()` drops the
-  49 whose rows carry more than one Ensembl id once the version suffix
-  is removed (element `shared` of `scored_slots.rds`). `drop_mitochondrial_genes()` is kept
-  as a guard and removes nothing here.
-- **Fractional counts.** The deposited counts are Salmon/Alevin
-  estimates. A UMI compatible with several genes is divided among them,
-  equally when no read tells them apart, so 12.8 % of the non-zero
-  entries are fractions such as 1/2, 1/3 or 1/4. The share is not tied
-  to expression level; it concentrates in multi-copy loci (the
-  protocadherin-γ cluster, processed pseudogenes, histone genes), whose
-  counts are shares of the same UMIs as their paralogues. Their
-  within-type correlations are then fixed by the split, not measured,
-  which matters for the covariances of @sec-cov-scope. The 2,178 genes
-  whose non-zero entries are more than 90 % fractional are dropped
-  (495 of them detected in at least 500 cells), the share being
-  computed on all 71,005 cells without labels
-  (`fractional_count_share()`; elements `fractional` and `dropped_fractional` of `scored_slots.rds`). The
-  counts are not rounded: rounding would turn every 0.5 into 0.
-  `glmGamPoi` accepts non-integer counts, and the negative-binomial
-  likelihood is then a quasi-likelihood.
-- **Presence gate.** After these filters 24,816 genes enter the
-  presence gate of @sec-fs-presence at each time; 8,643 (48 h), 8,636
-  (72 h) and 8,788 (96 h) pass it (element `presence` of `scored_slots.rds`).
-- **Authors' gene list.** The 2,944 genes of the `SCT` layer are the
-  CCA integration features: 3,000 anchor features, of which 56 (histone
-  genes, MHC `H2-` genes, *Nme2*, *4930537H20Rik*) are absent from the
-  layer (element `anchor_missing` of `scored_slots.rds`). They are variable
-  over all twelve time points and both batches, not a quality filter.
-  Of them, 1,622 (48 h), 1,589 (72 h) and 1,562 (96 h) also pass the
-  filters above, which pass 7,021, 7,047 and 7,226 genes outside the
-  list. The list was the gene set of the legacy panel only
-  ([legacy panel](#sec-fs-legacy)).
+![Fractional counts by cell type. (a) Share of fractional entries among the non-zero cells of each gene, one ridge per scored type and time, genes with at least 10 non-zero cells in the type; point: median. (b) Percent of each biotype (`org.Mm.eg.db` gene type) among the mostly fractional genes (more than half of the non-zero entries fractional, orange) and among the genes with integer counts only (blue), per type and time; square-root scale. Data: `fs_tier1_fractional.rds`.](images/feature_selection/fs_tier1_fractional.png){#fig-fs-fractional}
 
-![Gene filters at the three bulk-matched times. (a) Number of the 27,027 deposited genes failing each recorded rule; only the last two rows (fractional share, one-to-one bulk symbol) and the presence gate are applied. (b) Share of fractional non-zero entries per gene, for the genes detected in at least 50 cells; the dashed line is the 0.9 cut (count above it in the label; 2,178 genes in all). (c) Genes entering tier (ii) and in the authors' `SCT` layer (2,944 genes), in tier (ii) only, and in the `SCT` layer only. Source: `gene_filter_summary.csv` and `scored_slots.rds`; `scripts/02_01_vis_quality_control.R`.](images/feature_selection/fs_tier1_gene_filters.png){#fig-fs-gene-filters}
-
-@fig-fs-gene-filters compares the gene rules. The presence gate, which
-asks for detection in every scored type, removes about as many genes as
-the RNA-Sieve rule and more than deMixSC's, but it keeps a different
-set: most genes that enter tier (ii) are outside the authors' `SCT`
-list (panel c).
+![Per-gene mean of $\log(1+x_{gc}/s_c)$ in each scored type, before (top) and after (bottom) the presence gate, one ridge per type and one column per time; $s_c$ is the library size over its median. Label: share of genes whose mean is zero in the type. Data: `fs_tier1_density_filter.rds`.](images/feature_selection/fs_tier1_density_filter.png){#fig-fs-density-filter}
 
 | Time | Cell type | Cells | Scored |
 |---|---|---:|---|
@@ -194,88 +208,101 @@ list (panel c).
 | 96 h | Ectopic pluripotency | 116 | yes |
 | 96 h | Somite differentiation front | 29 | yes |
 
-: Cells per type and time after the slot filter (`output/feature_selection/tier_01/cell_counts.csv` for the scored rows, `author_qc_audit.csv` for all rows). The eleven scored type × time cells are the units of @sec-cov-scope. {#tbl-fs-cell-counts}
+: Cells per type and time after the slot filter (`cell_counts.csv` for the scored rows, `author_qc_audit.csv` for all rows). The eleven scored type × time cells are the units of @sec-cov-scope. {#tbl-fs-cell-counts}
 
 ### Knowledge-driven markers {#sec-fs-markers}
 
-Curated markers are hard prior knowledge: they are united with the
-ranked panel at each time whatever their score, so they are chosen
-without the counts and cannot be a product of the rank. The list is
-short: `data/dictionaries/mouse_gastruloid_signaling_markers.csv`, with
-columns `cell_type_excel` (lineage on the signalling map),
-`cell_type_suppinger` (the matching Suppinger label, or `NA`) and
-`gene_marker`. Symbols are mapped offline with `org.Mm.eg.db`
-(`R/02_01_stats_quality_control.R`), not `biomaRt`. The lineage groups of the
-same file are the gene modules of the tier (iii) filter
-(@sec-fs-bulk-filter).
+Curated lineage and signalling markers
+(`data/dictionaries/suppinger_celltype_markers.csv`) are hard prior
+knowledge: chosen without the counts, they are united with the ranked
+panel at each time whatever their score. Their lineage groups are the
+gene modules of the tier (iii) filter (@sec-fs-bulk-filter). Fifteen of
+the 19 mouse symbols are in the authors' 2,944 `SCT` genes, against
+about 2.1 expected under a uniform draw from the deposited symbols;
+*Myod1*, *Pax6*, *Sox1* and *Tfap2a* are not (@fig-fs-marker-venn).
 
-Fifteen of the 19 mouse symbols are in the 2,944-gene allow-list.
-Under a uniform draw of 19 genes from the 27,027 RNA symbols the
-expected overlap is about 2.1; the hypergeometric upper tail is
-$P(X\ge 15)=8.8\times10^{-12}$ (`marker_sct_hypergeometric.csv`). The
-four absent markers are *Myod1*, *Pax6*, *Sox1* and *Tfap2a*
-(`venn_markers_vs_counts.pdf`).
+![Curated markers against the authors' `SCT` genes. Counts of each region; title: overlap, its expectation under a uniform draw of 19 genes from the 27,027 deposited symbols, and the hypergeometric upper tail. Data: `fs_tier1_marker_venn.rds`.](images/feature_selection/fs_tier1_marker_venn.png){#fig-fs-marker-venn width=70%}
 
 ### Presence gate {#sec-fs-presence}
 
-A gene enters the ranking at a given time only if it is detected, and
-varies, in **every** scored type at that time. With $\delta_{gj}$ the
-fraction of cells of type $j$ with a non-zero count for gene $g$, and
-$v_{gj}$ the within-type variance of the counts,
+With $n_{gj}$ the number of cells of type $j$ in which gene $g$ is
+non-zero and $v_{gj}$ the within-type variance of its counts, a gene
+enters the ranking at a given time only if
 
 $$
-\min_{j}\delta_{gj}\ge\delta_{\min}
+\sum_{j}n_{gj}\ge 20,
+\qquad
+\min_{j}n_{gj}\ge 2
 \quad\text{and}\quad
 \min_{j}v_{gj}>0 .
 $$ {#eq-fs-presence}
 
-`presence_gate()` in `R/02_01_stats_quality_control.R` returns one row per
-gene with `min_detection`, `min_variance` and a logical `pass` that
-applies both conditions; $\delta_{\min}$ is the argument `min_frac`,
-fixed at 0.05 before the ranks are seen (the default and the value of
-every call below). The reasons
-for a gate in every type, rather than in at least one, are in
+The first condition is the gene filter of
+@lueckenCurrentBestPractices2019: a gene must be detected in at least
+as many cells as the smallest cluster of interest, here the 20 cells
+below which a type is not scored. It is computed without labels. The
+two per-type conditions are the necessary conditions for a
+non-singular within-type covariance; with `r min_type` cells, the
+somite differentiation front is the smallest scored type. Their
+reasons, and what they do not guarantee, are in
 [3.1, presence](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-presence).
-In the current outputs the gate is absent. Its absence is one cause of
-the constant-gene fallback of the covariance estimates
-(@sec-cov-scope).
 
 **Projections of the gated genes.** @fig-fs-pca-plsda projects the
-scored cells of each slot on the genes that pass the gate. They are
+scored cells of each slot on the genes that pass the gate. It is
 descriptive, not a selection rule.
 
 - **Input.** The analytic Pearson residuals of the null model $M_0$ of
   @eq-fs-glm (intercept and library-size offset, gene-wise
-  negative-binomial overdispersion, `pearson_residuals_m0()`), the
-  variance-stabilised scale of the tier (ii) count model, without
-  `SCTransform` and without clipping. Genes are centred, not scaled:
-  the residuals are already on a common scale, and scaling would
-  up-weight genes that carry mostly noise. PLS-DA
-  (`mixOmics::plsda()`, two components, cell type as response) uses the
-  same matrix. The shifted logarithm $\log(1+x/s_c)$, centred and
-  scaled, remains available (`input = "shifted_log"`).
-- **Small first axes.** The first two principal components explain
-  together 1.3 % (72 h) to 3.1 % (48 h) of the variance: the type
-  structure is spread over many genes.
-- **Cell line at 48 h.** The epiblast, the large type at 48 h, splits
-  into two clouds, and the panels coloured by cell line show that the
-  split is the cell line. The sign of the first principal component
-  puts 5,301 of the 5,470 B-S (batch 1) epiblast cells on one side and
-  5,081 of the 5,120 SBR (batch 2) cells on the other
-  (`projection_pc1_by_batch.csv`). Even the PLS-DA, fitted to separate
-  the types, separates the two lines on its second component. Cell
-  line is therefore the main source of variation within that type,
-  which is why the labels of tier (ii) are permuted within batch
-  (@sec-fs-omnibus).
+  negative-binomial overdispersion), without `SCTransform` and without
+  clipping, centred and not scaled. The sparse PLS-DA keeps 200 genes
+  per component, with the cell type as response. @sec-fs-projections
+  adds UMAP and the same projections on the authors' `SCT` residuals.
+- **Small first axes.** The first two principal components explain a
+  few per cent of the variance (axis labels): the type structure is
+  spread over many genes.
+- **Cell line at 48 h.** The epiblast splits into two clouds, and the
+  panels coloured by cell line show that the split is the cell line:
+  the sign of the first component puts
+  `r big(epi_side["major", "batch1"])` of the
+  `r big(epi_side["total", "batch1"])` B-S (batch 1) epiblast cells on
+  one side and `r big(epi_side["major", "batch2"])` of the
+  `r big(epi_side["total", "batch2"])` SBR (batch 2) cells on the
+  other. The sPLS-DA, fitted to separate the types, separates the two
+  lines on its second component. Cell line is the main source of
+  variation within that type, which is why the labels of tier (ii) are
+  permuted within batch (@sec-fs-omnibus).
 
-The PLS-DA components put the rare types (naïve and ectopic
-pluripotency, gut) at the ends of the axes.
+![PCA (left) and sparse PLS-DA (right) of the scored cells at 48 h, 72 h and 96 h, on the genes that pass the presence gate. Input: Pearson residuals of $M_0$, centred, not scaled, not clipped; sPLS-DA with two components, 200 genes per component and the cell type as response. One point per cell, coloured by cell type (lineage hue, type shade; largest type drawn first), with each type's number at its median; the second row repeats the 48 h projections coloured by cell line (B-S, batch 1; SBR, batch 2). Axis labels give the share of variance explained; 1:1 aspect. Data: `fs_tier1_pca_plsda.rds`.](images/feature_selection/fs_tier1_pca_plsda.png){#fig-fs-pca-plsda}
 
-![PCA (left) and PLS-DA (right) of the scored cells at 48 h, 72 h and 96 h, on the genes that pass the presence gate (8,643, 8,636 and 8,788 genes). Input: Pearson residuals of $M_0$, centred, not scaled, not clipped; PLS-DA with two components and the cell type as response (`mixOmics::plsda()`). One point per cell, coloured by cell type (largest type drawn first); the PCA panel of each row shares the legend of its PLS-DA panel; the second row repeats the 48 h projections coloured by cell line (B-S, batch 1; SBR, batch 2). Both axes are scores in the same units, so the panels keep a 1:1 aspect. Axis labels give the share of variance explained. Source: `scored_slots.rds`; `scripts/02_01_vis_quality_control.R`.](images/feature_selection/fs_tier1_pca_plsda.png){#fig-fs-pca-plsda}
+::: {#wrn-fs-tier1-choices .callout-warning}
+## Choices of tier (i) that shape the panel
+
+- **Two artefact labels are dropped.** The Cd63+ ectoderm-like and
+  Zscan4+ cells are treated as culture-stress artefacts; any signal
+  they carry is absent from every later tier.
+- **Rare types are dropped.** A type with fewer than 20 cells in a slot
+  is not scored (exiting naïve pluripotency at 72 h). Its genes can
+  still enter the panel through the other types, but its own moments
+  are never estimated.
+- **Hard thresholds.** The gate uses fixed numbers (20 cells in the
+  slot, 2 cells and a positive variance in every type), set before the
+  ranks were seen. A gene just below them is lost whatever its effect.
+- **The per-type conditions use the labels.** They are not independent
+  of the tier (ii) test of the type effect, which the gene filters
+  computed without labels are
+  [3.1, QC](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-qc).
+- **Perfect markers are removed.** A gene that is zero in a whole type
+  fails the gate, however well it separates that type.
+- **Fractional counts are kept.** Genes of multi-copy loci stay in the
+  panel with counts set by the Alevin split; their within-type
+  correlations are partly technical.
+:::
 
 {{< pagebreak >}}
 
 ## Tier (ii): cross-cell consistency {#sec-fs-consistency}
+
+[Numbers to rerun: the results below were computed on the earlier tier (i) panel (2,178 mostly fractional genes dropped, 5 % presence gate). Rerun `scripts/02_02_*` and `scripts/02_03_*` after `scripts/02_01_stats_quality_control.R`.]{.highlight}
 
 A gene is kept when its counts separate the scored types consistently
 across the cells of one slot. The theory, and the comparison of the
@@ -454,7 +481,8 @@ tests <- lapply(times, function(tm) {
     seed = 20261101L,
     strata = batch[[tm]],
     fdr = 0.05,
-    min_frac = 0.05
+    min_cells_total = 20L,
+    min_cells_type = 2L
   )
 })
 names(tests) <- times
@@ -578,6 +606,8 @@ within-batch permutations) is the next step.]{.highlight}
 {{< pagebreak >}}
 
 ## Tier (iii): cross-platform consistency {#sec-fs-bulk-consistency}
+
+[Numbers to rerun: the results below were computed on the earlier tier (i) panel (2,178 mostly fractional genes dropped, 5 % presence gate). Rerun `scripts/02_02_*` and `scripts/02_03_*` after `scripts/02_01_stats_quality_control.R`.]{.highlight}
 
 This tier compares the bulk with the single-cell reference, so it needs
 a matched bulk (@fig-suppinger-design). It removes genes whose bulk
@@ -1128,8 +1158,11 @@ range_flags <- lapply(times, function(tm) {
 })
 
 # Step 2: tail statements per gene and per module, and the quantile band.
-dict <- utils::read.csv("data/dictionaries/mouse_gastruloid_signaling_markers.csv")
-map <- map_marker_symbols(dict$gene_marker, universe = rownames(sc[["48h"]]))
+dict <- utils::read.csv(
+  "data/dictionaries/suppinger_celltype_markers.csv",
+  na.strings = c("", "NA")
+)
+map <- map_marker_symbols(unique(stats::na.omit(dict$gene_marker)), universe = rownames(sc[["48h"]]))
 dict$gene <- map$mouse_symbol[match(dict$gene_marker, map$gene_marker)]
 modules <- lapply(
   split(dict$gene, dict$cell_type_excel),
@@ -1252,7 +1285,7 @@ columns of @tbl-fs-new-rank-columns.
 |---|---|---|
 | Identifiers | `time_point`, `gene` | slot |
 | Tier (i) gene rules | `fractional_share`, `in_sct_layer`, `shared_with_bulk` | `fractional_count_share()`, `gene_filter_rules()` |
-| Presence gate | `min_detection`, `weakest_type`, `pass_presence` | `presence_gate()` |
+| Presence gate | `n_detected`, `min_type_cells`, `weakest_type`, `pass_presence` | `presence_gate()` |
 | Fits and effect size | `overdispersion`, `deviance_m0`, `deviance_m1`, `deviance_r2` | `compare_type_effect_tests()` |
 | Four tests | `<test>_stat`, `<test>_pval`, `<test>_padj`, `<test>_pass` for `lr`, `anova_vst`, `ql_f`, `welch_perm` | same |
 | Gate and rank | `gate_test`, `adj_pval`, `pass_fdr`, `rank`, `selected` | `rank_genes_omnibus()` |
@@ -1515,3 +1548,56 @@ scored in that slot (@sec-fs-markers). At 48 h the leading equal-cell
 ratios land on naïve-pluripotency markers; at 96 h the top gene is the
 endoderm marker *Sox17*. The residual clip changes only the far tail of
 these ratios.
+
+## Projections of tier (i) {#sec-fs-projections .appendix}
+
+The projections of @fig-fs-pca-plsda, with UMAP added and repeated on
+the authors' `SCT` residuals (the `scale.data` layer of the `SCT` assay,
+2,944 genes), as in the exploration of
+@suppingerMultimodalCharacterizationMurine2023 (Fig. 1B, S2A). Each
+input is centred, not scaled; UMAP (`uwot`) runs on its first 30
+principal components with 30 neighbours and a fixed seed, and is a
+nonlinear map: distances and areas on its axes are not the original
+distances. The sPLS-DA keeps 200 genes per component.
+
+::: {.column-screen}
+![PCA, UMAP and sPLS-DA of the scored cells per time (rows) on the Pearson residuals of $M_0$, genes passing the presence gate. Colours and numbers as in @fig-fs-pca-plsda. Data: `fs_tier1_projections_pearson.rds`.](images/feature_selection/fs_tier1_projections_pearson.png){#fig-fs-projections-pearson}
+:::
+
+::: {.column-screen}
+![PCA, UMAP and sPLS-DA of the scored cells per time (rows) on the authors' `SCT` residuals. Data: `fs_tier1_projections_sct.rds`.](images/feature_selection/fs_tier1_projections_sct.png){#fig-fs-projections-sct}
+:::
+
+::: {.column-screen}
+![One UMAP of the scored cells of the three times on the authors' `SCT` residuals, drawn once per time: cells of that time coloured by type, with each type's number at its median, the others in grey (as in Fig. S2A of @suppingerMultimodalCharacterizationMurine2023). Data: `fs_tier1_umap_pooled.rds`.](images/feature_selection/fs_tier1_umap_pooled.png){#fig-fs-umap-pooled}
+:::
+
+## Code of tier (i) {#sec-fs-code .appendix}
+
+Functions are in `R/02_01_stats_quality_control.R` (statistics),
+`R/02_01_vis_quality_control.R` (figures) and `R/02_00_utils.R`
+(shared). `scripts/02_01_stats_quality_control.R` writes
+`output/feature_selection/tier_01/` (`cell_counts.csv`,
+`author_qc_audit.csv`, `gene_filter_summary.csv` and `scored_slots.rds`,
+tracked with DVC: `dvc pull output/feature_selection/tier_01/scored_slots.rds.dvc`);
+`scripts/02_01_vis_quality_control.R` draws the figures, each with the
+`.rds` of its data in `output/feature_selection/tier_01/figures/`.
+
+| Function or script | Purpose | Supports |
+|---|---|---|
+| `keep_bulk_matched_cells()` | cells at 48, 72 or 96 h, with a label and a positive library size | @sec-fs-qc-applied |
+| `scored_types()` | types allowed by the dictionary with at least `min_cells` cells in the slot | @tbl-fs-cell-counts |
+| `read_bulk_htseq()`, `shared_bulk_single_cell_genes()` | bulk table; symbols shared one-to-one with the bulk | @tbl-fs-qc-compare |
+| `drop_mitochondrial_genes()`, `cell_mitochondrial_fraction()` | guards: no `mt-` symbol is deposited, so they remove nothing and return `NA` | @tbl-fs-qc-compare |
+| `fractional_count_share()`, `fractional_by_group()` | share of fractional non-zero entries per gene, over all cells and per type and time | @fig-fs-fractional |
+| `gene_biotypes()` | `org.Mm.eg.db` gene type of each symbol | @fig-fs-fractional |
+| `cell_qc_rules()` | record of the cell rules not applied (library-size MADs, deMixSC cut-offs) | @tbl-fs-qc-compare |
+| `presence_gate()`, `gene_filter_rules()` | presence gate (@eq-fs-presence): `min_cells_total = 20`, `min_cells_type = 2` | @sec-fs-presence |
+| `prepare_scored_counts()` | slots of scored cells and kept genes; `max_fractional_share = 1` keeps every gene | @sec-fs-qc-applied |
+| `map_marker_symbols()` | offline mapping of the curated markers to mouse symbols (`org.Mm.eg.db`) | @sec-fs-markers |
+| `pearson_residuals_m0()`, `projection_input()` | analysis scale of the projections (Pearson residuals of $M_0$, shifted log, `SCT` residuals) | @sec-fs-presence |
+| `project_slot()`, `plot_type_pca_plsda()`, `plot_pooled_umap()` | PCA, UMAP and sPLS-DA (`keepX = 200`) | @fig-fs-pca-plsda, @sec-fs-projections |
+| `celltype_colours()`, `celltype_lineages()`, `celltype_scale()` | nested lineage colours and grouped legend (`data/dictionaries/suppinger_celltype_colours.csv`) | all figures |
+| `save_figure()` | PDF, PNG and the `.rds` of the figure's data | all figures |
+
+: Code of tier (i). {#tbl-fs-code}

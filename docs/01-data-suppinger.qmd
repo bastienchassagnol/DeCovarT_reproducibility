@@ -132,13 +132,7 @@ CCA integration, chosen over all twelve time points and both batches.
 Two products of that workflow are used here: the cell-type labels
 (`celltypeannotation`), and that 2,944-gene list, which was the gene
 allow-list of the legacy panel only; the current tier (i) starts from
-the raw counts and records the list for comparison (@sec-fs-qc). The
-authors' residuals themselves are not used: the
-ranking fits its own negative-binomial GLMs per time slot
-(@sec-fs-glm), the legacy panel refitted `SCTransform` v2 per slot
-([legacy SCTransform fit](02-feature-selection.qmd#sec-fs-sct)),
-and the covariances are estimated from raw counts
-(@sec-cov-inputs).
+the raw counts and records the list for comparison (@sec-fs-qc). 
 
 ![Seurat workflow used to extract embeddings and downstream analyses on
 GSE229513.](images/suppinger_seurat_workflow_single_cell.png){#fig-seurat-workflow}
@@ -149,7 +143,7 @@ GSE229513.](images/suppinger_seurat_workflow_single_cell.png){#fig-seurat-workfl
 annotated type proportions along gastruloid time. They are not a
 reconstruction of embryonic lineages. Two annotated states are treated
 as technical artefacts of culture stress (Cd63+ ectoderm-like artefact
-and Zscan4+ artefact, `data/dictionaries/suppinger_celltype_crosswalk.csv`).
+and Zscan4+ artefact, `data/dictionaries/suppinger_celltype_markers.csv`).
 The working caudal sequence after the Chir/Wnt pulse is pluripotency
 $\to$ epiblast $\to$ primitive streak $\to$ caudal mesoderm / NMP
 $\to$ pre-somitic mesoderm / somites, with a residual endoderm bias

@@ -167,7 +167,8 @@ welch_g_stat <- function(s1, s2, n_j, tot, tot2) {
 #'   Labels are permuted within each stratum, so the type counts of
 #'   every stratum are kept. Default `NULL`: one stratum.
 #' @param fdr BH level used for the `<test>_pass` columns. Default `0.05`.
-#' @param min_frac Passed to [presence_gate()]. Default `0.05`.
+#' @param min_cells_total,min_cells_type Passed to [presence_gate()].
+#'   Defaults `20` and `2`.
 #' @param tests Tests to compute; any of `"lr"`, `"anova_vst"`, `"ql_f"`,
 #'   `"welch_perm"`. The M0 and M1 fits behind `deviance_r2` always run.
 #' @param vst_alpha Overdispersion fixed in the shifted logarithm.
@@ -179,7 +180,7 @@ welch_g_stat <- function(s1, s2, n_j, tot, tot2) {
 #'   (M1, gene-wise), `deviance_m0`, `deviance_m1`, `deviance_r2`, then
 #'   for each test `<test>_stat`, `<test>_pval`, `<test>_padj` and
 #'   `<test>_pass`. Attributes: `n_perm`, `seed`, `n_strata`, `fdr`,
-#'   `min_frac`, `tests`, `vst_alpha`, `df1` (`J - 1`) and `df2`
+#'   `min_cells_total`, `min_cells_type`, `tests`, `vst_alpha`, `df1` (`J - 1`) and `df2`
 #'   (`C - J`).
 compare_type_effect_tests <- function(
   counts,
@@ -189,7 +190,8 @@ compare_type_effect_tests <- function(
   seed = NULL,
   strata = NULL,
   fdr = 0.05,
-  min_frac = 0.05,
+  min_cells_total = 20L,
+  min_cells_type = 2L,
   tests = c("lr", "anova_vst", "ql_f", "welch_perm"),
   vst_alpha = 0.05,
   perm_block = 250L,
@@ -230,7 +232,7 @@ compare_type_effect_tests <- function(
     stop("`vst_alpha` must be one positive number.")
   }
 
-  gate <- presence_gate(counts, cell_type, min_frac)
+  gate <- presence_gate(counts, cell_type, min_cells_total, min_cells_type)
   n_genes <- nrow(counts)
   out <- data.frame(
     gene = gate$gene,
@@ -257,7 +259,8 @@ compare_type_effect_tests <- function(
   attr(out, "seed") <- seed
   attr(out, "n_strata") <- length(unique(strata))
   attr(out, "fdr") <- fdr
-  attr(out, "min_frac") <- min_frac
+  attr(out, "min_cells_total") <- min_cells_total
+  attr(out, "min_cells_type") <- min_cells_type
   attr(out, "tests") <- tests
   attr(out, "vst_alpha") <- vst_alpha
   attr(out, "df1") <- df1
@@ -557,7 +560,8 @@ rank_genes_omnibus <- function(
   cell_type,
   size_factors,
   fdr = 0.05,
-  min_frac = 0.05,
+  min_cells_total = 20L,
+  min_cells_type = 2L,
   n_select = 500L,
   gate_test = c("welch_perm", "ql_f", "lr", "anova_vst"),
   results = NULL,
@@ -570,7 +574,8 @@ rank_genes_omnibus <- function(
       cell_type,
       size_factors,
       fdr = fdr,
-      min_frac = min_frac,
+      min_cells_total = min_cells_total,
+      min_cells_type = min_cells_type,
       tests = gate_test,
       ...
     )

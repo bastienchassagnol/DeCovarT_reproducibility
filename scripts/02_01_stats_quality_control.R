@@ -3,12 +3,12 @@
 #   scripts/02_01_stats_quality_control.R \
 #   > "logs/02_01_stats_quality_control_$(date +%F).log" 2>&1 &
 #
-# Tier (i) cell and gene filters, and the record of the literature QC
-# rules against the authors' choices. Writes three summary CSVs and one
-# RDS (tracked with DVC) holding every table. Does not call
-# Seurat::SCTransform(): only the gene names of the authors' SCT layer
-# and their integration anchor features are read, for comparison. The
-# mean model of later tiers is glmGamPoi::glm_gp().
+# Tier (i) cell and gene filters. Writes three summary CSVs and one RDS
+# (tracked with DVC) holding every table. Does not call
+# Seurat::SCTransform(): the authors' SCT residuals are read only for the
+# appendix projections, and their gene names for comparison. The mean
+# model of later tiers is glmGamPoi::glm_gp(). Fractional (multi-mapping)
+# counts are kept as they are.
 
 # ==========================================================================
 # SECTION 0 · Dependencies and paths ----
@@ -19,9 +19,9 @@ suppressPackageStartupMessages(library(Matrix))
 source(file.path(root, "R", "02_00_utils.R"))
 source(file.path(root, "R", "02_01_stats_quality_control.R"))
 
-min_cells <- 20L
-min_frac <- 0.05
-max_fractional_share <- 0.9
+min_cells <- 20L # smallest scored type, and Luecken & Theis' gene rule
+min_cells_type <- 2L # non-zero cells per type: non-singular covariance
+max_fractional_share <- 1 # keep every gene, fractional counts included
 time_levels <- c("48h", "72h", "96h")
 cell_type_col <- "celltypeannotation"
 batch_col <- "batch"
@@ -71,6 +71,14 @@ meta <- seu@meta.data
 # gene names are used, to compare with the filters below.
 sct_genes <- rownames(assay_matrix(seu, "SCT", "counts"))
 anchor_features <- seu@commands$FindIntegrationAnchors@params$anchor.features
+# Authors' SCT Pearson residuals, for the appendix projections only.
+sct_layer <- "scale.data"
+sct_resid <- assay_matrix(seu, "SCT", sct_layer)
+if (is.null(sct_resid) || nrow(sct_resid) == 0L) {
+  sct_layer <- "data"
+  sct_resid <- assay_matrix(seu, "SCT", sct_layer)
+}
+message("SCT layer for the projections: ", sct_layer, " (", nrow(sct_resid), " genes)")
 rm(seu)
 gc()
 
@@ -86,13 +94,15 @@ batch <- as.character(meta[[batch_col]])
 # of the authors' SCT models; meta$nCount_RNA describes another matrix.
 library_size <- Matrix::colSums(counts)
 
-crosswalk <- utils::read.csv(
-  file.path(dict_dir, "suppinger_celltype_crosswalk.csv"),
+# Cell types and curated markers (one row per type x marker group x gene).
+type_markers <- utils::read.csv(
+  file.path(dict_dir, "suppinger_celltype_markers.csv"),
   stringsAsFactors = FALSE,
+  na.strings = c("", "NA"),
   fileEncoding = "UTF-8"
 )
 allowed <- unique(
-  crosswalk$celltypeannotation[crosswalk$include_in_ranking]
+  type_markers$celltypeannotation[type_markers$include_in_ranking %in% TRUE]
 )
 
 # ==========================================================================
@@ -174,18 +184,11 @@ write_out(slot_counts, "cell_counts.csv")
 # ==========================================================================
 
 # Gene-level facts that do not depend on the slot.
-sct_min_cells <- vapply(
-  split(seq_len(ncol(counts)), batch),
-  function(idx) Matrix::rowSums(counts[, idx, drop = FALSE] > 0) >= 5L,
-  logical(nrow(counts))
-)
 gene_facts <- data.frame(
   gene = rownames(counts),
   n_nonzero = fractional$n_nonzero,
   fractional_share = fractional$fractional_share,
-  fail_fractional = fractional$dropped,
   shared_with_bulk = fractional$shared_with_bulk,
-  sct_modelled_every_batch = apply(sct_min_cells, 1L, all),
   in_sct_layer = rownames(counts) %in% sct_genes,
   in_anchor_features = rownames(counts) %in% anchor_features,
   stringsAsFactors = FALSE
@@ -198,7 +201,8 @@ gene_rules <- do.call(
     rules <- gene_filter_rules(
       counts[, slot$cells, drop = FALSE],
       slot$cell_type,
-      min_frac = min_frac
+      min_cells_total = min_cells,
+      min_cells_type = min_cells_type
     )
     rules$time_point <- tm
     rules$enters_tier_ii <- rules$pass_presence &
@@ -216,12 +220,8 @@ gene_rule_summary <- do.call(
       rule = c(
         "deposited genes",
         "zero in every cell of the slot",
-        "detected in fewer than 5 cells of a batch (sctransform min_cells)",
-        "detected in < 5 % of the cells of the slot (deMixSC)",
-        "detected in < 20 % of the cells of every type (RNA-Sieve)",
-        "fractional share above 0.9",
         "not shared one-to-one with the bulk",
-        "fails the presence gate (>= 5 % in every scored type, variance > 0)",
+        "fails the presence gate (>= 20 cells, >= 2 in every type, variance > 0)",
         "in the authors' SCT layer (integration features)",
         "enters tier (ii)",
         "enters tier (ii) and in the SCT layer"
@@ -229,10 +229,6 @@ gene_rule_summary <- do.call(
       genes = c(
         nrow(r),
         sum(r$all_zero),
-        sum(!r$sct_modelled_every_batch),
-        sum(r$fail_demixsc),
-        sum(r$fail_rnasieve),
-        sum(r$fail_fractional),
         sum(!r$shared_with_bulk),
         sum(!r$pass_presence),
         sum(r$in_sct_layer),
@@ -249,21 +245,41 @@ gc()
 
 presence <- lapply(time_levels, function(tm) {
   slot <- prepared$slots[[tm]]
-  gate <- presence_gate(slot$counts, slot$cell_type, min_frac = min_frac)
+  gate <- presence_gate(
+    slot$counts,
+    slot$cell_type,
+    min_cells_total = min_cells,
+    min_cells_type = min_cells_type
+  )
   gate$time_point <- tm
   gate
 })
 names(presence) <- time_levels
 
-markers <- utils::read.csv(
-  file.path(dict_dir, "mouse_gastruloid_signaling_markers.csv"),
-  stringsAsFactors = FALSE,
-  fileEncoding = "UTF-8"
-)
 symbol_map <- map_marker_symbols(
-  markers = markers$gene_marker,
+  markers = unique(stats::na.omit(type_markers$gene_marker)),
   universe = rownames(prepared$slots[["48h"]]$counts)
 )
+
+# Fractional entries per gene, type and time (scored cells), and the
+# biotype of every gene, for the fractional-count figure.
+fractional_group <- do.call(
+  rbind,
+  lapply(time_levels, function(tm) {
+    slot <- prepared$slots[[tm]]
+    out <- fractional_by_group(slot$counts, slot$cell_type)
+    names(out)[names(out) == "group"] <- "cell_type"
+    out$time_point <- tm
+    out
+  })
+)
+biotype <- gene_biotypes(rownames(prepared$slots[[1L]]$counts))
+
+# Authors' SCT residuals of the scored cells, one matrix per slot.
+sct_slots <- lapply(prepared$slots, function(slot) {
+  as.matrix(sct_resid[, slot$cells, drop = FALSE])
+})
+rm(sct_resid)
 
 saveRDS(
   list(
@@ -274,6 +290,10 @@ saveRDS(
     dropped_mt = prepared$dropped_mt,
     mito = prepared$mito,
     fractional = fractional,
+    fractional_group = fractional_group,
+    biotype = biotype,
+    sct_slots = sct_slots,
+    sct_layer = sct_layer,
     gene_rules = gene_rules,
     presence = presence,
     cell_qc = cell_qc,
@@ -281,7 +301,7 @@ saveRDS(
     sct_genes = sct_genes,
     anchor_missing = setdiff(anchor_features, sct_genes),
     min_cells = min_cells,
-    min_frac = min_frac,
+    min_cells_type = min_cells_type,
     max_fractional_share = max_fractional_share,
     time_levels = time_levels
   ),

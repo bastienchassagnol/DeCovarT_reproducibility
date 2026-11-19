@@ -94,6 +94,8 @@ module <- chk[chk$check == "leave-one-module-out", ]
 
 ## What is being compared {#sec-deconv-models}
 
+[Numbers to rerun: they were computed on the panel of the earlier tier (i), which dropped the 2,178 mostly fractional genes and used the 5 % presence gate. Tier (i) now keeps every gene and applies the gate of @eq-fs-presence (@sec-fs-qc-applied).]{.highlight}
+
 DeCovarT deconvolves bulk profiles with both a mean signature and a
 per-type covariance. Every method below uses the same gene panel and
 the same labelled single-cell reference; they differ in what they

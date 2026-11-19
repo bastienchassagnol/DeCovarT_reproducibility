@@ -21,7 +21,8 @@ source(file.path(root, "R", "02_02_stats_cross_cell.R"))
 
 n_perm <- 2000L
 fdr <- 0.05
-min_frac <- 0.05
+min_cells_total <- 20L # Luecken and Theis (2019): smallest type of interest
+min_cells_type <- 2L
 n_select <- Inf # every gene passing the BH gate; no cap
 gate_test <- "welch_perm"
 seed_fit <- 20261101L
@@ -75,7 +76,8 @@ tests <- lapply(times, function(tm) {
     seed = seed_fit,
     strata = slot$batch,
     fdr = fdr,
-    min_frac = min_frac
+    min_cells_total = min_cells_total,
+    min_cells_type = min_cells_type
   )
 })
 names(tests) <- times
@@ -101,7 +103,8 @@ null_tests <- lapply(times, function(tm) {
     seed = seed_null_fit,
     strata = slot$batch,
     fdr = fdr,
-    min_frac = min_frac
+    min_cells_total = min_cells_total,
+    min_cells_type = min_cells_type
   )
   keep <- c("gene", grep("_pval$", names(res_null), value = TRUE))
   res_null[res_null$pass_presence, keep, drop = FALSE]

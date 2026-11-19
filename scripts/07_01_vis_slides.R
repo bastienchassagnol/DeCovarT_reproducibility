@@ -63,7 +63,8 @@ for (job in deck) {
     png_dir = NULL,
     width = 8,
     height = 6,
-    dpi = 300
+    dpi = 300,
+    data = NULL
   ) {
     if (!name %in% job$figures) {
       return(invisible(NULL))
@@ -126,9 +127,9 @@ if (!requireNamespace("ComplexUpset", quietly = TRUE)) {
 }
 
 prepared <- readRDS(slots_path)
-colours <- celltype_colours(
-  file.path(root, "data", "dictionaries", "suppinger_celltype_colours.csv")
-)
+colour_path <- file.path(root, "data", "dictionaries", "suppinger_celltype_colours.csv")
+colours <- celltype_colours(colour_path)
+lineages <- celltype_lineages(colour_path)
 png_dir <- file.path(root, "slides", "images", "feature_selection")
 dir.create(png_dir, recursive = TRUE, showWarnings = FALSE)
 line_label <- c(batch1 = "B-S (batch 1)", batch2 = "SBR (batch 2)")
@@ -136,10 +137,10 @@ line_colours <- c("B-S (batch 1)" = "#1d4e89", "SBR (batch 2)" = "#c45c26")
 
 upset_panels <- lapply(prepared$time_levels, function(tm) {
   slot <- prepared$slots[[tm]]
-  rules <- gene_filter_rules(slot$counts, slot$cell_type)
+  gate <- presence_gate(slot$counts, slot$cell_type)
   flags <- data.frame(
-    `Outside the presence gate` = !rules$pass_presence,
-    `Under 20% in every type` = rules$fail_rnasieve,
+    `Outside the presence gate` = !gate$pass,
+    `Under 20% in every type` = apply(attr(gate, "detection"), 1L, max) < 0.2,
     check.names = FALSE
   )
   ComplexUpset::upset(
@@ -175,6 +176,7 @@ for (tm in prepared$time_levels) {
     cell_type = slot$cell_type,
     size_factors = slot$library_size / stats::median(slot$library_size),
     colours = colours,
+    lineages = lineages,
     input = "pearson",
     groups = groups,
     group_colours = list("Cell line" = line_colours)

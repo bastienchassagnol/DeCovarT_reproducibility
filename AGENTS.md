@@ -4,6 +4,34 @@ Standing guidance is `.cursor/rules/` (Cursor) and `.claude/rules/` (Claude Code
 
 Division of content: the DeCovarT vignettes hold the theory (models, assumptions, literature, reasons for each choice); this book holds the practice (Suppinger data, algorithms as implemented, settings, code, outputs) and links to vignette anchors instead of restating theory.
 
+## Book chapters (`docs/`)
+
+- **Scope.** The scope section of a chapter is one or two sentences: what the
+  chapter builds, from which data, and the vignette it applies.
+- **Code goes to the appendix.** The body does not walk through functions,
+  scripts or output files. Each chapter ends with an appendix section
+  (`## Code {#sec-<chapter>-code .appendix}`) holding one table: function or
+  script, file, purpose, and the section it supports (`@sec-…`).
+- **Verbatim names.** Function, method, argument, package, file, column and
+  layer names are always in backticks: `presence_gate()`, `min_cells`,
+  `glmGamPoi`, `scored_slots.rds`.
+- **Options not taken.** Report the filters and thresholds that were
+  applied. Filters considered but not applied go to a table footnote
+  (`tinytable::tt(notes = ...)`) or to the vignette, not to the body.
+- **Figures.** Every saved figure has, in the same folder and with the same
+  base name, an `.rds` holding the minimal data to redraw it: a tibble, or a
+  named list of tibbles (data, annotations, settings). `save_figure(data = )`
+  in `R/02_00_utils.R` writes it. Bars, lollipops and box plots are ordered by
+  decreasing value. A figure that needs the full page width uses
+  [the full-width trick](https://www.productive-r-workflow.com/quarto-tricks#full-width-graph):
+  `#| column: screen` and `#| out-width: 100%` on the chunk, or
+  `::: {.column-screen}` around a static image (`.column-page` keeps the
+  margins).
+- **Dictionaries.** Every variable read from the Suppinger data or from
+  `data/dictionaries/` is documented (meaning, units, allowed values, missing
+  coding, source) in `data/dictionaries/suppinger_metadata_dictionary.csv`.
+  A new column or dictionary file adds its rows there in the same change.
+
 ## Skills and rules: where they live, which one wins
 
 Source of truth: `Config/.cursor/` in
