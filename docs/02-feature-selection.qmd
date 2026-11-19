@@ -302,8 +302,6 @@ descriptive, not a selection rule.
 
 ## Tier (ii): cross-cell consistency {#sec-fs-consistency}
 
-[Numbers to rerun: the results below were computed on the earlier tier (i) panel (2,178 mostly fractional genes dropped, 5 % presence gate). Rerun `scripts/02_02_*` and `scripts/02_03_*` after `scripts/02_01_stats_quality_control.R`.]{.highlight}
-
 A gene is kept when its counts separate the scored types consistently
 across the cells of one slot. The theory, and the comparison of the
 four tests, are in
@@ -531,7 +529,7 @@ panel <- unique(unlist(lapply(ranked, function(r) r$gene[r$selected])))
 ```
 
 **Results.** `scripts/02_02_stats_cross_cell_consistency.R` has been
-run (21 min, 23 GB peak memory). Its outputs in
+run (24 min). Its outputs in
 `output/feature_selection/tier_02/` are `calibration.csv`,
 `permutation_floor.csv`, `kendall_<time>.csv`, `selected_<time>.csv`
 and `cross_cell.rds` (every test table, tracked with DVC); the figures
@@ -539,29 +537,29 @@ are drawn by `scripts/02_02_vis_cross_cell.R`.
 
 - **Calibration.** Under one within-batch permutation of the labels
   (@fig-fs-null-calibration), the analytic tests are anti-conservative
-  at 48 h: at the 0.01 level the likelihood ratio rejects 2.9 times the
-  nominal rate, the quasi-likelihood $F$ 2.8 times and the
-  shifted-log ANOVA 3.4 times. A within-batch permutation keeps the
+  at 48 h: at the 0.01 level the likelihood ratio rejects 2.7 times the
+  nominal rate, the quasi-likelihood $F$ 2.6 times and the
+  shifted-log ANOVA 3.7 times. A within-batch permutation keeps the
   association between type and cell line, and these tests do not
   model the cell line, so its effect reads as a type effect. The
-  permuted Welch $G$ rejects 0.63 times the nominal rate there. At
+  permuted Welch $G$ rejects 0.59 times the nominal rate there. At
   72 h and 96 h, one batch each, every test is at or below its
-  nominal rate except the ANOVA (1.2 to 1.4 times at 0.01).
-- **Gate.** The permuted Welch $G$ passes 1,417 (48 h), 3,420 (72 h)
-  and 5,821 (96 h) of the 8,643, 8,636 and 8,788 tested genes at BH
-  0.05. The genes at the floor $1/(B+1)$ (635, 1,686 and 2,869) far
-  exceed the about 87 needed for all of them to pass
+  nominal rate except the ANOVA (1.5 to 1.6 times at 0.01).
+- **Gate.** The permuted Welch $G$ passes 1,360 (48 h), 3,617 (72 h)
+  and 5,893 (96 h) of the 9,633, 10,751 and 9,761 tested genes at BH
+  0.05. The genes at the floor $1/(B+1)$ (637, 1,806 and 2,920) far
+  exceed the 96 to 107 needed for all of them to pass
   (`permutation_floor.csv`), so the floor does not limit the gate.
 - **Agreement.** Kendall's $\tau$ between the likelihood ratio and the
   quasi-likelihood $F$ is 0.98 at every time; between the permuted
-  Welch $G$ and the other three it is 0.68 to 0.80
+  Welch $G$ and the other three it is 0.65 to 0.72
   (@fig-fs-test-agreement).
 - **Panel.** Every gated gene enters the panel (@fig-fs-gate-rank):
-  1,417, 3,420 and 5,821 genes at 48, 72 and 96 h, 6,604 across the
+  1,360, 3,617 and 5,893 genes at 48, 72 and 96 h, 6,749 across the
   three times (`selected_<time>.csv`, ordered by $R^{2}_{D}$). The
-  largest $R^{2}_{D}$ is 0.60 (*Slc2a3* at 96 h), but 99 % (48 h),
-  96 % (72 h) and 89 % (96 h) of the gated genes explain less than 5 %
-  of the deviance (median $R^{2}_{D}$ 0.003, 0.005 and 0.010): real but
+  largest $R^{2}_{D}$ is 0.66 (*Gpx2* at 96 h), but 99 % (48 h),
+  96 % (72 h) and 88 % (96 h) of the gated genes explain less than 5 %
+  of the deviance (median $R^{2}_{D}$ 0.003, 0.006 and 0.010): real but
   small effects, whose weight is the relevance question left to the
   model (tier (iv)).
 - **Overdispersion.** The gene-wise $1/\psi_g$ decreases with the mean
@@ -593,10 +591,10 @@ effect-size floor. The earlier rule kept the 500 genes with the largest
 $R^{2}_{D}$ per time; it came from the legacy panel and had no
 data-driven basis, so it is removed, and no threshold on $R^{2}_{D}$
 replaces it. The panel is every gene that passes the calibrated gate
-(permuted Welch $G$, BH at 0.05): 1,417, 3,420 and 5,821 genes at 48,
-72 and 96 h, 6,604 across the three times. The gate controls false
+(permuted Welch $G$, BH at 0.05): 1,360, 3,617 and 5,893 genes at 48,
+72 and 96 h, 6,749 across the three times. The gate controls false
 discoveries, not relevance: with thousands of cells per slot, 99 %
-(48 h), 96 % (72 h) and 89 % (96 h) of the gated genes explain less
+(48 h), 96 % (72 h) and 88 % (96 h) of the gated genes explain less
 than 5 % of the deviance. Weighting these small effects is left to the
 model (tier (iv), @sec-fs-weighting-pointer). Open question: if the
 fit of tier (iv) cannot absorb them, an effect-size floor chosen from
@@ -606,8 +604,6 @@ within-batch permutations) is the next step.]{.highlight}
 {{< pagebreak >}}
 
 ## Tier (iii): cross-platform consistency {#sec-fs-bulk-consistency}
-
-[Numbers to rerun: the results below were computed on the earlier tier (i) panel (2,178 mostly fractional genes dropped, 5 % presence gate). Rerun `scripts/02_02_*` and `scripts/02_03_*` after `scripts/02_01_stats_quality_control.R`.]{.highlight}
 
 This tier compares the bulk with the single-cell reference, so it needs
 a matched bulk (@fig-suppinger-design). It removes genes whose bulk
@@ -687,7 +683,7 @@ condition.
 - **Apply (planned, not applied).** The rule was to remove a gene
   flagged at any of the three matched times from the panel at every
   time, including the early-Wnt arm. The run below shows that the
-  model-based statements flag 93 to 95 % of the panel under A3, and
+  model-based statements flag 92 to 95 % of the panel under A3, and
   still 70 to 72 % after a cross-fitted gene-wise platform ratio, so
   the rule is not applied (see **Results**).
 - **Drift across times.** With three matched times the flags can be
@@ -864,13 +860,13 @@ the Chernoff statements.
 - **Multiplicity, two counts.** The level 0.01 per tail is per gene.
   In the vignette, that level flags about 60 consistent genes out of
   about 3,000: that count is the vignette's one comparison. Here, the
-  Suppinger panel is 6,615 genes times three replicates, which would
+  Suppinger panel is 6,759 genes times three replicates, which would
   give about 200 (gene, replicate) flags per tail and statement if the
-  model held. The run flags about 6,200 genes (below).
+  model held. The run flags about 6,300 genes (below).
 
-**Results.** The panel is the 6,604 genes that pass the tier (ii)
-gate at any time, united with the mapped markers: 6,616 genes, of which
-6,615 are in each slot. All three variants below run on that panel.
+**Results.** The panel is the 6,749 genes that pass the tier (ii)
+gate at any time, united with the mapped markers: 6,759 genes, all of
+them in each slot. All three variants below run on that panel.
 
 - **What the tail statements assume.** Every statement T1 to T5 tests
   $D_{gi}$ against its spread under assumption A3: each gene has the
@@ -886,7 +882,7 @@ gate at any time, united with the mapped markers: 6,616 genes, of which
   their variance about 300 times larger, than A3 allows; 91 to 92 % of
   the (gene, replicate) values lie beyond $\pm2.33$, where 2 % are
   expected (@fig-fs-a3-shift). T4, the most conservative per gene,
-  flags 6,147 (48 h), 6,220 (72 h) and 6,274 (96 h) of the 6,615 genes
+  flags 6,233 (48 h), 6,328 (72 h) and 6,401 (96 h) of the 6,759 genes
   (`a3_shift_summary.csv`, @fig-fs-tail-flags). These flags measure the
   failure of A3, not a defect of individual genes.
 - **The discrepancy is a gene-wise ratio.** For each gene and time,
@@ -895,18 +891,18 @@ gate at any time, united with the mapped markers: 6,616 genes, of which
   interquartile range of 2.0 to 2.2 across genes: half the genes are
   more than 2-fold away from the reference (`platform_log_ratio.csv`).
   The same genes are off in the same direction at every time: the
-  Spearman correlation of the ratios is 0.97 (48 h–72 h), 0.95
-  (72 h–96 h) and 0.94 (48 h–96 h) (@fig-fs-drift). 5,890 genes are
-  flagged by T4 at two or three times with one sign; the 466 flagged
-  with a sign change and the 226 flagged at one time only sit near a
+  Spearman correlation of the ratios is 0.96 (48 h–72 h), 0.95
+  (72 h–96 h) and 0.94 (48 h–96 h) (@fig-fs-drift). 5,987 genes are
+  flagged by T4 at two or three times with one sign; the 480 flagged
+  with a sign change and the 254 flagged at one time only sit near a
   ratio of 0, where a small difference flips the sign or the flag.
 - **The ratio follows transcript length.** The bulk is a full-length
   library and the reference a 3′ UMI library (protocols below), so a
   gene's bulk reads grow with its transcript length and its reference
   counts do not. The prediction is a slope of 1 of the log2 ratio on
-  log2 length. The median-regression slope is 1.06 (48 h, 95 %
-  gene-bootstrap interval 1.02 to 1.10), 1.18 (72 h, 1.13 to 1.22) and
-  1.06 (96 h, 1.01 to 1.10); Spearman's correlation is 0.55 to 0.59, and
+  log2 length. The median-regression slope is 1.04 (48 h, 95 %
+  gene-bootstrap interval 1.00 to 1.08), 1.15 (72 h, 1.10 to 1.20) and
+  1.05 (96 h, 1.00 to 1.10); Spearman's correlation is 0.54 to 0.58, and
   a loess on length explains 31 to 34 % of the variance of the ratio
   (`platform_length.csv`, @fig-fs-length). Length is a large part of
   the platform effect, but two thirds of the gene-to-gene variation
@@ -914,17 +910,17 @@ gate at any time, united with the mapped markers: 6,616 genes, of which
   are too narrow if genes are correlated.
 - **Dividing by a cross-fitted ratio.** With the free gene-wise ratio
   (estimated on the two other times), the interquartile range of the
-  residual log2 ratio falls from 2.0–2.2 to 0.38–0.42, the share of
-  genes more than 2-fold off from 51–54 % to 2–4 %, and the range rule
-  flags 79, 309 and 82 genes instead of 3,179, 3,802 and 2,859
+  residual log2 ratio falls from 2.0–2.2 to 0.39–0.43, the share of
+  genes more than 2-fold off from 50–54 % to 2–4 %, and the range rule
+  flags 83, 336 and 100 genes instead of 3,201, 3,846 and 2,879
   (@fig-fs-bulk-fit, @fig-fs-tail-flags). The ratio learnt at 72 and
   96 h (primitive streak, mesoderm) transfers to the epiblast bulk at
   48 h, and conversely, so for most genes the effect belongs to the
   gene, not to a type. The length-only ratio removes less: residual
-  interquartile range 1.5 to 1.6, range flags 2,007 to 2,940.
+  interquartile range 1.5 to 1.6, range flags 2,022 to 2,973.
 - **A residual remains.** With the gene-wise ratio the median
   $|z|$ is 2.0 to 2.2, and 44 to 48 % of the values lie beyond $\pm2.33$
-  instead of 2 %; T4 still flags 4,628, 4,751 and 4,722 genes
+  instead of 2 %; T4 still flags 4,707, 4,855 and 4,866 genes
   (@fig-fs-a3-shift). The residual log ratio (interquartile range about
   0.4 in log2 units, a 30 % spread) is far larger than both the
   negative-binomial sampling of the bulk and the uncertainty of the
@@ -939,77 +935,77 @@ gate at any time, united with the mapped markers: 6,616 genes, of which
   fourth variant below estimates one per replicate.
 - **Effective cell count.** With the gene-wise ratio, the deMixSC
   plug-in fitted on the Welch panel and $a_i$ replaced by $n_{\text{eff},i}$,
-  the median $n_{\text{eff},i}$ is 62 (48 h), 51 (72 h) and 41 (96 h),
-  against $a_i$ of 1,150 to 1,930: $n_{\text{eff},i}/a_i$ is 0.027 to
-  0.033, a bulk variance 30 to 37 times the negative-binomial one
+  the median $n_{\text{eff},i}$ is 63 (48 h), 51 (72 h) and 40 (96 h),
+  against $a_i$ of 1,140 to 1,930: $n_{\text{eff},i}/a_i$ is 0.026 to
+  0.034, a bulk variance 30 to 38 times the negative-binomial one
   (`a3_shift_summary.csv`, columns `median_n_bulk`, `median_n_over_a`).
   The median $|z|$ is 0.674 at every time by construction
   ($n_{\text{eff}}$ solves $\operatorname{median}z^{2}=0.455$), so it says
-  nothing about fit; the tails do. 7.1, 5.4 and 6.4 % of the (gene,
+  nothing about fit; the tails do. 7.2, 5.5 and 6.5 % of the (gene,
   replicate) values lie beyond $\pm2.33$, against 2 % expected
-  (@fig-fs-a3-shift). T4 flags 472, 362 and 399 genes (7.1, 5.5 and
-  6.0 % of the panel), T1 658, 547 and 687, instead of 4,628 to 4,751
+  (@fig-fs-a3-shift). T4 flags 489, 368 and 419 genes (7.2, 5.4 and
+  6.2 % of the panel), T1 678, 574 and 713, instead of 4,707 to 4,866
   with $n_i=a_i$ (@fig-fs-tail-flags). These flags now mean a tail
   heavier than that of the typical gene of the replicate, not a failure
   of A3. The range and MAD rules use no cell count and do not change;
-  the quantile band flags 195 to 204 genes.
+  the quantile band flags 190 to 205 genes.
 - **Multivariate test.** The selected DeCovarT model of
   @sec-deconv-strategy-ranking (Welch panel, raw shrinkage at
   $\hat\lambda=0.1$, 0.5 and 0.5, free $c_i$ and $\varphi_i$) fitted to
   each replicate, without a gene-wise ratio, gives
-  $\hat n_i=\hat c_i^{2}/\hat\varphi_i$ of 1.3 to 1.4 (48 h), 1.2 (72 h)
-  and 1.4 to 2.0 (96 h); with the robust scale $\tilde\varphi_i$,
-  $\hat c_i^{2}/\tilde\varphi_i$ is 2.7 to 4.1 (`multivariate_scales.csv`).
+  $\hat n_i=\hat c_i^{2}/\hat\varphi_i$ of 1.3 to 1.4 (48 h), 1.3 (72 h)
+  and 1.4 to 1.9 (96 h); with the robust scale $\tilde\varphi_i$,
+  $\hat c_i^{2}/\tilde\varphi_i$ is 2.6 to 3.9 (`multivariate_scales.csv`).
   The maximum-likelihood $\hat\varphi_i$ is two to three times the
-  robust one ($\kappa$ of 0.36 to 0.53): a minority of genes with large
-  residuals sets it. Both counts are about 15 to 40 times smaller than
+  robust one ($\kappa$ of 0.37 to 0.52): a minority of genes with large
+  residuals sets it. Both counts are about 10 to 47 times smaller than
   $n_{\text{eff},i}$. Our reading, not tested: the gene-wise ratio,
   absent from the multivariate model, is absorbed by $\varphi_i$; under
   A3 the univariate variance was about 300 times the negative-binomial
   one, which corresponds to a count of about 6.
-- **Multivariate flags.** With the robust scale, 7.5, 6.9 and 6.4 % of
+- **Multivariate flags.** With the robust scale, 7.0, 6.8 and 6.1 % of
   the conditional statistics $z_{gi}$ lie beyond $\pm2.33$ (diagonal
-  statistic: 6.1, 5.9 and 5.6 %), against 2 % expected. A gene is
-  flagged in at least one replicate in 115 of 1,417 (48 h), 275 of 3,420
-  (72 h) and 467 of 5,821 (96 h) Welch genes, 8.0 to 8.1 %, where 5.9 %
+  statistic: 6.0, 6.6 and 5.9 %), against 2 % expected. A gene is
+  flagged in at least one replicate in 105 of 1,360 (48 h), 282 of 3,617
+  (72 h) and 458 of 5,893 (96 h) Welch genes, 7.7 to 7.8 %, where 5.9 %
   is expected under the model ($1-0.98^{3}$; `multivariate_flags.csv`,
-  @fig-fs-multivariate). The conditional and diagonal flags share 41 to
+  @fig-fs-multivariate). The conditional and diagonal flags share 39 to
   46 % of their union (Jaccard index); the conditional and univariate T4
   flags share 4 to 7 % (`multivariate_overlap.csv`). The two tests ask
   different questions: the univariate one tests the residual left by the
   gene-wise ratio, the multivariate one tests the raw bulk against the
   correlated genes of the same replicate. Few dictionary modules are
-  tested on the Welch genes (none at 48 h, four at 72 h, two at 96 h);
+  tested on the Welch genes (none at 48 h, four at 72 h, three at 96 h);
   none is flagged.
 - **Power.** For a shift of three marginal standard deviations in one
   gene, the conditional statistic moves $\sqrt{\Sigma_{gg}W_{gg}}$ times
-  as far as the diagonal one: median 1.15 (48 h), 1.11 (72 h) and 1.15
+  as far as the diagonal one: median 1.15 (48 h), 1.11 (72 h) and 1.16
   (96 h), 10 % and 90 % quantiles 1.09 and 1.37. The mean power at
   0.01 per tail rises from 0.75 to 0.88, 0.85 and 0.88, and is higher
   for every gene (`multivariate_power.csv`). These are computed under the
   fitted covariance, not from injected shifts in the data.
 - **Two side effects.** The MAD rules flag more genes with the ratio
-  (587 to 720 against 299 to 463), because one of their summaries is a
-  bulk-to-reference ratio. The model-free quantile band flags 191 to
-  203 genes with the ratio and 154 to 161 under A3, 2.3 to 3.1 % of the
+  (659 to 853 against 367 to 586), because one of their summaries is a
+  bulk-to-reference ratio. The model-free quantile band flags 190 to
+  205 genes with the ratio and 162 to 170 under A3, 2.4 to 3.0 % of the
   panel, near the 2 % it is fitted for.
   The residual log ratios are negatively correlated between times
-  (Spearman −0.25 to −0.45): this is built in by cross-fitting, since
+  (Spearman −0.23 to −0.44): this is built in by cross-fitting, since
   each time's ratio is the average of the two others, and is not a
   drift.
 - **Plug-in composition.** Under A3, epiblast takes all of the 48 h
   bulk and the primitive streak all of the 72 h bulk (shares of at least
   0.999), the types that dominate the reference (97 % and 93 % of the
-  scored cells); at 96 h pre-somitic mesoderm takes 0.73 and caudal
-  mesoderm 0.26. With the gene-wise ratio, the 48 h bulk becomes 0.91
-  epiblast and 0.08 exiting naïve pluripotency, 72 h is unchanged
+  scored cells); at 96 h pre-somitic mesoderm takes 0.71 and caudal
+  mesoderm 0.28. With the gene-wise ratio, the 48 h bulk becomes 0.89
+  epiblast and 0.10 exiting naïve pluripotency, 72 h is unchanged
   (0.99 primitive streak), and the 96 h composition inverts: caudal
-  mesoderm 0.72, pre-somitic mesoderm 0.25 (@fig-fs-plugin). The ratio
+  mesoderm 0.72, pre-somitic mesoderm 0.26 (@fig-fs-plugin). The ratio
   used at 96 h was learnt at 48 and 72 h, where neither mesoderm type
   exists, so the genes that separate the two types carry ratios
   estimated from other cell states. Fitting the plug-in on the Welch
   genes only does not undo the inversion: caudal mesoderm 0.70,
-  pre-somitic mesoderm 0.26 (ochre in @fig-fs-plugin). The selected
+  pre-somitic mesoderm 0.27 (ochre in @fig-fs-plugin). The selected
   DeCovarT model, without a ratio, gives pre-somitic mesoderm 0.70 and
   caudal mesoderm 0.26 at 96 h, close to the scored-cell shares of 0.73
   and 0.21 (`observed_proportions.csv`). No ground truth exists for these
@@ -1019,7 +1015,7 @@ gate at any time, united with the mapped markers: 6,616 genes, of which
   any time. This is a property of the deMixSC weights, not a finding:
   with $w_g=1/(\hat y_g^{2}+e_g^{2}+c)$, $\sqrt{w_g}\,|e_g|<1$, so the
   standardised residual is bounded (it stays within $\pm1.7$) and never
-  reaches 3. Among cells, 21,686 to 27,679 (gene, cell) pairs are
+  reaches 3. Among cells, 22,757 to 28,481 (gene, cell) pairs are
   flagged per time, all in the small types, where a cell's leverage can
   exceed $3J/C$ (@fig-fs-cook).
 
@@ -1042,8 +1038,8 @@ As applied here:
   the UCSC knownGene transcripts of each gene
   (`TxDb.Mmusculus.UCSC.mm10.knownGene` 3.10.0,
   `GenomicFeatures::transcriptLengths()`), matched by Ensembl id through
-  `org.Mm.eg.db`, then by symbol: 6,564 genes by Ensembl id, 24 by
-  symbol, 28 without a length. That annotation is based on GENCODE
+  `org.Mm.eg.db`, then by symbol: 6,699 genes by Ensembl id, 28 by
+  symbol, 32 without a length. That annotation is based on GENCODE
   VM23, one release before the authors' vM24. Adapted from
   `annotate_genes_local()` of GastroDeconv2FateMap, which uses the
   genomic span instead (introns included).
@@ -1052,7 +1048,7 @@ As applied here:
   length. (iii) A free gene-wise ratio: the deMixSC plug-in on
   $y_{gi}/\hat b_g$ alternates with $\log\hat b_g=$ median over the
   pooled replicates of the log ratio, until the largest change is below
-  $10^{-3}$ (18 to 21 rounds; `estimate_platform_ratio()`). In (ii) and
+  $10^{-3}$ (17 to 22 rounds; `estimate_platform_ratio()`). In (ii) and
   (iii) $\operatorname{median}_g\log\hat b_g=0$, since $a_i$ absorbs a
   common factor.
 - **Cross-fitting.** The ratio used at one time is estimated on the six
@@ -1067,8 +1063,8 @@ As applied here:
   MAD rules need no composition and run on $y_{gi}/\hat b_g$ as well.
 - **Fourth variant: effective cell count.** The gene-wise ratio of (iii),
   with the plug-in fitted on the Welch genes of the slot
-  (`plugin_genes`, `output/grn/plugin/gene_sets.csv`; 1,417, 3,420 and
-  5,821 of the 6,615 panel genes, so the plug-in still shares genes with
+  (`plugin_genes`, `output/grn/plugin/gene_sets.csv`; 1,360, 3,617 and
+  5,893 of the 6,759 panel genes, so the plug-in still shares genes with
   the tested set) and `n_bulk = "moment"`: `estimate_effective_cells()`
   solves $\operatorname{median}_g z_{gi}^{2}(n)=0.455$ on
   $(10^{-3},a_i]$ with `uniroot()`, and $n_{\text{eff},i}$ replaces $a_i$
@@ -1094,7 +1090,7 @@ count per replicate, the univariate tail statements flag 5 to 7 % of
 the panel rather than 70 %, and become usable as a screen for genes
 with heavy tails. The multivariate test flags 8 % of the Welch genes,
 where 5.9 % is expected, and its flags barely overlap the univariate
-ones (Jaccard index 0.04 to 0.07). Neither set is removed: without a
+ones (Jaccard index 0.04 to 0.08). Neither set is removed: without a
 paired measurement, a flag cannot be told apart from a gene-specific
 platform effect that the multivariate model leaves in
 $\varphi_i$.
@@ -1273,7 +1269,7 @@ weighting can replace a hard filter is in
 The covariance scripts of @sec-cov-scope read the counts of
 `output/feature_selection/tier_01/scored_slots.rds` restricted, at each
 time, to the genes of `output/feature_selection/tier_02/selected_<time>.csv`:
-the gated panel of tier (ii), 1,417, 3,420 and 5,821 genes at 48, 72
+the gated panel of tier (ii), 1,360, 3,617 and 5,893 genes at 48, 72
 and 96 h, with full library sizes. The legacy export (the 500 genes of
 the type-equal ratio, [type-equal ratio](#sec-fs-ms-ratio), in
 `data/intermediate/equal_type_top500_by_time.rds`) is no longer read.
@@ -1393,7 +1389,7 @@ shortlist.
 $\mathcal{G}$ uses the within-type covariance, which is
 high-dimensional when $C_j$ is not much larger than $|\mathcal{G}|$
 ([3.1, multivariate tests](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-multivariate-tests)).
-With the gated panel of @sec-fs-export (1,417, 3,420 and 5,821 genes
+With the gated panel of @sec-fs-export (1,360, 3,617 and 5,893 genes
 at 48, 72 and 96 h), nine of the eleven scored type × time cells of
 @tbl-fs-cell-counts have $C_j<|\mathcal{G}|$, so their sample
 covariance is singular (@tbl-cov-units):
