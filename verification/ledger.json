@@ -1,5 +1,5 @@
 {
-  "date": "2026-11-18",
+  "date": "2026-11-20",
   "engine": "sympy==1.14.0 (mpmath for numeric rows)",
   "lean": "not configured for this repository",
   "rows": [
@@ -114,6 +114,38 @@
       "status": "pass",
       "detail": "variance of a linear combination of independent terms, one gene, n = 12, p = (1/4, 3/4); conditional on independence across cells and types",
       "file": "check_metrics_and_layers.py"
+    },
+    {
+      "id": "D1",
+      "claim": "I(eta_j) per cell = m/(1 + phi m) for NB2, log link, offset log s (eq-fs-nb-fisher)",
+      "kind": "exact",
+      "status": "pass",
+      "detail": "expected information from the NB2 log-likelihood",
+      "file": "check_posthoc_contrasts.py"
+    },
+    {
+      "id": "D2",
+      "claim": "sum_j Delta_j = 0 for J = 3, 4, 5 (eq-fs-posthoc-hypotheses)",
+      "kind": "exact",
+      "status": "pass",
+      "detail": "symbolic sums",
+      "file": "check_posthoc_contrasts.py"
+    },
+    {
+      "id": "D3",
+      "claim": "Delta_j = mean over k != j of (eta_j - eta_k), so B_j implies A_j",
+      "kind": "exact",
+      "status": "pass",
+      "detail": "J = 4, symbolic",
+      "file": "check_posthoc_contrasts.py"
+    },
+    {
+      "id": "D4",
+      "claim": "means 10, 8, 1, 1: A holds for types 1-2, B for type 1 only",
+      "kind": "numeric",
+      "status": "pass",
+      "detail": "Delta = [1.609, 1.312, -1.461, -1.461]",
+      "file": "check_posthoc_contrasts.py"
     },
     {
       "id": "P1",
