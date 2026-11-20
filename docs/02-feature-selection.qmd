@@ -36,6 +36,20 @@ epi_side <- sapply(c("batch1", "batch2"), function(b) {
   c(major = max(x$Freq), total = sum(x$Freq))
 })
 min_type <- min(cells$cells)
+
+# Tier (ii) numbers.
+floor_tbl <- read_out("feature_selection", "tier_02", "permutation_floor.csv")
+calib <- read_out("feature_selection", "tier_02", "calibration.csv")
+n_perm <- round(1 / floor_tbl$p_floor[1L] - 1)
+n_pass2 <- stats::setNames(floor_tbl$genes_passing, floor_tbl$time_point)
+n_floor2 <- stats::setNames(floor_tbl$genes_at_floor, floor_tbl$time_point)
+n_tested2 <- stats::setNames(floor_tbl$genes_tested, floor_tbl$time_point)
+fdr_floor <- 100 * n_tested2 * floor_tbl$p_floor / n_floor2
+ratio01 <- function(tt, tm) {
+  calib$ratio_to_nominal[calib$test == tt & calib$time_point == tm & calib$level == 0.01]
+}
+r48 <- sapply(c("lr", "ql_f", "anova_vst", "welch_perm"), ratio01, tm = "48h")
+fmt3 <- function(x) paste(big(x), collapse = " / ")
 ```
 
 ## Scope {#sec-fs-scope}
@@ -347,29 +361,6 @@ Each cell has weight one, which is the weighting of the likelihood
 itself; the type-equal weighting of the legacy rank
 (@eq-fs-equal-type) is not carried over.
 
-**Why `SCTransform` is not needed.** `SCTransform` fits the same $M_0$
-[@hafemeisterNormalizationVarianceStabilization2019;
-@choudharyComparisonEvaluationStatistical2022], but with two
-departures that matter for a screen of the type effect:
-
-- its overdispersion is regularised across genes, as a smooth function
-  of the mean, so a gene whose spread departs from the trend (for
-  example a marker that is bimodal across types) gets the wrong
-  residual scale;
-- its Pearson residuals are clipped at $\pm\sqrt{n/30}$, $n$ the cells
-  of the fit (@tbl-fs-sct-settings). Under $M_0$, which has no type
-  term, the cells of a rare type that expresses a marker, and the cells
-  of a highly expressed gene, have the largest residuals: they carry
-  the type signal. Clipping shrinks exactly these high-leverage cells.
-
-Here $\psi_g$ is estimated gene by gene and nothing is clipped. The
-`SCTransform` Pearson residual $r^{P}_{gc}=(x_{gc}-\hat m_{gc})/\sqrt{V(\hat m_{gc})}$
-is also not standardised. The standardised residual divides it by
-$\sqrt{\hat\varphi(1-h_{gc})}$, with $\hat\varphi$ the dispersion
-scale (1 for the NB likelihood) and $h_{gc}$ the leverage of cell $c$
-(@sec-fs-outliers). The vignette states the model and the residuals
-([3.1, count null model and Pearson residuals](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-sctransform)).
-
 ### Four tests of the type effect {#sec-fs-omnibus}
 
 `compare_type_effect_tests()` (`R/02_02_stats_cross_cell.R`) computes four
@@ -413,193 +404,116 @@ keeps the type counts of each batch; at 72 h and 96 h each slot holds
 one batch, so the restriction changes nothing there. Cell line is
 still not a covariate of $M_0$ or $M_1$.
 
-**Gate and rank.** One test is chosen before the ranks are seen and
-used as a Benjamini–Hochberg gate over the genes that pass the presence
-gate. The gate is the permuted Welch $G$ (`gate_test = "welch_perm"`,
-the default of `rank_genes_omnibus()`): in the simulation of the
-vignette it is the only test that keeps the false discovery rate at
-its nominal level when the within-type variances differ (0.05, against
-0.16 to 0.21 for the other tests compared there), at the cost of power
-(0.41, against
-0.76 to 0.85)
-([3.1, four tests](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-omnibus)).
-Every gene that passes the gate enters the panel; no cap is imposed
-(`n_select = Inf`). The cap of 500 genes per time was inherited from the
-legacy panel and had no data-driven justification. The genes that pass
-are still ranked by $R^{2}_{D,g}$ (@eq-fs-deviance-r2), ties broken by
-$\Lambda_g$, to order and report them. Why a gate followed by an effect
-size, rather than a rank by $p$-value, is in the vignette (link above).
+**Gate, rank and multiplicity.** The gate is the permuted Welch $G$
+(`gate_test = "welch_perm"`), chosen before the ranks were seen because
+it is the only one of the four tests that keeps its false discovery
+rate when the within-type variances differ
+([3.1, four tests](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-tests-simulation)).
+Benjamini–Hochberg at 0.05 is applied to its $p$-values over the genes
+of each slot, and every gene that passes enters the panel
+(`n_select = Inf`), ranked by $R^{2}_{D,g}$, the share of the $M_0$
+deviance (cell-to-cell variation after the size factor) explained by
+the differences between types. With $m$ genes tested, the genes at the
+floor $1/(B+1)$ all pass when there are at least $m/\{0.05(B+1)\}$ of
+them (`permutation_floor.csv`); near the cut the Monte Carlo standard
+error of a $p$-value is $\sqrt{p(1-p)/B}$, so a gene there can cross it
+with another seed. Each slot is gated on its own, so the union over the
+three slots, which feeds tier (iii), has no single false discovery
+rate.
 
-The gate controls false discoveries, not relevance. With thousands of
-cells, a type effect of any size passes Benjamini–Hochberg, so the panel
-contains genes whose effect is real but small. No effect-size floor is
-added: their weight is left to the model, through the covariances that
-DeCovarT estimates and inverts (tier (iv), @sec-fs-weighting-pointer).
+**A stricter tier, reported only.** A gene is *at the floor* when none
+of the $B=`r big(n_perm)`$ permuted $G^{*}$ of that gene reached its
+observed $G$: `r fmt3(n_floor2)` genes at 48, 72 and 96 h. A null gene
+lands there with probability $1/(B+1)$, so with all genes null about
+$m/(B+1)$ would, an estimated false discovery rate of
+`r paste(sprintf("%.1f", fdr_floor), collapse = " / ")` % for these
+sets. The floor is a property of each gene's own permutations, not a
+comparison between genes, and it moves with $B$; the floor genes are
+exported (`selected_floor_<time>.csv`) but the panel stays the
+Benjamini–Hochberg set.
 
-**Multiplicity.** A permutation $p$-value is marginal: one per gene.
-The gate is applied to every gene that passes the presence gate, so a
-correction across genes is still needed, and Benjamini–Hochberg at
-0.05 is applied to the permutation $p$-values of each slot. A false
-discovery rate suits a screen whose output is then ranked by an effect
-size; a family-wise rate (for example a max-$T$ adjustment from the
-same permutations) would discard genes that the rank needs. Three
-consequences of the permutation scale are reported with the outputs
-(`permutation_floor.csv`):
+**Calibration.** The four tests were rerun on one within-batch
+permutation of the labels (seed 20261102), a null by construction; how
+such a null is built and how its QQ plot and $p$-value histogram are
+read is in
+[3.1, reading a null calibration](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-null-calibration).
 
-- with $m$ genes tested, all the genes at the floor $1/(B+1)$ pass
-  only when there are at least $m/\{0.05\,(B+1)\}$ of them, about
-  $m/100$ for $B=2{,}000$;
-- near the Benjamini–Hochberg cut, the Monte Carlo standard error of a
-  $p$-value is $\sqrt{p(1-p)/B}$, so a gene close to the cut can move
-  across it with another seed;
-- each slot is gated at 0.05 on its own. The union over the three
-  slots, which feeds tier (iii), has no single false discovery rate;
-  a Benjamini–Hochberg over the pooled (gene, slot) $p$-values would
-  give one.
+![Null calibration of the four tests (columns) at each time (rows). Under the null a $p$-value is uniform, so $-\log_{10}p$ is exponential with rate $\log 10$: observed $-\log_{10}p$ on one within-batch permutation of the labels against that exponential (`qqplotr`), with the identity line and the pointwise 95 % band. Points above the band are too many small $p$-values (anti-conservative). Values above the panel range (one ANOVA gene) are drawn at its top edge. At 48 h, at the 0.01 level, the likelihood ratio rejects `r sprintf("%.1f", r48["lr"])` times the nominal rate, the quasi-likelihood $F$ `r sprintf("%.1f", r48["ql_f"])` times, the shifted-log ANOVA `r sprintf("%.1f", r48["anova_vst"])` times and the permuted Welch $G$ `r sprintf("%.2f", r48["welch_perm"])` times. Source: `cross_cell.rds`, element `null_tests`.](images/feature_selection/fs_tier2_null_calibration.png){#fig-fs-null-calibration}
 
-```{r}
-#| label: fs-omnibus-call
-#| eval: false
-# Not run. sc[[tm]]: raw counts (genes x cells) of the scored cells of
-# slot tm; cell_type[[tm]]: their labels; batch[[tm]]: their batch;
-# lib[[tm]]: full library sizes (column sums of the deposited counts).
-# B, the seeds and the thresholds are fixed before the run.
-source("R/02_00_utils.R")
-source("R/02_01_stats_quality_control.R")
-source("R/02_02_stats_cross_cell.R")
-times <- c("48h", "72h", "96h")
-sf <- lapply(lib, function(l) l / stats::median(l))
+![Unadjusted $p$-values of the four tests (rows) at each time (columns), bins of 0.05. The dashed line is the height of a flat histogram of the estimated null genes, $\hat\pi_0 m/20$ (`qvalue::pi0est()`, value in each panel). Every test shows a peak at 0 over a flat remainder; the permuted Welch $G$ is discrete (values $k/(B+1)$). Source: `cross_cell.rds`, element `tests`.](images/feature_selection/fs_tier2_pvalue_histograms.png){#fig-fs-pvalue-hist}
 
-tests <- lapply(times, function(tm) {
-  compare_type_effect_tests(
-    sc[[tm]],
-    cell_type[[tm]],
-    size_factors = sf[[tm]],
-    n_perm = 2000L,
-    seed = 20261101L,
-    strata = batch[[tm]],
-    fdr = 0.05,
-    min_cells_total = 20L,
-    min_cells_type = 2L
-  )
-})
-names(tests) <- times
+![The same histograms for the permuted Welch $G$, split by tertile of the mean size-normalised count within each slot. Low-mean genes have flatter histograms (larger $\hat\pi_0$): less signal is detectable at low counts.](images/feature_selection/fs_tier2_pvalue_histograms_by_mean.png){#fig-fs-pvalue-hist-mean}
 
-# Agreement of the gene orders: all tested genes, then those passing
-# the gate (permuted Welch G).
-tau_all <- lapply(tests, type_test_kendall)
-tau_gated <- lapply(tests, function(r) type_test_kendall(r, genes = r$welch_perm_pass))
+![Kendall's $\tau_b$ between the $p$-value rankings of the four tests over all tested genes, per time; lower triangle only. The likelihood ratio and the quasi-likelihood $F$ order genes almost identically ($\tau=0.98$ at every time); the permuted Welch $G$ differs most from the other three ($\tau$ 0.65 to 0.72). LR: likelihood ratio; ANOVA: on the shifted log; QL F: quasi-likelihood $F$; Welch G: permuted Welch $G$. Source: `kendall_<time>.csv`.](images/feature_selection/fs_tier2_test_agreement.png){#fig-fs-test-agreement}
 
-# Conservativeness: rerun on one within-batch permutation of the labels
-# (null by construction) and compare the share of p-values below 0.01
-# and 0.05.
-calibration <- lapply(times, function(tm) {
-  null_labels <- withr::with_seed(20261102L, {
-    lab <- cell_type[[tm]]
-    for (idx in split(seq_along(lab), batch[[tm]])) {
-      lab[idx] <- lab[idx][sample.int(length(idx))]
-    }
-    lab
-  })
-  res_null <- compare_type_effect_tests(
-    sc[[tm]],
-    null_labels,
-    size_factors = sf[[tm]],
-    n_perm = 2000L,
-    seed = 20261103L,
-    strata = batch[[tm]]
-  )
-  type_test_calibration(res_null)
-})
+![Gate and rank. Between-type share of deviance $R^{2}_{D}$ (square-root scale) against $-\log_{10}p$ of the permuted Welch $G$, one point per tested gene. Grey: fails BH 0.05; orange: passes; blue: at the floor $1/(B+1)$, no permuted $G^{*}$ reached the observed $G$. The $p$-value takes the values $k/(B+1)$ (formula in the first panel), so genes form vertical stripes (jittered): the rightmost is $k=1$, the next $k=2$ and $k=3$. Dashed line: largest $p$ that passes BH at that time; dotted line: the floor. `r fmt3(n_pass2)` genes pass at 48, 72 and 96 h, 6,749 across the three times (`selected_<time>.csv`, ordered by $R^{2}_{D}$); the largest $R^{2}_{D}$ is 0.66 (*Gpx2*, 96 h) and the median among passing genes 0.003, 0.006 and 0.010. Source: `cross_cell.rds`, element `ranked`.](images/feature_selection/fs_tier2_gate_rank.png){#fig-fs-gate-rank}
 
-# Gate on the permuted Welch G, rank by the deviance R^2; the fits and
-# permutations of `tests` are reused, not redrawn.
-ranked <- lapply(times, function(tm) {
-  rank_genes_omnibus(
-    fdr = 0.05,
-    n_select = Inf,
-    gate_test = "welch_perm",
-    results = tests[[tm]]
-  )
-})
-names(ranked) <- times
-# Panel passed to tier (iii): genes selected at any time (the tier (i)
-# markers are united with it before export).
-panel <- unique(unlist(lapply(ranked, function(r) r$gene[r$selected])))
-```
+![$R^{2}_{D}$ against the mean size-normalised count, coloured as in @fig-fs-gate-rank. Genes with a large $R^{2}_{D}$ but a mean below about 0.05 fail the gate (few counts, large permutation variance); genes at the floor mostly have means above 0.1.](images/feature_selection/fs_tier2_r2_vs_mean.png){#fig-fs-r2-mean}
 
-**Results.** `scripts/02_02_stats_cross_cell_consistency.R` has been
-run (24 min). Its outputs in
-`output/feature_selection/tier_02/` are `calibration.csv`,
-`permutation_floor.csv`, `kendall_<time>.csv`, `selected_<time>.csv`
-and `cross_cell.rds` (every test table, tracked with DVC); the figures
-are drawn by `scripts/02_02_vis_cross_cell.R`.
+**Overdispersion and the Poisson boundary.** With
+$\operatorname{Var}x_{gc}=m_{gc}+\phi_g m_{gc}^{2}$, $\phi_g=1/\psi_g$,
+the NB law is a Poisson measurement of a Gamma-distributed expression
+level, and $\phi_g$ is the squared coefficient of variation of that
+level within a type after the size factor
+([5.1, measurement model](https://bastienchassagnol.github.io/DeCovarT/articles/05-1-review-distribution-aware.html#sec-poisson-measurement),
+[5.1, expression models](https://bastienchassagnol.github.io/DeCovarT/articles/05-1-review-distribution-aware.html#sec-expression-models))
+[@sarkarSeparatingMeasurementExpression2021, Box 1 and Table 1, PDF pp. 2, 4].
+`glmGamPoi` returns $\hat\phi_g=0$ when the likelihood is largest at the
+Poisson boundary: the counts of the gene vary no more than Poisson
+sampling within each type, a point-mass expression model or "Poisson
+gene". It is a failure to detect extra variation, not proof of none:
+these genes have means of 0.01 to 0.3, where $\phi m^{2}$ is small
+next to $m$ and the information on $\phi$ is low. Fang & Pachter
+(2025, PDF pp. 6, 11) call genes Poisson when their variance stays
+within the Poisson range after extrinsic (size) noise, and find them to
+be low-variability rather than low-expression genes
+[TODO-cite: Fang & Pachter 2025, Extrinsic biological stochasticity and technical noise normalization of single-cell RNA sequencing data, bioRxiv, doi:10.1101/2025.05.11.653373]{.highlight}.
+At the other end, a few genes whose counts sit in a handful of cells
+have a likelihood that grows without bound in $\phi$ (upper boundary).
 
-- **Calibration.** Under one within-batch permutation of the labels
-  (@fig-fs-null-calibration), the analytic tests are anti-conservative
-  at 48 h: at the 0.01 level the likelihood ratio rejects 2.7 times the
-  nominal rate, the quasi-likelihood $F$ 2.6 times and the
-  shifted-log ANOVA 3.7 times. A within-batch permutation keeps the
-  association between type and cell line, and these tests do not
-  model the cell line, so its effect reads as a type effect. The
-  permuted Welch $G$ rejects 0.59 times the nominal rate there. At
-  72 h and 96 h, one batch each, every test is at or below its
-  nominal rate except the ANOVA (1.5 to 1.6 times at 0.01).
-- **Gate.** The permuted Welch $G$ passes 1,360 (48 h), 3,617 (72 h)
-  and 5,893 (96 h) of the 9,633, 10,751 and 9,761 tested genes at BH
-  0.05. The genes at the floor $1/(B+1)$ (637, 1,806 and 2,920) far
-  exceed the 96 to 107 needed for all of them to pass
-  (`permutation_floor.csv`), so the floor does not limit the gate.
-- **Agreement.** Kendall's $\tau$ between the likelihood ratio and the
-  quasi-likelihood $F$ is 0.98 at every time; between the permuted
-  Welch $G$ and the other three it is 0.65 to 0.72
-  (@fig-fs-test-agreement).
-- **Panel.** Every gated gene enters the panel (@fig-fs-gate-rank):
-  1,360, 3,617 and 5,893 genes at 48, 72 and 96 h, 6,749 across the
-  three times (`selected_<time>.csv`, ordered by $R^{2}_{D}$). The
-  largest $R^{2}_{D}$ is 0.66 (*Gpx2* at 96 h), but 99 % (48 h),
-  96 % (72 h) and 88 % (96 h) of the gated genes explain less than 5 %
-  of the deviance (median $R^{2}_{D}$ 0.003, 0.006 and 0.010): real but
-  small effects, whose weight is the relevance question left to the
-  model (tier (iv)).
-- **Overdispersion.** The gene-wise $1/\psi_g$ decreases with the mean
-  (@fig-fs-overdispersion); a group of genes sits near zero, the
-  Poisson limit of the fit.
+![Gene-wise maximum-likelihood $\phi_g=1/\psi_g$ of $M_1$ against the mean size-normalised count, log scales, with a loess trend of the overdispersed genes (orange). Green: Poisson-like genes ($\hat\phi_g<10^{-4}$), with the exact zeros returned by `glmGamPoi` drawn on the bottom strip; grey: upper boundary ($\hat\phi_g>10^{10}$); blue: the others. Counts per class in each panel; the NB variance is written in the first. Source: `cross_cell.rds`, element `tests`, and `scored_slots.rds`.](images/feature_selection/fs_tier2_overdispersion.png){#fig-fs-overdispersion}
 
-![Null calibration of the four tests. Observed against expected $-\log_{10}p$ on the genes of each slot after one within-batch permutation of the labels, one panel per test, one line per time (labelled at its end); the grey band is the pointwise 95 % interval of uniform order statistics (48 h genes); square panels, common range. Source: `cross_cell.rds`, element `null_tests`; `scripts/02_02_vis_cross_cell.R`.](images/feature_selection/fs_tier2_null_calibration.png){#fig-fs-null-calibration}
+::: {#tip-fs-tier2 .callout-tip}
+## Conclusion of tier (ii)
 
-![Kendall's $\tau_b$ between the $p$-value rankings of the four tests over all tested genes, per time; lower triangle only (the matrix is symmetric). LR: likelihood ratio; ANOVA: on the shifted log; QL F: quasi-likelihood $F$; Welch G: permuted Welch $G$. Source: `kendall_<time>.csv`.](images/feature_selection/fs_tier2_test_agreement.png){#fig-fs-test-agreement}
-
-![Gate and rank per time. Deviance explained $R^{2}_{D}$ (square-root scale) against $-\log_{10}p$ of the permuted Welch $G$ (jittered, since $p$ takes discrete values), one point per tested gene; grey: fails BH 0.05; orange: passes and enters the panel (no cap). Dashed line: largest $p$ that passes BH; dotted line: permutation floor $1/(B+1)$. Source: `cross_cell.rds`, element `ranked`.](images/feature_selection/fs_tier2_gate_rank.png){#fig-fs-gate-rank}
-
-![Gene-wise overdispersion $1/\psi_g$ of $M_1$ (maximum likelihood) against the mean size-normalised count, both on log scales, with a loess trend (orange); dotted line at $10^{-4}$, below which a gene is counted at the Poisson limit of the fit. Source: `cross_cell.rds`, element `tests`, and `scored_slots.rds`.](images/feature_selection/fs_tier2_overdispersion.png){#fig-fs-overdispersion}
+- **Calibration.** At 48 h, where the slot pools two cell lines, the
+  three analytic tests reject `r sprintf("%.1f", min(r48[1:3]))` to
+  `r sprintf("%.1f", max(r48[1:3]))` times the nominal rate under
+  permuted labels, because a within-batch permutation keeps the
+  type–cell-line association and these tests do not model the cell
+  line. The permuted Welch $G$ rejects `r sprintf("%.2f", r48["welch_perm"])`
+  times the nominal rate. At 72 h and 96 h (one batch each) every test
+  is at or below its nominal rate except the ANOVA (1.5 to 1.6 times at
+  0.01).
+- **Panel.** Every gene that passes the calibrated gate (permuted Welch
+  $G$, BH at 0.05): `r fmt3(n_pass2)` genes at 48, 72 and 96 h, 6,749
+  across the three times. `r fmt3(n_floor2)` of them are at the
+  permutation floor (stricter tier, reported only). Most effects are
+  small; their weight is left to the model (tier (iv),
+  @sec-fs-weighting-pointer).
+- **Which type drives each gene** is tested in the appendix
+  (@sec-fs-deg).
 
 | Question | Resampling | Unit |
 |---|---|---|
-| Is the nominal tail of each test accurate? | label permutation, one permutation applied to all genes | labels within batch, within the slot |
+| Is the nominal tail of each test accurate? | one label permutation applied to all genes | labels within batch, within the slot |
 | Which genes pass the gate? | $B$ shared label permutations (Freedman–Lane, Welch's $G$) | labels within batch, within the slot |
 
-: Resampling plan of tier (ii). $B$ is fixed before the run; bootstrap rows of the earlier plan are dropped. {#tbl-fs-boot-perm}
+: Resampling plan of tier (ii). $B$ is fixed before the run. {#tbl-fs-boot-perm}
+:::
 
-Cell types are the authors' annotations, fixed before any statistic is
-computed here. Labels refined on the same counts would make every
+::: {#cau-fs-labels .callout-caution}
+## Labels and effect sizes
+
+Cell types are the authors' annotations, fixed before any statistic
+is computed here. Labels refined on the same counts would make every
 permutation $p$-value anti-conservative
 [@gonzalezDelgadoPostclusteringInference2025].
-
-**Conclusion of tier (ii).** [Decision: the panel has no cap and no
-effect-size floor. The earlier rule kept the 500 genes with the largest
-$R^{2}_{D}$ per time; it came from the legacy panel and had no
-data-driven basis, so it is removed, and no threshold on $R^{2}_{D}$
-replaces it. The panel is every gene that passes the calibrated gate
-(permuted Welch $G$, BH at 0.05): 1,360, 3,617 and 5,893 genes at 48,
-72 and 96 h, 6,749 across the three times. The gate controls false
-discoveries, not relevance: with thousands of cells per slot, 99 %
-(48 h), 96 % (72 h) and 88 % (96 h) of the gated genes explain less
-than 5 % of the deviance. Weighting these small effects is left to the
-model (tier (iv), @sec-fs-weighting-pointer). Open question: if the
-fit of tier (iv) cannot absorb them, an effect-size floor chosen from
-the data (for example from the null distribution of $R^{2}_{D}$ under
-within-batch permutations) is the next step.]{.highlight}
+[TODO-open question: if the fit of tier (iv) cannot absorb the many
+small effects, an effect-size floor chosen from the data (for example
+from the null distribution of $R^{2}_{D}$ under within-batch
+permutations) is the next step.]{.highlight}
+:::
 
 {{< pagebreak >}}
 
@@ -1597,3 +1511,275 @@ tracked with DVC: `dvc pull output/feature_selection/tier_01/scored_slots.rds.dv
 | `save_figure()` | PDF, PNG and the `.rds` of the figure's data | all figures |
 
 : Code of tier (i). {#tbl-fs-code}
+
+## Which type drives each gene {#sec-fs-deg .appendix}
+
+```{r}
+#| label: fs-deg-values
+#| include: false
+deg_counts <- read_out("feature_selection", "deg", "deg_counts.csv")
+deg_checks <- read_out("feature_selection", "deg", "checks.csv")
+bimod <- read_out("feature_selection", "deg", "bimodality.csv")
+panel_cmp <- read_out("feature_selection", "deg", "panel_comparison.csv")
+w <- deg_counts[deg_counts$test == "welch_perm", ]
+n_wa <- sum(w$a_graph)
+n_wb <- sum(w$b_graph)
+n_wflat <- sum(w$a_flat_bh)
+tot <- stats::aggregate(cbind(a_graph, b_graph) ~ test, deg_counts, sum)
+alpha_i <- 0.05 * n_pass2 / n_tested2
+n_off <- sum(bimod$excess_zero > 0.1, na.rm = TRUE)
+n_two <- sum(bimod$bc_nonzero > 5 / 9 & bimod$dip_p_nonzero < 0.05, na.rm = TRUE)
+shared <- panel_cmp$n[panel_cmp$class == "both"]
+```
+
+The gate says that a gene varies across the types of a slot, not which
+type carries the difference. This appendix tests, for every gene and
+scored type, two one-sided hypotheses: $A$, the type is above the
+equal-weighted geometric mean of the other types, and $B$, it is above
+every other type ($B$ implies $A$). Hypotheses, error rate, the
+graphical within-gene procedure and the strategies dropped are in
+[3.1, post hoc inference](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-deg-posthoc).
+Cell line is not a covariate, and the cells of one specimen are not
+biological replicates (@nte-pseudoreplication): the results describe
+these cells.
+
+**Settings.** Each omnibus test of @tbl-fs-type-tests screens the genes
+of a slot at BH 0.05, and its own post hoc family confirms them at the
+stage-wise level $\alpha_I=0.05\,R/G$, that is
+`r paste(sprintf("%.4f", alpha_i), collapse = " / ")` for the permuted
+Welch $G$ at 48, 72 and 96 h. The four families are: Wald $z$ on the NB
+coefficients of $M_1$ (cell-means design; `emmeans` gives the same
+$p$-values to $10^{-15}$, `checks.csv`); the quasi-likelihood $F$
+contrast of `glmGamPoi::test_de()`; $t$ on the shifted log with the
+pooled variance; and Welch $t$ on the Pearson residuals of $M_0$,
+referred to the $B=`r big(n_perm)`$ within-batch permutations of the
+gate (the same draw: the gate $p$-values are reproduced exactly). The
+permuted Welch family is primary, because it is the only one calibrated
+at 48 h (@fig-fs-null-calibration). Within a gene the graph of
+[3.1](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#fig-fs-posthoc-graph)
+tests each $A_j$ at weight $1/J$ and passes it to $B_j$; Holm on $A$
+alone (with `stageR`'s multipliers $J-1,J-1,\ldots,1$; agreement with
+`stageR::stageWiseAdjustment()` is 1 at every time) and one BH over all
+gene $\times$ type pairs are reported beside it.
+
+**Results.** With the primary family, `r big(n_wa)` gene $\times$ type
+pairs are confirmed above the average of the other types and
+`r big(n_wb)` above every type (@fig-fs-deg-volcano); one BH over all
+pairs would confirm `r big(n_wflat)`. The four families agree on which
+types carry most genes (@fig-fs-deg-counts): primitive streak at 72 h
+has the most, exiting naïve pluripotency at 48 h the fewest. Unique
+superiority is rare where two types are close: at 96 h pre-somitic and
+caudal mesoderm have
+`r big(w$a_graph[w$time_point == "96h" & w$type == "Pre-somitic mesoderm"])`
+and `r big(w$a_graph[w$time_point == "96h" & w$type == "Caudal mesoderm"])`
+genes above the average of the other types, but only
+`r big(w$b_graph[w$time_point == "96h" & w$type == "Pre-somitic mesoderm"])`
+and `r big(w$b_graph[w$time_point == "96h" & w$type == "Caudal mesoderm"])`
+above every type. Most enriched genes belong to one type and time
+(@fig-fs-deg-upset). The one-versus-average fold changes are unimodal
+across genes, centred near 0 with a long right tail
+(@fig-fs-deg-lfc).
+
+![Volcano plots per type and time. x: log2 fold change of the type against the geometric mean of the other types (NB $M_1$); y: one-sided Wald $-\log_{10}p$, a continuous scale (the permutation $p$-value is discrete with a floor), capped at 300. Colour: decision of the primary family (permuted Welch, stage-wise graphical procedure): orange, above every type ($A$ and $B$); blue, above the average only ($A$); grey, not confirmed. Grey points with a large Wald $-\log_{10}p$ at 48 h are the anti-conservative analytic tests of @fig-fs-null-calibration. Six genes above every type are labelled per panel. Source: `deg.rds`.](images/feature_selection/fs_deg_volcano.png){#fig-fs-deg-volcano}
+
+![Confirmed gene $\times$ type pairs per family (colour) and design (panels): one BH over all pairs on $A$; stage-wise Holm on $A$; stage-wise graphical procedure, $A$ and $B$. Rows ordered by the graphical $A$ count. Source: `deg_counts.csv`.](images/feature_selection/fs_deg_counts.png){#fig-fs-deg-counts}
+
+![UpSet plot of the genes confirmed above the average of the other types (primary family), 25 largest intersections of the 11 type $\times$ time sets; left, set sizes. Source: `fs_deg_upset.rds`.](images/feature_selection/fs_deg_upset.png){#fig-fs-deg-upset}
+
+![Distribution over all tested genes of the one-versus-average log2 fold change per type (rows) and time (panels), half-eye densities with the median and the 66 % and 95 % intervals; x limited to $\pm6$. Source: `deg.rds`.](images/feature_selection/fs_deg_lfc_distributions.png){#fig-fs-deg-lfc}
+
+::: {.column-page}
+![Top confirmed genes at 48 h: up to 12 per type (rows, split by the type they are confirmed in; above every type first, then by fold change) in up to 150 cells per type (columns, split and coloured by type; second bar: batch). z-score per gene of $\log(1+x/s)$, clipped at $\pm3$; rows and cells clustered within their slice. At 48 h all naïve-pluripotency cells come from batch 2 (cell line SBR), so its genes cannot be separated from a cell-line effect. Source: `fs_deg_heatmap.rds`.](images/feature_selection/fs_deg_heatmap_48h.png){#fig-fs-deg-heatmap-48}
+:::
+
+::: {.column-page}
+![Top confirmed genes at 72 h, as in @fig-fs-deg-heatmap-48.](images/feature_selection/fs_deg_heatmap_72h.png){#fig-fs-deg-heatmap-72}
+:::
+
+::: {.column-page}
+![Top confirmed genes at 96 h, as in @fig-fs-deg-heatmap-48.](images/feature_selection/fs_deg_heatmap_96h.png){#fig-fs-deg-heatmap-96}
+:::
+
+**Sub-states within a type.** A type made of two promoter-activity
+states would show, for its genes, a negative-binomial mixture: an
+off-state with more zeros than one NB predicts, or two expressed
+modes; this is how CardamomOT defines basins, and a DeCovarT component
+would then need to be split into sub-types
+[TODO-cite: CardamomOT, mechanistic gene regulatory network and trajectory inference, Eq. beta_mixture; preprint, citation key to add]{.highlight}.
+Among the `r big(nrow(bimod))` genes above every type, `r big(n_off)`
+have a share of zero cells more than 10 points above the share the
+fitted NB (type mean, $\hat\phi_g$, size factors) predicts, and
+`r big(n_two)` have two modes among their non-zero cells (bimodality
+coefficient above 5/9 and dip test $p<0.05$) (@fig-fs-deg-bimodality).
+Within-type multimodality is therefore rare at the resolution of these
+tests; the descriptive checks are not a test of basins.
+
+![Within-type expression of the six genes above every type with the largest excess of zeros among genes with a mean above one count per cell: histogram of $\log(1+x/s)$ over the cells of the type. Each panel gives the observed share of zeros, the share the fitted NB predicts, and the bimodality coefficient of the non-zero cells. Source: `bimodality.csv`.](images/feature_selection/fs_deg_bimodality.png){#fig-fs-deg-bimodality}
+
+**Old against new panel.** The archived panel of the
+[legacy SCTransform ratio](#sec-fs-legacy) kept the top 500 genes per
+time; `r paste(big(shared), collapse = " / ")` of them pass the new gate
+at 48, 72 and 96 h, and their ranks agree moderately (Spearman 0.54 to
+0.67 on the shared genes) (@fig-fs-deg-panel). The new panel is larger
+because it has no cap.
+
+![Old (top 500 by the type-equal between/within ratio of SCTransform residuals, read from commit `3b71ae0^`) against new (BH 0.05 on the permuted Welch $G$) panel. Top: genes in the old panel only, in both, in the new panel only. Bottom: rank in the old panel against the $R^{2}_{D}$ rank in the new panel for the shared genes, Spearman correlation per time. Source: `panel_comparison.csv`.](images/feature_selection/fs_deg_panel_comparison.png){#fig-fs-deg-panel}
+
+[TODO-future: group knockoffs on gene modules or enriched gene sets, to test which combinations of genes jointly predict the cell type (a conditional question that the marginal tests above do not answer); see [3.1, dropped strategies](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#tbl-fs-posthoc-dropped).]{.highlight}
+
+## Enrichment of the genes that drive each type {#sec-fs-enrichment .appendix}
+
+```{r}
+#| label: fs-enrichment-values
+#| include: false
+enr_sig <- read_out("feature_selection", "enrichment", "enrichment_significant.csv")
+themes <- read.csv(here::here("..", "data", "dictionaries", "enrichment_themes.csv"), fileEncoding = "UTF-8")
+n_terms <- table(enr_sig$method)
+```
+
+**Settings.** For each type and time, the genes confirmed above the
+average of the other types by the primary family (permuted Welch,
+graphical procedure) are tested for over-representation (ORA) against
+the genes tested in the slot as universe, and all tested genes, ranked
+by the one-versus-average Welch $t$, are tested by gene-set enrichment
+(GSEA). Databases: GO biological process (`clusterProfiler`), Reactome
+(`ReactomePA`) and the MSigDB Hallmark collection (`msigdbr`); gene sets
+of 10 to 500 genes; BH 0.05 within each type, time, method and database.
+`r big(n_terms[["ORA"]])` ORA and `r big(n_terms[["GSEA"]])` GSEA terms
+pass (`enrichment_significant.csv`). The significant GO terms are
+grouped by semantic similarity (`simplifyEnrichment`, binary cut at
+0.7). The scripts follow the enrichment step of GastroDeconv2FateMap
+(`scripts/06_03_enrichment_analyses.R`).
+
+::: {.callout-note collapse="true"}
+## :robot: Themes are a draft interpretation
+
+The themes of @fig-fs-enrichment-lollipop
+(`data/dictionaries/enrichment_themes.csv`) were chosen by a language
+model (Claude) from the significant-term tables, with a focus on
+metabolism and on potency markers, and every term was checked against
+`enrichment_significant.csv`. No external model call was made. Read
+them as hypotheses to check against the genes, not as findings.
+:::
+
+**What the terms say (draft).** The pluripotent types carry the LIF
+response: naïve pluripotency at 48 h and 72 h, and the ectopic
+pluripotency of 96 h, whose genes also over-represent ribosome
+biogenesis and MYC and mTORC1 targets, a growth programme that is shared
+with the 48 h epiblast. Cholesterol synthesis marks the 48 h epiblast and
+the 72 h primitive streak. Oxidative phosphorylation and the respiratory
+chain mark the 96 h caudal mesoderm and, by GSEA, the cells exiting
+naïve pluripotency at 48 h. Axial patterning marks the primitive
+streak (Wnt signalling), the pre-somitic mesoderm (anterior/posterior
+pattern specification) and the somite differentiation front (Notch).
+The gut over-represents hypoxia, cell adhesion and IGF transport.
+
+![Summary of the curated themes: one row per type and time within a theme, one point per term (colour: database; shape: ORA or GSEA) at its $-\log_{10}$ BH-adjusted $p$; dashed line at 0.05. Source: `enrichment_themes.csv`, `enrichment_significant.csv`.](images/feature_selection/fs_enrichment_lollipop.png){#fig-fs-enrichment-lollipop}
+
+![Over-representation per type and time: one point per term, ordered by database (colour), at its $-\log_{10}p$; dashed line at the largest $p$ that passes BH 0.05 in the panel; the two terms with the smallest $p$ are labelled. Source: `enrichment.csv`.](images/feature_selection/fs_enrichment_manhattan.png){#fig-fs-enrichment-manhattan}
+
+![GSEA per type and time: normalised enrichment score (positive: the set sits among the genes above the average of the other types) against $-\log_{10}$ BH-adjusted $p$; grey: not significant; dashed line at 0.05. Source: `enrichment.csv`.](images/feature_selection/fs_enrichment_gsea_volcano.png){#fig-fs-enrichment-gsea}
+
+![Semantic map of the significant GO BP terms: classical MDS of one minus their semantic similarity, points sized by the number of type $\times$ time sets in which the term is significant, the eight largest clusters coloured and labelled by their most frequent term. Source: `go_clusters.csv`.](images/feature_selection/fs_enrichment_semantic_map.png){#fig-fs-enrichment-semantic}
+
+## Code of tier (ii) {#sec-fs-code-tier2 .appendix}
+
+Functions are in `R/02_02_stats_cross_cell.R` (statistics) and
+`R/02_02_vis_cross_cell.R` (figures).
+`scripts/02_02_stats_cross_cell_consistency.R` writes
+`output/feature_selection/tier_02/` (`calibration.csv`,
+`permutation_floor.csv`, `kendall_<time>.csv`, `selected_<time>.csv`,
+`selected_floor_<time>.csv` and `cross_cell.rds`, tracked with DVC);
+`scripts/02_02_vis_cross_cell.R` draws the figures, each with the
+`.rds` of its data in `output/feature_selection/tier_02/figures/`.
+
+| Function or script | Purpose | Supports |
+|---|---|---|
+| `compare_type_effect_tests()` | NB fits $M_0$, $M_1$, $R^{2}_{D}$ and the four tests; Welch $G$ with `n_perm = 2000` within-batch permutations | @sec-fs-omnibus |
+| `type_test_calibration()` | share of null $p$-values below 0.01 and 0.05 | @fig-fs-null-calibration |
+| `type_test_kendall()` | Kendall's $\tau_b$ between the test rankings | @fig-fs-test-agreement |
+| `rank_genes_omnibus()` | BH gate on the permuted Welch $G$, rank by $R^{2}_{D}$ (`n_select = Inf`) | @fig-fs-gate-rank |
+| `plot_null_calibration()` | `qqplotr` QQ plot of null $-\log_{10}p$ against the exponential | @fig-fs-null-calibration |
+| `plot_pvalue_histograms()` | unadjusted $p$-value histograms, optionally by expression tertile | @fig-fs-pvalue-hist, @fig-fs-pvalue-hist-mean |
+| `gate_class()`, `plot_gate_rank()`, `plot_r2_vs_mean()` | fails BH / passes / at the floor | @fig-fs-gate-rank, @fig-fs-r2-mean |
+| `plot_overdispersion()` | $\hat\phi_g$ against the mean, Poisson-like and upper-boundary classes | @fig-fs-overdispersion |
+
+| `type_contrast_tests()`, `contrast_matrices()`, `one_sided_ab()` (`R/02_04_stats_deg_contrasts.R`) | one-sided $A$ and $B$ $p$-values of the four families; same permutation draw as the gate | @sec-fs-deg |
+| `stagewise_decisions()`, `graph_a_then_b()` | stage-wise level $\alpha_I$, graphical procedure, Holm on $A$, flat BH | @fig-fs-deg-counts |
+| `emmeans_contrast_check()` | Wald $p$-values against `emmeans::qdrg()` contrasts | @sec-fs-deg |
+| `plot_deg_volcano()`, `plot_lfc_distributions()`, `plot_deg_counts()`, `plot_bimodality()`, `plot_panel_comparison()` (`R/02_04_vis_deg.R`) | figures of the post hoc contrasts; heatmaps and UpSet in `scripts/02_04_vis_deg.R` | @sec-fs-deg |
+| `enrich_one_type()`, `symbol_to_entrez()`, `hallmark_term2gene()` (`R/02_05_stats_enrichment.R`) | ORA and GSEA on GO BP, Reactome and Hallmark | @sec-fs-enrichment |
+| `plot_enrichment_lollipop()`, `plot_enrichment_manhattan()`, `plot_gsea_volcano()`, `plot_semantic_map()` (`R/02_05_vis_enrichment.R`) | enrichment figures | @sec-fs-enrichment |
+
+: Code of tier (ii) and of its appendices. Scripts: `scripts/02_04_stats_deg_contrasts.R` and `scripts/02_04_vis_deg.R` write `output/feature_selection/deg/`; `scripts/02_05_stats_enrichment.R` and `scripts/02_05_vis_enrichment.R` write `output/feature_selection/enrichment/`. {#tbl-fs-code-tier2}
+
+```{r}
+#| label: fs-omnibus-call
+#| eval: false
+# Not run. sc[[tm]]: raw counts (genes x cells) of the scored cells of
+# slot tm; cell_type[[tm]]: their labels; batch[[tm]]: their batch;
+# lib[[tm]]: full library sizes (column sums of the deposited counts).
+# B, the seeds and the thresholds are fixed before the run.
+source("R/02_00_utils.R")
+source("R/02_01_stats_quality_control.R")
+source("R/02_02_stats_cross_cell.R")
+times <- c("48h", "72h", "96h")
+sf <- lapply(lib, function(l) l / stats::median(l))
+
+tests <- lapply(times, function(tm) {
+  compare_type_effect_tests(
+    sc[[tm]],
+    cell_type[[tm]],
+    size_factors = sf[[tm]],
+    n_perm = 2000L,
+    seed = 20261101L,
+    strata = batch[[tm]],
+    fdr = 0.05,
+    min_cells_total = 20L,
+    min_cells_type = 2L
+  )
+})
+names(tests) <- times
+
+# Agreement of the gene orders: all tested genes, then those passing
+# the gate (permuted Welch G).
+tau_all <- lapply(tests, type_test_kendall)
+tau_gated <- lapply(tests, function(r) type_test_kendall(r, genes = r$welch_perm_pass))
+
+# Conservativeness: rerun on one within-batch permutation of the labels
+# (null by construction) and compare the share of p-values below 0.01
+# and 0.05.
+calibration <- lapply(times, function(tm) {
+  null_labels <- withr::with_seed(20261102L, {
+    lab <- cell_type[[tm]]
+    for (idx in split(seq_along(lab), batch[[tm]])) {
+      lab[idx] <- lab[idx][sample.int(length(idx))]
+    }
+    lab
+  })
+  res_null <- compare_type_effect_tests(
+    sc[[tm]],
+    null_labels,
+    size_factors = sf[[tm]],
+    n_perm = 2000L,
+    seed = 20261103L,
+    strata = batch[[tm]]
+  )
+  type_test_calibration(res_null)
+})
+
+# Gate on the permuted Welch G, rank by the deviance R^2; the fits and
+# permutations of `tests` are reused, not redrawn.
+ranked <- lapply(times, function(tm) {
+  rank_genes_omnibus(
+    fdr = 0.05,
+    n_select = Inf,
+    gate_test = "welch_perm",
+    results = tests[[tm]]
+  )
+})
+names(ranked) <- times
+# Panel passed to tier (iii): genes selected at any time (the tier (i)
+# markers are united with it before export).
+panel <- unique(unlist(lapply(ranked, function(r) r$gene[r$selected])))
+```

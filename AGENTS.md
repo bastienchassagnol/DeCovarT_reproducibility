@@ -12,6 +12,10 @@ Division of content: the DeCovarT vignettes hold the theory (models, assumptions
   scripts or output files. Each chapter ends with an appendix section
   (`## Code {#sec-<chapter>-code .appendix}`) holding one table: function or
   script, file, purpose, and the section it supports (`@sec-…`).
+- **Folded code.** Code chunks are folded by default (`code-fold: true`,
+  `code-summary: "Show the code"`) and every page has the Code menu
+  (`code-tools: true`), both set once in `docs/_quarto.yml`; a chunk that
+  must stay open sets `#| code-fold: false`.
 - **Verbatim names.** Function, method, argument, package, file, column and
   layer names are always in backticks: `presence_gate()`, `min_cells`,
   `glmGamPoi`, `scored_slots.rds`.

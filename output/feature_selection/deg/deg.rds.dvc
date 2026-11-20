@@ -1,0 +1,5 @@
+outs:
+- md5: 466afb1a4013574ecfdad8bcf874096c
+  size: 23099233
+  hash: md5
+  path: deg.rds

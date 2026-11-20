@@ -20,3 +20,11 @@ suppinger_celltype_markers.csv,cell_type_excel,Lineage group of the signalling-m
 suppinger_celltype_markers.csv,cell_type_suppinger,Suppinger label named by the signalling-marker list,NA,character,NA or empty when the list names none
 suppinger_celltype_markers.csv,gene_marker,Curated marker (human-style symbol; mapped to mouse by map_marker_symbols()),NA,character,empty when the type has no marker group
 suppinger_celltype_markers.csv,note,Free-text justification of the match,NA,character,never empty
+enrichment_themes.csv,theme,Curated biological theme grouping enrichment terms (draft interpretation written by a language model and checked against enrichment_significant.csv),NA,character,never empty
+enrichment_themes.csv,time_point,Bulk-matched time of the slot,NA,48h; 72h; 96h,never empty
+enrichment_themes.csv,cell_type,Scored cell type whose enriched genes the term describes (Suppinger annotation),NA,celltypeannotation values,never empty
+enrichment_themes.csv,method,Enrichment method,NA,ORA; GSEA,never empty
+enrichment_themes.csv,database,Gene-set database,NA,GO BP; Reactome; Hallmark,never empty
+enrichment_themes.csv,id,Term identifier in the database (GO id; Reactome stable id; MSigDB set name),NA,character,never empty
+enrichment_themes.csv,description,Term name as returned by clusterProfiler / ReactomePA / msigdbr,NA,character,never empty
+enrichment_themes.csv,description_by,Who wrote the theme assignment,NA,character,never empty

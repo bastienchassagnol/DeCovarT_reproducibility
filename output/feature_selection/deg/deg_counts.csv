@@ -1,0 +1,45 @@
+"time_point","test","type","a_flat_bh","a_holm","a_graph","b_graph"
+"96h","anova_vst","Caudal mesoderm",1308,1377,1319,141
+"96h","lr","Caudal mesoderm",1619,1670,1588,111
+"96h","ql_f","Caudal mesoderm",1706,1728,1658,117
+"96h","welch_perm","Caudal mesoderm",1319,1300,1247,110
+"72h","anova_vst","Ectopic pluripotency",535,605,555,108
+"96h","anova_vst","Ectopic pluripotency",1516,1526,1501,591
+"72h","lr","Ectopic pluripotency",411,479,440,43
+"96h","lr","Ectopic pluripotency",1440,1446,1405,421
+"72h","ql_f","Ectopic pluripotency",439,502,462,50
+"96h","ql_f","Ectopic pluripotency",1456,1451,1412,441
+"72h","welch_perm","Ectopic pluripotency",365,378,343,73
+"96h","welch_perm","Ectopic pluripotency",1538,1315,1290,511
+"48h","anova_vst","Epiblast",1019,1158,1079,406
+"48h","lr","Epiblast",731,980,896,316
+"48h","ql_f","Epiblast",949,1075,1014,372
+"48h","welch_perm","Epiblast",606,640,579,207
+"48h","anova_vst","Exiting naïve pluripotency",246,303,270,44
+"48h","lr","Exiting naïve pluripotency",153,214,191,26
+"48h","ql_f","Exiting naïve pluripotency",184,244,208,29
+"48h","welch_perm","Exiting naïve pluripotency",71,61,47,9
+"96h","anova_vst","Gut",1211,1254,1205,342
+"96h","lr","Gut",1297,1331,1269,245
+"96h","ql_f","Gut",1301,1322,1259,265
+"96h","welch_perm","Gut",1205,1073,1029,226
+"48h","anova_vst","Naïve pluripotency",828,920,870,653
+"72h","anova_vst","Naïve pluripotency",1074,1110,1067,733
+"48h","lr","Naïve pluripotency",452,533,490,221
+"72h","lr","Naïve pluripotency",803,833,789,379
+"48h","ql_f","Naïve pluripotency",429,508,476,217
+"72h","ql_f","Naïve pluripotency",746,824,769,369
+"48h","welch_perm","Naïve pluripotency",315,187,166,66
+"72h","welch_perm","Naïve pluripotency",794,484,459,238
+"96h","anova_vst","Pre-somitic mesoderm",1413,1470,1418,21
+"96h","lr","Pre-somitic mesoderm",1915,1965,1891,23
+"96h","ql_f","Pre-somitic mesoderm",2009,2023,1969,25
+"96h","welch_perm","Pre-somitic mesoderm",1500,1529,1451,23
+"72h","anova_vst","Primitive streak",1894,1896,1841,848
+"72h","lr","Primitive streak",1663,1819,1718,778
+"72h","ql_f","Primitive streak",1868,1911,1842,884
+"72h","welch_perm","Primitive streak",1952,2099,2005,944
+"96h","anova_vst","Somite differentiation front",532,590,547,137
+"96h","lr","Somite differentiation front",657,692,632,85
+"96h","ql_f","Somite differentiation front",620,636,595,83
+"96h","welch_perm","Somite differentiation front",585,570,528,106

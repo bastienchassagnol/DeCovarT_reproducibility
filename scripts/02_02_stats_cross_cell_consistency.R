@@ -147,6 +147,16 @@ for (tm in times) {
     ],
     paste0("selected_", tm, ".csv")
   )
+  # Stricter tier, reported only: genes whose observed G was not reached by
+  # any of the B permuted G* of the same gene (p at the floor 1 / (B + 1)).
+  at_floor <- sel$pval <= 1 / (n_perm + 1) + 1e-12
+  write_out(
+    sel[
+      order(sel$rank),
+      c("gene", "rank", "deviance_r2", "pval", "adj_pval", "overdispersion")
+    ][at_floor[order(sel$rank)], , drop = FALSE],
+    paste0("selected_floor_", tm, ".csv")
+  )
   write_out(
     as.data.frame(tau_all[[tm]]),
     paste0("kendall_", tm, ".csv"),
@@ -175,6 +185,11 @@ floor_tbl <- do.call(
     )
   })
 )
+# Estimated FDR of the floor set with pi0 = 1: a null gene lands at the
+# floor with probability 1 / (B + 1), so about m / (B + 1) null genes are
+# expected there.
+floor_tbl$floor_fdr_estimate <- floor_tbl$genes_tested * floor_tbl$p_floor /
+  floor_tbl$genes_at_floor
 write_out(floor_tbl, "permutation_floor.csv")
 
 panel <- unique(unlist(lapply(ranked, function(res) res$gene[res$selected])))

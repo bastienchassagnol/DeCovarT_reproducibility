@@ -138,6 +138,11 @@ resources:
 
 format:
   html:
+    # Code chunks folded by default, with a page-level Code menu
+    # (show/hide all, view source).
+    code-fold: true
+    code-summary: "Show the code"
+    code-tools: true
     comments:
       hypothesis:
         theme: clean
