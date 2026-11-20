@@ -84,6 +84,10 @@ repository. Do not add a project skill whose name the bundle already uses.
 - Audit of `dtoo_project/` on 2026-11-18: the only tracked symlink is
   `slides/_extensions/pandoc-ext/diagram`, relative and inside the repository.
 
-## Code graph (graphify)
+## Code graph (CodeGraph first, Graphify second)
 
-The `graphify` rule applies only where `graphify-out/` exists, and the folder is not committed. If `graphify-out/graph.json` is missing, tell the user to run the `/graphify` skill from the repository root before exploring the code, and wait for the build. Do not substitute a long manual exploration. `.graphifyignore` already excludes generated and vendored paths (`renv/`, `docs/slides-deck/`, `docs/_extensions/`).
+CodeGraph is the default for code. Graphify is secondary and applies to mixed material. Where this section and the `graphify` rule (Cursor `.cursor/rules/graphify.mdc`, Claude Code `~/.claude/rules/graphify.md`) disagree about a code question, this section applies.
+
+- **Code questions** (`R/`, `scripts/`, `verification/`, Python helpers: callers, callees, impact, how a call path reaches a function): where `.codegraph/` exists at the repository root, call `codegraph_explore` (MCP) or `codegraph explore "<question>"` before Grep, Glob or Read. Treat the returned source as already read. The index auto-syncs while the MCP server runs. `.codegraph/` is not committed; build it once per checkout with `codegraph init`. `codegraph.json` excludes `renv/`, `docs/slides-deck/`, `docs/_extensions/`, `docs/_freeze/`, `docs/_book/` and `slides/_extensions/`.
+- **Cross-document questions** (links across book chapters in `docs/`, the DeCovarT vignettes, papers and design notes): use `/graphify query` only where `graphify-out/graph.json` exists. The folder is not committed and is rebuilt at milestones (annotated tag or version bump, via `Config/.cursor/code-knowledge/scripts/graphify-milestone.sh` in the ubuntu-genesis bundle), not on every commit. Do not run `graphify hook install` for code sync: CodeGraph covers it. `.graphifyignore` already excludes generated and vendored paths (`renv/`, `docs/slides-deck/`, `docs/_extensions/`).
+- **Neither index exists**: for a code question, tell the user to run `codegraph init` and wait; for a cross-document question, tell them to run the `/graphify` skill from the repository root. Do not substitute a long manual exploration.

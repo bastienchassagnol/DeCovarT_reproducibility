@@ -18,6 +18,11 @@ Short, always-on. Details for documents are in `document-extraction`.
 - `/effort low` for mechanical edits; raise effort only for reasoning.
 - Cursor has no per-subagent model: switch to a small model for search turns.
 
+## Code exploration
+
+When `.codegraph/` exists, query CodeGraph before loading large file trees or
+running broad grep for structure questions.
+
 ## Reuse before recomputing
 
 - Documents: `doc-search search` checks cached answers (notes) first.

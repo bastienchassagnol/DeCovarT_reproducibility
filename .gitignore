@@ -84,3 +84,7 @@ __pycache__/
 CSI.pptx
 csi__ornella_compressed.pdf
 suppinger_study.pdf
+report/
+
+# CodeGraph local index (Graphify output is ignored above)
+.codegraph/

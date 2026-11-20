@@ -2,6 +2,10 @@
 description: Two citation streams — Zotero literature and generated software BibTeX
 globs: bibliography/**,docs/**/*.qmd,docs/_quarto.yml
 alwaysApply: false
+paths:
+  - "bibliography/**"
+  - "docs/**/*.qmd"
+  - "docs/_quarto.yml"
 ---
 
 # Bibliography

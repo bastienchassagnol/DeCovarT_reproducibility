@@ -1,0 +1,10 @@
+{
+  "exclude": [
+    "renv/",
+    "docs/slides-deck/",
+    "docs/_extensions/",
+    "docs/_freeze/",
+    "docs/_book/",
+    "slides/_extensions/"
+  ]
+}
