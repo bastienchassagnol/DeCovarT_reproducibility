@@ -148,6 +148,14 @@
       "file": "check_posthoc_contrasts.py"
     },
     {
+      "id": "D5",
+      "claim": "Delta_j(-eta) = -Delta_j(eta), so B2 (all differences one sign) implies A2 with that sign; two-sided p = 2 min(upper, lower) one-sided p",
+      "kind": "exact",
+      "status": "pass",
+      "detail": "J = 4 symbolic; z at t = -3/2, 1/3, 2",
+      "file": "check_posthoc_contrasts.py"
+    },
+    {
       "id": "P1",
       "claim": "c = m'Wy / m'Wm and phi = r'Wr / G are the stationary scales; profile log-likelihood = -(G/2) log phi - (1/2) log det S - G/2",
       "kind": "exact",

@@ -1,0 +1,89 @@
+"time_point","test","type","direction","a_flat_bh","a_holm","a_graph","b_graph"
+"96h","anova_vst","Caudal mesoderm","down",1057,1025,948,6
+"96h","lr","Caudal mesoderm","down",650,634,572,12
+"96h","ql_f","Caudal mesoderm","down",632,604,547,10
+"96h","welch_perm","Caudal mesoderm","down",977,857,779,2
+"72h","anova_vst","Ectopic pluripotency","down",452,483,419,18
+"96h","anova_vst","Ectopic pluripotency","down",1991,1866,1764,312
+"72h","lr","Ectopic pluripotency","down",246,262,242,28
+"96h","lr","Ectopic pluripotency","down",2263,2161,2059,628
+"72h","ql_f","Ectopic pluripotency","down",245,256,234,29
+"96h","ql_f","Ectopic pluripotency","down",2344,2233,2150,626
+"72h","welch_perm","Ectopic pluripotency","down",571,534,492,18
+"96h","welch_perm","Ectopic pluripotency","down",3156,2647,2568,530
+"48h","anova_vst","Epiblast","down",1342,1364,1300,619
+"48h","lr","Epiblast","down",975,973,939,493
+"48h","ql_f","Epiblast","down",908,940,901,460
+"48h","welch_perm","Epiblast","down",310,366,323,133
+"48h","anova_vst","Exiting naïve pluripotency","down",340,406,368,8
+"48h","lr","Exiting naïve pluripotency","down",59,81,61,5
+"48h","ql_f","Exiting naïve pluripotency","down",57,75,62,4
+"48h","welch_perm","Exiting naïve pluripotency","down",17,25,19,0
+"96h","anova_vst","Gut","down",1300,1245,1135,113
+"96h","lr","Gut","down",943,904,828,130
+"96h","ql_f","Gut","down",998,942,868,135
+"96h","welch_perm","Gut","down",1485,1271,1189,98
+"48h","anova_vst","Naïve pluripotency","down",324,344,325,156
+"72h","anova_vst","Naïve pluripotency","down",680,666,635,233
+"48h","lr","Naïve pluripotency","down",240,279,260,151
+"72h","lr","Naïve pluripotency","down",544,567,535,234
+"48h","ql_f","Naïve pluripotency","down",299,351,324,176
+"72h","ql_f","Naïve pluripotency","down",668,675,649,276
+"48h","welch_perm","Naïve pluripotency","down",96,156,135,34
+"72h","welch_perm","Naïve pluripotency","down",893,902,850,316
+"96h","anova_vst","Pre-somitic mesoderm","down",1445,1397,1328,5
+"96h","lr","Pre-somitic mesoderm","down",1007,970,914,8
+"96h","ql_f","Pre-somitic mesoderm","down",937,896,843,6
+"96h","welch_perm","Pre-somitic mesoderm","down",1272,1090,1018,3
+"72h","anova_vst","Primitive streak","down",1742,1705,1642,817
+"72h","lr","Primitive streak","down",1357,1329,1290,697
+"72h","ql_f","Primitive streak","down",1313,1309,1253,665
+"72h","welch_perm","Primitive streak","down",926,851,806,330
+"96h","anova_vst","Somite differentiation front","down",424,457,376,13
+"96h","lr","Somite differentiation front","down",304,313,255,24
+"96h","ql_f","Somite differentiation front","down",373,365,305,39
+"96h","welch_perm","Somite differentiation front","down",596,557,434,59
+"96h","anova_vst","Caudal mesoderm","up",1318,1239,1160,117
+"96h","lr","Caudal mesoderm","up",1572,1486,1392,96
+"96h","ql_f","Caudal mesoderm","up",1658,1585,1489,101
+"96h","welch_perm","Caudal mesoderm","up",1540,1296,1208,108
+"72h","anova_vst","Ectopic pluripotency","up",526,528,473,84
+"96h","anova_vst","Ectopic pluripotency","up",1520,1451,1405,524
+"72h","lr","Ectopic pluripotency","up",399,427,383,33
+"96h","lr","Ectopic pluripotency","up",1410,1356,1300,360
+"72h","ql_f","Ectopic pluripotency","up",418,448,403,38
+"96h","ql_f","Ectopic pluripotency","up",1423,1368,1320,387
+"72h","welch_perm","Ectopic pluripotency","up",376,350,309,58
+"96h","welch_perm","Ectopic pluripotency","up",1405,1176,1127,466
+"48h","anova_vst","Epiblast","up",1015,1026,959,327
+"48h","lr","Epiblast","up",726,831,735,232
+"48h","ql_f","Epiblast","up",918,973,901,295
+"48h","welch_perm","Epiblast","up",512,589,530,162
+"48h","anova_vst","Exiting naïve pluripotency","up",245,265,234,33
+"48h","lr","Exiting naïve pluripotency","up",150,194,167,16
+"48h","ql_f","Exiting naïve pluripotency","up",171,215,182,19
+"48h","welch_perm","Exiting naïve pluripotency","up",35,35,26,4
+"96h","anova_vst","Gut","up",1213,1139,1077,308
+"96h","lr","Gut","up",1263,1202,1139,205
+"96h","ql_f","Gut","up",1261,1200,1127,230
+"96h","welch_perm","Gut","up",1110,912,836,199
+"48h","anova_vst","Naïve pluripotency","up",824,840,812,584
+"72h","anova_vst","Naïve pluripotency","up",1061,1032,1002,670
+"48h","lr","Naïve pluripotency","up",452,469,453,200
+"72h","lr","Naïve pluripotency","up",775,764,745,329
+"48h","ql_f","Naïve pluripotency","up",412,449,425,190
+"72h","ql_f","Naïve pluripotency","up",724,732,698,314
+"48h","welch_perm","Naïve pluripotency","up",78,98,96,38
+"72h","welch_perm","Naïve pluripotency","up",290,287,269,131
+"96h","anova_vst","Pre-somitic mesoderm","up",1420,1327,1263,16
+"96h","lr","Pre-somitic mesoderm","up",1860,1767,1687,20
+"96h","ql_f","Pre-somitic mesoderm","up",1956,1844,1773,20
+"96h","welch_perm","Pre-somitic mesoderm","up",1753,1523,1424,22
+"72h","anova_vst","Primitive streak","up",1852,1792,1691,726
+"72h","lr","Primitive streak","up",1608,1652,1533,645
+"72h","ql_f","Primitive streak","up",1807,1799,1713,768
+"72h","welch_perm","Primitive streak","up",2158,2083,1984,928
+"96h","anova_vst","Somite differentiation front","up",539,525,441,116
+"96h","lr","Somite differentiation front","up",630,614,545,65
+"96h","ql_f","Somite differentiation front","up",590,574,503,69
+"96h","welch_perm","Somite differentiation front","up",260,260,178,26

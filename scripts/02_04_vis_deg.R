@@ -3,7 +3,8 @@
 #   scripts/02_04_vis_deg.R \
 #   > "logs/02_04_vis_deg_$(date +%F).log" 2>&1 &
 #
-# Figures of the post hoc contrasts (appendix of chapter 2): volcano,
+# Figures of the one-sided (superiority: A and B) post hoc contrasts
+# (appendix of chapter 2; two-sided figures: 02_04_vis_deg_twosided.R): volcano,
 # log2FC distributions, confirmed genes per family and design, UpSet of
 # the DEG sets, heatmap of the top confirmed genes, within-type
 # bimodality, and the old (SCTransform) against the new panel. PDFs and
@@ -39,7 +40,7 @@ save_figure(
     title = sprintf("%s gene x type pairs are confirmed above the average of the other types; %s above every type", fmt_n(n_a), fmt_n(n_ab)),
     subtitle = "Colour: permuted Welch family, stage-wise graphical procedure; y: one-sided Wald p (NB fit)"
   ),
-  "fs_deg_volcano",
+  "fs_deg_superiority_volcano",
   fig_dir,
   png_dir = png_dir,
   data = dec[dec$test %in% c("lr", primary), c("time_point", "test", "gene", "type", "log2fc", "p_a", "a_graph", "b_graph")],
@@ -70,7 +71,7 @@ save_figure(
     title = "The four families agree on which types carry most genes; B confirms far fewer than A",
     subtitle = "Confirmed gene x type pairs at 0.05 (flat BH: share of false pairs; stage-wise: gene-level OFDR)"
   ),
-  "fs_deg_counts",
+  "fs_deg_superiority_counts",
   fig_dir,
   png_dir = png_dir,
   data = deg$counts,
@@ -97,59 +98,20 @@ p_up <- ComplexUpset::upset(
     subtitle = "Genes confirmed above the average of the other types (permuted Welch, graphical procedure); 25 largest intersections",
     theme = theme_slide()
   )
-save_figure(p_up, "fs_deg_upset", fig_dir, png_dir = png_dir, data = up, width = 12, height = 6.5)
+save_figure(p_up, "fs_deg_superiority_upset", fig_dir, png_dir = png_dir, data = up, width = 12, height = 6.5)
 
 # 5. Heatmap of the top confirmed genes per type, cells subsampled.
-heat_one <- function(tm, k = 12L, max_cells = 150L) {
-  slot <- prepared$slots[[tm]]
+heat_one <- function(tm, k = 12L) {
   p <- prim[prim$time_point == tm & prim$a_graph, , drop = FALSE]
   p <- p[order(p$type, !p$b_graph, -p$log2fc), , drop = FALSE]
   top <- do.call(rbind, lapply(split(p, p$type), utils::head, k))
   top <- top[!duplicated(top$gene), , drop = FALSE]
-  ct <- as.character(slot$cell_type)
-  keep <- unlist(withr::with_seed(seed, lapply(split(seq_along(ct), ct), function(i) {
-    if (length(i) > max_cells) sample(i, max_cells) else i
-  })))
-  x <- as.matrix(slot$counts[top$gene, keep, drop = FALSE])
-  v <- log1p(sweep(x, 2L, cc$sf[[tm]][keep], "/"))
-  z <- t(scale(t(v)))
-  z[!is.finite(z)] <- 0
-  z <- pmin(pmax(z, -3), 3)
-  types <- intersect(names(type_cols), unique(ct))
-  col_split <- factor(ct[keep], levels = types)
-  row_split <- factor(top$type, levels = types)
-  ha <- ComplexHeatmap::HeatmapAnnotation(
-    type = col_split,
-    batch = factor(slot$batch[keep]),
-    col = list(type = type_cols[types], batch = c(batch1 = "#d9d3c7", batch2 = "#3d4a42")),
-    show_annotation_name = FALSE,
-    annotation_legend_param = list(type = list(title = "Cell type"), batch = list(title = "Batch"))
-  )
-  ComplexHeatmap::Heatmap(
-    z,
-    name = "z",
-    col = circlize::colorRamp2(c(-3, 0, 3), c("#1d4e89", "#f7f4ee", "#c45c26")),
-    top_annotation = ha,
-    column_split = col_split,
-    row_split = row_split,
-    cluster_row_slices = FALSE,
-    cluster_column_slices = FALSE,
-    show_column_names = FALSE,
-    row_names_gp = grid::gpar(fontsize = 6, fontface = "italic"),
-    column_title_gp = grid::gpar(fontsize = 8),
-    row_title_gp = grid::gpar(fontsize = 7),
-    row_title_rot = 0,
-    # Types are named by the colour annotation; slice titles of small
-    # types would overlap.
-    column_title = NULL,
-    use_raster = TRUE,
-    heatmap_legend_param = list(title = "z-score of\nlog(1 + x/s)")
-  )
+  deg_heatmap(prepared$slots[[tm]], cc$sf[[tm]], top, type_cols, seed)
 }
 heat_files <- list()
 for (tm in names(deg$results)) {
   hm <- heat_one(tm)
-  nm <- paste0("fs_deg_heatmap_", tm)
+  nm <- paste0("fs_deg_superiority_heatmap_", tm)
   for (dev in c("pdf", "png")) {
     f <- if (dev == "pdf") file.path(fig_dir, paste0(nm, ".pdf")) else file.path(png_dir, paste0(nm, ".png"))
     if (dev == "pdf") grDevices::cairo_pdf(f, width = 13, height = 7.5) else ragg::agg_png(f, width = 13, height = 7.5, units = "in", res = 300, background = "white")
@@ -164,7 +126,7 @@ for (tm in names(deg$results)) {
   heat_files[[tm]] <- nm
 }
 saveRDS(list(genes = lapply(names(deg$results), function(tm) prim[prim$time_point == tm & prim$a_graph, c("gene", "type", "log2fc", "b_graph")]), seed = seed),
-        file.path(fig_dir, "fs_deg_heatmap.rds"))
+        file.path(fig_dir, "fs_deg_superiority_heatmap.rds"))
 
 # 6. Within-type bimodality of the genes confirmed above every type.
 # Two cues of sub-states (CardamomOT basins: an NB mixture within a type):
@@ -229,7 +191,7 @@ save_figure(
     title = sprintf("Within-type sub-states are rare: %s / %s genes above every type exceed the NB zero share by 10 points", fmt_n(n_off), fmt_n(nrow(bim))),
     subtitle = sprintf("Six largest excesses among genes with a mean above 1; two modes among non-zero cells (BC > 5/9, dip p < 0.05): %s genes", fmt_n(n_two))
   ),
-  "fs_deg_bimodality",
+  "fs_deg_superiority_bimodality",
   fig_dir,
   png_dir = png_dir,
   data = list(bimodality = bim, top6 = top6, expr = expr),

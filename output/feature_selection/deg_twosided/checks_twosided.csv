@@ -1,0 +1,4 @@
+"time_point","genes_tested","same_permutation_draw","emmeans_max_abs_diff_a2","emmeans_max_abs_diff_b2"
+"48h",9633,TRUE,1.11022302462516e-15,0
+"72h",10751,TRUE,3.88578058618805e-15,0
+"96h",9761,TRUE,4.44089209850063e-16,0

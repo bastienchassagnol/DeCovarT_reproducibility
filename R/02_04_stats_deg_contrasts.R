@@ -12,6 +12,16 @@
 #'   k != j (intersection-union p-value: the largest of the pairwise
 #'   one-sided p-values). B_gj implies A_gj.
 #'
+#' Two-sided variant (returned beside the one-sided values, same fits and
+#' same permutation draw):
+#'
+#' - A2_gj: Delta_gj != 0 (two-sided p);
+#' - B2_gj: type j is above every other type or below every other type,
+#'   in the sign of Delta_gj (intersection-union of the two-sided pairwise
+#'   p-values, set to 1 when a pairwise estimate has the other sign).
+#'   Delta_gj is the mean of the pairwise contrasts eta_gj - eta_gk, so
+#'   B2_gj implies A2_gj with the same sign and the graph carries over.
+#'
 #' Four families of one-sided p-values, one per omnibus test of tier (ii):
 #'
 #' - `lr`: Wald z on the NB M1 coefficients (cell-means design, gene-wise
@@ -64,6 +74,42 @@ one_sided_ab <- function(est_a, se_a, est_p, se_p, pairs, df = Inf) {
   )
   dim(p_b) <- dim(p_a)
   list(p_a = p_a, p_b = p_b)
+}
+
+#' Sign-consistent intersection-union p for B2 from two-sided pairwise p.
+#'
+#' @param p_pair Genes x (ordered pairs) two-sided p-values.
+#' @param est_a Genes x J estimates of A (their sign is the direction).
+#' @param est_p Genes x (ordered pairs) estimates.
+#' @param pairs Data frame of ordered pairs from [contrast_matrices()].
+#' @return Genes x J matrix: the largest pairwise p of type j, or 1 when a
+#'   pairwise estimate of j does not have the sign of its A estimate.
+iut_two_sided <- function(p_pair, est_a, est_p, pairs) {
+  p_b <- vapply(
+    seq_len(ncol(est_a)),
+    function(j) {
+      cols <- pairs$j == j
+      same <- rowSums(sign(est_p[, cols, drop = FALSE]) != sign(est_a[, j])) == 0
+      pb <- apply(p_pair[, cols, drop = FALSE], 1L, max)
+      ifelse(same %in% TRUE | is.na(pb), pb, 1)
+    },
+    numeric(nrow(est_a))
+  )
+  dim(p_b) <- dim(est_a)
+  p_b
+}
+
+#' Two-sided p-values for A2 and the sign-consistent p for B2.
+#'
+#' @inheritParams one_sided_ab
+#' @return List of genes x J matrices `p_a`, `p_b` and `sign_a`.
+two_sided_ab <- function(est_a, se_a, est_p, se_p, pairs, df = Inf) {
+  both <- function(t) 2 * stats::pt(-abs(t), df = df)
+  list(
+    p_a = both(est_a / se_a),
+    p_b = iut_two_sided(both(est_p / se_p), est_a, est_p, pairs),
+    sign_a = sign(est_a)
+  )
 }
 
 #' Within-gene graphical procedure, A_j then B_j.
@@ -156,7 +202,8 @@ stagewise_decisions <- function(p_a, p_b, omnibus_padj, fdr = 0.05) {
 #' @param perm_block Permutations per matrix product. Default `250`.
 #' @return List: `log2fc` (genes x J, A contrast of the NB M1 fit, log2),
 #'   `log_mean` (genes x J, beta of M1), `p` (named list over tests of
-#'   lists `p_a`, `p_b`), `welch_gate_p` (gate p-value recomputed),
+#'   lists `p_a`, `p_b`), `p2` (the same for A2 and B2, two-sided, plus
+#'   `sign_a`), `welch_gate_p` (gate p-value recomputed),
 #'   `types`, `n_j`.
 type_contrast_tests <- function(
   counts,
@@ -184,6 +231,7 @@ type_contrast_tests <- function(
     dims = c(n_cells, n_types)
   )
   p <- list()
+  p2 <- list()
 
   # LR / Wald: NB M1, cell-means design, ML overdispersion (as the gate).
   fit1 <- glmGamPoi::glm_gp(
@@ -206,6 +254,7 @@ type_contrast_tests <- function(
   est_p <- beta %*% t(cm$P)
   se_p <- sqrt(v_beta %*% t(cm$P^2))
   p$lr <- one_sided_ab(est_a, se_a, est_p, se_p, cm$pairs)
+  p2$lr <- two_sided_ab(est_a, se_a, est_p, se_p, cm$pairs)
   log2fc <- est_a / log(2)
 
   # QL F: contrasts on the fit with shrunk overdispersion.
@@ -220,13 +269,19 @@ type_contrast_tests <- function(
   )
   ql_one <- function(cvec) {
     de <- glmGamPoi::test_de(fit_ql, contrast = cvec)
-    de <- de[match(rownames(counts), de$name), , drop = FALSE]
-    ifelse(de$lfc > 0, de$pval / 2, 1 - de$pval / 2)
+    de[match(rownames(counts), de$name), c("pval", "lfc"), drop = FALSE]
   }
-  qa <- vapply(seq_len(n_types), function(j) ql_one(cm$A[j, ]), numeric(nrow(counts)))
-  qp <- vapply(seq_len(nrow(cm$P)), function(r) ql_one(cm$P[r, ]), numeric(nrow(counts)))
-  dim(qa) <- c(nrow(counts), n_types)
-  dim(qp) <- c(nrow(counts), nrow(cm$P))
+  de_a <- lapply(seq_len(n_types), function(j) ql_one(cm$A[j, ]))
+  de_p <- lapply(seq_len(nrow(cm$P)), function(r) ql_one(cm$P[r, ]))
+  pick <- function(des, col) vapply(des, `[[`, numeric(nrow(counts)), col)
+  qa2 <- pick(de_a, "pval")
+  qp2 <- pick(de_p, "pval")
+  la <- pick(de_a, "lfc")
+  lp <- pick(de_p, "lfc")
+  dim(qa2) <- dim(la) <- c(nrow(counts), n_types)
+  dim(qp2) <- dim(lp) <- c(nrow(counts), nrow(cm$P))
+  qa <- ifelse(la > 0, qa2 / 2, 1 - qa2 / 2)
+  qp <- ifelse(lp > 0, qp2 / 2, 1 - qp2 / 2)
   qb <- vapply(
     seq_len(n_types),
     function(j) apply(qp[, cm$pairs$j == j, drop = FALSE], 1L, max),
@@ -234,6 +289,11 @@ type_contrast_tests <- function(
   )
   dim(qb) <- dim(qa)
   p$ql_f <- list(p_a = qa, p_b = qb)
+  p2$ql_f <- list(
+    p_a = qa2,
+    p_b = iut_two_sided(qp2, la, lp, cm$pairs),
+    sign_a = sign(la)
+  )
 
   # ANOVA on the shifted logarithm, pooled residual variance.
   y0 <- 1 / (4 * vst_alpha)
@@ -253,6 +313,7 @@ type_contrast_tests <- function(
   est_p <- means %*% t(cm$P)
   se_p <- sqrt(outer(mse, as.vector(cm$P^2 %*% inv_n)))
   p$anova_vst <- one_sided_ab(est_a, se_a, est_p, se_p, cm$pairs, df = df2)
+  p2$anova_vst <- two_sided_ab(est_a, se_a, est_p, se_p, cm$pairs, df = df2)
 
   # Welch t on the Pearson residuals of M0, permutation-calibrated.
   fit0 <- glmGamPoi::glm_gp(
@@ -297,6 +358,8 @@ type_contrast_tests <- function(
   perm_lab <- matrix(withr::with_seed(seed, draw()), nrow = n_cells)
   ex_a <- matrix(0, nrow(counts), n_types)
   ex_p <- matrix(0, nrow(counts), nrow(cm$P))
+  ex_a2 <- ex_a
+  ex_p2 <- ex_p
   ex_g <- numeric(nrow(counts))
   for (b0 in seq(1L, n_perm, by = perm_block)) {
     bb <- b0:min(b0 + perm_block - 1L, n_perm)
@@ -313,6 +376,8 @@ type_contrast_tests <- function(
       st <- welch_t(ps1[, cols, drop = FALSE], ps2[, cols, drop = FALSE])
       ex_a <- ex_a + (!is.na(st$a) & st$a >= obs$a)
       ex_p <- ex_p + (!is.na(st$p) & st$p >= obs$p)
+      ex_a2 <- ex_a2 + (!is.na(st$a) & abs(st$a) >= abs(obs$a))
+      ex_p2 <- ex_p2 + (!is.na(st$p) & abs(st$p) >= abs(obs$p))
       g_star <- welch_g_stat(ps1[, cols, drop = FALSE], ps2[, cols, drop = FALSE], n_j, tot, tot2)[, "G"]
       ex_g <- ex_g + (!is.na(g_star) & g_star >= obs_g)
     }
@@ -328,11 +393,23 @@ type_contrast_tests <- function(
   )
   dim(pb) <- dim(pa)
   p$welch_perm <- list(p_a = pa, p_b = pb, t_a = obs$a)
+  pa2 <- (1 + ex_a2) / (n_perm + 1)
+  pa2[is.na(obs$a)] <- NA_real_
+  pp2 <- (1 + ex_p2) / (n_perm + 1)
+  pp2[is.na(obs$p)] <- NA_real_
+  p2$welch_perm <- list(
+    p_a = pa2,
+    p_b = iut_two_sided(pp2, obs$a, obs$p, cm$pairs),
+    sign_a = sign(obs$a),
+    t_a = obs$a
+  )
   gate_p <- (1 + ex_g) / (n_perm + 1)
   gate_p[is.na(obs_g)] <- NA_real_
 
   for (tt in names(p)) {
     dimnames(p[[tt]]$p_a) <- dimnames(p[[tt]]$p_b) <- list(rownames(counts), types)
+    dimnames(p2[[tt]]$p_a) <- dimnames(p2[[tt]]$p_b) <-
+      dimnames(p2[[tt]]$sign_a) <- list(rownames(counts), types)
   }
   dimnames(log2fc) <- list(rownames(counts), types)
   rownames(beta) <- rownames(counts)
@@ -341,6 +418,7 @@ type_contrast_tests <- function(
     log_mean = beta,
     v_beta = v_beta,
     p = p,
+    p2 = p2,
     welch_gate_p = stats::setNames(gate_p, rownames(counts)),
     types = types,
     n_j = stats::setNames(n_j, types)
@@ -357,8 +435,11 @@ type_contrast_tests <- function(
 #'
 #' @param res Output of [type_contrast_tests()].
 #' @param genes Genes to check.
-#' @return Data frame: `gene`, `max_abs_diff_a`, `max_abs_diff_b`.
-emmeans_contrast_check <- function(res, genes) {
+#' @param side `">"` (one-sided A and B) or `"two-sided"` (A2 and B2).
+#' @return Data frame: `gene`, `side`, `max_abs_diff_a`, `max_abs_diff_b`.
+emmeans_contrast_check <- function(res, genes, side = c(">", "two-sided")) {
+  side <- match.arg(side)
+  two <- identical(side, "two-sided")
   types <- res$types
   n_types <- length(types)
   grid <- data.frame(cell_type = factor(types, levels = types))
@@ -373,7 +454,7 @@ emmeans_contrast_check <- function(res, genes) {
     emm <- emmeans::emmeans(rg, "cell_type")
     a <- summary(
       emmeans::contrast(emm, method = "del.eff", adjust = "none"),
-      side = ">",
+      side = if (two) "=" else ">",
       infer = c(FALSE, TRUE)
     )$p.value
     pw <- summary(
@@ -389,11 +470,26 @@ emmeans_contrast_check <- function(res, genes) {
     lo <- unwrap(vapply(lab, `[`, "", 2L))
     one <- c(stats::pnorm(zval, lower.tail = FALSE), stats::pnorm(zval))
     top <- c(hi, lo)
-    b <- vapply(types, function(tp) max(one[top == tp]), numeric(1))
+    if (two) {
+      # B2: largest two-sided pairwise p, 1 unless every pairwise sign
+      # matches the sign of the A estimate.
+      est_a <- summary(emmeans::contrast(emm, method = "del.eff"))$estimate
+      names(est_a) <- types
+      sg <- c(sign(zval), -sign(zval))
+      p2 <- rep(pw$p.value, 2L)
+      b <- vapply(types, function(tp) {
+        if (all(sg[top == tp] == sign(est_a[[tp]]))) max(p2[top == tp]) else 1
+      }, numeric(1))
+      ref <- res$p2$lr
+    } else {
+      b <- vapply(types, function(tp) max(one[top == tp]), numeric(1))
+      ref <- res$p$lr
+    }
     data.frame(
       gene = g,
-      max_abs_diff_a = max(abs(a - res$p$lr$p_a[g, ])),
-      max_abs_diff_b = max(abs(b - res$p$lr$p_b[g, ]))
+      side = side,
+      max_abs_diff_a = max(abs(a - ref$p_a[g, ])),
+      max_abs_diff_b = max(abs(b - ref$p_b[g, ]))
     )
   }))
 }

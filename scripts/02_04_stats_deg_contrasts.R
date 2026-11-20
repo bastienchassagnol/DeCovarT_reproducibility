@@ -7,7 +7,10 @@
 # effect, per slot (appendix of chapter 2). Reads the scored slots
 # (tier (i)) and cross_cell.rds (tier (ii): size factors, presence gate,
 # omnibus BH p-values, permutation settings). Writes per-slot contrast
-# tables, DEG counts and checks to output/feature_selection/deg/.
+# tables, DEG counts and checks to output/feature_selection/deg/
+# (one-sided superiority: A and B) and output/feature_selection/deg_twosided/
+# (two-sided: A2 and B2, same fits and permutation draw), plus the
+# two-stage panel of the classifier benchmark (panel_twosided_<time>.csv).
 
 root <- here::here()
 suppressPackageStartupMessages(library(Matrix))
@@ -20,11 +23,16 @@ fdr <- 0.05
 tests_used <- c("lr", "ql_f", "anova_vst", "welch_perm")
 n_check_emmeans <- 25L
 seed_check <- 20261120L
+# Fold-change thresholds of the two-stage panel (|log2FC| of the type
+# against the geometric mean of the others); drawn on the volcano, not tested.
+lfc_thresholds <- c(1, log2(1.3))
 
 tier1 <- file.path(root, "output", "feature_selection", "tier_01")
 tier2 <- file.path(root, "output", "feature_selection", "tier_02")
 out_dir <- file.path(root, "output", "feature_selection", "deg")
+out_dir2 <- file.path(root, "output", "feature_selection", "deg_twosided")
 dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
+dir.create(out_dir2, recursive = TRUE, showWarnings = FALSE)
 
 prepared <- readRDS(file.path(tier1, "scored_slots.rds"))
 cc <- readRDS(file.path(tier2, "cross_cell.rds"))
@@ -37,7 +45,29 @@ old_results <- if (reuse) readRDS(file.path(out_dir, "deg.rds"))$results else NU
 
 results <- list()
 decisions <- list()
+decisions2 <- list()
 checks <- list()
+checks2 <- list()
+
+# Stage-wise decisions of every test for one list of p-values (p or p2).
+decide <- function(res, pl, gate, genes) {
+  rows <- list()
+  for (tt in tests_used) {
+    padj <- gate[[paste0(tt, "_padj")]][match(genes, gate$gene)]
+    d <- stagewise_decisions(pl[[tt]]$p_a, pl[[tt]]$p_b, padj, fdr = fdr)
+    d$gene <- genes[d$row]
+    d$test <- tt
+    d$p_a <- as.vector(pl[[tt]]$p_a)
+    d$p_b <- as.vector(pl[[tt]]$p_b)
+    d$log2fc <- as.vector(res$log2fc)
+    if (!is.null(pl[[tt]]$sign_a)) {
+      d$direction <- ifelse(as.vector(pl[[tt]]$sign_a) > 0, "up", "down")
+    }
+    d$row <- NULL
+    rows[[tt]] <- d
+  }
+  rows
+}
 for (tm in times) {
   t0 <- Sys.time()
   slot <- prepared$slots[[tm]]
@@ -64,18 +94,7 @@ for (tm in times) {
   check_genes <- withr::with_seed(seed_check, sample(genes, n_check_emmeans))
   em <- emmeans_contrast_check(res, check_genes)
 
-  rows <- list()
-  for (tt in tests_used) {
-    padj <- gate[[paste0(tt, "_padj")]][match(genes, gate$gene)]
-    d <- stagewise_decisions(res$p[[tt]]$p_a, res$p[[tt]]$p_b, padj, fdr = fdr)
-    d$gene <- genes[d$row]
-    d$test <- tt
-    d$p_a <- as.vector(res$p[[tt]]$p_a)
-    d$p_b <- as.vector(res$p[[tt]]$p_b)
-    d$log2fc <- as.vector(res$log2fc)
-    d$row <- NULL
-    rows[[tt]] <- d
-  }
+  rows <- decide(res, res$p, gate, genes)
   dec <- do.call(rbind, rows)
   dec$time_point <- tm
   decisions[[tm]] <- dec
@@ -109,6 +128,47 @@ for (tm in times) {
     row.names = FALSE,
     fileEncoding = "UTF-8"
   )
+
+  # Two-sided: A2 and B2 on the same fits and draw.
+  if (is.null(res$p2)) {
+    stop("deg.rds has no two-sided p-values: rerun without DEG_REUSE.")
+  }
+  dec2 <- do.call(rbind, decide(res, res$p2, gate, genes))
+  dec2$time_point <- tm
+  decisions2[[tm]] <- dec2
+  em2 <- emmeans_contrast_check(res, check_genes, side = "two-sided")
+  checks2[[tm]] <- data.frame(
+    time_point = tm,
+    genes_tested = length(genes),
+    same_permutation_draw = same_draw,
+    emmeans_max_abs_diff_a2 = max(em2$max_abs_diff_a),
+    emmeans_max_abs_diff_b2 = max(em2$max_abs_diff_b)
+  )
+  print(checks2[[tm]])
+  utils::write.csv(
+    dec2[, c(
+      "time_point", "test", "gene", "type", "log2fc", "direction", "p_a",
+      "p_b", "screened", "alpha_I", "a_graph", "b_graph", "a_holm",
+      "a_flat_bh"
+    )],
+    file.path(out_dir2, paste0("contrasts_twosided_", tm, ".csv")),
+    row.names = FALSE,
+    fileEncoding = "UTF-8"
+  )
+  # Two-stage panel: primary family, A2 confirmed by the graph.
+  pan <- dec2[dec2$test == "welch_perm" & dec2$a_graph %in% TRUE, ]
+  pan <- pan[order(pan$type, -abs(pan$log2fc)), c(
+    "time_point", "type", "gene", "log2fc", "direction", "p_a", "b_graph"
+  )]
+  for (thr in lfc_thresholds) {
+    pan[[sprintf("abs_log2fc_ge_%.3f", thr)]] <- abs(pan$log2fc) >= thr
+  }
+  utils::write.csv(
+    pan,
+    file.path(out_dir2, paste0("panel_twosided_", tm, ".csv")),
+    row.names = FALSE,
+    fileEncoding = "UTF-8"
+  )
 }
 
 all_dec <- do.call(rbind, decisions)
@@ -125,3 +185,24 @@ saveRDS(
 )
 utils::capture.output(sessionInfo(), file = file.path(out_dir, "session_info.txt"))
 message("Wrote ", out_dir)
+
+all_dec2 <- do.call(rbind, decisions2)
+counts2 <- stats::aggregate(
+  cbind(a_flat_bh, a_holm, a_graph, b_graph) ~ time_point + test + type + direction,
+  data = all_dec2,
+  FUN = sum
+)
+utils::write.csv(counts2, file.path(out_dir2, "deg_counts_twosided.csv"), row.names = FALSE, fileEncoding = "UTF-8")
+utils::write.csv(do.call(rbind, checks2), file.path(out_dir2, "checks_twosided.csv"), row.names = FALSE, fileEncoding = "UTF-8")
+saveRDS(
+  list(
+    decisions = all_dec2,
+    counts = counts2,
+    checks = do.call(rbind, checks2),
+    fdr = fdr,
+    lfc_thresholds = lfc_thresholds
+  ),
+  file.path(out_dir2, "deg_twosided.rds")
+)
+utils::capture.output(sessionInfo(), file = file.path(out_dir2, "session_info.txt"))
+message("Wrote ", out_dir2)

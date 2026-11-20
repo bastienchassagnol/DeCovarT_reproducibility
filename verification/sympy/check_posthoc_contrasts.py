@@ -2,7 +2,7 @@
 # requires-python = ">=3.11"
 # dependencies = ["sympy==1.14.0"]
 # ///
-"""Post hoc contrasts of the type effect (D1-D4), DeCovarT 3.1 #sec-fs-deg-posthoc."""
+"""Post hoc contrasts of the type effect (D1-D5), DeCovarT 3.1 #sec-fs-deg-posthoc."""
 
 import sympy as sp
 
@@ -64,6 +64,24 @@ records.append(
     record("D4", "means 10, 8, 1, 1: A holds for types 1-2, B for type 1 only", "numeric",
            "pass" if pos == [True, True, False, False] and sup == [True, False, False, False] else "fail",
            f"Delta = {[round(float(sp.N(d)), 3) for d in delta]}")
+)
+
+# D5. Two-sided B2 implies A2 with the same sign: Delta_j is linear and odd
+# in the differences eta_j - eta_k, so all differences < 0 give Delta_j < 0
+# (D3 with eta -> -eta), and the two-sided p of a symmetric statistic is
+# 2 min(F(t), 1 - F(t)) = 2 F(-|t|).
+neg = d_j.subs({e: -e for e in etas}, simultaneous=True)
+t = sp.symbols("t", real=True)
+F = (1 + sp.erf(t / sp.sqrt(2))) / 2  # standard normal cdf
+two_sided = 2 * F.subs(t, -sp.Abs(t))
+one_up = 1 - F
+ok_p = all(
+    is_zero(sp.simplify(two_sided.subs(t, v) - 2 * sp.Min(one_up.subs(t, v), F.subs(t, v))))
+    for v in (sp.Rational(-3, 2), sp.Rational(1, 3), sp.Integer(2))
+)
+records.append(
+    record("D5", "Delta_j(-eta) = -Delta_j(eta), so B2 (all differences one sign) implies A2 with that sign; two-sided p = 2 min(upper, lower) one-sided p",
+           "exact", "pass" if is_zero(neg + d_j) and ok_p else "fail", "J = 4 symbolic; z at t = -3/2, 1/3, 2")
 )
 
 emit(records)

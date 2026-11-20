@@ -1,7 +1,10 @@
 #' Figures of the post hoc contrasts (appendix of chapter 2).
 #'
-#' Plots only; `scripts/02_04_vis_deg.R` saves them. Inputs are elements
-#' of `output/feature_selection/deg/deg.rds`. Requires `R/02_00_utils.R`.
+#' Plots only; `scripts/02_04_vis_deg.R` (one-sided superiority, A and B)
+#' and `scripts/02_04_vis_deg_twosided.R` (two-sided, A2 and B2) save
+#' them. Inputs are elements of `output/feature_selection/deg/deg.rds` and
+#' `output/feature_selection/deg_twosided/deg_twosided.rds`. Requires
+#' `R/02_00_utils.R`.
 
 deg_test_labels <- c(
   lr = "LR (Wald)",
@@ -21,11 +24,32 @@ deg_status_colours <- c(
   "Not confirmed" = "#c9c3b8"
 )
 
+deg_status_colours_twosided <- c(
+  "Up, above every type (A2, B2)" = "#c45c26",
+  "Up, above the average (A2)" = "#e8a77f",
+  "Down, below the average (A2)" = "#8eaed6",
+  "Down, below every type (A2, B2)" = "#1d4e89",
+  "Not confirmed" = "#c9c3b8"
+)
+
 #' Confirmation status of each gene x type for one family.
 #'
-#' @param d Rows of `deg$decisions` for one test.
-#' @return Factor with the levels of `deg_status_colours`.
+#' @param d Rows of `deg$decisions` (one-sided) or of
+#'   `deg_twosided$decisions` (two-sided, with a `direction` column) for
+#'   one test.
+#' @return Factor with the levels of `deg_status_colours`, or of
+#'   `deg_status_colours_twosided` when `d` has a `direction` column.
 deg_status <- function(d) {
+  if (!is.null(d$direction)) {
+    lv <- names(deg_status_colours_twosided)
+    up <- d$direction %in% "up"
+    out <- ifelse(
+      d$b_graph,
+      ifelse(up, lv[1L], lv[4L]),
+      ifelse(d$a_graph, ifelse(up, lv[2L], lv[3L]), lv[5L])
+    )
+    return(factor(out, levels = lv))
+  }
   factor(
     ifelse(d$b_graph, names(deg_status_colours)[1L],
       ifelse(d$a_graph, names(deg_status_colours)[2L], names(deg_status_colours)[3L])
@@ -37,30 +61,50 @@ deg_status <- function(d) {
 #' Volcano plots, one panel per type and time.
 #'
 #' x: log2 fold change of the type against the equal-weighted geometric
-#' mean of the other types (NB fit). y: -log10 one-sided p-value of the
-#' Wald contrast (continuous; the permutation p-value is discrete with a
-#' floor). Colour: decision of the `colour_test` family.
+#' mean of the other types (NB fit). y: -log10 p-value of the Wald
+#' contrast, one-sided (superiority) or two-sided according to `dec`
+#' (continuous; the permutation p-value is discrete with a floor).
+#' Colour: decision of the `colour_test` family. With two-sided decisions
+#' (a `direction` column), dashed lines mark +/- `lfc_threshold`; the
+#' threshold is drawn, not tested.
 #'
-#' @param dec `deg$decisions`.
+#' @param dec `deg$decisions` or `deg_twosided$decisions`.
 #' @param colour_test Family whose decisions colour the points.
-#' @param n_label Genes labelled per panel (largest log2FC among A and B).
+#' @param n_label Genes labelled per panel (largest |log2FC| among those
+#'   confirmed against every type; split between up and down when
+#'   two-sided).
 #' @param y_cap Cap of the y axis (values above are drawn at the cap).
+#' @param lfc_threshold Fold-change guide (log2), two-sided only.
 #' @param title,subtitle Plot title and subtitle.
 #' @return A ggplot.
-plot_deg_volcano <- function(dec, colour_test = "welch_perm", n_label = 6L, y_cap = 300, title = NULL, subtitle = NULL) {
+plot_deg_volcano <- function(dec, colour_test = "welch_perm", n_label = 6L, y_cap = 300, lfc_threshold = 1, title = NULL, subtitle = NULL) {
+  two <- !is.null(dec$direction)
+  cols <- if (two) deg_status_colours_twosided else deg_status_colours
+  top_lv <- if (two) names(cols)[c(1L, 4L)] else names(cols)[1L]
   y <- dec[dec$test == "lr", c("time_point", "gene", "type", "log2fc", "p_a")]
   col <- dec[dec$test == colour_test, ]
   col$status <- deg_status(col)
   d <- merge(y, col[, c("time_point", "gene", "type", "status")], by = c("time_point", "gene", "type"))
   d$mlog_p <- pmin(-log10(pmax(d$p_a, .Machine$double.xmin)), y_cap)
   d$panel <- paste0(d$time_point, ": ", d$type)
-  d <- d[order(d$status, decreasing = TRUE), , drop = FALSE]
+  d <- d[order(d$status == "Not confirmed", decreasing = TRUE), , drop = FALSE]
   lab <- do.call(rbind, lapply(split(d, d$panel), function(r) {
-    r <- r[r$status == names(deg_status_colours)[1L], , drop = FALSE]
-    utils::head(r[order(-r$log2fc), , drop = FALSE], n_label)
+    do.call(rbind, lapply(top_lv, function(lv) {
+      r <- r[r$status == lv, , drop = FALSE]
+      utils::head(r[order(-abs(r$log2fc)), , drop = FALSE], ceiling(n_label / length(top_lv)))
+    }))
   }))
-  ggplot2::ggplot(d, ggplot2::aes(x = log2fc, y = mlog_p, colour = status)) +
-    ggplot2::geom_vline(xintercept = 0, colour = "#1c2b24", linewidth = 0.3) +
+  p <- ggplot2::ggplot(d, ggplot2::aes(x = log2fc, y = mlog_p, colour = status)) +
+    ggplot2::geom_vline(xintercept = 0, colour = "#1c2b24", linewidth = 0.3)
+  if (two) {
+    p <- p + ggplot2::geom_vline(
+      xintercept = c(-1, 1) * lfc_threshold,
+      colour = "#1c2b24",
+      linetype = "dashed",
+      linewidth = 0.3
+    )
+  }
+  p +
     ggplot2::geom_point(size = 0.4, alpha = 0.5) +
     ggrepel::geom_text_repel(
       data = lab,
@@ -73,8 +117,9 @@ plot_deg_volcano <- function(dec, colour_test = "welch_perm", n_label = 6L, y_ca
       show.legend = FALSE
     ) +
     ggplot2::scale_colour_manual(
-      values = deg_status_colours,
+      values = cols,
       name = NULL,
+      drop = FALSE,
       guide = ggplot2::guide_legend(override.aes = list(size = 2, alpha = 1))
     ) +
     ggplot2::facet_wrap(~panel, ncol = 4, scales = "free") +
@@ -82,7 +127,7 @@ plot_deg_volcano <- function(dec, colour_test = "welch_perm", n_label = 6L, y_ca
       title = title,
       subtitle = subtitle,
       x = "log2 fold change, type vs geometric mean of the other types",
-      y = sprintf("-log10 p, one-sided Wald (capped at %d)", y_cap)
+      y = sprintf("-log10 p, %s Wald (capped at %d)", if (two) "two-sided" else "one-sided", y_cap)
     ) +
     theme_slide() +
     ggplot2::theme(strip.text = ggplot2::element_text(size = 8))
@@ -131,23 +176,29 @@ plot_lfc_distributions <- function(results, colours, title = NULL, subtitle = NU
 
 #' Number of confirmed genes per type for each family and design.
 #'
-#' @param counts `deg$counts`.
+#' @param counts `deg$counts`, or `deg_twosided$counts` (with a
+#'   `direction` column: one row per type and direction).
 #' @param title,subtitle Plot title and subtitle.
 #' @return A ggplot.
 plot_deg_counts <- function(counts, title = NULL, subtitle = NULL) {
-  long <- do.call(rbind, lapply(names(deg_design_labels), function(k) {
+  dir <- if (is.null(counts$direction)) "" else paste0(", ", counts$direction)
+  labels <- deg_design_labels
+  if (!is.null(counts$direction)) {
+    labels[] <- sub("([AB])$", "\\12", labels)
+  }
+  long <- do.call(rbind, lapply(names(labels), function(k) {
     data.frame(
       time_point = counts$time_point,
-      type = counts$type,
+      type = paste0(counts$type, dir),
       test = deg_test_labels[counts$test],
-      design = deg_design_labels[[k]],
+      design = labels[[k]],
       n = counts[[k]]
     )
   }))
-  long$design <- factor(long$design, levels = unname(deg_design_labels))
+  long$design <- factor(long$design, levels = unname(labels))
   long$test <- factor(long$test, levels = unname(deg_test_labels))
   long$row <- paste0(long$time_point, ": ", long$type)
-  ord <- stats::aggregate(n ~ row, long[long$design == deg_design_labels[["a_graph"]], ], max)
+  ord <- stats::aggregate(n ~ row, long[long$design == labels[["a_graph"]], ], max)
   long$row <- factor(long$row, levels = ord$row[order(ord$n)])
   test_cols <- c("#1d4e89", "#5b8c5a", "#9a9286", "#c45c26")
   names(test_cols) <- unname(deg_test_labels)
@@ -159,6 +210,62 @@ plot_deg_counts <- function(counts, title = NULL, subtitle = NULL) {
     ggplot2::labs(title = title, subtitle = subtitle, x = "Confirmed genes", y = NULL) +
     theme_slide()
 }
+
+#' Heatmap of selected genes in subsampled cells of one slot.
+#'
+#' z-score per gene of log(1 + x/s), clipped at +/- 3; columns split and
+#' coloured by type (second bar: batch), rows split by the type the gene
+#' is confirmed in, rows and cells clustered within their slice.
+#'
+#' @param slot One element of `scored_slots.rds$slots`.
+#' @param sf Size factors of the slot.
+#' @param top Data frame with `gene` and `type`, in row order.
+#' @param type_cols Named type colours.
+#' @param seed Seed of the cell subsample.
+#' @param max_cells Cells kept per type. Default `150`.
+#' @return A `ComplexHeatmap` heatmap.
+deg_heatmap <- function(slot, sf, top, type_cols, seed, max_cells = 150L) {
+  ct <- as.character(slot$cell_type)
+  keep <- unlist(withr::with_seed(seed, lapply(split(seq_along(ct), ct), function(i) {
+    if (length(i) > max_cells) sample(i, max_cells) else i
+  })))
+  x <- as.matrix(slot$counts[top$gene, keep, drop = FALSE])
+  v <- log1p(sweep(x, 2L, sf[keep], "/"))
+  z <- t(scale(t(v)))
+  z[!is.finite(z)] <- 0
+  z <- pmin(pmax(z, -3), 3)
+  types <- intersect(names(type_cols), unique(ct))
+  col_split <- factor(ct[keep], levels = types)
+  row_split <- factor(top$type, levels = types)
+  ha <- ComplexHeatmap::HeatmapAnnotation(
+    type = col_split,
+    batch = factor(slot$batch[keep]),
+    col = list(type = type_cols[types], batch = c(batch1 = "#d9d3c7", batch2 = "#3d4a42")),
+    show_annotation_name = FALSE,
+    annotation_legend_param = list(type = list(title = "Cell type"), batch = list(title = "Batch"))
+  )
+  ComplexHeatmap::Heatmap(
+    z,
+    name = "z",
+    col = circlize::colorRamp2(c(-3, 0, 3), c("#1d4e89", "#f7f4ee", "#c45c26")),
+    top_annotation = ha,
+    column_split = col_split,
+    row_split = row_split,
+    cluster_row_slices = FALSE,
+    cluster_column_slices = FALSE,
+    show_column_names = FALSE,
+    row_names_gp = grid::gpar(fontsize = 6, fontface = "italic"),
+    column_title_gp = grid::gpar(fontsize = 8),
+    row_title_gp = grid::gpar(fontsize = 7),
+    row_title_rot = 0,
+    # Types are named by the colour annotation; slice titles of small
+    # types would overlap.
+    column_title = NULL,
+    use_raster = TRUE,
+    heatmap_legend_param = list(title = "z-score of\nlog(1 + x/s)")
+  )
+}
+
 
 #' Bimodality coefficient of a sample.
 #'

@@ -378,6 +378,11 @@ reference laws; the vignette compares their assumptions
 
 : The four tests of the type effect as implemented. $C$ is the number of cells of the slot. {#tbl-fs-type-tests}
 
+The four tests are joint tests on $J-1$ degrees of freedom: they detect
+a type effect in any direction, so they have no one-sided form.
+Direction enters only in the post hoc contrasts, reported one-sided
+(@sec-fs-deg) and two-sided (@sec-fs-deg-twosided).
+
 [TODO-cite: Ahlmann-Eltze & Huber (2023), shifted logarithm]{.highlight}
 [TODO-cite: Winkler et al. (2014), Permutation inference for the general linear model, NeuroImage; Freedman-Lane recommended, G statistic Eqs 6-7]{.highlight}
 [TODO-cite: Welch (1951), On the comparison of several mean values]{.highlight}
@@ -1512,7 +1517,7 @@ tracked with DVC: `dvc pull output/feature_selection/tier_01/scored_slots.rds.dv
 
 : Code of tier (i). {#tbl-fs-code}
 
-## Which type drives each gene {#sec-fs-deg .appendix}
+## Which type drives each gene: one-sided superiority {#sec-fs-deg .appendix}
 
 ```{r}
 #| label: fs-deg-values
@@ -1580,24 +1585,24 @@ above every type. Most enriched genes belong to one type and time
 across genes, centred near 0 with a long right tail
 (@fig-fs-deg-lfc).
 
-![Volcano plots per type and time. x: log2 fold change of the type against the geometric mean of the other types (NB $M_1$); y: one-sided Wald $-\log_{10}p$, a continuous scale (the permutation $p$-value is discrete with a floor), capped at 300. Colour: decision of the primary family (permuted Welch, stage-wise graphical procedure): orange, above every type ($A$ and $B$); blue, above the average only ($A$); grey, not confirmed. Grey points with a large Wald $-\log_{10}p$ at 48 h are the anti-conservative analytic tests of @fig-fs-null-calibration. Six genes above every type are labelled per panel. Source: `deg.rds`.](images/feature_selection/fs_deg_volcano.png){#fig-fs-deg-volcano}
+![Volcano plots per type and time. x: log2 fold change of the type against the geometric mean of the other types (NB $M_1$); y: one-sided Wald $-\log_{10}p$, a continuous scale (the permutation $p$-value is discrete with a floor), capped at 300. Colour: decision of the primary family (permuted Welch, stage-wise graphical procedure): orange, above every type ($A$ and $B$); blue, above the average only ($A$); grey, not confirmed. Grey points with a large Wald $-\log_{10}p$ at 48 h are the anti-conservative analytic tests of @fig-fs-null-calibration. Six genes above every type are labelled per panel. Source: `deg.rds`.](images/feature_selection/fs_deg_superiority_volcano.png){#fig-fs-deg-volcano}
 
-![Confirmed gene $\times$ type pairs per family (colour) and design (panels): one BH over all pairs on $A$; stage-wise Holm on $A$; stage-wise graphical procedure, $A$ and $B$. Rows ordered by the graphical $A$ count. Source: `deg_counts.csv`.](images/feature_selection/fs_deg_counts.png){#fig-fs-deg-counts}
+![Confirmed gene $\times$ type pairs per family (colour) and design (panels): one BH over all pairs on $A$; stage-wise Holm on $A$; stage-wise graphical procedure, $A$ and $B$. Rows ordered by the graphical $A$ count. Source: `deg_counts.csv`.](images/feature_selection/fs_deg_superiority_counts.png){#fig-fs-deg-counts}
 
-![UpSet plot of the genes confirmed above the average of the other types (primary family), 25 largest intersections of the 11 type $\times$ time sets; left, set sizes. Source: `fs_deg_upset.rds`.](images/feature_selection/fs_deg_upset.png){#fig-fs-deg-upset}
+![UpSet plot of the genes confirmed above the average of the other types (primary family), 25 largest intersections of the 11 type $\times$ time sets; left, set sizes. Source: `fs_deg_superiority_upset.rds`.](images/feature_selection/fs_deg_superiority_upset.png){#fig-fs-deg-upset}
 
 ![Distribution over all tested genes of the one-versus-average log2 fold change per type (rows) and time (panels), half-eye densities with the median and the 66 % and 95 % intervals; x limited to $\pm6$. Source: `deg.rds`.](images/feature_selection/fs_deg_lfc_distributions.png){#fig-fs-deg-lfc}
 
 ::: {.column-page}
-![Top confirmed genes at 48 h: up to 12 per type (rows, split by the type they are confirmed in; above every type first, then by fold change) in up to 150 cells per type (columns, split and coloured by type; second bar: batch). z-score per gene of $\log(1+x/s)$, clipped at $\pm3$; rows and cells clustered within their slice. At 48 h all naïve-pluripotency cells come from batch 2 (cell line SBR), so its genes cannot be separated from a cell-line effect. Source: `fs_deg_heatmap.rds`.](images/feature_selection/fs_deg_heatmap_48h.png){#fig-fs-deg-heatmap-48}
+![Top confirmed genes at 48 h: up to 12 per type (rows, split by the type they are confirmed in; above every type first, then by fold change) in up to 150 cells per type (columns, split and coloured by type; second bar: batch). z-score per gene of $\log(1+x/s)$, clipped at $\pm3$; rows and cells clustered within their slice. At 48 h all naïve-pluripotency cells come from batch 2 (cell line SBR), so its genes cannot be separated from a cell-line effect. Source: `fs_deg_superiority_heatmap.rds`.](images/feature_selection/fs_deg_superiority_heatmap_48h.png){#fig-fs-deg-heatmap-48}
 :::
 
 ::: {.column-page}
-![Top confirmed genes at 72 h, as in @fig-fs-deg-heatmap-48.](images/feature_selection/fs_deg_heatmap_72h.png){#fig-fs-deg-heatmap-72}
+![Top confirmed genes at 72 h, as in @fig-fs-deg-heatmap-48.](images/feature_selection/fs_deg_superiority_heatmap_72h.png){#fig-fs-deg-heatmap-72}
 :::
 
 ::: {.column-page}
-![Top confirmed genes at 96 h, as in @fig-fs-deg-heatmap-48.](images/feature_selection/fs_deg_heatmap_96h.png){#fig-fs-deg-heatmap-96}
+![Top confirmed genes at 96 h, as in @fig-fs-deg-heatmap-48.](images/feature_selection/fs_deg_superiority_heatmap_96h.png){#fig-fs-deg-heatmap-96}
 :::
 
 **Sub-states within a type.** A type made of two promoter-activity
@@ -1614,7 +1619,7 @@ coefficient above 5/9 and dip test $p<0.05$) (@fig-fs-deg-bimodality).
 Within-type multimodality is therefore rare at the resolution of these
 tests; the descriptive checks are not a test of basins.
 
-![Within-type expression of the six genes above every type with the largest excess of zeros among genes with a mean above one count per cell: histogram of $\log(1+x/s)$ over the cells of the type. Each panel gives the observed share of zeros, the share the fitted NB predicts, and the bimodality coefficient of the non-zero cells. Source: `bimodality.csv`.](images/feature_selection/fs_deg_bimodality.png){#fig-fs-deg-bimodality}
+![Within-type expression of the six genes above every type with the largest excess of zeros among genes with a mean above one count per cell: histogram of $\log(1+x/s)$ over the cells of the type. Each panel gives the observed share of zeros, the share the fitted NB predicts, and the bimodality coefficient of the non-zero cells. Source: `bimodality.csv`.](images/feature_selection/fs_deg_superiority_bimodality.png){#fig-fs-deg-bimodality}
 
 **Old against new panel.** The archived panel of the
 [legacy SCTransform ratio](#sec-fs-legacy) kept the top 500 genes per
@@ -1626,6 +1631,82 @@ because it has no cap.
 ![Old (top 500 by the type-equal between/within ratio of SCTransform residuals, read from commit `3b71ae0^`) against new (BH 0.05 on the permuted Welch $G$) panel. Top: genes in the old panel only, in both, in the new panel only. Bottom: rank in the old panel against the $R^{2}_{D}$ rank in the new panel for the shared genes, Spearman correlation per time. Source: `panel_comparison.csv`.](images/feature_selection/fs_deg_panel_comparison.png){#fig-fs-deg-panel}
 
 [TODO-future: group knockoffs on gene modules or enriched gene sets, to test which combinations of genes jointly predict the cell type (a conditional question that the marginal tests above do not answer); see [3.1, dropped strategies](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#tbl-fs-posthoc-dropped).]{.highlight}
+
+## Which type drives each gene: two-sided contrasts {#sec-fs-deg-twosided .appendix}
+
+```{r}
+#| label: fs-deg2-values
+#| include: false
+deg2_counts <- read_out("feature_selection", "deg_twosided", "deg_counts_twosided.csv")
+deg2_checks <- read_out("feature_selection", "deg_twosided", "checks_twosided.csv")
+w2 <- deg2_counts[deg2_counts$test == "welch_perm", ]
+n_up2 <- sum(w2$a_graph[w2$direction == "up"])
+n_down2 <- sum(w2$a_graph[w2$direction == "down"])
+n_bup2 <- sum(w2$b_graph[w2$direction == "up"])
+n_bdown2 <- sum(w2$b_graph[w2$direction == "down"])
+by_time2 <- stats::aggregate(a_graph ~ time_point + direction, w2, sum)
+panel2 <- lapply(times, function(tm) {
+  read_out("feature_selection", "deg_twosided", paste0("panel_twosided_", tm, ".csv"))
+})
+names(panel2) <- times
+n_panel2 <- sapply(panel2, function(p) sum(p$abs_log2fc_ge_1.000))
+n_panel2_13 <- sapply(panel2, function(p) sum(p$abs_log2fc_ge_0.379))
+```
+
+The one-sided appendix (@sec-fs-deg) only finds genes *above* the other
+types, so a type marked by the loss of a gene is missed. This appendix
+tests the same contrasts in both directions:
+
+- $A2$: the type differs from the geometric mean of the other types;
+- $B2$: the type is above every other type, or below every other type,
+  in the sign of its $A2$ estimate.
+
+Definitions and the reason the graph carries over unchanged ($B2$
+implies $A2$ with the same sign) are in
+[3.1, two-sided variant](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#eq-fs-posthoc-twosided)
+(ledger check D5).
+
+**Settings.**
+
+- The fits, the four families, the stage-wise level $\alpha_I$ and the
+  graph are those of @sec-fs-deg.
+- For the permuted Welch family, $|t^{*}|\ge|t|$ is counted on the same
+  $B=`r big(n_perm)`$ within-batch permutations. The gate $p$-values are
+  reproduced exactly (`checks_twosided.csv`). The Wald $p$-values agree
+  with `emmeans` to `r signif(max(deg2_checks$emmeans_max_abs_diff_a2), 2)`.
+- No fold-change threshold enters the tests. The volcano plots draw
+  $|\log_2\mathrm{FC}|=1$, which also defines the two-stage panel
+  compared with the classifiers (@sec-fs-classifiers).
+
+**Results.** With the primary family:
+
+- `r big(n_up2)` gene $\times$ type pairs are confirmed above the
+  average of the other types, and `r big(n_down2)` below it;
+- `r big(n_bup2)` pairs are above every other type, and `r big(n_bdown2)`
+  below every other type (@fig-fs-deg2-volcano, @fig-fs-deg2-counts).
+
+The two-stage panel keeps the pairs confirmed by $A2$ with
+$|\log_2\mathrm{FC}|\ge1$. That is `r paste(big(n_panel2), collapse = " / ")`
+pairs at 48, 72 and 96 h, or `r paste(big(n_panel2_13), collapse = " / ")`
+with the looser $\mathrm{FC}\ge1.3$ (`panel_twosided_<time>.csv`).
+
+![Two-sided volcano plots per type and time. x: log2 fold change of the type against the geometric mean of the other types (NB $M_1$); y: two-sided Wald $-\log_{10}p$, capped at 300. Colour: decision of the primary family (permuted Welch, stage-wise graphical procedure): dark orange, above every type ($A2$, $B2$); light orange, above the average ($A2$); light blue, below the average; dark blue, below every type; grey, not confirmed. Dashed lines: $|\log_2\mathrm{FC}|=1$, drawn and not tested. Up to three genes per direction are labelled per panel. Source: `fs_deg_twosided_volcano.rds`.](images/feature_selection/fs_deg_twosided_volcano.png){#fig-fs-deg2-volcano}
+
+![Two-sided confirmed gene $\times$ type pairs per family (colour), design (panels) and direction (rows). Designs: one BH over all pairs on $A2$; stage-wise Holm on $A2$; stage-wise graphical procedure, $A2$ and $B2$. Source: `deg_counts_twosided.csv`.](images/feature_selection/fs_deg_twosided_counts.png){#fig-fs-deg2-counts}
+
+![UpSet plot of the genes confirmed by $A2$ (primary family), one set per time, type and direction; 25 largest intersections. Source: `fs_deg_twosided_upset.rds`.](images/feature_selection/fs_deg_twosided_upset.png){#fig-fs-deg2-upset}
+
+::: {.column-page}
+![Two-sided top confirmed genes at 48 h: per type, up to 6 genes above and then 6 below the other types (rows, split by the type they are confirmed in), in up to 150 cells per type (columns; second bar: batch). z-score per gene of $\log(1+x/s)$, clipped at $\pm3$. Source: `fs_deg_twosided_heatmap.rds`.](images/feature_selection/fs_deg_twosided_heatmap_48h.png){#fig-fs-deg2-heatmap-48}
+:::
+
+::: {.column-page}
+![Two-sided top confirmed genes at 72 h, as in @fig-fs-deg2-heatmap-48.](images/feature_selection/fs_deg_twosided_heatmap_72h.png){#fig-fs-deg2-heatmap-72}
+:::
+
+::: {.column-page}
+![Two-sided top confirmed genes at 96 h, as in @fig-fs-deg2-heatmap-48.](images/feature_selection/fs_deg_twosided_heatmap_96h.png){#fig-fs-deg2-heatmap-96}
+:::
 
 ## Enrichment of the genes that drive each type {#sec-fs-enrichment .appendix}
 
@@ -1705,13 +1786,14 @@ Functions are in `R/02_02_stats_cross_cell.R` (statistics) and
 | `plot_overdispersion()` | $\hat\phi_g$ against the mean, Poisson-like and upper-boundary classes | @fig-fs-overdispersion |
 
 | `type_contrast_tests()`, `contrast_matrices()`, `one_sided_ab()` (`R/02_04_stats_deg_contrasts.R`) | one-sided $A$ and $B$ $p$-values of the four families; same permutation draw as the gate | @sec-fs-deg |
+| `two_sided_ab()`, `iut_two_sided()` | two-sided $A2$ and sign-consistent $B2$ $p$-values, same fits and permutation draw | @sec-fs-deg-twosided |
 | `stagewise_decisions()`, `graph_a_then_b()` | stage-wise level $\alpha_I$, graphical procedure, Holm on $A$, flat BH | @fig-fs-deg-counts |
 | `emmeans_contrast_check()` | Wald $p$-values against `emmeans::qdrg()` contrasts | @sec-fs-deg |
-| `plot_deg_volcano()`, `plot_lfc_distributions()`, `plot_deg_counts()`, `plot_bimodality()`, `plot_panel_comparison()` (`R/02_04_vis_deg.R`) | figures of the post hoc contrasts; heatmaps and UpSet in `scripts/02_04_vis_deg.R` | @sec-fs-deg |
+| `plot_deg_volcano()`, `plot_lfc_distributions()`, `plot_deg_counts()`, `deg_heatmap()`, `plot_bimodality()`, `plot_panel_comparison()` (`R/02_04_vis_deg.R`) | figures of the post hoc contrasts, one-sided (`fs_deg_superiority_*`, `scripts/02_04_vis_deg.R`) and two-sided (`fs_deg_twosided_*`, `scripts/02_04_vis_deg_twosided.R`) | @sec-fs-deg, @sec-fs-deg-twosided |
 | `enrich_one_type()`, `symbol_to_entrez()`, `hallmark_term2gene()` (`R/02_05_stats_enrichment.R`) | ORA and GSEA on GO BP, Reactome and Hallmark | @sec-fs-enrichment |
 | `plot_enrichment_lollipop()`, `plot_enrichment_manhattan()`, `plot_gsea_volcano()`, `plot_semantic_map()` (`R/02_05_vis_enrichment.R`) | enrichment figures | @sec-fs-enrichment |
 
-: Code of tier (ii) and of its appendices. Scripts: `scripts/02_04_stats_deg_contrasts.R` and `scripts/02_04_vis_deg.R` write `output/feature_selection/deg/`; `scripts/02_05_stats_enrichment.R` and `scripts/02_05_vis_enrichment.R` write `output/feature_selection/enrichment/`. {#tbl-fs-code-tier2}
+: Code of tier (ii) and of its appendices. Scripts: `scripts/02_04_stats_deg_contrasts.R` writes `output/feature_selection/deg/` (one-sided) and `output/feature_selection/deg_twosided/` (two-sided); `scripts/02_04_vis_deg.R` and `scripts/02_04_vis_deg_twosided.R` draw their figures; `scripts/02_05_stats_enrichment.R` and `scripts/02_05_vis_enrichment.R` write `output/feature_selection/enrichment/`. {#tbl-fs-code-tier2}
 
 ```{r}
 #| label: fs-omnibus-call
