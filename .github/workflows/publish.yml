@@ -58,6 +58,15 @@ jobs:
             libgl1 \
             libglu1-mesa
 
+      # sglOptim/msgl (GitHub, archived on CRAN) fail to compile with the
+      # default C++ standard and GCC 14 (-Wtemplate-body). Same Makevars as
+      # the local install (header of scripts/02_06_stats_classifier_cv.R).
+      - name: Makevars for sglOptim and msgl
+        run: |
+          mkdir -p "$HOME/.R"
+          printf 'CXX = g++ -std=gnu++17\nCXXFLAGS += -fpermissive\n' > "$HOME/.R/Makevars.sgl"
+          echo "R_MAKEVARS_USER=$HOME/.R/Makevars.sgl" >> "$GITHUB_ENV"
+
       - name: Restore renv lockfile
         uses: r-lib/actions/setup-renv@v2
         with:
