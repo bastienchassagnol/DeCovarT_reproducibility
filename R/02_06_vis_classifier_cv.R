@@ -11,6 +11,7 @@ clf_method_labels <- c(
   msgl = "msgl, sparse-group lasso",
   plnlda = "PLN-LDA",
   ranger = "Random forest",
+  ranger_balanced = "Balanced random forest",
   xgboost = "XGBoost",
   splsda = "sPLS-DA"
 )
@@ -20,6 +21,7 @@ clf_method_colours <- c(
   msgl = "#5b8c5a",
   plnlda = "#8e6c8a",
   ranger = "#c45c26",
+  ranger_balanced = "#e39a6c",
   xgboost = "#c9a227",
   splsda = "#4f9fa6"
 )
@@ -55,7 +57,8 @@ plot_clf_metrics <- function(metrics, title = NULL, subtitle = NULL) {
     ggplot2::geom_linerange(data = summ, ggplot2::aes(xmin = lo, xmax = hi, x = NULL), colour = "#9a9286", linewidth = 0.6) +
     ggplot2::geom_point(colour = "#9a9286", size = 1, alpha = 0.7) +
     ggplot2::geom_point(data = summ, ggplot2::aes(x = mean), colour = "#1d4e89", size = 2.2) +
-    ggplot2::facet_grid(time_point ~ metric, scales = "free_x") +
+    # Free y drops a method with no fit at that time (msgl at 48 h).
+    ggplot2::facet_grid(time_point ~ metric, scales = "free") +
     ggplot2::labs(title = title, subtitle = subtitle, x = NULL, y = NULL) +
     theme_slide() +
     ggplot2::theme(strip.text = ggplot2::element_text(size = 9))

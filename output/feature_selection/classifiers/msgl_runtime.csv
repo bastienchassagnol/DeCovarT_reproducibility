@@ -1,0 +1,29 @@
+# msgl (sparse-group lasso, 2,000 HVGs, 50 Ward modules, alpha in {0.25, 0.5, 0.75}), 20 forked workers, started 2026-11-20 16:21.
+# Wall time per outer fold. The 48 h slot (about 8,700 cells) was far too slow: one fold took 38.6 h, the other 14 were unfinished after 42.6 h.
+# Run stopped on 2026-11-22; msgl is reported at 72 h and 96 h (primary) only. kept = fit used in the benchmark.
+"time_point","variant","fold","hours","status","kept"
+"48h","combat",1,42.6,"stopped unfinished",FALSE
+"48h","combat",2,42.6,"stopped unfinished",FALSE
+"48h","combat",3,42.6,"stopped unfinished",FALSE
+"48h","combat",4,42.6,"stopped unfinished",FALSE
+"48h","combat",5,42.6,"stopped unfinished",FALSE
+"48h","covariate",1,42.6,"stopped unfinished",FALSE
+"48h","covariate",2,38.63,"ok",FALSE
+"48h","covariate",3,42.6,"stopped unfinished",FALSE
+"48h","covariate",4,42.6,"stopped unfinished",FALSE
+"48h","covariate",5,42.6,"stopped unfinished",FALSE
+"48h","primary",1,42.6,"stopped unfinished",FALSE
+"48h","primary",2,42.6,"stopped unfinished",FALSE
+"48h","primary",3,42.6,"stopped unfinished",FALSE
+"48h","primary",4,42.6,"stopped unfinished",FALSE
+"48h","primary",5,42.6,"stopped unfinished",FALSE
+"72h","primary",1,8.56,"ok",TRUE
+"72h","primary",2,7.88,"ok",TRUE
+"72h","primary",3,4.48,"ok",TRUE
+"72h","primary",4,8.99,"ok",TRUE
+"72h","primary",5,7.98,"ok",TRUE
+"96h","primary",1,11.61,"ok",TRUE
+"96h","primary",2,10.99,"ok",TRUE
+"96h","primary",3,6.62,"ok",TRUE
+"96h","primary",4,11.91,"ok",TRUE
+"96h","primary",5,6.25,"ok",TRUE

@@ -53,12 +53,14 @@ methods <- unique(metrics$method)
 has <- function(m) m %in% methods
 
 # 1 · Held-out metrics, confusion, recall -----------------------------------------
-mf1 <- stats::aggregate(macro_f1 ~ method, metrics, mean)
+# Rank on the times every method covers (msgl has no 48 h fit).
+common <- Reduce(intersect, split(metrics$time_point, metrics$method))
+mf1 <- stats::aggregate(macro_f1 ~ method, metrics[metrics$time_point %in% common, , drop = FALSE], mean)
 best <- mf1$method[which.max(mf1$macro_f1)]
 save(
   plot_clf_metrics(
     metrics,
-    title = sprintf("%s has the highest mean macro-F1 (%.2f over the times shown)", clf_method_labels[[best]], max(mf1$macro_f1)),
+    title = sprintf("%s has the highest mean macro-F1 (%.2f over %s)", clf_method_labels[[best]], max(mf1$macro_f1), paste(common, collapse = ", ")),
     subtitle = "Outer 5-fold CV stratified by type; grey: folds and their range; blue: mean. Cells of one specimen"
   ),
   "fs_clf_metrics", metrics, 12, 7
@@ -120,8 +122,8 @@ if (length(logit_methods) > 0L) {
       "fs_clf_glmnet_paths", path, 13, 8
     )
   }
-  # Checks per method, time and fold: EPV, separation; VIF on the stable
-  # set of each time over all cells of the slot.
+  # Checks per method, time and fold: EPV, separation, and the collinearity
+  # of the genes selected by that fold, on its training cells.
   slots <- readRDS(file.path(root, "output", "feature_selection", "tier_01", "scored_slots.rds"))
   cc <- readRDS(file.path(root, "output", "feature_selection", "tier_02", "cross_cell.rds"))
   tot <- stats::aggregate(n_test ~ time_point + method + variant + type, recall, sum)
@@ -136,29 +138,36 @@ if (length(logit_methods) > 0L) {
       share_separated = mean(dd$pmax >= 0.999)
     )
   }))
-  vif <- do.call(rbind, lapply(logit_methods, function(m) {
-    do.call(rbind, lapply(times, function(tm) {
-      g <- unique(stable$gene[stable$method == m & stable$time_point == tm])
-      if (length(g) < 2L) return(data.frame(time_point = tm, method = m, n_genes = length(g), max_vif = NA_real_, condition_number = NA_real_))
-      sl <- slots$slots[[tm]]
-      x <- log1p(t(as.matrix(sl$counts[g, , drop = FALSE])) / cc$sf[[tm]])
-      r <- stats::cor(x)
-      ev <- eigen(r, symmetric = TRUE, only.values = TRUE)$values
-      inv <- tryCatch(solve(r), error = function(e) NULL)
-      data.frame(
-        time_point = tm, method = m, n_genes = length(g),
-        max_vif = if (is.null(inv) || min(ev) <= 1e-10) Inf else max(diag(inv)),
-        condition_number = sqrt(max(ev) / max(min(ev), .Machine$double.eps))
-      )
-    }))
+  sel <- read("selected_genes.csv")
+  sel <- sel[sel$variant == "primary" & sel$method %in% logit_methods, , drop = FALSE]
+  test_cells <- do.call(rbind, lapply(pred, function(p) data.frame(time_point = p$time_point[[1L]], method = p$method[[1L]], fold = p$fold[[1L]], cell = p$cell)))
+  vif <- do.call(rbind, lapply(split(sel, list(sel$method, sel$time_point, sel$fold), drop = TRUE), function(s) {
+    m <- s$method[[1L]]; tm <- s$time_point[[1L]]; k <- s$fold[[1L]]
+    g <- unique(s$gene)
+    out <- data.frame(time_point = tm, method = m, fold = k, n_genes = length(g), max_vif = NA_real_, condition_number = NA_real_)
+    if (length(g) < 2L) return(out)
+    sl <- slots$slots[[tm]]
+    cells <- sl$cells %||% colnames(sl$counts)
+    held <- test_cells$cell[test_cells$time_point == tm & test_cells$method == m & test_cells$fold == k]
+    keep <- which(!is.na(sl$cell_type) & !(cells %in% held))
+    sf <- cc$sf[[tm]][cells[keep]]
+    stopifnot(!anyNA(sf))
+    x <- log1p(t(as.matrix(sl$counts[g, keep, drop = FALSE])) / sf)
+    x <- x[, apply(x, 2L, stats::sd) > 0, drop = FALSE]
+    r <- stats::cor(x)
+    ev <- eigen(r, symmetric = TRUE, only.values = TRUE)$values
+    inv <- if (min(ev) > 1e-10) tryCatch(solve(r), error = function(e) NULL) else NULL
+    out$max_vif <- if (is.null(inv)) Inf else max(diag(inv))
+    out$condition_number <- sqrt(max(ev) / max(min(ev), .Machine$double.eps))
+    out
   }))
-  checks <- merge(checks, vif[, c("time_point", "method", "max_vif")], by = c("time_point", "method"))
-  utils::write.csv(merge(checks, vif), file.path(clf_dir, "logit_checks.csv"), row.names = FALSE, fileEncoding = "UTF-8")
+  checks <- merge(checks, vif, by = c("time_point", "method", "fold"))
+  utils::write.csv(checks, file.path(clf_dir, "logit_checks.csv"), row.names = FALSE, fileEncoding = "UTF-8")
   save(
     plot_clf_logit_checks(
       checks,
       title = "Penalised logit checks: few events per selected gene, collinear selected genes",
-      subtitle = "Dashed: EPV 10; VIF 5 and 10. VIF of the stable genes over all cells of the slot (Inf: singular correlation)"
+      subtitle = "Dashed: EPV 10; VIF 5 and 10. VIF of the genes selected by each outer fold, on its training cells (Inf: singular correlation)"
     ),
     "fs_clf_logit_checks", list(checks = checks, vif = vif), 12, 4.5
   )
@@ -203,7 +212,7 @@ if (length(logit_methods) > 0L) {
 }
 
 # 4 · Trees ------------------------------------------------------------------------
-tree_methods <- intersect(c("ranger", "xgboost"), methods)
+tree_methods <- intersect(c("ranger", "ranger_balanced", "xgboost"), methods)
 if (length(tree_methods) > 0L) {
   vi <- imp[imp$method %in% tree_methods, , drop = FALSE]
   save(
@@ -213,7 +222,7 @@ if (length(tree_methods) > 0L) {
   tu <- do.call(rbind, lapply(tree_methods, function(m) {
     t <- read(sprintf("tuning_%s.csv", m))
     t <- t[t$variant == "primary", , drop = FALSE]
-    t$setting <- if (m == "ranger") sprintf("mtry %d, min_n %d", t$mtry, t$min_n) else sprintf("depth %d, rate %.2f, mtry %d", t$tree_depth, t$learn_rate, t$mtry)
+    t$setting <- if (m %in% c("ranger", "ranger_balanced")) sprintf("mtry %d, min_n %d", t$mtry, t$min_n) else sprintf("depth %d, rate %.2f, mtry %d", t$tree_depth, t$learn_rate, t$mtry)
     t[, c("time_point", "method", "fold", "setting", "mean")]
   }))
   save(
@@ -254,7 +263,7 @@ if (has("plnlda")) {
 # 6 · HVGs --------------------------------------------------------------------------
 hv <- do.call(rbind, lapply(times, function(tm) cbind(time_point = tm, read(sprintf("hvg_%s.csv", tm)))))
 save(
-  plot_clf_hvg(hv, title = "Global top 2,000 highly variable genes per slot (Seurat v3 vst)", subtitle = "Universe of msgl and PLN-LDA; black: loess of log variance on log mean (span 0.3)"),
+  plot_clf_hvg(hv, title = "Global top 2,000 highly variable genes per slot (Seurat v3 vst)", subtitle = "Universe of msgl, PLN-LDA and XGBoost; black: loess of log variance on log mean (span 0.3)"),
   "fs_clf_hvg", hv, 12, 4.5
 )
 
@@ -283,6 +292,7 @@ for (tm in times) {
     p_up <- ComplexUpset::upset(
       up,
       intersect = names(groups),
+      name = "Intersection",
       n_intersections = 20,
       width_ratio = 0.25,
       base_annotations = list("Genes" = ComplexUpset::intersection_size(fill = "#1d4e89", text = list(size = 2.5))),

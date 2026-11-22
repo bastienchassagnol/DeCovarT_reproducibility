@@ -10,8 +10,10 @@
 # (chapter 2, #sec-fs-classifiers). Each time point is analysed on its
 # own: outer 5-fold cross-validation stratified by type, inner 3-fold
 # tuning on the outer training cells only. The resampling unit is the
-# cell (one specimen, no donor column). Methods run one after another;
-# within a method the outer tasks (time x fold x variant) run in parallel.
+# cell (one specimen, no donor column). Within a method the
+# outer tasks (time x fold x variant) run in parallel; methods run one
+# after another or as separate processes
+# (scripts/run_02_classifiers_parallel.sh: one process of 14 workers each).
 #
 # Variants: `primary` (every time); at 48 h only, `covariate` (cell line
 # as an unpenalised covariate where the method allows) and `combat`
@@ -19,9 +21,13 @@
 # of the slot: no labels used).
 #
 # Universe: the genes tested in tier (ii) (presence gate) for glmnet,
-# ranger, xgboost and sPLS-DA; the global top 2,000 highly variable genes
-# of the slot (Seurat v3 vst, select_hvg_vst()) for msgl and PLN-LDA,
-# whose cost grows too fast with the number of genes.
+# ranger and sPLS-DA; the global top 2,000 highly variable genes of the
+# slot (Seurat v3 vst, select_hvg_vst(), unadjusted counts of all cells,
+# no cell line) for msgl, PLN-LDA and xgboost, whose cost grows too fast
+# with the number of genes.
+# msgl was stopped on 2026-11-22: even on 2,000 HVGs a 48 h fold took
+# 38.6 h. It is reported at 72 h and 96 h (primary) only; see
+# output/feature_selection/classifiers/msgl_runtime.csv.
 #
 # Inputs: output/feature_selection/tier_01/scored_slots.rds,
 # output/feature_selection/tier_02/cross_cell.rds.
@@ -59,7 +65,7 @@ K_inner <- 3L
 stable_threshold <- 0.6
 sensitivity_time <- "48h"
 n_hvg <- 2000L
-hvg_methods <- c("msgl", "plnlda")
+hvg_methods <- c("msgl", "plnlda", "xgboost")
 settings <- list(
   gamma = 0.5,
   n_top = 50L,
@@ -115,6 +121,9 @@ load_slot <- function(tm, variant) {
     }))))
   }
   counts <- slot$counts[genes, cells, drop = FALSE]
+  # HVGs from the unadjusted counts of all cells of the slot, so that every
+  # variant of a time point shares one gene list.
+  hvg <- select_hvg_vst(counts, n_top = n_hvg)
   if (variant == "combat") {
     cache <- file.path(fits_dir, sprintf("combat_%s.rds", tm))
     if (!file.exists(cache)) {
@@ -125,7 +134,6 @@ load_slot <- function(tm, variant) {
   }
   lib <- as.numeric(slot$library_size[cells])
   sf <- lib / stats::median(lib)
-  hvg <- select_hvg_vst(counts, n_top = n_hvg)
   X <- Matrix::t(counts %*% Matrix::Diagonal(x = 1 / sf))
   X@x <- log1p(X@x)
   colnames(X) <- genes
@@ -190,7 +198,9 @@ if ("nested" %in% stages) {
         parts <- strsplit(key, " ")[[1L]]
         message("Loading ", key)
         slot_data[[key]] <- load_slot(parts[[1L]], parts[[2L]])
-        if (parts[[2L]] == "primary") write_table(slot_data[[key]]$hvg, sprintf("hvg_%s.csv", parts[[1L]]))
+        # Several method processes may run at once: write the HVG table once.
+        hvg_file <- file.path(out_dir, sprintf("hvg_%s.csv", parts[[1L]]))
+        if (parts[[2L]] == "primary" && !file.exists(hvg_file)) write_table(slot_data[[key]]$hvg, basename(hvg_file))
       }
     }
     workers <- min(n_workers, nrow(tasks))
@@ -271,6 +281,7 @@ if ("tables" %in% stages) {
     if (!is.null(tu)) write_table(tu, sprintf("tuning_%s.csv", m))
   }
   selected <- do.call(rbind, lapply(seq_along(fits), function(i) tag(i, fits[[i]]$selected)))
+  write_table(selected, "selected_genes.csv")
   freq <- stats::aggregate(
     fold ~ time_point + method + variant + type + gene,
     unique(selected[, c("time_point", "method", "variant", "type", "gene", "fold")]),

@@ -1,0 +1,401 @@
+"time_point","method","variant","truth","pred","n"
+"48h","glmnet","combat","Epiblast","Epiblast",10471
+"48h","plnlda","combat","Epiblast","Epiblast",9919
+"48h","ranger","combat","Epiblast","Epiblast",10590
+"48h","ranger_balanced","combat","Epiblast","Epiblast",10110
+"48h","splsda","combat","Epiblast","Epiblast",10586
+"48h","xgboost","combat","Epiblast","Epiblast",10560
+"48h","glmnet","covariate","Epiblast","Epiblast",10478
+"48h","plnlda","covariate","Epiblast","Epiblast",9988
+"48h","ranger","covariate","Epiblast","Epiblast",10590
+"48h","ranger_balanced","covariate","Epiblast","Epiblast",10078
+"48h","splsda","covariate","Epiblast","Epiblast",10585
+"48h","xgboost","covariate","Epiblast","Epiblast",10541
+"48h","glmnet","primary","Epiblast","Epiblast",10476
+"48h","plnlda","primary","Epiblast","Epiblast",9722
+"48h","ranger","primary","Epiblast","Epiblast",10590
+"48h","ranger_balanced","primary","Epiblast","Epiblast",10103
+"48h","splsda","primary","Epiblast","Epiblast",10585
+"48h","xgboost","primary","Epiblast","Epiblast",10547
+"48h","glmnet","combat","Exiting naïve pluripotency","Epiblast",72
+"48h","plnlda","combat","Exiting naïve pluripotency","Epiblast",19
+"48h","ranger","combat","Exiting naïve pluripotency","Epiblast",265
+"48h","ranger_balanced","combat","Exiting naïve pluripotency","Epiblast",26
+"48h","splsda","combat","Exiting naïve pluripotency","Epiblast",233
+"48h","xgboost","combat","Exiting naïve pluripotency","Epiblast",145
+"48h","glmnet","covariate","Exiting naïve pluripotency","Epiblast",76
+"48h","plnlda","covariate","Exiting naïve pluripotency","Epiblast",8
+"48h","ranger","covariate","Exiting naïve pluripotency","Epiblast",265
+"48h","ranger_balanced","covariate","Exiting naïve pluripotency","Epiblast",32
+"48h","splsda","covariate","Exiting naïve pluripotency","Epiblast",233
+"48h","xgboost","covariate","Exiting naïve pluripotency","Epiblast",105
+"48h","glmnet","primary","Exiting naïve pluripotency","Epiblast",74
+"48h","plnlda","primary","Exiting naïve pluripotency","Epiblast",33
+"48h","ranger","primary","Exiting naïve pluripotency","Epiblast",265
+"48h","ranger_balanced","primary","Exiting naïve pluripotency","Epiblast",32
+"48h","splsda","primary","Exiting naïve pluripotency","Epiblast",233
+"48h","xgboost","primary","Exiting naïve pluripotency","Epiblast",112
+"48h","glmnet","combat","Naïve pluripotency","Epiblast",0
+"48h","plnlda","combat","Naïve pluripotency","Epiblast",0
+"48h","ranger","combat","Naïve pluripotency","Epiblast",36
+"48h","ranger_balanced","combat","Naïve pluripotency","Epiblast",0
+"48h","splsda","combat","Naïve pluripotency","Epiblast",5
+"48h","xgboost","combat","Naïve pluripotency","Epiblast",2
+"48h","glmnet","covariate","Naïve pluripotency","Epiblast",0
+"48h","plnlda","covariate","Naïve pluripotency","Epiblast",0
+"48h","ranger","covariate","Naïve pluripotency","Epiblast",36
+"48h","ranger_balanced","covariate","Naïve pluripotency","Epiblast",0
+"48h","splsda","covariate","Naïve pluripotency","Epiblast",7
+"48h","xgboost","covariate","Naïve pluripotency","Epiblast",1
+"48h","glmnet","primary","Naïve pluripotency","Epiblast",0
+"48h","plnlda","primary","Naïve pluripotency","Epiblast",0
+"48h","ranger","primary","Naïve pluripotency","Epiblast",36
+"48h","ranger_balanced","primary","Naïve pluripotency","Epiblast",0
+"48h","splsda","primary","Naïve pluripotency","Epiblast",7
+"48h","xgboost","primary","Naïve pluripotency","Epiblast",0
+"48h","glmnet","combat","Epiblast","Exiting naïve pluripotency",117
+"48h","plnlda","combat","Epiblast","Exiting naïve pluripotency",669
+"48h","ranger","combat","Epiblast","Exiting naïve pluripotency",0
+"48h","ranger_balanced","combat","Epiblast","Exiting naïve pluripotency",478
+"48h","splsda","combat","Epiblast","Exiting naïve pluripotency",4
+"48h","xgboost","combat","Epiblast","Exiting naïve pluripotency",30
+"48h","glmnet","covariate","Epiblast","Exiting naïve pluripotency",111
+"48h","plnlda","covariate","Epiblast","Exiting naïve pluripotency",601
+"48h","ranger","covariate","Epiblast","Exiting naïve pluripotency",0
+"48h","ranger_balanced","covariate","Epiblast","Exiting naïve pluripotency",509
+"48h","splsda","covariate","Epiblast","Exiting naïve pluripotency",5
+"48h","xgboost","covariate","Epiblast","Exiting naïve pluripotency",49
+"48h","glmnet","primary","Epiblast","Exiting naïve pluripotency",113
+"48h","plnlda","primary","Epiblast","Exiting naïve pluripotency",855
+"48h","ranger","primary","Epiblast","Exiting naïve pluripotency",0
+"48h","ranger_balanced","primary","Epiblast","Exiting naïve pluripotency",483
+"48h","splsda","primary","Epiblast","Exiting naïve pluripotency",5
+"48h","xgboost","primary","Epiblast","Exiting naïve pluripotency",42
+"48h","glmnet","combat","Exiting naïve pluripotency","Exiting naïve pluripotency",186
+"48h","plnlda","combat","Exiting naïve pluripotency","Exiting naïve pluripotency",242
+"48h","ranger","combat","Exiting naïve pluripotency","Exiting naïve pluripotency",0
+"48h","ranger_balanced","combat","Exiting naïve pluripotency","Exiting naïve pluripotency",225
+"48h","splsda","combat","Exiting naïve pluripotency","Exiting naïve pluripotency",31
+"48h","xgboost","combat","Exiting naïve pluripotency","Exiting naïve pluripotency",118
+"48h","glmnet","covariate","Exiting naïve pluripotency","Exiting naïve pluripotency",182
+"48h","plnlda","covariate","Exiting naïve pluripotency","Exiting naïve pluripotency",253
+"48h","ranger","covariate","Exiting naïve pluripotency","Exiting naïve pluripotency",0
+"48h","ranger_balanced","covariate","Exiting naïve pluripotency","Exiting naïve pluripotency",218
+"48h","splsda","covariate","Exiting naïve pluripotency","Exiting naïve pluripotency",32
+"48h","xgboost","covariate","Exiting naïve pluripotency","Exiting naïve pluripotency",160
+"48h","glmnet","primary","Exiting naïve pluripotency","Exiting naïve pluripotency",186
+"48h","plnlda","primary","Exiting naïve pluripotency","Exiting naïve pluripotency",199
+"48h","ranger","primary","Exiting naïve pluripotency","Exiting naïve pluripotency",0
+"48h","ranger_balanced","primary","Exiting naïve pluripotency","Exiting naïve pluripotency",220
+"48h","splsda","primary","Exiting naïve pluripotency","Exiting naïve pluripotency",32
+"48h","xgboost","primary","Exiting naïve pluripotency","Exiting naïve pluripotency",153
+"48h","glmnet","combat","Naïve pluripotency","Exiting naïve pluripotency",27
+"48h","plnlda","combat","Naïve pluripotency","Exiting naïve pluripotency",18
+"48h","ranger","combat","Naïve pluripotency","Exiting naïve pluripotency",0
+"48h","ranger_balanced","combat","Naïve pluripotency","Exiting naïve pluripotency",11
+"48h","splsda","combat","Naïve pluripotency","Exiting naïve pluripotency",31
+"48h","xgboost","combat","Naïve pluripotency","Exiting naïve pluripotency",28
+"48h","glmnet","covariate","Naïve pluripotency","Exiting naïve pluripotency",18
+"48h","plnlda","covariate","Naïve pluripotency","Exiting naïve pluripotency",22
+"48h","ranger","covariate","Naïve pluripotency","Exiting naïve pluripotency",0
+"48h","ranger_balanced","covariate","Naïve pluripotency","Exiting naïve pluripotency",13
+"48h","splsda","covariate","Naïve pluripotency","Exiting naïve pluripotency",29
+"48h","xgboost","covariate","Naïve pluripotency","Exiting naïve pluripotency",27
+"48h","glmnet","primary","Naïve pluripotency","Exiting naïve pluripotency",25
+"48h","plnlda","primary","Naïve pluripotency","Exiting naïve pluripotency",8
+"48h","ranger","primary","Naïve pluripotency","Exiting naïve pluripotency",0
+"48h","ranger_balanced","primary","Naïve pluripotency","Exiting naïve pluripotency",8
+"48h","splsda","primary","Naïve pluripotency","Exiting naïve pluripotency",29
+"48h","xgboost","primary","Naïve pluripotency","Exiting naïve pluripotency",32
+"48h","glmnet","combat","Epiblast","Naïve pluripotency",2
+"48h","plnlda","combat","Epiblast","Naïve pluripotency",2
+"48h","ranger","combat","Epiblast","Naïve pluripotency",0
+"48h","ranger_balanced","combat","Epiblast","Naïve pluripotency",2
+"48h","splsda","combat","Epiblast","Naïve pluripotency",0
+"48h","xgboost","combat","Epiblast","Naïve pluripotency",0
+"48h","glmnet","covariate","Epiblast","Naïve pluripotency",1
+"48h","plnlda","covariate","Epiblast","Naïve pluripotency",1
+"48h","ranger","covariate","Epiblast","Naïve pluripotency",0
+"48h","ranger_balanced","covariate","Epiblast","Naïve pluripotency",3
+"48h","splsda","covariate","Epiblast","Naïve pluripotency",0
+"48h","xgboost","covariate","Epiblast","Naïve pluripotency",0
+"48h","glmnet","primary","Epiblast","Naïve pluripotency",1
+"48h","plnlda","primary","Epiblast","Naïve pluripotency",13
+"48h","ranger","primary","Epiblast","Naïve pluripotency",0
+"48h","ranger_balanced","primary","Epiblast","Naïve pluripotency",4
+"48h","splsda","primary","Epiblast","Naïve pluripotency",0
+"48h","xgboost","primary","Epiblast","Naïve pluripotency",1
+"48h","glmnet","combat","Exiting naïve pluripotency","Naïve pluripotency",7
+"48h","plnlda","combat","Exiting naïve pluripotency","Naïve pluripotency",4
+"48h","ranger","combat","Exiting naïve pluripotency","Naïve pluripotency",0
+"48h","ranger_balanced","combat","Exiting naïve pluripotency","Naïve pluripotency",14
+"48h","splsda","combat","Exiting naïve pluripotency","Naïve pluripotency",1
+"48h","xgboost","combat","Exiting naïve pluripotency","Naïve pluripotency",2
+"48h","glmnet","covariate","Exiting naïve pluripotency","Naïve pluripotency",7
+"48h","plnlda","covariate","Exiting naïve pluripotency","Naïve pluripotency",4
+"48h","ranger","covariate","Exiting naïve pluripotency","Naïve pluripotency",0
+"48h","ranger_balanced","covariate","Exiting naïve pluripotency","Naïve pluripotency",15
+"48h","splsda","covariate","Exiting naïve pluripotency","Naïve pluripotency",0
+"48h","xgboost","covariate","Exiting naïve pluripotency","Naïve pluripotency",0
+"48h","glmnet","primary","Exiting naïve pluripotency","Naïve pluripotency",5
+"48h","plnlda","primary","Exiting naïve pluripotency","Naïve pluripotency",33
+"48h","ranger","primary","Exiting naïve pluripotency","Naïve pluripotency",0
+"48h","ranger_balanced","primary","Exiting naïve pluripotency","Naïve pluripotency",13
+"48h","splsda","primary","Exiting naïve pluripotency","Naïve pluripotency",0
+"48h","xgboost","primary","Exiting naïve pluripotency","Naïve pluripotency",0
+"48h","glmnet","combat","Naïve pluripotency","Naïve pluripotency",9
+"48h","plnlda","combat","Naïve pluripotency","Naïve pluripotency",18
+"48h","ranger","combat","Naïve pluripotency","Naïve pluripotency",0
+"48h","ranger_balanced","combat","Naïve pluripotency","Naïve pluripotency",25
+"48h","splsda","combat","Naïve pluripotency","Naïve pluripotency",0
+"48h","xgboost","combat","Naïve pluripotency","Naïve pluripotency",6
+"48h","glmnet","covariate","Naïve pluripotency","Naïve pluripotency",18
+"48h","plnlda","covariate","Naïve pluripotency","Naïve pluripotency",14
+"48h","ranger","covariate","Naïve pluripotency","Naïve pluripotency",0
+"48h","ranger_balanced","covariate","Naïve pluripotency","Naïve pluripotency",23
+"48h","splsda","covariate","Naïve pluripotency","Naïve pluripotency",0
+"48h","xgboost","covariate","Naïve pluripotency","Naïve pluripotency",8
+"48h","glmnet","primary","Naïve pluripotency","Naïve pluripotency",11
+"72h","glmnet","primary","Naïve pluripotency","Naïve pluripotency",52
+"72h","msgl","primary","Naïve pluripotency","Naïve pluripotency",53
+"48h","plnlda","primary","Naïve pluripotency","Naïve pluripotency",28
+"72h","plnlda","primary","Naïve pluripotency","Naïve pluripotency",63
+"48h","ranger","primary","Naïve pluripotency","Naïve pluripotency",0
+"72h","ranger","primary","Naïve pluripotency","Naïve pluripotency",13
+"48h","ranger_balanced","primary","Naïve pluripotency","Naïve pluripotency",28
+"72h","ranger_balanced","primary","Naïve pluripotency","Naïve pluripotency",58
+"48h","splsda","primary","Naïve pluripotency","Naïve pluripotency",0
+"72h","splsda","primary","Naïve pluripotency","Naïve pluripotency",46
+"48h","xgboost","primary","Naïve pluripotency","Naïve pluripotency",4
+"72h","xgboost","primary","Naïve pluripotency","Naïve pluripotency",52
+"72h","glmnet","primary","Ectopic pluripotency","Naïve pluripotency",4
+"72h","msgl","primary","Ectopic pluripotency","Naïve pluripotency",8
+"72h","plnlda","primary","Ectopic pluripotency","Naïve pluripotency",18
+"72h","ranger","primary","Ectopic pluripotency","Naïve pluripotency",0
+"72h","ranger_balanced","primary","Ectopic pluripotency","Naïve pluripotency",10
+"72h","splsda","primary","Ectopic pluripotency","Naïve pluripotency",5
+"72h","xgboost","primary","Ectopic pluripotency","Naïve pluripotency",2
+"72h","glmnet","primary","Primitive streak","Naïve pluripotency",0
+"72h","msgl","primary","Primitive streak","Naïve pluripotency",0
+"72h","plnlda","primary","Primitive streak","Naïve pluripotency",0
+"72h","ranger","primary","Primitive streak","Naïve pluripotency",0
+"72h","ranger_balanced","primary","Primitive streak","Naïve pluripotency",0
+"72h","splsda","primary","Primitive streak","Naïve pluripotency",0
+"72h","xgboost","primary","Primitive streak","Naïve pluripotency",0
+"72h","glmnet","primary","Naïve pluripotency","Ectopic pluripotency",14
+"72h","msgl","primary","Naïve pluripotency","Ectopic pluripotency",13
+"72h","plnlda","primary","Naïve pluripotency","Ectopic pluripotency",3
+"72h","ranger","primary","Naïve pluripotency","Ectopic pluripotency",52
+"72h","ranger_balanced","primary","Naïve pluripotency","Ectopic pluripotency",8
+"72h","splsda","primary","Naïve pluripotency","Ectopic pluripotency",20
+"72h","xgboost","primary","Naïve pluripotency","Ectopic pluripotency",14
+"72h","glmnet","primary","Ectopic pluripotency","Ectopic pluripotency",223
+"96h","glmnet","primary","Ectopic pluripotency","Ectopic pluripotency",108
+"72h","msgl","primary","Ectopic pluripotency","Ectopic pluripotency",227
+"96h","msgl","primary","Ectopic pluripotency","Ectopic pluripotency",110
+"72h","plnlda","primary","Ectopic pluripotency","Ectopic pluripotency",244
+"96h","plnlda","primary","Ectopic pluripotency","Ectopic pluripotency",111
+"72h","ranger","primary","Ectopic pluripotency","Ectopic pluripotency",114
+"96h","ranger","primary","Ectopic pluripotency","Ectopic pluripotency",98
+"72h","ranger_balanced","primary","Ectopic pluripotency","Ectopic pluripotency",251
+"96h","ranger_balanced","primary","Ectopic pluripotency","Ectopic pluripotency",115
+"72h","splsda","primary","Ectopic pluripotency","Ectopic pluripotency",150
+"96h","splsda","primary","Ectopic pluripotency","Ectopic pluripotency",105
+"72h","xgboost","primary","Ectopic pluripotency","Ectopic pluripotency",237
+"96h","xgboost","primary","Ectopic pluripotency","Ectopic pluripotency",108
+"72h","glmnet","primary","Primitive streak","Ectopic pluripotency",36
+"72h","msgl","primary","Primitive streak","Ectopic pluripotency",46
+"72h","plnlda","primary","Primitive streak","Ectopic pluripotency",125
+"72h","ranger","primary","Primitive streak","Ectopic pluripotency",1
+"72h","ranger_balanced","primary","Primitive streak","Ectopic pluripotency",86
+"72h","splsda","primary","Primitive streak","Ectopic pluripotency",8
+"72h","xgboost","primary","Primitive streak","Ectopic pluripotency",24
+"96h","glmnet","primary","Caudal mesoderm","Ectopic pluripotency",9
+"96h","msgl","primary","Caudal mesoderm","Ectopic pluripotency",9
+"96h","plnlda","primary","Caudal mesoderm","Ectopic pluripotency",18
+"96h","ranger","primary","Caudal mesoderm","Ectopic pluripotency",1
+"96h","ranger_balanced","primary","Caudal mesoderm","Ectopic pluripotency",30
+"96h","splsda","primary","Caudal mesoderm","Ectopic pluripotency",5
+"96h","xgboost","primary","Caudal mesoderm","Ectopic pluripotency",3
+"96h","glmnet","primary","Gut","Ectopic pluripotency",0
+"96h","msgl","primary","Gut","Ectopic pluripotency",0
+"96h","plnlda","primary","Gut","Ectopic pluripotency",0
+"96h","ranger","primary","Gut","Ectopic pluripotency",0
+"96h","ranger_balanced","primary","Gut","Ectopic pluripotency",0
+"96h","splsda","primary","Gut","Ectopic pluripotency",0
+"96h","xgboost","primary","Gut","Ectopic pluripotency",0
+"96h","glmnet","primary","Pre-somitic mesoderm","Ectopic pluripotency",0
+"96h","msgl","primary","Pre-somitic mesoderm","Ectopic pluripotency",1
+"96h","plnlda","primary","Pre-somitic mesoderm","Ectopic pluripotency",0
+"96h","ranger","primary","Pre-somitic mesoderm","Ectopic pluripotency",0
+"96h","ranger_balanced","primary","Pre-somitic mesoderm","Ectopic pluripotency",2
+"96h","splsda","primary","Pre-somitic mesoderm","Ectopic pluripotency",0
+"96h","xgboost","primary","Pre-somitic mesoderm","Ectopic pluripotency",0
+"96h","glmnet","primary","Somite differentiation front","Ectopic pluripotency",0
+"96h","msgl","primary","Somite differentiation front","Ectopic pluripotency",0
+"96h","plnlda","primary","Somite differentiation front","Ectopic pluripotency",0
+"96h","ranger","primary","Somite differentiation front","Ectopic pluripotency",0
+"96h","ranger_balanced","primary","Somite differentiation front","Ectopic pluripotency",0
+"96h","splsda","primary","Somite differentiation front","Ectopic pluripotency",0
+"96h","xgboost","primary","Somite differentiation front","Ectopic pluripotency",0
+"72h","glmnet","primary","Naïve pluripotency","Primitive streak",0
+"72h","msgl","primary","Naïve pluripotency","Primitive streak",0
+"72h","plnlda","primary","Naïve pluripotency","Primitive streak",0
+"72h","ranger","primary","Naïve pluripotency","Primitive streak",1
+"72h","ranger_balanced","primary","Naïve pluripotency","Primitive streak",0
+"72h","splsda","primary","Naïve pluripotency","Primitive streak",0
+"72h","xgboost","primary","Naïve pluripotency","Primitive streak",0
+"72h","glmnet","primary","Ectopic pluripotency","Primitive streak",39
+"72h","msgl","primary","Ectopic pluripotency","Primitive streak",31
+"72h","plnlda","primary","Ectopic pluripotency","Primitive streak",4
+"72h","ranger","primary","Ectopic pluripotency","Primitive streak",152
+"72h","ranger_balanced","primary","Ectopic pluripotency","Primitive streak",5
+"72h","splsda","primary","Ectopic pluripotency","Primitive streak",111
+"72h","xgboost","primary","Ectopic pluripotency","Primitive streak",27
+"72h","glmnet","primary","Primitive streak","Primitive streak",4243
+"72h","msgl","primary","Primitive streak","Primitive streak",4233
+"72h","plnlda","primary","Primitive streak","Primitive streak",4154
+"72h","ranger","primary","Primitive streak","Primitive streak",4278
+"72h","ranger_balanced","primary","Primitive streak","Primitive streak",4193
+"72h","splsda","primary","Primitive streak","Primitive streak",4271
+"72h","xgboost","primary","Primitive streak","Primitive streak",4255
+"96h","glmnet","primary","Ectopic pluripotency","Caudal mesoderm",6
+"96h","msgl","primary","Ectopic pluripotency","Caudal mesoderm",5
+"96h","plnlda","primary","Ectopic pluripotency","Caudal mesoderm",4
+"96h","ranger","primary","Ectopic pluripotency","Caudal mesoderm",13
+"96h","ranger_balanced","primary","Ectopic pluripotency","Caudal mesoderm",0
+"96h","splsda","primary","Ectopic pluripotency","Caudal mesoderm",7
+"96h","xgboost","primary","Ectopic pluripotency","Caudal mesoderm",4
+"96h","glmnet","primary","Caudal mesoderm","Caudal mesoderm",994
+"96h","msgl","primary","Caudal mesoderm","Caudal mesoderm",1002
+"96h","plnlda","primary","Caudal mesoderm","Caudal mesoderm",1011
+"96h","ranger","primary","Caudal mesoderm","Caudal mesoderm",961
+"96h","ranger_balanced","primary","Caudal mesoderm","Caudal mesoderm",986
+"96h","splsda","primary","Caudal mesoderm","Caudal mesoderm",998
+"96h","xgboost","primary","Caudal mesoderm","Caudal mesoderm",1002
+"96h","glmnet","primary","Gut","Caudal mesoderm",2
+"96h","msgl","primary","Gut","Caudal mesoderm",2
+"96h","plnlda","primary","Gut","Caudal mesoderm",3
+"96h","ranger","primary","Gut","Caudal mesoderm",9
+"96h","ranger_balanced","primary","Gut","Caudal mesoderm",0
+"96h","splsda","primary","Gut","Caudal mesoderm",2
+"96h","xgboost","primary","Gut","Caudal mesoderm",6
+"96h","glmnet","primary","Pre-somitic mesoderm","Caudal mesoderm",78
+"96h","msgl","primary","Pre-somitic mesoderm","Caudal mesoderm",74
+"96h","plnlda","primary","Pre-somitic mesoderm","Caudal mesoderm",159
+"96h","ranger","primary","Pre-somitic mesoderm","Caudal mesoderm",43
+"96h","ranger_balanced","primary","Pre-somitic mesoderm","Caudal mesoderm",206
+"96h","splsda","primary","Pre-somitic mesoderm","Caudal mesoderm",84
+"96h","xgboost","primary","Pre-somitic mesoderm","Caudal mesoderm",60
+"96h","glmnet","primary","Somite differentiation front","Caudal mesoderm",0
+"96h","msgl","primary","Somite differentiation front","Caudal mesoderm",0
+"96h","plnlda","primary","Somite differentiation front","Caudal mesoderm",0
+"96h","ranger","primary","Somite differentiation front","Caudal mesoderm",0
+"96h","ranger_balanced","primary","Somite differentiation front","Caudal mesoderm",0
+"96h","splsda","primary","Somite differentiation front","Caudal mesoderm",0
+"96h","xgboost","primary","Somite differentiation front","Caudal mesoderm",0
+"96h","glmnet","primary","Ectopic pluripotency","Gut",0
+"96h","msgl","primary","Ectopic pluripotency","Gut",0
+"96h","plnlda","primary","Ectopic pluripotency","Gut",0
+"96h","ranger","primary","Ectopic pluripotency","Gut",0
+"96h","ranger_balanced","primary","Ectopic pluripotency","Gut",0
+"96h","splsda","primary","Ectopic pluripotency","Gut",0
+"96h","xgboost","primary","Ectopic pluripotency","Gut",0
+"96h","glmnet","primary","Caudal mesoderm","Gut",6
+"96h","msgl","primary","Caudal mesoderm","Gut",6
+"96h","plnlda","primary","Caudal mesoderm","Gut",15
+"96h","ranger","primary","Caudal mesoderm","Gut",1
+"96h","ranger_balanced","primary","Caudal mesoderm","Gut",22
+"96h","splsda","primary","Caudal mesoderm","Gut",6
+"96h","xgboost","primary","Caudal mesoderm","Gut",4
+"96h","glmnet","primary","Gut","Gut",137
+"96h","msgl","primary","Gut","Gut",138
+"96h","plnlda","primary","Gut","Gut",137
+"96h","ranger","primary","Gut","Gut",129
+"96h","ranger_balanced","primary","Gut","Gut",140
+"96h","splsda","primary","Gut","Gut",137
+"96h","xgboost","primary","Gut","Gut",133
+"96h","glmnet","primary","Pre-somitic mesoderm","Gut",1
+"96h","msgl","primary","Pre-somitic mesoderm","Gut",2
+"96h","plnlda","primary","Pre-somitic mesoderm","Gut",1
+"96h","ranger","primary","Pre-somitic mesoderm","Gut",1
+"96h","ranger_balanced","primary","Pre-somitic mesoderm","Gut",2
+"96h","splsda","primary","Pre-somitic mesoderm","Gut",2
+"96h","xgboost","primary","Pre-somitic mesoderm","Gut",2
+"96h","glmnet","primary","Somite differentiation front","Gut",0
+"96h","msgl","primary","Somite differentiation front","Gut",0
+"96h","plnlda","primary","Somite differentiation front","Gut",0
+"96h","ranger","primary","Somite differentiation front","Gut",0
+"96h","ranger_balanced","primary","Somite differentiation front","Gut",0
+"96h","splsda","primary","Somite differentiation front","Gut",0
+"96h","xgboost","primary","Somite differentiation front","Gut",0
+"96h","glmnet","primary","Ectopic pluripotency","Pre-somitic mesoderm",2
+"96h","msgl","primary","Ectopic pluripotency","Pre-somitic mesoderm",1
+"96h","plnlda","primary","Ectopic pluripotency","Pre-somitic mesoderm",1
+"96h","ranger","primary","Ectopic pluripotency","Pre-somitic mesoderm",5
+"96h","ranger_balanced","primary","Ectopic pluripotency","Pre-somitic mesoderm",1
+"96h","splsda","primary","Ectopic pluripotency","Pre-somitic mesoderm",4
+"96h","xgboost","primary","Ectopic pluripotency","Pre-somitic mesoderm",4
+"96h","glmnet","primary","Caudal mesoderm","Pre-somitic mesoderm",52
+"96h","msgl","primary","Caudal mesoderm","Pre-somitic mesoderm",44
+"96h","plnlda","primary","Caudal mesoderm","Pre-somitic mesoderm",17
+"96h","ranger","primary","Caudal mesoderm","Pre-somitic mesoderm",98
+"96h","ranger_balanced","primary","Caudal mesoderm","Pre-somitic mesoderm",23
+"96h","splsda","primary","Caudal mesoderm","Pre-somitic mesoderm",52
+"96h","xgboost","primary","Caudal mesoderm","Pre-somitic mesoderm",52
+"96h","glmnet","primary","Gut","Pre-somitic mesoderm",1
+"96h","msgl","primary","Gut","Pre-somitic mesoderm",0
+"96h","plnlda","primary","Gut","Pre-somitic mesoderm",0
+"96h","ranger","primary","Gut","Pre-somitic mesoderm",2
+"96h","ranger_balanced","primary","Gut","Pre-somitic mesoderm",0
+"96h","splsda","primary","Gut","Pre-somitic mesoderm",1
+"96h","xgboost","primary","Gut","Pre-somitic mesoderm",1
+"96h","glmnet","primary","Pre-somitic mesoderm","Pre-somitic mesoderm",3493
+"96h","msgl","primary","Pre-somitic mesoderm","Pre-somitic mesoderm",3498
+"96h","plnlda","primary","Pre-somitic mesoderm","Pre-somitic mesoderm",3135
+"96h","ranger","primary","Pre-somitic mesoderm","Pre-somitic mesoderm",3545
+"96h","ranger_balanced","primary","Pre-somitic mesoderm","Pre-somitic mesoderm",3245
+"96h","splsda","primary","Pre-somitic mesoderm","Pre-somitic mesoderm",3503
+"96h","xgboost","primary","Pre-somitic mesoderm","Pre-somitic mesoderm",3527
+"96h","glmnet","primary","Somite differentiation front","Pre-somitic mesoderm",12
+"96h","msgl","primary","Somite differentiation front","Pre-somitic mesoderm",15
+"96h","plnlda","primary","Somite differentiation front","Pre-somitic mesoderm",14
+"96h","ranger","primary","Somite differentiation front","Pre-somitic mesoderm",29
+"96h","ranger_balanced","primary","Somite differentiation front","Pre-somitic mesoderm",7
+"96h","splsda","primary","Somite differentiation front","Pre-somitic mesoderm",29
+"96h","xgboost","primary","Somite differentiation front","Pre-somitic mesoderm",28
+"96h","glmnet","primary","Ectopic pluripotency","Somite differentiation front",0
+"96h","msgl","primary","Ectopic pluripotency","Somite differentiation front",0
+"96h","plnlda","primary","Ectopic pluripotency","Somite differentiation front",0
+"96h","ranger","primary","Ectopic pluripotency","Somite differentiation front",0
+"96h","ranger_balanced","primary","Ectopic pluripotency","Somite differentiation front",0
+"96h","splsda","primary","Ectopic pluripotency","Somite differentiation front",0
+"96h","xgboost","primary","Ectopic pluripotency","Somite differentiation front",0
+"96h","glmnet","primary","Caudal mesoderm","Somite differentiation front",0
+"96h","msgl","primary","Caudal mesoderm","Somite differentiation front",0
+"96h","plnlda","primary","Caudal mesoderm","Somite differentiation front",0
+"96h","ranger","primary","Caudal mesoderm","Somite differentiation front",0
+"96h","ranger_balanced","primary","Caudal mesoderm","Somite differentiation front",0
+"96h","splsda","primary","Caudal mesoderm","Somite differentiation front",0
+"96h","xgboost","primary","Caudal mesoderm","Somite differentiation front",0
+"96h","glmnet","primary","Gut","Somite differentiation front",0
+"96h","msgl","primary","Gut","Somite differentiation front",0
+"96h","plnlda","primary","Gut","Somite differentiation front",0
+"96h","ranger","primary","Gut","Somite differentiation front",0
+"96h","ranger_balanced","primary","Gut","Somite differentiation front",0
+"96h","splsda","primary","Gut","Somite differentiation front",0
+"96h","xgboost","primary","Gut","Somite differentiation front",0
+"96h","glmnet","primary","Pre-somitic mesoderm","Somite differentiation front",17
+"96h","msgl","primary","Pre-somitic mesoderm","Somite differentiation front",14
+"96h","plnlda","primary","Pre-somitic mesoderm","Somite differentiation front",294
+"96h","ranger","primary","Pre-somitic mesoderm","Somite differentiation front",0
+"96h","ranger_balanced","primary","Pre-somitic mesoderm","Somite differentiation front",134
+"96h","splsda","primary","Pre-somitic mesoderm","Somite differentiation front",0
+"96h","xgboost","primary","Pre-somitic mesoderm","Somite differentiation front",0
+"96h","glmnet","primary","Somite differentiation front","Somite differentiation front",17
+"96h","msgl","primary","Somite differentiation front","Somite differentiation front",14
+"96h","plnlda","primary","Somite differentiation front","Somite differentiation front",15
+"96h","ranger","primary","Somite differentiation front","Somite differentiation front",0
+"96h","ranger_balanced","primary","Somite differentiation front","Somite differentiation front",22
+"96h","splsda","primary","Somite differentiation front","Somite differentiation front",0
+"96h","xgboost","primary","Somite differentiation front","Somite differentiation front",1

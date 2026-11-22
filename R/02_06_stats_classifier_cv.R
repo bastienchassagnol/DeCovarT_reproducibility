@@ -12,6 +12,8 @@
 #' - `msgl`: multinomial sparse-group lasso, groups = co-expression modules;
 #' - `plnlda`: PLN-LDA on raw counts, offset log library size;
 #' - `ranger`: random forest (`parsnip`), permutation importance;
+#' - `ranger_balanced`: balanced random forest, each tree bootstraps the
+#'   same number of cells (the size of the rarest type) from every type;
 #' - `xgboost`: boosted trees (`parsnip`), gain importance;
 #' - `splsda`: sparse PLS discriminant analysis (`mixOmics`).
 #'
@@ -19,7 +21,7 @@
 #' `glmnet`, `msgl` and `splsda` standardise the genes internally on the
 #' training cells, and trees are invariant to monotone scaling.
 
-classifier_methods <- c("glmnet", "msgl", "plnlda", "ranger", "xgboost", "splsda")
+classifier_methods <- c("glmnet", "msgl", "plnlda", "ranger", "ranger_balanced", "xgboost", "splsda")
 
 #' Highly variable genes, Seurat v3 `vst` (reimplemented, no Seurat).
 #'
@@ -386,6 +388,7 @@ fit_classifier <- function(method, X, Y, lib, y, train, test, inner, covariate =
       )
     },
     ranger = ,
+    ranger_balanced = ,
     xgboost = {
       df_tr <- data.frame(as.matrix(Xtr), check.names = TRUE)
       df_te <- data.frame(as.matrix(Xte), check.names = TRUE)
@@ -393,11 +396,19 @@ fit_classifier <- function(method, X, Y, lib, y, train, test, inner, covariate =
       df_tr$.y <- y_tr
       p <- length(genes)
       rec <- recipes::recipe(.y ~ ., data = df_tr)
-      if (method == "ranger") {
+      rf <- method %in% c("ranger", "ranger_balanced")
+      if (rf) {
         cw <- stats::setNames(as.numeric(table(y_tr))^(-settings$gamma), types)
         cw <- cw / mean(cw[as.character(y_tr)])
+        # Balanced: class-wise bootstrap of n_min cells per type (order of levels(y_tr)), no weights.
+        rf_args <- if (method == "ranger_balanced") {
+          n_c <- as.numeric(table(y_tr))
+          list(replace = TRUE, sample.fraction = rep(min(n_c) / sum(n_c), length(n_c)))
+        } else {
+          list(class.weights = cw)
+        }
         spec <- parsnip::rand_forest(trees = settings$rf_trees, mtry = parsnip::tune(), min_n = parsnip::tune()) |>
-          parsnip::set_engine("ranger", class.weights = cw, num.threads = 1L, importance = "none") |>
+          (\(m) do.call(parsnip::set_engine, c(list(m, "ranger", num.threads = 1L, importance = "none"), rf_args)))() |>
           parsnip::set_mode("classification")
         grid <- expand.grid(mtry = unique(pmax(1L, round(sqrt(p) * settings$rf_mtry_mult))), min_n = settings$rf_min_n)
       } else {
@@ -433,9 +444,9 @@ fit_classifier <- function(method, X, Y, lib, y, train, test, inner, covariate =
       ))
       best <- tune::select_best(tuned, metric = "f_meas")
       tun <- tune::collect_metrics(tuned)
-      if (method == "ranger") {
+      if (rf) {
         spec_f <- parsnip::rand_forest(trees = settings$rf_trees, mtry = best$mtry, min_n = best$min_n) |>
-          parsnip::set_engine("ranger", class.weights = cw, num.threads = 1L, importance = "permutation") |>
+          (\(m) do.call(parsnip::set_engine, c(list(m, "ranger", num.threads = 1L, importance = "permutation"), rf_args)))() |>
           parsnip::set_mode("classification")
         wf_f <- workflows::update_model(wf, spec_f)
       } else {
@@ -446,7 +457,7 @@ fit_classifier <- function(method, X, Y, lib, y, train, test, inner, covariate =
       colnames(prob) <- sub("^\\.pred_", "", colnames(prob))
       prob <- prob[, types, drop = FALSE]
       eng <- workflows::extract_fit_engine(fitted)
-      if (method == "ranger") {
+      if (rf) {
         imp <- eng$variable.importance
       } else {
         xi <- xgboost::xgb.importance(model = eng)

@@ -1,0 +1,31 @@
+"method","type","variant","n_primary","n_variant","jaccard"
+"glmnet","Epiblast","combat",41,35,0.727272727272727
+"glmnet","Epiblast","covariate",41,32,0.659090909090909
+"plnlda","Epiblast","combat",3,5,0.333333333333333
+"plnlda","Epiblast","covariate",3,3,0
+"ranger","Epiblast","combat",22,26,0.5
+"ranger","Epiblast","covariate",22,20,0.615384615384615
+"ranger_balanced","Epiblast","combat",27,31,0.526315789473684
+"ranger_balanced","Epiblast","covariate",27,20,0.678571428571429
+"splsda","Epiblast","combat",13,67,0.126760563380282
+"splsda","Epiblast","covariate",13,11,0.846153846153846
+"xgboost","Epiblast","combat",23,28,0.758620689655172
+"xgboost","Epiblast","covariate",23,20,0.869565217391304
+"glmnet","Exiting naïve pluripotency","combat",29,18,0.46875
+"glmnet","Exiting naïve pluripotency","covariate",29,13,0.3125
+"plnlda","Exiting naïve pluripotency","covariate",0,1,0
+"splsda","Exiting naïve pluripotency","combat",4,12,0
+"splsda","Exiting naïve pluripotency","covariate",4,5,0.8
+"xgboost","Exiting naïve pluripotency","covariate",1,2,0.5
+"glmnet","Naïve pluripotency","combat",22,23,0.730769230769231
+"glmnet","Naïve pluripotency","covariate",22,17,0.625
+"plnlda","Naïve pluripotency","combat",41,40,0.883720930232558
+"plnlda","Naïve pluripotency","covariate",41,38,0.0128205128205128
+"ranger","Naïve pluripotency","combat",25,16,0.576923076923077
+"ranger","Naïve pluripotency","covariate",25,25,0.923076923076923
+"ranger_balanced","Naïve pluripotency","combat",14,9,0.352941176470588
+"ranger_balanced","Naïve pluripotency","covariate",14,12,0.733333333333333
+"splsda","Naïve pluripotency","combat",35,71,0.152173913043478
+"splsda","Naïve pluripotency","covariate",35,32,0.861111111111111
+"xgboost","Naïve pluripotency","combat",20,13,0.5
+"xgboost","Naïve pluripotency","covariate",20,20,0.739130434782609

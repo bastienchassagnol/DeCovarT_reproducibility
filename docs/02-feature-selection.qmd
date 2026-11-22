@@ -1235,53 +1235,164 @@ Outputs: `overlap_48h_cell_line.csv`, `ranks_global_48h_by_line.csv`,
 
 ### Comparison with classifier-based marker selection {#sec-fs-classifiers}
 
-A second check of the panel uses classifiers of the cell type, each
-inside stability selection [@meinshausenStabilitySelection2010], as in
-[S6, sparse classifiers](https://bastienchassagnol.github.io/DeCovarT/articles/S6-feature-screening-scenario.html#sec-sparse-classifiers):
+```{r}
+#| label: fs-clf-values
+#| include: false
+clf_m <- read_out("feature_selection", "classifiers", "metrics.csv")
+clf_p <- clf_m[clf_m$variant == "primary", ]
+clf_mean <- stats::aggregate(cbind(macro_f1, balanced_accuracy) ~ time_point + method, clf_p, mean)
+mf1 <- function(m, tm) sprintf("%.2f", clf_mean$macro_f1[clf_mean$method == m & clf_mean$time_point == tm])
+ba <- function(m, tm) sprintf("%.2f", clf_mean$balanced_accuracy[clf_mean$method == m & clf_mean$time_point == tm])
+clf_sets <- read_out("feature_selection", "classifiers", "comparison_sets.csv")
+key <- paste(clf_sets$time_point, clf_sets$type, clf_sets$gene)
+in_two <- function(m) sprintf("%.0f %%", 100 * mean(key[clf_sets$method == m] %in% key[clf_sets$method == "two_stage"]))
+n_set <- function(m) sum(clf_sets$method == m)
+msgl_rt <- utils::read.csv(here::here("..", "output", "feature_selection", "classifiers", "msgl_runtime.csv"), comment.char = "#")
+```
 
-- penalised multinomial logistic regression (`glmnet`, grouped lasso
-  across types);
-- sparse PLS discriminant analysis (`mixOmics::splsda()`);
-- random forest (`ranger`, impurity importance).
+Seven classifiers of the cell type select genes on their own, and their
+stable sets are set against the two-stage panel: genes confirmed by the
+two-sided contrast $A2$ (@sec-fs-deg-twosided) with
+$|\log_2\mathrm{FC}|\ge 1$. The comparison is qualitative: it asks
+which genes a predictive criterion keeps that the tests do not, and the
+reverse. The reasons for each method and for what is not done (time
+splines, MINT) are in the vignette
+([3.1, classifier choices](https://bastienchassagnol.github.io/DeCovarT/articles/03-1-feature-selection.html#sec-fs-classifier-theory)).
 
-[TODO-cite: glmnet (Friedman, Hastie & Tibshirani 2010); mixOmics (Rohart et al. 2017); ranger (Wright & Ziegler 2017)]{.highlight}
+**Design.** Each time point is analysed on its own. Outer 5-fold
+cross-validation, stratified by type, estimates the held-out metrics;
+an inner 3-fold split of the outer training cells tunes each method.
+Classes are weighted by $n_c^{-1/2}$. A gene is stable for a type when
+it is selected in at least 3 of the 5 outer fits. The cells come from
+one specimen, so the metrics measure generalisation to new cells of
+this specimen (@nte-pseudoreplication).
 
-`classifier_markers()` (`R/02_05_classifiers.R`) subsamples half of
-the cells of each type 100 times, keeps the top 50 genes of each fit,
-and reports each gene's selection frequency; the stable set is the
-genes selected in at least 60 % of the subsamples. The cells come from
-one specimen, so the resampling unit is the cell and the frequencies
-measure generalisation to new cells of this specimen
-(@nte-pseudoreplication). The purpose is to check that the panel is
-biologically meaningful, robust and able to discriminate the types, not
-to replace it: the stable sets are compared with the omnibus panel
-through their overlaps (`set_overlap()` in `R/02_00_utils.R`).
+| Method | Fit | Genes offered | Gene set per type |
+|---|---|---|---|
+| `glmnet` | ungrouped multinomial elastic net, $\alpha\in\{0.1,\dots,1\}$ [@R-glmnet] | gated panel | non-zero coefficients |
+| `msgl` | sparse-group lasso on 50 co-expression modules [@R-msgl] | 2,000 HVGs | non-zero coefficients |
+| PLN-LDA | Poisson log-normal LDA on raw counts, offset $\log$ library size, diagonal covariance [@R-PLNmodels] | 2,000 HVGs | top 50 by correlation with the axes |
+| random forest | `ranger` through `parsnip`, 500 trees, class weights $n_c^{-1/2}$ [@R-ranger; @R-parsnip] | gated panel | top 50 by permutation importance |
+| balanced random forest | as above, but each tree bootstraps the same number of cells (the size of the rarest type) from every type, no class weights [TODO-cite: Chen, Liaw & Breiman 2004, Using random forest to learn imbalanced data, Tech. Rep. 666, Dept. Statistics, UC Berkeley; page to check]{.highlight} | gated panel | top 50 by permutation importance |
+| XGBoost | boosted trees through `parsnip` [@R-xgboost; @R-tune] | 2,000 HVGs | top 50 by gain |
+| sPLS-DA | `mixOmics::splsda()`, `keepX` tuned [@R-mixOmics] | gated panel | selected loadings |
+
+: Classifiers of the benchmark. Gated panel: genes passing the presence gate of tier (ii) (9,633, 10,751 and 9,761 genes at 48, 72 and 96 h). HVGs: top 2,000 by Seurat v3 variance-stabilising selection, computed once per time point on the unadjusted counts of all cells, without labels or cell line (@fig-fs-clf-hvg). A gene ranked by an unsigned score goes to the type with the largest $|\log_2\mathrm{FC}|$ against the other types on the training fold. `msgl` was stopped at 48 h: even on 2,000 HVGs one 48 h fold took 38.6 h and the other 14 were unfinished after 42.6 h (`msgl_runtime.csv`); it is reported at 72 and 96 h only. {#tbl-fs-clf-methods}
+
+**Prediction.** At 72 and 96 h the penalised logistic models and
+XGBoost reach a macro-F1 of 0.78–0.91 (@fig-fs-clf-metrics): `glmnet`
+`r mf1("glmnet", "72h")` and `r mf1("glmnet", "96h")`, XGBoost
+`r mf1("xgboost", "72h")` and `r mf1("xgboost", "96h")`. At 48 h every
+method does worse, because naïve pluripotency has 36 cells and
+exiting naïve pluripotency 265 against about 8,400 epiblast cells.
+Accuracy stays above 0.9 everywhere and says little here: predicting
+epiblast for every 48 h cell already gives 0.97. Random forest with
+class weights does exactly that at 48 h (macro-F1 `r mf1("ranger", "48h")`,
+recall 0 for both minority types, @fig-fs-clf-recall), and sPLS-DA
+nearly so (`r mf1("splsda", "48h")`). The balanced random forest, which
+draws as many cells of each type for every tree, removes the collapse:
+macro-F1 `r mf1("ranger_balanced", "48h")`, `r mf1("ranger_balanced", "72h")`
+and `r mf1("ranger_balanced", "96h")` at 48, 72 and 96 h against
+`r mf1("ranger", "48h")`, `r mf1("ranger", "72h")` and
+`r mf1("ranger", "96h")`, the best macro-F1 of all methods at 48 h. The
+somite differentiation front at 96 h (29 cells), missed by the weighted
+forest, reaches a recall of 0.74. PLN-LDA has the best balanced accuracy
+(`r ba("plnlda", "48h")` at 48 h, `r ba("plnlda", "72h")` at 72 h) but
+the worst accuracy and log loss: it trades majority-class errors for
+minority recall, and its posteriors are overconfident
+(@fig-fs-clf-reliability).
+
+![Held-out metrics of the seven classifiers per time point. One grey point per outer fold, grey range, blue mean. Methods ordered by mean macro-F1 over 72 and 96 h; `msgl` has no 48 h fit. sPLS-DA has no log loss (no class probabilities). Source: `fs_clf_metrics.rds`.](images/feature_selection/fs_clf_metrics.png){#fig-fs-clf-metrics}
+
+**Overlap with the two-stage panel.** The tree methods keep few genes
+and most of them are already in the two-stage panel: `r in_two("xgboost")`
+of the `r n_set("xgboost")` XGBoost type × gene pairs,
+`r in_two("ranger")` of the `r n_set("ranger")` random-forest pairs and
+`r in_two("ranger_balanced")` of the `r n_set("ranger_balanced")`
+balanced random-forest pairs.
+sPLS-DA follows (`r in_two("splsda")` of `r n_set("splsda")`). The
+penalised logistic models select more genes and overlap less: `glmnet`
+`r in_two("glmnet")` of `r n_set("glmnet")`, `msgl` `r in_two("msgl")`
+of `r n_set("msgl")`. PLN-LDA overlaps least (`r in_two("plnlda")` of
+`r n_set("plnlda")`; see below). A predictive model
+needs one gene from each block of correlated genes, while the tests
+confirm every gene of the block, so most of the two-stage panel is
+found by no classifier (@fig-fs-clf-jaccard and the UpSet plots below).
+
+**Why PLN-LDA picks other genes.** At 48 and 72 h none of the stable
+PLN-LDA genes passes the omnibus gate, and they are almost never
+detected: about 0.01 counts per cell on average, against 0.9–2.9 for
+the XGBoost genes drawn from the same 2,000 HVGs
+(@tbl-fs-clf-plnlda-genes). Their large fold changes come from a few
+counts that happen to fall in a small type. PLN-LDA ranks genes by the
+correlation of their latent positions with the discriminant axes
+(`corr_map`). For a gene that is nearly always zero, the latent position
+is set by the prior and the offset, and a handful of counts in one type
+is enough to align it with an axis; the shared diagonal covariance
+then gives it a small latent variance and a large weight. The linear
+boundary (LDA rather than QDA) affects the posteriors, which are
+overconfident, more than the ranking of genes. The permuted Welch gate
+rejects these genes because they carry almost no signal. A floor on
+the mean count within the training fold would remove them; it was not
+run.
 
 ```{r}
-#| label: fs-classifiers-call
-#| eval: false
-# Not run.
-source("R/02_00_utils.R")
-source("R/02_05_classifiers.R")
-clf <- lapply(times, function(tm) {
-  g <- ranked[[tm]]$gene[ranked[[tm]]$pass_presence]
-  classifier_markers(
-    sc[[tm]][g, ],
-    cell_type[[tm]],
-    size_factors = sf[[tm]],
-    n_subsample = 100L,
-    frac = 0.5,
-    n_top = 50L,
-    threshold = 0.6,
-    seed = 20261104L
-  )
-})
-names(clf) <- times
-clf_overlap <- lapply(times, function(tm) {
-  stable <- split(clf[[tm]]$gene[clf[[tm]]$stable], clf[[tm]]$method[clf[[tm]]$stable])
-  set_overlap(c(stable, omnibus = list(ranked[[tm]]$gene[ranked[[tm]]$selected])))
-})
+#| label: tbl-fs-clf-plnlda-genes
+#| tbl-cap: "Stable genes of PLN-LDA and XGBoost (same 2,000 HVGs): share passing the omnibus gate of tier (ii), median mean count per cell and median $|\\log_2\\mathrm{FC}|$ of the type they are assigned to."
+pln_tab <- do.call(rbind, lapply(times, function(tm) {
+  ctr <- read_out("feature_selection", "deg_twosided", paste0("contrasts_twosided_", tm, ".csv"))
+  ctr <- ctr[ctr$test == "welch_perm", ]
+  hv <- read_out("feature_selection", "classifiers", paste0("hvg_", tm, ".csv"))
+  do.call(rbind, lapply(c("plnlda", "xgboost"), function(m) {
+    x <- clf_sets[clf_sets$method == m & clf_sets$time_point == tm, ]
+    cc <- ctr[match(paste(x$type, x$gene), paste(ctr$type, ctr$gene)), ]
+    data.frame(
+      Time = tm,
+      Method = if (m == "plnlda") "PLN-LDA" else "XGBoost",
+      `Stable pairs` = nrow(x),
+      `Pass the gate` = sprintf("%.0f %%", 100 * mean(x$gene %in% ctr$gene[ctr$screened])),
+      `Median mean count` = signif(stats::median(hv$mean[match(x$gene, hv$gene)]), 2),
+      `Median |log2FC|` = round(stats::median(abs(cc$log2fc), na.rm = TRUE), 1),
+      check.names = FALSE
+    )
+  }))
+}))
+tinytable::tt(pln_tab)
 ```
+
+![Jaccard similarity of the type × gene sets of the methods, per time point. Two-stage: $A2$ confirmed and $|\log_2\mathrm{FC}|\ge 1$; classifiers: stable sets. Source: `fs_clf_jaccard.rds`.](images/feature_selection/fs_clf_jaccard.png){#fig-fs-clf-jaccard}
+
+::: {.panel-tabset}
+
+```{r}
+#| label: fs-clf-upset-tabs
+#| results: asis
+#| echo: false
+up_files <- read_out("feature_selection", "classifiers", "upset_files.csv")
+for (i in seq_len(nrow(up_files))) {
+  cat(sprintf("## %s, %s\n\n![](images/feature_selection/%s.png)\n\n", up_files$time_point[i], up_files$type[i], up_files$file[i]))
+}
+```
+:::
+
+UpSet plots: genes of the two-stage panel and of the classifier stable sets, one tab per type × time (20 largest intersections). Source: `fs_clf_upset_<time>_<type>.rds`.
+
+**48 h sensitivities.** The cell line is ignored in the primary fits.
+Two corrections are compared at 48 h: the cell line as an unpenalised
+covariate (`glmnet`, PLN-LDA) or as a predictor (trees, sPLS-DA), and
+ComBat-seq on the counts without the labels [@R-sva]. The covariate
+raises the `glmnet` macro-F1 from 0.68 to 0.74 and XGBoost from 0.60
+to 0.66; ComBat-seq moves every macro-F1 by less than 0.07, upwards
+only for PLN-LDA (@fig-fs-clf-sensitivity). The
+stable sets of `glmnet` and XGBoost stay close to their primary sets
+(median Jaccard 0.62–0.74 across types); sPLS-DA under ComBat-seq and
+PLN-LDA with the covariate share almost no stable genes with their
+primary sets (`jaccard_sensitivity_48h.csv`), so their 48 h selections
+depend on the cell line.
+
+![Macro-F1 and balanced accuracy at 48 h: primary fit, cell line as covariate, ComBat-seq. Small points: outer folds; large points: mean. Source: `fs_clf_sensitivity_48h.rds`.](images/feature_selection/fs_clf_sensitivity_48h.png){#fig-fs-clf-sensitivity}
+
+Diagnostics of each model are in @sec-fs-classifier-diagnostics.
 
 ### Optional multivariate refinement {#sec-fs-nsga2 .appendix}
 
@@ -1708,6 +1819,91 @@ with the looser $\mathrm{FC}\ge1.3$ (`panel_twosided_<time>.csv`).
 ![Two-sided top confirmed genes at 96 h, as in @fig-fs-deg2-heatmap-48.](images/feature_selection/fs_deg_twosided_heatmap_96h.png){#fig-fs-deg2-heatmap-96}
 :::
 
+## Classifier diagnostics {#sec-fs-classifier-diagnostics .appendix}
+
+Diagnostics of the benchmark of @sec-fs-classifiers, written by
+`scripts/02_06_vis_classifier_cv.R`.
+
+**All methods.** Row-normalised confusion matrices
+(@fig-fs-clf-confusion) and per-type recall (@fig-fs-clf-recall) show
+where the macro-F1 is lost: the two minority types at 48 h, naïve and
+ectopic pluripotency at 72 h (mean recall over methods 0.70 and 0.75),
+and the somite differentiation front at 96 h (0.26, 29 cells). One-versus-rest
+reliability curves (@fig-fs-clf-reliability) compare predicted and
+observed class frequencies on held-out cells.
+
+![Row-normalised confusion matrices summed over the outer folds. Source: `fs_clf_confusion.rds`.](images/feature_selection/fs_clf_confusion.png){#fig-fs-clf-confusion}
+
+![Recall per type on held-out cells, one small point per outer fold, large point the mean. Source: `fs_clf_recall.rds`.](images/feature_selection/fs_clf_recall.png){#fig-fs-clf-recall}
+
+![One-versus-rest reliability curves of the methods that return class probabilities. Source: `fs_clf_reliability.rds`.](images/feature_selection/fs_clf_reliability.png){#fig-fs-clf-reliability}
+
+**Penalised logistic models (`glmnet`, `msgl`).** The checks of an
+unpenalised logit are adapted to $p\gg n$. The inner-CV deviance
+against $\log\lambda$ (@fig-fs-clf-glmnet-cv, @fig-fs-clf-msgl-cv) and
+the coefficient paths (@fig-fs-clf-glmnet-paths) show where the
+selected penalty sits. Events per variable (cells of the rarest type
+over selected genes) stay below 1 for every fit (at most 0.35), so no
+unpenalised refit is attempted and `car::vif` is replaced by the
+variance inflation from the inverse correlation matrix of the genes
+selected by each outer fold, computed on that fold's training cells,
+and by its condition number (@fig-fs-clf-logit-checks). Both stay low
+for `glmnet` (largest VIF 5.7, condition number at most 12.2 over the
+15 fits) and for `msgl` at 72 h (VIF at most 4.0); `msgl` at 96 h keeps
+about 1,000 genes per fold, correlated ones included (largest VIF
+65–192 across folds), as the group penalty intends. Up to 39 % of the held-out cells get a
+probability of at least 0.999, close to separation: the penalty is what
+keeps the coefficients finite. Binned empirical logits against
+expression check the linearity of the log-odds for the top genes
+(@fig-fs-clf-logit-linearity), and per-cell held-out deviance
+contributions flag influential cells (@fig-fs-clf-logit-influence).
+Independence cannot be checked without a grouping column
+(@nte-pseudoreplication).
+
+![Inner-CV multinomial deviance of `glmnet` against $\log\lambda$, one curve per $\alpha$. Source: `fs_clf_glmnet_cv.rds`.](images/feature_selection/fs_clf_glmnet_cv.png){#fig-fs-clf-glmnet-cv}
+
+![Coefficient paths of the selected `glmnet` fit. Source: `fs_clf_glmnet_paths.rds`.](images/feature_selection/fs_clf_glmnet_paths.png){#fig-fs-clf-glmnet-paths}
+
+![Inner-CV error of `msgl` against $\log\lambda$, 72 and 96 h. Source: `fs_clf_msgl_cv.rds`.](images/feature_selection/fs_clf_msgl_cv.png){#fig-fs-clf-msgl-cv}
+
+![Events per variable, largest variance inflation, condition number and share of near-separated cells per fit. Source: `fs_clf_logit_checks.rds`.](images/feature_selection/fs_clf_logit_checks.png){#fig-fs-clf-logit-checks}
+
+![Binned empirical logits $\log\{(y+0.5)/(n-y+0.5)\}$ against $\log(1+x)$ for the top genes, with a natural spline of 3 df. Source: `fs_clf_logit_linearity.rds`.](images/feature_selection/fs_clf_logit_linearity.png){#fig-fs-clf-logit-linearity}
+
+![Held-out deviance contribution of each cell. Source: `fs_clf_logit_influence.rds`.](images/feature_selection/fs_clf_logit_influence.png){#fig-fs-clf-logit-influence}
+
+**Trees (random forest, XGBoost).** Variable importance (permutation
+for random forest, gain for XGBoost) is shown across the outer folds
+(@fig-fs-clf-tree-vip); it spreads over correlated genes and is
+unstable when they compete. Inner-CV macro-F1 against the
+hyperparameters is in @fig-fs-clf-tree-tuning. The class-weighted
+random forest at 48 h predicts epiblast for every cell whatever `mtry`
+and `min_n`: the $n_c^{-1/2}$ class weights do not offset a 230-to-1
+imbalance. The balanced random forest fixes this by the sampling
+itself (@sec-fs-classifiers).
+
+![Variable importance of the top genes, one point per outer fold. Source: `fs_clf_tree_vip.rds`.](images/feature_selection/fs_clf_tree_vip.png){#fig-fs-clf-tree-vip}
+
+![Inner-CV macro-F1 of each hyperparameter setting. Source: `fs_clf_tree_tuning.rds`.](images/feature_selection/fs_clf_tree_tuning.png){#fig-fs-clf-tree-tuning}
+
+**sPLS-DA.** Inner-CV balanced error against `keepX` per component
+(@fig-fs-clf-splsda-tuning) and the cells on the first two variates
+(@fig-fs-clf-splsda-variates).
+
+![Inner-CV balanced error rate of sPLS-DA against `keepX`. Source: `fs_clf_splsda_tuning.rds`.](images/feature_selection/fs_clf_splsda_tuning.png){#fig-fs-clf-splsda-tuning}
+
+![Training cells of one outer fold on the first two sPLS-DA variates, 95 % ellipses. Source: `fs_clf_splsda_variates.rds`.](images/feature_selection/fs_clf_splsda_variates.png){#fig-fs-clf-splsda-variates}
+
+**PLN-LDA.** Training cells on the first two discriminant axes
+(@fig-fs-clf-plnlda-scores).
+
+![Training cells of one outer fold on the first two PLN-LDA axes, 95 % ellipses. Source: `fs_clf_plnlda_scores.rds`.](images/feature_selection/fs_clf_plnlda_scores.png){#fig-fs-clf-plnlda-scores}
+
+**Highly variable genes.** @fig-fs-clf-hvg shows the mean–variance
+relation used to pick the 2,000 HVGs of `msgl`, PLN-LDA and XGBoost.
+
+![Mean–variance relation per time point; orange: top 2,000 genes by standardised variance (Seurat v3 vst); black: loess fit (span 0.3). Source: `fs_clf_hvg.rds`.](images/feature_selection/fs_clf_hvg.png){#fig-fs-clf-hvg}
+
 ## Enrichment of the genes that drive each type {#sec-fs-enrichment .appendix}
 
 ```{r}
@@ -1792,8 +1988,10 @@ Functions are in `R/02_02_stats_cross_cell.R` (statistics) and
 | `plot_deg_volcano()`, `plot_lfc_distributions()`, `plot_deg_counts()`, `deg_heatmap()`, `plot_bimodality()`, `plot_panel_comparison()` (`R/02_04_vis_deg.R`) | figures of the post hoc contrasts, one-sided (`fs_deg_superiority_*`, `scripts/02_04_vis_deg.R`) and two-sided (`fs_deg_twosided_*`, `scripts/02_04_vis_deg_twosided.R`) | @sec-fs-deg, @sec-fs-deg-twosided |
 | `enrich_one_type()`, `symbol_to_entrez()`, `hallmark_term2gene()` (`R/02_05_stats_enrichment.R`) | ORA and GSEA on GO BP, Reactome and Hallmark | @sec-fs-enrichment |
 | `plot_enrichment_lollipop()`, `plot_enrichment_manhattan()`, `plot_gsea_volcano()`, `plot_semantic_map()` (`R/02_05_vis_enrichment.R`) | enrichment figures | @sec-fs-enrichment |
+| `select_hvg_vst()`, `stratified_fold_ids()`, `class_weights()`, `fit_classifier()`, `classification_metrics()` (`R/02_06_stats_classifier_cv.R`) | HVGs, nested folds, class weights, the six classifiers, held-out metrics | @sec-fs-classifiers |
+| `plot_clf_metrics()`, `plot_clf_confusion()`, `plot_clf_recall()`, `plot_clf_reliability()`, `plot_clf_logit_checks()`, `plot_clf_jaccard()`, `plot_clf_sensitivity()` and the other `plot_clf_*()` (`R/02_06_vis_classifier_cv.R`) | benchmark and diagnostic figures (`fs_clf_*`) | @sec-fs-classifiers, @sec-fs-classifier-diagnostics |
 
-: Code of tier (ii) and of its appendices. Scripts: `scripts/02_04_stats_deg_contrasts.R` writes `output/feature_selection/deg/` (one-sided) and `output/feature_selection/deg_twosided/` (two-sided); `scripts/02_04_vis_deg.R` and `scripts/02_04_vis_deg_twosided.R` draw their figures; `scripts/02_05_stats_enrichment.R` and `scripts/02_05_vis_enrichment.R` write `output/feature_selection/enrichment/`. {#tbl-fs-code-tier2}
+: Code of tier (ii) and of its appendices. Scripts: `scripts/02_04_stats_deg_contrasts.R` writes `output/feature_selection/deg/` (one-sided) and `output/feature_selection/deg_twosided/` (two-sided); `scripts/02_04_vis_deg.R` and `scripts/02_04_vis_deg_twosided.R` draw their figures; `scripts/02_05_stats_enrichment.R` and `scripts/02_05_vis_enrichment.R` write `output/feature_selection/enrichment/`. `scripts/02_06_stats_classifier_cv.R` writes `output/feature_selection/classifiers/` (fits in `fits/`, git-ignored) and `scripts/02_06_vis_classifier_cv.R` its figures; `scripts/run_02_classifiers_parallel.sh` runs both detached. {#tbl-fs-code-tier2}
 
 ```{r}
 #| label: fs-omnibus-call

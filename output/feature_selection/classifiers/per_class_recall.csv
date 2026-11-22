@@ -1,0 +1,551 @@
+"time_point","method","variant","fold","type","n_test","recall"
+"48h","glmnet","combat",1,"Epiblast",2118,0.995278564683664
+"48h","glmnet","combat",1,"Exiting naïve pluripotency",53,0.641509433962264
+"48h","glmnet","combat",1,"Naïve pluripotency",8,0.375
+"48h","glmnet","combat",2,"Epiblast",2118,0.986779981114259
+"48h","glmnet","combat",2,"Exiting naïve pluripotency",53,0.735849056603774
+"48h","glmnet","combat",2,"Naïve pluripotency",7,0.142857142857143
+"48h","glmnet","combat",3,"Epiblast",2118,0.987252124645892
+"48h","glmnet","combat",3,"Exiting naïve pluripotency",53,0.660377358490566
+"48h","glmnet","combat",3,"Naïve pluripotency",7,0.142857142857143
+"48h","glmnet","combat",4,"Epiblast",2118,0.988668555240793
+"48h","glmnet","combat",4,"Exiting naïve pluripotency",53,0.830188679245283
+"48h","glmnet","combat",4,"Naïve pluripotency",7,0.428571428571429
+"48h","glmnet","combat",5,"Epiblast",2118,0.985835694050991
+"48h","glmnet","combat",5,"Exiting naïve pluripotency",53,0.641509433962264
+"48h","glmnet","combat",5,"Naïve pluripotency",7,0.142857142857143
+"48h","glmnet","covariate",1,"Epiblast",2118,0.993389990557129
+"48h","glmnet","covariate",1,"Exiting naïve pluripotency",53,0.547169811320755
+"48h","glmnet","covariate",1,"Naïve pluripotency",8,0.5
+"48h","glmnet","covariate",2,"Epiblast",2118,0.987252124645892
+"48h","glmnet","covariate",2,"Exiting naïve pluripotency",53,0.754716981132076
+"48h","glmnet","covariate",2,"Naïve pluripotency",7,0.428571428571429
+"48h","glmnet","covariate",3,"Epiblast",2118,0.987252124645892
+"48h","glmnet","covariate",3,"Exiting naïve pluripotency",53,0.679245283018868
+"48h","glmnet","covariate",3,"Naïve pluripotency",7,0.571428571428571
+"48h","glmnet","covariate",4,"Epiblast",2118,0.990084985835694
+"48h","glmnet","covariate",4,"Exiting naïve pluripotency",53,0.792452830188679
+"48h","glmnet","covariate",4,"Naïve pluripotency",7,0.428571428571429
+"48h","glmnet","covariate",5,"Epiblast",2118,0.989140698772427
+"48h","glmnet","covariate",5,"Exiting naïve pluripotency",53,0.660377358490566
+"48h","glmnet","covariate",5,"Naïve pluripotency",7,0.571428571428571
+"48h","glmnet","primary",1,"Epiblast",2118,0.995750708215297
+"48h","glmnet","primary",1,"Exiting naïve pluripotency",53,0.60377358490566
+"48h","glmnet","primary",1,"Naïve pluripotency",8,0.25
+"48h","glmnet","primary",2,"Epiblast",2118,0.987252124645892
+"48h","glmnet","primary",2,"Exiting naïve pluripotency",53,0.754716981132076
+"48h","glmnet","primary",2,"Naïve pluripotency",7,0.142857142857143
+"48h","glmnet","primary",3,"Epiblast",2118,0.988668555240793
+"48h","glmnet","primary",3,"Exiting naïve pluripotency",53,0.622641509433962
+"48h","glmnet","primary",3,"Naïve pluripotency",7,0.428571428571429
+"48h","glmnet","primary",4,"Epiblast",2118,0.989140698772427
+"48h","glmnet","primary",4,"Exiting naïve pluripotency",53,0.830188679245283
+"48h","glmnet","primary",4,"Naïve pluripotency",7,0.428571428571429
+"48h","glmnet","primary",5,"Epiblast",2118,0.985363550519358
+"48h","glmnet","primary",5,"Exiting naïve pluripotency",53,0.69811320754717
+"48h","glmnet","primary",5,"Naïve pluripotency",7,0.285714285714286
+"72h","glmnet","primary",1,"Ectopic pluripotency",54,0.796296296296296
+"72h","glmnet","primary",1,"Naïve pluripotency",14,0.857142857142857
+"72h","glmnet","primary",1,"Primitive streak",856,0.992990654205608
+"72h","glmnet","primary",2,"Ectopic pluripotency",53,0.886792452830189
+"72h","glmnet","primary",2,"Naïve pluripotency",13,0.769230769230769
+"72h","glmnet","primary",2,"Primitive streak",856,0.98714953271028
+"72h","glmnet","primary",3,"Ectopic pluripotency",53,0.754716981132076
+"72h","glmnet","primary",3,"Naïve pluripotency",13,0.769230769230769
+"72h","glmnet","primary",3,"Primitive streak",856,0.992990654205608
+"72h","glmnet","primary",4,"Ectopic pluripotency",53,0.886792452830189
+"72h","glmnet","primary",4,"Naïve pluripotency",13,0.923076923076923
+"72h","glmnet","primary",4,"Primitive streak",856,0.990654205607477
+"72h","glmnet","primary",5,"Ectopic pluripotency",53,0.867924528301887
+"72h","glmnet","primary",5,"Naïve pluripotency",13,0.615384615384615
+"72h","glmnet","primary",5,"Primitive streak",855,0.994152046783626
+"96h","glmnet","primary",1,"Caudal mesoderm",213,0.953051643192488
+"96h","glmnet","primary",1,"Ectopic pluripotency",24,0.916666666666667
+"96h","glmnet","primary",1,"Gut",28,1
+"96h","glmnet","primary",1,"Pre-somitic mesoderm",718,0.98050139275766
+"96h","glmnet","primary",1,"Somite differentiation front",6,1
+"96h","glmnet","primary",2,"Caudal mesoderm",212,0.924528301886792
+"96h","glmnet","primary",2,"Ectopic pluripotency",23,0.91304347826087
+"96h","glmnet","primary",2,"Gut",28,1
+"96h","glmnet","primary",2,"Pre-somitic mesoderm",718,0.973537604456824
+"96h","glmnet","primary",2,"Somite differentiation front",6,0.5
+"96h","glmnet","primary",3,"Caudal mesoderm",212,0.929245283018868
+"96h","glmnet","primary",3,"Ectopic pluripotency",23,0.956521739130435
+"96h","glmnet","primary",3,"Gut",28,0.928571428571429
+"96h","glmnet","primary",3,"Pre-somitic mesoderm",718,0.967966573816156
+"96h","glmnet","primary",3,"Somite differentiation front",6,0.666666666666667
+"96h","glmnet","primary",4,"Caudal mesoderm",212,0.938679245283019
+"96h","glmnet","primary",4,"Ectopic pluripotency",23,0.956521739130435
+"96h","glmnet","primary",4,"Gut",28,1
+"96h","glmnet","primary",4,"Pre-somitic mesoderm",718,0.974930362116992
+"96h","glmnet","primary",4,"Somite differentiation front",6,0.5
+"96h","glmnet","primary",5,"Caudal mesoderm",212,0.938679245283019
+"96h","glmnet","primary",5,"Ectopic pluripotency",23,0.91304347826087
+"96h","glmnet","primary",5,"Gut",28,0.964285714285714
+"96h","glmnet","primary",5,"Pre-somitic mesoderm",717,0.96931659693166
+"96h","glmnet","primary",5,"Somite differentiation front",5,0.2
+"72h","msgl","primary",1,"Ectopic pluripotency",54,0.833333333333333
+"72h","msgl","primary",1,"Naïve pluripotency",14,0.785714285714286
+"72h","msgl","primary",1,"Primitive streak",856,0.988317757009346
+"72h","msgl","primary",2,"Ectopic pluripotency",53,0.830188679245283
+"72h","msgl","primary",2,"Naïve pluripotency",13,0.769230769230769
+"72h","msgl","primary",2,"Primitive streak",856,0.989485981308411
+"72h","msgl","primary",3,"Ectopic pluripotency",53,0.811320754716981
+"72h","msgl","primary",3,"Naïve pluripotency",13,0.769230769230769
+"72h","msgl","primary",3,"Primitive streak",856,0.990654205607477
+"72h","msgl","primary",4,"Ectopic pluripotency",53,0.905660377358491
+"72h","msgl","primary",4,"Naïve pluripotency",13,1
+"72h","msgl","primary",4,"Primitive streak",856,0.988317757009346
+"72h","msgl","primary",5,"Ectopic pluripotency",53,0.886792452830189
+"72h","msgl","primary",5,"Naïve pluripotency",13,0.692307692307692
+"72h","msgl","primary",5,"Primitive streak",855,0.989473684210526
+"96h","msgl","primary",1,"Caudal mesoderm",213,0.948356807511737
+"96h","msgl","primary",1,"Ectopic pluripotency",24,0.958333333333333
+"96h","msgl","primary",1,"Gut",28,1
+"96h","msgl","primary",1,"Pre-somitic mesoderm",718,0.973537604456824
+"96h","msgl","primary",1,"Somite differentiation front",6,1
+"96h","msgl","primary",2,"Caudal mesoderm",212,0.919811320754717
+"96h","msgl","primary",2,"Ectopic pluripotency",23,0.91304347826087
+"96h","msgl","primary",2,"Gut",28,1
+"96h","msgl","primary",2,"Pre-somitic mesoderm",718,0.973537604456824
+"96h","msgl","primary",2,"Somite differentiation front",6,0.5
+"96h","msgl","primary",3,"Caudal mesoderm",212,0.94811320754717
+"96h","msgl","primary",3,"Ectopic pluripotency",23,0.956521739130435
+"96h","msgl","primary",3,"Gut",28,0.928571428571429
+"96h","msgl","primary",3,"Pre-somitic mesoderm",718,0.977715877437326
+"96h","msgl","primary",3,"Somite differentiation front",6,0.333333333333333
+"96h","msgl","primary",4,"Caudal mesoderm",212,0.94811320754717
+"96h","msgl","primary",4,"Ectopic pluripotency",23,0.956521739130435
+"96h","msgl","primary",4,"Gut",28,1
+"96h","msgl","primary",4,"Pre-somitic mesoderm",718,0.976323119777159
+"96h","msgl","primary",4,"Somite differentiation front",6,0.5
+"96h","msgl","primary",5,"Caudal mesoderm",212,0.957547169811321
+"96h","msgl","primary",5,"Ectopic pluripotency",23,0.956521739130435
+"96h","msgl","primary",5,"Gut",28,1
+"96h","msgl","primary",5,"Pre-somitic mesoderm",717,0.9721059972106
+"96h","msgl","primary",5,"Somite differentiation front",5,0
+"48h","plnlda","combat",1,"Epiblast",2118,0.949952785646837
+"48h","plnlda","combat",1,"Exiting naïve pluripotency",53,0.867924528301887
+"48h","plnlda","combat",1,"Naïve pluripotency",8,0.625
+"48h","plnlda","combat",2,"Epiblast",2118,0.940037771482531
+"48h","plnlda","combat",2,"Exiting naïve pluripotency",53,0.924528301886792
+"48h","plnlda","combat",2,"Naïve pluripotency",7,0.571428571428571
+"48h","plnlda","combat",3,"Epiblast",2118,0.927762039660057
+"48h","plnlda","combat",3,"Exiting naïve pluripotency",53,0.867924528301887
+"48h","plnlda","combat",3,"Naïve pluripotency",7,0.285714285714286
+"48h","plnlda","combat",4,"Epiblast",2118,0.930122757318225
+"48h","plnlda","combat",4,"Exiting naïve pluripotency",53,1
+"48h","plnlda","combat",4,"Naïve pluripotency",7,0.428571428571429
+"48h","plnlda","combat",5,"Epiblast",2118,0.935316336166194
+"48h","plnlda","combat",5,"Exiting naïve pluripotency",53,0.905660377358491
+"48h","plnlda","combat",5,"Naïve pluripotency",7,0.571428571428571
+"48h","plnlda","covariate",1,"Epiblast",2118,0.953729933899906
+"48h","plnlda","covariate",1,"Exiting naïve pluripotency",53,0.943396226415094
+"48h","plnlda","covariate",1,"Naïve pluripotency",8,0.25
+"48h","plnlda","covariate",2,"Epiblast",2118,0.945703493862134
+"48h","plnlda","covariate",2,"Exiting naïve pluripotency",53,0.943396226415094
+"48h","plnlda","covariate",2,"Naïve pluripotency",7,0.571428571428571
+"48h","plnlda","covariate",3,"Epiblast",2118,0.93342776203966
+"48h","plnlda","covariate",3,"Exiting naïve pluripotency",53,0.943396226415094
+"48h","plnlda","covariate",3,"Naïve pluripotency",7,0.285714285714286
+"48h","plnlda","covariate",4,"Epiblast",2118,0.932955618508026
+"48h","plnlda","covariate",4,"Exiting naïve pluripotency",53,0.981132075471698
+"48h","plnlda","covariate",4,"Naïve pluripotency",7,0.285714285714286
+"48h","plnlda","covariate",5,"Epiblast",2118,0.949952785646837
+"48h","plnlda","covariate",5,"Exiting naïve pluripotency",53,0.962264150943396
+"48h","plnlda","covariate",5,"Naïve pluripotency",7,0.571428571428571
+"48h","plnlda","primary",1,"Epiblast",2118,0.931539187913126
+"48h","plnlda","primary",1,"Exiting naïve pluripotency",53,0.69811320754717
+"48h","plnlda","primary",1,"Naïve pluripotency",8,0.75
+"48h","plnlda","primary",2,"Epiblast",2118,0.917374881964117
+"48h","plnlda","primary",2,"Exiting naïve pluripotency",53,0.849056603773585
+"48h","plnlda","primary",2,"Naïve pluripotency",7,0.714285714285714
+"48h","plnlda","primary",3,"Epiblast",2118,0.915958451369216
+"48h","plnlda","primary",3,"Exiting naïve pluripotency",53,0.716981132075472
+"48h","plnlda","primary",3,"Naïve pluripotency",7,0.857142857142857
+"48h","plnlda","primary",4,"Epiblast",2118,0.915958451369216
+"48h","plnlda","primary",4,"Exiting naïve pluripotency",53,0.792452830188679
+"48h","plnlda","primary",4,"Naïve pluripotency",7,0.857142857142857
+"48h","plnlda","primary",5,"Epiblast",2118,0.909348441926346
+"48h","plnlda","primary",5,"Exiting naïve pluripotency",53,0.69811320754717
+"48h","plnlda","primary",5,"Naïve pluripotency",7,0.714285714285714
+"72h","plnlda","primary",1,"Ectopic pluripotency",54,0.925925925925926
+"72h","plnlda","primary",1,"Naïve pluripotency",14,0.857142857142857
+"72h","plnlda","primary",1,"Primitive streak",856,0.977803738317757
+"72h","plnlda","primary",2,"Ectopic pluripotency",53,0.849056603773585
+"72h","plnlda","primary",2,"Naïve pluripotency",13,1
+"72h","plnlda","primary",2,"Primitive streak",856,0.966121495327103
+"72h","plnlda","primary",3,"Ectopic pluripotency",53,0.962264150943396
+"72h","plnlda","primary",3,"Naïve pluripotency",13,1
+"72h","plnlda","primary",3,"Primitive streak",856,0.975467289719626
+"72h","plnlda","primary",4,"Ectopic pluripotency",53,0.905660377358491
+"72h","plnlda","primary",4,"Naïve pluripotency",13,1
+"72h","plnlda","primary",4,"Primitive streak",856,0.967289719626168
+"72h","plnlda","primary",5,"Ectopic pluripotency",53,0.943396226415094
+"72h","plnlda","primary",5,"Naïve pluripotency",13,0.923076923076923
+"72h","plnlda","primary",5,"Primitive streak",855,0.967251461988304
+"96h","plnlda","primary",1,"Caudal mesoderm",213,0.962441314553991
+"96h","plnlda","primary",1,"Ectopic pluripotency",24,0.916666666666667
+"96h","plnlda","primary",1,"Gut",28,1
+"96h","plnlda","primary",1,"Pre-somitic mesoderm",718,0.860724233983287
+"96h","plnlda","primary",1,"Somite differentiation front",6,0.666666666666667
+"96h","plnlda","primary",2,"Caudal mesoderm",212,0.952830188679245
+"96h","plnlda","primary",2,"Ectopic pluripotency",23,0.91304347826087
+"96h","plnlda","primary",2,"Gut",28,0.964285714285714
+"96h","plnlda","primary",2,"Pre-somitic mesoderm",718,0.860724233983287
+"96h","plnlda","primary",2,"Somite differentiation front",6,0.833333333333333
+"96h","plnlda","primary",3,"Caudal mesoderm",212,0.943396226415094
+"96h","plnlda","primary",3,"Ectopic pluripotency",23,0.956521739130435
+"96h","plnlda","primary",3,"Gut",28,0.964285714285714
+"96h","plnlda","primary",3,"Pre-somitic mesoderm",718,0.881615598885794
+"96h","plnlda","primary",3,"Somite differentiation front",6,0.5
+"96h","plnlda","primary",4,"Caudal mesoderm",212,0.957547169811321
+"96h","plnlda","primary",4,"Ectopic pluripotency",23,1
+"96h","plnlda","primary",4,"Gut",28,1
+"96h","plnlda","primary",4,"Pre-somitic mesoderm",718,0.884401114206128
+"96h","plnlda","primary",4,"Somite differentiation front",6,0.5
+"96h","plnlda","primary",5,"Caudal mesoderm",212,0.94811320754717
+"96h","plnlda","primary",5,"Ectopic pluripotency",23,1
+"96h","plnlda","primary",5,"Gut",28,0.964285714285714
+"96h","plnlda","primary",5,"Pre-somitic mesoderm",717,0.880055788005579
+"96h","plnlda","primary",5,"Somite differentiation front",5,0
+"48h","ranger","combat",1,"Epiblast",2118,1
+"48h","ranger","combat",1,"Exiting naïve pluripotency",53,0
+"48h","ranger","combat",1,"Naïve pluripotency",8,0
+"48h","ranger","combat",2,"Epiblast",2118,1
+"48h","ranger","combat",2,"Exiting naïve pluripotency",53,0
+"48h","ranger","combat",2,"Naïve pluripotency",7,0
+"48h","ranger","combat",3,"Epiblast",2118,1
+"48h","ranger","combat",3,"Exiting naïve pluripotency",53,0
+"48h","ranger","combat",3,"Naïve pluripotency",7,0
+"48h","ranger","combat",4,"Epiblast",2118,1
+"48h","ranger","combat",4,"Exiting naïve pluripotency",53,0
+"48h","ranger","combat",4,"Naïve pluripotency",7,0
+"48h","ranger","combat",5,"Epiblast",2118,1
+"48h","ranger","combat",5,"Exiting naïve pluripotency",53,0
+"48h","ranger","combat",5,"Naïve pluripotency",7,0
+"48h","ranger","covariate",1,"Epiblast",2118,1
+"48h","ranger","covariate",1,"Exiting naïve pluripotency",53,0
+"48h","ranger","covariate",1,"Naïve pluripotency",8,0
+"48h","ranger","covariate",2,"Epiblast",2118,1
+"48h","ranger","covariate",2,"Exiting naïve pluripotency",53,0
+"48h","ranger","covariate",2,"Naïve pluripotency",7,0
+"48h","ranger","covariate",3,"Epiblast",2118,1
+"48h","ranger","covariate",3,"Exiting naïve pluripotency",53,0
+"48h","ranger","covariate",3,"Naïve pluripotency",7,0
+"48h","ranger","covariate",4,"Epiblast",2118,1
+"48h","ranger","covariate",4,"Exiting naïve pluripotency",53,0
+"48h","ranger","covariate",4,"Naïve pluripotency",7,0
+"48h","ranger","covariate",5,"Epiblast",2118,1
+"48h","ranger","covariate",5,"Exiting naïve pluripotency",53,0
+"48h","ranger","covariate",5,"Naïve pluripotency",7,0
+"48h","ranger","primary",1,"Epiblast",2118,1
+"48h","ranger","primary",1,"Exiting naïve pluripotency",53,0
+"48h","ranger","primary",1,"Naïve pluripotency",8,0
+"48h","ranger","primary",2,"Epiblast",2118,1
+"48h","ranger","primary",2,"Exiting naïve pluripotency",53,0
+"48h","ranger","primary",2,"Naïve pluripotency",7,0
+"48h","ranger","primary",3,"Epiblast",2118,1
+"48h","ranger","primary",3,"Exiting naïve pluripotency",53,0
+"48h","ranger","primary",3,"Naïve pluripotency",7,0
+"48h","ranger","primary",4,"Epiblast",2118,1
+"48h","ranger","primary",4,"Exiting naïve pluripotency",53,0
+"48h","ranger","primary",4,"Naïve pluripotency",7,0
+"48h","ranger","primary",5,"Epiblast",2118,1
+"48h","ranger","primary",5,"Exiting naïve pluripotency",53,0
+"48h","ranger","primary",5,"Naïve pluripotency",7,0
+"72h","ranger","primary",1,"Ectopic pluripotency",54,0.481481481481481
+"72h","ranger","primary",1,"Naïve pluripotency",14,0.142857142857143
+"72h","ranger","primary",1,"Primitive streak",856,1
+"72h","ranger","primary",2,"Ectopic pluripotency",53,0.547169811320755
+"72h","ranger","primary",2,"Naïve pluripotency",13,0.307692307692308
+"72h","ranger","primary",2,"Primitive streak",856,1
+"72h","ranger","primary",3,"Ectopic pluripotency",53,0.339622641509434
+"72h","ranger","primary",3,"Naïve pluripotency",13,0.230769230769231
+"72h","ranger","primary",3,"Primitive streak",856,1
+"72h","ranger","primary",4,"Ectopic pluripotency",53,0.320754716981132
+"72h","ranger","primary",4,"Naïve pluripotency",13,0.0769230769230769
+"72h","ranger","primary",4,"Primitive streak",856,1
+"72h","ranger","primary",5,"Ectopic pluripotency",53,0.452830188679245
+"72h","ranger","primary",5,"Naïve pluripotency",13,0.230769230769231
+"72h","ranger","primary",5,"Primitive streak",855,0.998830409356725
+"96h","ranger","primary",1,"Caudal mesoderm",213,0.92018779342723
+"96h","ranger","primary",1,"Ectopic pluripotency",24,0.833333333333333
+"96h","ranger","primary",1,"Gut",28,0.964285714285714
+"96h","ranger","primary",1,"Pre-somitic mesoderm",718,0.984679665738162
+"96h","ranger","primary",1,"Somite differentiation front",6,0
+"96h","ranger","primary",2,"Caudal mesoderm",212,0.891509433962264
+"96h","ranger","primary",2,"Ectopic pluripotency",23,0.826086956521739
+"96h","ranger","primary",2,"Gut",28,0.964285714285714
+"96h","ranger","primary",2,"Pre-somitic mesoderm",718,0.991643454038997
+"96h","ranger","primary",2,"Somite differentiation front",6,0
+"96h","ranger","primary",3,"Caudal mesoderm",212,0.919811320754717
+"96h","ranger","primary",3,"Ectopic pluripotency",23,0.826086956521739
+"96h","ranger","primary",3,"Gut",28,0.857142857142857
+"96h","ranger","primary",3,"Pre-somitic mesoderm",718,0.984679665738162
+"96h","ranger","primary",3,"Somite differentiation front",6,0
+"96h","ranger","primary",4,"Caudal mesoderm",212,0.910377358490566
+"96h","ranger","primary",4,"Ectopic pluripotency",23,0.826086956521739
+"96h","ranger","primary",4,"Gut",28,0.928571428571429
+"96h","ranger","primary",4,"Pre-somitic mesoderm",718,0.993036211699164
+"96h","ranger","primary",4,"Somite differentiation front",6,0
+"96h","ranger","primary",5,"Caudal mesoderm",212,0.886792452830189
+"96h","ranger","primary",5,"Ectopic pluripotency",23,0.91304347826087
+"96h","ranger","primary",5,"Gut",28,0.892857142857143
+"96h","ranger","primary",5,"Pre-somitic mesoderm",717,0.98465829846583
+"96h","ranger","primary",5,"Somite differentiation front",5,0
+"48h","ranger_balanced","combat",1,"Epiblast",2118,0.955146364494806
+"48h","ranger_balanced","combat",1,"Exiting naïve pluripotency",53,0.792452830188679
+"48h","ranger_balanced","combat",1,"Naïve pluripotency",8,0.875
+"48h","ranger_balanced","combat",2,"Epiblast",2118,0.948064211520302
+"48h","ranger_balanced","combat",2,"Exiting naïve pluripotency",53,0.905660377358491
+"48h","ranger_balanced","combat",2,"Naïve pluripotency",7,0.571428571428571
+"48h","ranger_balanced","combat",3,"Epiblast",2118,0.95561850802644
+"48h","ranger_balanced","combat",3,"Exiting naïve pluripotency",53,0.773584905660377
+"48h","ranger_balanced","combat",3,"Naïve pluripotency",7,0.571428571428571
+"48h","ranger_balanced","combat",4,"Epiblast",2118,0.953729933899906
+"48h","ranger_balanced","combat",4,"Exiting naïve pluripotency",53,0.886792452830189
+"48h","ranger_balanced","combat",4,"Naïve pluripotency",7,0.714285714285714
+"48h","ranger_balanced","combat",5,"Epiblast",2118,0.96081208687441
+"48h","ranger_balanced","combat",5,"Exiting naïve pluripotency",53,0.886792452830189
+"48h","ranger_balanced","combat",5,"Naïve pluripotency",7,0.714285714285714
+"48h","ranger_balanced","covariate",1,"Epiblast",2118,0.958923512747875
+"48h","ranger_balanced","covariate",1,"Exiting naïve pluripotency",53,0.867924528301887
+"48h","ranger_balanced","covariate",1,"Naïve pluripotency",8,0.625
+"48h","ranger_balanced","covariate",2,"Epiblast",2118,0.949008498583569
+"48h","ranger_balanced","covariate",2,"Exiting naïve pluripotency",53,0.867924528301887
+"48h","ranger_balanced","covariate",2,"Naïve pluripotency",7,0.571428571428571
+"48h","ranger_balanced","covariate",3,"Epiblast",2118,0.948064211520302
+"48h","ranger_balanced","covariate",3,"Exiting naïve pluripotency",53,0.735849056603774
+"48h","ranger_balanced","covariate",3,"Naïve pluripotency",7,0.714285714285714
+"48h","ranger_balanced","covariate",4,"Epiblast",2118,0.948536355051936
+"48h","ranger_balanced","covariate",4,"Exiting naïve pluripotency",53,0.867924528301887
+"48h","ranger_balanced","covariate",4,"Naïve pluripotency",7,0.571428571428571
+"48h","ranger_balanced","covariate",5,"Epiblast",2118,0.953729933899906
+"48h","ranger_balanced","covariate",5,"Exiting naïve pluripotency",53,0.773584905660377
+"48h","ranger_balanced","covariate",5,"Naïve pluripotency",7,0.714285714285714
+"48h","ranger_balanced","primary",1,"Epiblast",2118,0.968366383380548
+"48h","ranger_balanced","primary",1,"Exiting naïve pluripotency",53,0.830188679245283
+"48h","ranger_balanced","primary",1,"Naïve pluripotency",8,1
+"48h","ranger_balanced","primary",2,"Epiblast",2118,0.951369216241738
+"48h","ranger_balanced","primary",2,"Exiting naïve pluripotency",53,0.886792452830189
+"48h","ranger_balanced","primary",2,"Naïve pluripotency",7,0.714285714285714
+"48h","ranger_balanced","primary",3,"Epiblast",2118,0.953257790368272
+"48h","ranger_balanced","primary",3,"Exiting naïve pluripotency",53,0.735849056603774
+"48h","ranger_balanced","primary",3,"Naïve pluripotency",7,0.714285714285714
+"48h","ranger_balanced","primary",4,"Epiblast",2118,0.951369216241738
+"48h","ranger_balanced","primary",4,"Exiting naïve pluripotency",53,0.905660377358491
+"48h","ranger_balanced","primary",4,"Naïve pluripotency",7,0.714285714285714
+"48h","ranger_balanced","primary",5,"Epiblast",2118,0.945703493862134
+"48h","ranger_balanced","primary",5,"Exiting naïve pluripotency",53,0.792452830188679
+"48h","ranger_balanced","primary",5,"Naïve pluripotency",7,0.714285714285714
+"72h","ranger_balanced","primary",1,"Ectopic pluripotency",54,0.944444444444444
+"72h","ranger_balanced","primary",1,"Naïve pluripotency",14,0.785714285714286
+"72h","ranger_balanced","primary",1,"Primitive streak",856,0.978971962616822
+"72h","ranger_balanced","primary",2,"Ectopic pluripotency",53,0.924528301886792
+"72h","ranger_balanced","primary",2,"Naïve pluripotency",13,1
+"72h","ranger_balanced","primary",2,"Primitive streak",856,0.969626168224299
+"72h","ranger_balanced","primary",3,"Ectopic pluripotency",53,1
+"72h","ranger_balanced","primary",3,"Naïve pluripotency",13,1
+"72h","ranger_balanced","primary",3,"Primitive streak",856,0.983644859813084
+"72h","ranger_balanced","primary",4,"Ectopic pluripotency",53,0.962264150943396
+"72h","ranger_balanced","primary",4,"Naïve pluripotency",13,1
+"72h","ranger_balanced","primary",4,"Primitive streak",856,0.98481308411215
+"72h","ranger_balanced","primary",5,"Ectopic pluripotency",53,0.886792452830189
+"72h","ranger_balanced","primary",5,"Naïve pluripotency",13,0.615384615384615
+"72h","ranger_balanced","primary",5,"Primitive streak",855,0.982456140350877
+"96h","ranger_balanced","primary",1,"Caudal mesoderm",213,0.934272300469484
+"96h","ranger_balanced","primary",1,"Ectopic pluripotency",24,0.958333333333333
+"96h","ranger_balanced","primary",1,"Gut",28,1
+"96h","ranger_balanced","primary",1,"Pre-somitic mesoderm",718,0.881615598885794
+"96h","ranger_balanced","primary",1,"Somite differentiation front",6,0.666666666666667
+"96h","ranger_balanced","primary",2,"Caudal mesoderm",212,0.929245283018868
+"96h","ranger_balanced","primary",2,"Ectopic pluripotency",23,1
+"96h","ranger_balanced","primary",2,"Gut",28,1
+"96h","ranger_balanced","primary",2,"Pre-somitic mesoderm",718,0.910863509749304
+"96h","ranger_balanced","primary",2,"Somite differentiation front",6,1
+"96h","ranger_balanced","primary",3,"Caudal mesoderm",212,0.924528301886792
+"96h","ranger_balanced","primary",3,"Ectopic pluripotency",23,1
+"96h","ranger_balanced","primary",3,"Gut",28,1
+"96h","ranger_balanced","primary",3,"Pre-somitic mesoderm",718,0.906685236768802
+"96h","ranger_balanced","primary",3,"Somite differentiation front",6,1
+"96h","ranger_balanced","primary",4,"Caudal mesoderm",212,0.938679245283019
+"96h","ranger_balanced","primary",4,"Ectopic pluripotency",23,1
+"96h","ranger_balanced","primary",4,"Gut",28,1
+"96h","ranger_balanced","primary",4,"Pre-somitic mesoderm",718,0.927576601671309
+"96h","ranger_balanced","primary",4,"Somite differentiation front",6,0.833333333333333
+"96h","ranger_balanced","primary",5,"Caudal mesoderm",212,0.919811320754717
+"96h","ranger_balanced","primary",5,"Ectopic pluripotency",23,1
+"96h","ranger_balanced","primary",5,"Gut",28,1
+"96h","ranger_balanced","primary",5,"Pre-somitic mesoderm",717,0.894002789400279
+"96h","ranger_balanced","primary",5,"Somite differentiation front",5,0.2
+"48h","splsda","combat",1,"Epiblast",2118,1
+"48h","splsda","combat",1,"Exiting naïve pluripotency",53,0.113207547169811
+"48h","splsda","combat",1,"Naïve pluripotency",8,0
+"48h","splsda","combat",2,"Epiblast",2118,0.999055712936733
+"48h","splsda","combat",2,"Exiting naïve pluripotency",53,0.0754716981132075
+"48h","splsda","combat",2,"Naïve pluripotency",7,0
+"48h","splsda","combat",3,"Epiblast",2118,0.999527856468366
+"48h","splsda","combat",3,"Exiting naïve pluripotency",53,0.132075471698113
+"48h","splsda","combat",3,"Naïve pluripotency",7,0
+"48h","splsda","combat",4,"Epiblast",2118,1
+"48h","splsda","combat",4,"Exiting naïve pluripotency",53,0.0943396226415094
+"48h","splsda","combat",4,"Naïve pluripotency",7,0
+"48h","splsda","combat",5,"Epiblast",2118,0.999527856468366
+"48h","splsda","combat",5,"Exiting naïve pluripotency",53,0.169811320754717
+"48h","splsda","combat",5,"Naïve pluripotency",7,0
+"48h","splsda","covariate",1,"Epiblast",2118,0.999527856468366
+"48h","splsda","covariate",1,"Exiting naïve pluripotency",53,0.150943396226415
+"48h","splsda","covariate",1,"Naïve pluripotency",8,0
+"48h","splsda","covariate",2,"Epiblast",2118,0.999055712936733
+"48h","splsda","covariate",2,"Exiting naïve pluripotency",53,0.113207547169811
+"48h","splsda","covariate",2,"Naïve pluripotency",7,0
+"48h","splsda","covariate",3,"Epiblast",2118,0.999527856468366
+"48h","splsda","covariate",3,"Exiting naïve pluripotency",53,0.0943396226415094
+"48h","splsda","covariate",3,"Naïve pluripotency",7,0
+"48h","splsda","covariate",4,"Epiblast",2118,1
+"48h","splsda","covariate",4,"Exiting naïve pluripotency",53,0.113207547169811
+"48h","splsda","covariate",4,"Naïve pluripotency",7,0
+"48h","splsda","covariate",5,"Epiblast",2118,0.999527856468366
+"48h","splsda","covariate",5,"Exiting naïve pluripotency",53,0.132075471698113
+"48h","splsda","covariate",5,"Naïve pluripotency",7,0
+"48h","splsda","primary",1,"Epiblast",2118,0.999527856468366
+"48h","splsda","primary",1,"Exiting naïve pluripotency",53,0.150943396226415
+"48h","splsda","primary",1,"Naïve pluripotency",8,0
+"48h","splsda","primary",2,"Epiblast",2118,0.999055712936733
+"48h","splsda","primary",2,"Exiting naïve pluripotency",53,0.113207547169811
+"48h","splsda","primary",2,"Naïve pluripotency",7,0
+"48h","splsda","primary",3,"Epiblast",2118,0.999527856468366
+"48h","splsda","primary",3,"Exiting naïve pluripotency",53,0.0943396226415094
+"48h","splsda","primary",3,"Naïve pluripotency",7,0
+"48h","splsda","primary",4,"Epiblast",2118,1
+"48h","splsda","primary",4,"Exiting naïve pluripotency",53,0.113207547169811
+"48h","splsda","primary",4,"Naïve pluripotency",7,0
+"48h","splsda","primary",5,"Epiblast",2118,0.999527856468366
+"48h","splsda","primary",5,"Exiting naïve pluripotency",53,0.132075471698113
+"48h","splsda","primary",5,"Naïve pluripotency",7,0
+"72h","splsda","primary",1,"Ectopic pluripotency",54,0.518518518518518
+"72h","splsda","primary",1,"Naïve pluripotency",14,0.857142857142857
+"72h","splsda","primary",1,"Primitive streak",856,0.998831775700935
+"72h","splsda","primary",2,"Ectopic pluripotency",53,0.641509433962264
+"72h","splsda","primary",2,"Naïve pluripotency",13,0.461538461538462
+"72h","splsda","primary",2,"Primitive streak",856,0.996495327102804
+"72h","splsda","primary",3,"Ectopic pluripotency",53,0.509433962264151
+"72h","splsda","primary",3,"Naïve pluripotency",13,0.461538461538462
+"72h","splsda","primary",3,"Primitive streak",856,0.997663551401869
+"72h","splsda","primary",4,"Ectopic pluripotency",53,0.60377358490566
+"72h","splsda","primary",4,"Naïve pluripotency",13,0.923076923076923
+"72h","splsda","primary",4,"Primitive streak",856,0.998831775700935
+"72h","splsda","primary",5,"Ectopic pluripotency",53,0.547169811320755
+"72h","splsda","primary",5,"Naïve pluripotency",13,0.769230769230769
+"72h","splsda","primary",5,"Primitive streak",855,0.998830409356725
+"96h","splsda","primary",1,"Caudal mesoderm",213,0.934272300469484
+"96h","splsda","primary",1,"Ectopic pluripotency",24,0.875
+"96h","splsda","primary",1,"Gut",28,1
+"96h","splsda","primary",1,"Pre-somitic mesoderm",718,0.977715877437326
+"96h","splsda","primary",1,"Somite differentiation front",6,0
+"96h","splsda","primary",2,"Caudal mesoderm",212,0.943396226415094
+"96h","splsda","primary",2,"Ectopic pluripotency",23,0.91304347826087
+"96h","splsda","primary",2,"Gut",28,1
+"96h","splsda","primary",2,"Pre-somitic mesoderm",718,0.97075208913649
+"96h","splsda","primary",2,"Somite differentiation front",6,0
+"96h","splsda","primary",3,"Caudal mesoderm",212,0.943396226415094
+"96h","splsda","primary",3,"Ectopic pluripotency",23,0.91304347826087
+"96h","splsda","primary",3,"Gut",28,0.928571428571429
+"96h","splsda","primary",3,"Pre-somitic mesoderm",718,0.976323119777159
+"96h","splsda","primary",3,"Somite differentiation front",6,0
+"96h","splsda","primary",4,"Caudal mesoderm",212,0.952830188679245
+"96h","splsda","primary",4,"Ectopic pluripotency",23,0.91304347826087
+"96h","splsda","primary",4,"Gut",28,1
+"96h","splsda","primary",4,"Pre-somitic mesoderm",718,0.981894150417827
+"96h","splsda","primary",4,"Somite differentiation front",6,0
+"96h","splsda","primary",5,"Caudal mesoderm",212,0.929245283018868
+"96h","splsda","primary",5,"Ectopic pluripotency",23,0.91304347826087
+"96h","splsda","primary",5,"Gut",28,0.964285714285714
+"96h","splsda","primary",5,"Pre-somitic mesoderm",717,0.97350069735007
+"96h","splsda","primary",5,"Somite differentiation front",5,0
+"48h","xgboost","combat",1,"Epiblast",2118,0.997639282341832
+"48h","xgboost","combat",1,"Exiting naïve pluripotency",53,0.377358490566038
+"48h","xgboost","combat",1,"Naïve pluripotency",8,0.25
+"48h","xgboost","combat",2,"Epiblast",2118,0.997639282341832
+"48h","xgboost","combat",2,"Exiting naïve pluripotency",53,0.528301886792453
+"48h","xgboost","combat",2,"Naïve pluripotency",7,0
+"48h","xgboost","combat",3,"Epiblast",2118,0.995278564683664
+"48h","xgboost","combat",3,"Exiting naïve pluripotency",53,0.509433962264151
+"48h","xgboost","combat",3,"Naïve pluripotency",7,0.142857142857143
+"48h","xgboost","combat",4,"Epiblast",2118,0.998111425873466
+"48h","xgboost","combat",4,"Exiting naïve pluripotency",53,0.452830188679245
+"48h","xgboost","combat",4,"Naïve pluripotency",7,0.285714285714286
+"48h","xgboost","combat",5,"Epiblast",2118,0.997167138810198
+"48h","xgboost","combat",5,"Exiting naïve pluripotency",53,0.358490566037736
+"48h","xgboost","combat",5,"Naïve pluripotency",7,0.142857142857143
+"48h","xgboost","covariate",1,"Epiblast",2118,0.996694995278565
+"48h","xgboost","covariate",1,"Exiting naïve pluripotency",53,0.490566037735849
+"48h","xgboost","covariate",1,"Naïve pluripotency",8,0.375
+"48h","xgboost","covariate",2,"Epiblast",2118,0.998111425873466
+"48h","xgboost","covariate",2,"Exiting naïve pluripotency",53,0.566037735849057
+"48h","xgboost","covariate",2,"Naïve pluripotency",7,0.142857142857143
+"48h","xgboost","covariate",3,"Epiblast",2118,0.993862134088763
+"48h","xgboost","covariate",3,"Exiting naïve pluripotency",53,0.584905660377358
+"48h","xgboost","covariate",3,"Naïve pluripotency",7,0.142857142857143
+"48h","xgboost","covariate",4,"Epiblast",2118,0.995278564683664
+"48h","xgboost","covariate",4,"Exiting naïve pluripotency",53,0.773584905660377
+"48h","xgboost","covariate",4,"Naïve pluripotency",7,0.285714285714286
+"48h","xgboost","covariate",5,"Epiblast",2118,0.992917847025496
+"48h","xgboost","covariate",5,"Exiting naïve pluripotency",53,0.60377358490566
+"48h","xgboost","covariate",5,"Naïve pluripotency",7,0.142857142857143
+"48h","xgboost","primary",1,"Epiblast",2118,0.998111425873466
+"48h","xgboost","primary",1,"Exiting naïve pluripotency",53,0.39622641509434
+"48h","xgboost","primary",1,"Naïve pluripotency",8,0.25
+"48h","xgboost","primary",2,"Epiblast",2118,0.997167138810198
+"48h","xgboost","primary",2,"Exiting naïve pluripotency",53,0.622641509433962
+"48h","xgboost","primary",2,"Naïve pluripotency",7,0
+"48h","xgboost","primary",3,"Epiblast",2118,0.994334277620397
+"48h","xgboost","primary",3,"Exiting naïve pluripotency",53,0.547169811320755
+"48h","xgboost","primary",3,"Naïve pluripotency",7,0
+"48h","xgboost","primary",4,"Epiblast",2118,0.996694995278565
+"48h","xgboost","primary",4,"Exiting naïve pluripotency",53,0.735849056603774
+"48h","xgboost","primary",4,"Naïve pluripotency",7,0.142857142857143
+"48h","xgboost","primary",5,"Epiblast",2118,0.993389990557129
+"48h","xgboost","primary",5,"Exiting naïve pluripotency",53,0.584905660377358
+"48h","xgboost","primary",5,"Naïve pluripotency",7,0.142857142857143
+"72h","xgboost","primary",1,"Ectopic pluripotency",54,0.87037037037037
+"72h","xgboost","primary",1,"Naïve pluripotency",14,0.785714285714286
+"72h","xgboost","primary",1,"Primitive streak",856,0.994158878504673
+"72h","xgboost","primary",2,"Ectopic pluripotency",53,0.962264150943396
+"72h","xgboost","primary",2,"Naïve pluripotency",13,0.769230769230769
+"72h","xgboost","primary",2,"Primitive streak",856,0.992990654205608
+"72h","xgboost","primary",3,"Ectopic pluripotency",53,0.905660377358491
+"72h","xgboost","primary",3,"Naïve pluripotency",13,0.846153846153846
+"72h","xgboost","primary",3,"Primitive streak",856,0.996495327102804
+"72h","xgboost","primary",4,"Ectopic pluripotency",53,0.886792452830189
+"72h","xgboost","primary",4,"Naïve pluripotency",13,0.923076923076923
+"72h","xgboost","primary",4,"Primitive streak",856,0.994158878504673
+"72h","xgboost","primary",5,"Ectopic pluripotency",53,0.830188679245283
+"72h","xgboost","primary",5,"Naïve pluripotency",13,0.615384615384615
+"72h","xgboost","primary",5,"Primitive streak",855,0.994152046783626
+"96h","xgboost","primary",1,"Caudal mesoderm",213,0.953051643192488
+"96h","xgboost","primary",1,"Ectopic pluripotency",24,0.916666666666667
+"96h","xgboost","primary",1,"Gut",28,1
+"96h","xgboost","primary",1,"Pre-somitic mesoderm",718,0.981894150417827
+"96h","xgboost","primary",1,"Somite differentiation front",6,0
+"96h","xgboost","primary",2,"Caudal mesoderm",212,0.933962264150943
+"96h","xgboost","primary",2,"Ectopic pluripotency",23,0.869565217391304
+"96h","xgboost","primary",2,"Gut",28,1
+"96h","xgboost","primary",2,"Pre-somitic mesoderm",718,0.984679665738162
+"96h","xgboost","primary",2,"Somite differentiation front",6,0
+"96h","xgboost","primary",3,"Caudal mesoderm",212,0.952830188679245
+"96h","xgboost","primary",3,"Ectopic pluripotency",23,0.956521739130435
+"96h","xgboost","primary",3,"Gut",28,0.892857142857143
+"96h","xgboost","primary",3,"Pre-somitic mesoderm",718,0.981894150417827
+"96h","xgboost","primary",3,"Somite differentiation front",6,0
+"96h","xgboost","primary",4,"Caudal mesoderm",212,0.943396226415094
+"96h","xgboost","primary",4,"Ectopic pluripotency",23,0.956521739130435
+"96h","xgboost","primary",4,"Gut",28,0.928571428571429
+"96h","xgboost","primary",4,"Pre-somitic mesoderm",718,0.984679665738162
+"96h","xgboost","primary",4,"Somite differentiation front",6,0.166666666666667
+"96h","xgboost","primary",5,"Caudal mesoderm",212,0.938679245283019
+"96h","xgboost","primary",5,"Ectopic pluripotency",23,0.956521739130435
+"96h","xgboost","primary",5,"Gut",28,0.928571428571429
+"96h","xgboost","primary",5,"Pre-somitic mesoderm",717,0.98047419804742
+"96h","xgboost","primary",5,"Somite differentiation front",5,0
