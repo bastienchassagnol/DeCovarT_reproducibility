@@ -26,43 +26,43 @@ glossary_popup("hover")
 \begin{tikzpicture}
 \begin{scope}
 \node[ptitle] at (0,1.15) {(b) independent cells};
-\node[const] (bm) at (0,0) {$m_j$};
-\node[const] (bth) at (2.3,0) {$\boldsymbol{\mu}_{\cdot j},\boldsymbol{\Sigma}_j$};
-\node[stoch] (bx) at (1.15,-1.9) {$\boldsymbol{X}_{jc}$};
+\node[fixed] (bm) at (0,0) {$m_j$};
+\node[fixed] (bth) at (2.3,0) {$\boldsymbol{\mu}_{\cdot j},\boldsymbol{\Sigma}_j$};
+\node[latent] (bx) at (1.15,-1.9) {$\boldsymbol{X}_{jc}$};
 \plate{bc}{(bx)}{$c\le m_j$}
-\plate{bj}{(bm)(bth)(bc)(bc-lab)}{$j=1,\ldots,J$}
+\plate{bj}{(bm)(bth)(bc)(bc-caption)}{$j=1,\ldots,J$}
 \node[det] (by) at (1.15,-5.0) {$\boldsymbol{y}$};
 \node[note, below=1mm of by] {$\sum_j m_j\boldsymbol{\Sigma}_j$};
-\draw[edge] (bm) -- (bx);
-\draw[edge] (bth) -- (bx);
-\draw[edge] (bj.south -| by) -- (by);
+\draw[dependency] (bm) -- (bx);
+\draw[dependency] (bth) -- (bx);
+\draw[dependency] (bj.south -| by) -- (by);
 \end{scope}
 \begin{scope}[xshift=68mm]
 \node[ptitle] at (0,1.15) {(c) equicorrelated cells};
-\node[const] (cm) at (0,0) {$m_j$};
-\node[const] (cth) at (2.5,0) {$\boldsymbol{\mu}_{\cdot j},\boldsymbol{\Sigma}_j,\varrho_j$};
-\node[stoch] (cB) at (2.5,-1.7) {$\boldsymbol{B}_j$};
-\node[stoch] (cx) at (1.15,-3.3) {$\boldsymbol{X}_{jc}$};
+\node[fixed] (cm) at (0,0) {$m_j$};
+\node[fixed] (cth) at (2.5,0) {$\boldsymbol{\mu}_{\cdot j},\boldsymbol{\Sigma}_j,\varrho_j$};
+\node[latent] (cB) at (2.5,-1.7) {$\boldsymbol{B}_j$};
+\node[latent] (cx) at (1.15,-3.3) {$\boldsymbol{X}_{jc}$};
 \plate{cc}{(cx)}{$c\le m_j$}
-\plate{cj}{(cm)(cth)(cB)(cc)(cc-lab)}{$j=1,\ldots,J$}
+\plate{cj}{(cm)(cth)(cB)(cc)(cc-caption)}{$j=1,\ldots,J$}
 \node[det] (cy) at (1.15,-6.2) {$\boldsymbol{y}$};
 \node[note, below=1mm of cy] {$\sum_j m_j[1+(m_j-1)\varrho_j]\boldsymbol{\Sigma}_j$};
-\draw[edge] (cth) -- (cB);
-\draw[edge] (cB) -- (cx);
-\draw[edge] (cm) -- (cx);
-\draw[edge] (cj.south -| cy) -- (cy);
+\draw[dependency] (cth) -- (cB);
+\draw[dependency] (cB) -- (cx);
+\draw[dependency] (cm) -- (cx);
+\draw[dependency] (cj.south -| cy) -- (cy);
 \end{scope}
 \begin{scope}[xshift=138mm]
 \node[ptitle] at (0,1.15) {(d) population profiles};
-\node[const] (dp) at (0,0) {$p_j$};
-\node[const] (dth) at (2.3,0) {$\boldsymbol{\mu}_{\cdot j},\boldsymbol{\Sigma}_j$};
-\node[stoch] (dZ) at (2.3,-1.9) {$\boldsymbol{Z}_j$};
+\node[fixed] (dp) at (0,0) {$p_j$};
+\node[fixed] (dth) at (2.3,0) {$\boldsymbol{\mu}_{\cdot j},\boldsymbol{\Sigma}_j$};
+\node[latent] (dZ) at (2.3,-1.9) {$\boldsymbol{Z}_j$};
 \plate{dj}{(dp)(dth)(dZ)}{$j=1,\ldots,J$}
 \node[det] (dy) at (1.15,-5.0) {$\boldsymbol{y}$};
 \node[note, below=1mm of dy] {$\sum_j p_j^{2}\boldsymbol{\Sigma}_j$};
-\draw[edge] (dth) -- (dZ);
-\draw[edge] (dZ) -- (dy);
-\draw[edge] (dp) -- (dy);
+\draw[dependency] (dth) -- (dZ);
+\draw[dependency] (dZ) -- (dy);
+\draw[dependency] (dp) -- (dy);
 \end{scope}
 \end{tikzpicture}
 ```
@@ -481,26 +481,26 @@ The raw $\boldsymbol{\Sigma}_{W,j}$ matches the bulk only at capture ratio 1. Ot
 %%| filename: fig-dag-measurement
 %%| alt: Plate diagram. Inside a plate over cell types j, fixed mu_j and Sigma lambda_j generate the latent expression lambda_c. Inside a nested plate over cells, the latent biological size factor s bio multiplies lambda_c to give the deterministic molecule content m_c, and the latent technical size factor s tech together with the fixed gene capture vector b outside the plates generate the observed counts x_c through a Poisson law.
 \begin{tikzpicture}[node distance=10mm and 12mm]
-\node[stoch] (lam) {$\boldsymbol{\lambda}_{\cdot c}$};
-\node[stoch, left=of lam] (sbio) {$s^{\mathrm{bio}}_c$};
+\node[latent] (lam) {$\boldsymbol{\lambda}_{\cdot c}$};
+\node[latent, left=of lam] (sbio) {$s^{\mathrm{bio}}_c$};
 \node[det, below=of lam] (m) {$\boldsymbol{m}_{\cdot c}$};
-\node[stoch, left=of m] (stech) {$s^{\mathrm{tech}}_c$};
+\node[latent, left=of m] (stech) {$s^{\mathrm{tech}}_c$};
 \node[obs, below=of m] (x) {$\boldsymbol{x}_{\cdot c}$};
-\node[const, above=10mm of lam] (mu) {$\tilde{\boldsymbol{\mu}}_{\cdot j}$};
-\node[const, right=8mm of mu] (Sig) {$\boldsymbol{\Sigma}^{\lambda}_{j}$};
+\node[fixed, above=10mm of lam] (mu) {$\tilde{\boldsymbol{\mu}}_{\cdot j}$};
+\node[fixed, right=8mm of mu] (Sig) {$\boldsymbol{\Sigma}^{\lambda}_{j}$};
 \node[note, right=2mm of lam] (nl) {$\sim F_j(\tilde{\boldsymbol{\mu}}_{\cdot j},\boldsymbol{\Sigma}^{\lambda}_j)$};
 \node[note, right=2mm of m] (nm) {$=s^{\mathrm{bio}}_c\boldsymbol{\lambda}_{\cdot c}$};
 \node[note, below=2mm of x] (nx) {$x_{gc}\sim\mathrm{Poisson}(s^{\mathrm{tech}}_c b_g m_{gc})$};
 \node[note, left=1mm of sbio] {cell size};
 \node[note, left=1mm of stech] {depth};
-\draw[edge] (mu) -- (lam); \draw[edge] (Sig) -- (lam);
-\draw[edge] (lam) -- (m); \draw[edge] (sbio) -- (m);
-\draw[edge] (m) -- (x); \draw[edge] (stech) -- (x);
+\draw[dependency] (mu) -- (lam); \draw[dependency] (Sig) -- (lam);
+\draw[dependency] (lam) -- (m); \draw[dependency] (sbio) -- (m);
+\draw[dependency] (m) -- (x); \draw[dependency] (stech) -- (x);
 \plate{cells}{(sbio)(stech)(lam)(m)(x)(nl)(nm)(nx)}{cells $c\in\mathcal{C}_j$}
-\plate{types}{(mu)(Sig)(cells)(cells-lab)}{$j=1,\ldots,J$}
-\node[const] (b) at ([xshift=12mm]types.east |- x) {$\boldsymbol{b}$};
+\plate{types}{(mu)(Sig)(cells)(cells-caption)}{$j=1,\ldots,J$}
+\node[fixed] (b) at ([xshift=12mm]types.east |- x) {$\boldsymbol{b}$};
 \node[note, above=1mm of b] {gene capture};
-\draw[edge] (b) -- (x);
+\draw[dependency] (b) -- (x);
 \end{tikzpicture}
 ```
 

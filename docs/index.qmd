@@ -61,16 +61,16 @@ step 9 is @sec-deconv-models.
 \node[keybox, pstep, right=of s8] (s9) {DeCovarT on bulk:\\ standard Wnt,\\ 48/72/96\,h};
 \node[note, below=1.5mm of s9, text width=30mm, align=center, font=\footnotesize] (n9) {Early Wnt: no matched single-cell reference at any time};
 \foreach \k in {1,...,9} {\node[num] at (s\k.north west) {\k};}
-\draw[edge] (s1) -- (s2);
-\draw[edge] (s2) -- (s3);
-\draw[edge] (s3) -- (s4);
-\draw[edge] (s4) -- (s5);
+\draw[dependency] (s1) -- (s2);
+\draw[dependency] (s2) -- (s3);
+\draw[dependency] (s3) -- (s4);
+\draw[dependency] (s4) -- (s5);
 \coordinate (turn) at ($(s5.south)!0.5!(s5.south |- s7.north)$);
-\draw[edge] (s5.south) -- (turn) -| (s7.north);
+\draw[dependency] (s5.south) -- (turn) -| (s7.north);
 \draw[dashededge] (turn) -| (s6.north);
 \draw[dashededge] (s6) -- (s7);
-\draw[edge] (s7) -- (s8);
-\draw[edge] (s8) -- (s9);
+\draw[dependency] (s7) -- (s8);
+\draw[dependency] (s8) -- (s9);
 \end{tikzpicture}
 ```
 

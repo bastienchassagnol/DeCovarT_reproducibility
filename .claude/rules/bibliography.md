@@ -1,0 +1,51 @@
+---
+description: Two citation streams — Zotero literature and generated software BibTeX
+globs: bibliography/**,docs/**/*.qmd,docs/_quarto.yml
+alwaysApply: false
+paths:
+  - "bibliography/**"
+  - "docs/**/*.qmd"
+  - "docs/_quarto.yml"
+---
+
+# Bibliography
+
+Two streams. Do not mix them. Do not invent BibTeX entries, citekeys, or DOIs. The general workflow is `documentation-bibliography.mdc`; this file gives the book paths.
+
+The curation scripts live in the sibling package, `../DeCovarT/scripts/curate_bibliography/`. This repository has no `scripts/curate_bibliography/`.
+
+## Literature
+
+Source of truth: the author’s [Zotero library](https://www.zotero.org/bastienchassagnol/library) (library ID `7172053`). Add items in Zotero first (one-off inserts: `../DeCovarT/scripts/curate_bibliography/add_zotero_perspectives.py`), then export to `bibliography/REFERENCES.bib`.
+
+`check_bibliography.py` checks only the package files (`inst/REFERENCES.bib`, `article/decovart_library.bib`); its `--clean` rewrites those files, not `bibliography/REFERENCES.bib`. Do not run it to clean the book bibliography.
+
+Assign exactly one Zotero collection — the most specific leaf. **Git → Zotero:** `zotc keys extract`, then `collection add` (dry-run first).
+
+Allowed fields: `title`, `author`, `editor`, `year`, `journal`, `booktitle`, `publisher`, `howpublished`, `doi`, `volume`, `number`, `pages`, `isbn`, `issn`, `edition`, `school`, `institution`, `url`.
+
+Required: `@article` title, author, year, journal; `@book` title, year, publisher, and author or editor; `@incollection` title, author, year, booktitle, publisher; theses title, author, year, school; `@techreport` title, author, year, institution.
+
+Enrich gaps with Crossref without overwriting values and without inventing DOIs, then `bibtex-tidy`:
+
+```bash
+uv run --project ../DeCovarT/scripts/curate_bibliography \
+  python ../DeCovarT/scripts/curate_bibliography/bib_enrich.py \
+  bibliography/REFERENCES.bib --write --backup --min-score 92
+npx bibtex-tidy@1.14.0 bibliography/REFERENCES.bib --modify --curly --numeric --sort=key
+```
+
+## Software
+
+Not Zotero. `bibliography/packages.bib` lists the packages used in `docs/` and `scripts/`. Generate entries from official citation metadata (`knitr::write_bib()`, `citation()`). The package's `generate_packages_bib.R` writes only the package's own files and needs its `DESCRIPTION`; do not run it for this repository.
+
+Book YAML (or each `docs/*.qmd`) must declare both files:
+
+```yaml
+bibliography:
+  - ../bibliography/packages.bib
+  - ../bibliography/REFERENCES.bib
+link-citations: true
+```
+
+Literature keys such as `@suppingerMultimodalCharacterizationMurine2023`; software keys `@R-glasso`, `@R-corpcor`, `@R-PLNmodels`. If a key is missing, flag it.
