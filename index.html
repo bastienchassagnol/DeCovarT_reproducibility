@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Bastien Chassagnol">
-<meta name="dcterms.date" content="2026-11-22">
+<meta name="dcterms.date" content="2026-11-24">
 <meta name="description" content="What this book runs on the Suppinger gastruloids, and where the theory lives.">
 
 <title>DeCovarT reproducibility</title>
@@ -273,7 +273,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">22 Nov 2026</p>
+        <p class="date">24 Nov 2026</p>
       </div>
     </div>
     
@@ -388,7 +388,7 @@ window.Quarto = {
 </section>
 <section id="sec-pipeline" class="level2" data-number="0.2">
 <h2 data-number="0.2" class="anchored" data-anchor-id="sec-pipeline"><span class="header-section-number">0.2</span> Pipeline</h2>
-<p><a href="#fig-pipeline" class="quarto-xref">Figure&nbsp;<span>1</span></a> lists the nine steps in the order the scripts run them. Steps 2 to 5 are <a href="02-feature-selection.html#sec-fs-scope" class="quarto-xref"><span>Section 3.1</span></a>; step 7 is <a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a>; step 8 is <a href="https://bastienchassagnol.github.io/DeCovarT/articles/02-1-single-cell-generative-optimisation.html#sec-three-regimes">2.1, three regimes</a>; step 9 is <a href="04-deconvolution-pipeline.html#sec-deconv-models" class="quarto-xref"><span>Section 5.1</span></a>.</p>
+<p><a href="#fig-pipeline" class="quarto-xref">Figure&nbsp;<span>1</span></a> lists the nine steps in the order the scripts run them. Steps 2 to 5 are <a href="02-feature-selection.html#sec-fs-scope" class="quarto-xref"><span>Section 3.1</span></a>; step 7 is <a href="03-covariance-estimation.html#sec-cov-scope" class="quarto-xref"><span>Section 4.1</span></a>; step 8 is <a href="https://bastienchassagnol.github.io/DeCovarT/articles/02-1-single-cell-generative-optimisation.html#sec-three-regimes">2.1, three regimes</a>; step 9 is <a href="04-deconvolution-pipeline.html#sec-deconv-models" class="quarto-xref"><span>Section 5.2</span></a>.</p>
 <div id="fig-pipeline" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-pipeline-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -434,7 +434,7 @@ Table&nbsp;1: Book chapters and the vignette chapters that hold their theory.
 <td><a href="https://bastienchassagnol.github.io/DeCovarT/articles/03-2-covariance-network-estimation.html#tbl-cov-estimators">3.2 Covariance estimation</a></td>
 </tr>
 <tr class="even">
-<td><a href="04-deconvolution-pipeline.html#sec-deconv-models" class="quarto-xref"><span>Section 5.1</span></a>, Comparators</td>
+<td><a href="04-deconvolution-pipeline.html#sec-deconv-models" class="quarto-xref"><span>Section 5.2</span></a>, Comparators</td>
 <td>DeCovarT, second-generation methods, NNLS and RLM baselines</td>
 <td><a href="https://bastienchassagnol.github.io/DeCovarT/articles/05-1-review-distribution-aware.html">5.1 Review</a>; <a href="https://bastienchassagnol.github.io/DeCovarT/articles/02-1-single-cell-generative-optimisation.html#sec-reference">2.1 From cells to reference moments</a></td>
 </tr>
@@ -1072,16 +1072,16 @@ iframe.slides {
 <span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a><span class="in">\node[keybox, pstep, right=of s8] (s9) {DeCovarT on bulk:\\ standard Wnt,\\ 48/72/96\,h};</span></span>
 <span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a><span class="in">\node[note, below=1.5mm of s9, text width=30mm, align=center, font=\footnotesize] (n9) {Early Wnt: no matched single-cell reference at any time};</span></span>
 <span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a><span class="in">\foreach \k in {1,...,9} {\node[num] at (s\k.north west) {\k};}</span></span>
-<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a><span class="in">\draw[edge] (s1) -- (s2);</span></span>
-<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a><span class="in">\draw[edge] (s2) -- (s3);</span></span>
-<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a><span class="in">\draw[edge] (s3) -- (s4);</span></span>
-<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a><span class="in">\draw[edge] (s4) -- (s5);</span></span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a><span class="in">\draw[dependency] (s1) -- (s2);</span></span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a><span class="in">\draw[dependency] (s2) -- (s3);</span></span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a><span class="in">\draw[dependency] (s3) -- (s4);</span></span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a><span class="in">\draw[dependency] (s4) -- (s5);</span></span>
 <span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a><span class="in">\coordinate (turn) at ($(s5.south)!0.5!(s5.south |- s7.north)$);</span></span>
-<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a><span class="in">\draw[edge] (s5.south) -- (turn) -| (s7.north);</span></span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a><span class="in">\draw[dependency] (s5.south) -- (turn) -| (s7.north);</span></span>
 <span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a><span class="in">\draw[dashededge] (turn) -| (s6.north);</span></span>
 <span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a><span class="in">\draw[dashededge] (s6) -- (s7);</span></span>
-<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a><span class="in">\draw[edge] (s7) -- (s8);</span></span>
-<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a><span class="in">\draw[edge] (s8) -- (s9);</span></span>
+<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a><span class="in">\draw[dependency] (s7) -- (s8);</span></span>
+<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a><span class="in">\draw[dependency] (s8) -- (s9);</span></span>
 <span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a><span class="in">\end{tikzpicture}</span></span>
 <span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a></span>
