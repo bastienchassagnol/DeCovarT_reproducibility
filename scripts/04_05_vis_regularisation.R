@@ -84,11 +84,12 @@ colour_series <- "#1d4e89"
 colour_marked <- "#c45c26"
 colour_ink <- "#1c2b24"
 
-# theme_slide() sets no family, so ragg (PNG) draws the generic "sans"
-# with the font systemfonts resolves (Noto Sans here), while svglite
-# writes "sans" as "Arial" and Inkscape then outlines Arial. Name the
-# resolved family in the SVG so the PDF keeps the font of the PNG.
-sans_family <- systemfonts::font_info(family = "sans")$family[[1L]]
+# Name Noto Sans in the SVG (same as ragg PNGs); svglite would else write Arial.
+sans_family <- if ("Noto Sans" %in% systemfonts::system_fonts()$family) {
+  "Noto Sans"
+} else {
+  systemfonts::font_info(family = "sans")$family[[1L]]
+}
 svg_device <- function(filename, ...) {
   svglite::svglite(filename, ..., system_fonts = list(sans = sans_family))
 }

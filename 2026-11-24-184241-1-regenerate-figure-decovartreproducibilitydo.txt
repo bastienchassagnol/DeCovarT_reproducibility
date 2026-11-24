@@ -1,0 +1,2052 @@
+
+❯ 1) Regenerate figure
+  @DeCovarT_reproducibility/docs/04-deconvolution-pipeline.qmd#445 appltying
+  rule @.claude/rules/graphical-models.md  +
+  @DeCovarT/.claude/rules/latex-scientific.md#109-225  -> ony a protable dpf is
+  required, but do archvie the png ai-generated figure under @archives/figures
+   .
+
+  Then, relocate in a appendix (using the .appendix markdown code) parapgrh:
+  @DeCovarT_reproducibility/docs/04-deconvolution-pipeline.qmd#411-445  such
+  that ther eis no #### header (correpsoding to a paragh in
+  @04-deconvoltuion.qmd)
+
+  2) relocate all results and figures using a usbt of the welch pane( 1% and 5%
+  deviance) as appendix.
+  3) add a todo comment sumamrising @lasso_regularisation.md to complemet
+  @DeCovarT_reproducibility/docs/04-deconvolution-pipeline.qmd#2121-2125  using
+  a callout collapsiible info for additioanl visualsiations to egenrate. Top
+  visualsiation encmpass i beleive:
+       i) a pdf docuent with geom_tile heatmaps comapring on the top row side
+  by side the row sample correlation, the regelised bulk-likeihd and
+  cell-nested cross vlaidationr egusaition. -> to be visually visbible, from
+  the wlech panel, choose the top 50 genes with highest ombius deviance across
+  cell types for a given time slot (so intotal 3 pages to genertae, one page
+  epr time slot).
+       ii) the numerical eigenvlaue condtionditining reporting the codntion
+  number versus regulsiation ratio,a nd the effective rank regulsiation
+       iii) a dumbell plot comapring the enstd cross-vlaidation for eahc cell
+  tyep verus the common bulk chocie maximsing likelihood (one page per time
+  slot, but only report the welch agted panel), aka the clel type speciic
+  regulsiation map.
+       iv) a four panel ehatmpa for the rak-absed deocmpstion approach (to eb
+  added a stodo in instead)
+  @DeCovarT_reproducibility/docs/04-deconvolution-pipeline.qmd#1368
+     v) for the finally selecte dmethod, free scale approach, a plto relaitng
+  the elvel of regulsiation lamdab shared across cell types with te rmse and
+  the raw log-liheoohd, emphsing where we observe de-trend.
+
+  If you cna regenerate these outptus direclty from the rpovided rds files, or
+  witha simple script, do it
+
+  4) add a as a eprstie, if adiditonal bulk rpofiels were avlaible (not enought
+  to eprform a true 80/20 split without re gernitng pseudo bulk profiles) the
+  profile kilehood at each candidate vlaue (not enough idnepent biolgila
+  replciates to eprform a proepr staility analysis)
+  5) I beleive you can remove entirley section
+  @DeCovarT_reproducibility/docs/04-deconvolution-pipeline.qmd#1736  + sumamrse
+  overall this 04-deconvolution-piepline.qmd vignette.
+  ⎿  Read .claude/rules/graphical-models.md (130 lines)
+  ⎿  Listed directory archives/figures/
+  ⎿  Loaded ../../../../.claude/rules/graphical-models.md
+  ⎿  Loaded ../../../../.claude/rules/data-visualisation.md
+  ⎿  Loaded ../../../../.claude/rules/documentation-bibliography.md
+  ⎿  Loaded ../../../../.claude/rules/quarto-presentations.md
+  ⎿  Loaded ../../../../.claude/rules/statistical-modelling.md
+  ⎿  Loaded ../../../../.claude/rules/symbolic-verification.md
+  ⎿  Loaded .claude/rules/data-visualisation.md
+  ⎿  Loaded .claude/rules/documentation-bibliography.md
+  ⎿  Loaded .claude/rules/quarto-presentations.md
+  ⎿  Loaded .claude/rules/statistical-modelling.md
+  ⎿  Loaded .claude/rules/symbolic-verification.md
+
+  Read 4 files, ran 11 shell commands · 1 failed (ctrl+o to expand)
+
+● Answered Claude's questions:
+  ⎿  · Item 5: line 1736 of 04-deconvolution-pipeline.qmd currently falls inside
+     the R chunk at the top of '#### Results on the three panels'
+     (sec-deconv-scale-panels, lines 1722–1996: the 7-strategy × 3-panel table,
+     its bullets and the 'bulk likelihood across strategies' paragraph). Which
+     section should be removed entirely? → Results on three panels
+     · Item 1: once Scenario 1 moves to an appendix, how far should the headings
+     be flattened? You wrote 'no #### header'. → Whole chapter ≤ ###
+     · Item 3(i): each page covers one time slot and shows the top 50 Welch
+     genes by deviance share. What layout should each page use? → Types × 3,
+     correlation only
+     · Item 1: how should the AI-generated SCDC / BayesPrism / DWLS figure be
+     redrawn under the bayesnet plate-notation rule? → Redrawn 3-row schematic
+
+  Read 1 file, ran 4 shell commands (ctrl+o to expand)
+
+● Updated plan
+  ⎿  Error: PreToolUse:Write hook error: dataviz-nudge: this call writes chart
+     code, and no dataviz design step has been loaded in this session. Before
+     plotting: load the data-visualisation skill, run the inspiration workflow
+     (3–5 references, then chart-chooser; use ggdist raincloud when shape
+     matters). Skills: data-visualisation (read
+     references/dataviz-inspiration.md — gallery search before code). If this is
+     a trivial tweak to an approved chart, retry once — this check fires only
+     once per session.
+
+● Skill(data-visualisation)
+  ⎿  Loaded skill
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+● Updated plan
+  ⎿  /plan to preview
+  ⎿  Error: User chose to stay in plan mode and continue planning
+
+     Comments on the plan:
+     [Re: "It is not generated: the factor loadings are not stored."] mody the
+     code to store form now on the factor loadings
+
+  Ran 4 shell commands (ctrl+o to expand)
+
+● Updated plan
+  ⎿  /plan to preview
+
+● Updated plan
+  ⎿  /plan to preview
+
+● Approved Claude's plan
+  ⎿  Plan saved to:
+     ~/.claude/plans/1-regenerate-figure-decovart-reproducibi-rustling-aurora.md
+     · /plan to edit
+     Restructure docs/04-deconvolution-pipeline.qmd and add the regularisation
+     figures
+
+     Repository: DeCovarT_reproducibility. Archive target:
+     DeCovarT/archives/figures/.
+
+     Context
+
+     Chapter 4 of the book has five problems:
+
+     - It shows an AI-generated schematic (fig-kappa-gastruloid).
+     - Results on the $R^2_D$ subsets of the Welch panel are mixed into the main
+       text.
+     - Its headings go down to #####.
+     - It keeps a full-run section ("Results on the three panels") that is no
+       longer wanted.
+     - It does not say which regularisation diagnostics are still missing
+       (lasso_regularisation.md).
+
+     Intended outcome:
+
+     - The main text is Welch-panel only and has no heading deeper than ###.
+     - Scenario 1 and the small-panel results move to .appendix sections.
+     - The schematic is redrawn in TikZ, with bayesnet nodes for the model
+       parts.
+     - A collapsible callout lists the regularisation visualisations. Those that
+       can be computed from the outputs on disk are generated.
+     - A new perspective covers more bulk replicates.
+     - A short summary opens the chapter.
+
+     Decisions taken with the user:
+
+     - Remove #### Results on the three panels (lines 1722–1996).
+     - Flatten the whole chapter to ### or less.
+     - Heatmaps (i): one page per time, with one row per cell type and 3 columns
+       (sample, bulk λ, CV λ_j), correlation only.
+     - Figure: a redrawn 3-row schematic (A notation, B reference building, C
+       inference and hypothesis).
+
+     1. Figure fig-kappa-gastruloid (TikZ, portable PDF)
+
+     - Source: docs/images/src/kappa_gastruloid/kappa_gastruloid.tex. It is
+       standalone, LuaLaTeX only, with a header comment giving the build
+       commands, as in docs/images/src/early_wnt/early_wnt.tex.
+       - Preamble: the font block of the graphical-models and latex-scientific
+         rules (STIX Two Math, TeX Gyre Heros with Ligatures=CommonOff, \symbf,
+         no bm). Then bayesnet,positioning,fit,calc,arrows.meta, plus the fixed,
+         note and dependency styles and the ink and obs colours of
+         docs/_quarto.yml.
+       - Arrows use \draw[dependency], never \edge. Equations go only in note
+         nodes.
+     - Row A, notation:
+       - Nodes: obs x_gc, const z_c, det μ_gj (the signature S), obs y_gi and
+         latent p_i.
+       - Plates: c, g and i.
+       - Note nodes: $\symbf y_i\approx\symbf S\symbf p_i$, $p_{ji}\ge0$,
+         $\sum_jp_{ji}=1$.
+       - A lineage strip of boxes: epiblast → primitive streak → caudal
+         mesoderm/NMP → PSM → somite.
+     - Row B, reference building per method:
+       - SCDC: μ_gj det, with one reference (R = 1, no ensemble).
+       - BayesPrism: latent φ_j with a Dirichlet prior, and φ_gj as the read
+         share.
+       - DWLS: μ_gj → det marker set M, chosen by minimising κ(S) = σ_max/σ_min
+         over g ∈ {50,…,200}, with MAST and diff.cutoff = 0.5.
+     - Row C, inference:
+       - SCDC: $\min_{p\ge0,\sum p=1}\sum_gw_g(y_{gi}-\symbf S_g\symbf p)^2$
+         with $w_g=1/(\nu+\hat\delta_g^2)$.
+       - BayesPrism: latent read assignments in a plate over reads, Gibbs
+         sampling, posterior $P(\symbf p_i\mid\symbf y_i)$.
+       - DWLS: dampened weights $1/\hat y_{gi}^2$ on g ∈ M.
+       - One hypothesis box: "BayesPrism ≈ SCDC ≠ DWLS: κ-driven pruning drops
+         the genes that separate collinear lineages".
+     - Formulas: they follow @tbl-deconv-own-genes, not the simplified AI
+       picture.
+     - Build:
+       a. lualatex produces the PDF.
+       b. gs -dNoOutputFonts turns every glyph into an outline. The result is
+          the portable PDF docs/images/fig_04_kappa_gastruloid.pdf.
+       c. pdftocairo -svg makes fig_04_kappa_gastruloid.svg, which the HTML book
+          embeds because it cannot show a PDF inline. Then delete the white
+          page rectangle in the SVG.
+       d. No editable SVG and no TexText. This follows the user's "portable PDF
+          only".
+     - Archive:
+       - Copy
+         docs/images/condition_number_poor_performance_correlated_cell_types.png
+         to DeCovarT/archives/figures/.
+       - Add a row to its README.md (original path, replaced by, 2026-11-24,
+         "AI-drawn illustration").
+       - Run git rm on the original in the reproducibility repository.
+     - Caption: rewritten. It drops the AI sentence and keeps "hypothesis, not a
+       result".
+
+     2. Chapter restructuring (docs/04-deconvolution-pipeline.qmd)
+
+     Headings (none deeper than ###)
+
+     - Drop ### Scenario 2…. Its introduction (shared panel, solvers,
+       second-pass list, local symbols) stays under ## Statistical
+       interpretation. The two-scenario introduction is rewritten to point to
+       the appendix (@sec-deconv-own-genes).
+     - #### Results on a shared panel, #### Why the profile likelihood loses at
+       96 h, #### Early-Wnt arm and #### Which strategy to carry forward become
+       ###. Their ids are kept; 03-covariance-estimation.qmd:727 and
+       06-sensitivity…qmd:175 reference them.
+     - Every ##### becomes a bold run-in paragraph.
+
+     Remove "Results on the three panels" (lines 1722–1996)
+
+     - Delete the heading, tbl-deconv-scale-panels, its bullets and the "Bulk
+       likelihood across strategies" paragraph.
+     - Keep a trimmed deconv-panels-values chunk at the head of the Early-Wnt
+       section. It must still define lsel_all with the loglik_y Jacobian,
+       strategy_short, slots_all, pick_all, mean_rmse, best_strategy and
+       fac_neg. Drop the variables only the deleted text used: comp_*, fp*,
+       fa_grid_top, cv_shared, shared_top and most jac_*.
+     - Add one sentence on the shared-c Jacobian $G\sum_i\log k_i$, because
+       tbl-deconv-early uses it.
+     - Re-point @sec-deconv-scale-panels (lines 582, 2122, 2205) to
+       @sec-deconv-selection or @sec-deconv-strategy-ranking. Move "best
+       DeCovarT RMSE on the two smaller panels" from the strategy ranking to the
+       appendix.
+
+     Appendices (.appendix, after the Glossary; no #### inside)
+
+     - ## Scenario 1: each method selects its own genes {#sec-deconv-own-genes
+       .appendix} holds lines 411–445 and the new figure.
+     - ## Results on the $R^2_D$ subsets of the Welch panel
+       {#sec-deconv-small-panels .appendix}. Mixed items are split: Welch in the
+       main text, the subsets here.
+
+     Item: tbl-deconv-fixed-rmse
+     Main text: Welch columns
+     Appendix: tbl-deconv-fixed-rmse-small (R²≥5 %), with the bullet "small
+       panel is worse…"
+     ────────────────────────────────────────
+     Item: fig-deconv-rmse, fig-deconv-aitchison, fig-deconv-sieve (second
+       pass)
+     Main text: Welch-only variants
+     Appendix: the existing all-panel PNGs
+     ────────────────────────────────────────
+     Item: tbl-deconv-loglik, tbl-deconv-agreement, tbl-deconv-selection,
+       tbl-deconv-early
+     Main text: Welch rows (filter in the chunk)
+     Appendix: R² rows
+     ────────────────────────────────────────
+     Item: fig-deconv-agreement, fig-deconv-lineage-collapse,
+       fig-deconv-rmse-selected, fig-deconv-aitchison-selected
+     Main text: Welch-only variants
+     Appendix: the existing all-panel PNGs
+     ────────────────────────────────────────
+     Item: Small-panel bullets (shrinkage sweep, selection "Small panels",
+       lineage split, small-panel QP, Firth 17 genes, 0.22× Mahalanobis)
+     Main text: removed from the main text
+     Appendix: moved
+
+     - Welch-only figures:
+       - Add a Welch filter variant (*_welch.png) to
+         scripts/04_01_vis_deconvolution.R.
+       - Add the same to scripts/archives/second_pass_variants/04_01_vis_deconvo
+         lution_second_pass.R.
+       - Rerun both scripts. They read CSVs only.
+       - If the archived script fails, move those three figures to the appendix
+         whole and cite the Welch table in the main text.
+
+     Collapsible callout for the regularisation visualisations (item 3)
+
+     - Placed after line 2125: ::: {#nte-deconv-regularisation-visuals
+       .callout-note collapse="true"}, titled "Regularisation visualisations
+       still to add".
+     - Content:
+       - A short summary of lasso_regularisation.md: its 7 priorities, and the
+         caveat that shrinkage does not impose sparsity.
+       - Then items i–v, each with its status, its output path and the figure
+         embedded where it exists.
+     - (i) Heatmaps. A link to the 3-page PDF. One caveat sentence: under
+       shrinkage towards I, the three columns differ only by $(1-\lambda)$ on
+       the off-diagonal terms. They show intensity, not pattern, which is why
+       the note proposes partial correlations.
+     - (ii) Conditioning. κ(λ) and effective rank, embedded.
+     - (iii) Regularisation map. The dumbbell plot, embedded, with a link to the
+       3-page PDF.
+     - (iv) A TODO only (below).
+     - (v) The λ path of the free-scale method, embedded.
+
+     Item 3(iv): TODO in ### Positivity of the mean scale (line 1368)
+
+     - Add a [TODO: …]{.highlight}: a four-panel geom_tile on the top 50 Welch
+       genes for one type and time.
+       a. Raw covariance on the correlation scale.
+       b. The rank-one size term $\nu_j\symbf\mu_j\symbf\mu_j^\top$.
+       c. The remainder $\symbf\Delta_j$.
+       d. The factor fit $\symbf B_j\symbf B_j^\top+\symbf\Psi_j$.
+     - $A_{jk}$ goes in the caption.
+     - It is not generated in this batch, because no loadings are on disk (see
+       "Store the factor loadings" below). scripts/04_05_vis_regularisation.R
+       gets the panel as a section guarded by file.exists(), so it runs as soon
+       as the loadings exist.
+
+     Store the factor loadings from now on
+
+     What exists today:
+
+     - The raw per-type and shared loadings are already written by
+       scripts/03_04_cv_covariance.R (stage fit,
+       output/grn/cv/factors_<time>_<gene_set>.rds, which holds
+       per_type[[type]][[rank]]$B, $psi, $loglik and shared). They are not in
+       this checkout: they are not in Git, have no .dvc pointer, and probably
+       sit on the cluster.
+     - The size-normalised loadings in scripts/04_01_stats_deconvolution.R
+       (around line 717) are fitted in memory and never saved.
+     - The pseudo-bulk loadings of scripts/04_04_stats_scale_screen.R (line 129)
+       are fitted in memory and never saved.
+
+     Changes:
+
+     1. scripts/04_01_stats_deconvolution.R. Write the size-normalised fit to
+        output/grn/cv/factors_size_<time>_<gene_set>.rds, with the structure of
+        the raw file (time, gene_set, input, types, per_type). Read it back when
+        it already exists, the way the raw file is read. Add the file to the
+        header's output list.
+     2. scripts/04_04_stats_scale_screen.R. Write factor_fits (raw and
+        size-normalised, training cells of the seed) to
+        output/deconvolution/scale_screen_factors_<time>_seed<k>.rds, with align
+        kept. Add it to the header.
+     3. scripts/03_04_cv_covariance.R. Leave the code unchanged. Add a header
+        note that factors_*.rds is an output the deconvolution and the figures
+        need. After the next cluster run, run dvc add
+        output/grn/cv/factors_*.rds, then commit the .dvc pointers.
+     4. Size check. With ranks up to 8, B uses about $G\sum_q q$ doubles per
+        type, about 0.9 MB at 96 h on the Welch panel, so the files are small.
+
+     Nothing is rerun here. To get the loadings now: Rscript
+     scripts/03_04_cv_covariance.R stages=fit gene_sets=welch (cluster), then
+     dvc pull.
+
+     Item 4: new perspective
+
+     - ### Five directions… becomes "Six directions". Item 6 is "Select λ on
+       further bulk profiles".
+     - Today there are three replicates per protocol and time. That is too few
+       for an 80/20 split without regenerating pseudo-bulks, and too few
+       independent biological replicates for a stability analysis.
+     - With more bulks: compute the profile log-likelihood of each held-out bulk
+       at every candidate λ. The spread of the argmax across bulks then
+       measures the stability of the choice.
+     - Update TODO (a) to match.
+
+     Item 5: summary
+
+     - ## Summary {#sec-deconv-summary} after the setup chunks: about 6 bullets
+       covering the comparison, the design, the Welch results and the limits.
+     - Inline R uses only objects defined in deconv-values (pick_of, rmse_of,
+       lsel).
+
+     Prose pass
+
+     - Run deslop on the changed prose only. Maths, chunks, references and
+       tables are left alone.
+
+     3. Script scripts/04_05_vis_regularisation.R (items i, ii, iii, v)
+
+     Welch panel, standard-Wnt protocol, theme_slide() (R/02_00_utils.R).
+
+     - Inputs:
+       - scored_slots.rds (present) through read_panel_slot()
+         (R/03_01_stats_covariance_estimation.R:52), with the Welch genes of
+         tier_02/selected_<time>.csv, as in scripts/03_05… §1–2.
+       - lambda_selection.csv (shrinkage, standard, welch).
+       - cv_selected_tuning.csv ("shrinkage, per type" and "shrinkage, common").
+       - plugin_summary.csv (C_j).
+       - The moments_*.rds files are not on disk, so the script computes per
+         type, one at a time.
+     - (ii) Spectra:
+       - Standardise each type with the sd floor of build_sigma().
+       - Take the non-zero eigenvalues with right_spectrum() (R/03_01…:220),
+         which uses the Gram matrix when C_j < G. Pad with zeros. Add eigenvalue
+         1 for each constant gene.
+       - Compute $\kappa(\lambda)=((1-\lambda)\ell_{\max}+\lambda)/((1-\lambda)\
+         ell_{\min}+\lambda)$ and $r_{\text{eff}}=(\sum\ell)^2/\sum\ell^2$ on a
+         log grid of λ from 10⁻³ to 1.
+       - Write output/deconvolution/regularisation_spectra.csv.
+       - Plot: rows are log κ and effective rank, columns are times, one line
+         per type with a direct label, ticks at λ_bulk and λ_j,CV.
+       - Add one stopifnot() comparing the closed form with kappa(exact = TRUE)
+         on a small matrix.
+     - (i) Heatmaps:
+       - Gene set: the top 50 Welch genes by deviance_r2.
+       - Order the genes once per time by clustering pooled_correlation().
+       - geom_tile: rows are types, columns are sample, bulk and CV.
+       - Colour: a diverging scale from colorspace fixed at −1 to 1, with the
+         diagonal neutralised.
+       - Form borrowed from the R graph gallery correlogram (Yan Holtz,
+         https://r-graph-gallery.com/correlogram.html, via
+         https://www.dataviz-inspiration.com/correlogram).
+     - (iii) Dumbbell:
+       - Rows are types, ordered by C_j. A segment runs from λ_j,CV to λ_bulk,
+         plus a marker for the common CV λ.
+       - One page per time, plus a faceted PNG for the book.
+       - Form borrowed from the EL PAÍS eclipse dumbbell (via
+         https://www.dataviz-inspiration.com/lollipop): two colours and direct
+         labels.
+     - (v) λ path:
+       - Columns are times. Rows are the summed profile log-likelihood (raw) and
+         the RMSE against λ, with the selected λ marked.
+       - Shade the intervals where the log-likelihood and the RMSE rise together
+         (decoupled). State that the RMSE is not used by the selection.
+     - Output:
+       - SVG via svglite. PDF via inkscape --export-text-to-path
+         --export-type=pdf. Multi-page PDFs merged with qpdf --empty --pages,
+         into output/deconvolution/figures/regularisation/.
+       - Book PNGs via ragg, white background, size stated, in
+         docs/images/deconvolution/regularisation/.
+       - Check against the checklist, then run roast-my-chart.
+
+     4. Verification ledger (last)
+
+     - Add R6 to verification/sympy/check_covariance_selection.py. It checks
+       that the eigenvalues of $(1-\lambda)\symbf R+\lambda\symbf I$ are
+       $(1-\lambda)\ell_k+\lambda$, and that κ(λ) and r_eff follow from them
+       (exact).
+     - Then run python3 verification/run_all.py.
+
+     Execution
+
+     - Use parallel subagents: one for the TikZ figure (§1) and one for the R
+       script and its run (§3).
+     - I do §2 myself and wire in the paths when both report back.
+
+     Verification
+
+     1. pdffonts on the new PDF lists no fonts, and the SVG renders.
+     2. Rscript -e 'parse("scripts/04_01_stats_deconvolution.R");
+        parse("scripts/04_04_stats_scale_screen.R")' parses both edited stats
+        scripts; they are not rerun. The R script exits 0. qpdf --show-npages
+        gives 3 for each multi-page PDF. In the CSV, κ(1) = 1 and r_eff(1) = G.
+     3. grep -nE '^#{4,} ' on the chapter finds no headings outside code chunks.
+     4. grep 'sec-deconv-scale-panels\|tbl-deconv-scale-panels' docs/*.qmd
+        returns nothing.
+     5. quarto render docs/04-deconvolution-pipeline.qmd (CSV inputs only) gives
+        no unresolved cross-references, and the appendices appear at the end.
+     6. Run git diff --stat in both repositories. Report what was run and what
+        was not.
+
+● 2 background agents launched (↓ to manage)
+   ├ TikZ kappa schematic figure
+   └ R regularisation figures script
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Now the edits for storing the size-normalised loadings.
+● Bash(cd "/home/bastien/OneDrive/02. BNCL (PhD)/PhD
+      projects/DeCovarT_reproducibility" && python3 - <<'EOF'
+      p = "scripts/04_01_stats_deconvolution.R"…)
+  ⎿  1:# mkdir -p logs
+     2:# OPENBLAS_CORETYPE=Haswell OPENBLAS_NUM_THREADS=1 nohup Rscript --n
+     o-save \
+     … +57 lines (ctrl+o to expand)
+  ⎿  Updated ~/OneDrive/02. BNCL (PhD)/PhD
+     projects/DeCovarT_reproducibility/scripts/04_01_stats_deconvolution.R
+     +32 -6
+      54  #   output/grn/plugin/moments_<time>_<gene_set>.rds
+      55  #   output/grn/cv/{cv_selected_tuning.csv, factors_<time>_<gene
+          _set>.rds}
+      56  #   output/deconvolution/scale_screen_summary.csv
+      57 +# Outputs, output/grn/cv/:                                     
+      58 +#   factors_size_<time>_<gene_set>.rds  per-type factor fits of
+         + the                                                           
+      59 +#                             size-normalised cells (per_type[[
+         +type]][[rank]]                                                 
+      60 +#                             with B, psi, align); read back wh
+         +en present                                                     
+      61  # Outputs, output/deconvolution/:
+      62  #   proportions_long.csv      one row per method x sample x cel
+          l type
+      63  #   sweep_diagnostics.csv     one row per DeCovarT fit
+     ...
+      718          `size-normalised` = if (
+      719            any(tasks$arm == "factor" & tasks$input != "raw")
+      720          ) {
+      717 -          fit_factor_types(                                   
+      718 -            panel$y,                                          
+      719 -            panel$cell_type,                                  
+      720 -            types,                                            
+      721 -            factor_ranks,                                     
+      722 -            panel$library_size                                
+      721 +          # Stored like the raw fits of scripts/03_04 (output/
+          +grn/cv/), so                                                  
+      722 +          # the loadings can be read back for figures and reru
+          +ns.                                                           
+      723 +          size_path <- file.path(                             
+      724 +            cv_dir,                                           
+      725 +            paste0("factors_size_", tm, "_", gs, ".rds")      
+      726            )
+      727 +          if (file.exists(size_path)) {                       
+      728 +            readRDS(size_path)$per_type                       
+      729 +          } else {                                            
+      730 +            per_type <- fit_factor_types(                     
+      731 +              panel$y,                                        
+      732 +              panel$cell_type,                                
+      733 +              types,                                          
+      734 +              factor_ranks,                                   
+      735 +              panel$library_size                              
+      736 +            )                                                 
+      737 +            saveRDS(                                          
+      738 +              list(                                           
+      739 +                time = tm,                                    
+      740 +                gene_set = gs,                                
+      741 +                input = "size-normalised",                    
+     … +11 lines (ctrl+o to expand)
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Bash(cd "/home/bastien/OneDrive/02. BNCL (PhD)/PhD
+      projects/DeCovarT_reproducibility" && python3 - <<'EOF'
+      p = "scripts/04_04_stats_scale_screen.R"…)
+  ⎿  '#   nested_cv_summary.csv     one row per unit x rule\n#   informatio
+     n_criteria.csv  one row per unit x factor rank\n#   factors_<time>_<ge
+     ne_set>.rds  factor fits on all cells (not in Git)\n#   fits/
+     … +6 lines (ctrl+o to expand)
+  ⎿  Updated ~/OneDrive/02. BNCL (PhD)/PhD
+     projects/DeCovarT_reproducibility/scripts/04_04_stats_scale_screen.R
+     +15
+      34  #   scale_screen_fits.csv     one row per replicate x triplet x
+           strategy x level
+      35  #   scale_screen_summary.csv  one row per strategy: error at th
+          e chosen
+      36  #                             level, failures, scale recovery, 
+          rank
+      37 +#   scale_screen_factors_<time>.rds  per-type factor fits on th
+         +e                                                              
+      38 +#                             training cells (80%), raw and siz
+         +e-normalised:                                                  
+      39 +#                             per_input[[input]][[type]][[rank]
+         +] with B, psi,                                                 
+      40 +#                             align (not in Git)               
+      41  #   fits/<time>/scale_screen.rds  fit store (not in Git): rows 
+          (one per
+      42  #                             replicate x fit) and compositions
+           (estimate
+      43  #                             and truth per replicate x cell ty
+          pe)
+     ...
+      139        library_size = if (input == "size-normalised") panel$lib
+           rary_size[train]
+      140      )
+      141    })
+      142 +  # Kept for figures (loadings, alignment with the mean); a fe
+          +w MB.                                                         
+      143 +  saveRDS(                                                    
+      144 +    list(                                                     
+      145 +      time = tm,                                              
+      146 +      genes = genes,                                          
+      147 +      types = types,                                          
+      148 +      train = panel$cells[train],                             
+      149 +      per_input = factor_fits                                 
+      150 +    ),                                                        
+      151 +    file.path(out_dir, paste0("scale_screen_factors_", tm, ".r
+          +ds"))                                                         
+      152 +  )                                                           
+      153    covariances <- c(
+      154      lapply(lambda_levels, function(l) {
+      155        stats::setNames(
+
+● Bash(cd "/home/bastien/OneDrive/02. BNCL (PhD)/PhD
+      projects/DeCovarT_reproducibility" && python3 - <<'EOF'
+      p = "scripts/03_04_cv_covariance.R"…)
+  ⎿  - One or more packages recorded in the lockfile are not installed.
+     - Use `renv::status()` for more details.
+     ok
+  ⎿  Updated ~/OneDrive/02. BNCL (PhD)/PhD
+     projects/DeCovarT_reproducibility/scripts/03_04_cv_covariance.R +5 -1
+      40  #   nested_cv_by_fold.csv     one row per unit x outer fold x r
+          ule
+      41  #   nested_cv_summary.csv     one row per unit x rule
+      42  #   information_criteria.csv  one row per unit x factor rank
+      43 -#   factors_<time>_<gene_set>.rds  factor fits on all cells (no
+         -t in Git)                                                      
+      43 +#   factors_<time>_<gene_set>.rds  factor fits on all cells (no
+         +t in Git):                                                     
+      44 +#                             per_type[[type]][[rank]] (B, psi,
+         + loglik)                                                       
+      45 +#                             and shared; read by scripts/04_01
+         + and by                                                        
+      46 +#                             the figures of scripts/04_05. Tra
+         +ck them                                                        
+      47 +#                             after a run: dvc add output/grn/c
+         +v/factors_*.rds                                                
+      48  #   fits/                     checkpoints (not in Git)
+      49 
+      50  # =============================================================
+          =============
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Bash(cd "/home/bastien/OneDrive/02. BNCL (PhD)/PhD
+      projects/DeCovarT_reproducibility" && sed -n 140,147p
+      scripts/04_01_vis_deconvolution.R && python3 - <<'EOF'
+      p = "…)
+  ⎿    ),
+       "lineage_collapse_96h",
+       pdf_dir,
+     … +4 lines (ctrl+o to expand)
+  ⎿  Updated ~/OneDrive/02. BNCL (PhD)/PhD
+     projects/DeCovarT_reproducibility/scripts/04_01_vis_deconvolution.R
+     +16 -11
+      14  #   scale_screen                          error of the strategi
+          es of the
+      15  #                                         light screen (scripts
+          /04_04)
+      16  #   profile_correlation_welch             correlation of the me
+          an profiles
+      17 +# The benchmark, agreement and lineage figures are also written
+         + for the                                                       
+      18 +# Welch panel alone, suffix _welch (main text of docs/04).     
+      19  # The figures of the second pass (scripts/archives/second_pass_
+          variants/)
+      20  # stay in docs/images/deconvolution/ under the prefix second_pa
+          ss_.
+      21 
+     ...
+      62    )
+      63  )
+      64  at_96 <- shown[shown$time == "96h" & shown$gene_set == "welch",
+           ]
+      63 -for (metric in c("rmse", "aitchison")) {                       
+      65 +# Each figure twice: all three gene panels (appendix of the boo
+         +k) and the                                                     
+      66 +# Welch panel alone (main text), suffix _welch.                
+      67 +panel_versions <- list(all = c("welch", "r2_01", "r2_05"), welc
+         +h = "welch")                                                   
+      68 +for (version in names(panel_versions)) for (metric in c("rmse",
+         + "aitchison")) {                                               
+      69    best <- sort(tapply(at_96[[metric]], at_96$label, mean))[1:2]
+      70    save_figure(
+      71      plot_benchmark_metric(
+      67 -      shown,                                                   
+      72 +      shown[shown$gene_set %in% panel_versions[[version]], ],  
+      73        metric,
+      74        title = paste0(
+      75          "Lowest error at 96 h on the Welch panel: ",
+     ...
+       88          "Aitchison distance to the observed composition (zeros
+            at 0.001)"
+       89        }
+       90      ),
+       86 -    paste0("benchmark_", metric),                             
+       91 +    paste0("benchmark_", metric, if (version == "welch") "_wel
+          +ch"),                                                         
+       92      pdf_dir,
+       93      png_dir,
+       94      width = 15,
+       90 -    height = 13                                               
+       95 +    height = if (version == "welch") 6 else 13                
+       96    )
+       97  }
+       98 
+       99  # 1b · Mixture diagnostics (scripts/04_02_stats_mixture_diagno
+           stics.R) ---------
+      100  agreement <- read_table(out_dir, "bulk_reference_agreement.csv
+           ")
+      101  off <- tapply(agreement$share_over_4_fold, agreement$time, mea
+           n)
+     … +39 lines (ctrl+o to expand)
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● Bash(cd "/home/bastien/OneDrive/02. BNCL (PhD)/PhD
+      projects/DeCovarT_reproducibility" && timeout 600 Rscript --no-save
+      --no-restore scripts/04_01_vis_deconvolution.R…)
+  ⎿  - One or more packages recorded in the lockfile are not installed.
+     - Use `renv::status()` for more details.
+     Figures written to /home/bastien/OneDrive/02. BNCL (PhD)/PhD projects/
+     … +15 lines (ctrl+o to expand)
+  ⎿  22 files changed (binary, mode only or too large to show)
+     ~/OneDrive/02. BNCL (PhD)/PhD projects/DeCovarT_reproducibility/output
+     /deconvolution/figures/benchmark_rmse.pdf
+     ~/OneDrive/02. BNCL (PhD)/PhD projects/DeCovarT_reproducibility/docs/i
+     mages/deconvolution/benchmark_rmse.png
+     ~/OneDrive/02. BNCL (PhD)/PhD projects/DeCovarT_reproducibility/output
+     /deconvolution/figures/benchmark_aitchison.pdf
+     +19 more
+
+  Read 2 files (ctrl+o to expand)
+
+● Bash(cd "/home/bastien/OneDrive/02. BNCL (PhD)/PhD
+      projects/DeCovarT_reproducibility" && sed -i 's/  width = if (version ==
+      "welch") 7 else 15,/  width = if (version…)
+  ⎿  Figures written to /home/bastien/OneDrive/02. BNCL (PhD)/PhD projects/
+     DeCovarT_reproducibility/docs/images/deconvolution.
+      M docs/images/deconvolution/benchmark_aitchison.png
+     … +20 lines (ctrl+o to expand)
+  ⎿  Updated ~/OneDrive/02. BNCL (PhD)/PhD
+     projects/DeCovarT_reproducibility/scripts/04_01_vis_deconvolution.R +1
+     -1
+      146    paste0("lineage_collapse_96h", if (version == "welch") "_wel
+           ch"),
+      147    pdf_dir,
+      148    png_dir,
+      149 -  width = if (version == "welch") 7 else 15,                  
+      149 +  width = if (version == "welch") 12 else 15,                 
+      150    height = 10
+      151  )
+      152 
+  ⎿  … +12 files changed
+     ~/OneDrive/02. BNCL (PhD)/PhD projects/DeCovarT_reproducibility/output
+     /deconvolution/figures/benchmark_rmse.pdf
+     ~/OneDrive/02. BNCL (PhD)/PhD projects/DeCovarT_reproducibility/output
+     /deconvolution/figures/benchmark_aitchison.pdf
+     ~/OneDrive/02. BNCL (PhD)/PhD projects/DeCovarT_reproducibility/output
+     /deconvolution/figures/benchmark_rmse_welch.pdf
+     +9 more
+
+● Now the chapter restructuring. I'll do it in stages with a Python script and
+  assertions.
+
+  Made 1 scratchpad edit +152, ran 1 shell command (ctrl+o to expand)
+
+● Bash(cd /tmp/claude-1001/-home-bastien-OneDrive-02--BNCL--PhD--PhD-projects-De
+      CovarT/c70dc111-f20f-4fed-a3d7-9e3e4d15718a/scratchpad && python3 -
+      <<'EOF'
+      p="stage1.p…)
+  ⎿  ok
+     95:## What is being compared {#sec-deconv-models}
+     110:### Second-generation, mean-based {#sec-deconv-second-generation}
+     … +40 lines (ctrl+o to expand)
+  ⎿  Created ~/OneDrive/02. BNCL (PhD)/PhD projects/DeCovarT_reproducibilit
+     y/docs/04-deconvolution-pipeline.qmd.scen1 +36
+       1 +### Scenario 1: each method selects its own genes {#sec-deconv-
+         +own-genes}                                                     
+       2 +                                                               
+       3 +The earlier runs on these data (GastroDeconv2FateMap) called th
+         +e                                                              
+       4 +methods through the `omnideconv` wrapper. Its benchmark states 
+         +the                                                            
+       5 +policy: the authors "consulted the methods' developers for guid
+         +ance on                                                        
+       6 +optimal parameter settings and data type usage. In the absence 
+         +of                                                             
+       7 +feedback, we ran the corresponding method with default paramete
+         +rs and                                                         
+       8 +considered counts and transcripts per million (TPM) as single-c
+         +ell and                                                        
+       9 +bulk RNA-seq input data, respectively" (Dietrich et al. 2026, p
+         +. 5).                                                          
+      10 +Signature building and deconvolution are run as two steps for D
+         +WLS and                                                        
+      11 +SCDC, among others (p. 27).                                    
+      12 +[TODO-cite: Dietrich et al. 2026, omnideconv, Genome Biology 27
+         +:6, doi:10.1186/s13059-026-03955-w; pp. 5, 27; not in Zotero no
+         +r in bibliography/REFERENCES.bib.]{.highlight}                 
+      13 +                                                               
+      14 +Under that policy the three second-generation methods do not se
+         +e the                                                          
+      15 +same genes, nor the same weights (@tbl-deconv-own-genes).      
+      16 +                                                               
+      17 +| Method | Genes kept | Weight of a gene in the fit | Input sca
+         +le in the omnideconv benchmark |                               
+      18 +|---|---|---|---|                                              
+      19 +| DWLS | Markers only. MAST test of each type against the rest;
+         + genes with adjusted $p$ below `pval.cutoff` and $\log_2$ fold 
+         +change above `diff.cutoff = 0.5`; the top $g$ per type by fold 
+         +change, with $g$ scanned from 50 to 200 and chosen to minimise 
+         +the condition number of the signature (`DWLS::buildSignatureMat
+         +rixMAST()`) | Inverse squared fitted value, capped by the dampe
+         +ning constant | `pval_cutoff = 0.05`, other defaults (p. 29); s
+         +cale not reported in the DWLS paragraph |                      
+      20 +| SCDC | No selection: every gene shared by the reference and t
+         +he bulk | Iterated weights $1/(\nu+\hat\delta_g^{2})$, with $\h
+         +at\delta_g$ the residual of gene $g$ (`SCDC::SCDC_prop_ONE()`);
+         + the weighted basis is used (`weight.basis = TRUE`) | Single-ce
+         +ll counts, bulk TPM, one reference (p. 29) |                   
+      21 +| BayesPrism | No marker step inside `new.prism()`; genes that 
+         +dominate a bulk are dropped (`outlier.cut = 0.01`, `outlier.fra
+         +ction = 0.1`). `cleanup.genes()` and `select.marker()` are opti
+         +onal steps left to the user | None explicit: a multinomial like
+         +lihood, so a gene counts in proportion to its reads | Un-normal
+         +ised counts for both inputs; cell types only (p. 27). Gene clea
+         +n-up: not reported |                                           
+      22 +                                                               
+      23 +: Gene selection and gene weights of the three second-generatio
+         +n methods when each runs with its own defaults. Code columns re
+         +ad from the installed packages (DWLS 0.5.2, SCDC 0.0.0.9000, Ba
+         +yesPrism 2.2.3); the last column from Dietrich et al. (2026). {
+         +#tbl-deconv-own-genes}                                         
+      24 +                                                               
+      25 +DWLS is the only one of the three that prunes genes on the cond
+         +ition number of                                                
+      26 +the mean signature. Labelled states at 48 h, 72 h and 96 h lie 
+         +on a                                                           
+      27 +continuum, so neighbouring types have nearly collinear mean pro
+         +files.                                                         
+      28 +A rule that minimises the condition number then keeps the genes
+         + that                                                          
+      29 +separate a few dominant lineages and drops those that distingui
+         +sh                                                             
+      30 +closely related types. SCDC and BayesPrism keep those genes, wi
+         +th a                                                           
+      31 +low weight or a low read share. That would explain estimates th
+         +at                                                             
+      32 +agree between SCDC and BayesPrism and differ for DWLS          
+      33 +(@fig-kappa-gastruloid).                                       
+      34 +                                                               
+      35 +![Hypothesis: sources of disagreement between SCDC, BayesPrism 
+         +and DWLS when each builds its own signature from one reference.
+         + A: shared notation. B: how each method builds its reference. C
+         +: inference step and the proposed reading for gastruloids. The 
+         +picture was generated by an AI image model; it is a teaching sk
+         +etch of the hypothesis, not a result, and its formulas are simp
+         +lified.](images/condition_number_poor_performance_correlated_ce
+         +ll_types.png){#fig-kappa-gastruloid}                           
+      36 +                                                               
+  ⎿  Created ~/OneDrive/02. BNCL (PhD)/PhD projects/DeCovarT_reproducibilit
+     y/docs/04-deconvolution-pipeline.qmd.panels +275
+        1 +#### Results on the three panels {#sec-deconv-scale-panels}   
+        2 +                                                              
+        3 +```{r}                                                        
+        4 +#| label: deconv-panels-values                                
+        5 +#| include: false                                             
+        6 +# Both protocols; lsel above keeps the standard arm only.     
+        7 +lsel_all <- read_deconv("lambda_selection.csv")               
+        8 +strategy_short <- c(                                          
+        9 +  "shrinkage" = "Shrinkage, free",                            
+       10 +  "raw shrinkage, shared_c scales" = "Shrinkage, shared $c$", 
+       11 +  "raw shrinkage, linked scales" = "Shrinkage, linked",       
+       12 +  "size-normalised shrinkage, free scales" = "Size-normalised 
+          +shrinkage",                                                   
+       13 +  "two_param" = "Two-parameter",                              
+       14 +  "factor" = "Factor, free",                                  
+       15 +  "raw factor, positive scales" = "Factor, positive"          
+       16 +)                                                             
+       17 +strategy_text_of <- c(                                        
+       18 +  "shrinkage" = "raw shrinkage with free scales",             
+       19 +  "raw shrinkage, shared_c scales" = "raw shrinkage with a sha
+          +red $c$",                                                     
+       20 +  "raw shrinkage, linked scales" = "raw shrinkage with linked 
+          +scales",                                                      
+       21 +  "size-normalised shrinkage, free scales" = "size-normalised 
+          +shrinkage",                                                   
+       22 +  "two_param" = "the two-parameter arm",                      
+       23 +  "factor" = "factor analysis with free scales",              
+       24 +  "raw factor, positive scales" = "factor analysis with positi
+          +ve scales"                                                    
+       25 +)                                                             
+       26 +slots_all <- unique(lsel_all[c("gene_set", "time")])          
+       27 +slots_all <- slots_all[order(match(slots_all$gene_set, names(p
+          +anel_label)), slots_all$time), ]                              
+       28 +pick_all <- function(family, gene_set, time, arm = "standard")
+          + {                                                            
+       29 +  d <- lsel_all[lsel_all$family == family & lsel_all$gene_set 
+          +== gene_set &                                                 
+       30 +    lsel_all$time == time & lsel_all$arm == arm & lsel_all$sel
+          +ected_profile %in% TRUE, ]                                    
+       31 +  d[1L, ]                                                     
+       32 +}                                                             
+       33 +mean_rmse <- function(family, gene_set) {                     
+       34 +  mean(vapply(c("48h", "72h", "96h"), function(tm) pick_all(fa
+          +mily, gene_set, tm)$rmse, numeric(1)))                        
+       35 +}                                                             
+       36 +                                                              
+       37 +# Shared c fits y' = k_i y with k_i = median(depth) / depth_i 
+          +over the                                                      
+       38 +# replicates of one time x protocol; its log-likelihood for y 
+          +adds                                                          
+       39 +# G * sum_i log k_i (Jacobian of y -> y'). Depths are the colu
+          +mn sums of                                                    
+       40 +# the HTSeq table, written by scripts/04_01_stats_deconvolutio
+          +n.R. The                                                      
+     … +235 lines (ctrl+o to expand)
+  ⎿  … +1 file changed
+     ~/OneDrive/02. BNCL (PhD)/PhD
+     projects/DeCovarT_reproducibility/docs/04-deconvolution-pipeline.qmd
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+● Now stage 2: split tables and figures between main text and the appendix.
+
+  Made 1 scratchpad edit +434, ran 2 shell commands · 1 failed (ctrl+o to expand)
+
+● Bash(cd /tmp/claude-1001/-home-bastien-OneDrive-02--BNCL--PhD--PhD-projects-De
+      CovarT/c70dc111-f20f-4fed-a3d7-9e3e4d15718a/scratchpad && sed -i 's/"""
+      "Cell CV, per…)
+  ⎿  ok
+  ⎿  Created ~/OneDrive/02. BNCL (PhD)/PhD projects/DeCovarT_reproducibilit
+     y/docs/04-deconvolution-pipeline.qmd.appendix.json +23
+       1 +{                                                              
+       2 + "appendix": [                                                 
+       3 +  "- **The small panel is worse for every comparator at 96 h** 
+         +(0.27 to\n  0.42) and at 48 h, where 17 genes carry the fit. Th
+         +e panel matters\n  more than the method there.\n",             
+       4 +  "FIGPAIR",                                                   
+       5 +  "FIGSIEVE",                                                  
+       6 +  "- **On the small panel at 96 h the QP is worse than DeCovarT
+         +** (0.36\n  against 0.21) and does not converge. The result abo
+         +ve is a result\n  about the Welch panel.\n",                   
+       7 +  "- **Small panels:** no gain (0.21 → 0.28 to 0.32 at 96 h).\n
+         +",                                                             
+       8 +  "- **The covariance does not separate the lineage on the 635-
+         +gene\n  panel** at 96 h: the Mahalanobis separation of caudal f
+         +rom\n  pre-somitic mesoderm is 0.22 times the diagonal one, aga
+         +inst 3.5\n  times on the Welch panel (scratch check on `96h_CTL
+         +_rep1`).\n",                                                   
+       9 +  "- **Over the three panels,** `r sum(lin_all_ok)` of `r nrow(
+         +lin)`\n  method × panel means are at 0.04 or below after summin
+         +g\n  (@fig-deconv-lineage-collapse-all).\n- **The small panel l
+         +oses the split, not the lineage.** On the\n  $R^2_D\\ge 5\\%$ p
+         +anel the five-part error is higher than on the Welch\n  panel f
+         +or `r sum(lin_wide$rmse_five_parts_05 > lin_wide$rmse_five_part
+         +s_w)`\n  of the `r nrow(lin_wide)` methods fitted on both, whil
+         +e the summed\n  error stays small. On the\n  $R^2_D\\ge 1\\%$ p
+         +anel the lowest five-part error is\n  `r lin_r01_best$label` (`
+         +r f3(lin_r01_best$rmse_five_parts)`).\n  Reading (not tested): 
+         +the genes that separate the three types are\n  in the Welch pan
+         +el and mostly absent from its high-deviance subset.\n",        
+      10 +  "FIGLINEAGE",                                                
+      11 +  "FIGAGREE",                                                  
+      12 +  "- **Firth penalty, 17-gene panel at 48 h:** the RMSE goes fr
+         +om 0.74\n  to 0.57; on the Welch panel at 72 h the estimates ar
+         +e unchanged to\n  the third decimal.\n",                       
+      13 +  "- **Small panels.** Along the shrinkage levels the 17-gene p
+         +anel at\n  48 h stays at `r span(small(\"48h\"))` and the 635-g
+         +ene panel at 96 h\n  at `r span(small(\"96h\"))`. At 72 h the 1
+         +40-gene panel gives\n  `r span(small(\"72h\"))`.\n",           
+      14 +  "FIGSEL",                                                    
+      15 +  "EARLY",                                                     
+      16 +  "RANKING"                                                    
+      17 + ],                                                            
+      18 + "fig_pair": "![Root mean squared error per replicate, every me
+         +thod, gene panel and\ntreatment of the bulk. Rows of panels: me
+         +thods; columns: bulk times.\nSmall points: the three standard-W
+         +nt replicates; large point: their\nmean. Black: comparators and
+         + the QP stage of the multivariate\nRNA-Sieve; blue: DeCovarT by
+         + trust-region Newton; orange: DeCovarT by\nL-BFGS-B, or BFGS fo
+         +r the Firth\nfits.](images/deconvolution/second_pass_benchmark_
+         +rmse.png){#fig-deconv-rmse}\n\n![Aitchison distance to the obse
+         +rved composition, same layout as\n@fig-deconv-rmse. Zeros are r
+         +eplaced at 0.001 before the centred\nlog-ratio. The distance de
+         +pends on the number of parts (3 at 48 h and\n72 h, 5 at 96 h), 
+         +so it compares methods within a column\nonly.](images/deconvolu
+         +tion/second_pass_benchmark_aitchison.png){#fig-deconv-aitchison
+         +}",                                                            
+      19 + "fig_sieve": "![Stages of the multivariate RNA-Sieve, RMSE per
+         + replicate. Rows of\npanels: covariance input; columns: bulk ti
+         +mes. Stages are fitted from\ntop to bottom, each from the previ
+         +ous one. Blue: Welch panel; orange:\ngenes with $R^2_D\\ge 5\\%
+         +$. Small points: the three standard-Wnt\nreplicates; large poin
+         +t: their\nmean.](images/deconvolution/second_pass_sieve_stages_
+         +rmse.png){#fig-deconv-sieve}",                                 
+      20 + "fig_lineage_all": "![RMSE at 96 h before and after the three 
+         +paraxial-mesoderm types\n(caudal mesoderm, pre-somitic mesoderm
+         +, somite differentiation front)\nare summed into one part, mean
+         + over the three standard-Wnt replicates.\nPanels: gene panels; 
+         +rows: methods, DeCovarT at the level chosen by the\nbulk likeli
+         +hood (no suffix) or by held-out cells (\"per type\",\n\"common\
+         +", \"shared loadings\"). Orange: five scored types; blue: three
+         +\nparts, lineage summed; grey segment: the error removed by sum
+         +ming.\nThe factor-analysis row with free scales has no point on
+         + the\n$R^2_D\\ge 5\\%$ panel: every level stopped on a non-posi
+         +tive\nscale.](images/deconvolution/lineage_collapse_96h.png){#f
+         +ig-deconv-lineage-collapse-all}",                              
+      21 + "fig_agree_all": "![Bulk against the reference mean mixed at t
+         +he observed composition,\nstandard-Wnt samples. Left: Pearson c
+         +orrelation of\n$\\log(1+y_g)$ with $\\log(1+(\\boldsymbol{\\mu}
+         +\\boldsymbol{p})_g)$;\nright: share of genes whose bulk-to-refe
+         +rence ratio is more than 4-fold\nfrom the median ratio of the s
+         +ample. Horizontal axis: bulk time;\ncolours: gene panel (blue: 
+         +Welch; green: $R^2_D\\ge 1\\%$; orange:\n$R^2_D\\ge 5\\%$). Sma
+         +ll points: the three replicates; large point:\ntheir mean. Both
+         + vertical axes run from 0 to\n1.](images/deconvolution/bulk_ref
+         +erence_agreement.png){#fig-deconv-agreement-all}",             
+      22 + "fig_sel_all": "![Root mean squared error of the proportions, 
+         +every method of the full\nrun, at the levels chosen without the
+         + observed composition. Rows of\npanels: gene panels (Welch, $R^
+         +2_D\\ge 1\\%$, $R^2_D\\ge 5\\%$); columns:\nbulk times, each wi
+         +th its own horizontal scale. Point: mean over the\nthree standa
+         +rd-Wnt replicates; segment: their range. Dark blue: DeCovarT\nw
+         +ith the level chosen by the summed bulk likelihood (one row per
+         +\ncovariance and scale strategy); light blue: DeCovarT with the
+         + levels\nchosen on held-out cells; orange: other methods. The t
+         +itle names the\nlowest mean at 96 h on the Welch\npanel.](image
+         +s/deconvolution/benchmark_rmse.png){#fig-deconv-rmse-selected-a
+         +ll}\n\n![Aitchison distance to the observed composition (zeros 
+         +replaced at\n0.001), same layout and colours as @fig-deconv-rms
+         +e-selected-all-all. The\ndistance depends on the number of part
+         +s, so it compares methods within\na column only. The title name
+         +s the lowest mean distance at 96 h on the\nWelch panel.](images
+         +/deconvolution/benchmark_aitchison.png){#fig-deconv-aitchison-s
+         +elected-all}"                                                  
+      23 +}                                                              
+         \ No newline at end of file
+  ⎿  … +1 file changed
+     ~/OneDrive/02. BNCL (PhD)/PhD
+     projects/DeCovarT_reproducibility/docs/04-deconvolution-pipeline.qmd
+
+  Made 1 scratchpad edit +272, ran 1 shell command (ctrl+o to expand)
+
+● Bash(cd /tmp/claude-1001/-home-bastien-OneDrive-02--BNCL--PhD--PhD-projects-De
+      CovarT/c70dc111-f20f-4fed-a3d7-9e3e4d15718a/scratchpad && python3 -
+      <<'EOF'
+      p="stage3.p…)
+  ⎿  ok
+     95:## Summary {#sec-deconv-summary}
+     138:## What is being compared {#sec-deconv-models}
+     … +25 lines (ctrl+o to expand)
+  ⎿  Updated ~/OneDrive/02. BNCL (PhD)/PhD
+     projects/DeCovarT_reproducibility/docs/04-deconvolution-pipeline.qmd
+     +322 -2
+       92  module <- chk[chk$check == "leave-one-module-out", ]
+       93  ```
+       94 
+       95 +## Summary {#sec-deconv-summary}                              
+       96 +                                                              
+       97 +```{r}                                                        
+       98 +#| label: deconv-summary-values                               
+       99 +#| include: false                                             
+      100 +sum_sel <- lapply(c("48h", "72h", "96h"), function(tm) pick_of
+          +("shrinkage", "welch", tm))                                   
+      101 +names(sum_sel) <- c("48h", "72h", "96h")                      
+      102 +sum_comp <- sort(vapply(                                      
+      103 +  unique(bm$stem[bm$family == "comparator"]), rmse_of, numeric
+          +(1),                                                          
+      104 +  time = "96h", gene_set = "welch"                            
+      105 +))                                                            
+      106 +```                                                           
+      107 +                                                              
+      108 +- **Question.** Does a per-type covariance improve deconvoluti
+          +on of the                                                     
+      109 +  Suppinger bulk samples (GSE229386, 48, 72 and 96 h, three st
+          +andard-Wnt                                                    
+      110 +  replicates per time) against mean-based methods, when every 
+          +method                                                        
+      111 +  receives the same genes and the same scored cells?          
+      112 +- **Design.** One DeCovarT model (single-cell law, raw-count  
+      113 +  covariances, profiled scales, L-BFGS-B); only the regularisa
+          +tion of                                                       
+      114 +  the within-type correlation moves, and its level is chosen b
+          +y the                                                         
+      115 +  bulk likelihood summed over the replicates, never by the obs
+          +erved                                                         
+      116 +  composition. The observed composition is the share of scored
+          + cells in                                                     
+      117 +  the single-cell annotation.                                 
+      118 +- **Main result, Welch panel.** With shrinkage of the raw cova
+          +riance the                                                    
+      119 +  bulk likelihood chooses                                     
+      120 +  `r and_list(paste(vapply(sum_sel, function(x) format(x$tunin
+          +g), ""), "at", hours(names(sum_sel))))`;                      
+      121 +  the RMSE there is                                           
+      122 +  `r and_list(paste(f3(vapply(sum_sel, function(x) x$rmse, 0))
+          +, "at", hours(names(sum_sel))))`.                             
+      123 +  The best comparator at 96 h is `r names(sum_comp)[[1L]]`    
+      124 +  (`r f3(sum_comp[[1L]])`).                                   
+      125 +- **Where the error sits.** At 96 h most of the remaining erro
+          +r is a                                                        
+      126 +  split inside paraxial mesoderm, whose mean profiles are near
+          +ly                                                            
+      127 +  collinear (@tbl-deconv-lineage); the bulk is far from the re
+          +ference                                                       
+      128 +  mixture on many genes (@tbl-deconv-agreement).              
+      129 +- **What the likelihood can and cannot do.** It ranks levels w
+          +ithin one                                                     
+      130 +  covariance family; across families a higher likelihood is no
+          +t a                                                           
+      131 +  lower error (@sec-deconv-strategy-ranking). Factor analysis 
+          +needs                                                         
+     … +323 lines (ctrl+o to expand)
+  ⎿  Deleted ~/OneDrive/02. BNCL (PhD)/PhD projects/DeCovarT_reproducibilit
+     y/docs/04-deconvolution-pipeline.qmd.appendix.json -23
+       1 -{                                                              
+       2 - "appendix": [                                                 
+       3 -  "- **The small panel is worse for every comparator at 96 h** 
+         -(0.27 to\n  0.42) and at 48 h, where 17 genes carry the fit. Th
+         -e panel matters\n  more than the method there.\n",             
+       4 -  "FIGPAIR",                                                   
+       5 -  "FIGSIEVE",                                                  
+       6 -  "- **On the small panel at 96 h the QP is worse than DeCovarT
+         -** (0.36\n  against 0.21) and does not converge. The result abo
+         -ve is a result\n  about the Welch panel.\n",                   
+       7 -  "- **Small panels:** no gain (0.21 → 0.28 to 0.32 at 96 h).\n
+         -",                                                             
+       8 -  "- **The covariance does not separate the lineage on the 635-
+         -gene\n  panel** at 96 h: the Mahalanobis separation of caudal f
+         -rom\n  pre-somitic mesoderm is 0.22 times the diagonal one, aga
+         -inst 3.5\n  times on the Welch panel (scratch check on `96h_CTL
+         -_rep1`).\n",                                                   
+       9 -  "- **Over the three panels,** `r sum(lin_all_ok)` of `r nrow(
+         -lin)`\n  method × panel means are at 0.04 or below after summin
+         -g\n  (@fig-deconv-lineage-collapse-all).\n- **The small panel l
+         -oses the split, not the lineage.** On the\n  $R^2_D\\ge 5\\%$ p
+         -anel the five-part error is higher than on the Welch\n  panel f
+         -or `r sum(lin_wide$rmse_five_parts_05 > lin_wide$rmse_five_part
+         -s_w)`\n  of the `r nrow(lin_wide)` methods fitted on both, whil
+         -e the summed\n  error stays small. On the\n  $R^2_D\\ge 1\\%$ p
+         -anel the lowest five-part error is\n  `r lin_r01_best$label` (`
+         -r f3(lin_r01_best$rmse_five_parts)`).\n  Reading (not tested): 
+         -the genes that separate the three types are\n  in the Welch pan
+         -el and mostly absent from its high-deviance subset.\n",        
+      10 -  "FIGLINEAGE",                                                
+      11 -  "FIGAGREE",                                                  
+      12 -  "- **Firth penalty, 17-gene panel at 48 h:** the RMSE goes fr
+         -om 0.74\n  to 0.57; on the Welch panel at 72 h the estimates ar
+         -e unchanged to\n  the third decimal.\n",                       
+      13 -  "- **Small panels.** Along the shrinkage levels the 17-gene p
+         -anel at\n  48 h stays at `r span(small(\"48h\"))` and the 635-g
+         -ene panel at 96 h\n  at `r span(small(\"96h\"))`. At 72 h the 1
+         -40-gene panel gives\n  `r span(small(\"72h\"))`.\n",           
+      14 -  "FIGSEL",                                                    
+      15 -  "EARLY",                                                     
+      16 -  "RANKING"                                                    
+      17 - ],                                                            
+      18 - "fig_pair": "![Root mean squared error per replicate, every me
+         -thod, gene panel and\ntreatment of the bulk. Rows of panels: me
+         -thods; columns: bulk times.\nSmall points: the three standard-W
+         -nt replicates; large point: their\nmean. Black: comparators and
+         - the QP stage of the multivariate\nRNA-Sieve; blue: DeCovarT by
+         - trust-region Newton; orange: DeCovarT by\nL-BFGS-B, or BFGS fo
+         -r the Firth\nfits.](images/deconvolution/second_pass_benchmark_
+         -rmse.png){#fig-deconv-rmse}\n\n![Aitchison distance to the obse
+         -rved composition, same layout as\n@fig-deconv-rmse. Zeros are r
+         -eplaced at 0.001 before the centred\nlog-ratio. The distance de
+         -pends on the number of parts (3 at 48 h and\n72 h, 5 at 96 h), 
+         -so it compares methods within a column\nonly.](images/deconvolu
+         -tion/second_pass_benchmark_aitchison.png){#fig-deconv-aitchison
+         -}",                                                            
+      19 - "fig_sieve": "![Stages of the multivariate RNA-Sieve, RMSE per
+         - replicate. Rows of\npanels: covariance input; columns: bulk ti
+         -mes. Stages are fitted from\ntop to bottom, each from the previ
+         -ous one. Blue: Welch panel; orange:\ngenes with $R^2_D\\ge 5\\%
+         -$. Small points: the three standard-Wnt\nreplicates; large poin
+         -t: their\nmean.](images/deconvolution/second_pass_sieve_stages_
+         -rmse.png){#fig-deconv-sieve}",                                 
+      20 - "fig_lineage_all": "![RMSE at 96 h before and after the three 
+         -paraxial-mesoderm types\n(caudal mesoderm, pre-somitic mesoderm
+         -, somite differentiation front)\nare summed into one part, mean
+         - over the three standard-Wnt replicates.\nPanels: gene panels; 
+         -rows: methods, DeCovarT at the level chosen by the\nbulk likeli
+         -hood (no suffix) or by held-out cells (\"per type\",\n\"common\
+         -", \"shared loadings\"). Orange: five scored types; blue: three
+         -\nparts, lineage summed; grey segment: the error removed by sum
+         -ming.\nThe factor-analysis row with free scales has no point on
+         - the\n$R^2_D\\ge 5\\%$ panel: every level stopped on a non-posi
+         -tive\nscale.](images/deconvolution/lineage_collapse_96h.png){#f
+         -ig-deconv-lineage-collapse-all}",                              
+      21 - "fig_agree_all": "![Bulk against the reference mean mixed at t
+         -he observed composition,\nstandard-Wnt samples. Left: Pearson c
+         -orrelation of\n$\\log(1+y_g)$ with $\\log(1+(\\boldsymbol{\\mu}
+         -\\boldsymbol{p})_g)$;\nright: share of genes whose bulk-to-refe
+         -rence ratio is more than 4-fold\nfrom the median ratio of the s
+         -ample. Horizontal axis: bulk time;\ncolours: gene panel (blue: 
+         -Welch; green: $R^2_D\\ge 1\\%$; orange:\n$R^2_D\\ge 5\\%$). Sma
+         -ll points: the three replicates; large point:\ntheir mean. Both
+         - vertical axes run from 0 to\n1.](images/deconvolution/bulk_ref
+         -erence_agreement.png){#fig-deconv-agreement-all}",             
+      22 - "fig_sel_all": "![Root mean squared error of the proportions, 
+         -every method of the full\nrun, at the levels chosen without the
+         - observed composition. Rows of\npanels: gene panels (Welch, $R^
+         -2_D\\ge 1\\%$, $R^2_D\\ge 5\\%$); columns:\nbulk times, each wi
+         -th its own horizontal scale. Point: mean over the\nthree standa
+         -rd-Wnt replicates; segment: their range. Dark blue: DeCovarT\nw
+         -ith the level chosen by the summed bulk likelihood (one row per
+         -\ncovariance and scale strategy); light blue: DeCovarT with the
+         - levels\nchosen on held-out cells; orange: other methods. The t
+         -itle names the\nlowest mean at 96 h on the Welch\npanel.](image
+         -s/deconvolution/benchmark_rmse.png){#fig-deconv-rmse-selected-a
+         -ll}\n\n![Aitchison distance to the observed composition (zeros 
+         -replaced at\n0.001), same layout and colours as @fig-deconv-rms
+         -e-selected-all-all. The\ndistance depends on the number of part
+         -s, so it compares methods within\na column only. The title name
+         -s the lowest mean distance at 96 h on the\nWelch panel.](images
+         -/deconvolution/benchmark_aitchison.png){#fig-deconv-aitchison-s
+         -elected-all}"                                                  
+      23 -}                                                              
+         \ No newline at end of file
+  ⎿  Deleted ~/OneDrive/02. BNCL (PhD)/PhD projects/DeCovarT_reproducibilit
+     y/docs/04-deconvolution-pipeline.qmd.scen1 -36
+       1 -### Scenario 1: each method selects its own genes {#sec-deconv-
+         -own-genes}                                                     
+       2 -                                                               
+       3 -The earlier runs on these data (GastroDeconv2FateMap) called th
+         -e                                                              
+       4 -methods through the `omnideconv` wrapper. Its benchmark states 
+         -the                                                            
+       5 -policy: the authors "consulted the methods' developers for guid
+         -ance on                                                        
+       6 -optimal parameter settings and data type usage. In the absence 
+         -of                                                             
+       7 -feedback, we ran the corresponding method with default paramete
+         -rs and                                                         
+       8 -considered counts and transcripts per million (TPM) as single-c
+         -ell and                                                        
+       9 -bulk RNA-seq input data, respectively" (Dietrich et al. 2026, p
+         -. 5).                                                          
+      10 -Signature building and deconvolution are run as two steps for D
+         -WLS and                                                        
+      11 -SCDC, among others (p. 27).                                    
+      12 -[TODO-cite: Dietrich et al. 2026, omnideconv, Genome Biology 27
+         -:6, doi:10.1186/s13059-026-03955-w; pp. 5, 27; not in Zotero no
+         -r in bibliography/REFERENCES.bib.]{.highlight}                 
+      13 -                                                               
+      14 -Under that policy the three second-generation methods do not se
+         -e the                                                          
+      15 -same genes, nor the same weights (@tbl-deconv-own-genes).      
+      16 -                                                               
+      17 -| Method | Genes kept | Weight of a gene in the fit | Input sca
+         -le in the omnideconv benchmark |                               
+      18 -|---|---|---|---|                                              
+      19 -| DWLS | Markers only. MAST test of each type against the rest;
+         - genes with adjusted $p$ below `pval.cutoff` and $\log_2$ fold 
+         -change above `diff.cutoff = 0.5`; the top $g$ per type by fold 
+         -change, with $g$ scanned from 50 to 200 and chosen to minimise 
+         -the condition number of the signature (`DWLS::buildSignatureMat
+         -rixMAST()`) | Inverse squared fitted value, capped by the dampe
+         -ning constant | `pval_cutoff = 0.05`, other defaults (p. 29); s
+         -cale not reported in the DWLS paragraph |                      
+      20 -| SCDC | No selection: every gene shared by the reference and t
+         -he bulk | Iterated weights $1/(\nu+\hat\delta_g^{2})$, with $\h
+         -at\delta_g$ the residual of gene $g$ (`SCDC::SCDC_prop_ONE()`);
+         - the weighted basis is used (`weight.basis = TRUE`) | Single-ce
+         -ll counts, bulk TPM, one reference (p. 29) |                   
+      21 -| BayesPrism | No marker step inside `new.prism()`; genes that 
+         -dominate a bulk are dropped (`outlier.cut = 0.01`, `outlier.fra
+         -ction = 0.1`). `cleanup.genes()` and `select.marker()` are opti
+         -onal steps left to the user | None explicit: a multinomial like
+         -lihood, so a gene counts in proportion to its reads | Un-normal
+         -ised counts for both inputs; cell types only (p. 27). Gene clea
+         -n-up: not reported |                                           
+      22 -                                                               
+      23 -: Gene selection and gene weights of the three second-generatio
+         -n methods when each runs with its own defaults. Code columns re
+         -ad from the installed packages (DWLS 0.5.2, SCDC 0.0.0.9000, Ba
+         -yesPrism 2.2.3); the last column from Dietrich et al. (2026). {
+         -#tbl-deconv-own-genes}                                         
+      24 -                                                               
+      25 -DWLS is the only one of the three that prunes genes on the cond
+         -ition number of                                                
+      26 -the mean signature. Labelled states at 48 h, 72 h and 96 h lie 
+         -on a                                                           
+      27 -continuum, so neighbouring types have nearly collinear mean pro
+         -files.                                                         
+      28 -A rule that minimises the condition number then keeps the genes
+         - that                                                          
+      29 -separate a few dominant lineages and drops those that distingui
+         -sh                                                             
+      30 -closely related types. SCDC and BayesPrism keep those genes, wi
+         -th a                                                           
+      31 -low weight or a low read share. That would explain estimates th
+         -at                                                             
+      32 -agree between SCDC and BayesPrism and differ for DWLS          
+      33 -(@fig-kappa-gastruloid).                                       
+      34 -                                                               
+      35 -![Hypothesis: sources of disagreement between SCDC, BayesPrism 
+         -and DWLS when each builds its own signature from one reference.
+         - A: shared notation. B: how each method builds its reference. C
+         -: inference step and the proposed reading for gastruloids. The 
+         -picture was generated by an AI image model; it is a teaching sk
+         -etch of the hypothesis, not a result, and its formulas are simp
+         -lified.](images/condition_number_poor_performance_correlated_ce
+         -ll_types.png){#fig-kappa-gastruloid}                           
+      36 -                                                               
+  ⎿  Deleted ~/OneDrive/02. BNCL (PhD)/PhD projects/DeCovarT_reproducibilit
+     y/docs/04-deconvolution-pipeline.qmd.panels -275
+        1 -#### Results on the three panels {#sec-deconv-scale-panels}   
+        2 -                                                              
+        3 -```{r}                                                        
+        4 -#| label: deconv-panels-values                                
+        5 -#| include: false                                             
+        6 -# Both protocols; lsel above keeps the standard arm only.     
+        7 -lsel_all <- read_deconv("lambda_selection.csv")               
+        8 -strategy_short <- c(                                          
+        9 -  "shrinkage" = "Shrinkage, free",                            
+       10 -  "raw shrinkage, shared_c scales" = "Shrinkage, shared $c$", 
+       11 -  "raw shrinkage, linked scales" = "Shrinkage, linked",       
+       12 -  "size-normalised shrinkage, free scales" = "Size-normalised 
+          -shrinkage",                                                   
+       13 -  "two_param" = "Two-parameter",                              
+       14 -  "factor" = "Factor, free",                                  
+       15 -  "raw factor, positive scales" = "Factor, positive"          
+       16 -)                                                             
+       17 -strategy_text_of <- c(                                        
+       18 -  "shrinkage" = "raw shrinkage with free scales",             
+       19 -  "raw shrinkage, shared_c scales" = "raw shrinkage with a sha
+          -red $c$",                                                     
+       20 -  "raw shrinkage, linked scales" = "raw shrinkage with linked 
+          -scales",                                                      
+       21 -  "size-normalised shrinkage, free scales" = "size-normalised 
+          -shrinkage",                                                   
+       22 -  "two_param" = "the two-parameter arm",                      
+       23 -  "factor" = "factor analysis with free scales",              
+       24 -  "raw factor, positive scales" = "factor analysis with positi
+          -ve scales"                                                    
+       25 -)                                                             
+       26 -slots_all <- unique(lsel_all[c("gene_set", "time")])          
+       27 -slots_all <- slots_all[order(match(slots_all$gene_set, names(p
+          -anel_label)), slots_all$time), ]                              
+       28 -pick_all <- function(family, gene_set, time, arm = "standard")
+          - {                                                            
+       29 -  d <- lsel_all[lsel_all$family == family & lsel_all$gene_set 
+          -== gene_set &                                                 
+       30 -    lsel_all$time == time & lsel_all$arm == arm & lsel_all$sel
+          -ected_profile %in% TRUE, ]                                    
+       31 -  d[1L, ]                                                     
+       32 -}                                                             
+       33 -mean_rmse <- function(family, gene_set) {                     
+       34 -  mean(vapply(c("48h", "72h", "96h"), function(tm) pick_all(fa
+          -mily, gene_set, tm)$rmse, numeric(1)))                        
+       35 -}                                                             
+       36 -                                                              
+       37 -# Shared c fits y' = k_i y with k_i = median(depth) / depth_i 
+          -over the                                                      
+       38 -# replicates of one time x protocol; its log-likelihood for y 
+          -adds                                                          
+       39 -# G * sum_i log k_i (Jacobian of y -> y'). Depths are the colu
+          -mn sums of                                                    
+       40 -# the HTSeq table, written by scripts/04_01_stats_deconvolutio
+          -n.R. The                                                      
+     … +235 lines (ctrl+o to expand)
+  ⎿  … +1 file changed
+     ~/OneDrive/02. BNCL (PhD)/PhD projects/DeCovarT_reproducibility/docs/i
+     mages/src/kappa_gastruloid/kappa_gastruloid.log
+  ⎿  (another command ran in this repository at the same time; a change
+     made by either may show under either result)
+
+● Bash(cd "/home/bastien/OneDrive/02. BNCL (PhD)/PhD
+      projects/DeCovarT_reproducibility" && python3 - <<'EOF'
+      p="docs/04-deconvolution-pipeline.qmd"; s=open(p).read()…)
+  ⎿  1773:# Factor arm: replicate fits with a non-positive scale
+  ⎿  Updated ~/OneDrive/02. BNCL (PhD)/PhD
+     projects/DeCovarT_reproducibility/docs/04-deconvolution-pipeline.qmd
+     +1 -10
+      1733    "factor" = "Factor, free",
+      1734    "raw factor, positive scales" = "Factor, positive"
+      1735  )
+      1736 -strategy_text_of <- c(                                       
+      1737 -  "shrinkage" = "raw shrinkage with free scales",            
+      1738 -  "raw shrinkage, shared_c scales" = "raw shrinkage with a sh
+           -ared $c$",                                                   
+      1739 -  "raw shrinkage, linked scales" = "raw shrinkage with linked
+           - scales",                                                    
+      1740 -  "size-normalised shrinkage, free scales" = "size-normalised
+           - shrinkage",                                                 
+      1741 -  "two_param" = "the two-parameter arm",                     
+      1742 -  "factor" = "factor analysis with free scales",             
+      1743 -  "raw factor, positive scales" = "factor analysis with posit
+           -ive scales"                                                  
+      1744 -)                                                            
+      1736  slots_all <- unique(lsel_all[c("gene_set", "time")])
+      1737  slots_all <- slots_all[order(match(slots_all$gene_set, names(
+            panel_label)), slots_all$time), ]
+      1738  pick_all <- function(family, gene_set, time, arm = "standard"
+            ) {
+     ...
+      1770    top <- top[order(-top$loglik_y), ]
+      1771    list(families = top$family, label = paste(strategy_short[to
+            p$family], collapse = " ≈ "))
+      1772  }
+      1782 -# Factor arm: failures, bound, free against positive         
+      1773 +# Factor arm: replicate fits with a non-positive scale       
+      1774  fac_rows <- sweep[sweep$family == "factor", ]
+      1775  fac_neg <- neg_scale[sweep$family == "factor"]
+      1776  ```
+
+● Skill(deslop)
+  ⎿  Loaded skill
+
+● Bash(cd "/home/bastien/OneDrive/02. BNCL (PhD)/PhD
+      projects/DeCovarT_reproducibility" && python3 - <<'EOF'
+      p="docs/04-deconvolution-pipeline.qmd"; s=open(p).read()…)
+  ⎿  ## Summary {#sec-deconv-summary}
+
+     ```{r}
+     … +39 lines (ctrl+o to expand)
+  ⎿  Updated ~/OneDrive/02. BNCL (PhD)/PhD
+     projects/DeCovarT_reproducibility/docs/04-deconvolution-pipeline.qmd
+     +9 -9
+      105  ))
+      106  ```
+      107 
+      108 -- **Question.** Does a per-type covariance improve deconvoluti
+          -on of the                                                     
+      108 +- The chapter asks whether a per-type covariance improves deco
+          +nvolution of the                                              
+      109    Suppinger bulk samples (GSE229386, 48, 72 and 96 h, three st
+           andard-Wnt
+      110    replicates per time) against mean-based methods, when every
+           method
+      111 -  receives the same genes and the same scored cells?          
+      112 -- **Design.** One DeCovarT model (single-cell law, raw-count  
+      111 +  receives the same genes and the same scored cells.          
+      112 +- One DeCovarT model is fitted throughout (single-cell law, ra
+          +w-count                                                       
+      113    covariances, profiled scales, L-BFGS-B); only the regularisa
+           tion of
+      114    the within-type correlation moves, and its level is chosen b
+           y the
+      115    bulk likelihood summed over the replicates, never by the obs
+           erved
+      116    composition. The observed composition is the share of scored
+            cells in
+      117    the single-cell annotation.
+      118 -- **Main result, Welch panel.** With shrinkage of the raw cova
+          -riance the                                                    
+      118 +- On the Welch panel, with shrinkage of the raw covariance, th
+          +e                                                             
+      119    bulk likelihood chooses
+      120    `r and_list(paste(vapply(sum_sel, function(x) format(x$tunin
+           g), ""), "at", hours(names(sum_sel))))`;
+      121    the RMSE there is
+      122    `r and_list(paste(f3(vapply(sum_sel, function(x) x$rmse, 0))
+           , "at", hours(names(sum_sel))))`.
+      123    The best comparator at 96 h is `r names(sum_comp)[[1L]]`
+      124    (`r f3(sum_comp[[1L]])`).
+      125 -- **Where the error sits.** At 96 h most of the remaining erro
+          -r is a                                                        
+      125 +- At 96 h most of the remaining error is a                    
+      126    split inside paraxial mesoderm, whose mean profiles are near
+           ly
+      127    collinear (@tbl-deconv-lineage); the bulk is far from the re
+           ference
+      128    mixture on many genes (@tbl-deconv-agreement).
+      129 -- **What the likelihood can and cannot do.** It ranks levels w
+          -ithin one                                                     
+      129 +- The bulk likelihood ranks levels within one                 
+      130    covariance family; across families a higher likelihood is no
+           t a
+      131    lower error (@sec-deconv-strategy-ranking). Factor analysis
+           needs
+      132    positive scales (@sec-deconv-scale-positivity).
+      133 -- **Limits.** Three replicates per protocol and time, no inter
+          -val on a                                                      
+      133 +- Limits: three replicates per protocol and time, no interval 
+          +on a                                                          
+      134    chosen level, one reference per time. The smaller gene panel
+           s and the
+      135    case where each method selects its own genes are in the appe
+           ndix
+      136    (@sec-deconv-small-panels, @sec-deconv-own-genes).
+     ...
+      1710  error, and only the bulk likelihood is read there. The early
+            arm is fitted
+     … +15 lines (ctrl+o to expand)
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+● Bash(cd "/home/bastien/OneDrive/02. BNCL (PhD)/PhD
+      projects/DeCovarT_reproducibility" && python3 - <<'EOF'
+      p="verification/sympy/check_covariance_selection.py"; s=op…)
+  ⎿  Installed 2 packages in 38ms
+     [
+       {
+     … +42 lines (ctrl+o to expand)
+  ⎿  (another command ran in this repository at the same time; a change
+     made by either may show under either result)
+
+  Ran 1 shell command · 1 failed (ctrl+o to expand)
+
+● Bash(cd "/home/bastien/OneDrive/02. BNCL (PhD)/PhD
+      projects/DeCovarT_reproducibility/docs" && python3 - <<'EOF'
+      import re,glob…)
+  ⎿  missing: ['fig-deconv-reg-map', 'fig-deconv-reg-path', 'fig-deconv-reg
+     -spectra']
+     dups: []
+  ⎿  (another command ran in this repository at the same time; a change
+     made by either may show under either result)
+  Ran 1 shell command (ctrl+o to expand)
+
+● The chapter is restructured. Two background agents are still running: one
+  draws the TikZ figure, the other produces the regularisation figures. I'll
+  wire in their outputs when they report.
+
+› Message from general-purpose
+  I redrew the AI-generated schematic as a LuaLaTeX TikZ figure and built the
+  portable PDF and SVG. The PDF has no fonts and the SVG renders the same as the
+  PDF. The old PNG is archived (identical copy, checked with `cmp`) and removed
+  with `git rm`. I did not edit any `.qmd` file and did not commit. Your
+  chapter edit already points at the new SVG
+  (`docs/04-deconvolution-pipeline.qmd`, line 2094), and no `.qmd` mentions the
+  old PNG any more.
+
+  **Files created** (all untracked):
+  - `/home/bastien/OneDrive/02. BNCL (PhD)/PhD projects/DeCovarT_reproducibility
+  /docs/images/src/kappa_gastruloid/kappa_gastruloid.tex`: the source, with a
+  header comment giving the build commands. The aux, log and pdf build files
+  were deleted, so only the `.tex` is left.
+  - `/home/bastien/OneDrive/02. BNCL (PhD)/PhD
+  projects/DeCovarT_reproducibility/docs/images/fig_04_kappa_gastruloid.pdf`:
+  Ghostscript output with `-dNoOutputFonts`, so all text is outlined.
+  - `/home/bastien/OneDrive/02. BNCL (PhD)/PhD
+  projects/DeCovarT_reproducibility/docs/images/fig_04_kappa_gastruloid.svg`:
+  made with `pdftocairo`. It has no full-page white rectangle, so nothing needed
+  deleting; the only white fills are the latent nodes.
+  - `/home/bastien/OneDrive/02. BNCL (PhD)/PhD projects/DeCovarT/archives/figure
+  s/condition_number_poor_performance_correlated_cell_types.png`: the archived
+  copy.
+  - `/home/bastien/OneDrive/02. BNCL (PhD)/PhD
+  projects/DeCovarT/archives/figures/README.md`: one row added with the fields
+  you specified, including commit "moved on 2026-11-24".
+  - In the reproducibility repo, `git status` now shows `D
+  docs/images/condition_number_poor_performance_correlated_cell_types.png`.
+
+  **Size:** `pdfinfo` gives 632.19 x 632.19 pt (about 22.3 x 22.3 cm, square).
+  At 900 px wide that is roughly 1:1, so the smallest text (footnotesize) shows
+  at about 11 px.
+
+  **`pdffonts docs/images/fig_04_kappa_gastruloid.pdf`** prints only the header
+  lines, so no fonts are listed:
+  ```
+  name                                 type              encoding         emb
+  sub uni object ID
+  ------------------------------------ ----------------- ---------------- ---
+  --- --- ---------
+  ```
+
+  **Checks:** `lualatex` ran without errors. I looked at previews at 110 and 220
+  dpi and fixed the overlaps, clipped text and bad line breaks over four
+  rounds. Arrows only cross plate borders where they enter a plate, as plate
+  notation intends. Final preview:
+  `/tmp/claude-1001/-home-bastien-OneDrive-02--BNCL--PhD--PhD-projects-DeCovarT/
+  c70dc111-f20f-4fed-a3d7-9e3e4d15718a/scratchpad/svgcheck.png`.
+
+  **Departures from your brief:**
+  - **Header colours:** the three method headers each have one accent, used only
+  for the name and a side bar: SCDC 2E7D6B, BayesPrism 6A4C93, DWLS C45C26 (the
+  orange from `early_wnt.tex`). Node shapes carry the meaning.
+  - **Node styles:** the bayesnet nodes keep the package's own styles (white
+  latent, grey observed, black outlines), not the `latfill`/`obsfill` colours.
+  - **Plates in row B:** the small graphs there have no plates, because row A
+  already defines the indices.
+  - **DWLS "rescaled to sum to one":** I added this to row C after checking the
+  installed DWLS source. `solveDampenedWLS()` returns `solution/sum(solution)`,
+  and `solveDampenedWLSj()` fits with `p ≥ 0` only; the weights are scaled to
+  their minimum and capped by the dampening multiplier. So the DWLS objective
+  shows `p ≥ 0`, not the sum-to-one constraint.
+  - **BayesPrism reads in row C:** the read model is written as `a_r | p_i ~
+  Cat(p_i)` (cell type of read r), `ℓ_r | a_r = j ~ Cat(φ_j)` (gene of read r),
+  and `y_gi = #{r : ℓ_r = g}`. This is how I drew "latent read assignment" and
+  the multinomial likelihood. I added no prior on `p_i`, since your brief does
+  not state one.
+  - **SCDC signature:** no formula for μ_gj is given for SCDC; the note says
+  only "one profile per type, from one reference (R = 1)". The mean formula
+  `μ_gj = (1/N_j) Σ_{c: z_c=j} x_gc` appears only in the DWLS column, as "one
+  mean signature per type".
+
+  **What each row shows (for your caption):**
+  - **A:** A plate diagram fixes the shared notation. Single-cell counts x_gc
+  (cells c, genes g) and fixed type labels z_c give the signature S = (μ_gj);
+  with the composition p_i (non-negative, summing to one) it gives the bulk
+  expression y_gi ≈ S p_i. A key defines each symbol and node shape, and a strip
+  shows the example lineage Epiblast → Primitive streak → Caudal mesoderm / NMP
+  → PSM → Somite, whose neighbouring states have nearly collinear mean
+  profiles.
+  - **B:** Each method builds its reference from x_gc and z_c differently. SCDC
+  keeps every shared gene and one reference (R = 1, no ensemble). BayesPrism has
+  no marker step, drops genes that dominate a bulk (`outlier.cut = 0.01`,
+  `outlier.fraction = 0.1`) and uses per-type read shares φ_j with a Dirichlet
+  prior. DWLS takes the type means μ_gj and keeps the marker set M from MAST
+  (adjusted p below `pval.cutoff`, log2 fold change above 0.5, top g per type, g
+  from 50 to 200 chosen to minimise κ(S) = σmax/σmin).
+  - **C:** The inference step of each method. SCDC solves a constrained weighted
+  least squares over every shared gene with iterated weights w_g = 1/(ν +
+  δ̂_g²). BayesPrism draws latent read assignments in a plate over reads r and
+  samples by Gibbs to give P(p_i | y_i). DWLS solves a dampened weighted least
+  squares on g ∈ M with w_gi = 1/ŷ_gi² and rescales the result. A dashed box
+  spanning the width holds your hypothesis text word for word, marked
+  "Hypothesis (not a result)".
+
+  Nothing in the task was left undone.
+
+  Read 1 file (ctrl+o to expand)
+
+● Agent "TikZ kappa schematic figure" finished · 7m 9s
+
+● Bash(cd "/home/bastien/OneDrive/02. BNCL (PhD)/PhD
+      projects/DeCovarT_reproducibility" && python3 - <<'EOF'
+      p="docs/04-deconvolution-pipeline.qmd"; s=open(p).read()…)
+  ⎿   M docs/03-covariance-estimation.qmd
+      M docs/04-deconvolution-pipeline.qmd
+      M docs/06-sensitivity-misspecification.qmd
+     … +27 lines (ctrl+o to expand)
+  ⎿  Updated ~/OneDrive/02. BNCL (PhD)/PhD
+     projects/DeCovarT_reproducibility/docs/04-deconvolution-pipeline.qmd
+     +6 -4
+      2085 
+      2086  ![Hypothesis on the disagreement between SCDC, BayesPrism and
+             DWLS
+      2087  when each builds its own signature from one reference. A: sha
+            red
+      2088 -notation (grey: observed; white circle: latent; diamond: dete
+           -rministic;                                                   
+      2089 -plates: indexed repetition) and the developmental continuum o
+           -f the                                                        
+      2088 +notation (grey circle: observed; white circle: latent; diamon
+           +d:                                                           
+      2089 +deterministic; square: fixed; rounded frame: plate over the i
+           +ndex at                                                      
+      2090 +its bottom right) and the developmental continuum of the     
+      2091  scored states. B: how each method builds its reference from t
+            he
+      2091 -labelled cells. C: the inference step of each method and the 
+           -proposed                                                     
+      2092 -reading for gastruloids. Formulas follow @tbl-deconv-own-gene
+           -s. A                                                         
+      2092 +labelled cells. C: the inference step of each method (DWLS fi
+           +ts with $\boldsymbol{p}\ge 0$                                
+      2093 +only and rescales the estimate to sum to one) and the propose
+           +d reading                                                    
+      2094 +for gastruloids. Formulas follow @tbl-deconv-own-genes. A    
+      2095  schematic of a hypothesis, not a result; source
+      2096  `images/src/kappa_gastruloid/kappa_gastruloid.tex`.](images/f
+            ig_04_kappa_gastruloid.svg){#fig-kappa-gastruloid}
+      2097 
+
+● Bash(cd "/home/bastien/OneDrive/02. BNCL (PhD)/PhD
+      projects/DeCovarT_reproducibility" && git status --short | grep
+      _diagram-cache; git checkout -- docs/_diagram-cach…)
+  ⎿   D docs/_diagram-cache/2d66bf1e4905e6687d4d3e13aef3b3c34f0cb723.svg
+      D docs/_diagram-cache/335533bccc58f12104d567aca59ca7cdd16839ea.svg
+      D docs/_diagram-cache/5b5ae14548d2b5d55ba327b47548c625caf505b9.svg
+     … +7 lines (ctrl+o to expand)
+  ⎿  9 files changed (binary, mode only or too large to show)
+     ~/OneDrive/02. BNCL (PhD)/PhD projects/DeCovarT_reproducibility/docs/_
+     diagram-cache/2d66bf1e4905e6687d4d3e13aef3b3c34f0cb723.svg
+     ~/OneDrive/02. BNCL (PhD)/PhD projects/DeCovarT_reproducibility/docs/_
+     diagram-cache/335533bccc58f12104d567aca59ca7cdd16839ea.svg
+     ~/OneDrive/02. BNCL (PhD)/PhD projects/DeCovarT_reproducibility/docs/_
+     diagram-cache/5b5ae14548d2b5d55ba327b47548c625caf505b9.svg
+     +6 more
+  ⎿  (a git step in this command can move the working tree, so these may be
+     its changes, not edits) (ctrl+o to expand)
+
+● The TikZ figure is in place and its caption is updated. While checking, I
+  found nine committed _diagram-cache SVGs had been deleted during the session.
+  Nobody asked for that and the build needs them, so I restored them from Git.
+  The regularisation-figure agent is still running.
+
+● Background command "Run the verification ledger" completed (exit code 0)
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● The verification ledger passes: 31 rows, 0 failed, including the new check R6.
+  The regularisation-figure agent is still running.
+
+› Message from general-purpose
+  ## Summary
+
+  I wrote and ran `scripts/04_05_vis_regularisation.R`, but **every figure and
+  number below is provisional**. The local `scored_slots.rds` is older than its
+  DVC pointer, and the current copy could not be fetched. The run finishes with
+  exit code 0. I edited no .qmd, committed nothing and installed nothing. REPRO
+  has no `.codegraph/`, so I used grep and file reads to find my way around.
+
+  ## Blocker: the scored counts file is out of date
+  - `output/feature_selection/tier_01/scored_slots.rds` is 196 MB and dated 12
+  Nov. Its `.dvc` pointer (commit 1e8d6de, "revised tier (i) panel") expects md5
+  `90c90cd…` and 665 MB. The 665 MB file is not in the local DVC cache, and the
+  remote `/mnt/DATA_11TB/...` is not mounted.
+  - As a result, **2 / 35 / 39 Welch genes are missing at 48 / 72 / 96 h** (for
+  example Hmgb1 and Zfp988). The current Welch panel has **1,360 / 3,617 /
+  5,893** genes, not the 5,821 in your brief. The run used 1,358 / 3,582 /
+  5,854. Cell counts and constant-gene counts match `plugin_summary.csv`.
+  - By default the script stops with a `dvc pull` message. I ran it with
+  `DECOVART_ALLOW_STALE_SLOTS=1`, which leaves the missing genes out. Every
+  subtitle then says "Provisional: 2 / 35 / 39 …", and the CSV has a
+  `genes_missing` column.
+  - To get the final version: run `dvc pull
+  output/feature_selection/tier_01/scored_slots.rds.dvc`, then rerun without the
+  variable.
+  - **Separate dating problem:** `lambda_selection.csv` and
+  `cv_selected_tuning.csv` were written on 19 Nov at 13:12. The panel rerun
+  commit is from 19 Nov at 20:37. So the λ choices were probably made on the
+  older Welch panel.
+
+  ## Files created
+  - Script: `/home/bastien/OneDrive/02. BNCL (PhD)/PhD
+  projects/DeCovarT_reproducibility/scripts/04_05_vis_regularisation.R`
+  - CSV: `output/deconvolution/regularisation_spectra.csv` (time, cell_type,
+  cells, genes, genes_missing, lambda, kappa, eff_rank). It includes λ = 0,
+  where κ is Inf for singular R_j.
+  - In `output/deconvolution/figures/regularisation/`, each figure has an SVG
+  per page, a PDF made through Inkscape, and an `.rds` of its data:
+    - `correlation_heatmaps_welch.pdf` (3 pages)
+    - `regularisation_spectra_welch.pdf`
+    - `regularisation_map_welch.pdf` (3 pages)
+    - `lambda_path_welch.pdf`
+    - `session_info.txt`
+  - Book PNGs in `docs/images/deconvolution/regularisation/`:
+  `regularisation_spectra_welch.png`, `regularisation_map_welch.png` (one panel
+  per time), `lambda_path_welch.png`, `correlation_heatmap_96h_welch.png`.
+  - Section (iv) is written but skipped with a `message()`, because
+  `factors_96h_welch.rds` does not exist.
+
+  ## Checks
+  - **Closed form:** the `stopifnot()` passes on one full-rank and one singular
+  random case. It compares against `kappa(M, exact = TRUE)`, a direct
+  eigendecomposition and `right_spectrum()`.
+  - **Trace:** the eigenvalues sum to G for every type.
+  - **Page counts:** `qpdf --show-npages` gives 3 for both multi-page PDFs.
+  - **λ = 1:** κ = 1 and eff_rank = G for all 11 types.
+  - **Exact spectrum:** build_sigma resets every diagonal below 1 to 1, both for
+  constant genes and for genes under the variance floor. I add one row
+  √(1−|z_g|²)·e_g per such gene before taking the Gram eigenvalues, so the
+  spectrum is exactly that of R_j. This matters once: Somite differentiation
+  front at 96 h has one floored gene, so its rank is 29, not 28.
+  - **roast-my-chart** fixes applied:
+    - The spectra x-axis was changed to logit, and effective rank put on a log
+  scale.
+    - The λ-path panels were rebuilt as separate aligned plots so each has its
+  own y scale.
+    - Each "decoupled" band is annotated with its RMSE increase.
+    - At 48 h the RMSE panel notes that RMSE is the same at every λ.
+    - The heatmap legend title was moved.
+
+  ## Changes from your spec
+  - **Spectra x-axis:** I used a logit scale with a logit-spaced grid from 0.001
+  to 0.999 (61 points), plus the exact grid values. On a log scale every
+  cross-validated λ (0.84–0.97) and the convergence all fell into the last tenth
+  of the axis. The CSV still holds λ = 0 and λ = 1.
+  - **Type labels:** they are stacked in the empty lower-left corner of each κ
+  panel, in the order of the lines. They are not at the right end, because all
+  lines meet at κ = 1 there.
+  - **Effective-rank row:** shown as r_eff / G, so the three times share one
+  y-axis.
+  - **Colours:** I used Okabe-Ito instead of the house lineage colours, which
+  give three near-identical greens at 96 h. A type keeps its colour across
+  times. Epiblast/Gut, Exiting naïve/Somite differentiation front and Primitive
+  streak/Pre-somitic mesoderm share a colour, but never at the same time point.
+
+  ## Numbers you can quote (provisional)
+  - C = cells; G = genes used; rank = rank of R_j.
+  - κ(0) is Inf for every type except Epiblast at 48 h, where it is 2,341. κ at
+  λ = 0.001 ranges from 2.3 thousand to 1.31 million.
+
+  | time | type | C | G | rank | κ(λ_bulk) | λ_j,CV | κ(λ_j) | r_eff(0) |
+  r_eff(λ_bulk) |
+  |---|---|---|---|---|---|---|---|---|---|
+  | 48 h (λ_bulk 0.1) | Epiblast | 10,590 | 1,358 | 1,358 | 973 | 0.469 | 193 |
+  49.1 | 60.2 |
+  | | Exiting naïve pluripotency | 265 | 1,358 | 264 | 1,493 | 0.900 | 19.4 |
+  50.2 | 61.4 |
+  | | Naïve pluripotency | 36 | 1,358 | 35 | 1,720 | 0.9375 | 13.7 | 22.8 | 28.0
+  |
+  | 72 h (λ_bulk 0.5) | Ectopic pluripotency | 266 | 3,582 | 265 | 296 | 0.9375
+  | 20.7 | 93.6 | 347 |
+  | | Naïve pluripotency | 66 | 3,582 | 65 | 437 | 0.9375 | 30.0 | 34.5 | 134 |
+  | | Primitive streak | 4,279 | 3,582 | 3,581 | 341 | 0.844 | 63.9 | 104.3 |
+  384 |
+  | 96 h (λ_bulk 0.5) | Caudal mesoderm | 1,061 | 5,854 | 1,060 | 695 | 0.900 |
+  78.1 | 64.8 | 251 |
+  | | Ectopic pluripotency | 116 | 5,854 | 115 | 757 | 0.9375 | 51.4 | 39.5 |
+  155 |
+  | | Gut | 140 | 5,854 | 139 | 735 | 0.9375 | 50.0 | 44.3 | 173 |
+  | | Pre-somitic mesoderm | 3,589 | 5,854 | 3,588 | 775 | 0.844 | 144 | 54.9 |
+  214 |
+  | | Somite differentiation front | 29 | 5,854 | 29 | 1,312 | 0.969 | 43.3 |
+  13.1 | 51.9 |
+
+  - **Common CV λ ("shrinkage, common"):** 0.875 at 48 h, 0.9375 at 72 h, 0.906
+  at 96 h.
+  - **Primitive streak at 72 h** has rank G−1 even though it has more cells than
+  genes.
+
+  ## Intervals flagged "decoupled" (log-likelihood up and RMSE up)
+  - **48 h:** none. The RMSE is 0.0213 at every λ, so the estimate does not
+  change with λ.
+  - **72 h:** λ 0.1 → 0.5, three steps. The log-likelihood gains 893 and the
+  RMSE goes from 0.026 to 0.043 (+0.017). This is the figure title.
+  - **96 h:** λ 0.375 → 0.5. The log-likelihood gains 163 but the RMSE rises by
+  only 0.0002 (0.0333 to 0.0335), so this flag is negligible. The panel shows
+  the size of the rise.
+
+  Read 3 files (ctrl+o to expand)
+
+● Agent "R regularisation figures script" finished · 14m 35s
+
+● Bash(cd "/home/bastien/OneDrive/02. BNCL (PhD)/PhD
+      projects/DeCovarT_reproducibility" && python3 - <<'EOF'
+      p="docs/04-deconvolution-pipeline.qmd"; s=open(p).read()…)
+  ⎿  missing: []
+  ⎿  Updated ~/OneDrive/02. BNCL (PhD)/PhD
+     projects/DeCovarT_reproducibility/docs/04-deconvolution-pipeline.qmd
+     +31 -1
+      1934     summed bulk log-likelihood and RMSE along the common level
+            , with the
+      1935     intervals where both rise (@fig-deconv-reg-path).
+      1936 
+      1937 -FIGURES_PLACEHOLDER                                          
+      1937 +[Provisional: the local `scored_slots.rds` predates its DVC p
+           +ointer,                                                      
+      1938 +so 2, 35 and 39 Welch genes at 48, 72 and 96 h are missing fr
+           +om items                                                     
+      1939 +1 and 2; the levels in items 2, 3 and 5 were chosen before th
+           +e last                                                       
+      1940 +rerun of the Welch panel (19 November 2026). Rerun           
+      1941 +`scripts/04_05_vis_regularisation.R` after                   
+      1942 +`dvc pull output/feature_selection/tier_01/scored_slots.rds.d
+           +vc`.]{.highlight}                                            
+      1943 
+      1944 +![Condition number (top, log scale) and effective rank as a s
+           +hare of                                                      
+      1945 +the genes (bottom) of $(1-\lambda)\boldsymbol{R}_j+\lambda\bo
+           +ldsymbol{I}$                                                 
+      1946 +along the shrinkage level (logit scale), one line per cell ty
+           +pe, Welch                                                    
+      1947 +panel. Dashed: level chosen by the summed bulk likelihood; po
+           +int: level                                                   
+      1948 +chosen for that type on held-out cells. $\boldsymbol{R}_j$ is
+           + singular                                                    
+      1949 +for every type but the 48 h epiblast, so $\kappa$ is infinite
+           + at                                                          
+      1950 +$\lambda=0$.](images/deconvolution/regularisation/regularisat
+           +ion_spectra_welch.png){#fig-deconv-reg-spectra}              
+      1951 +                                                             
+      1952 +![Shrinkage level per cell type, Welch panel, standard-Wnt re
+           +plicates.                                                    
+      1953 +Rows: types ordered by their number of cells. Filled blue: le
+           +vel chosen                                                   
+      1954 +per type on held-out cells; open blue: one level for all type
+           +s chosen on                                                  
+      1955 +held-out cells; orange: level chosen by the summed bulk profi
+           +le                                                           
+      1956 +likelihood, common to the                                    
+      1957 +types.](images/deconvolution/regularisation/regularisation_ma
+           +p_welch.png){#fig-deconv-reg-map}                            
+      1958 +                                                             
+      1959 +![Summed profile log-likelihood (top) and RMSE of the proport
+           +ions                                                         
+      1960 +(bottom) along the common shrinkage level, raw covariance wit
+           +h free                                                       
+      1961 +scales, Welch panel. Orange: level chosen by the likelihood; 
+           +shaded:                                                      
+      1962 +steps where both the likelihood and the RMSE rise. The RMSE p
+           +lays no                                                      
+      1963 +part in the choice; at 48 h it is the same at every          
+      1964 +level.](images/deconvolution/regularisation/lambda_path_welch
+           +.png){#fig-deconv-reg-path}                                  
+      1965 +                                                             
+      1966 +Item 1 at 96 h, as a preview of the three-page PDF:          
+      1967 +[`correlation_heatmap_96h_welch.png`](images/deconvolution/re
+           +gularisation/correlation_heatmap_96h_welch.png).             
+      1968 +                                                             
+      1969  Still to do from the review: partial correlations from the fu
+            ll-panel
+      1970  precision, the one-type-at-a-time bulk likelihood, residual h
+            eatmaps
+      1971  and the stability of the chosen level (item 6 below).
+
+  Ran 2 shell commands (ctrl+o to expand)
+
+● All five items are done and the chapter renders cleanly. The new
+  regularisation figures are provisional, though: the single-cell counts file in
+  this checkout is older than the version its DVC pointer expects. Nothing is
+  committed.
+
+  Data blocker to fix first. The local
+  output/feature_selection/tier_01/scored_slots.rds (196 MB, dated 12 Nov) is
+  older than its DVC pointer (665 MB), and the remote copy was not reachable.
+  - So 2, 35 and 39 Welch genes are missing at 48, 72 and 96 h.
+  - The script stops by default. I ran it with DECOVART_ALLOW_STALE_SLOTS=1, and
+    every new figure says "Provisional" in its subtitle.
+  - To get the final versions: dvc pull
+    output/feature_selection/tier_01/scored_slots.rds.dvc, then rerun
+    scripts/04_05_vis_regularisation.R.
+  - Separately, lambda_selection.csv and cv_selected_tuning.csv were written
+    about seven hours before the last Welch-panel rerun (19 Nov). The λ choices
+    were therefore probably made on the older panel.
+
+  1. Figure and Scenario 1
+  - The AI picture is redrawn as a TikZ schematic with bayesnet nodes, in three
+    rows: shared notation, how each method builds its reference, and the
+    inference step plus the hypothesis.
+    - Source: docs/images/src/kappa_gastruloid/kappa_gastruloid.tex.
+    - Portable PDF: docs/images/fig_04_kappa_gastruloid.pdf, with all text
+      outlined (pdffonts lists none). The book shows an SVG made from it.
+  - The formulas follow the method table. DWLS fits with p ≥ 0 only and then
+    rescales the estimate to sum to one; I checked this in the installed DWLS
+    source.
+  - The old PNG is in DeCovarT/archives/figures/ with a README row, and is
+    removed from the book with git rm.
+  - Scenario 1 is now an appendix section. The "Scenario 2" heading is gone, and
+    the chapter has no heading deeper than ###. Former ##### headings are bold
+    lead-in paragraphs.
+
+  2. Smaller gene panels moved to an appendix
+  - The main text is Welch-only. Five tables are split: Welch rows in the main
+    text, the two smaller panels in the appendix.
+  - Four figures now come in a Welch-only version for the main text, produced by
+    scripts/04_01_vis_deconvolution.R. The all-panel versions are in the
+    appendix.
+  - The three second-pass figures went to the appendix unchanged. Their archived
+    plotting script writes to the current figure names, so rerunning it would
+    have overwritten the main figures.
+
+  3. Regularisation callout (collapsed). It summarises lasso_regularisation.md
+  and lists the five visualisations:
+  - (i) Correlation heatmaps: 3-page PDF. On these, the three columns differ
+    only by the factor (1−λ) on the off-diagonal terms. They show a change of
+    intensity, not of pattern, which is why partial correlations are the next
+    step.
+  - (ii) Condition number and effective rank against λ.
+  - (iii) Dumbbell plot: held-out cells choose λ of 0.47 to 0.97 per type, while
+    the bulk likelihood chooses 0.1 to 0.5.
+  - (iv) Rank-based decomposition: a TODO in "Positivity of the mean scale". The
+    script has the code but skips it until the factor loadings exist.
+  - (v) λ path:
+    - At 72 h the likelihood rises from λ = 0.1 to 0.5 while the RMSE rises from
+      0.026 to 0.043.
+    - At 96 h the overlap is negligible (+0.0002).
+    - At 48 h the RMSE is the same at every level, so the estimate does not move
+      with λ.
+
+  Factor loadings.
+  - scripts/03_04_cv_covariance.R already saves the raw loadings to
+    output/grn/cv/factors_<time>_<gene_set>.rds, but none is in this checkout.
+    Its header now says to track them with dvc add after the next run.
+  - scripts/04_01_stats_deconvolution.R now also saves the size-normalised fits
+    (factors_size_*.rds).
+  - scripts/04_04_stats_scale_screen.R now saves its fits
+    (scale_screen_factors_<time>.rds).
+  - Both edited scripts parse; neither was rerun.
+
+  4. New perspective. "Five directions" is now six. Item 6: with more bulk
+  profiles, compute the held-out profile likelihood at each candidate λ and use
+  it to check how stable the choice is.
+
+  5. Removed section and summary.
+  - "Results on the three panels" is gone. Its helper code moved to the
+    Early-Wnt section, which still needs it, with one sentence explaining the
+    shared-c correction.
+  - A new Summary opens the chapter. Its numbers are computed inline: λ = 0.1,
+    0.5 and 0.5, giving RMSE 0.021, 0.043 and 0.034 at 48, 72 and 96 h; the best
+    comparator at 96 h is MEAD at 0.048.
+
+  Checks
+  - Rendering 04-deconvolution-pipeline.qmd leaves no unresolved
+    cross-references, and both appendices come out as appendix sections.
+  - The ledger has a new check R6 (condition number and effective rank along the
+    shrinkage path). verification/run_all.py reports 31 rows, 0 failed.
+  - During the session, nine committed SVGs under docs/_diagram-cache/ and
+    slides/_diagram-cache/ were deleted. Nobody asked for this, so I restored
+    them from Git.
+  - The Welch-only rerun also re-wrote the existing deconvolution figures. They
+    show up as modified binaries from the same data.
+
+❯ One small change: keep using the them_sldie on rendered ggplot2 objects,
+  @DeCovarT/.claude/rules/data-visualisation.md#24-37
+  @DeCovarT/article/scripts/fig01_pipeline.R#69-84 , and do otchaneg the font
+  pfr purely generatd ggplto2 objects.
+
+  For example, the font is not the bets for @regularisation_map_welch.pdf ->
+  identify the cursor or claude ule in the folder that induces a chnage of font
+
+  Read 1 file, ran 5 shell commands (ctrl+o to expand)
+
+● Bash(cd "/home/bastien/OneDrive/02. BNCL (PhD)/PhD
+      projects/DeCovarT_reproducibility" && python3 - <<'EOF'
+      p="scripts/04_05_vis_regularisation.R"; s=open(p).read()…)
+  ⎿  Noto Sans
+  ⎿  Updated ~/OneDrive/02. BNCL (PhD)/PhD
+     projects/DeCovarT_reproducibility/scripts/04_05_vis_regularisation.R
+     +10 -1
+      84  colour_marked <- "#c45c26"
+      85  colour_ink <- "#1c2b24"
+      86 
+      87 +# theme_slide() sets no family, so ragg (PNG) draws the generic
+         + "sans"                                                        
+      88 +# with the font systemfonts resolves (Noto Sans here), while sv
+         +glite                                                          
+      89 +# writes "sans" as "Arial" and Inkscape then outlines Arial. Na
+         +me the                                                         
+      90 +# resolved family in the SVG so the PDF keeps the font of the P
+         +NG.                                                            
+      91 +sans_family <- systemfonts::font_info(family = "sans")$family[[
+         +1L]]                                                           
+      92 +svg_device <- function(filename, ...) {                        
+      93 +  svglite::svglite(filename, ..., system_fonts = list(sans = sa
+         +ns_family))                                                    
+      94 +}                                                              
+      95 +                                                               
+      96  #' Save one page as SVG, then PDF through Inkscape (text as pat
+          hs).
+      97  #'
+      98  #' @param plot A ggplot or patchwork object.
+     ...
+      108      width = width,
+      109      height = height,
+      110      units = "in",
+      102 -    device = svglite::svglite,                                
+      111 +    device = svg_device,                                      
+      112      bg = "white"
+      113    )
+      114    status <- system2(
+
+  Ran 1 shell command (ctrl+o to expand)
+
+● I've found the cause and fixed the script; the rerun is going now and I'll
+  check the PDFs when it finishes.
+
+  Which rule causes the font change: .claude/rules/data-visualisation.md, lines
+  31–35. The Cursor copy, .cursor/rules/data-visualisation.mdc, has the same
+  lines. They say to write vector figures with svglite and make the PDF from the
+  SVG with Inkscape. That path changes the font when the theme names no font:
+
+  - The repository's theme_slide() (R/02_00_utils.R:160) sets no font family, so
+    ggplot2 asks for the generic "sans".
+  - The book PNGs (ragg) turn "sans" into Noto Sans, the system default here.
+  - svglite writes "sans" into the SVG as "Arial". Arial is installed, so
+    Inkscape outlines Arial and the PDF comes out in Arial.
+
+  Your article/scripts/fig01_pipeline.R (lines 69–84) avoids this because its
+  theme names the font (base_family = "Noto Sans").
+
+  Fix: scripts/04_05_vis_regularisation.R still uses theme_slide() unchanged.
+  The save helper now looks up which font "sans" resolves to (Noto Sans) and
+  tells svglite to write that name instead of Arial. The PDFs should then use
+  the same font as the PNGs. The theme, the rule and the other figure scripts
+  are untouched.
+
+  The rerun uses DECOVART_ALLOW_STALE_SLOTS=1 again, so the figures remain
+  provisional until the counts file is pulled from DVC.
+
+  The other PDFs made by save_figure() use cairo_pdf, which resolves "sans" the
+  same way as the PNGs, so they should not have this font change. I did not
+  check them, and that helper still breaks the rule's "never cairo_pdf".
+
+● Background command "Rerun regularisation figures with the font mapping"
+  completed (exit code 0)
+
+  Read 1 file, ran 1 shell command (ctrl+o to expand)
+
+● The regularisation PDFs now use Noto Sans, the same font as the book PNGs. The
+  rerun finished without errors. All 780 text elements across the SVGs now name
+  "Noto Sans" instead of Arial, and I looked at the first page of
+  regularisation_map_welch.pdf to confirm.
+
+  The rerun used the same stale counts file, so the figures are still marked
+  "Provisional". The rank-based decomposition panel was skipped again because
+  the factor loadings file is not in this checkout.

@@ -156,9 +156,19 @@ set_overlap <- function(sets) {
 #' book's other figures (`scripts/06_01_plot_early_wnt_compositions.R`).
 #'
 #' @param base_size Base font size. Default `11` (multi-panel figures).
+#' @param base_family Font family. Default Noto Sans when installed, else the
+#'   system `sans` resolution (`systemfonts`).
 #' @return A ggplot2 theme.
-theme_slide <- function(base_size = 11) {
-  ggplot2::theme_minimal(base_size = base_size) +
+theme_slide <- function(base_size = 11, base_family = NULL) {
+  if (is.null(base_family)) {
+    families <- systemfonts::system_fonts()$family
+    base_family <- if ("Noto Sans" %in% families) {
+      "Noto Sans"
+    } else {
+      systemfonts::font_info(family = "sans")$family[[1L]]
+    }
+  }
+  ggplot2::theme_minimal(base_size = base_size, base_family = base_family) +
     ggplot2::theme(
       panel.grid.minor = ggplot2::element_blank(),
       panel.grid.major = ggplot2::element_line(colour = "#e6e1d8"),
