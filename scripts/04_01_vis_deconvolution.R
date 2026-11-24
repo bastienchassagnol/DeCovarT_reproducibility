@@ -14,6 +14,8 @@
 #   scale_screen                          error of the strategies of the
 #                                         light screen (scripts/04_04)
 #   profile_correlation_welch             correlation of the mean profiles
+# The benchmark, agreement and lineage figures are also written for the
+# Welch panel alone, suffix _welch (main text of docs/04).
 # The figures of the second pass (scripts/archives/second_pass_variants/)
 # stay in docs/images/deconvolution/ under the prefix second_pass_.
 
@@ -60,11 +62,14 @@ shown$group <- ifelse(
   )
 )
 at_96 <- shown[shown$time == "96h" & shown$gene_set == "welch", ]
-for (metric in c("rmse", "aitchison")) {
+# Each figure twice: all three gene panels (appendix of the book) and the
+# Welch panel alone (main text), suffix _welch.
+panel_versions <- list(all = c("welch", "r2_01", "r2_05"), welch = "welch")
+for (version in names(panel_versions)) for (metric in c("rmse", "aitchison")) {
   best <- sort(tapply(at_96[[metric]], at_96$label, mean))[1:2]
   save_figure(
     plot_benchmark_metric(
-      shown,
+      shown[shown$gene_set %in% panel_versions[[version]], ],
       metric,
       title = paste0(
         "Lowest error at 96 h on the Welch panel: ",
@@ -83,20 +88,20 @@ for (metric in c("rmse", "aitchison")) {
         "Aitchison distance to the observed composition (zeros at 0.001)"
       }
     ),
-    paste0("benchmark_", metric),
+    paste0("benchmark_", metric, if (version == "welch") "_welch"),
     pdf_dir,
     png_dir,
     width = 15,
-    height = 13
+    height = if (version == "welch") 6 else 13
   )
 }
 
 # 1b · Mixture diagnostics (scripts/04_02_stats_mixture_diagnostics.R) ---------
 agreement <- read_table(out_dir, "bulk_reference_agreement.csv")
 off <- tapply(agreement$share_over_4_fold, agreement$time, mean)
-save_figure(
+for (version in names(panel_versions)) save_figure(
   plot_bulk_agreement(
-    agreement,
+    agreement[agreement$gene_set %in% panel_versions[[version]], ],
     title = paste0(
       "The bulk departs most from the reference mixture at ",
       sub("h$", " h", names(which.max(off))),
@@ -109,7 +114,7 @@ save_figure(
       "Small points: replicates; large: mean."
     )
   ),
-  "bulk_reference_agreement",
+  paste0("bulk_reference_agreement", if (version == "welch") "_welch"),
   pdf_dir,
   png_dir,
   width = 12,
@@ -124,9 +129,9 @@ gain <- with(
   lineage[lineage$gene_set == "welch", ],
   mean(rmse_five_parts - rmse_three_parts)
 )
-save_figure(
+for (version in names(panel_versions)) save_figure(
   plot_lineage_collapse(
-    lineage,
+    lineage[lineage$gene_set %in% panel_versions[[version]], ],
     title = paste0(
       "At 96 h most error is a split inside paraxial mesoderm: summing it removes ",
       fmt(gain, 2),
@@ -138,10 +143,10 @@ save_figure(
     ),
     x_label = "Root mean squared error at 96 h"
   ),
-  "lineage_collapse_96h",
+  paste0("lineage_collapse_96h", if (version == "welch") "_welch"),
   pdf_dir,
   png_dir,
-  width = 15,
+  width = if (version == "welch") 12 else 15,
   height = 10
 )
 

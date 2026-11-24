@@ -1,5 +1,5 @@
 {
-  "date": "2026-11-20",
+  "date": "2026-11-24",
   "engine": "sympy==1.14.0 (mpmath for numeric rows)",
   "lean": "not configured for this repository",
   "rows": [
@@ -41,6 +41,14 @@
       "kind": "exact",
       "status": "pass",
       "detail": "symbolic in G, a, D, Q > 0 and real N; positivity because G^2 a^2 + 4 D Q - (G a)^2 = 4 D Q > 0; second derivative times 2 a c^3 equals G a c - 2 Q = -(Q + D c^2) < 0 at the root",
+      "file": "check_covariance_selection.py"
+    },
+    {
+      "id": "R6",
+      "claim": "Shrinkage path of a correlation matrix: eigenvalue sum stays G; kappa(lambda) is non-increasing, d kappa / d lambda = (l_min - l_max) / ((1 - lambda) l_min + lambda)^2; kappa(1) = 1 and effective rank (sum l)^2 / sum l^2 = G at lambda = 1",
+      "kind": "exact",
+      "status": "pass",
+      "detail": "symbolic in lambda and the eigenvalues; trace and effective rank checked with G = 3 (eigenvalues l1, l2, 3 - l1 - l2); eigenvalue map from R1",
       "file": "check_covariance_selection.py"
     },
     {

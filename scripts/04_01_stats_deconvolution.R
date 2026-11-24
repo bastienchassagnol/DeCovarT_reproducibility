@@ -54,6 +54,10 @@
 #   output/grn/plugin/moments_<time>_<gene_set>.rds
 #   output/grn/cv/{cv_selected_tuning.csv, factors_<time>_<gene_set>.rds}
 #   output/deconvolution/scale_screen_summary.csv
+# Outputs, output/grn/cv/:
+#   factors_size_<time>_<gene_set>.rds  per-type factor fits of the
+#                             size-normalised cells (per_type[[type]][[rank]]
+#                             with B, psi, align); read back when present
 # Outputs, output/deconvolution/:
 #   proportions_long.csv      one row per method x sample x cell type
 #   sweep_diagnostics.csv     one row per DeCovarT fit
@@ -714,13 +718,35 @@ if ("sweep" %in% run_stages && "scale" %in% run_families) {
         `size-normalised` = if (
           any(tasks$arm == "factor" & tasks$input != "raw")
         ) {
-          fit_factor_types(
-            panel$y,
-            panel$cell_type,
-            types,
-            factor_ranks,
-            panel$library_size
+          # Stored like the raw fits of scripts/03_04 (output/grn/cv/), so
+          # the loadings can be read back for figures and reruns.
+          size_path <- file.path(
+            cv_dir,
+            paste0("factors_size_", tm, "_", gs, ".rds")
           )
+          if (file.exists(size_path)) {
+            readRDS(size_path)$per_type
+          } else {
+            per_type <- fit_factor_types(
+              panel$y,
+              panel$cell_type,
+              types,
+              factor_ranks,
+              panel$library_size
+            )
+            saveRDS(
+              list(
+                time = tm,
+                gene_set = gs,
+                input = "size-normalised",
+                types = types,
+                genes = genes,
+                per_type = per_type
+              ),
+              size_path
+            )
+            per_type
+          }
         }
       )
       rm(panel)

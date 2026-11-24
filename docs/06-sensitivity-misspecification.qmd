@@ -16,7 +16,6 @@ misspecification factors described in DeCovarT
 3. Copula / PLN dependence across genes
 4. Spillover between types
 5. Outlier genes
-6. Wrong covariance reference (perturb or subsample the glasso / PLN fit)
 
 Zero-inflated or hurdle observation models belong **here**, as a
 contamination of the sampling layer, not as the default GRN

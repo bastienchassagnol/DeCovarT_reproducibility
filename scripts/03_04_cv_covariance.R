@@ -40,7 +40,11 @@
 #   nested_cv_by_fold.csv     one row per unit x outer fold x rule
 #   nested_cv_summary.csv     one row per unit x rule
 #   information_criteria.csv  one row per unit x factor rank
-#   factors_<time>_<gene_set>.rds  factor fits on all cells (not in Git)
+#   factors_<time>_<gene_set>.rds  factor fits on all cells (not in Git):
+#                             per_type[[type]][[rank]] (B, psi, loglik)
+#                             and shared; read by scripts/04_01 and by
+#                             the figures of scripts/04_05. Track them
+#                             after a run: dvc add output/grn/cv/factors_*.rds
 #   fits/                     checkpoints (not in Git)
 
 # ==========================================================================

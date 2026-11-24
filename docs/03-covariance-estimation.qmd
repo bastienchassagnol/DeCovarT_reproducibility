@@ -239,7 +239,6 @@ denoised covariance are archived (@sec-cov-archived). The theory is in
 | Sample moments per time × gene set | `scripts/03_05_stats_plugin_covariance.R` | `output/grn/plugin/`: `gene_sets.csv`, `plugin_summary.csv`, `moments_<time>_<gene_set>.rds` (not in Git) |
 | Tuning on held-out cells, nested comparison, factor fits | `scripts/03_04_cv_covariance.R` | `output/grn/cv/`: five CSV tables (@sec-cov-cv-run), `factors_<time>_<gene_set>.rds` (not in Git) |
 | Search comparison (archived stage) | `scripts/archives/search_comparison/` | `output/grn/cv/search_comparison.csv`, kept and read by @tbl-cov-search |
-| Archived arms | `scripts/archives/sparse_precision_arms/`, `scripts/archives/denoised_covariance/` | not run |
 
 : Covariance-estimation code and outputs. {#tbl-cov-status}
 
@@ -768,6 +767,15 @@ two-parameter arm uses 5 folds in every unit. Shared loadings use 5
 joint folds, each type split into 5. Folds split the cells of one unit:
 the score measures generalisation to new cells of this specimen, not
 to new specimens (@nte-pseudoreplication).
+
+[TODO (reply to Elias, 2026-11-22): complement the held-out log-score by the
+universal approximate cross-validation (UACV) of Commenges et al. (2015),
+which approximates leave-one-out without refitting and corrects for a
+misspecified or penalised fit, and report its tracking interval
+$\Delta_{\mathrm{UACV}}\pm1.96\,\hat\omega/\sqrt{n}$ when two arms or two
+models are compared. The interval is asymptotic only, and its unit must be
+an independent one: cells of one specimen are pseudo-replicates, and three
+bulk replicates per time are too few for a stable variance.]{.highlight}
 
 **Poisson floor.** `split_standardise()`
 (`R/03_01_stats_covariance_estimation.R`) standardises the training and

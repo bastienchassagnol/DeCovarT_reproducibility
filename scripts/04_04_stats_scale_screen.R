@@ -34,6 +34,10 @@
 #   scale_screen_fits.csv     one row per replicate x triplet x strategy x level
 #   scale_screen_summary.csv  one row per strategy: error at the chosen
 #                             level, failures, scale recovery, rank
+#   scale_screen_factors_<time>.rds  per-type factor fits on the
+#                             training cells (80%), raw and size-normalised:
+#                             per_input[[input]][[type]][[rank]] with B, psi,
+#                             align (not in Git)
 #   fits/<time>/scale_screen.rds  fit store (not in Git): rows (one per
 #                             replicate x fit) and compositions (estimate
 #                             and truth per replicate x cell type)
@@ -135,6 +139,17 @@ prepare_time <- function(tm, slots) {
       library_size = if (input == "size-normalised") panel$library_size[train]
     )
   })
+  # Kept for figures (loadings, alignment with the mean); a few MB.
+  saveRDS(
+    list(
+      time = tm,
+      genes = genes,
+      types = types,
+      train = panel$cells[train],
+      per_input = factor_fits
+    ),
+    file.path(out_dir, paste0("scale_screen_factors_", tm, ".rds"))
+  )
   covariances <- c(
     lapply(lambda_levels, function(l) {
       stats::setNames(

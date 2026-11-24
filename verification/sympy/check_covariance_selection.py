@@ -2,7 +2,8 @@
 # requires-python = ">=3.11"
 # dependencies = ["sympy==1.14.0"]
 # ///
-"""Shrinkage path, factor form, restricted likelihood, linked scales (R1 to R5)."""
+"""Shrinkage path, factor form, restricted likelihood, linked scales,
+conditioning along the shrinkage path (R1 to R6)."""
 
 import sympy as sp
 
@@ -132,6 +133,38 @@ records.append(
         "symbolic in G, a, D, Q > 0 and real N; positivity because "
         "G^2 a^2 + 4 D Q - (G a)^2 = 4 D Q > 0; second derivative times "
         "2 a c^3 equals G a c - 2 Q = -(Q + D c^2) < 0 at the root",
+    )
+)
+
+# R6. Conditioning along the shrinkage path of a correlation matrix
+# (docs/04, regularisation callout; scripts/04_05_vis_regularisation.R).
+# With the eigenvalues of R_lambda = (1 - lambda) R + lambda I given by R1:
+# (a) their sum stays G, the trace of a correlation matrix;
+# (b) kappa(lambda) = ((1 - lambda) l_max + lambda) / ((1 - lambda) l_min + lambda)
+#     has derivative (l_min - l_max) / ((1 - lambda) l_min + lambda)^2 <= 0;
+# (c) kappa(1) = 1 and the effective rank (sum l)^2 / sum l^2 is G at lambda = 1.
+l1, l2, l3 = sp.symbols("l1 l2 l3", nonnegative=True)
+spectrum = [l1, l2, 3 - l1 - l2]  # G = 3, trace 3
+shrunk = [(1 - lam) * v + lam for v in spectrum]
+trace_ok = is_zero(sum(shrunk) - 3)
+lmax, lmin = sp.symbols("l_max l_min", nonnegative=True)
+kappa = ((1 - lam) * lmax + lam) / ((1 - lam) * lmin + lam)
+dkappa_ok = is_zero(sp.diff(kappa, lam) - (lmin - lmax) / ((1 - lam) * lmin + lam) ** 2)
+at_one = is_zero(kappa.subs(lam, 1) - 1) and is_zero(
+    (sum(shrunk) ** 2 / sum(v**2 for v in shrunk)).subs(lam, 1) - 3
+)
+records.append(
+    record(
+        "R6",
+        "Shrinkage path of a correlation matrix: eigenvalue sum stays G; "
+        "kappa(lambda) is non-increasing, d kappa / d lambda = "
+        "(l_min - l_max) / ((1 - lambda) l_min + lambda)^2; kappa(1) = 1 and "
+        "effective rank (sum l)^2 / sum l^2 = G at lambda = 1",
+        "exact",
+        "pass" if trace_ok and dkappa_ok and at_one else "fail",
+        "symbolic in lambda and the eigenvalues; trace and effective rank "
+        "checked with G = 3 (eigenvalues l1, l2, 3 - l1 - l2); eigenvalue "
+        "map from R1",
     )
 )
 

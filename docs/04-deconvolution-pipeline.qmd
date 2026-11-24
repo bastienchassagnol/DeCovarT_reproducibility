@@ -92,6 +92,49 @@ chk <- read_deconv("lambda_checks.csv")
 module <- chk[chk$check == "leave-one-module-out", ]
 ```
 
+## Summary {#sec-deconv-summary}
+
+```{r}
+#| label: deconv-summary-values
+#| include: false
+sum_sel <- lapply(c("48h", "72h", "96h"), function(tm) pick_of("shrinkage", "welch", tm))
+names(sum_sel) <- c("48h", "72h", "96h")
+sum_comp <- sort(vapply(
+  unique(bm$stem[bm$family == "comparator"]), rmse_of, numeric(1),
+  time = "96h", gene_set = "welch"
+))
+```
+
+- The chapter asks whether a per-type covariance improves deconvolution of the
+  Suppinger bulk samples (GSE229386, 48, 72 and 96 h, three standard-Wnt
+  replicates per time) against mean-based methods, when every method
+  receives the same genes and the same scored cells.
+- One DeCovarT model is fitted throughout (single-cell law, raw-count
+  covariances, profiled scales, L-BFGS-B); only the regularisation of
+  the within-type correlation moves, and its level is chosen by the
+  bulk likelihood summed over the replicates, never by the observed
+  composition. The observed composition is the share of scored cells in
+  the single-cell annotation.
+- On the Welch panel, with shrinkage of the raw covariance, the
+  bulk likelihood chooses
+  `r and_list(paste(vapply(sum_sel, function(x) format(x$tuning), ""), "at", hours(names(sum_sel))))`;
+  the RMSE there is
+  `r and_list(paste(f3(vapply(sum_sel, function(x) x$rmse, 0)), "at", hours(names(sum_sel))))`.
+  The best comparator at 96 h is `r names(sum_comp)[[1L]]`
+  (`r f3(sum_comp[[1L]])`).
+- At 96 h most of the remaining error is a
+  split inside paraxial mesoderm, whose mean profiles are nearly
+  collinear (@tbl-deconv-lineage); the bulk is far from the reference
+  mixture on many genes (@tbl-deconv-agreement).
+- The bulk likelihood ranks levels within one
+  covariance family; across families a higher likelihood is not a
+  lower error (@sec-deconv-strategy-ranking). Factor analysis needs
+  positive scales (@sec-deconv-scale-positivity).
+- Limits: three replicates per protocol and time, no interval on a
+  chosen level, one reference per time. The smaller gene panels and the
+  case where each method selects its own genes are in the appendix
+  (@sec-deconv-small-panels, @sec-deconv-own-genes).
+
 ## What is being compared {#sec-deconv-models}
 
 [Numbers to rerun: they were computed on the panel of the earlier tier (i), which dropped the 2,178 mostly fractional genes and used the 5 % presence gate. Tier (i) now keeps every gene and applies the gate of @eq-fs-presence (@sec-fs-qc-applied).]{.highlight}
@@ -402,64 +445,12 @@ a zero proportion "very complicated" (p. S22).
 
 ## Statistical interpretation of the results {#sec-deconv-interpretation}
 
-Two scenarios are kept apart, because they answer different questions.
-In the first, each method chooses its own genes, so a difference
-between two methods mixes the gene set, the input scale and the
-estimator. In the second, every method receives the same genes, so a
-difference comes from the estimator alone.
-
-### Scenario 1: each method selects its own genes {#sec-deconv-own-genes}
-
-The earlier runs on these data (GastroDeconv2FateMap) called the
-methods through the `omnideconv` wrapper. Its benchmark states the
-policy: the authors "consulted the methods' developers for guidance on
-optimal parameter settings and data type usage. In the absence of
-feedback, we ran the corresponding method with default parameters and
-considered counts and transcripts per million (TPM) as single-cell and
-bulk RNA-seq input data, respectively" (Dietrich et al. 2026, p. 5).
-Signature building and deconvolution are run as two steps for DWLS and
-SCDC, among others (p. 27).
-[TODO-cite: Dietrich et al. 2026, omnideconv, Genome Biology 27:6, doi:10.1186/s13059-026-03955-w; pp. 5, 27; not in Zotero nor in bibliography/REFERENCES.bib.]{.highlight}
-
-Under that policy the three second-generation methods do not see the
-same genes, nor the same weights (@tbl-deconv-own-genes).
-
-| Method | Genes kept | Weight of a gene in the fit | Input scale in the omnideconv benchmark |
-|---|---|---|---|
-| DWLS | Markers only. MAST test of each type against the rest; genes with adjusted $p$ below `pval.cutoff` and $\log_2$ fold change above `diff.cutoff = 0.5`; the top $g$ per type by fold change, with $g$ scanned from 50 to 200 and chosen to minimise the condition number of the signature (`DWLS::buildSignatureMatrixMAST()`) | Inverse squared fitted value, capped by the dampening constant | `pval_cutoff = 0.05`, other defaults (p. 29); scale not reported in the DWLS paragraph |
-| SCDC | No selection: every gene shared by the reference and the bulk | Iterated weights $1/(\nu+\hat\delta_g^{2})$, with $\hat\delta_g$ the residual of gene $g$ (`SCDC::SCDC_prop_ONE()`); the weighted basis is used (`weight.basis = TRUE`) | Single-cell counts, bulk TPM, one reference (p. 29) |
-| BayesPrism | No marker step inside `new.prism()`; genes that dominate a bulk are dropped (`outlier.cut = 0.01`, `outlier.fraction = 0.1`). `cleanup.genes()` and `select.marker()` are optional steps left to the user | None explicit: a multinomial likelihood, so a gene counts in proportion to its reads | Un-normalised counts for both inputs; cell types only (p. 27). Gene clean-up: not reported |
-
-: Gene selection and gene weights of the three second-generation methods when each runs with its own defaults. Code columns read from the installed packages (DWLS 0.5.2, SCDC 0.0.0.9000, BayesPrism 2.2.3); the last column from Dietrich et al. (2026). {#tbl-deconv-own-genes}
-
-**Hypothesis for the gastruloid reference (not tested here).** DWLS is
-the only one of the three that prunes genes on the condition number of
-the mean signature. Labelled states at 48 h, 72 h and 96 h lie on a
-continuum, so neighbouring types have nearly collinear mean profiles.
-A rule that minimises the condition number then keeps the genes that
-separate a few dominant lineages and drops those that distinguish
-closely related types. SCDC and BayesPrism keep those genes, with a
-low weight or a low read share. That would explain estimates that
-agree between SCDC and BayesPrism and differ for DWLS
-(@fig-kappa-gastruloid).
-
-![Hypothesis: sources of disagreement between SCDC, BayesPrism and DWLS when each builds its own signature from one reference. A: shared notation. B: how each method builds its reference. C: inference step and the proposed reading for gastruloids. The picture was generated by an AI image model; it is a teaching sketch of the hypothesis, not a result, and its formulas are simplified.](images/condition_number_poor_performance_correlated_cell_types.png){#fig-kappa-gastruloid}
-
-Two cautions:
-
-- **The benchmark does not support the hypothesis directly.** Dietrich
-  et al. report DWLS among the most stable methods across annotation
-  resolutions and the one with the least spillover between related
-  immune types (pp. 8 and 13). They compare two DWLS signatures and
-  find the better deconvolution with the lower condition number
-  (p. 16). Their references are immune and tumour atlases with ground
-  truth from flow cytometry, not a developmental continuum.
-- **Scenario 1 cannot isolate the cause.** DWLS differs from the other
-  two by its genes, its weights and its solver at once.
-- **No condition number was computed in this repository.** The
-  argument above is an argument, not a measurement.
-
-### Scenario 2: one gene panel for every method {#sec-deconv-fixed-panel}
+Two scenarios answer different questions. When each method chooses
+its own genes, a difference between two methods mixes the gene set,
+the input scale and the estimator; that scenario, and the hypothesis it
+suggests, is in the appendix (@sec-deconv-own-genes). This chapter
+gives every method the same genes, so a difference comes from the
+estimator alone.
 
 The runs of this book give every method the same genes, the same
 scored cells and raw counts (`scripts/04_01_stats_deconvolution.R`):
@@ -480,7 +471,7 @@ scored cells and raw counts (`scripts/04_01_stats_deconvolution.R`):
 
 A difference between methods is then a difference between estimators.
 A difference between panels, for one method, measures what the
-gene set contributes. If the hypothesis of scenario 1 holds, DWLS on
+gene set contributes. If the hypothesis of @sec-deconv-own-genes holds, DWLS on
 the shared panel should move towards SCDC and BayesPrism.
 
 The second pass (11 November 2026) adds to that list MEAD with four
@@ -498,7 +489,7 @@ $\boldsymbol{S}_T(\boldsymbol{p})$, the same with the between-type term
 (@eq-deconv-total-cov); $d_g$, a gene-wise variance scale; $\lambda$, the
 `r glossary("shrinkage intensity")` of @sec-cov-shrinkage-reading.
 
-#### Results on a shared panel {#sec-deconv-fixed-results}
+### Results on a shared panel {#sec-deconv-fixed-results}
 
 These are the results of the second pass (11 November 2026), read from
 `output/deconvolution/second_pass/`; they are not rerun, and this
@@ -514,7 +505,7 @@ below is over three bulk replicates of one protocol.
 
 ```{r}
 #| label: tbl-deconv-fixed-rmse
-#| tbl-cap: "Root mean squared error of the estimated proportions, mean over the three standard-Wnt replicates, per time and gene panel, second pass (`output/deconvolution/second_pass/benchmark_metrics.csv`). Bulk as is. DeCovarT rows: L-BFGS-B. Rows are ordered by the last column."
+#| tbl-cap: "Root mean squared error of the estimated proportions, mean over the three standard-Wnt replicates, per time, Welch panel, second pass (`output/deconvolution/second_pass/benchmark_metrics.csv`; the $R^2_D\\ge 5\\%$ panel is in @tbl-deconv-fixed-rmse-small). Bulk as is. DeCovarT rows: L-BFGS-B. Rows are ordered by the last column."
 #| echo: false
 metrics <- utils::read.csv(
   here::here("..", "output", "deconvolution", "second_pass", "benchmark_metrics.csv"),
@@ -537,8 +528,10 @@ rows <- c(
   "DeCovarT, denoised covariance" = "DeCovarT denoised (bio only) | lbfgsb | b_g none"
 )
 metrics$stem <- sub(" \\| (welch|r2_05)$", "", metrics$method)
+# One table per gene panel: Welch here, R2_D >= 5% in the appendix.
+fixed_rmse_table <- function(gene_set) {
 cells <- expand.grid(
-  gene_set = c("r2_05", "welch"),
+  gene_set = gene_set,
   time = c("48h", "72h", "96h"),
   stringsAsFactors = FALSE
 )
@@ -569,10 +562,12 @@ colnames(out) <- c(
 )
 tinytable::tt(out) |>
   tinytable::format_tt(quarto = TRUE) |>
-  tinytable::style_tt(j = 2:7, align = "r")
+  tinytable::style_tt(j = 2:4, align = "r")
+}
+fixed_rmse_table("welch")
 ```
 
-What @tbl-deconv-fixed-rmse and @fig-deconv-rmse show:
+What @tbl-deconv-fixed-rmse shows (per replicate: @fig-deconv-rmse, appendix):
 
 - **At 96 h on the Welch panel, five estimators are within 0.03 to
   0.07** of the observed composition: DeCovarT on the raw covariance
@@ -583,9 +578,6 @@ What @tbl-deconv-fixed-rmse and @fig-deconv-rmse show:
   with the denoised covariance.** The first-pass plug-ins, not the
   DeCovarT law, are what fails: the same law with another $\lambda$ is
   the best row of the table.
-- **The small panel is worse for every comparator at 96 h** (0.27 to
-  0.42) and at 48 h, where 17 genes carry the fit. The panel matters
-  more than the method there.
 - **Pooled over the three times,** the lowest RMSE on the Welch panel is
   0.040 (DeCovarT, $\lambda=0.5$), then 0.053 (QP, full raw covariance)
   and 0.054 (DeMixSC weights); the best first-pass DeCovarT flavour was
@@ -594,23 +586,9 @@ What @tbl-deconv-fixed-rmse and @fig-deconv-rmse show:
   levels scored against the same nine samples that define the error, so
   0.034 is an optimistic value. A level chosen without the observed
   composition is needed before the comparison with MEAD or RNA-Sieve is
-  fair; the full run makes it (@sec-deconv-scale-panels).
+  fair; the full run makes it (@sec-deconv-selection).
 
-![Root mean squared error per replicate, every method, gene panel and
-treatment of the bulk. Rows of panels: methods; columns: bulk times.
-Small points: the three standard-Wnt replicates; large point: their
-mean. Black: comparators and the QP stage of the multivariate
-RNA-Sieve; blue: DeCovarT by trust-region Newton; orange: DeCovarT by
-L-BFGS-B, or BFGS for the Firth
-fits.](images/deconvolution/second_pass_benchmark_rmse.png){#fig-deconv-rmse}
-
-![Aitchison distance to the observed composition, same layout as
-@fig-deconv-rmse. Zeros are replaced at 0.001 before the centred
-log-ratio. The distance depends on the number of parts (3 at 48 h and
-72 h, 5 at 96 h), so it compares methods within a column
-only.](images/deconvolution/second_pass_benchmark_aitchison.png){#fig-deconv-aitchison}
-
-The `r glossary("Aitchison distance")` (@fig-deconv-aitchison, ledger M1) ranks
+The `r glossary("Aitchison distance")` (@fig-deconv-aitchison in the appendix, ledger M1) ranks
 differently, because it is driven by the rare types. An estimate of
 exactly zero for a type observed at 0.6% costs more than 0.1 of mass
 moved between two abundant types. At 96 h on the Welch panel the lowest
@@ -625,17 +603,15 @@ Standard-Wnt replicates; one point per cell type and replicate; dashed
 line: equality. Above each panel: Pearson correlation and RMSE over its
 points.](images/deconvolution/second_pass_observed_vs_estimated_welch.png){#fig-deconv-scatter}
 
-#### Why the profile likelihood loses at 96 h {#sec-deconv-96h-diagnosis}
+### Why the profile likelihood loses at 96 h {#sec-deconv-96h-diagnosis}
 
-##### Assumptions made before the second pass, and what the data say
-
-Seven explanations were on the table: five from the discussion of
+**Assumptions made before the second pass, and what the data say.** Seven explanations were on the table: five from the discussion of
 11 November, two of mine. Each keeps its row whether or not the data
 went its way.
 
 | Assumption | Source | Verdict | Evidence |
 | --- | --- | --- | --- |
-| Too many genes, or too few at 48 h | discussion | Partly | Not monotonic. At 96 h the large panel helps every comparator and hurts DeCovarT with the closed-form $\lambda$; 17 genes at 48 h fail for most methods unless the bulk is divided by $b_g$ (@tbl-deconv-fixed-rmse). |
+| Too many genes, or too few at 48 h | discussion | Partly | Not monotonic. At 96 h the large panel helps every comparator and hurts DeCovarT with the closed-form $\lambda$; 17 genes at 48 h fail for most methods unless the bulk is divided by $b_g$ (@tbl-deconv-fixed-rmse-small). |
 | The Gaussian law does not hold | discussion | True as a misfit, not the cause | $\hat n<1$ cell at 96 h; 18 to 28% of genes more than 4-fold off (@tbl-deconv-agreement). Yet the same Gaussian law with $\lambda=0.5$ gives the lowest error. |
 | The covariance is not regularised enough | discussion | **Supported** | RMSE 0.36 → 0.034 at 96 h on the Welch panel when $\lambda$ goes from the closed form to 0.5 (@fig-deconv-shrinkage). I had ranked this last in my first note of 11 November; that ranking was wrong. |
 | ILR optimiser against quadratic programming | discussion | Not the optimiser; yes for the estimating equation | DeCovarT's estimate has a higher likelihood than the observed composition in all 36 sample × panel × covariance cells (@tbl-deconv-loglik). A QP on the same plug-ins gives 0.060 (@fig-deconv-sieve). |
@@ -646,9 +622,7 @@ went its way.
 : Assumptions and verdicts. "Discussion": raised by the author of the
 book on 11 November 2026. {#tbl-deconv-assumptions}
 
-##### The optimiser reaches a better likelihood than the observed composition
-
-The `r glossary("profile likelihood", "profile log-likelihood")` of
+**The optimiser reaches a better likelihood than the observed composition.** The `r glossary("profile likelihood", "profile log-likelihood")` of
 `DeCovarT::deconvolute_single_cell()` at a
 composition $\boldsymbol{p}$ is, up to a constant (ledger P1),
 
@@ -670,7 +644,7 @@ standard-Wnt samples.
 
 ```{r}
 #| label: tbl-deconv-loglik
-#| tbl-cap: "Profile log-likelihood at the DeCovarT estimate (L-BFGS-B, bulk as is) minus its value at the observed composition, split into the two terms of @eq-deconv-profile; mean over the three standard-Wnt replicates (`output/deconvolution/second_pass/likelihood_terms.csv`). 'Smallest gain': lowest of the three replicates; a negative value would mean the optimiser stopped below the observed composition."
+#| tbl-cap: "Profile log-likelihood at the DeCovarT estimate (L-BFGS-B, bulk as is) minus its value at the observed composition, split into the two terms of @eq-deconv-profile, Welch panel ($R^2_D\\ge 5\\%$ panel: @tbl-deconv-loglik-small); mean over the three standard-Wnt replicates (`output/deconvolution/second_pass/likelihood_terms.csv`). 'Smallest gain': lowest of the three replicates; a negative value would mean the optimiser stopped below the observed composition."
 #| echo: false
 terms <- utils::read.csv(
   here::here("..", "output", "deconvolution", "second_pass", "likelihood_terms.csv"),
@@ -684,9 +658,12 @@ gap <- merge(at_fit, at_obs, by = key, suffixes = c("_fit", "_obs"))
 gap$total <- gap$loglik_fit - gap$loglik_obs
 gap$quadratic <- gap$quadratic_term_fit - gap$quadratic_term_obs
 gap$log_det <- gap$log_det_term_fit - gap$log_det_term_obs
+whole <- function(x) format(round(x), big.mark = ",", trim = TRUE)
+# Welch rows here, the other panel in the appendix.
+loglik_table <- function(keep) {
+gap <- gap[gap$gene_set %in% keep, ]
 cell <- interaction(gap$covariance, gap$gene_set, gap$time, drop = TRUE)
 pick <- !duplicated(cell)
-whole <- function(x) format(round(x), big.mark = ",", trim = TRUE)
 tab <- data.frame(
   ifelse(gap$covariance[pick] == "raw", "raw", "denoised"),
   sub("h$", " h", gap$time[pick]),
@@ -709,6 +686,8 @@ colnames(tab) <- c(
 tinytable::tt(tab) |>
   tinytable::format_tt(quarto = TRUE) |>
   tinytable::style_tt(j = 3:7, align = "r")
+}
+loglik_table("welch")
 ```
 
 - **No optimiser failure.** The gain is never negative: the estimate is
@@ -735,9 +714,7 @@ tinytable::tt(tab) |>
   $\hat\phi$ is $10^6$ to $10^8$ here. A model with one scale for mean
   and variance, as RNA-Sieve, keeps the quadratic form at full weight.
 
-##### Same plug-ins, quadratic programme instead of likelihood
-
-The multivariate RNA-Sieve (`fit_sieve_chain()`) writes the bulk as
+**Same plug-ins, quadratic programme instead of likelihood.** The multivariate RNA-Sieve (`fit_sieve_chain()`) writes the bulk as
 $\boldsymbol{y}\sim\mathcal{N}\bigl(\boldsymbol{\mu}\boldsymbol{w},\,
 n\,\boldsymbol{S}_T(\boldsymbol{p})\bigr)$, one $n$ for the mean and the
 covariance. Its covariance is that of a bulk whose cell-type counts are
@@ -781,17 +758,10 @@ the raw covariance, full raw, full denoised):
 6. `full_lik`: from that state, the full likelihood with its
    log-determinant, maximised in $\boldsymbol{w}\ge 0$.
 
-![Stages of the multivariate RNA-Sieve, RMSE per replicate. Rows of
-panels: covariance input; columns: bulk times. Stages are fitted from
-top to bottom, each from the previous one. Blue: Welch panel; orange:
-genes with $R^2_D\ge 5\%$. Small points: the three standard-Wnt
-replicates; large point: their
-mean.](images/deconvolution/second_pass_sieve_stages_rmse.png){#fig-deconv-sieve}
-
 - **The estimating equation is what differs.** On the Welch panel at
   96 h, with the full raw covariance, the QP gives 0.060 and its
   iteration converges for the three replicates. DeCovarT with the same
-  covariance gives 0.36. The QP uses the covariance as a weight only;
+  covariance gives 0.36 (@fig-deconv-sieve, appendix). The QP uses the covariance as a weight only;
   the likelihood also reads the composition from it.
 - **The between-type term changes little:** `qp_within` and `qp` have
   the same RMSE to the third decimal in 10 of the 18 cells of
@@ -804,17 +774,14 @@ mean.](images/deconvolution/second_pass_sieve_stages_rmse.png){#fig-deconv-sieve
   proportions. RNA-Sieve shares the refined means across bulks; that
   version was not written here, and six bulks with two protocols would
   still be few for three to five profiles.
-- **The gene-wise variance scale has no consistent effect** (better at
-  72 h on the small panel, worse at 96 h on the Welch panel), and the
+- **The gene-wise variance scale has no consistent effect** (worse at
+  96 h on the Welch panel; the small panel is in the appendix), and the
   alternation did not converge in 13 of 18 chains.
 - **The full likelihood undoes the QP** on the Welch panel with the full
   raw covariance (0.060 → 0.47 at 96 h, starting from refined means).
 - **The denoised covariance alone is unstable:** its QP iteration does
-  not converge at 96 h on either panel. It is a fixed point, not a
+  not converge at 96 h on the Welch panel (nor on the smaller one). It is a fixed point, not a
   descent, and a nearly singular weight matrix makes it cycle.
-- **On the small panel at 96 h the QP is worse than DeCovarT** (0.36
-  against 0.21) and does not converge. The result above is a result
-  about the Welch panel.
 
 The released Python RNA-Sieve behaved as a weighted least squares in
 the second pass. In `rnasieve` 0.1.4 the proportion update passes its
@@ -829,9 +796,7 @@ released estimator. `scripts/python/run_rnasieve.py` now installs the
 corrected update and reports the Godambe intervals (@sec-deconv-comparators);
 the current run (@sec-deconv-selection) uses the repaired estimator.
 
-##### Shrinkage level of the raw covariance
-
-`rescale_shrinkage()` moves the raw covariance to another $\lambda$ by
+**Shrinkage level of the raw covariance.** `rescale_shrinkage()` moves the raw covariance to another $\lambda$ by
 multiplying its off-diagonal terms by $(1-\lambda)/(1-\hat\lambda^{\ast}_j)$
 (ledger S2); variances are untouched.
 
@@ -846,7 +811,6 @@ mean.](images/deconvolution/second_pass_shrinkage_sweep.png){#fig-deconv-shrinka
   (0.5), 0.067 (0.75), 0.16 (1). The optimum is interior: correlations
   help, at half their sample value.
 - **Welch panel, 72 h:** 0.36 → 0.033 at $\lambda=0.25$.
-- **Small panels:** no gain (0.21 → 0.28 to 0.32 at 96 h).
 - **Reading.** The closed-form $\lambda$ minimises the
   `r glossary("Frobenius risk")` of the covariance, type by type. Abundant types get $\lambda\approx 0.02$
   and rare ones 0.6: the weight matrices of the types are then of very
@@ -854,7 +818,7 @@ mean.](images/deconvolution/second_pass_shrinkage_sweep.png){#fig-deconv-shrinka
   signal. One common, larger $\lambda$ removes it. This is an
   interpretation; the sweep does not separate "larger" from "common".
 
-##### Collinear mean profiles: the error at 96 h is a split inside one lineage
+**Collinear mean profiles: the error at 96 h is a split inside one lineage.**
 
 ![Correlation between the mean profiles of the scored cell types, Welch
 panel. Rows: Pearson on mean raw counts per cell, and Kendall's tau;
@@ -888,9 +852,9 @@ with the covariance held fixed.
 
 - **The means alone do not separate the lineage.** Unweighted NNLS puts
   everything on caudal mesoderm, observed at 0.22.
-- **The covariance does, on the large panel only.** The Mahalanobis
+- **The covariance does, on the Welch panel.** The Mahalanobis
   separation of caudal from pre-somitic mesoderm is 3.5 times the
-  diagonal one on the Welch panel and 0.22 times on the 635-gene panel.
+  diagonal one.
 
 ```{r}
 #| label: tbl-deconv-lineage
@@ -946,9 +910,8 @@ lin_r01_best <- lin_r01[which.min(lin_r01$rmse_five_parts), ]
 - **Once the lineage is summed, `r sum(lin_ok)` of the `r nrow(lin_w)`
   rows are at 0.04 or below** on the Welch panel; the exception is
   `r and_list(paste0(lin_bad$label, " (", f3(lin_bad$rmse_three_parts), ")"))`.
-  Summing removes `r f2(lin_gap)` of RMSE on average. Over the three
-  panels, `r sum(lin_all_ok)` of `r nrow(lin)` method × panel means are
-  at 0.04 or below after summing (@fig-deconv-lineage-collapse).
+  Summing removes `r f2(lin_gap)` of RMSE on average
+  (@fig-deconv-lineage-collapse).
 - **The methods differ mostly by the split.** The observed pre-somitic
   share of the lineage is `r f2(lin_w$observed_psm_share[[1L]])`; the
   four shrinkage strategies of DeCovarT give
@@ -957,38 +920,31 @@ lin_r01_best <- lin_r01[which.min(lin_r01$rmse_five_parts), ]
   `r lin_share("DWLS")`, RNA-Sieve `r lin_share("RNA-Sieve")`, SCDC
   `r lin_share("SCDC")`, and NNLS and DECALS put the whole lineage on
   caudal mesoderm (`r lin_share("NNLS")`).
-- **The small panel loses the split, not the lineage.** On the
-  $R^2_D\ge 5\%$ panel the five-part error is higher than on the Welch
-  panel for `r sum(lin_wide$rmse_five_parts_05 > lin_wide$rmse_five_parts_w)`
-  of the `r nrow(lin_wide)` methods fitted on both, while the summed
-  error stays small (@fig-deconv-lineage-collapse). On the
-  $R^2_D\ge 1\%$ panel the lowest five-part error is
-  `r lin_r01_best$label` (`r f3(lin_r01_best$rmse_five_parts)`).
-  Reading (not tested): the genes that separate the three types are
-  in the Welch panel and mostly absent from its high-deviance subset.
 
-![RMSE at 96 h before and after the three paraxial-mesoderm types
-(caudal mesoderm, pre-somitic mesoderm, somite differentiation front)
-are summed into one part, mean over the three standard-Wnt replicates.
-Panels: gene panels; rows: methods, DeCovarT at the level chosen by the
-bulk likelihood (no suffix) or by held-out cells ("per type",
+![RMSE at 96 h on the Welch panel before and after the three
+paraxial-mesoderm types (caudal mesoderm, pre-somitic mesoderm, somite
+differentiation front) are summed into one part, mean over the three
+standard-Wnt replicates. Rows: methods, DeCovarT at the level chosen by
+the bulk likelihood (no suffix) or by held-out cells ("per type",
 "common", "shared loadings"). Orange: five scored types; blue: three
-parts, lineage summed; grey segment: the error removed by summing.
-The factor-analysis row with free scales has no point on the
-$R^2_D\ge 5\%$ panel: every level stopped on a non-positive
-scale.](images/deconvolution/lineage_collapse_96h.png){#fig-deconv-lineage-collapse}
+parts, lineage summed; grey segment: the error removed by summing. The
+three panels are compared in
+@fig-deconv-lineage-collapse-all.](images/deconvolution/lineage_collapse_96h_welch.png){#fig-deconv-lineage-collapse}
 
-##### How far the bulk is from the reference
+**How far the bulk is from the reference.**
 
 ```{r}
 #| label: tbl-deconv-agreement
-#| tbl-cap: "Bulk against the reference mixed at the observed composition, standard-Wnt samples, mean over three replicates (`output/deconvolution/bulk_reference_agreement.csv`). Correlations of $\\log(1+y_g)$ with $\\log(1+(\\boldsymbol{\\mu}\\boldsymbol{p})_g)$; share of genes whose bulk-to-reference ratio is more than 4-fold from the median ratio of the sample."
+#| tbl-cap: "Bulk against the reference mixed at the observed composition, standard-Wnt samples, Welch panel, mean over three replicates (`output/deconvolution/bulk_reference_agreement.csv`; the two subsets are in @tbl-deconv-agreement-small). Correlations of $\\log(1+y_g)$ with $\\log(1+(\\boldsymbol{\\mu}\\boldsymbol{p})_g)$; share of genes whose bulk-to-reference ratio is more than 4-fold from the median ratio of the sample."
 #| echo: false
 agree <- utils::read.csv(
   here::here("..", "output", "deconvolution", "bulk_reference_agreement.csv"),
   stringsAsFactors = FALSE,
   fileEncoding = "UTF-8"
 )
+# Welch rows here, the two subsets in the appendix.
+agreement_table <- function(keep) {
+agree <- agree[agree$gene_set %in% keep, ]
 cell <- interaction(agree$gene_set, agree$time, drop = TRUE)
 pick <- !duplicated(cell)
 tab <- data.frame(
@@ -1008,6 +964,8 @@ colnames(tab) <- c(
 tinytable::tt(tab) |>
   tinytable::format_tt(quarto = TRUE) |>
   tinytable::style_tt(j = 2:5, align = "r")
+}
+agreement_table("welch")
 ```
 
 ```{r}
@@ -1016,27 +974,27 @@ tinytable::tt(tab) |>
 agree_m <- stats::aggregate(
   cbind(pearson_log, share_over_4_fold, genes) ~ gene_set + time, agree, mean
 )
-agree_hi <- agree_m[which.max(agree_m$pearson_log), ]
-agree_lo <- agree_m[which.min(agree_m$pearson_log), ]
+agree_w <- agree_m[agree_m$gene_set == "welch", ]
+agree_hi <- agree_w[which.max(agree_w$pearson_log), ]
+agree_lo <- agree_w[which.min(agree_w$pearson_log), ]
 ```
 
 ![Bulk against the reference mean mixed at the observed composition,
-standard-Wnt samples. Left: Pearson correlation of
+standard-Wnt samples, Welch panel. Left: Pearson correlation of
 $\log(1+y_g)$ with $\log(1+(\boldsymbol{\mu}\boldsymbol{p})_g)$;
 right: share of genes whose bulk-to-reference ratio is more than 4-fold
-from the median ratio of the sample. Horizontal axis: bulk time;
-colours: gene panel (blue: Welch; green: $R^2_D\ge 1\%$; orange:
-$R^2_D\ge 5\%$). Small points: the three replicates; large point:
-their mean. Both vertical axes run from 0 to
-1.](images/deconvolution/bulk_reference_agreement.png){#fig-deconv-agreement}
+from the median ratio of the sample. Horizontal axis: bulk time. Small
+points: the three replicates; large point: their mean. Both vertical
+axes run from 0 to 1. The two subsets are in
+@fig-deconv-agreement-all.](images/deconvolution/bulk_reference_agreement_welch.png){#fig-deconv-agreement}
 
-The correlation between a bulk and its own reference mixture ranges
-from `r f2(agree_hi$pearson_log)` (`r hours(agree_hi$time)`,
-`r big(agree_hi$genes)` genes) to `r f2(agree_lo$pearson_log)`
-(`r hours(agree_lo$time)`, `r big(agree_lo$genes)` genes); it is
-lowest on the Welch panel at every time, and
-`r pct(min(agree_m$share_over_4_fold))` to
-`r pct(max(agree_m$share_over_4_fold))` of the genes are more than
+On the Welch panel the correlation between a bulk and its own
+reference mixture ranges from `r f2(agree_hi$pearson_log)`
+(`r hours(agree_hi$time)`, `r big(agree_hi$genes)` genes) to
+`r f2(agree_lo$pearson_log)` (`r hours(agree_lo$time)`,
+`r big(agree_lo$genes)` genes), and
+`r pct(min(agree_w$share_over_4_fold))` to
+`r pct(max(agree_w$share_over_4_fold))` of the genes are more than
 4-fold off (@tbl-deconv-agreement, @fig-deconv-agreement). The fitted DeCovarT scales say the same:
 the variance scale implies fewer than one cell per bulk at 96 h. The
 residual is a difference between platforms, gene by gene, not the
@@ -1045,7 +1003,7 @@ $\sum_j p_j^{2}\boldsymbol{\Sigma}_{B,j}+n^{-1}\sum_j p_j\boldsymbol{\Sigma}_{W,
 +\boldsymbol{\Sigma}_{\mathrm{obs}}$ (ledger Q1), has two layers that do
 not shrink with $n$; the fits here use the middle one only.
 
-##### Two variants that did not change the picture
+**Two variants that did not change the picture.**
 
 - **Between-type covariance in the DeCovarT likelihood**
   (`fit_decovart_total()`, @eq-deconv-total-cov with free $c$ and
@@ -1059,8 +1017,7 @@ not shrink with $n$; the fits here use the middle one only.
   $J-1$ ILR coordinates, a few units (median 4 on the Welch panel at
   48 h and 72 h), against likelihood differences of hundreds. The
   estimates equal the unpenalised ones to the third decimal on the
-  Welch panel at 72 h; on the 17-gene panel at 48 h the RMSE goes from
-  0.74 to 0.57. The information is singular on a face (ledger F1), so
+  Welch panel at 72 h. The information is singular on a face (ledger F1), so
   the penalty keeps the estimate interior; it does not act on the
   covariance log-determinant of @eq-deconv-profile.
   [At 96 h on the Welch panel one Firth fit is projected at about 8 h
@@ -1068,7 +1025,7 @@ not shrink with $n$; the fits here use the middle one only.
   for the raw and denoised covariance, bulk as is, and are not in the
   figures yet.]{.highlight}
 
-##### Limits
+**Limits.**
 
 - One reference per time, from one cell line at 72 h and 96 h; three
   bulk replicates per protocol; the observed composition is the share
@@ -1078,21 +1035,7 @@ not shrink with $n$; the fits here use the middle one only.
 - Robust regression returned a negative coefficient for every sample;
   the reported estimate is the clipped one.
 - Every "best" value above was selected on the samples that score it.
-- The equations of this section are checked in
-  `verification/ledger.json` (@tbl-deconv-ledger); the repository has
-  no Lean project, and no shared notation file exists yet.
 
-```{r}
-#| label: tbl-deconv-ledger
-#| tbl-cap: "Symbolic checks of the equations used in this section (`python3 verification/run_all.py`, SymPy 1.14.0). 'exact': the difference simplifies to zero; 'rational-sampling': zero in exact rational arithmetic at 25 points, not a proof; 'numeric': mpmath at 40 digits, not a proof; 'series': expansion to the stated order."
-#| echo: false
-ledger <- jsonlite::fromJSON(
-  here::here("..", "verification", "ledger.json")
-)$rows
-tab <- ledger[, c("id", "claim", "kind", "status")]
-colnames(tab) <- c("Id", "Claim", "Kind", "Status")
-tinytable::tt(tab, width = c(0.06, 0.66, 0.16, 0.12))
-```
 
 ### Choosing the shrinkage level without the observed composition {#sec-deconv-selection}
 
@@ -1124,10 +1067,12 @@ stage `sweep`; `r big(nrow(sweep))` fits in
 
 ```{r}
 #| label: tbl-deconv-selection
-#| tbl-cap: "Shrinkage arm, standard-Wnt replicates. Level chosen by the bulk likelihood (profile), mean RMSE at that level, and the lowest mean RMSE on the grid. Last two columns: DeCovarT with the levels chosen on held-out cells. `output/deconvolution/lambda_selection.csv`."
+#| tbl-cap: "Shrinkage arm, standard-Wnt replicates, Welch panel (the two subsets: @tbl-deconv-selection-small). Level chosen by the bulk likelihood (profile), mean RMSE at that level, and the lowest mean RMSE on the grid. Last two columns: DeCovarT with the levels chosen on held-out cells. `output/deconvolution/lambda_selection.csv`."
 #| echo: false
 shr <- lsel[lsel$family == "shrinkage", ]
-slots <- unique(shr[c("gene_set", "time")])
+# Welch rows here, the two subsets in the appendix.
+selection_table <- function(keep) {
+slots <- unique(shr[shr$gene_set %in% keep, c("gene_set", "time")])
 slots <- slots[order(match(slots$gene_set, names(panel_label)), slots$time), ]
 or_dash <- function(x) if (length(x) && !is.na(x[[1L]])) f3(x[[1L]]) else "—"
 tab <- do.call(rbind, lapply(seq_len(nrow(slots)), function(i) {
@@ -1152,6 +1097,8 @@ colnames(tab) <- c(
 tinytable::tt(tab) |>
   tinytable::format_tt(quarto = TRUE) |>
   tinytable::style_tt(j = 3:7, align = "r")
+}
+selection_table("welch")
 ```
 
 ![Shrinkage level of the raw covariance, Welch panel. Rows: held-out
@@ -1216,27 +1163,22 @@ neg_factor <- sum(neg_scale & grepl("factor", sweep$id))
   shrinkage level (`r sprintf("%+.0f", tp96$sum_profile - sh96$sum_profile)`
   units) and `r f2(tp96$rmse / sh96$rmse)` times its error
   (`r f3(tp96$rmse)`).
-- **Small panels.** Along the shrinkage levels the 17-gene panel at
-  48 h stays at `r span(small("48h"))` and the 635-gene panel at 96 h
-  at `r span(small("96h"))`. At 72 h the 140-gene panel gives
-  `r span(small("72h"))`.
 
 ![Root mean squared error of the proportions, every method of the full
-run, at the levels chosen without the observed composition. Rows of
-panels: gene panels (Welch, $R^2_D\ge 1\%$, $R^2_D\ge 5\%$); columns:
-bulk times, each with its own horizontal scale. Point: mean over the
-three standard-Wnt replicates; segment: their range. Dark blue: DeCovarT
-with the level chosen by the summed bulk likelihood (one row per
-covariance and scale strategy); light blue: DeCovarT with the levels
-chosen on held-out cells; orange: other methods. The title names the
-lowest mean at 96 h on the Welch
-panel.](images/deconvolution/benchmark_rmse.png){#fig-deconv-rmse-selected}
+run, at the levels chosen without the observed composition, Welch
+panel. Columns: bulk times, each with its own horizontal scale. Point:
+mean over the three standard-Wnt replicates; segment: their range. Dark
+blue: DeCovarT with the level chosen by the summed bulk likelihood (one
+row per covariance and scale strategy); light blue: DeCovarT with the
+levels chosen on held-out cells; orange: other methods. The title names
+the lowest mean at 96 h. The two subsets are in
+@fig-deconv-rmse-selected-all.](images/deconvolution/benchmark_rmse_welch.png){#fig-deconv-rmse-selected}
 
 ![Aitchison distance to the observed composition (zeros replaced at
 0.001), same layout and colours as @fig-deconv-rmse-selected. The
 distance depends on the number of parts, so it compares methods within
-a column only. The title names the lowest mean distance at 96 h on the
-Welch panel.](images/deconvolution/benchmark_aitchison.png){#fig-deconv-aitchison-selected}
+a column only. The two subsets are in
+@fig-deconv-aitchison-selected-all.](images/deconvolution/benchmark_aitchison_welch.png){#fig-deconv-aitchison-selected}
 
 **Factor arm.** A per-type factor model at rank 5 gives an error of
 `r f3(fa5("48h"))` at 48 h and `r f3(fa5("72h"))` at 72 h on the Welch
@@ -1553,6 +1495,18 @@ $\cos_W$ (`cos_w`) and $D_c$ (`info_c`) for every replicate; $A_{jk}$
 is computed for the factor fits of the screen of
 @sec-deconv-scale-screen (largest $A_{jk}$ over loadings and types, `max_alignment`).
 
+[TODO: four-panel `geom_tile()` heatmap of the rank-based decomposition
+for one type and time (96 h, top 50 Welch genes by deviance share, one
+gene order): (1) the raw covariance on the correlation scale; (2) the
+rank-one size term $\nu_j\boldsymbol{\mu}_{\cdot j}\boldsymbol{\mu}_{\cdot j}^{\top}$;
+(3) the remainder $\boldsymbol{\Delta}_j$; (4) the factor fit
+$\boldsymbol{B}_j\boldsymbol{B}_j^{\top}+\boldsymbol{\Psi}_j$ at the
+chosen rank, with the alignment $A_{jk}$ in the caption. The loadings
+are stored (`output/grn/cv/factors_<time>_<gene_set>.rds` from
+`scripts/03_04_cv_covariance.R`, `factors_size_*.rds` from
+`scripts/04_01_stats_deconvolution.R`) but none is in this checkout;
+`scripts/04_05_vis_regularisation.R` draws the panel once they are.]{.highlight}
+
 **Order of remedies, as expected from this analysis.** First, separate
 the size factor and keep the scales in their physical domain; second,
 the constrained profile with an explicit boundary flag; third,
@@ -1748,7 +1702,22 @@ Five distinct strategies go to the full run (`scale_strategies()` in
 reaches its bound counts as free): `r paste0(paste0("(", seq_along(carried), ") ", vapply(carried, strategy_text, character(1))), collapse = "; ")`.
 The first is the existing shrinkage family of @sec-deconv-selection.
 
-#### Results on the three panels {#sec-deconv-scale-panels}
+### Early-Wnt arm {#sec-deconv-early}
+
+The early-Wnt bulks have no single-cell counterpart
+(@sec-geo-design): their composition need not match the reference of
+the same time, so their RMSE against the scored-cell shares is not an
+error, and only the bulk likelihood is read there. The early arm is fitted
+on its own, with the same reference, grids and selection rule.
+
+The table below compares bulk likelihoods across strategies. Every strategy fits the same bulk vector
+$\boldsymbol{y}$ with $c$ and $\phi$ profiled, except the shared-$c$
+model, which first scales replicate $i$ to the median depth of its
+triplet, $\boldsymbol{y}_i'=k_i\boldsymbol{y}_i$ with
+$k_i=\operatorname{median}_{i'}(d_{i'})/d_i$ and $d_i$ the column sum
+of the HTSeq table. Its likelihood is that of $\boldsymbol{y}'$; the
+Jacobian $G\sum_i\log k_i$ is added so that it compares with the
+others.
 
 ```{r}
 #| label: deconv-panels-values
@@ -1763,15 +1732,6 @@ strategy_short <- c(
   "two_param" = "Two-parameter",
   "factor" = "Factor, free",
   "raw factor, positive scales" = "Factor, positive"
-)
-strategy_text_of <- c(
-  "shrinkage" = "raw shrinkage with free scales",
-  "raw shrinkage, shared_c scales" = "raw shrinkage with a shared $c$",
-  "raw shrinkage, linked scales" = "raw shrinkage with linked scales",
-  "size-normalised shrinkage, free scales" = "size-normalised shrinkage",
-  "two_param" = "the two-parameter arm",
-  "factor" = "factor analysis with free scales",
-  "raw factor, positive scales" = "factor analysis with positive scales"
 )
 slots_all <- unique(lsel_all[c("gene_set", "time")])
 slots_all <- slots_all[order(match(slots_all$gene_set, names(panel_label)), slots_all$time), ]
@@ -1801,25 +1761,6 @@ panel_genes <- unique(sweep[c("time", "gene_set", "genes")])
 lsel_all <- merge(merge(lsel_all, panel_genes), log_k)
 is_shared <- lsel_all$family == "raw shrinkage, shared_c scales"
 lsel_all$loglik_y <- lsel_all$sum_profile + ifelse(is_shared, lsel_all$genes * lsel_all$sum_log_k, 0)
-jac_pair <- merge(
-  lsel_all[is_shared, c("time", "gene_set", "arm", "tuning", "sum_profile", "loglik_y", "selected_profile")],
-  lsel_all[lsel_all$family == "shrinkage", c("time", "gene_set", "arm", "tuning", "sum_profile")],
-  by = c("time", "gene_set", "arm", "tuning"), suffixes = c("_c", "_free")
-)
-jac_raw_gap <- range(jac_pair$sum_profile_c - jac_pair$sum_profile_free)
-jac_adj_gap <- max(abs(jac_pair$loglik_y - jac_pair$sum_profile_free))
-jac_sel_gap <- with(jac_pair[jac_pair$selected_profile %in% TRUE, ], max(abs(loglik_y - sum_profile_free)))
-jac_size <- with(merge(panel_genes, log_k), range(genes * sum_log_k))
-shr_same <- vapply(seq_len(nrow(slots_all)), function(k) {
-  lv <- unlist(lapply(c("standard", "early"), function(a) {
-    vapply(names(strategy_short)[1:3], function(f) {
-      pick_all(f, slots_all$gene_set[[k]], slots_all$time[[k]], a)$tuning
-    }, numeric(1))
-  }))
-  length(unique(lv[1:3])) == 1L && length(unique(lv[4:6])) == 1L
-}, logical(1))
-shr_w_means <- vapply(names(strategy_short)[1:4], mean_rmse, numeric(1), gene_set = "welch")
-panel_means <- vapply(names(panel_label), function(gs) mean_rmse("shrinkage", gs), numeric(1))
 
 # Highest summed log-likelihood for y among the strategies of one slot.
 best_strategy <- function(gene_set, time, arm, tol = 1) {
@@ -1829,211 +1770,14 @@ best_strategy <- function(gene_set, time, arm, tol = 1) {
   top <- top[order(-top$loglik_y), ]
   list(families = top$family, label = paste(strategy_short[top$family], collapse = " ≈ "))
 }
-size_gain <- function(time, arm, gene_set = "welch") {
-  sz <- pick_all("size-normalised shrinkage, free scales", gene_set, time, arm)
-  sh <- pick_all("shrinkage", gene_set, time, arm)
-  sz$sum_profile - sh$sum_profile
-}
-size_top <- outer(c("48h", "72h", "96h"), c("standard", "early"), Vectorize(function(tm, a) {
-  identical(best_strategy("welch", tm, a)$families[[1L]], "size-normalised shrinkage, free scales")
-}))
-
-# Comparators
-comp_stems <- unique(bm$stem[bm$family == "comparator"])
-comp_rmse <- function(gene_set, time) {
-  x <- vapply(comp_stems, rmse_of, numeric(1), time = time, gene_set = gene_set)
-  sort(x)
-}
-comp_w96 <- comp_rmse("welch", "96h")
-comp_r01_96 <- comp_rmse("r2_01", "96h")
-comp_r05_48 <- comp_rmse("r2_05", "48h")
-decovart_r05_48 <- vapply(names(strategy_short), function(f) pick_all(f, "r2_05", "48h")$rmse, numeric(1))
-genes_of <- function(gs, tm) panel_genes$genes[panel_genes$gene_set == gs & panel_genes$time == tm]
-
-# Factor arm: failures, bound, free against positive
+# Factor arm: replicate fits with a non-positive scale
 fac_rows <- sweep[sweep$family == "factor", ]
 fac_neg <- neg_scale[sweep$family == "factor"]
-fac_fail_96 <- sum(fac_neg & fac_rows$time == "96h")
-fac_fail_panels <- unique(fac_rows$gene_set[fac_neg])
-pos_bound <- sum(sweep$boundary[sweep$family == "raw factor, positive scales"] %in% TRUE)
-n_pos <- sum(sweep$family == "raw factor, positive scales")
-fp <- merge(
-  lsel[lsel$family == "factor", c("time", "gene_set", "tuning", "rmse")],
-  lsel[lsel$family == "raw factor, positive scales", c("time", "gene_set", "tuning", "rmse")],
-  by = c("time", "gene_set", "tuning"), suffixes = c("_free", "_pos")
-)
-fp <- fp[!is.na(fp$rmse_free) & !is.na(fp$rmse_pos), ]
-fp_same <- abs(fp$rmse_free - fp$rmse_pos) < 0.005
-fp_diff <- fp[!fp_same, ]
-fp_diff <- fp_diff[order(-abs(fp_diff$rmse_free - fp_diff$rmse_pos)), ]
-
-# Ranks at the top of the grids
-fa_grid_top <- max(lsel_all$tuning[lsel_all$family == "factor"], na.rm = TRUE)
-fa_sel <- lsel_all[lsel_all$family %in% c("factor", "raw factor, positive scales") &
-  lsel_all$selected_profile %in% TRUE, ]
-cv_shared <- read.csv(
-  here::here("..", "output", "grn", "cv", "cv_selected_tuning.csv"),
-  stringsAsFactors = FALSE, fileEncoding = "UTF-8"
-)
-cv_shared <- unique(cv_shared[cv_shared$rule == "factor, shared loadings", c("gene_set", "time", "tuning")])
-cv_scores <- read.csv(
-  here::here("..", "output", "grn", "cv", "cv_tuning_scores.csv"),
-  stringsAsFactors = FALSE, fileEncoding = "UTF-8"
-)
-shared_top <- max(cv_scores$tuning[cv_scores$arm == "factor_shared"])
 ```
-
-```{r}
-#| label: tbl-deconv-scale-panels
-#| tbl-cap: "Full run, standard-Wnt replicates: mean RMSE at the level chosen by the summed bulk likelihood, per strategy, panel and time (`output/deconvolution/lambda_selection.csv`, rows with `selected_profile`). Shrinkage columns: raw-count covariance, except the size-normalised one; scales as in @sec-deconv-scale-models. Italic row: mean over the three times. A dash: every level of the strategy stopped on a non-positive scale (and no mean without that time). Bold: lowest DeCovarT value of the row; last column: lowest comparator."
-#| echo: false
-rows_k <- rbind(slots_all, data.frame(gene_set = names(panel_label), time = "mean"))
-rows_k <- rows_k[order(match(rows_k$gene_set, names(panel_label)), rows_k$time), ]
-vals <- vapply(names(strategy_short), function(f) {
-  vapply(seq_len(nrow(rows_k)), function(k) {
-    gs <- rows_k$gene_set[[k]]
-    tm <- rows_k$time[[k]]
-    if (tm == "mean") mean_rmse(f, gs) else pick_all(f, gs, tm)$rmse
-  }, numeric(1))
-}, numeric(nrow(rows_k)))
-best_comp <- vapply(seq_len(nrow(rows_k)), function(k) {
-  gs <- rows_k$gene_set[[k]]
-  tm <- rows_k$time[[k]]
-  x <- if (tm == "mean") {
-    sort(rowMeans(sapply(c("48h", "72h", "96h"), function(t) comp_rmse(gs, t)[comp_stems])))
-  } else {
-    comp_rmse(gs, tm)
-  }
-  paste0(f3(x[[1L]]), " (", sub(" \\(.*", "", names(x)[[1L]]), ")")
-}, character(1))
-tab <- data.frame(
-  panel_label[rows_k$gene_set],
-  ifelse(rows_k$time == "mean", "mean", hours(rows_k$time)),
-  ifelse(is.na(vals), "—", f3(vals)),
-  best_comp,
-  row.names = NULL
-)
-colnames(tab) <- c("Panel", "Time", strategy_short, "Best comparator")
-out <- tinytable::tt(tab) |>
-  tinytable::format_tt(quarto = TRUE) |>
-  tinytable::style_tt(j = seq(3, ncol(tab)), align = "r") |>
-  tinytable::style_tt(i = which(rows_k$time == "mean"), italic = TRUE)
-low <- lapply(seq_len(nrow(vals)), function(i) {
-  which(round(vals[i, ], 3) == round(min(vals[i, ], na.rm = TRUE), 3))
-})
-for (i in seq_along(low)) {
-  out <- tinytable::style_tt(out, i = i, j = 2L + low[[i]], bold = TRUE)
-}
-out
-```
-
-What @tbl-deconv-scale-panels and @fig-deconv-rmse-selected show:
-
-- **Welch panel: the four shrinkage strategies are within 0.002 of one
-  another.** Mean RMSE over the three times:
-  `r and_list(paste0(strategy_text_of[c("raw shrinkage, shared_c scales", "shrinkage", "raw shrinkage, linked scales", "size-normalised shrinkage, free scales")], " ", f4(vapply(c("raw shrinkage, shared_c scales", "shrinkage", "raw shrinkage, linked scales", "size-normalised shrinkage, free scales"), mean_rmse, numeric(1), gene_set = "welch"))))`;
-  the two-parameter arm `r f3(mean_rmse("two_param", "welch"))`,
-  factor analysis `r f3(mean_rmse("factor", "welch"))` (free scales) and
-  `r f3(mean_rmse("raw factor, positive scales", "welch"))` (positive).
-  At 96 h the shrinkage strategies give
-  `r span(vapply(names(strategy_short)[1:4], function(f) pick_all(f, "welch", "96h")$rmse, numeric(1)))`;
-  the best comparator is `r names(comp_w96)[[1L]]`
-  (`r f3(comp_w96[[1L]])`), then
-  `r and_list(paste0(names(comp_w96)[2:3], " (", f3(comp_w96[2:3]), ")"))`;
-  RNA-Sieve with the repaired update gives
-  `r f3(comp_w96[["RNA-Sieve"]])`, the aligned DeMixSC weights
-  `r f3(comp_w96[["DeMixSC aligned (other times)"]])`, DECALS and NNLS
-  `r f3(comp_w96[["NNLS"]])`.
-- **$R^2_D\ge 1\%$ panel: size normalisation helps.** Size-normalised
-  shrinkage has the lowest DeCovarT mean
-  (`r f3(mean_rmse("size-normalised shrinkage, free scales", "r2_01"))`);
-  at 96 h it gives
-  `r f3(pick_all("size-normalised shrinkage, free scales", "r2_01", "96h")$rmse)`
-  against `r f3(pick_all("shrinkage", "r2_01", "96h")$rmse)` for raw
-  shrinkage, and `r names(comp_r01_96)[[1L]]` is lower still
-  (`r f3(comp_r01_96[[1L]])`).
-- **$R^2_D\ge 5\%$ panel.** At 48 h (`r genes_of("r2_05", "48h")` genes)
-  every DeCovarT strategy is at `r span(decovart_r05_48, f2)`; the
-  comparators that stay below 0.2 there are
-  `r and_list(paste0(names(comp_r05_48)[comp_r05_48 < 0.2], " (", f3(comp_r05_48[comp_r05_48 < 0.2]), ")"))`.
-  At 96 h size-normalised shrinkage gives
-  `r f3(pick_all("size-normalised shrinkage, free scales", "r2_05", "96h")$rmse)`
-  against `r f3(pick_all("shrinkage", "r2_05", "96h")$rmse)` for raw
-  shrinkage.
-- **The panel matters more than the scale model.** For raw shrinkage
-  the mean RMSE is
-  `r and_list(paste0(f3(panel_means), " on the ", c("Welch", "$R^2_D\\ge 1\\%$", "$R^2_D\\ge 5\\%$"), " panel"))`;
-  the four shrinkage strategies on the Welch panel span
-  `r f4(diff(range(shr_w_means)))`. The Welch panel has the lowest
-  mean for every strategy.
-- **With shrinkage the scale model does not matter.** Free, shared-$c$
-  and linked scales choose the same level in `r sum(shr_same)` of the
-  `r length(shr_same)` panel × time slots on both protocols, and their
-  Welch means agree to `r f4(diff(range(shr_w_means[1:3])))`.
-- **With factor analysis positivity matters.** With free scales the
-  generalised least-squares scale is non-positive in
-  `r sum(fac_neg)` replicate fits (`r fac_fail_96` at 96 h; panels
-  `r and_list(panel_label[fac_fail_panels])`; both protocols). With
-  positive scales `r n_pos_fail <- sum(neg_scale[sweep$family == "raw factor, positive scales"]); if (n_pos_fail == 0) "no fit fails" else paste(n_pos_fail, "fits fail")` and `r sum(sweep$boundary[sweep$family == "raw factor, positive scales"] %in% TRUE)`
-  of `r n_pos` replicate fits sit at $c_{\min}$. On the
-  $R^2_D\ge 5\%$ panel at 96 h every free level fails, while positive
-  scales give `r f3(pick_all("raw factor, positive scales", "r2_05", "96h")$rmse)`.
-  Where both fits exist the RMSE agrees to within 0.005 in
-  `r sum(fp_same)` of `r nrow(fp)` levels; the largest difference is at
-  rank `r fp_diff$tuning[[1L]]` (`r hours(fp_diff$time[[1L]])`,
-  `r panel_label[[fp_diff$gene_set[[1L]]]]` panel: `r f3(fp_diff$rmse_free[[1L]])` free,
-  `r f3(fp_diff$rmse_pos[[1L]])` positive).
-- **The factor ranks sit at the top of their grids.** The bulk
-  likelihood chooses rank `r fa_grid_top`, the largest of the grid, in
-  `r sum(fa_sel$tuning == fa_grid_top)` of the `r nrow(fa_sel)` factor
-  slots (both protocols, free and positive scales). Held-out cells
-  choose rank `r shared_top` for shared loadings, the top of their grid,
-  at every time on the Welch and $R^2_D\ge 1\%$ panels
-  (@sec-cov-shrinkage-reading). Both grids must be extended before the
-  factor arm is judged against shrinkage.
-
-**Bulk likelihood across strategies.** Every strategy above fits the
-same bulk vector $\boldsymbol{y}$ with $c$ and $\phi$ profiled, so its
-summed log-likelihood can be compared across covariance inputs, except
-for one. The shared-$c$ model first scales replicate $i$ to the median
-depth of its triplet, $\boldsymbol{y}_i'=k_i\boldsymbol{y}_i$ with
-$k_i=\operatorname{median}_{i'}(d_{i'})/d_i$ and $d_i$ the column sum of
-the HTSeq table (`fit_decovart_scales()`). Its likelihood is that of
-$\boldsymbol{y}'$; the density of $\boldsymbol{y}$ adds the Jacobian
-$G\sum_i\log k_i$, which here ranges from
-`r big(min(jac_size))` to `r big(max(jac_size))` units. Without it the
-shared-$c$ fit appears `r big(jac_raw_gap[[1L]])` to
-`r big(jac_raw_gap[[2L]])` units away from the free fit at the same
-level; with it the two differ by at most `r f2(jac_sel_gap)` units at
-the selected level of every slot, as their identical estimates require
-(at most `r round(jac_adj_gap)` units over all levels). All comparisons
-below use the corrected value.
-
-- **Size-normalised shrinkage has the highest bulk likelihood** in
-  `r sum(size_top)` of the 6 Welch slots (3 times × 2 protocols). At
-  96 h it exceeds raw shrinkage by `r big(size_gain("96h", "standard"))`
-  units on the standard arm and `r big(size_gain("96h", "early"))` on
-  the early arm. Its RMSE on the Welch panel is slightly higher
-  (`r f3(pick_all("size-normalised shrinkage, free scales", "welch", "96h")$rmse)`
-  against `r f3(pick_all("shrinkage", "welch", "96h")$rmse)` at 96 h)
-  and lower on the two smaller panels.
-- As at 96 h for the two-parameter arm (@sec-deconv-selection), a
-  higher likelihood across arms is not a lower error: on the Welch
-  panel the likelihood ranks size normalisation first among the
-  shrinkage strategies and its mean RMSE last, by
-  `r f4(shr_w_means[[4L]] - min(shr_w_means))`.
-
-#### Early-Wnt arm {#sec-deconv-early}
-
-The early-Wnt bulks have no single-cell counterpart
-(@sec-geo-design): their composition need not match the reference of
-the same time, so their RMSE against the scored-cell shares is not an
-error, and only the bulk likelihood is read there. The early arm is fitted
-on its own, with the same reference, grids and selection rule.
 
 ```{r}
 #| label: tbl-deconv-early
-#| tbl-cap: "Level chosen by the summed bulk likelihood on the standard-Wnt and on the early-Wnt replicates, per strategy, panel and time (`output/deconvolution/lambda_selection.csv`). Cell: standard / early; one value when both agree; two-parameter: $(\\alpha,\\lambda)$; factor: rank. Bold: the two protocols disagree. Last two columns: strategy with the highest summed log-likelihood on each protocol, shared $c$ with its Jacobian added; ≈ joins strategies within one log-likelihood unit. A dash: every level failed."
+#| tbl-cap: "Level chosen by the summed bulk likelihood on the standard-Wnt and on the early-Wnt replicates, per strategy and time, Welch panel (the two subsets: @tbl-deconv-early-small) (`output/deconvolution/lambda_selection.csv`). Cell: standard / early; one value when both agree; two-parameter: $(\\alpha,\\lambda)$; factor: rank. Bold: the two protocols disagree. Last two columns: strategy with the highest summed log-likelihood on each protocol, shared $c$ with its Jacobian added; ≈ joins strategies within one log-likelihood unit. A dash: every level failed."
 #| echo: false
 level_txt <- function(d) {
   if (is.na(d$family)) return("—")
@@ -2055,20 +1799,25 @@ best_e <- t(vapply(seq_len(nrow(slots_all)), function(k) {
     best_strategy(slots_all$gene_set[[k]], slots_all$time[[k]], "early")$label
   )
 }, character(2)))
-tab <- data.frame(
-  panel_label[slots_all$gene_set], hours(slots_all$time), cells_e, best_e,
-  row.names = NULL
-)
-colnames(tab) <- c("Panel", "Time", strategy_short, "Highest $\\ell$, standard", "Highest $\\ell$, early")
-out <- tinytable::tt(tab) |>
-  tinytable::format_tt(quarto = TRUE) |>
-  tinytable::style_tt(j = 3:9, align = "r")
-for (k in which(grepl(" / ", cells_e))) {
-  i <- (k - 1L) %% nrow(cells_e) + 1L
-  j <- (k - 1L) %/% nrow(cells_e) + 3L
-  out <- tinytable::style_tt(out, i = i, j = j, bold = TRUE)
+# Welch rows here, the two subsets in the appendix.
+early_table <- function(keep) {
+  ce <- cells_e[keep, , drop = FALSE]
+  tab <- data.frame(
+    panel_label[slots_all$gene_set[keep]], hours(slots_all$time[keep]), ce,
+    best_e[keep, , drop = FALSE],
+    row.names = NULL
+  )
+  colnames(tab) <- c("Panel", "Time", strategy_short, "Highest $\\ell$, standard", "Highest $\\ell$, early")
+  out <- tinytable::tt(tab) |>
+    tinytable::format_tt(quarto = TRUE) |>
+    tinytable::style_tt(j = 3:9, align = "r")
+  bold <- which(matrix(grepl(" / ", ce), nrow = nrow(ce)), arr.ind = TRUE)
+  for (r in seq_len(nrow(bold))) {
+    out <- tinytable::style_tt(out, i = bold[r, 1L], j = bold[r, 2L] + 2L, bold = TRUE)
+  }
+  out
 }
-out
+early_table(slots_all$gene_set == "welch")
 ```
 
 ```{r}
@@ -2091,20 +1840,15 @@ same_best_w <- same_best[slots_all$gene_set == "welch"]
   The two protocols choose the same level in
   `r sum(!differ_w)` of the `r length(differ_w)` strategy × time cells;
   they differ for `r differ_txt("welch")`.
-- **The strategy ranking transfers on the Welch panel only.** The
+- **The strategy ranking transfers on the Welch panel.** The
   strategy with the highest likelihood is the same on both protocols at
-  `r sum(same_best_w)` of 3 times on the Welch panel and at
-  `r sum(same_best[slots_all$gene_set != "welch"])` of 6 slots on the
-  two smaller panels, where the two-parameter arm or factor analysis
-  wins on the early bulks.
-- **On the smaller panels the levels move more:** `r sum(differ) - sum(differ_w)`
-  of the `r length(differ) - length(differ_w)` cells differ.
+  `r sum(same_best_w)` of 3 times.
 
 The early arm therefore supports the Welch-panel choices made on the
 standard arm: the same shrinkage levels and the same likelihood ranking
 of the covariance inputs. It cannot say which of them is more accurate.
 
-#### Which strategy to carry forward {#sec-deconv-strategy-ranking}
+### Which strategy to carry forward {#sec-deconv-strategy-ranking}
 
 Ranked on the evidence of this run; each choice is made without the
 observed composition.
@@ -2116,8 +1860,7 @@ observed composition.
    protocol. Shared-$c$ and linked scales return the same estimates and
    add nothing with shrinkage.
 2. **Size-normalised shrinkage, free scales.** Highest bulk likelihood
-   in every Welch slot of both protocols, best DeCovarT RMSE on the two
-   smaller panels, and within
+   in every Welch slot of both protocols, and within
    `r f3(mean_rmse("size-normalised shrinkage, free scales", "welch") - mean_rmse("shrinkage", "welch"))`
    of the first on the Welch panel. Worth adopting if a second bulk
    data set with known composition confirms it. Size normalisation was
@@ -2133,7 +1876,7 @@ observed composition.
    fits fail; its chosen ranks sit at the top of both grids, so the
    present comparison understates or misjudges it.
 
-### Five directions to improve the estimates {#sec-deconv-perspectives}
+### Six directions to improve the estimates {#sec-deconv-perspectives}
 
 Ranked by the evidence of this benchmark, with the perspectives of the
 DeCovarT article in mind (its section "Improve DeCovarT"). Each item
@@ -2148,10 +1891,85 @@ states what was observed here and what is only expected.
      real bulks (@sec-deconv-selection), and the factor form
      $\boldsymbol{B}\boldsymbol{B}^{\top}+\boldsymbol{\Psi}$ is screened
      with constrained scales on pseudo-bulks (@sec-deconv-scale-screen)
-     and on the real bulks (@sec-deconv-scale-panels,
-     @sec-deconv-strategy-ranking). Still to do: an extended rank grid, one level common to the types against one per type in
+     and on the real bulks (@sec-deconv-strategy-ranking). Still to do: an extended rank grid, one level common to the types against one per type in
      the bulk likelihood, and the sparse precisions of chapter 3.
    - Expected, not shown: a common level matters more than its value.
+
+::: {#nte-deconv-regularisation-visuals .callout-note collapse="true"}
+## Regularisation visualisations still to add
+
+A review of chapters 3 and 4 (`lasso_regularisation.md`, not part of
+the book) proposes figures that link the covariance geometry, the
+regularisation level, the bulk likelihood and the deconvolution error.
+Its priorities, in order: correlation and partial-correlation heatmaps;
+eigenvalue spectra and conditioning; a map of the per-type
+(held-out cells) against the common (bulk) level; the bulk likelihood
+when the level of one type moves at a time, the others fixed at the
+common level and $\boldsymbol{p}$, $c$, $\phi$ refitted; gene-wise bulk
+residual heatmaps; the stability of the chosen level; likelihood gain
+against composition error. Shrinkage towards the identity does not
+impose sparsity, so a partial-correlation map is the conditional
+association under the fitted Gaussian law, not a regulatory network.
+Five of these, on the Welch panel, standard-Wnt replicates
+(`scripts/04_05_vis_regularisation.R`):
+
+1. **Correlation heatmaps**, one page per time, top 50 Welch genes by
+   deviance share, one row per type, columns: sample correlation, level
+   chosen by the bulk likelihood, per-type level chosen on held-out
+   cells (`output/deconvolution/figures/regularisation/correlation_heatmaps_welch.pdf`).
+   Under shrinkage towards the identity the three columns differ only
+   by the factor $(1-\lambda)$ on the off-diagonal terms: they show a
+   change of intensity, not of pattern, which is why partial
+   correlations are the next step.
+2. **Conditioning against the level**: condition number
+   $\kappa(\lambda)$ and effective rank of $(1-\lambda)\boldsymbol{R}_j+\lambda\boldsymbol{I}$
+   (@fig-deconv-reg-spectra).
+3. **Per-type regularisation map**: per-type level chosen on held-out
+   cells against the common level chosen by the bulk likelihood
+   (@fig-deconv-reg-map; one page per time in
+   `output/deconvolution/figures/regularisation/regularisation_map_welch.pdf`).
+4. **Rank-based decomposition** (raw covariance, size term, remainder,
+   factor fit): to do, see @sec-deconv-scale-positivity.
+5. **Level path of the retained method** (raw shrinkage, free scales):
+   summed bulk log-likelihood and RMSE along the common level, with the
+   intervals where both rise (@fig-deconv-reg-path).
+
+[Provisional: the local `scored_slots.rds` predates its DVC pointer,
+so 2, 35 and 39 Welch genes at 48, 72 and 96 h are missing from items
+1 and 2; the levels in items 2, 3 and 5 were chosen before the last
+rerun of the Welch panel (19 November 2026). Rerun
+`scripts/04_05_vis_regularisation.R` after
+`dvc pull output/feature_selection/tier_01/scored_slots.rds.dvc`.]{.highlight}
+
+![Condition number (top, log scale) and effective rank as a share of
+the genes (bottom) of $(1-\lambda)\boldsymbol{R}_j+\lambda\boldsymbol{I}$
+along the shrinkage level (logit scale), one line per cell type, Welch
+panel. Dashed: level chosen by the summed bulk likelihood; point: level
+chosen for that type on held-out cells. $\boldsymbol{R}_j$ is singular
+for every type but the 48 h epiblast, so $\kappa$ is infinite at
+$\lambda=0$.](images/deconvolution/regularisation/regularisation_spectra_welch.png){#fig-deconv-reg-spectra}
+
+![Shrinkage level per cell type, Welch panel, standard-Wnt replicates.
+Rows: types ordered by their number of cells. Filled blue: level chosen
+per type on held-out cells; open blue: one level for all types chosen on
+held-out cells; orange: level chosen by the summed bulk profile
+likelihood, common to the
+types.](images/deconvolution/regularisation/regularisation_map_welch.png){#fig-deconv-reg-map}
+
+![Summed profile log-likelihood (top) and RMSE of the proportions
+(bottom) along the common shrinkage level, raw covariance with free
+scales, Welch panel. Orange: level chosen by the likelihood; shaded:
+steps where both the likelihood and the RMSE rise. The RMSE plays no
+part in the choice; at 48 h it is the same at every
+level.](images/deconvolution/regularisation/lambda_path_welch.png){#fig-deconv-reg-path}
+
+Item 1 at 96 h, as a preview of the three-page PDF:
+[`correlation_heatmap_96h_welch.png`](images/deconvolution/regularisation/correlation_heatmap_96h_welch.png).
+
+Still to do from the review: partial correlations from the full-panel
+precision, the one-type-at-a-time bulk likelihood, residual heatmaps
+and the stability of the chosen level (item 6 below).
+:::
 
 2. **Estimate the composition from the mean equation: quasi-likelihood,
    GEE, Fisher scoring.**
@@ -2214,6 +2032,16 @@ states what was observed here and what is only expected.
      between-replicate layer; a mean refinement only when it is shared
      by many bulks.
 
+6. **Select the level on further bulk profiles.**
+   - Observed: three replicates per protocol and time. That is too few
+     for an 80/20 split of the bulks without regenerating pseudo-bulks,
+     and too few independent biological replicates for a stability
+     analysis of the chosen level.
+   - To do, if more bulk profiles become available: the profile
+     log-likelihood of each held-out bulk at every candidate level,
+     fitted on the others; the spread of the maximising level across
+     bulks then measures how stable the choice is.
+
 Not in the list, on this evidence: the Firth penalty and the
 between-type covariance term (no consistent effect), and other
 optimisers (the optimiser is not what fails).
@@ -2231,9 +2059,10 @@ expectation; only the first column was measured here.
 : Expected dependence of the best direction on the mixture. Speculation
 except for the measured column. {#tbl-deconv-regimes}
 
-[TODO: (a) done for every arm and scale model (@sec-deconv-scale-panels);
+[TODO: (a) done for every arm and scale model (@sec-deconv-strategy-ranking);
 the bulk likelihood ranks covariance inputs but did not pick the lowest
-error on the Welch panel, so a criterion that ranks arms is still missing; (b) write the mean-equation fit with a cluster
+error on the Welch panel, so a criterion that ranks arms is still
+missing, and the stability of the chosen level needs more bulks (item 6); (b) write the mean-equation fit with a cluster
 jackknife; (c) fit the lineage in two levels; (d) add a scenario-1 run
 of DWLS with its own signature on the same cells; (e) add the 96 h
 Firth fits when they finish.]{.highlight}
@@ -2249,3 +2078,213 @@ The terms underlined in this chapter, with the definitions of
 #| echo: false
 glossary::glossary_table()
 ```
+
+## Scenario 1: each method selects its own genes {#sec-deconv-own-genes .appendix}
+
+The earlier runs on these data (GastroDeconv2FateMap) called the
+methods through the `omnideconv` wrapper. Its benchmark states the
+policy: the authors "consulted the methods' developers for guidance on
+optimal parameter settings and data type usage. In the absence of
+feedback, we ran the corresponding method with default parameters and
+considered counts and transcripts per million (TPM) as single-cell and
+bulk RNA-seq input data, respectively" (Dietrich et al. 2026, p. 5).
+Signature building and deconvolution are run as two steps for DWLS and
+SCDC, among others (p. 27).
+[TODO-cite: Dietrich et al. 2026, omnideconv, Genome Biology 27:6, doi:10.1186/s13059-026-03955-w; pp. 5, 27; not in Zotero nor in bibliography/REFERENCES.bib.]{.highlight}
+
+Under that policy the three second-generation methods do not see the
+same genes, nor the same weights (@tbl-deconv-own-genes).
+
+| Method | Genes kept | Weight of a gene in the fit | Input scale in the omnideconv benchmark |
+|---|---|---|---|
+| DWLS | Markers only. MAST test of each type against the rest; genes with adjusted $p$ below `pval.cutoff` and $\log_2$ fold change above `diff.cutoff = 0.5`; the top $g$ per type by fold change, with $g$ scanned from 50 to 200 and chosen to minimise the condition number of the signature (`DWLS::buildSignatureMatrixMAST()`) | Inverse squared fitted value, capped by the dampening constant | `pval_cutoff = 0.05`, other defaults (p. 29); scale not reported in the DWLS paragraph |
+| SCDC | No selection: every gene shared by the reference and the bulk | Iterated weights $1/(\nu+\hat\delta_g^{2})$, with $\hat\delta_g$ the residual of gene $g$ (`SCDC::SCDC_prop_ONE()`); the weighted basis is used (`weight.basis = TRUE`) | Single-cell counts, bulk TPM, one reference (p. 29) |
+| BayesPrism | No marker step inside `new.prism()`; genes that dominate a bulk are dropped (`outlier.cut = 0.01`, `outlier.fraction = 0.1`). `cleanup.genes()` and `select.marker()` are optional steps left to the user | None explicit: a multinomial likelihood, so a gene counts in proportion to its reads | Un-normalised counts for both inputs; cell types only (p. 27). Gene clean-up: not reported |
+
+: Gene selection and gene weights of the three second-generation methods when each runs with its own defaults. Code columns read from the installed packages (DWLS 0.5.2, SCDC 0.0.0.9000, BayesPrism 2.2.3); the last column from Dietrich et al. (2026). {#tbl-deconv-own-genes}
+
+DWLS is the only one of the three that prunes genes on the condition number of
+the mean signature. Labelled states at 48 h, 72 h and 96 h lie on a
+continuum, so neighbouring types have nearly collinear mean profiles.
+A rule that minimises the condition number then keeps the genes that
+separate a few dominant lineages and drops those that distinguish
+closely related types. SCDC and BayesPrism keep those genes, with a
+low weight or a low read share. That would explain estimates that
+agree between SCDC and BayesPrism and differ for DWLS
+(@fig-kappa-gastruloid).
+
+![Hypothesis on the disagreement between SCDC, BayesPrism and DWLS
+when each builds its own signature from one reference. A: shared
+notation (grey circle: observed; white circle: latent; diamond:
+deterministic; square: fixed; rounded frame: plate over the index at
+its bottom right) and the developmental continuum of the
+scored states. B: how each method builds its reference from the
+labelled cells. C: the inference step of each method (DWLS fits with $\boldsymbol{p}\ge 0$
+only and rescales the estimate to sum to one) and the proposed reading
+for gastruloids. Formulas follow @tbl-deconv-own-genes. A
+schematic of a hypothesis, not a result; source
+`images/src/kappa_gastruloid/kappa_gastruloid.tex`.](images/fig_04_kappa_gastruloid.svg){#fig-kappa-gastruloid}
+
+## Results on the $R^2_D$ subsets of the Welch panel {#sec-deconv-small-panels .appendix}
+
+The main text reports the Welch panel only. This appendix collects the
+results on its two subsets, the genes with a deviance share
+$R^2_D\ge 1\%$ and $R^2_D\ge 5\%$ (17, 140 and 635 genes at 48, 72
+and 96 h for the latter; @sec-fs-consistency), and the display items of
+the main text drawn on all three panels.
+
+### Second pass on a shared panel
+
+```{r}
+#| label: tbl-deconv-fixed-rmse-small
+#| tbl-cap: "As @tbl-deconv-fixed-rmse, on the $R^2_D\\ge 5\\%$ panel (second pass). Rows are ordered by the last column."
+#| echo: false
+fixed_rmse_table("r2_05")
+```
+
+- **The small panel is worse for every comparator at 96 h** (0.27 to
+  0.42) and at 48 h, where 17 genes carry the fit. The panel matters
+  more than the method there.
+
+![Root mean squared error per replicate, every method, gene panel and
+treatment of the bulk. Rows of panels: methods; columns: bulk times.
+Small points: the three standard-Wnt replicates; large point: their
+mean. Black: comparators and the QP stage of the multivariate
+RNA-Sieve; blue: DeCovarT by trust-region Newton; orange: DeCovarT by
+L-BFGS-B, or BFGS for the Firth
+fits.](images/deconvolution/second_pass_benchmark_rmse.png){#fig-deconv-rmse}
+
+![Aitchison distance to the observed composition, same layout as
+@fig-deconv-rmse. Zeros are replaced at 0.001 before the centred
+log-ratio. The distance depends on the number of parts (3 at 48 h and
+72 h, 5 at 96 h), so it compares methods within a column
+only.](images/deconvolution/second_pass_benchmark_aitchison.png){#fig-deconv-aitchison}
+
+```{r}
+#| label: tbl-deconv-loglik-small
+#| tbl-cap: "As @tbl-deconv-loglik, on the $R^2_D\\ge 5\\%$ panel."
+#| echo: false
+loglik_table(setdiff(unique(terms$gene_set), "welch"))
+```
+
+![Stages of the multivariate RNA-Sieve, RMSE per replicate. Rows of
+panels: covariance input; columns: bulk times. Stages are fitted from
+top to bottom, each from the previous one. Blue: Welch panel; orange:
+genes with $R^2_D\ge 5\%$. Small points: the three standard-Wnt
+replicates; large point: their
+mean.](images/deconvolution/second_pass_sieve_stages_rmse.png){#fig-deconv-sieve}
+
+- **On the small panel at 96 h the QP is worse than DeCovarT** (0.36
+  against 0.21) and does not converge. The result above is a result
+  about the Welch panel.
+- **Small panels:** no gain (0.21 → 0.28 to 0.32 at 96 h).
+- **The covariance does not separate the lineage on the 635-gene
+  panel** at 96 h: the Mahalanobis separation of caudal from
+  pre-somitic mesoderm is 0.22 times the diagonal one, against 3.5
+  times on the Welch panel (scratch check on `96h_CTL_rep1`).
+- **Firth penalty, 17-gene panel at 48 h:** the RMSE goes from 0.74
+  to 0.57; on the Welch panel at 72 h the estimates are unchanged to
+  the third decimal.
+
+### Lineage and bulk–reference agreement
+
+- **Over the three panels,** `r sum(lin_all_ok)` of `r nrow(lin)`
+  method × panel means are at 0.04 or below after summing
+  (@fig-deconv-lineage-collapse-all).
+- **The small panel loses the split, not the lineage.** On the
+  $R^2_D\ge 5\%$ panel the five-part error is higher than on the Welch
+  panel for `r sum(lin_wide$rmse_five_parts_05 > lin_wide$rmse_five_parts_w)`
+  of the `r nrow(lin_wide)` methods fitted on both, while the summed
+  error stays small. On the
+  $R^2_D\ge 1\%$ panel the lowest five-part error is
+  `r lin_r01_best$label` (`r f3(lin_r01_best$rmse_five_parts)`).
+  Reading (not tested): the genes that separate the three types are
+  in the Welch panel and mostly absent from its high-deviance subset.
+
+![RMSE at 96 h before and after the three paraxial-mesoderm types
+(caudal mesoderm, pre-somitic mesoderm, somite differentiation front)
+are summed into one part, mean over the three standard-Wnt replicates.
+Panels: gene panels; rows: methods, DeCovarT at the level chosen by the
+bulk likelihood (no suffix) or by held-out cells ("per type",
+"common", "shared loadings"). Orange: five scored types; blue: three
+parts, lineage summed; grey segment: the error removed by summing.
+The factor-analysis row with free scales has no point on the
+$R^2_D\ge 5\%$ panel: every level stopped on a non-positive
+scale.](images/deconvolution/lineage_collapse_96h.png){#fig-deconv-lineage-collapse-all}
+
+```{r}
+#| label: tbl-deconv-agreement-small
+#| tbl-cap: "As @tbl-deconv-agreement, on the $R^2_D\\ge 1\\%$ and $R^2_D\\ge 5\\%$ panels."
+#| echo: false
+agreement_table(c("r2_01", "r2_05"))
+```
+
+![Bulk against the reference mean mixed at the observed composition,
+standard-Wnt samples. Left: Pearson correlation of
+$\log(1+y_g)$ with $\log(1+(\boldsymbol{\mu}\boldsymbol{p})_g)$;
+right: share of genes whose bulk-to-reference ratio is more than 4-fold
+from the median ratio of the sample. Horizontal axis: bulk time;
+colours: gene panel (blue: Welch; green: $R^2_D\ge 1\%$; orange:
+$R^2_D\ge 5\%$). Small points: the three replicates; large point:
+their mean. Both vertical axes run from 0 to
+1.](images/deconvolution/bulk_reference_agreement.png){#fig-deconv-agreement-all}
+
+### Level chosen without the observed composition
+
+```{r}
+#| label: tbl-deconv-selection-small
+#| tbl-cap: "As @tbl-deconv-selection, on the $R^2_D\\ge 1\\%$ and $R^2_D\\ge 5\\%$ panels."
+#| echo: false
+selection_table(c("r2_01", "r2_05"))
+```
+
+- **Small panels.** Along the shrinkage levels the 17-gene panel at
+  48 h stays at `r span(small("48h"))` and the 635-gene panel at 96 h
+  at `r span(small("96h"))`. At 72 h the 140-gene panel gives
+  `r span(small("72h"))`.
+
+![Root mean squared error of the proportions, every method of the full
+run, at the levels chosen without the observed composition. Rows of
+panels: gene panels (Welch, $R^2_D\ge 1\%$, $R^2_D\ge 5\%$); columns:
+bulk times, each with its own horizontal scale. Point: mean over the
+three standard-Wnt replicates; segment: their range. Dark blue: DeCovarT
+with the level chosen by the summed bulk likelihood (one row per
+covariance and scale strategy); light blue: DeCovarT with the levels
+chosen on held-out cells; orange: other methods. The title names the
+lowest mean at 96 h on the Welch
+panel.](images/deconvolution/benchmark_rmse.png){#fig-deconv-rmse-selected-all}
+
+![Aitchison distance to the observed composition (zeros replaced at
+0.001), same layout and colours as @fig-deconv-rmse-selected-all. The
+distance depends on the number of parts, so it compares methods within
+a column only. The title names the lowest mean distance at 96 h on the
+Welch panel.](images/deconvolution/benchmark_aitchison.png){#fig-deconv-aitchison-selected-all}
+
+- **Size-normalised shrinkage is the best DeCovarT strategy on both
+  subsets:** mean RMSE over the three times
+  `r f3(mean_rmse("size-normalised shrinkage, free scales", "r2_01"))`
+  ($R^2_D\ge 1\%$) and
+  `r f3(mean_rmse("size-normalised shrinkage, free scales", "r2_05"))`
+  ($R^2_D\ge 5\%$), against
+  `r f3(mean_rmse("shrinkage", "r2_01"))` and
+  `r f3(mean_rmse("shrinkage", "r2_05"))` for raw shrinkage with free
+  scales. On the Welch panel the order is reversed
+  (@sec-deconv-strategy-ranking).
+
+### Early-Wnt arm
+
+```{r}
+#| label: tbl-deconv-early-small
+#| tbl-cap: "As @tbl-deconv-early, on the $R^2_D\\ge 1\\%$ and $R^2_D\\ge 5\\%$ panels."
+#| echo: false
+early_table(slots_all$gene_set != "welch")
+```
+
+- **The strategy ranking transfers less on the smaller panels.** The
+  strategy with the highest likelihood is the same on both protocols at
+  `r sum(same_best[slots_all$gene_set != "welch"])` of 6 slots, where
+  the two-parameter arm or factor analysis wins on the early bulks.
+- **The levels move more:** `r sum(differ) - sum(differ_w)` of the
+  `r length(differ) - length(differ_w)` strategy × time cells differ
+  between the protocols (`r sum(differ_w)` of `r length(differ_w)` on
+  the Welch panel).
