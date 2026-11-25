@@ -1,0 +1,5 @@
+outs:
+- md5: ea1b9b6f7975b153bd7ff78d2b47bb12
+  size: 9349113
+  hash: md5
+  path: factors_72h_welch.rds
