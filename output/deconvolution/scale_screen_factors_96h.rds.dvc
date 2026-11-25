@@ -1,0 +1,5 @@
+outs:
+- md5: d120ab8726ad70ca21933b1c460262ef
+  size: 1865175
+  hash: md5
+  path: scale_screen_factors_96h.rds

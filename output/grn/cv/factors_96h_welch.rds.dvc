@@ -1,0 +1,5 @@
+outs:
+- md5: e2dceb696a376108d3030daee323ff49
+  size: 22468806
+  hash: md5
+  path: factors_96h_welch.rds
