@@ -7,7 +7,7 @@
 # to everything:
 #   gene_sets=r2_05,r2_01,welch   times=48h,72h,96h   samples=48h_CTL_rep1
 #   stages=comparators,sweep,tables
-#   families=shrinkage,two_param,factor,cv,scale
+#   families=shrinkage,two_param,factor,cv,scale,newton,newton_warm,ratio
 #
 # Deconvolution benchmark of the Suppinger bulk samples (GSE229386: 3
 # standard-Wnt and 3 early-Wnt replicates at 48, 72 and 96 h), each
@@ -30,6 +30,18 @@
 #              replicates of a protocol (fit_decovart_scales()); those
 #              equal to a family above (raw cells, free scales) are not
 #              repeated
+#   newton     shrinkage, 8 values, Newton optimiser instead of L-BFGS-B,
+#              from 6 starts (the DeMixSC wNNLS estimate of the sample and
+#              5 Dirichlet(1) draws, seed newton_seed + task), keeping the
+#              fit of highest log-likelihood; one start stopped early
+#              (singular convergence) in the 24 Nov run
+#   newton_warm  shrinkage, 8 values, Newton started at the L-BFGS-B
+#              estimate of the same sample and level (shrinkage store);
+#              run after the shrinkage family
+#   ratio      shrinkage, 8 values, bulk divided by the cross-fitted
+#              gene-wise platform ratio b_g of tier (iii)
+#              (read_platform_ratio(), method "gene"); the two variants of
+#              the second pass kept after it (appendix of chapter 4)
 # Selection without the observed composition: per time, protocol, gene
 # set and family, the level with the highest profile likelihood summed
 # over the three replicates, and the same with the restricted
@@ -54,6 +66,7 @@
 #   output/grn/plugin/moments_<time>_<gene_set>.rds
 #   output/grn/cv/{cv_selected_tuning.csv, factors_<time>_<gene_set>.rds}
 #   output/deconvolution/scale_screen_summary.csv
+#   output/feature_selection/tier_03/platform_ratio.csv   (family ratio)
 # Outputs, output/grn/cv/:
 #   factors_size_<time>_<gene_set>.rds  per-type factor fits of the
 #                             size-normalised cells (per_type[[type]][[rank]]
@@ -88,7 +101,18 @@ check_blas_kernel()
 time_levels <- c("48h", "72h", "96h")
 gene_set_levels <- c("r2_05", "r2_01", "welch")
 stage_levels <- c("comparators", "sweep", "tables")
-family_levels <- c("shrinkage", "two_param", "factor", "cv", "scale")
+family_levels <- c(
+  "shrinkage",
+  "two_param",
+  "factor",
+  "cv",
+  "scale",
+  "newton",
+  "newton_warm",
+  "ratio"
+)
+newton_starts <- 5L
+newton_seed <- 20261125L
 scale_screen_top <- 5L
 lambda_levels <- c(0.1, 0.25, 0.375, 0.5, 0.625, 0.75, 0.9, 1)
 two_param_levels <- expand.grid(
@@ -144,6 +168,13 @@ slots_path <- file.path(tier_01, "scored_slots.rds")
 selected_dir <- file.path(root, "output", "feature_selection", "tier_02")
 moments_dir <- file.path(root, "output", "grn", "plugin")
 cv_dir <- file.path(root, "output", "grn", "cv")
+ratio_path <- file.path(
+  root,
+  "output",
+  "feature_selection",
+  "tier_03",
+  "platform_ratio.csv"
+)
 out_dir <- file.path(root, "output", "deconvolution")
 fits_dir <- file.path(out_dir, "fits")
 dir.create(fits_dir, recursive = TRUE, showWarnings = FALSE)
@@ -193,7 +224,16 @@ read_moments <- function(time_level, gene_set) {
       ". Run scripts/03_05_stats_plugin_covariance.R first."
     )
   }
-  readRDS(path)
+  moments <- readRDS(path)
+  # The Welch reference of a time is the gate of that time, never a union.
+  if (gene_set == "welch") {
+    gated <- utils::read.csv(
+      file.path(selected_dir, paste0("selected_", time_level, ".csv")),
+      fileEncoding = "UTF-8"
+    )$gene
+    stopifnot(setequal(moments$genes, gated))
+  }
+  moments
 }
 samples_of <- function(time_level) {
   ids <- design$sample_id[design$time == time_level]
@@ -351,6 +391,26 @@ stored_sweep_keys <- function(time_level, gene_set) {
   paste(d$id, d$sample_id, sep = "\r")
 }
 
+# Stored estimates of one time and gene set, used as Newton starts: rows
+# of `strategy` whose column `by` equals `value` (all rows if NULL).
+stored_estimates <- function(time_level, strategy, gene_set, value, by) {
+  e <- read_fit_store(file.path(fits_dir, time_level), strategy, "estimates")
+  e <- e[e$gene_set == gene_set & (is.null(value) | e[[by]] %in% value), ]
+  e$key <- e[[by]]
+  e
+}
+
+# Start vector of one fit from stored estimates; zeros are moved into the
+# open simplex by DeCovarT (starting_simplex(), numeric branch).
+start_of <- function(estimates, key, sample_id, types) {
+  e <- estimates[estimates$key == key & estimates$sample_id == sample_id, ]
+  p <- stats::setNames(e$proportion, e$cell_type)[types]
+  if (anyNA(p)) {
+    stop("No complete stored start ", key, " for ", sample_id, ".")
+  }
+  p
+}
+
 # Merges the fits returned by the workers into the store, one file per
 # strategy. Each task catches its own errors (tryCatch), so a failed fit
 # never loses the others; only a killed R process loses the fits of the
@@ -399,6 +459,24 @@ sweep_levels <- function() {
       tuning = lambda_levels
     ),
     data.frame(
+      id = sprintf("newton_%.3f", lambda_levels),
+      family = "newton",
+      alpha = 0,
+      tuning = lambda_levels
+    ),
+    data.frame(
+      id = sprintf("newton_warm_%.3f", lambda_levels),
+      family = "newton_warm",
+      alpha = 0,
+      tuning = lambda_levels
+    ),
+    data.frame(
+      id = sprintf("ratio_%.3f", lambda_levels),
+      family = "ratio",
+      alpha = 0,
+      tuning = lambda_levels
+    ),
+    data.frame(
       id = sprintf(
         "two_param_%.2f_%.2f",
         two_param_levels$alpha,
@@ -431,7 +509,7 @@ build_level <- function(level, moments, factors, cv) {
     ranks <- as.integer(names(fits))
     fits[[as.character(max(ranks[ranks <= q]))]]
   }
-  if (level$family == "shrinkage") {
+  if (level$family %in% c("shrinkage", "newton", "newton_warm", "ratio")) {
     return(build_sigma(moments, "shrinkage", lambda = level$tuning))
   }
   if (level$family == "two_param") {
@@ -524,6 +602,17 @@ if ("sweep" %in% run_stages) {
         ,
         drop = FALSE
       ]
+      b_g <- if ("ratio" %in% tasks$family) {
+        read_platform_ratio(ratio_path, tm, genes)
+      }
+      # Starts of the Newton variants: DeMixSC wNNLS (newton) and the
+      # L-BFGS-B fit at the same level (newton_warm), per sample.
+      demixsc_p <- if ("newton" %in% tasks$family) {
+        stored_estimates(tm, "comparators", gs, "demixsc_wnnls", "comparator")
+      }
+      lbfgsb_p <- if ("newton_warm" %in% tasks$family) {
+        stored_estimates(tm, "shrinkage", gs, NULL, "id")
+      }
       fit_bytes <- 7 * 8 * length(genes)^2 * length(moments$types)
       workers <- max(
         1L,
@@ -558,7 +647,53 @@ if ("sweep" %in% run_stages) {
             {
               sigma <- build_level(task, moments, factors, cv)
               y <- bulk[, task$sample_id]
-              fit <- fit_decovart_once(y, moments$mu, sigma, "lbfgsb")
+              if (task$family == "ratio") {
+                y <- y / b_g
+              }
+              types <- colnames(moments$mu)
+              optimiser <- if (grepl("^newton", task$family)) {
+                "newton"
+              } else {
+                "lbfgsb"
+              }
+              starts <- NULL
+              initial_p <- NULL
+              if (task$family == "newton") {
+                set.seed(newton_seed + k)
+                starts <- c(
+                  list(start_of(
+                    demixsc_p,
+                    "demixsc_wnnls",
+                    task$sample_id,
+                    types
+                  )),
+                  replicate(
+                    newton_starts,
+                    DeCovarT:::starting_simplex(
+                      length(types),
+                      "dirichlet",
+                      types
+                    ),
+                    simplify = FALSE
+                  )
+                )
+              }
+              if (task$family == "newton_warm") {
+                initial_p <- start_of(
+                  lbfgsb_p,
+                  sprintf("shrinkage_%.3f", task$tuning),
+                  task$sample_id,
+                  types
+                )
+              }
+              fit <- fit_decovart_once(
+                y,
+                moments$mu,
+                sigma,
+                optimiser,
+                initial_p = initial_p,
+                starts = starts
+              )
               lik <- if (is.null(fit$p)) {
                 list(profile = NA_real_, restricted = NA_real_)
               } else {
@@ -908,7 +1043,10 @@ if ("tables" %in% run_stages) {
     shrinkage = "shrinkage",
     two_param = "two-parameter",
     factor = "factor analysis",
-    cv = "cell CV"
+    cv = "cell CV",
+    newton = "shrinkage, Newton",
+    newton_warm = "shrinkage, Newton from L-BFGS-B",
+    ratio = "shrinkage, bulk / b_g"
   )
   write_table <- function(x, name) {
     utils::write.csv(

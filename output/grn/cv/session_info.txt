@@ -24,6 +24,6 @@ other attached packages:
 [1] Matrix_1.7-6
 
 loaded via a namespace (and not attached):
-[1] BiocManager_1.30.27 compiler_4.6.2      parallel_4.6.2     
-[4] tools_4.6.2         withr_3.0.3         grid_4.6.2         
-[7] renv_1.2.4          lattice_0.23-1     
+ [1] compiler_4.6.2  here_1.0.2      rprojroot_2.1.1 parallel_4.6.2 
+ [5] tools_4.6.2     withr_3.0.3     yaml_2.3.12     grid_4.6.2     
+ [9] renv_1.2.4      lattice_0.23-1 

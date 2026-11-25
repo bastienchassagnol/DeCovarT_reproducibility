@@ -20,7 +20,7 @@
 #                                kappa, eff_rank (lambda = 0 included;
 #                                kappa is Inf there when R_j is singular)
 #   figures/regularisation/      one SVG per page, the PDF made from it
-#                                with Inkscape (pages merged with qpdf),
+#                                with Inkscape (pages merged with pdfunite),
 #                                and an RDS of the data of each figure:
 #     correlation_heatmaps_welch   3 pages, one per time
 #     regularisation_spectra_welch condition number and effective rank
@@ -42,7 +42,11 @@ var_floor_rel <- 1e-4 # as in build_sigma()
 n_heatmap_genes <- 50L
 # Logit-spaced grid on [0.001, 0.999]: log-spaced near 0, where the
 # sample correlation dominates, and near 1, where the levels are chosen.
-lambda_grid <- stats::plogis(seq(stats::qlogis(1e-3), stats::qlogis(1 - 1e-3), length.out = 61L))
+lambda_grid <- stats::plogis(seq(
+  stats::qlogis(1e-3),
+  stats::qlogis(1 - 1e-3),
+  length.out = 61L
+))
 
 slots_path <- file.path(
   root,
@@ -130,18 +134,16 @@ save_page <- function(plot, stem, width, height) {
   invisible(pdf)
 }
 
-#' Merge single-page PDFs with qpdf and delete the pages.
+#' Merge single-page PDFs with pdfunite and delete the pages.
 #'
 #' @param pages PDF paths, in page order.
 #' @param out Path of the merged PDF.
 #' @return `out`, invisibly.
 merge_pages <- function(pages, out) {
-  status <- system2(
-    "qpdf",
-    c("--empty", "--pages", shQuote(pages), "--", shQuote(out))
-  )
+  # pdfunite (poppler) ships with the system; qpdf is not installed here.
+  status <- system2("pdfunite", c(shQuote(pages), shQuote(out)))
   if (!identical(status, 0L)) {
-    stop("qpdf failed on ", out)
+    stop("pdfunite failed on ", out)
   }
   unlink(pages)
   invisible(out)
@@ -231,20 +233,47 @@ path <- selection[
   c("time", "tuning", "sum_profile", "selected_profile", "rmse")
 ]
 path <- path[order(path$time, path$tuning), ]
-bulk_lambda <- with(path[path$selected_profile, ], stats::setNames(tuning, time))
+bulk_lambda <- with(
+  path[path$selected_profile, ],
+  stats::setNames(tuning, time)
+)
 stopifnot(setequal(names(bulk_lambda), time_levels))
 
-cv <- read_table(file.path(root, "output", "grn", "cv", "cv_selected_tuning.csv"))
+cv <- read_table(file.path(
+  root,
+  "output",
+  "grn",
+  "cv",
+  "cv_selected_tuning.csv"
+))
 cv <- cv[cv$gene_set == "welch", ]
-cv_type <- cv[cv$rule == "shrinkage, per type", c("time", "cell_type", "tuning")]
-cv_common <- cv[cv$rule == "shrinkage, common", c("time", "cell_type", "tuning")]
+cv_type <- cv[
+  cv$rule == "shrinkage, per type",
+  c("time", "cell_type", "tuning")
+]
+cv_common <- cv[
+  cv$rule == "shrinkage, common",
+  c("time", "cell_type", "tuning")
+]
 names(cv_type)[3L] <- "lambda_cv"
 names(cv_common)[3L] <- "lambda_common"
 
-plugin <- read_table(file.path(root, "output", "grn", "plugin", "plugin_summary.csv"))
+plugin <- read_table(file.path(
+  root,
+  "output",
+  "grn",
+  "plugin",
+  "plugin_summary.csv"
+))
 plugin <- plugin[plugin$gene_set == "welch", ]
 
-grid_all <- sort(unique(c(0, 1, lambda_grid, path$tuning, cv$tuning[cv$tuning > 0])))
+grid_all <- sort(unique(c(
+  0,
+  1,
+  lambda_grid,
+  path$tuning,
+  cv$tuning[cv$tuning > 0]
+)))
 
 # ==========================================================================
 # SECTION 2 · Spectra and 50-gene correlations, one type at a time ----
@@ -271,7 +300,10 @@ spectrum_summary <- list()
 heat <- list()
 size_inputs <- list() # standardised means and correlations, section 7
 for (tm in time_levels) {
-  selected <- read_table(file.path(selected_dir, paste0("selected_", tm, ".csv")))
+  selected <- read_table(file.path(
+    selected_dir,
+    paste0("selected_", tm, ".csv")
+  ))
   absent <- setdiff(selected$gene, rownames(slots$slots[[tm]]$counts))
   if (length(absent) > 0L) {
     msg <- paste0(
@@ -284,7 +316,10 @@ for (tm in time_levels) {
       "dvc pull output/feature_selection/tier_01/scored_slots.rds.dvc"
     )
     if (!allow_stale) {
-      stop(msg, ", or set DECOVART_ALLOW_STALE_SLOTS=1 for provisional figures.")
+      stop(
+        msg,
+        ", or set DECOVART_ALLOW_STALE_SLOTS=1 for provisional figures."
+      )
     }
     warning(msg, ". Provisional run without these genes.")
     missing_by_time[[tm]] <- length(absent)
@@ -325,7 +360,8 @@ for (tm in time_levels) {
     r_top[[tp]] <- crossprod(Z[, top_idx, drop = FALSE])
     size_inputs[[tm]][[tp]] <- list(
       r_top = r_top[[tp]],
-      m_top = (mu / sd)[top_idx]
+      m_top = (mu / sd)[top_idx],
+      m_all = mu / sd
     )
     # A constant gene (zero column of Z) or a gene under the variance
     # floor has a diagonal below 1 in Z' Z, which build_sigma() resets to
@@ -502,7 +538,10 @@ plot_heatmap_page <- function(d, tm) {
       breaks = seq(-1, 1, 0.5),
       na.value = "grey80",
       name = "Correlation",
-      guide = ggplot2::guide_colourbar(title.position = "top", title.hjust = 0.5)
+      guide = ggplot2::guide_colourbar(
+        title.position = "top",
+        title.hjust = 0.5
+      )
     ) +
     ggplot2::scale_x_discrete(labels = NULL, expand = c(0, 0)) +
     ggplot2::scale_y_discrete(expand = c(0, 0)) +
@@ -554,7 +593,12 @@ for (tm in time_levels) {
     size[["height"]]
   )
   if (tm == "96h") {
-    save_png(p, "correlation_heatmap_96h_welch", size[["width"]], size[["height"]])
+    save_png(
+      p,
+      "correlation_heatmap_96h_welch",
+      size[["width"]],
+      size[["height"]]
+    )
   }
 }
 merge_pages(heat_pages, file.path(fig_dir, "correlation_heatmaps_welch.pdf"))
@@ -649,7 +693,10 @@ spectra_plot <- function() {
       labels = scales::label_number(big.mark = ",", accuracy = 1),
       breaks = 10^(0:7)
     ) +
-    ggplot2::labs(x = NULL, y = paste0("Condition number ", kap, " (log scale)")) +
+    ggplot2::labs(
+      x = NULL,
+      y = paste0("Condition number ", kap, " (log scale)")
+    ) +
     ggplot2::theme(axis.text.x = ggplot2::element_blank())
   p_rank <- base("eff_share") +
     ggplot2::scale_y_log10(
@@ -736,8 +783,16 @@ plot_map <- function(d, top, lines, common, facet = FALSE) {
       size = 5,
       stroke = 0.9
     ) +
-    ggplot2::geom_point(ggplot2::aes(x = lambda_cv), colour = colour_series, size = 3.2) +
-    ggplot2::geom_point(ggplot2::aes(x = lambda_bulk), colour = colour_marked, size = 3.2) +
+    ggplot2::geom_point(
+      ggplot2::aes(x = lambda_cv),
+      colour = colour_series,
+      size = 3.2
+    ) +
+    ggplot2::geom_point(
+      ggplot2::aes(x = lambda_bulk),
+      colour = colour_marked,
+      size = 3.2
+    ) +
     ggplot2::geom_text(
       data = lines,
       ggplot2::aes(
@@ -756,7 +811,12 @@ plot_map <- function(d, top, lines, common, facet = FALSE) {
       ggplot2::aes(
         x = lambda_common,
         y = Inf,
-        label = paste0("○ held-out cells, common ", lam, " = ", fmt(lambda_common))
+        label = paste0(
+          "○ held-out cells, common ",
+          lam,
+          " = ",
+          fmt(lambda_common)
+        )
       ),
       inherit.aes = FALSE,
       colour = colour_series,
@@ -779,7 +839,11 @@ plot_map <- function(d, top, lines, common, facet = FALSE) {
     ) +
     ggplot2::scale_y_discrete(expand = ggplot2::expansion(add = c(0.6, 1.4))) +
     ggplot2::labs(
-      x = paste0("Shrinkage level ", lam, " (0 = sample correlation, 1 = diagonal)"),
+      x = paste0(
+        "Shrinkage level ",
+        lam,
+        " (0 = sample correlation, 1 = diagonal)"
+      ),
       y = NULL
     ) +
     theme_slide(base_size = 12) +
@@ -832,7 +896,13 @@ for (tm in time_levels) {
   )
 }
 merge_pages(map_pages, file.path(fig_dir, "regularisation_map_welch.pdf"))
-p <- plot_map(map_d, map_top[map_top$time == "48h", ], map_lines, map_common, facet = TRUE) +
+p <- plot_map(
+  map_d,
+  map_top[map_top$time == "48h", ],
+  map_lines,
+  map_common,
+  facet = TRUE
+) +
   ggplot2::labs(title = map_title, subtitle = map_subtitle)
 save_png(p, "regularisation_map_welch", 12, 8)
 saveRDS(
@@ -891,15 +961,27 @@ quantity_levels <- c(
   "RMSE of the proportions"
 )
 path_long <- rbind(
-  data.frame(path[, c("time", "tuning", "selected_profile")], quantity = quantity_levels[[1L]], value = path$sum_profile),
-  data.frame(path[, c("time", "tuning", "selected_profile")], quantity = quantity_levels[[2L]], value = path$rmse)
+  data.frame(
+    path[, c("time", "tuning", "selected_profile")],
+    quantity = quantity_levels[[1L]],
+    value = path$sum_profile
+  ),
+  data.frame(
+    path[, c("time", "tuning", "selected_profile")],
+    quantity = quantity_levels[[2L]],
+    value = path$rmse
+  )
 )
 path_long$quantity <- factor(path_long$quantity, levels = quantity_levels)
 path_long$time_label <- time_label(path_long$time)
 if (!is.null(decoupled)) {
   decoupled$time_label <- time_label(decoupled$time)
 }
-widest <- if (is.null(decoupled)) NULL else decoupled[which.max(decoupled$xmax - decoupled$xmin), ]
+widest <- if (is.null(decoupled)) {
+  NULL
+} else {
+  decoupled[which.max(decoupled$xmax - decoupled$xmin), ]
+}
 
 #' One panel of the path figure: one quantity at one time, own y scale.
 #' Separate plots (not free facets) so that patchwork aligns the panels.
@@ -924,7 +1006,10 @@ plot_path_panel <- function(q, tm, y_label, top_row) {
           ggplot2::aes(
             x = (xmin + xmax) / 2,
             y = -Inf,
-            label = paste0("decoupled\nRMSE +", formatC(d_rmse, format = "fg", digits = 2))
+            label = paste0(
+              "decoupled\nRMSE +",
+              formatC(d_rmse, format = "fg", digits = 2)
+            )
           ),
           inherit.aes = FALSE,
           vjust = -0.8,
@@ -974,7 +1059,11 @@ plot_path <- function() {
       plot_path_panel(
         quantity_levels[[1L]],
         tm,
-        if (tm == time_levels[[1L]]) "Summed profile log-likelihood\n(3 replicates)" else NULL,
+        if (tm == time_levels[[1L]]) {
+          "Summed profile log-likelihood\n(3 replicates)"
+        } else {
+          NULL
+        },
         top_row = TRUE
       )
     }),
@@ -985,7 +1074,13 @@ plot_path <- function() {
         if (tm == time_levels[[1L]]) "RMSE of the proportions" else NULL,
         top_row = FALSE
       ) +
-        ggplot2::labs(x = if (tm == time_levels[[2L]]) paste0("Shrinkage level ", lam) else NULL)
+        ggplot2::labs(
+          x = if (tm == time_levels[[2L]]) {
+            paste0("Shrinkage level ", lam)
+          } else {
+            NULL
+          }
+        )
     })
   )
   patchwork::wrap_plots(panels, ncol = 3L) +
@@ -1035,7 +1130,9 @@ saveRDS(
 # correlation R, a rank-one size term nu u u' with u the standardised mean
 # (mu / sd, unit length) and nu = u' R u (least-squares fit of R by a
 # multiple of u u'), the remainder R - nu u u', and the factor fit
-# B B' + Psi of the smallest fitted rank above 0.
+# B B' + Psi at the rank chosen on held-out cells ("factor, per type";
+# largest fitted rank not above it), with the alignment A_k of each
+# loading with the standardised mean over all genes.
 factor_path <- file.path(root, "output", "grn", "cv", "factors_96h_welch.rds")
 if (!file.exists(factor_path)) {
   message(
@@ -1053,10 +1150,32 @@ if (!file.exists(factor_path)) {
   u <- inp$m_top / sqrt(sum(inp$m_top^2))
   nu <- drop(crossprod(u, inp$r_top %*% u))
   size_term <- nu * tcrossprod(u)
-  ranks <- names(fits$per_type[[tp]])
-  rank_q <- ranks[as.integer(ranks) > 0L][[1L]]
+  ranks <- as.integer(names(fits$per_type[[tp]]))
+  cv_rank <- read_table(file.path(
+    root,
+    "output",
+    "grn",
+    "cv",
+    "cv_selected_tuning.csv"
+  ))
+  cv_rank <- cv_rank$tuning[
+    cv_rank$time == "96h" &
+      cv_rank$gene_set == "welch" &
+      cv_rank$rule == "factor, per type" &
+      cv_rank$cell_type == tp
+  ]
+  stopifnot(length(cv_rank) == 1L)
+  rank_q <- as.character(max(ranks[ranks <= cv_rank]))
   f <- fits$per_type[[tp]][[rank_q]]
+  # A_k = |b_k' m| / (|b_k| |m|), m the standardised mean (genes with a
+  # loading only, as fit_factor_types()).
+  loaded <- rowSums(f$B != 0) > 0
+  m_all <- inp$m_all[loaded]
+  align <- abs(drop(crossprod(f$B[loaded, , drop = FALSE], m_all))) /
+    (sqrt(colSums(f$B[loaded, , drop = FALSE]^2)) * sqrt(sum(m_all^2)))
   idx <- match(top, genes96)
+  # A factor file of an older panel would not hold these genes.
+  stopifnot(!anyNA(idx), nrow(f$B) == length(genes96))
   factor_fit <- tcrossprod(f$B[idx, , drop = FALSE]) + diag(f$psi[idx])
   panels <- stats::setNames(
     list(inp$r_top, size_term, inp$r_top - size_term, factor_fit),
@@ -1081,8 +1200,14 @@ if (!file.exists(factor_path)) {
     })
   )
   size_long$panel <- factor(size_long$panel, levels = names(panels))
-  size_long$gene_x <- factor(size_long$gene_x, levels = heat[["96h"]]$gene_order)
-  size_long$gene_y <- factor(size_long$gene_y, levels = rev(heat[["96h"]]$gene_order))
+  size_long$gene_x <- factor(
+    size_long$gene_x,
+    levels = heat[["96h"]]$gene_order
+  )
+  size_long$gene_y <- factor(
+    size_long$gene_y,
+    levels = rev(heat[["96h"]]$gene_order)
+  )
   p <- ggplot2::ggplot(size_long, ggplot2::aes(gene_x, gene_y, fill = value)) +
     ggplot2::geom_tile() +
     ggplot2::facet_wrap(~panel, nrow = 1L) +
@@ -1107,6 +1232,8 @@ if (!file.exists(factor_path)) {
         " genes of highest deviance share; u: standardised mean, ",
         "ν = u′ R u = ",
         fmt(nu, 2),
+        "; alignment of the loadings with the mean, A = ",
+        paste(fmt(sort(align, decreasing = TRUE), 2), collapse = ", "),
         ". Diagonal in grey.",
         provisional
       ),
@@ -1121,9 +1248,22 @@ if (!file.exists(factor_path)) {
       legend.key.width = ggplot2::unit(2.5, "cm"),
       legend.key.height = ggplot2::unit(0.3, "cm")
     )
-  stem <- paste0("size_term_", gsub("[^a-z0-9]+", "_", tolower(tp)), "_96h_welch")
+  stem <- "size_term_96h_welch"
   save_page(p, file.path(fig_dir, stem), 16, 5.5)
-  saveRDS(list(data = size_long, nu = nu, rank = rank_q), file.path(fig_dir, paste0(stem, ".rds")))
+  save_png(p, stem, 16, 5.5)
+  saveRDS(
+    list(
+      data = size_long,
+      cell_type = tp,
+      nu = nu,
+      rank = rank_q,
+      alignment = align
+    ),
+    file.path(fig_dir, paste0(stem, ".rds"))
+  )
 }
 
-writeLines(capture.output(utils::sessionInfo()), file.path(fig_dir, "session_info.txt"))
+writeLines(
+  capture.output(utils::sessionInfo()),
+  file.path(fig_dir, "session_info.txt")
+)

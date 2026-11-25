@@ -25,9 +25,10 @@ disables it).
 
 - `theme_slide()` on every ggplot (code, colour roles and multi-panel sizes in
   `references/ggplot2-production.md`; `slide_family()` in `fonts.md`).
-- Fonts: files in the project `fonts/`, discovery with `systemfonts`, then the
-  device. Mixed faces or text boxes use `marquee`; no `showtext`, `extrafont`
-  or `ggtext`.
+- Fonts: default sans **Noto Sans** when it is installed (`slide_family()` in
+  `fonts.md`); otherwise a file in project `fonts/`, then `systemfonts`, then the
+  device (`system_fonts` in `svglite`). Mixed faces or text boxes use `marquee`;
+  no `showtext`, `extrafont` or `ggtext`.
 - Devices, SVG first: vector with `svglite::svglite`, raster with `ragg`
   (`ggsave(..., device = ragg::agg_png)`) on a white background, size and
   resolution stated in the call. Never `pdf()` or `cairo_pdf`. A venue or

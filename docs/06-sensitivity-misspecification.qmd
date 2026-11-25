@@ -172,11 +172,11 @@ factor correlates every pair of genes. Report, per type and level, the
 share of non-zero off-diagonal partial correlations, the number of
 connected components and the condition number, next to the accuracy
 metrics and the agreement between the two optimisers. Done so far
-(@sec-deconv-96h-diagnosis): level (i) for DeCovarT on the raw
-covariance, L-BFGS-B, bulk as is; the RMSE at 96 h on the Welch-gated
-panel goes from 0.36 (closed form) to 0.034 ($\lambda=0.5$), with no
-gain on the small panels. Levels (ii) and (iii), and a choice of
-$\lambda$ that does not use the observed composition, remain.]{.highlight}
+(@sec-deconv-selection): level (i) for DeCovarT on the raw covariance,
+L-BFGS-B, bulk as is, with $\lambda$ chosen by the summed bulk
+likelihood, never by the observed composition, and the Newton optimiser
+on the same grid (@sec-deconv-variants). Levels (ii) and (iii)
+remain.]{.highlight}
 
 ```{r}
 #| label: sens-panel-size-sweep

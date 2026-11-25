@@ -119,6 +119,16 @@ gene_sets <- utils::read.csv(
   stringsAsFactors = FALSE,
   fileEncoding = "UTF-8"
 )
+# The Welch set of a time is the gate of that time, never a union.
+for (tm in time_levels) {
+  stopifnot(setequal(
+    gene_sets$gene[gene_sets$time_point == tm & gene_sets$gene_set == "welch"],
+    utils::read.csv(
+      file.path(selected_dir, paste0("selected_", tm, ".csv")),
+      fileEncoding = "UTF-8"
+    )$gene
+  ))
+}
 slots <- if (any(run_stages != "tables")) readRDS(slots_path) else NULL
 
 #' Cells of every scored type of one time, on one gene set.

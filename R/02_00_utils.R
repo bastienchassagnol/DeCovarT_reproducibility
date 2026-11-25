@@ -242,9 +242,10 @@ celltype_lineages <- function(
   )
 }
 
-#' Save one figure as PDF (archive) and PNG (book).
+#' Save one figure as SVG and PDF (archive) and PNG (book).
 #'
-#' The PDF goes to `pdf_dir`, the PNG (`ragg`, white background) to
+#' The SVG (`svglite`) and the PDF made from it by Inkscape (text as
+#' paths) go to `pdf_dir`, the PNG (`ragg`, white background) to
 #' `png_dir`, both named `name`. When `data` is given it is saved as
 #' `<pdf_dir>/<name>.rds`: the minimal data needed to redraw the figure.
 #'
@@ -268,15 +269,33 @@ save_figure <- function(
 ) {
   dir.create(pdf_dir, recursive = TRUE, showWarnings = FALSE)
   dir.create(png_dir, recursive = TRUE, showWarnings = FALSE)
+  svg_path <- file.path(pdf_dir, paste0(name, ".svg"))
   pdf_path <- file.path(pdf_dir, paste0(name, ".pdf"))
   png_path <- file.path(png_dir, paste0(name, ".png"))
+  # SVG first; the PDF is drawn from it by Inkscape with text as paths.
   ggplot2::ggsave(
-    pdf_path,
+    svg_path,
     plot,
     width = width,
     height = height,
-    device = grDevices::cairo_pdf
+    device = svglite::svglite,
+    bg = "white"
   )
+  status <- system2(
+    "inkscape",
+    c(
+      shQuote(svg_path),
+      "--export-text-to-path",
+      "--export-type=pdf",
+      "-o",
+      shQuote(pdf_path)
+    ),
+    stdout = FALSE,
+    stderr = FALSE
+  )
+  if (!identical(status, 0L) || !file.exists(pdf_path)) {
+    stop("Inkscape could not convert ", svg_path, " to PDF.")
+  }
   ggplot2::ggsave(
     png_path,
     plot,
@@ -286,7 +305,7 @@ save_figure <- function(
     device = ragg::agg_png,
     bg = "white"
   )
-  paths <- c(pdf = pdf_path, png = png_path)
+  paths <- c(svg = svg_path, pdf = pdf_path, png = png_path)
   if (!is.null(data)) {
     paths[["rds"]] <- file.path(pdf_dir, paste0(name, ".rds"))
     saveRDS(data, paths[["rds"]])
