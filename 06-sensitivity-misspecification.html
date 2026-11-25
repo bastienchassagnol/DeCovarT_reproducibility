@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2026-11-24">
+<meta name="dcterms.date" content="2026-11-25">
 <meta name="description" content="How the fit moves when the precision matrices are misspecified.">
 
 <title>7&nbsp; Sensitivity analyses – DeCovarT reproducibility</title>
@@ -265,7 +265,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">24 Nov 2026</p>
+        <p class="date">25 Nov 2026</p>
       </div>
     </div>
     
@@ -536,8 +536,8 @@ Table&nbsp;7.2: Factors of the panel-size sweep. The largest panel stays below t
 <li><strong>Scale.</strong> Means, covariances and pseudo-bulks use raw UMI counts, so a pseudo-bulk is an exact sum of the cell profiles. The size-factor scale of <a href="03-covariance-estimation.html#sec-cov-inputs" class="quarto-xref"><span>Section 4.1.1</span></a> is a second arm.</li>
 <li><strong>Metrics.</strong> <code>DeCovarT::compute_benchmark_metrics()</code> with the true cell fractions: total variation and RMSE per bulk (<code>regression$global</code>), and per-type correlation and error (<code>regression$cell_type</code>). For the real bulks, the total variation between <span class="math inline">\hat{\boldsymbol{p}}</span> at each size and at 500 genes.</li>
 </ul>
-<p>The covariance has <span class="math inline">G(G+1)/2</span> entries per type. Above the number of reference cells of a type the sample covariance is singular, and only a regularised estimate of <a href="03-covariance-estimation.html#sec-shrinkage" class="quarto-xref"><span>Section 4.2.1</span></a> is defined. The closed-form intensity of this sketch is archived; the sweep should use the level chosen on held-out cells or by the bulk likelihood (<a href="04-deconvolution-pipeline.html#sec-deconv-selection" class="quarto-xref"><span>Section 5.3.3</span></a>).</p>
-<p><span class="light-content" style="color: #7a1f1f;border-radius: 0.2rem; padding: 0 0.2rem 0 0.2rem;background-color: #f4c7c3;">TODO, partly superseded by <a href="04-deconvolution-pipeline.html#sec-deconv-selection" class="quarto-xref"><span>Section 5.3.3</span></a>, which sweeps the shrinkage level, the two-parameter arm and factor ranks on the real bulks: add the level of covariance regularisation as a factor of the sweep. The shrinkage estimate is dense by construction: it multiplies every sample correlation by <span class="math inline">1 - \lambda</span> and sets none to zero, so it says nothing about isolated groups of genes. At the closed-form intensity the abundant types are barely shrunk (<span class="math inline">\lambda</span> of 0.006 to 0.03 on the Welch-gated panels, <code>output/grn/plugin/plugin_summary.csv</code>). Levels to compare: (i) <span class="math inline">\lambda</span> on a grid, closed form; 0.25; 0.5; 0.75; 1 (diagonal, no gene-gene term); (ii) a sparse arm, the graphical lasso precision of <a href="03-covariance-estimation.html#eq-grn-export" class="quarto-xref">Equation&nbsp;<span>4.1</span></a> along its penalty path; (iii) raw counts against size-factor-scaled counts, since a shared cell-size factor correlates every pair of genes. Report, per type and level, the share of non-zero off-diagonal partial correlations, the number of connected components and the condition number, next to the accuracy metrics and the agreement between the two optimisers. Done so far (<a href="04-deconvolution-pipeline.html#sec-deconv-96h-diagnosis" class="quarto-xref"><span>Section 5.3.2</span></a>): level (i) for DeCovarT on the raw covariance, L-BFGS-B, bulk as is; the RMSE at 96 h on the Welch-gated panel goes from 0.36 (closed form) to 0.034 (<span class="math inline">\lambda=0.5</span>), with no gain on the small panels. Levels (ii) and (iii), and a choice of <span class="math inline">\lambda</span> that does not use the observed composition, remain.</span></p>
+<p>The covariance has <span class="math inline">G(G+1)/2</span> entries per type. Above the number of reference cells of a type the sample covariance is singular, and only a regularised estimate of <a href="03-covariance-estimation.html#sec-shrinkage" class="quarto-xref"><span>Section 4.2.1</span></a> is defined. The closed-form intensity of this sketch is archived; the sweep should use the level chosen on held-out cells or by the bulk likelihood (<a href="04-deconvolution-pipeline.html#sec-deconv-selection" class="quarto-xref"><span>Section 5.3.2</span></a>).</p>
+<p><span class="light-content" style="color: #7a1f1f;border-radius: 0.2rem; padding: 0 0.2rem 0 0.2rem;background-color: #f4c7c3;">TODO, partly superseded by <a href="04-deconvolution-pipeline.html#sec-deconv-selection" class="quarto-xref"><span>Section 5.3.2</span></a>, which sweeps the shrinkage level, the two-parameter arm and factor ranks on the real bulks: add the level of covariance regularisation as a factor of the sweep. The shrinkage estimate is dense by construction: it multiplies every sample correlation by <span class="math inline">1 - \lambda</span> and sets none to zero, so it says nothing about isolated groups of genes. At the closed-form intensity the abundant types are barely shrunk (<span class="math inline">\lambda</span> of 0.006 to 0.03 on the Welch-gated panels, <code>output/grn/plugin/plugin_summary.csv</code>). Levels to compare: (i) <span class="math inline">\lambda</span> on a grid, closed form; 0.25; 0.5; 0.75; 1 (diagonal, no gene-gene term); (ii) a sparse arm, the graphical lasso precision of <a href="03-covariance-estimation.html#eq-grn-export" class="quarto-xref">Equation&nbsp;<span>4.1</span></a> along its penalty path; (iii) raw counts against size-factor-scaled counts, since a shared cell-size factor correlates every pair of genes. Report, per type and level, the share of non-zero off-diagonal partial correlations, the number of connected components and the condition number, next to the accuracy metrics and the agreement between the two optimisers. Done so far (<a href="04-deconvolution-pipeline.html#sec-deconv-selection" class="quarto-xref"><span>Section 5.3.2</span></a>): level (i) for DeCovarT on the raw covariance, L-BFGS-B, bulk as is, with <span class="math inline">\lambda</span> chosen by the summed bulk likelihood, never by the observed composition, and the Newton optimiser on the same grid (<a href="04-deconvolution-pipeline.html#sec-deconv-variants" class="quarto-xref"><span>Section 5.7</span></a>). Levels (ii) and (iii) remain.</span></p>
 <div class="cell">
 <details class="code-fold">
 <summary>Show the code</summary>
@@ -1439,11 +1439,11 @@ a.glossary:active .def::after {
 <span id="cb3-174"><a href="#cb3-174" aria-hidden="true" tabindex="-1"></a>share of non-zero off-diagonal partial correlations, the number of</span>
 <span id="cb3-175"><a href="#cb3-175" aria-hidden="true" tabindex="-1"></a>connected components and the condition number, next to the accuracy</span>
 <span id="cb3-176"><a href="#cb3-176" aria-hidden="true" tabindex="-1"></a>metrics and the agreement between the two optimisers. Done so far</span>
-<span id="cb3-177"><a href="#cb3-177" aria-hidden="true" tabindex="-1"></a>(@sec-deconv-96h-diagnosis): level (i) for DeCovarT on the raw</span>
-<span id="cb3-178"><a href="#cb3-178" aria-hidden="true" tabindex="-1"></a>covariance, L-BFGS-B, bulk as is; the RMSE at 96 h on the Welch-gated</span>
-<span id="cb3-179"><a href="#cb3-179" aria-hidden="true" tabindex="-1"></a>panel goes from 0.36 (closed form) to 0.034 ($\lambda=0.5$), with no</span>
-<span id="cb3-180"><a href="#cb3-180" aria-hidden="true" tabindex="-1"></a>gain on the small panels. Levels (ii) and (iii), and a choice of</span>
-<span id="cb3-181"><a href="#cb3-181" aria-hidden="true" tabindex="-1"></a>$\lambda$ that does not use the observed composition, remain.]{.highlight}</span>
+<span id="cb3-177"><a href="#cb3-177" aria-hidden="true" tabindex="-1"></a>(@sec-deconv-selection): level (i) for DeCovarT on the raw covariance,</span>
+<span id="cb3-178"><a href="#cb3-178" aria-hidden="true" tabindex="-1"></a>L-BFGS-B, bulk as is, with $\lambda$ chosen by the summed bulk</span>
+<span id="cb3-179"><a href="#cb3-179" aria-hidden="true" tabindex="-1"></a>likelihood, never by the observed composition, and the Newton optimiser</span>
+<span id="cb3-180"><a href="#cb3-180" aria-hidden="true" tabindex="-1"></a>on the same grid (@sec-deconv-variants). Levels (ii) and (iii)</span>
+<span id="cb3-181"><a href="#cb3-181" aria-hidden="true" tabindex="-1"></a>remain.]{.highlight}</span>
 <span id="cb3-182"><a href="#cb3-182" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-185"><a href="#cb3-185" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
 <span id="cb3-186"><a href="#cb3-186" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: sens-panel-size-sweep</span></span>
