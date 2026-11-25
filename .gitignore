@@ -88,3 +88,4 @@ report/
 
 # CodeGraph local index (Graphify output is ignored above)
 .codegraph/
+output/_superseded/

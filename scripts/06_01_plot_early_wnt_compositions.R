@@ -3,12 +3,21 @@
 #   scripts/06_01_plot_early_wnt_compositions.R \
 #   > "logs/06_01_early_wnt_$(date +%F).log" 2>&1
 #
-# Written, not run. The input table does not exist yet: it is the output
-# of the comparator runs planned in docs/04-deconvolution-pipeline.qmd
-# (#sec-deconv-models). Once it exists, this script writes three vector
-# panels for the TikZ composite docs/images/src/early_wnt/early_wnt.tex,
-# which replaces docs/images/deconvolution_guided_early_treatment-1.png
-# in docs/05-biological-insights.qmd (#fig-bio-early).
+# First run 2026-11-25, on the Welch rerun of chapter 4
+# (scripts/04_01_stats_deconvolution.R). Writes three vector panels for
+# the TikZ composite docs/images/src/early_wnt/early_wnt.tex, which
+# replaces docs/images/deconvolution_guided_early_treatment-1.png in
+# docs/05-biological-insights.qmd (#fig-bio-early).
+#
+# Methods shown: the comparators and DeCovarT (shrinkage, level by the
+# summed bulk likelihood), on the time-specific Welch panel; the other
+# DeCovarT levels and families of the sweep are not shown. Method x
+# sample pairs with a failed fit (missing proportion) are dropped.
+#
+# Reference: there is no single-cell reference of the early-Wnt arm. Both
+# arms at a time are deconvolved with the standard-Wnt reference of that
+# time, although early-Wnt gastruloids differ in composition, so the
+# early-arm estimates carry a reference mismatch.
 #
 # Input: output/deconvolution/proportions_long.csv, UTF-8, one row per
 # method x bulk sample x cell type.
@@ -18,7 +27,6 @@
 #   arm             chr  "standard" (Wnt pulse at 48 h) or "early" (24 h)
 #   time            chr  bulk time point: "48h", "72h" or "96h"
 #   replicate       int  biological replicate within arm x time (1 to 3)
-#   reference_slot  chr  single-cell slot whose reference was used
 #   cell_type       chr  celltypeannotation, as in
 #                        data/dictionaries/suppinger_celltype_markers.csv
 #   proportion      dbl  estimated proportion in [0, 1]; sums to one over
@@ -45,8 +53,8 @@
 #     only 10 distinct multisets per arm, so the percentile interval is
 #     coarse; the nine pairwise early-minus-standard differences are drawn
 #     beside it.
-#   - Both arms at one time must be deconvolved with the same reference;
-#     the script stops otherwise.
+#   - Both arms at one time use the standard-Wnt reference of that time
+#     (see Reference above).
 
 # ==========================================================================
 # SECTION 0 · Dependencies and paths ----
@@ -57,6 +65,7 @@
 stopifnot(requireNamespace("ggplot2", quietly = TRUE))
 
 root <- here::here()
+source(file.path(root, "R", "02_00_utils.R"))
 in_file <- file.path(root, "output", "deconvolution", "proportions_long.csv")
 out_dir <- file.path(root, "output", "deconvolution", "early_wnt")
 fig_dir <- file.path(root, "docs", "images", "src", "early_wnt")
@@ -95,30 +104,10 @@ neutral <- "#d9d3c7"
 
 pretty_time <- function(x) sub("h$", " h", x)
 
-# theme_slide() of the r-development rule (the repository has no theme of
-# its own), with the smaller type that the rule asks for in multi-panel
-# figures.
-theme_slide <- function() {
-  ggplot2::theme_minimal(base_size = 18) +
-    ggplot2::theme(
-      panel.grid.minor = ggplot2::element_blank(),
-      panel.grid.major = ggplot2::element_line(colour = "#e6e1d8"),
-      plot.title = ggplot2::element_text(
-        face = "bold",
-        colour = "#0e4d3a",
-        size = 18
-      ),
-      plot.subtitle = ggplot2::element_text(colour = "#3d4a42", size = 13),
-      axis.title = ggplot2::element_text(colour = "#1c2b24"),
-      strip.text = ggplot2::element_text(face = "bold", colour = "#0e4d3a"),
-      legend.position = "bottom",
-      plot.background = ggplot2::element_rect(fill = "white", colour = NA),
-      panel.background = ggplot2::element_rect(fill = "white", colour = NA)
-    )
-}
-
+# House theme_slide() (R/02_00_utils.R) with the smaller type of a
+# multi-panel figure.
 theme_panel <- function() {
-  theme_slide() +
+  theme_slide(base_size = 12) +
     ggplot2::theme(
       plot.title = ggplot2::element_text(size = 15),
       plot.subtitle = ggplot2::element_text(size = 11),
@@ -145,13 +134,27 @@ read_proportions <- function(path) {
     )
   }
   x <- utils::read.csv(path, stringsAsFactors = FALSE, fileEncoding = "UTF-8")
+  x <- x[x$gene_set == "welch" & x$method %in% shown_methods(x), , drop = FALSE]
+  x$method <- sub(" | welch", "", x$method, fixed = TRUE)
+  failed <- unique(x[is.na(x$proportion), c("method", "sample_id")])
+  if (nrow(failed) > 0L) {
+    message(
+      "Dropped (failed fit): ",
+      toString(paste(failed$method, failed$sample_id, sep = " / "))
+    )
+    x <- x[
+      !paste(x$method, x$sample_id) %in%
+        paste(failed$method, failed$sample_id),
+      ,
+      drop = FALSE
+    ]
+  }
   required <- c(
     "method",
     "sample_id",
     "arm",
     "time",
     "replicate",
-    "reference_slot",
     "cell_type",
     "proportion"
   )
@@ -172,6 +175,11 @@ read_proportions <- function(path) {
   if (!all(x$time %in% time_levels)) {
     stop("`time` must be one of ", toString(time_levels), ".", call. = FALSE)
   }
+  # Negative proportions (DWLS, down to -1e-17) are set to zero and each
+  # method x sample is renormalised to sum to one.
+  x$proportion <- pmax(x$proportion, 0)
+  x$proportion <- x$proportion /
+    stats::ave(x$proportion, x$method, x$sample_id, FUN = sum)
   if (anyNA(x$proportion) || any(x$proportion < 0 | x$proportion > 1)) {
     stop(
       "`proportion` must lie in [0, 1] and have no missing value.",
@@ -198,21 +206,6 @@ read_proportions <- function(path) {
     )
   }
 
-  refs <- unique(x[, c("method", "time", "arm", "reference_slot")])
-  n_refs <- stats::aggregate(
-    reference_slot ~ method + time,
-    data = refs,
-    FUN = function(v) length(unique(v))
-  )
-  if (any(n_refs$reference_slot > 1L)) {
-    stop(
-      "Both arms at one time must be deconvolved with the same single-cell ",
-      "reference; otherwise the early-versus-standard contrast mixes ",
-      "references.",
-      call. = FALSE
-    )
-  }
-
   reps <- unique(x[, c("method", "arm", "time", "replicate")])
   n_reps <- stats::aggregate(
     replicate ~ method + arm + time,
@@ -235,6 +228,12 @@ read_proportions <- function(path) {
     x$upper <- NA_real_
   }
   x
+}
+
+#' Comparators and the selected DeCovarT shrinkage fit of the Welch panel.
+shown_methods <- function(x) {
+  keep <- unique(x$method[x$family == "comparator"])
+  c(keep, "DeCovarT shrinkage, bulk likelihood | welch")
 }
 
 props <- read_proportions(in_file)
@@ -414,7 +413,11 @@ panel_b <- ggplot2::ggplot(props, ggplot2::aes(y = y, colour = arm)) +
     labels = names(method_index),
     expand = ggplot2::expansion(add = 0.5)
   ) +
-  ggplot2::facet_wrap(~facet, ncol = 4L) +
+  ggplot2::facet_wrap(
+    ~facet,
+    ncol = 4L,
+    labeller = ggplot2::label_wrap_gen(width = 22)
+  ) +
   ggplot2::labs(
     x = "Estimated proportion (dots: replicates; bar: mean)",
     y = NULL
@@ -452,7 +455,11 @@ panel_c <- ggplot2::ggplot(contrasts, ggplot2::aes(y = method)) +
     ),
     name = NULL
   ) +
-  ggplot2::facet_wrap(~facet, ncol = 4L) +
+  ggplot2::facet_wrap(
+    ~facet,
+    ncol = 4L,
+    labeller = ggplot2::label_wrap_gen(width = 22)
+  ) +
   ggplot2::labs(
     x = paste0(
       "CLR contrast, early minus standard ",
@@ -512,15 +519,17 @@ n_facets <- nlevels(droplevels(contrasts$facet))
 facet_rows <- ceiling(n_facets / 4)
 row_height <- 0.35 * length(method_levels) + 0.9
 
+# SVG, outlined PDF (the TikZ composite reads it), PNG and .rds data, all
+# in fig_dir.
 save_panel <- function(plot, filename, width, height) {
-  ggplot2::ggsave(
-    filename = file.path(fig_dir, filename),
-    plot = plot,
-    device = grDevices::cairo_pdf,
+  save_figure(
+    plot,
+    sub("\\.pdf$", "", filename),
+    fig_dir,
+    fig_dir,
     width = width,
     height = height,
-    units = "in",
-    bg = "white"
+    data = plot$data
   )
 }
 

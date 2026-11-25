@@ -822,7 +822,7 @@
     },
     "DeCovarT": {
       "Package": "DeCovarT",
-      "Version": "2.6.0",
+      "Version": "2.7.0",
       "Source": "GitHub",
       "Title": "Covariance-Aware Deconvolution of Bulk Transcriptomic Samples",
       "Authors@R": "person(\"Bastien\", \"Chassagnol\", , \"bastien_chassagnol@laposte.net\", role = c(\"aut\", \"cre\", \"cph\"), comment = c(ORCID = \"0000-0002-8955-2391\"))",
@@ -901,14 +901,12 @@
       "Encoding": "UTF-8",
       "Language": "en-GB",
       "Roxygen": "list(markdown = TRUE, roclets = c(\"namespace\", \"rd\", \"srr::srr_stats_roclet\"))",
-      "Author": "Bastien Chassagnol [aut, cre, cph] (ORCID: <https://orcid.org/0000-0002-8955-2391>)",
-      "Maintainer": "Bastien Chassagnol <bastien_chassagnol@laposte.net>",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
       "RemoteUsername": "bastienchassagnol",
       "RemoteRepo": "DeCovarT",
-      "RemoteRef": "main",
-      "RemoteSha": "e71b5d714d4725ac052c6d31281eaa39580b6f12"
+      "RemoteRef": "51bfcd8131d55d7b5a68eb5bda59b4c6acd3efcc",
+      "RemoteSha": "51bfcd8131d55d7b5a68eb5bda59b4c6acd3efcc"
     },
     "DeMixSC": {
       "Package": "DeMixSC",

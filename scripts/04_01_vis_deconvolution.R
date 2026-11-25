@@ -14,10 +14,12 @@
 #   scale_screen                          error of the strategies of the
 #                                         light screen (scripts/04_04)
 #   profile_correlation_welch             correlation of the mean profiles
+#   variants_rmse_welch                   shrinkage against its Newton and
+#                                         bulk / b_g variants (appendix)
 # The benchmark, agreement and lineage figures are also written for the
 # Welch panel alone, suffix _welch (main text of docs/04).
-# The figures of the second pass (scripts/archives/second_pass_variants/)
-# stay in docs/images/deconvolution/ under the prefix second_pass_.
+# Each figure is written as SVG, PDF (from the SVG) and PNG, with an RDS
+# of the data behind it (save_figure(data = )).
 
 root <- here::here()
 source(file.path(root, "R", "02_00_utils.R"))
@@ -42,6 +44,19 @@ fmt <- function(x, digits = 3) formatC(x, format = "f", digits = digits)
 # 1 · Benchmark ---------------------------------------------------------------
 shown <- metrics[metrics$family != "DeCovarT sweep", ]
 shown <- shown[!grepl("restricted", shown$method), ]
+# Newton and bulk / b_g variants of the shrinkage go to their own figure.
+variant_algorithms <- c(
+  "DeCovarT shrinkage, Newton",
+  "DeCovarT shrinkage, Newton from L-BFGS-B",
+  "DeCovarT shrinkage, bulk / b_g"
+)
+variants <- shown[
+  shown$algorithm %in%
+    c("DeCovarT shrinkage", variant_algorithms) &
+    shown$family == "DeCovarT, bulk likelihood" &
+    shown$gene_set == "welch",
+]
+shown <- shown[!shown$algorithm %in% variant_algorithms, ]
 #' Short row label: no gene set, no "DeCovarT" prefix, no repeated rule.
 short_label <- function(method) {
   x <- sub(" \\| (welch|r2_01|r2_05)$", "", method)
@@ -65,90 +80,112 @@ at_96 <- shown[shown$time == "96h" & shown$gene_set == "welch", ]
 # Each figure twice: all three gene panels (appendix of the book) and the
 # Welch panel alone (main text), suffix _welch.
 panel_versions <- list(all = c("welch", "r2_01", "r2_05"), welch = "welch")
-for (version in names(panel_versions)) for (metric in c("rmse", "aitchison")) {
-  best <- sort(tapply(at_96[[metric]], at_96$label, mean))[1:2]
-  save_figure(
-    plot_benchmark_metric(
-      shown[shown$gene_set %in% panel_versions[[version]], ],
-      metric,
-      title = paste0(
-        "Lowest error at 96 h on the Welch panel: ",
-        names(best)[[1L]],
-        if (metric == "rmse") " (RMSE " else " (Aitchison ",
-        fmt(best[[1L]]),
-        ")"
+for (version in names(panel_versions)) {
+  for (metric in c("rmse", "aitchison")) {
+    best <- sort(tapply(at_96[[metric]], at_96$label, mean))[1:2]
+    figure_rows <- shown[shown$gene_set %in% panel_versions[[version]], ]
+    save_figure(
+      plot_benchmark_metric(
+        figure_rows,
+        metric,
+        title = paste0(
+          "Lowest error at 96 h on the Welch panel: ",
+          names(best)[[1L]],
+          if (metric == "rmse") " (RMSE " else " (Aitchison ",
+          fmt(best[[1L]]),
+          ")"
+        ),
+        subtitle = paste0(
+          "Point: mean of the three standard-Wnt replicates; segment: their range. ",
+          "No DeCovarT row uses the observed composition to choose its level."
+        ),
+        x_label = if (metric == "rmse") {
+          "Root mean squared error of the proportions"
+        } else {
+          "Aitchison distance to the observed composition (zeros at 0.001)"
+        }
       ),
-      subtitle = paste0(
-        "Point: mean of the three standard-Wnt replicates; segment: their range. ",
-        "No DeCovarT row uses the observed composition to choose its level."
-      ),
-      x_label = if (metric == "rmse") {
-        "Root mean squared error of the proportions"
-      } else {
-        "Aitchison distance to the observed composition (zeros at 0.001)"
-      }
-    ),
-    paste0("benchmark_", metric, if (version == "welch") "_welch"),
-    pdf_dir,
-    png_dir,
-    width = 15,
-    height = if (version == "welch") 6 else 13
-  )
+      paste0("benchmark_", metric, if (version == "welch") "_welch"),
+      pdf_dir,
+      png_dir,
+      width = 15,
+      height = if (version == "welch") 6 else 13,
+      data = figure_rows[c(
+        "label",
+        "group",
+        "time",
+        "gene_set",
+        "sample_id",
+        metric
+      )]
+    )
+  }
 }
 
 # 1b · Mixture diagnostics (scripts/04_02_stats_mixture_diagnostics.R) ---------
 agreement <- read_table(out_dir, "bulk_reference_agreement.csv")
 off <- tapply(agreement$share_over_4_fold, agreement$time, mean)
-for (version in names(panel_versions)) save_figure(
-  plot_bulk_agreement(
-    agreement[agreement$gene_set %in% panel_versions[[version]], ],
-    title = paste0(
-      "The bulk departs most from the reference mixture at ",
-      sub("h$", " h", names(which.max(off))),
-      ": ",
-      round(100 * max(off)),
-      "% of genes more than 4-fold off"
+for (version in names(panel_versions)) {
+  agreement_rows <- agreement[
+    agreement$gene_set %in% panel_versions[[version]],
+  ]
+  save_figure(
+    plot_bulk_agreement(
+      agreement_rows,
+      title = paste0(
+        "The bulk departs most from the reference mixture at ",
+        sub("h$", " h", names(which.max(off))),
+        ": ",
+        round(100 * max(off)),
+        "% of genes more than 4-fold off"
+      ),
+      subtitle = paste0(
+        "Standard-Wnt bulk against the reference mean at the observed composition. ",
+        "Small points: replicates; large: mean."
+      )
     ),
-    subtitle = paste0(
-      "Standard-Wnt bulk against the reference mean at the observed composition. ",
-      "Small points: replicates; large: mean."
-    )
-  ),
-  paste0("bulk_reference_agreement", if (version == "welch") "_welch"),
-  pdf_dir,
-  png_dir,
-  width = 12,
-  height = 6
-)
+    paste0("bulk_reference_agreement", if (version == "welch") "_welch"),
+    pdf_dir,
+    png_dir,
+    width = 12,
+    height = 6,
+    data = agreement_rows
+  )
+}
 lineage <- read_table(out_dir, "lineage_collapsed_metrics.csv")
 lineage <- lineage[
-  !grepl("restricted|DeCovarT sweep", paste(lineage$method, lineage$family)),
+  !grepl("restricted|DeCovarT sweep", paste(lineage$method, lineage$family)) &
+    !lineage$algorithm %in% variant_algorithms,
 ]
 lineage$label <- short_label(lineage$method)
 gain <- with(
   lineage[lineage$gene_set == "welch", ],
   mean(rmse_five_parts - rmse_three_parts)
 )
-for (version in names(panel_versions)) save_figure(
-  plot_lineage_collapse(
-    lineage[lineage$gene_set %in% panel_versions[[version]], ],
-    title = paste0(
-      "At 96 h most error is a split inside paraxial mesoderm: summing it removes ",
-      fmt(gain, 2),
-      " RMSE on average (Welch)"
+for (version in names(panel_versions)) {
+  lineage_rows <- lineage[lineage$gene_set %in% panel_versions[[version]], ]
+  save_figure(
+    plot_lineage_collapse(
+      lineage_rows,
+      title = paste0(
+        "At 96 h most error is a split inside paraxial mesoderm: summing it removes ",
+        fmt(gain, 2),
+        " RMSE on average (Welch)"
+      ),
+      subtitle = paste0(
+        "Mean over the standard-Wnt replicates; caudal mesoderm, pre-somitic mesoderm ",
+        "and somite front summed into one part."
+      ),
+      x_label = "Root mean squared error at 96 h"
     ),
-    subtitle = paste0(
-      "Mean over the standard-Wnt replicates; caudal mesoderm, pre-somitic mesoderm ",
-      "and somite front summed into one part."
-    ),
-    x_label = "Root mean squared error at 96 h"
-  ),
-  paste0("lineage_collapse_96h", if (version == "welch") "_welch"),
-  pdf_dir,
-  png_dir,
-  width = if (version == "welch") 12 else 15,
-  height = 10
-)
+    paste0("lineage_collapse_96h", if (version == "welch") "_welch"),
+    pdf_dir,
+    png_dir,
+    width = if (version == "welch") 12 else 15,
+    height = 10,
+    data = lineage_rows
+  )
+}
 
 # 2 · Criteria along the shrinkage level, Welch panel --------------------------
 shr <- selection[
@@ -223,7 +260,8 @@ save_figure(
   pdf_dir,
   png_dir,
   width = 11,
-  height = 8
+  height = 8,
+  data = list(curves = curves, chosen = chosen)
 )
 
 # 3 · Light screen of the scale and covariance strategies --------------------
@@ -283,7 +321,8 @@ if (file.exists(screen_path)) {
     pdf_dir,
     png_dir,
     width = 13,
-    height = 8
+    height = 8,
+    data = chosen
   )
 }
 
@@ -313,6 +352,52 @@ save_figure(
   pdf_dir,
   png_dir,
   width = 11,
-  height = 8
+  height = 8,
+  data = correlations[correlations$gene_set == "welch", ]
 )
+
+# 5 · Second-pass variants of the shrinkage, Welch panel (appendix) -----------
+if (nrow(variants) > 0L) {
+  variants$label <- short_label(variants$method)
+  variants$group <- "DeCovarT, level by bulk likelihood"
+  gap <- tapply(variants$rmse, list(variants$algorithm, variants$time), mean)
+  base <- gap["DeCovarT shrinkage", ]
+  best_variant <- vapply(
+    variant_algorithms,
+    function(a) mean(gap[a, ] - base, na.rm = TRUE),
+    numeric(1)
+  )
+  save_figure(
+    plot_benchmark_metric(
+      variants,
+      "rmse",
+      title = paste0(
+        "Against plain shrinkage, mean RMSE change over the times: Newton ",
+        sprintf("%+.3f", best_variant[[1L]]),
+        ", Newton from L-BFGS-B ",
+        sprintf("%+.3f", best_variant[[2L]]),
+        ", bulk / b_g ",
+        sprintf("%+.3f", best_variant[[3L]])
+      ),
+      subtitle = paste0(
+        "Each variant at the level its summed bulk likelihood chooses. ",
+        "Point: mean of the three standard-Wnt replicates; segment: their range."
+      ),
+      x_label = "Root mean squared error of the proportions"
+    ),
+    "variants_rmse_welch",
+    pdf_dir,
+    png_dir,
+    width = 12,
+    height = 5,
+    data = variants[c(
+      "label",
+      "algorithm",
+      "time",
+      "sample_id",
+      "rmse",
+      "covariance"
+    )]
+  )
+}
 message("Figures written to ", png_dir, ".")

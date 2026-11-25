@@ -130,6 +130,11 @@ read_platform_ratio <- function(
 #' @param sigma Covariances, genes by genes by types.
 #' @param optimiser `"newton"` or `"lbfgsb"`.
 #' @param initial_p Optional start on the simplex.
+#' @param starts Optional list of starts on the simplex. When given, the
+#'   model is fitted from each and the fit of highest log-likelihood is
+#'   kept, as in [DeCovarT::multistart_decovart()] (which fixes the first
+#'   start at the barycentre, hence this local loop); the spread of the
+#'   log-likelihoods goes to the message. `initial_p` is then ignored.
 #' @param level Confidence level. Default `0.95`.
 #' @return A list with `estimates` (one row per type), `diagnostics` (one
 #'   row) and `p` (named vector, or `NULL` after an error).
@@ -139,20 +144,46 @@ fit_decovart_once <- function(
   sigma,
   optimiser,
   initial_p = NULL,
+  starts = NULL,
   level = 0.95
 ) {
   types <- colnames(mu)
   started <- proc.time()[["elapsed"]]
-  fit <- tryCatch(
-    DeCovarT::deconvolute_single_cell(
-      y,
-      mu,
-      sigma,
-      optimiser = optimiser,
-      initial_p = initial_p
-    ),
-    error = function(e) e
-  )
+  fit_from <- function(p0) {
+    tryCatch(
+      DeCovarT::deconvolute_single_cell(
+        y,
+        mu,
+        sigma,
+        optimiser = optimiser,
+        initial_p = p0
+      ),
+      error = function(e) e
+    )
+  }
+  if (is.null(starts)) {
+    fit <- fit_from(initial_p)
+  } else {
+    fits <- lapply(starts, fit_from)
+    ll <- vapply(
+      fits,
+      function(f) if (inherits(f, "error")) NA_real_ else f$loglik,
+      numeric(1)
+    )
+    fit <- if (any(is.finite(ll))) {
+      best <- fits[[which.max(ll)]]
+      best$message <- sprintf(
+        "multistart: %d starts (%d converged, best start %d), loglik range %.3g",
+        length(starts),
+        sum(is.finite(ll)),
+        which.max(ll),
+        diff(range(ll, na.rm = TRUE))
+      )
+      best
+    } else {
+      fits[[1L]]
+    }
+  }
   elapsed <- proc.time()[["elapsed"]] - started
   if (inherits(fit, "error")) {
     return(list(
@@ -1122,10 +1153,13 @@ bind_fill <- function(parts) {
     return(NULL)
   }
   columns <- unique(unlist(lapply(parts, names)))
-  out <- do.call(rbind, lapply(parts, function(d) {
-    d[setdiff(columns, names(d))] <- NA
-    d[columns]
-  }))
+  out <- do.call(
+    rbind,
+    lapply(parts, function(d) {
+      d[setdiff(columns, names(d))] <- NA
+      d[columns]
+    })
+  )
   rownames(out) <- NULL
   out
 }
@@ -1169,7 +1203,9 @@ update_fit_store <- function(path, new, key) {
   id <- function(d) do.call(paste, c(d[key], sep = "\r"))
   for (tab in names(new)) {
     add <- new[[tab]]
-    if (is.null(add) || nrow(add) == 0L) next
+    if (is.null(add) || nrow(add) == 0L) {
+      next
+    }
     kept <- store[[tab]]
     if (!is.null(kept)) {
       kept <- kept[!id(kept) %in% id(add), , drop = FALSE]

@@ -26,60 +26,59 @@
   </clipPath>
 </defs>
 <g clip-path='url(#cpMC4wMHw4NjQuMDB8MC4wMHw0MDMuMjA=)'>
-<rect x='0.00' y='0.000000000000057' width='864.00' height='403.20' style='stroke-width: 1.16; stroke: none; fill: #FFFFFF;' />
+<rect x='0.00' y='0.00' width='864.00' height='403.20' style='stroke-width: 1.16; stroke: none; fill: #FFFFFF;' />
 </g>
 <defs>
-  <clipPath id='cpMTcyLjU4fDg1OC4wMnw2OS4wNHwzNjguMjU='>
-    <rect x='172.58' y='69.04' width='685.45' height='299.21' />
+  <clipPath id='cpMTcyLjU0fDg1OC4wMnw1Ni4wOHwzNjguMjU='>
+    <rect x='172.54' y='56.08' width='685.48' height='312.17' />
   </clipPath>
 </defs>
-<g clip-path='url(#cpMTcyLjU4fDg1OC4wMnw2OS4wNHwzNjguMjU=)'>
-<rect x='172.58' y='69.04' width='685.45' height='299.21' style='stroke-width: 1.16; stroke: none; fill: #FFFFFF;' />
-<polyline points='185.76,368.25 185.76,69.04 ' style='stroke-width: 1.16; stroke: #E6E1D8; stroke-linecap: butt;' />
-<polyline points='350.53,368.25 350.53,69.04 ' style='stroke-width: 1.16; stroke: #E6E1D8; stroke-linecap: butt;' />
-<polyline points='515.30,368.25 515.30,69.04 ' style='stroke-width: 1.16; stroke: #E6E1D8; stroke-linecap: butt;' />
-<polyline points='680.07,368.25 680.07,69.04 ' style='stroke-width: 1.16; stroke: #E6E1D8; stroke-linecap: butt;' />
-<polyline points='844.84,368.25 844.84,69.04 ' style='stroke-width: 1.16; stroke: #E6E1D8; stroke-linecap: butt;' />
-<line x1='741.86' y1='138.85' x2='515.30' y2='138.85' style='stroke-width: 2.99; stroke: #BFBFBF; stroke-linecap: butt;' />
-<line x1='778.93' y1='188.72' x2='515.30' y2='188.72' style='stroke-width: 2.99; stroke: #BFBFBF; stroke-linecap: butt;' />
-<line x1='803.65' y1='238.59' x2='515.30' y2='238.59' style='stroke-width: 2.99; stroke: #BFBFBF; stroke-linecap: butt;' />
-<line x1='803.65' y1='288.46' x2='515.30' y2='288.46' style='stroke-width: 2.99; stroke: #BFBFBF; stroke-linecap: butt;' />
-<line x1='824.24' y1='338.33' x2='515.30' y2='338.33' style='stroke-width: 2.99; stroke: #BFBFBF; stroke-linecap: butt;' />
-<circle cx='783.05' cy='138.85' r='5.97' style='stroke-width: 1.28; stroke: #1D4E89;' />
-<circle cx='783.05' cy='188.72' r='5.97' style='stroke-width: 1.28; stroke: #1D4E89;' />
-<circle cx='783.05' cy='238.59' r='5.97' style='stroke-width: 1.28; stroke: #1D4E89;' />
-<circle cx='783.05' cy='288.46' r='5.97' style='stroke-width: 1.28; stroke: #1D4E89;' />
-<circle cx='783.05' cy='338.33' r='5.97' style='stroke-width: 1.28; stroke: #1D4E89;' />
-<circle cx='741.86' cy='138.85' r='3.80' style='stroke-width: 0.77; stroke: #1D4E89; fill: #1D4E89;' />
-<circle cx='778.93' cy='188.72' r='3.80' style='stroke-width: 0.77; stroke: #1D4E89; fill: #1D4E89;' />
-<circle cx='803.65' cy='238.59' r='3.80' style='stroke-width: 0.77; stroke: #1D4E89; fill: #1D4E89;' />
-<circle cx='803.65' cy='288.46' r='3.80' style='stroke-width: 0.77; stroke: #1D4E89; fill: #1D4E89;' />
-<circle cx='824.24' cy='338.33' r='3.80' style='stroke-width: 0.77; stroke: #1D4E89; fill: #1D4E89;' />
-<circle cx='515.30' cy='138.85' r='3.80' style='stroke-width: 0.77; stroke: #C45C26; fill: #C45C26;' />
-<circle cx='515.30' cy='188.72' r='3.80' style='stroke-width: 0.77; stroke: #C45C26; fill: #C45C26;' />
-<circle cx='515.30' cy='238.59' r='3.80' style='stroke-width: 0.77; stroke: #C45C26; fill: #C45C26;' />
-<circle cx='515.30' cy='288.46' r='3.80' style='stroke-width: 0.77; stroke: #C45C26; fill: #C45C26;' />
-<circle cx='515.30' cy='338.33' r='3.80' style='stroke-width: 0.77; stroke: #C45C26; fill: #C45C26;' />
-<text x='515.30' y='78.54' text-anchor='middle' style='font-size: 10.24px;fill: #C45C26; font-family: "Noto Sans";' textLength='112.64px' lengthAdjust='spacingAndGlyphs'>bulk likelihood, λ = 0.50</text>
-<text x='783.05' y='78.54' text-anchor='end' style='font-size: 10.24px;fill: #1D4E89; font-family: "Noto Sans";' textLength='166.55px' lengthAdjust='spacingAndGlyphs'>○ held-out cells, common λ = 0.906</text>
-<text x='741.86' y='130.81' text-anchor='end' style='font-size: 10.24px;fill: #1D4E89; font-family: "Noto Sans";' textLength='118.17px' lengthAdjust='spacingAndGlyphs'>● held-out cells, per type</text>
+<g clip-path='url(#cpMTcyLjU0fDg1OC4wMnw1Ni4wOHwzNjguMjU=)'>
+<rect x='172.54' y='56.08' width='685.48' height='312.17' style='stroke-width: 1.16; stroke: none; fill: #FFFFFF;' />
+<polyline points='185.73,368.25 185.73,56.08 ' style='stroke-width: 1.16; stroke: #E6E1D8; stroke-linecap: butt;' />
+<polyline points='350.51,368.25 350.51,56.08 ' style='stroke-width: 1.16; stroke: #E6E1D8; stroke-linecap: butt;' />
+<polyline points='515.28,368.25 515.28,56.08 ' style='stroke-width: 1.16; stroke: #E6E1D8; stroke-linecap: butt;' />
+<polyline points='680.06,368.25 680.06,56.08 ' style='stroke-width: 1.16; stroke: #E6E1D8; stroke-linecap: butt;' />
+<polyline points='844.84,368.25 844.84,56.08 ' style='stroke-width: 1.16; stroke: #E6E1D8; stroke-linecap: butt;' />
+<line x1='741.85' y1='128.92' x2='515.28' y2='128.92' style='stroke-width: 2.99; stroke: #BFBFBF; stroke-linecap: butt;' />
+<line x1='783.05' y1='180.95' x2='515.28' y2='180.95' style='stroke-width: 2.99; stroke: #BFBFBF; stroke-linecap: butt;' />
+<line x1='803.65' y1='232.97' x2='515.28' y2='232.97' style='stroke-width: 2.99; stroke: #BFBFBF; stroke-linecap: butt;' />
+<line x1='803.65' y1='285.00' x2='515.28' y2='285.00' style='stroke-width: 2.99; stroke: #BFBFBF; stroke-linecap: butt;' />
+<line x1='824.24' y1='337.03' x2='515.28' y2='337.03' style='stroke-width: 2.99; stroke: #BFBFBF; stroke-linecap: butt;' />
+<circle cx='783.05' cy='128.92' r='5.97' style='stroke-width: 1.28; stroke: #1D4E89;' />
+<circle cx='783.05' cy='180.95' r='5.97' style='stroke-width: 1.28; stroke: #1D4E89;' />
+<circle cx='783.05' cy='232.97' r='5.97' style='stroke-width: 1.28; stroke: #1D4E89;' />
+<circle cx='783.05' cy='285.00' r='5.97' style='stroke-width: 1.28; stroke: #1D4E89;' />
+<circle cx='783.05' cy='337.03' r='5.97' style='stroke-width: 1.28; stroke: #1D4E89;' />
+<circle cx='741.85' cy='128.92' r='3.80' style='stroke-width: 0.77; stroke: #1D4E89; fill: #1D4E89;' />
+<circle cx='783.05' cy='180.95' r='3.80' style='stroke-width: 0.77; stroke: #1D4E89; fill: #1D4E89;' />
+<circle cx='803.65' cy='232.97' r='3.80' style='stroke-width: 0.77; stroke: #1D4E89; fill: #1D4E89;' />
+<circle cx='803.65' cy='285.00' r='3.80' style='stroke-width: 0.77; stroke: #1D4E89; fill: #1D4E89;' />
+<circle cx='824.24' cy='337.03' r='3.80' style='stroke-width: 0.77; stroke: #1D4E89; fill: #1D4E89;' />
+<circle cx='515.28' cy='128.92' r='3.80' style='stroke-width: 0.77; stroke: #C45C26; fill: #C45C26;' />
+<circle cx='515.28' cy='180.95' r='3.80' style='stroke-width: 0.77; stroke: #C45C26; fill: #C45C26;' />
+<circle cx='515.28' cy='232.97' r='3.80' style='stroke-width: 0.77; stroke: #C45C26; fill: #C45C26;' />
+<circle cx='515.28' cy='285.00' r='3.80' style='stroke-width: 0.77; stroke: #C45C26; fill: #C45C26;' />
+<circle cx='515.28' cy='337.03' r='3.80' style='stroke-width: 0.77; stroke: #C45C26; fill: #C45C26;' />
+<text x='515.28' y='65.58' text-anchor='middle' style='font-size: 10.24px;fill: #C45C26; font-family: "Noto Sans";' textLength='112.64px' lengthAdjust='spacingAndGlyphs'>bulk likelihood, λ = 0.50</text>
+<text x='783.05' y='65.58' text-anchor='end' style='font-size: 10.24px;fill: #1D4E89; font-family: "Noto Sans";' textLength='166.55px' lengthAdjust='spacingAndGlyphs'>○ held-out cells, common λ = 0.906</text>
+<text x='741.85' y='120.88' text-anchor='end' style='font-size: 10.24px;fill: #1D4E89; font-family: "Noto Sans";' textLength='118.17px' lengthAdjust='spacingAndGlyphs'>● held-out cells, per type</text>
 </g>
 <g clip-path='url(#cpMC4wMHw4NjQuMDB8MC4wMHw0MDMuMjA=)'>
-<text x='167.20' y='341.75' text-anchor='end' style='font-size: 9.60px;fill: #4D4D4D; font-family: "Noto Sans";' textLength='161.22px' lengthAdjust='spacingAndGlyphs'>Somite differentiation front  (n = 29)</text>
-<text x='167.20' y='291.89' text-anchor='end' style='font-size: 9.60px;fill: #4D4D4D; font-family: "Noto Sans";' textLength='135.03px' lengthAdjust='spacingAndGlyphs'>Ectopic pluripotency  (n = 116)</text>
-<text x='167.20' y='242.02' text-anchor='end' style='font-size: 9.60px;fill: #4D4D4D; font-family: "Noto Sans";' textLength='59.98px' lengthAdjust='spacingAndGlyphs'>Gut  (n = 140)</text>
-<text x='167.20' y='192.15' text-anchor='end' style='font-size: 9.60px;fill: #4D4D4D; font-family: "Noto Sans";' textLength='134.30px' lengthAdjust='spacingAndGlyphs'>Caudal mesoderm  (n = 1,061)</text>
-<text x='167.20' y='142.28' text-anchor='end' style='font-size: 9.60px;fill: #4D4D4D; font-family: "Noto Sans";' textLength='153.64px' lengthAdjust='spacingAndGlyphs'>Pre-somitic mesoderm  (n = 3,589)</text>
-<text x='185.76' y='380.48' text-anchor='middle' style='font-size: 9.60px;fill: #4D4D4D; font-family: "Noto Sans";' textLength='19.03px' lengthAdjust='spacingAndGlyphs'>0.00</text>
-<text x='350.53' y='380.48' text-anchor='middle' style='font-size: 9.60px;fill: #4D4D4D; font-family: "Noto Sans";' textLength='19.03px' lengthAdjust='spacingAndGlyphs'>0.25</text>
-<text x='515.30' y='380.48' text-anchor='middle' style='font-size: 9.60px;fill: #4D4D4D; font-family: "Noto Sans";' textLength='19.03px' lengthAdjust='spacingAndGlyphs'>0.50</text>
-<text x='680.07' y='380.48' text-anchor='middle' style='font-size: 9.60px;fill: #4D4D4D; font-family: "Noto Sans";' textLength='19.03px' lengthAdjust='spacingAndGlyphs'>0.75</text>
+<text x='167.17' y='340.46' text-anchor='end' style='font-size: 9.60px;fill: #4D4D4D; font-family: "Noto Sans";' textLength='161.19px' lengthAdjust='spacingAndGlyphs'>Somite differentiation front  (n = 29)</text>
+<text x='167.17' y='288.43' text-anchor='end' style='font-size: 9.60px;fill: #4D4D4D; font-family: "Noto Sans";' textLength='135.03px' lengthAdjust='spacingAndGlyphs'>Ectopic pluripotency  (n = 116)</text>
+<text x='167.17' y='236.40' text-anchor='end' style='font-size: 9.60px;fill: #4D4D4D; font-family: "Noto Sans";' textLength='59.98px' lengthAdjust='spacingAndGlyphs'>Gut  (n = 140)</text>
+<text x='167.17' y='184.37' text-anchor='end' style='font-size: 9.60px;fill: #4D4D4D; font-family: "Noto Sans";' textLength='134.30px' lengthAdjust='spacingAndGlyphs'>Caudal mesoderm  (n = 1,061)</text>
+<text x='167.17' y='132.34' text-anchor='end' style='font-size: 9.60px;fill: #4D4D4D; font-family: "Noto Sans";' textLength='153.62px' lengthAdjust='spacingAndGlyphs'>Pre-somitic mesoderm  (n = 3,589)</text>
+<text x='185.73' y='380.48' text-anchor='middle' style='font-size: 9.60px;fill: #4D4D4D; font-family: "Noto Sans";' textLength='19.03px' lengthAdjust='spacingAndGlyphs'>0.00</text>
+<text x='350.51' y='380.48' text-anchor='middle' style='font-size: 9.60px;fill: #4D4D4D; font-family: "Noto Sans";' textLength='19.03px' lengthAdjust='spacingAndGlyphs'>0.25</text>
+<text x='515.28' y='380.48' text-anchor='middle' style='font-size: 9.60px;fill: #4D4D4D; font-family: "Noto Sans";' textLength='19.03px' lengthAdjust='spacingAndGlyphs'>0.50</text>
+<text x='680.06' y='380.48' text-anchor='middle' style='font-size: 9.60px;fill: #4D4D4D; font-family: "Noto Sans";' textLength='19.03px' lengthAdjust='spacingAndGlyphs'>0.75</text>
 <text x='844.84' y='380.48' text-anchor='middle' style='font-size: 9.60px;fill: #4D4D4D; font-family: "Noto Sans";' textLength='19.03px' lengthAdjust='spacingAndGlyphs'>1.00</text>
-<text x='515.30' y='394.34' text-anchor='middle' style='font-size: 12.00px;fill: #1C2B24; font-family: "Noto Sans";' textLength='306.25px' lengthAdjust='spacingAndGlyphs'>Shrinkage level λ (0 = sample correlation, 1 = diagonal)</text>
-<text x='5.98' y='34.26' style='font-size: 12.00px;fill: #3D4A42; font-family: "Noto Sans";' textLength='847.11px' lengthAdjust='spacingAndGlyphs'>96 h. Welch panel, standard Wnt. Rows: cell types, ordered by cells. Filled blue: level chosen per type by held-out cells; open blue: one level for all types;</text>
-<text x='5.98' y='47.22' style='font-size: 12.00px;fill: #3D4A42; font-family: "Noto Sans";' textLength='455.56px' lengthAdjust='spacingAndGlyphs'>orange: level chosen by the summed bulk profile likelihood, common to all types.</text>
-<text x='5.98' y='60.18' style='font-size: 12.00px;fill: #3D4A42; font-family: "Noto Sans";' textLength='597.20px' lengthAdjust='spacingAndGlyphs'>Provisional: 2 / 35 / 39 Welch genes at 48 / 72 / 96 h are absent from the local scored_slots.rds and left out.</text>
-<text x='5.98' y='16.26' style='font-size: 14.40px; font-weight: bold;fill: #0E4D3A; font-family: "Noto Sans";' textLength='631.16px' lengthAdjust='spacingAndGlyphs'>Held-out cells choose heavier shrinkage (λ 0.47–0.97) than the bulk likelihood (0.10–0.50)</text>
+<text x='515.28' y='394.34' text-anchor='middle' style='font-size: 12.00px;fill: #1C2B24; font-family: "Noto Sans";' textLength='306.22px' lengthAdjust='spacingAndGlyphs'>Shrinkage level λ (0 = sample correlation, 1 = diagonal)</text>
+<text x='5.98' y='34.26' style='font-size: 12.00px;fill: #3D4A42; font-family: "Noto Sans";' textLength='846.97px' lengthAdjust='spacingAndGlyphs'>96 h. Welch panel, standard Wnt. Rows: cell types, ordered by cells. Filled blue: level chosen per type by held-out cells; open blue: one level for all types;</text>
+<text x='5.98' y='47.22' style='font-size: 12.00px;fill: #3D4A42; font-family: "Noto Sans";' textLength='455.50px' lengthAdjust='spacingAndGlyphs'>orange: level chosen by the summed bulk profile likelihood, common to all types.</text>
+<text x='5.98' y='16.26' style='font-size: 14.40px; font-weight: bold;fill: #0E4D3A; font-family: "Noto Sans";' textLength='631.16px' lengthAdjust='spacingAndGlyphs'>Held-out cells choose heavier shrinkage (λ 0.44–0.97) than the bulk likelihood (0.10–0.50)</text>
 </g>
 </g>
 </svg>

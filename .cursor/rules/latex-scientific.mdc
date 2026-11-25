@@ -150,24 +150,25 @@ TikZ, pgfplots, and `curve2e`. Do not use PSTricks. Its pictures need
 
 ### Fonts (default)
 
-STIX Two Math for equations, TeX Gyre Heros for diagram labels (including
-`bayesnet` figures, see `graphical-models`). Both ship with TeX Live and are
-installed as system fonts, so Inkscape can edit Heros text.
+STIX Two Math for equations. Diagram labels use **Noto Sans** when it is
+installed on the system (same default as `slide_family()` in ggplot figures);
+use **TeX Gyre Heros** only when Noto is absent (bundled with TeX Live). Both
+are system fonts Inkscape can edit as live text.
 
 ```latex
 \usepackage{amsmath}               % before unicode-math
 \usepackage{fontspec}
 \usepackage{unicode-math}          % no amssymb or bm; use \symbf
 \setmathfont{STIX Two Math}
-\setmainfont{TeX Gyre Heros}[Ligatures=CommonOff] % figure sources only
+\setmainfont{Noto Sans}[Ligatures=CommonOff] % figure sources; Heros if Noto missing
 ```
 
-In a figure source, set Heros as the main font: a TikZ `font=\footnotesize`
-key replaces `\sffamily`, so a sans-serif style alone leaves Latin Modern in
-some labels. `Ligatures=CommonOff` keeps "fi" and "fl" as two letters: ligature
-glyphs carry no Unicode, so Inkscape drops them from the SVG text. In a
-manuscript, keep the body font and use
-`\setsansfont{TeX Gyre Heros}` with `font=\sffamily` in TikZ styles.
+In a figure source, set the diagram sans as the main font: a TikZ
+`font=\footnotesize` key replaces `\sffamily`, so a sans-serif style alone
+leaves Latin Modern in some labels. `Ligatures=CommonOff` keeps "fi" and "fl"
+as two letters: ligature glyphs carry no Unicode, so Inkscape drops them from
+the SVG text. In a manuscript, keep the body font and use
+`\setsansfont{Noto Sans}` (or Heros) with `font=\sffamily` in TikZ styles.
 
 ### TikZ figures: SVG first, PDF last
 
@@ -176,7 +177,8 @@ schematics). R plots follow `data-visualisation`; Quarto `{.tikz}` blocks
 get the portable SVG only (`graphical-models`).
 
 Inkscape is the vector target. Each figure gets an **editable** SVG (labels
-as live Heros text, maths as exact outlines or TexText objects) and a
+as live sans text (Noto Sans by default), maths as exact outlines or TexText
+objects) and a
 **portable** SVG (all glyphs as outlines). The PDF is rendered from the
 portable SVG, never from the editable one.
 
@@ -193,7 +195,7 @@ portable SVG, never from the editable one.
 
 4. Editable SVG:
    `inkscape name-src.pdf --pages=1 --pdf-font-strategy=draw-missing --export-plain-svg -o name-edit.svg`.
-   Heros labels are `<text>`; maths glyphs are paths with the TeX shapes.
+   Sans labels are `<text>`; maths glyphs are paths with the TeX shapes.
 5. Equations you expect to rewrite: in Inkscape, replace them with
    **TexText** objects (Extensions → Text → TexText; LuaLaTeX; preamble file
    `figures/textext-preamble.tex` holding the font block, with

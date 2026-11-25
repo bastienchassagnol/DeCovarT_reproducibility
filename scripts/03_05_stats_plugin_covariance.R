@@ -14,10 +14,10 @@
 # (i)), no per-cell library division, restricted to one of two gene sets
 # per time, both read from `selected_<time>.csv` (tier (ii)):
 #   welch  every gene gated by the permuted Welch G at BH 0.05
-#          (1,417 / 3,420 / 5,821 genes at 48 / 72 / 96 h);
+#          (1,360 / 3,617 / 5,893 genes at 48 / 72 / 96 h);
 #   r2_05  the gated genes with a deviance share R2_D >= 0.05
 #   r2_01  the gated genes with R2_D >= 0.01, between the two
-#          (17 / 140 / 635 genes).
+#          (r2_05: 17 / 148 / 685 genes; r2_01: 150 / 978 / 2,991).
 #
 # Outputs, output/grn/plugin/:
 #   gene_sets.csv                  time_point, gene_set, gene
