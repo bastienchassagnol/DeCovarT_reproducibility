@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2026-11-25">
+<meta name="dcterms.date" content="2026-11-26">
 <meta name="description" content="How the fit moves when the precision matrices are misspecified.">
 
 <title>7&nbsp; Sensitivity analyses – DeCovarT reproducibility</title>
@@ -265,7 +265,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">25 Nov 2026</p>
+        <p class="date">26 Nov 2026</p>
       </div>
     </div>
     
@@ -378,7 +378,6 @@ window.Quarto = {
 <li>Spillover between types</li>
 <li>Outlier genes</li>
 </ol>
-<p>Zero-inflated or hurdle observation models belong <strong>here</strong>, as a contamination of the sampling layer, not as the default GRN (<span class="quarto-unresolved-ref">?nte-drop-zico</span>).</p>
 </section>
 <section id="sec-sens-scdesign3" class="level2" data-number="7.2">
 <h2 data-number="7.2" class="anchored" data-anchor-id="sec-sens-scdesign3"><span class="header-section-number">7.2</span> <code>scDesign3</code> settings for GSE229513</h2>
@@ -411,7 +410,7 @@ Table&nbsp;7.1: <code>scDesign3</code> settings per type and time for GSE229513.
 </tr>
 <tr class="odd">
 <td>Margins</td>
-<td>Negative binomial, mean and dispersion by cell type, log size factor as mean offset; no zero inflation (<span class="quarto-unresolved-ref">?nte-drop-zico</span>)</td>
+<td>Negative binomial, mean and dispersion by cell type, log size factor as mean offset; no zero inflation</td>
 </tr>
 <tr class="even">
 <td>Copula</td>
@@ -633,38 +632,40 @@ Table&nbsp;7.2: Factors of the panel-size sweep. The largest panel stays below t
 <span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cbind</span>(</span>
 <span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a>        <span class="at">method =</span> <span class="st">"nnls"</span>,</span>
 <span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a>        DeCovarT<span class="sc">::</span><span class="fu">compute_benchmark_metrics</span>(</span>
-<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a>          y, mu, <span class="at">estimated_p =</span> p_nnls, <span class="at">true_ratios =</span> pb<span class="sc">$</span>p</span>
-<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a>        )<span class="sc">$</span>regression<span class="sc">$</span>global</span>
-<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a>      ),</span>
-<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cbind</span>(</span>
-<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a>        <span class="at">method =</span> <span class="st">"decovart_newton"</span>,</span>
-<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a>        DeCovarT<span class="sc">::</span><span class="fu">compute_benchmark_metrics</span>(</span>
-<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a>          y, mu, <span class="at">estimated_p =</span> p_dcv, <span class="at">true_ratios =</span> pb<span class="sc">$</span>p</span>
-<span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a>        )<span class="sc">$</span>regression<span class="sc">$</span>global</span>
-<span id="cb2-101"><a href="#cb2-101" aria-hidden="true" tabindex="-1"></a>      )</span>
-<span id="cb2-102"><a href="#cb2-102" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb2-103"><a href="#cb2-103" aria-hidden="true" tabindex="-1"></a>  })</span>
-<span id="cb2-104"><a href="#cb2-104" aria-hidden="true" tabindex="-1"></a>  <span class="fu">do.call</span>(rbind, scores)</span>
-<span id="cb2-105"><a href="#cb2-105" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb2-106"><a href="#cb2-106" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-107"><a href="#cb2-107" aria-hidden="true" tabindex="-1"></a>rank_lists <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">list</span>(<span class="at">type_equal_ratio =</span> rank_a), rank_b)</span>
-<span id="cb2-108"><a href="#cb2-108" aria-hidden="true" tabindex="-1"></a>sweep <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, <span class="fu">lapply</span>(<span class="fu">names</span>(rank_lists), <span class="cf">function</span>(r) {</span>
-<span id="cb2-109"><a href="#cb2-109" aria-hidden="true" tabindex="-1"></a>  <span class="fu">do.call</span>(rbind, <span class="fu">lapply</span>(panel_sizes, <span class="cf">function</span>(n) {</span>
-<span id="cb2-110"><a href="#cb2-110" aria-hidden="true" tabindex="-1"></a>    genes <span class="ot">&lt;-</span> utils<span class="sc">::</span><span class="fu">head</span>(rank_lists[[r]], n)</span>
-<span id="cb2-111"><a href="#cb2-111" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(genes) <span class="sc">&lt;</span> n) {</span>
-<span id="cb2-112"><a href="#cb2-112" aria-hidden="true" tabindex="-1"></a>      <span class="fu">return</span>(<span class="cn">NULL</span>) <span class="co"># the gate passes fewer genes than requested</span></span>
-<span id="cb2-113"><a href="#cb2-113" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb2-114"><a href="#cb2-114" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cbind</span>(<span class="at">rank =</span> r, <span class="at">n_genes_global =</span> n, <span class="fu">fit_panel</span>(genes))</span>
-<span id="cb2-115"><a href="#cb2-115" aria-hidden="true" tabindex="-1"></a>  }))</span>
-<span id="cb2-116"><a href="#cb2-116" aria-hidden="true" tabindex="-1"></a>}))</span>
-<span id="cb2-117"><a href="#cb2-117" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-118"><a href="#cb2-118" aria-hidden="true" tabindex="-1"></a><span class="co"># Bulk consistency filter on the real standard-Wnt bulks of the slot</span></span>
-<span id="cb2-119"><a href="#cb2-119" aria-hidden="true" tabindex="-1"></a><span class="co"># (bulk: genes x 3 replicates, same identifiers). sd and n_cells come</span></span>
-<span id="cb2-120"><a href="#cb2-120" aria-hidden="true" tabindex="-1"></a><span class="co"># from the reference half; flagged genes are removed before the sweep</span></span>
-<span id="cb2-121"><a href="#cb2-121" aria-hidden="true" tabindex="-1"></a><span class="co"># is repeated.</span></span>
-<span id="cb2-122"><a href="#cb2-122" aria-hidden="true" tabindex="-1"></a><span class="co"># flags &lt;- bulk_consistency_filter(bulk, mu = mu_all, sd = sd_all,</span></span>
-<span id="cb2-123"><a href="#cb2-123" aria-hidden="true" tabindex="-1"></a><span class="co">#                                  n_cells = table(cell_type[ref]))</span></span>
-<span id="cb2-124"><a href="#cb2-124" aria-hidden="true" tabindex="-1"></a><span class="co"># rank_lists_clean &lt;- lapply(rank_lists, intersect, flags$gene[flags$keep])</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a>          y, mu,</span>
+<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a>          <span class="at">estimated_p =</span> p_nnls, <span class="at">true_ratios =</span> pb<span class="sc">$</span>p</span>
+<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a>        )<span class="sc">$</span>regression<span class="sc">$</span>global</span>
+<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cbind</span>(</span>
+<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a>        <span class="at">method =</span> <span class="st">"decovart_newton"</span>,</span>
+<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a>        DeCovarT<span class="sc">::</span><span class="fu">compute_benchmark_metrics</span>(</span>
+<span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a>          y, mu,</span>
+<span id="cb2-101"><a href="#cb2-101" aria-hidden="true" tabindex="-1"></a>          <span class="at">estimated_p =</span> p_dcv, <span class="at">true_ratios =</span> pb<span class="sc">$</span>p</span>
+<span id="cb2-102"><a href="#cb2-102" aria-hidden="true" tabindex="-1"></a>        )<span class="sc">$</span>regression<span class="sc">$</span>global</span>
+<span id="cb2-103"><a href="#cb2-103" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb2-104"><a href="#cb2-104" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-105"><a href="#cb2-105" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb2-106"><a href="#cb2-106" aria-hidden="true" tabindex="-1"></a>  <span class="fu">do.call</span>(rbind, scores)</span>
+<span id="cb2-107"><a href="#cb2-107" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-108"><a href="#cb2-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-109"><a href="#cb2-109" aria-hidden="true" tabindex="-1"></a>rank_lists <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">list</span>(<span class="at">type_equal_ratio =</span> rank_a), rank_b)</span>
+<span id="cb2-110"><a href="#cb2-110" aria-hidden="true" tabindex="-1"></a>sweep <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, <span class="fu">lapply</span>(<span class="fu">names</span>(rank_lists), <span class="cf">function</span>(r) {</span>
+<span id="cb2-111"><a href="#cb2-111" aria-hidden="true" tabindex="-1"></a>  <span class="fu">do.call</span>(rbind, <span class="fu">lapply</span>(panel_sizes, <span class="cf">function</span>(n) {</span>
+<span id="cb2-112"><a href="#cb2-112" aria-hidden="true" tabindex="-1"></a>    genes <span class="ot">&lt;-</span> utils<span class="sc">::</span><span class="fu">head</span>(rank_lists[[r]], n)</span>
+<span id="cb2-113"><a href="#cb2-113" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(genes) <span class="sc">&lt;</span> n) {</span>
+<span id="cb2-114"><a href="#cb2-114" aria-hidden="true" tabindex="-1"></a>      <span class="fu">return</span>(<span class="cn">NULL</span>) <span class="co"># the gate passes fewer genes than requested</span></span>
+<span id="cb2-115"><a href="#cb2-115" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-116"><a href="#cb2-116" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cbind</span>(<span class="at">rank =</span> r, <span class="at">n_genes_global =</span> n, <span class="fu">fit_panel</span>(genes))</span>
+<span id="cb2-117"><a href="#cb2-117" aria-hidden="true" tabindex="-1"></a>  }))</span>
+<span id="cb2-118"><a href="#cb2-118" aria-hidden="true" tabindex="-1"></a>}))</span>
+<span id="cb2-119"><a href="#cb2-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-120"><a href="#cb2-120" aria-hidden="true" tabindex="-1"></a><span class="co"># Bulk consistency filter on the real standard-Wnt bulks of the slot</span></span>
+<span id="cb2-121"><a href="#cb2-121" aria-hidden="true" tabindex="-1"></a><span class="co"># (bulk: genes x 3 replicates, same identifiers). sd and n_cells come</span></span>
+<span id="cb2-122"><a href="#cb2-122" aria-hidden="true" tabindex="-1"></a><span class="co"># from the reference half; flagged genes are removed before the sweep</span></span>
+<span id="cb2-123"><a href="#cb2-123" aria-hidden="true" tabindex="-1"></a><span class="co"># is repeated.</span></span>
+<span id="cb2-124"><a href="#cb2-124" aria-hidden="true" tabindex="-1"></a><span class="co"># flags &lt;- bulk_consistency_filter(bulk, mu = mu_all, sd = sd_all,</span></span>
+<span id="cb2-125"><a href="#cb2-125" aria-hidden="true" tabindex="-1"></a><span class="co">#                                  n_cells = table(cell_type[ref]))</span></span>
+<span id="cb2-126"><a href="#cb2-126" aria-hidden="true" tabindex="-1"></a><span class="co"># rank_lists_clean &lt;- lapply(rank_lists, intersect, flags$gene[flags$keep])</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <p>Three outcomes would bear on the hypothesis. A rise and a plateau in both methods, with no decline up to 2000 genes, says that the panel of 500 is not too large for the pseudo-bulks. A decline that disappears after the bulk consistency filter points to platform-inconsistent genes, which only the real bulks can show. A decline in DeCovarT alone, present already on pseudo-bulks, points to the covariance estimate rather than to the genes.</p>
@@ -1284,376 +1285,374 @@ a.glossary:active .def::after {
 <span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Spillover between types</span>
 <span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Outlier genes</span>
 <span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>Zero-inflated or hurdle observation models belong **here**, as a</span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>contamination of the sampling layer, not as the default GRN</span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>(@nte-drop-zico).</span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="fu">## `scDesign3` settings for GSE229513 {#sec-sens-scdesign3}</span></span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>The fitted count simulator of</span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">S5, simulator</span><span class="co">](https://bastienchassagnol.github.io/DeCovarT/articles/S5-misspecification.html#sec-s5-simulator)</span></span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>draws reference-like cells whose type-level law is known. On</span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>Suppinger it is used to calibrate, not to resample: the cells of one</span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>specimen series are not biological replicates</span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>(@nte-pseudoreplication).</span>
-<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Setting <span class="pp">|</span> Value <span class="pp">|</span></span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|</span></span>
-<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Fit unit <span class="pp">|</span> One model per time slot, 48 h, 72 h and 96 h; the two lines pooled at 48 h, cell line not a covariate (@sec-geo-design) <span class="pp">|</span></span>
-<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Cells and genes <span class="pp">|</span> Cells after QC, culture-stress labels removed (@sec-fs-qc); the selected panel, raw UMI counts (@sec-cov-inputs) <span class="pp">|</span></span>
-<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Margins <span class="pp">|</span> Negative binomial, mean and dispersion by cell type, log size factor as mean offset; no zero inflation (@nte-drop-zico) <span class="pp">|</span></span>
-<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Copula <span class="pp">|</span> Gaussian, one per type, correlation of the plug-in $\widehat{\boldsymbol{\Sigma}}_{j}$ of that type and time (@sec-shrinkage); not refitted <span class="pp">|</span></span>
-<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Composition and depth <span class="pp">|</span> Type proportions $C_j/\sum_\ell C_\ell$ of the slot, frozen; each synthetic cell takes the size factor of a real cell of its type <span class="pp">|</span></span>
-<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Truth for scoring <span class="pp">|</span> Count-scale mean and covariance of a large draw (for example $10^{5}$ cells per type), not $\boldsymbol{R}_j$ <span class="pp">|</span></span>
-<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Checks before use <span class="pp">|</span> Normal QQ plots of randomised quantile residuals per gene and type; marginal and copula AIC and BIC against independence and the empirical copula <span class="pp">|</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="fu">## `scDesign3` settings for GSE229513 {#sec-sens-scdesign3}</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>The fitted count simulator of</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">S5, simulator</span><span class="co">](https://bastienchassagnol.github.io/DeCovarT/articles/S5-misspecification.html#sec-s5-simulator)</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>draws reference-like cells whose type-level law is known. On</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>Suppinger it is used to calibrate, not to resample: the cells of one</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>specimen series are not biological replicates</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>(@nte-pseudoreplication).</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Setting <span class="pp">|</span> Value <span class="pp">|</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Fit unit <span class="pp">|</span> One model per time slot, 48 h, 72 h and 96 h; the two lines pooled at 48 h, cell line not a covariate (@sec-geo-design) <span class="pp">|</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Cells and genes <span class="pp">|</span> Cells after QC, culture-stress labels removed (@sec-fs-qc); the selected panel, raw UMI counts (@sec-cov-inputs) <span class="pp">|</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Margins <span class="pp">|</span> Negative binomial, mean and dispersion by cell type, log size factor as mean offset; no zero inflation <span class="pp">|</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Copula <span class="pp">|</span> Gaussian, one per type, correlation of the plug-in $\widehat{\boldsymbol{\Sigma}}_{j}$ of that type and time (@sec-shrinkage); not refitted <span class="pp">|</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Composition and depth <span class="pp">|</span> Type proportions $C_j/\sum_\ell C_\ell$ of the slot, frozen; each synthetic cell takes the size factor of a real cell of its type <span class="pp">|</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Truth for scoring <span class="pp">|</span> Count-scale mean and covariance of a large draw (for example $10^{5}$ cells per type), not $\boldsymbol{R}_j$ <span class="pp">|</span></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Checks before use <span class="pp">|</span> Normal QQ plots of randomised quantile residuals per gene and type; marginal and copula AIC and BIC against independence and the empirical copula <span class="pp">|</span></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>: <span class="in">`scDesign3`</span> settings per type and time for GSE229513. {#tbl-sens-scdesign3}</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>Factors of the list above that the simulator serves:</span>
 <span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>: <span class="in">`scDesign3`</span> settings per type and time for GSE229513. {#tbl-sens-scdesign3}</span>
-<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>Factors of the list above that the simulator serves:</span>
-<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**1, observation noise**: negative-binomial cells replace the</span>
-<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>  Gaussian law; pseudo-bulks are sums of simulated cells at known</span>
-<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>  $\boldsymbol{p}$.</span>
-<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**2, missing component**: simulate every type and leave one out of</span>
-<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>  the signature.</span>
-<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**3, copula dependence**: swap the plug-in correlation for an</span>
-<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>  equicorrelated or a Clayton copula, margins fixed.</span>
-<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**6, wrong covariance reference**: generate with the</span>
-<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>  $\widehat{\boldsymbol{\Sigma}}_{j}$ of one estimator or time, and fit</span>
-<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>  DeCovarT with another.</span>
-<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>Spillover (4) and outlier genes (5) are added after generation; the</span>
-<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>simulator plays no part in them.</span>
-<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: sens-scdesign3-call</span></span>
-<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a><span class="co"># Not run. scDesign3 is not in renv.lock. Function and argument names</span></span>
-<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a><span class="co"># follow the scDesign3 tutorial (modular interface) and must be checked</span></span>
-<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a><span class="co"># against the installed version before use.</span></span>
-<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a><span class="co"># sce: SingleCellExperiment of one time slot, raw UMI counts of the</span></span>
-<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a><span class="co">#   selected panel, culture-stress labels removed; colData holds</span></span>
-<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a><span class="co">#   cell_type and log_s (log size factor).</span></span>
-<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a><span class="co"># sigma_plugin: named list, one G x G plug-in covariance per cell type.</span></span>
-<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> scDesign3<span class="sc">::</span><span class="fu">construct_data</span>(</span>
-<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a>  <span class="at">sce =</span> sce, <span class="at">assay_use =</span> <span class="st">"counts"</span>, <span class="at">celltype =</span> <span class="st">"cell_type"</span>,</span>
-<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a>  <span class="at">pseudotime =</span> <span class="cn">NULL</span>, <span class="at">spatial =</span> <span class="cn">NULL</span>, <span class="at">other_covariates =</span> <span class="st">"log_s"</span>,</span>
-<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>  <span class="at">corr_by =</span> <span class="st">"cell_type"</span></span>
-<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a>marginals <span class="ot">&lt;-</span> scDesign3<span class="sc">::</span><span class="fu">fit_marginal</span>(</span>
-<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> dat, <span class="at">predictor =</span> <span class="st">"gene"</span>,</span>
-<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a>  <span class="at">mu_formula =</span> <span class="st">"cell_type + offset(log_s)"</span>,</span>
-<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a>  <span class="at">sigma_formula =</span> <span class="st">"cell_type"</span>,</span>
-<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a>  <span class="at">family_use =</span> <span class="st">"nb"</span>, <span class="at">n_cores =</span> <span class="dv">2</span>, <span class="at">usebam =</span> <span class="cn">FALSE</span></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**1, observation noise**: negative-binomial cells replace the</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>  Gaussian law; pseudo-bulks are sums of simulated cells at known</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>  $\boldsymbol{p}$.</span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**2, missing component**: simulate every type and leave one out of</span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>  the signature.</span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**3, copula dependence**: swap the plug-in correlation for an</span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>  equicorrelated or a Clayton copula, margins fixed.</span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**6, wrong covariance reference**: generate with the</span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>  $\widehat{\boldsymbol{\Sigma}}_{j}$ of one estimator or time, and fit</span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>  DeCovarT with another.</span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>Spillover (4) and outlier genes (5) are added after generation; the</span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>simulator plays no part in them.</span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: sens-scdesign3-call</span></span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a><span class="co"># Not run. scDesign3 is not in renv.lock. Function and argument names</span></span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a><span class="co"># follow the scDesign3 tutorial (modular interface) and must be checked</span></span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a><span class="co"># against the installed version before use.</span></span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a><span class="co"># sce: SingleCellExperiment of one time slot, raw UMI counts of the</span></span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a><span class="co">#   selected panel, culture-stress labels removed; colData holds</span></span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a><span class="co">#   cell_type and log_s (log size factor).</span></span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a><span class="co"># sigma_plugin: named list, one G x G plug-in covariance per cell type.</span></span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> scDesign3<span class="sc">::</span><span class="fu">construct_data</span>(</span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>  <span class="at">sce =</span> sce, <span class="at">assay_use =</span> <span class="st">"counts"</span>, <span class="at">celltype =</span> <span class="st">"cell_type"</span>,</span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>  <span class="at">pseudotime =</span> <span class="cn">NULL</span>, <span class="at">spatial =</span> <span class="cn">NULL</span>, <span class="at">other_covariates =</span> <span class="st">"log_s"</span>,</span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>  <span class="at">corr_by =</span> <span class="st">"cell_type"</span></span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a>marginals <span class="ot">&lt;-</span> scDesign3<span class="sc">::</span><span class="fu">fit_marginal</span>(</span>
+<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> dat, <span class="at">predictor =</span> <span class="st">"gene"</span>,</span>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>  <span class="at">mu_formula =</span> <span class="st">"cell_type + offset(log_s)"</span>,</span>
+<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a>  <span class="at">sigma_formula =</span> <span class="st">"cell_type"</span>,</span>
+<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a>  <span class="at">family_use =</span> <span class="st">"nb"</span>, <span class="at">n_cores =</span> <span class="dv">2</span>, <span class="at">usebam =</span> <span class="cn">FALSE</span></span>
+<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a>para <span class="ot">&lt;-</span> scDesign3<span class="sc">::</span><span class="fu">extract_para</span>(</span>
+<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a>  <span class="at">sce =</span> sce, <span class="at">marginal_list =</span> marginals, <span class="at">n_cores =</span> <span class="dv">2</span>,</span>
+<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a>  <span class="at">family_use =</span> <span class="st">"nb"</span>, <span class="at">new_covariate =</span> dat<span class="sc">$</span>newCovariate, <span class="at">data =</span> dat<span class="sc">$</span>dat</span>
 <span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a>para <span class="ot">&lt;-</span> scDesign3<span class="sc">::</span><span class="fu">extract_para</span>(</span>
-<span id="cb3-85"><a href="#cb3-85" aria-hidden="true" tabindex="-1"></a>  <span class="at">sce =</span> sce, <span class="at">marginal_list =</span> marginals, <span class="at">n_cores =</span> <span class="dv">2</span>,</span>
-<span id="cb3-86"><a href="#cb3-86" aria-hidden="true" tabindex="-1"></a>  <span class="at">family_use =</span> <span class="st">"nb"</span>, <span class="at">new_covariate =</span> dat<span class="sc">$</span>newCovariate, <span class="at">data =</span> dat<span class="sc">$</span>dat</span>
-<span id="cb3-87"><a href="#cb3-87" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-88"><a href="#cb3-88" aria-hidden="true" tabindex="-1"></a><span class="co"># Known dependence: the correlation of each plug-in covariance.</span></span>
-<span id="cb3-89"><a href="#cb3-89" aria-hidden="true" tabindex="-1"></a>copula_known <span class="ot">&lt;-</span> <span class="fu">lapply</span>(sigma_plugin, stats<span class="sc">::</span>cov2cor)</span>
-<span id="cb3-90"><a href="#cb3-90" aria-hidden="true" tabindex="-1"></a>cells_sim <span class="ot">&lt;-</span> scDesign3<span class="sc">::</span><span class="fu">simu_new</span>(</span>
-<span id="cb3-91"><a href="#cb3-91" aria-hidden="true" tabindex="-1"></a>  <span class="at">sce =</span> sce, <span class="at">mean_mat =</span> para<span class="sc">$</span>mean_mat, <span class="at">sigma_mat =</span> para<span class="sc">$</span>sigma_mat,</span>
-<span id="cb3-92"><a href="#cb3-92" aria-hidden="true" tabindex="-1"></a>  <span class="at">zero_mat =</span> para<span class="sc">$</span>zero_mat, <span class="at">copula_list =</span> copula_known,</span>
-<span id="cb3-93"><a href="#cb3-93" aria-hidden="true" tabindex="-1"></a>  <span class="at">n_cores =</span> <span class="dv">2</span>, <span class="at">family_use =</span> <span class="st">"nb"</span>, <span class="at">input_data =</span> dat<span class="sc">$</span>dat,</span>
-<span id="cb3-94"><a href="#cb3-94" aria-hidden="true" tabindex="-1"></a>  <span class="at">new_covariate =</span> dat<span class="sc">$</span>newCovariate</span>
-<span id="cb3-95"><a href="#cb3-95" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-96"><a href="#cb3-96" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-97"><a href="#cb3-97" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-98"><a href="#cb3-98" aria-hidden="true" tabindex="-1"></a><span class="fu">## Signature size and selection threshold {#sec-sens-panel-size}</span></span>
-<span id="cb3-99"><a href="#cb3-99" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-100"><a href="#cb3-100" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">S5i, signature size</span><span class="co">](https://bastienchassagnol.github.io/DeCovarT/articles/S5-misspecification.html#sec-s5i)</span></span>
-<span id="cb3-101"><a href="#cb3-101" aria-hidden="true" tabindex="-1"></a>states the hypothesis: accuracy rises with the number of genes, reaches</span>
-<span id="cb3-102"><a href="#cb3-102" aria-hidden="true" tabindex="-1"></a>a plateau, then falls once uninformative genes or genes inconsistent</span>
-<span id="cb3-103"><a href="#cb3-103" aria-hidden="true" tabindex="-1"></a>between bulk and single-cell libraries enter the panel. Every chapter</span>
-<span id="cb3-104"><a href="#cb3-104" aria-hidden="true" tabindex="-1"></a>of this book so far uses one panel, the top <span class="in">`n_genes_global = 500`</span> of</span>
-<span id="cb3-105"><a href="#cb3-105" aria-hidden="true" tabindex="-1"></a>the legacy type-equal <span class="in">`SCTransform`</span> ratio</span>
-<span id="cb3-106"><a href="#cb3-106" aria-hidden="true" tabindex="-1"></a>(<span class="co">[</span><span class="ot">legacy type-equal ratio</span><span class="co">](02-feature-selection.qmd#sec-fs-ms-ratio)</span>,</span>
-<span id="cb3-107"><a href="#cb3-107" aria-hidden="true" tabindex="-1"></a>@sec-fs-export). This section</span>
-<span id="cb3-108"><a href="#cb3-108" aria-hidden="true" tabindex="-1"></a>plans the sweep that tests the hypothesis on GSE229513. It has not been</span>
-<span id="cb3-109"><a href="#cb3-109" aria-hidden="true" tabindex="-1"></a>run.</span>
-<span id="cb3-110"><a href="#cb3-110" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-111"><a href="#cb3-111" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Factor <span class="pp">|</span> Levels <span class="pp">|</span></span>
-<span id="cb3-112"><a href="#cb3-112" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|</span></span>
-<span id="cb3-113"><a href="#cb3-113" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Panel size <span class="in">`n_genes_global`</span> <span class="pp">|</span> 50; 100; 200; 500; 1000; 2000, the top genes of each rank <span class="pp">|</span></span>
-<span id="cb3-114"><a href="#cb3-114" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Rank <span class="pp">|</span> legacy type-equal ratio (<span class="in">`ranks_global_equal_type.csv`</span>, column <span class="in">`rank`</span>); omnibus rank, cell-weighted deviance $R^2_D$ (column <span class="in">`deviance_r2`</span>, @sec-fs-omnibus) <span class="pp">|</span></span>
-<span id="cb3-115"><a href="#cb3-115" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Omnibus gate <span class="pp">|</span> Benjamini–Hochberg level <span class="in">`fdr`</span> of <span class="in">`rank_genes_omnibus()`</span>: 0.001; 0.01; 0.05; 0.2 <span class="pp">|</span></span>
-<span id="cb3-116"><a href="#cb3-116" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Bulk consistency filter <span class="pp">|</span> off; on (@sec-fs-bulk-consistency) <span class="pp">|</span></span>
-<span id="cb3-117"><a href="#cb3-117" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Time slot <span class="pp">|</span> 48 h, 72 h, 96 h (@sec-geo-design) <span class="pp">|</span></span>
-<span id="cb3-118"><a href="#cb3-118" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Methods <span class="pp">|</span> NNLS; DeCovarT, profile Newton (@sec-deconv-models) <span class="pp">|</span></span>
+<span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a><span class="co"># Known dependence: the correlation of each plug-in covariance.</span></span>
+<span id="cb3-85"><a href="#cb3-85" aria-hidden="true" tabindex="-1"></a>copula_known <span class="ot">&lt;-</span> <span class="fu">lapply</span>(sigma_plugin, stats<span class="sc">::</span>cov2cor)</span>
+<span id="cb3-86"><a href="#cb3-86" aria-hidden="true" tabindex="-1"></a>cells_sim <span class="ot">&lt;-</span> scDesign3<span class="sc">::</span><span class="fu">simu_new</span>(</span>
+<span id="cb3-87"><a href="#cb3-87" aria-hidden="true" tabindex="-1"></a>  <span class="at">sce =</span> sce, <span class="at">mean_mat =</span> para<span class="sc">$</span>mean_mat, <span class="at">sigma_mat =</span> para<span class="sc">$</span>sigma_mat,</span>
+<span id="cb3-88"><a href="#cb3-88" aria-hidden="true" tabindex="-1"></a>  <span class="at">zero_mat =</span> para<span class="sc">$</span>zero_mat, <span class="at">copula_list =</span> copula_known,</span>
+<span id="cb3-89"><a href="#cb3-89" aria-hidden="true" tabindex="-1"></a>  <span class="at">n_cores =</span> <span class="dv">2</span>, <span class="at">family_use =</span> <span class="st">"nb"</span>, <span class="at">input_data =</span> dat<span class="sc">$</span>dat,</span>
+<span id="cb3-90"><a href="#cb3-90" aria-hidden="true" tabindex="-1"></a>  <span class="at">new_covariate =</span> dat<span class="sc">$</span>newCovariate</span>
+<span id="cb3-91"><a href="#cb3-91" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-92"><a href="#cb3-92" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-93"><a href="#cb3-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-94"><a href="#cb3-94" aria-hidden="true" tabindex="-1"></a><span class="fu">## Signature size and selection threshold {#sec-sens-panel-size}</span></span>
+<span id="cb3-95"><a href="#cb3-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-96"><a href="#cb3-96" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">S5i, signature size</span><span class="co">](https://bastienchassagnol.github.io/DeCovarT/articles/S5-misspecification.html#sec-s5i)</span></span>
+<span id="cb3-97"><a href="#cb3-97" aria-hidden="true" tabindex="-1"></a>states the hypothesis: accuracy rises with the number of genes, reaches</span>
+<span id="cb3-98"><a href="#cb3-98" aria-hidden="true" tabindex="-1"></a>a plateau, then falls once uninformative genes or genes inconsistent</span>
+<span id="cb3-99"><a href="#cb3-99" aria-hidden="true" tabindex="-1"></a>between bulk and single-cell libraries enter the panel. Every chapter</span>
+<span id="cb3-100"><a href="#cb3-100" aria-hidden="true" tabindex="-1"></a>of this book so far uses one panel, the top <span class="in">`n_genes_global = 500`</span> of</span>
+<span id="cb3-101"><a href="#cb3-101" aria-hidden="true" tabindex="-1"></a>the legacy type-equal <span class="in">`SCTransform`</span> ratio</span>
+<span id="cb3-102"><a href="#cb3-102" aria-hidden="true" tabindex="-1"></a>(<span class="co">[</span><span class="ot">legacy type-equal ratio</span><span class="co">](02-feature-selection.qmd#sec-fs-ms-ratio)</span>,</span>
+<span id="cb3-103"><a href="#cb3-103" aria-hidden="true" tabindex="-1"></a>@sec-fs-export). This section</span>
+<span id="cb3-104"><a href="#cb3-104" aria-hidden="true" tabindex="-1"></a>plans the sweep that tests the hypothesis on GSE229513. It has not been</span>
+<span id="cb3-105"><a href="#cb3-105" aria-hidden="true" tabindex="-1"></a>run.</span>
+<span id="cb3-106"><a href="#cb3-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-107"><a href="#cb3-107" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Factor <span class="pp">|</span> Levels <span class="pp">|</span></span>
+<span id="cb3-108"><a href="#cb3-108" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|</span></span>
+<span id="cb3-109"><a href="#cb3-109" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Panel size <span class="in">`n_genes_global`</span> <span class="pp">|</span> 50; 100; 200; 500; 1000; 2000, the top genes of each rank <span class="pp">|</span></span>
+<span id="cb3-110"><a href="#cb3-110" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Rank <span class="pp">|</span> legacy type-equal ratio (<span class="in">`ranks_global_equal_type.csv`</span>, column <span class="in">`rank`</span>); omnibus rank, cell-weighted deviance $R^2_D$ (column <span class="in">`deviance_r2`</span>, @sec-fs-omnibus) <span class="pp">|</span></span>
+<span id="cb3-111"><a href="#cb3-111" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Omnibus gate <span class="pp">|</span> Benjamini–Hochberg level <span class="in">`fdr`</span> of <span class="in">`rank_genes_omnibus()`</span>: 0.001; 0.01; 0.05; 0.2 <span class="pp">|</span></span>
+<span id="cb3-112"><a href="#cb3-112" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Bulk consistency filter <span class="pp">|</span> off; on (@sec-fs-bulk-consistency) <span class="pp">|</span></span>
+<span id="cb3-113"><a href="#cb3-113" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Time slot <span class="pp">|</span> 48 h, 72 h, 96 h (@sec-geo-design) <span class="pp">|</span></span>
+<span id="cb3-114"><a href="#cb3-114" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Methods <span class="pp">|</span> NNLS; DeCovarT, profile Newton (@sec-deconv-models) <span class="pp">|</span></span>
+<span id="cb3-115"><a href="#cb3-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-116"><a href="#cb3-116" aria-hidden="true" tabindex="-1"></a>: Factors of the panel-size sweep. The largest panel stays below the size of the allow-list of every slot (@sec-fs-qc). {#tbl-sens-panel-size}</span>
+<span id="cb3-117"><a href="#cb3-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-118"><a href="#cb3-118" aria-hidden="true" tabindex="-1"></a>Design choices:</span>
 <span id="cb3-119"><a href="#cb3-119" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-120"><a href="#cb3-120" aria-hidden="true" tabindex="-1"></a>: Factors of the panel-size sweep. The largest panel stays below the size of the allow-list of every slot (@sec-fs-qc). {#tbl-sens-panel-size}</span>
-<span id="cb3-121"><a href="#cb3-121" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-122"><a href="#cb3-122" aria-hidden="true" tabindex="-1"></a>Design choices:</span>
-<span id="cb3-123"><a href="#cb3-123" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-124"><a href="#cb3-124" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Source of genes.** The 500-gene export</span>
-<span id="cb3-125"><a href="#cb3-125" aria-hidden="true" tabindex="-1"></a>  <span class="in">`data/intermediate/equal_type_top500_by_time.rds`</span> cannot supply</span>
-<span id="cb3-126"><a href="#cb3-126" aria-hidden="true" tabindex="-1"></a>  panels larger than 500. The sweep reads the allow-list object</span>
-<span id="cb3-127"><a href="#cb3-127" aria-hidden="true" tabindex="-1"></a>  <span class="in">`data/intermediate/suppinger_sct_allowlist_seurat.rds`</span> and the full</span>
-<span id="cb3-128"><a href="#cb3-128" aria-hidden="true" tabindex="-1"></a>  rank table, then subsets genes per panel size.</span>
-<span id="cb3-129"><a href="#cb3-129" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Truth.** Within each type, cells are split at random into a</span>
-<span id="cb3-130"><a href="#cb3-130" aria-hidden="true" tabindex="-1"></a>  reference half and a pseudo-bulk half. The rank, the mean and the</span>
-<span id="cb3-131"><a href="#cb3-131" aria-hidden="true" tabindex="-1"></a>  covariance use the reference half only; pseudo-bulks are sums of</span>
-<span id="cb3-132"><a href="#cb3-132" aria-hidden="true" tabindex="-1"></a>  cells of the other half at known numbers per type. Bulk and reference</span>
-<span id="cb3-133"><a href="#cb3-133" aria-hidden="true" tabindex="-1"></a>  cells are then disjoint, the condition under which a within-type</span>
-<span id="cb3-134"><a href="#cb3-134" aria-hidden="true" tabindex="-1"></a>  variance can matter</span>
-<span id="cb3-135"><a href="#cb3-135" aria-hidden="true" tabindex="-1"></a>  (<span class="co">[</span><span class="ot">S5, ReDeconv</span><span class="co">](https://bastienchassagnol.github.io/DeCovarT/articles/S5-misspecification.html#sec-s5-review-redeconv)</span>).</span>
-<span id="cb3-136"><a href="#cb3-136" aria-hidden="true" tabindex="-1"></a>  Both halves come from one specimen series, so the pseudo-bulks carry</span>
-<span id="cb3-137"><a href="#cb3-137" aria-hidden="true" tabindex="-1"></a>  no platform bias and no between-specimen variation</span>
-<span id="cb3-138"><a href="#cb3-138" aria-hidden="true" tabindex="-1"></a>  (@nte-pseudoreplication).</span>
-<span id="cb3-139"><a href="#cb3-139" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Platform-inconsistent genes.** The pseudo-bulks cannot reveal them.</span>
-<span id="cb3-140"><a href="#cb3-140" aria-hidden="true" tabindex="-1"></a>  The real standard-Wnt bulks of GSE229386 enter through the bulk</span>
-<span id="cb3-141"><a href="#cb3-141" aria-hidden="true" tabindex="-1"></a>  consistency filter: the sweep is repeated on the panels with the</span>
-<span id="cb3-142"><a href="#cb3-142" aria-hidden="true" tabindex="-1"></a>  flagged genes removed, and on the real bulks the change of</span>
-<span id="cb3-143"><a href="#cb3-143" aria-hidden="true" tabindex="-1"></a>  $\hat{\boldsymbol{p}}$ with panel size is reported, since no truth</span>
-<span id="cb3-144"><a href="#cb3-144" aria-hidden="true" tabindex="-1"></a>  exists there.</span>
-<span id="cb3-145"><a href="#cb3-145" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Scale.** Means, covariances and pseudo-bulks use raw UMI counts,</span>
-<span id="cb3-146"><a href="#cb3-146" aria-hidden="true" tabindex="-1"></a>  so a pseudo-bulk is an exact sum of the cell profiles. The</span>
-<span id="cb3-147"><a href="#cb3-147" aria-hidden="true" tabindex="-1"></a>  size-factor scale of @sec-cov-inputs is a second arm.</span>
-<span id="cb3-148"><a href="#cb3-148" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Metrics.** <span class="in">`DeCovarT::compute_benchmark_metrics()`</span> with the true</span>
-<span id="cb3-149"><a href="#cb3-149" aria-hidden="true" tabindex="-1"></a>  cell fractions: total variation and RMSE per bulk</span>
-<span id="cb3-150"><a href="#cb3-150" aria-hidden="true" tabindex="-1"></a>  (<span class="in">`regression$global`</span>), and per-type correlation and error</span>
-<span id="cb3-151"><a href="#cb3-151" aria-hidden="true" tabindex="-1"></a>  (<span class="in">`regression$cell_type`</span>). For the real bulks, the total variation</span>
-<span id="cb3-152"><a href="#cb3-152" aria-hidden="true" tabindex="-1"></a>  between $\hat{\boldsymbol{p}}$ at each size and at 500 genes.</span>
-<span id="cb3-153"><a href="#cb3-153" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-154"><a href="#cb3-154" aria-hidden="true" tabindex="-1"></a>The covariance has $G(G+1)/2$ entries per type. Above the number of</span>
-<span id="cb3-155"><a href="#cb3-155" aria-hidden="true" tabindex="-1"></a>reference cells of a type the sample covariance is singular, and only</span>
-<span id="cb3-156"><a href="#cb3-156" aria-hidden="true" tabindex="-1"></a>a regularised estimate of @sec-shrinkage is defined. The closed-form</span>
-<span id="cb3-157"><a href="#cb3-157" aria-hidden="true" tabindex="-1"></a>intensity of this sketch is archived; the sweep should use the level</span>
-<span id="cb3-158"><a href="#cb3-158" aria-hidden="true" tabindex="-1"></a>chosen on held-out cells or by the bulk likelihood</span>
-<span id="cb3-159"><a href="#cb3-159" aria-hidden="true" tabindex="-1"></a>(@sec-deconv-selection).</span>
-<span id="cb3-160"><a href="#cb3-160" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-161"><a href="#cb3-161" aria-hidden="true" tabindex="-1"></a>[TODO, partly superseded by @sec-deconv-selection, which sweeps the</span>
-<span id="cb3-162"><a href="#cb3-162" aria-hidden="true" tabindex="-1"></a>shrinkage level, the two-parameter arm and factor ranks on the real</span>
-<span id="cb3-163"><a href="#cb3-163" aria-hidden="true" tabindex="-1"></a>bulks: add the level of covariance regularisation as a factor of the</span>
-<span id="cb3-164"><a href="#cb3-164" aria-hidden="true" tabindex="-1"></a>sweep. The shrinkage estimate is dense by construction: it multiplies</span>
-<span id="cb3-165"><a href="#cb3-165" aria-hidden="true" tabindex="-1"></a>every sample correlation by $1 - \lambda$ and sets none to zero, so it</span>
-<span id="cb3-166"><a href="#cb3-166" aria-hidden="true" tabindex="-1"></a>says nothing about isolated groups of genes. At the closed-form</span>
-<span id="cb3-167"><a href="#cb3-167" aria-hidden="true" tabindex="-1"></a>intensity the abundant types are barely shrunk ($\lambda$ of 0.006 to</span>
-<span id="cb3-168"><a href="#cb3-168" aria-hidden="true" tabindex="-1"></a>0.03 on the Welch-gated panels, <span class="in">`output/grn/plugin/plugin_summary.csv`</span>).</span>
-<span id="cb3-169"><a href="#cb3-169" aria-hidden="true" tabindex="-1"></a>Levels to compare: (i) $\lambda$ on a grid, closed form; 0.25; 0.5;</span>
-<span id="cb3-170"><a href="#cb3-170" aria-hidden="true" tabindex="-1"></a>0.75; 1 (diagonal, no gene-gene term); (ii) a sparse arm, the graphical</span>
-<span id="cb3-171"><a href="#cb3-171" aria-hidden="true" tabindex="-1"></a>lasso precision of @eq-grn-export along its penalty path; (iii) raw</span>
-<span id="cb3-172"><a href="#cb3-172" aria-hidden="true" tabindex="-1"></a>counts against size-factor-scaled counts, since a shared cell-size</span>
-<span id="cb3-173"><a href="#cb3-173" aria-hidden="true" tabindex="-1"></a>factor correlates every pair of genes. Report, per type and level, the</span>
-<span id="cb3-174"><a href="#cb3-174" aria-hidden="true" tabindex="-1"></a>share of non-zero off-diagonal partial correlations, the number of</span>
-<span id="cb3-175"><a href="#cb3-175" aria-hidden="true" tabindex="-1"></a>connected components and the condition number, next to the accuracy</span>
-<span id="cb3-176"><a href="#cb3-176" aria-hidden="true" tabindex="-1"></a>metrics and the agreement between the two optimisers. Done so far</span>
-<span id="cb3-177"><a href="#cb3-177" aria-hidden="true" tabindex="-1"></a>(@sec-deconv-selection): level (i) for DeCovarT on the raw covariance,</span>
-<span id="cb3-178"><a href="#cb3-178" aria-hidden="true" tabindex="-1"></a>L-BFGS-B, bulk as is, with $\lambda$ chosen by the summed bulk</span>
-<span id="cb3-179"><a href="#cb3-179" aria-hidden="true" tabindex="-1"></a>likelihood, never by the observed composition, and the Newton optimiser</span>
-<span id="cb3-180"><a href="#cb3-180" aria-hidden="true" tabindex="-1"></a>on the same grid (@sec-deconv-variants). Levels (ii) and (iii)</span>
-<span id="cb3-181"><a href="#cb3-181" aria-hidden="true" tabindex="-1"></a>remain.]{.highlight}</span>
-<span id="cb3-182"><a href="#cb3-182" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-185"><a href="#cb3-185" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb3-186"><a href="#cb3-186" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: sens-panel-size-sweep</span></span>
-<span id="cb3-187"><a href="#cb3-187" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb3-188"><a href="#cb3-188" aria-hidden="true" tabindex="-1"></a><span class="co"># Not run. Function names and arguments follow R/02_02_stats_cross_cell.R,</span></span>
-<span id="cb3-189"><a href="#cb3-189" aria-hidden="true" tabindex="-1"></a><span class="co"># R/03_01_stats_covariance_estimation.R and the DeCovarT reference.</span></span>
-<span id="cb3-190"><a href="#cb3-190" aria-hidden="true" tabindex="-1"></a><span class="co"># Culture-stress labels are removed first, as in</span></span>
-<span id="cb3-191"><a href="#cb3-191" aria-hidden="true" tabindex="-1"></a><span class="co"># scripts/01_03_export_equal_type_seurat.R.</span></span>
-<span id="cb3-192"><a href="#cb3-192" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/02_00_utils.R"</span>)</span>
-<span id="cb3-193"><a href="#cb3-193" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/02_01_stats_quality_control.R"</span>)</span>
-<span id="cb3-194"><a href="#cb3-194" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/02_02_stats_cross_cell.R"</span>)</span>
-<span id="cb3-195"><a href="#cb3-195" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/03_01_stats_covariance_estimation.R"</span>)</span>
-<span id="cb3-196"><a href="#cb3-196" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-197"><a href="#cb3-197" aria-hidden="true" tabindex="-1"></a>seu <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"data/intermediate/suppinger_sct_allowlist_seurat.rds"</span>)</span>
-<span id="cb3-198"><a href="#cb3-198" aria-hidden="true" tabindex="-1"></a>ranks <span class="ot">&lt;-</span> utils<span class="sc">::</span><span class="fu">read.csv</span>(</span>
-<span id="cb3-199"><a href="#cb3-199" aria-hidden="true" tabindex="-1"></a>  <span class="st">"output/naive_marker_selection/tables/ranks_global_equal_type.csv"</span></span>
-<span id="cb3-200"><a href="#cb3-200" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-201"><a href="#cb3-201" aria-hidden="true" tabindex="-1"></a>panel_sizes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">50</span>L, <span class="dv">100</span>L, <span class="dv">200</span>L, <span class="dv">500</span>L, <span class="dv">1000</span>L, <span class="dv">2000</span>L)</span>
-<span id="cb3-202"><a href="#cb3-202" aria-hidden="true" tabindex="-1"></a>bh_levels <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.001</span>, <span class="fl">0.01</span>, <span class="fl">0.05</span>, <span class="fl">0.2</span>)</span>
-<span id="cb3-203"><a href="#cb3-203" aria-hidden="true" tabindex="-1"></a>time_level <span class="ot">&lt;-</span> <span class="st">"48h"</span></span>
-<span id="cb3-204"><a href="#cb3-204" aria-hidden="true" tabindex="-1"></a>n_bulk <span class="ot">&lt;-</span> <span class="dv">100</span>L</span>
-<span id="cb3-205"><a href="#cb3-205" aria-hidden="true" tabindex="-1"></a>n_cells_bulk <span class="ot">&lt;-</span> <span class="dv">500</span>L</span>
-<span id="cb3-206"><a href="#cb3-206" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-207"><a href="#cb3-207" aria-hidden="true" tabindex="-1"></a>counts <span class="ot">&lt;-</span> <span class="fu">assay_matrix</span>(seu, <span class="st">"RNA"</span>, <span class="st">"counts"</span>)</span>
-<span id="cb3-208"><a href="#cb3-208" aria-hidden="true" tabindex="-1"></a>in_slot <span class="ot">&lt;-</span> seu<span class="sc">$</span>time_point <span class="sc">==</span> time_level <span class="co"># &amp; !culture-stress label</span></span>
-<span id="cb3-209"><a href="#cb3-209" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(counts[, in_slot])</span>
-<span id="cb3-210"><a href="#cb3-210" aria-hidden="true" tabindex="-1"></a>cell_type <span class="ot">&lt;-</span> <span class="fu">droplevels</span>(<span class="fu">factor</span>(seu<span class="sc">$</span>celltypeannotation[in_slot]))</span>
-<span id="cb3-211"><a href="#cb3-211" aria-hidden="true" tabindex="-1"></a>lib <span class="ot">&lt;-</span> <span class="dv">10</span><span class="sc">^</span>seu<span class="sc">$</span>log_umi[in_slot]</span>
-<span id="cb3-212"><a href="#cb3-212" aria-hidden="true" tabindex="-1"></a>types <span class="ot">&lt;-</span> <span class="fu">levels</span>(cell_type)</span>
-<span id="cb3-213"><a href="#cb3-213" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-214"><a href="#cb3-214" aria-hidden="true" tabindex="-1"></a><span class="co"># Disjoint halves within each type: 1 = reference, 2 = pseudo-bulk.</span></span>
-<span id="cb3-215"><a href="#cb3-215" aria-hidden="true" tabindex="-1"></a>half <span class="ot">&lt;-</span> withr<span class="sc">::</span><span class="fu">with_seed</span>(<span class="dv">20261101</span>, {</span>
-<span id="cb3-216"><a href="#cb3-216" aria-hidden="true" tabindex="-1"></a>  stats<span class="sc">::</span><span class="fu">ave</span>(</span>
-<span id="cb3-217"><a href="#cb3-217" aria-hidden="true" tabindex="-1"></a>    <span class="fu">seq_along</span>(cell_type),</span>
-<span id="cb3-218"><a href="#cb3-218" aria-hidden="true" tabindex="-1"></a>    cell_type,</span>
-<span id="cb3-219"><a href="#cb3-219" aria-hidden="true" tabindex="-1"></a>    <span class="at">FUN =</span> <span class="cf">function</span>(i) <span class="fu">sample</span>(<span class="fu">rep_len</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="fu">length</span>(i)))</span>
-<span id="cb3-220"><a href="#cb3-220" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb3-221"><a href="#cb3-221" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb3-222"><a href="#cb3-222" aria-hidden="true" tabindex="-1"></a>ref <span class="ot">&lt;-</span> half <span class="sc">==</span> <span class="dv">1</span>L</span>
-<span id="cb3-223"><a href="#cb3-223" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-224"><a href="#cb3-224" aria-hidden="true" tabindex="-1"></a><span class="co"># Rank A: legacy type-equal ratio of the current panel (computed on all</span></span>
-<span id="cb3-225"><a href="#cb3-225" aria-hidden="true" tabindex="-1"></a><span class="co"># cells of the slot; rank B below is the leakage-free one).</span></span>
-<span id="cb3-226"><a href="#cb3-226" aria-hidden="true" tabindex="-1"></a>rank_a <span class="ot">&lt;-</span> ranks[ranks<span class="sc">$</span>time_point <span class="sc">==</span> time_level <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(ranks<span class="sc">$</span>rank), ]</span>
-<span id="cb3-227"><a href="#cb3-227" aria-hidden="true" tabindex="-1"></a>rank_a <span class="ot">&lt;-</span> rank_a<span class="sc">$</span>gene[<span class="fu">order</span>(rank_a<span class="sc">$</span>rank)]</span>
-<span id="cb3-228"><a href="#cb3-228" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-229"><a href="#cb3-229" aria-hidden="true" tabindex="-1"></a><span class="co"># Rank B: omnibus rank on the reference half; fdr = 1 keeps every gene</span></span>
-<span id="cb3-230"><a href="#cb3-230" aria-hidden="true" tabindex="-1"></a><span class="co"># so that each BH level is a filter of one fit.</span></span>
-<span id="cb3-231"><a href="#cb3-231" aria-hidden="true" tabindex="-1"></a>omni <span class="ot">&lt;-</span> <span class="fu">rank_genes_omnibus</span>(</span>
-<span id="cb3-232"><a href="#cb3-232" aria-hidden="true" tabindex="-1"></a>  x[, ref],</span>
-<span id="cb3-233"><a href="#cb3-233" aria-hidden="true" tabindex="-1"></a>  cell_type[ref],</span>
-<span id="cb3-234"><a href="#cb3-234" aria-hidden="true" tabindex="-1"></a>  <span class="at">size_factors =</span> lib[ref] <span class="sc">/</span> stats<span class="sc">::</span><span class="fu">median</span>(lib[ref]),</span>
-<span id="cb3-235"><a href="#cb3-235" aria-hidden="true" tabindex="-1"></a>  <span class="at">fdr =</span> <span class="dv">1</span>,</span>
-<span id="cb3-236"><a href="#cb3-236" aria-hidden="true" tabindex="-1"></a>  <span class="at">n_select =</span> <span class="fu">max</span>(panel_sizes)</span>
-<span id="cb3-237"><a href="#cb3-237" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-238"><a href="#cb3-238" aria-hidden="true" tabindex="-1"></a>omni <span class="ot">&lt;-</span> omni[<span class="sc">!</span><span class="fu">is.na</span>(omni<span class="sc">$</span>rank), ]</span>
-<span id="cb3-239"><a href="#cb3-239" aria-hidden="true" tabindex="-1"></a>rank_b <span class="ot">&lt;-</span> <span class="fu">lapply</span>(bh_levels, <span class="cf">function</span>(level) {</span>
-<span id="cb3-240"><a href="#cb3-240" aria-hidden="true" tabindex="-1"></a>  gated <span class="ot">&lt;-</span> omni[omni<span class="sc">$</span>adj_pval <span class="sc">&lt;=</span> level, ]</span>
-<span id="cb3-241"><a href="#cb3-241" aria-hidden="true" tabindex="-1"></a>  gated<span class="sc">$</span>gene[<span class="fu">order</span>(gated<span class="sc">$</span>rank)]</span>
-<span id="cb3-242"><a href="#cb3-242" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb3-243"><a href="#cb3-243" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(rank_b) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"omnibus_fdr_"</span>, bh_levels)</span>
-<span id="cb3-244"><a href="#cb3-244" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-245"><a href="#cb3-245" aria-hidden="true" tabindex="-1"></a><span class="co"># Pseudo-bulks at known cell numbers, from the pseudo-bulk half.</span></span>
-<span id="cb3-246"><a href="#cb3-246" aria-hidden="true" tabindex="-1"></a>pseudo <span class="ot">&lt;-</span> withr<span class="sc">::</span><span class="fu">with_seed</span>(<span class="dv">20261102</span>, {</span>
-<span id="cb3-247"><a href="#cb3-247" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lapply</span>(<span class="fu">seq_len</span>(n_bulk), <span class="cf">function</span>(b) {</span>
-<span id="cb3-248"><a href="#cb3-248" aria-hidden="true" tabindex="-1"></a>    w <span class="ot">&lt;-</span> stats<span class="sc">::</span><span class="fu">rgamma</span>(<span class="fu">length</span>(types), <span class="at">shape =</span> <span class="dv">2</span>)</span>
-<span id="cb3-249"><a href="#cb3-249" aria-hidden="true" tabindex="-1"></a>    m <span class="ot">&lt;-</span> stats<span class="sc">::</span><span class="fu">rmultinom</span>(<span class="dv">1</span>L, n_cells_bulk, <span class="at">prob =</span> w <span class="sc">/</span> <span class="fu">sum</span>(w))[, <span class="dv">1</span>L]</span>
-<span id="cb3-250"><a href="#cb3-250" aria-hidden="true" tabindex="-1"></a>    cells <span class="ot">&lt;-</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(<span class="fu">seq_along</span>(types), <span class="cf">function</span>(j) {</span>
-<span id="cb3-251"><a href="#cb3-251" aria-hidden="true" tabindex="-1"></a>      pool <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="sc">!</span>ref <span class="sc">&amp;</span> cell_type <span class="sc">==</span> types[j])</span>
-<span id="cb3-252"><a href="#cb3-252" aria-hidden="true" tabindex="-1"></a>      pool[<span class="fu">sample.int</span>(<span class="fu">length</span>(pool), m[j], <span class="at">replace =</span> <span class="cn">TRUE</span>)]</span>
-<span id="cb3-253"><a href="#cb3-253" aria-hidden="true" tabindex="-1"></a>    }))</span>
-<span id="cb3-254"><a href="#cb3-254" aria-hidden="true" tabindex="-1"></a>    <span class="fu">list</span>(<span class="at">y =</span> <span class="fu">rowSums</span>(x[, cells, <span class="at">drop =</span> <span class="cn">FALSE</span>]), <span class="at">p =</span> m <span class="sc">/</span> <span class="fu">sum</span>(m))</span>
-<span id="cb3-255"><a href="#cb3-255" aria-hidden="true" tabindex="-1"></a>  })</span>
-<span id="cb3-256"><a href="#cb3-256" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb3-257"><a href="#cb3-257" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-258"><a href="#cb3-258" aria-hidden="true" tabindex="-1"></a>fit_panel <span class="ot">&lt;-</span> <span class="cf">function</span>(genes) {</span>
-<span id="cb3-259"><a href="#cb3-259" aria-hidden="true" tabindex="-1"></a>  mu <span class="ot">&lt;-</span> <span class="fu">vapply</span>(</span>
-<span id="cb3-260"><a href="#cb3-260" aria-hidden="true" tabindex="-1"></a>    types,</span>
-<span id="cb3-261"><a href="#cb3-261" aria-hidden="true" tabindex="-1"></a>    <span class="cf">function</span>(j) <span class="fu">rowMeans</span>(x[genes, ref <span class="sc">&amp;</span> cell_type <span class="sc">==</span> j, <span class="at">drop =</span> <span class="cn">FALSE</span>]),</span>
-<span id="cb3-262"><a href="#cb3-262" aria-hidden="true" tabindex="-1"></a>    <span class="fu">numeric</span>(<span class="fu">length</span>(genes))</span>
-<span id="cb3-263"><a href="#cb3-263" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb3-264"><a href="#cb3-264" aria-hidden="true" tabindex="-1"></a>  sigma <span class="ot">&lt;-</span> <span class="fu">vapply</span>(</span>
-<span id="cb3-265"><a href="#cb3-265" aria-hidden="true" tabindex="-1"></a>    types,</span>
-<span id="cb3-266"><a href="#cb3-266" aria-hidden="true" tabindex="-1"></a>    <span class="cf">function</span>(j) {</span>
-<span id="cb3-267"><a href="#cb3-267" aria-hidden="true" tabindex="-1"></a>      xj <span class="ot">&lt;-</span> <span class="fu">t</span>(x[genes, ref <span class="sc">&amp;</span> cell_type <span class="sc">==</span> j, <span class="at">drop =</span> <span class="cn">FALSE</span>])</span>
-<span id="cb3-268"><a href="#cb3-268" aria-hidden="true" tabindex="-1"></a>      <span class="fu">fit_cov_shrinkage</span>(xj, <span class="at">lambda =</span> <span class="fu">shrinkage_lambda_closed_form</span>(xj))<span class="sc">$</span>sigma</span>
-<span id="cb3-269"><a href="#cb3-269" aria-hidden="true" tabindex="-1"></a>    },</span>
-<span id="cb3-270"><a href="#cb3-270" aria-hidden="true" tabindex="-1"></a>    <span class="fu">matrix</span>(<span class="dv">0</span>, <span class="fu">length</span>(genes), <span class="fu">length</span>(genes))</span>
-<span id="cb3-271"><a href="#cb3-271" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb3-272"><a href="#cb3-272" aria-hidden="true" tabindex="-1"></a>  scores <span class="ot">&lt;-</span> <span class="fu">lapply</span>(pseudo, <span class="cf">function</span>(pb) {</span>
-<span id="cb3-273"><a href="#cb3-273" aria-hidden="true" tabindex="-1"></a>    y <span class="ot">&lt;-</span> pb<span class="sc">$</span>y[genes]</span>
-<span id="cb3-274"><a href="#cb3-274" aria-hidden="true" tabindex="-1"></a>    p_nnls <span class="ot">&lt;-</span> DeCovarT<span class="sc">::</span><span class="fu">deconvolute_ratios_nnls</span>(y, mu)</span>
-<span id="cb3-275"><a href="#cb3-275" aria-hidden="true" tabindex="-1"></a>    p_dcv <span class="ot">&lt;-</span> DeCovarT<span class="sc">::</span><span class="fu">deconvolute_single_cell</span>(y, mu, sigma)<span class="sc">$</span>p</span>
-<span id="cb3-276"><a href="#cb3-276" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rbind</span>(</span>
-<span id="cb3-277"><a href="#cb3-277" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cbind</span>(</span>
-<span id="cb3-278"><a href="#cb3-278" aria-hidden="true" tabindex="-1"></a>        <span class="at">method =</span> <span class="st">"nnls"</span>,</span>
-<span id="cb3-279"><a href="#cb3-279" aria-hidden="true" tabindex="-1"></a>        DeCovarT<span class="sc">::</span><span class="fu">compute_benchmark_metrics</span>(</span>
-<span id="cb3-280"><a href="#cb3-280" aria-hidden="true" tabindex="-1"></a>          y, mu, <span class="at">estimated_p =</span> p_nnls, <span class="at">true_ratios =</span> pb<span class="sc">$</span>p</span>
-<span id="cb3-281"><a href="#cb3-281" aria-hidden="true" tabindex="-1"></a>        )<span class="sc">$</span>regression<span class="sc">$</span>global</span>
-<span id="cb3-282"><a href="#cb3-282" aria-hidden="true" tabindex="-1"></a>      ),</span>
-<span id="cb3-283"><a href="#cb3-283" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cbind</span>(</span>
-<span id="cb3-284"><a href="#cb3-284" aria-hidden="true" tabindex="-1"></a>        <span class="at">method =</span> <span class="st">"decovart_newton"</span>,</span>
-<span id="cb3-285"><a href="#cb3-285" aria-hidden="true" tabindex="-1"></a>        DeCovarT<span class="sc">::</span><span class="fu">compute_benchmark_metrics</span>(</span>
-<span id="cb3-286"><a href="#cb3-286" aria-hidden="true" tabindex="-1"></a>          y, mu, <span class="at">estimated_p =</span> p_dcv, <span class="at">true_ratios =</span> pb<span class="sc">$</span>p</span>
-<span id="cb3-287"><a href="#cb3-287" aria-hidden="true" tabindex="-1"></a>        )<span class="sc">$</span>regression<span class="sc">$</span>global</span>
-<span id="cb3-288"><a href="#cb3-288" aria-hidden="true" tabindex="-1"></a>      )</span>
-<span id="cb3-289"><a href="#cb3-289" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb3-290"><a href="#cb3-290" aria-hidden="true" tabindex="-1"></a>  })</span>
-<span id="cb3-291"><a href="#cb3-291" aria-hidden="true" tabindex="-1"></a>  <span class="fu">do.call</span>(rbind, scores)</span>
-<span id="cb3-292"><a href="#cb3-292" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb3-293"><a href="#cb3-293" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-294"><a href="#cb3-294" aria-hidden="true" tabindex="-1"></a>rank_lists <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">list</span>(<span class="at">type_equal_ratio =</span> rank_a), rank_b)</span>
-<span id="cb3-295"><a href="#cb3-295" aria-hidden="true" tabindex="-1"></a>sweep <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, <span class="fu">lapply</span>(<span class="fu">names</span>(rank_lists), <span class="cf">function</span>(r) {</span>
-<span id="cb3-296"><a href="#cb3-296" aria-hidden="true" tabindex="-1"></a>  <span class="fu">do.call</span>(rbind, <span class="fu">lapply</span>(panel_sizes, <span class="cf">function</span>(n) {</span>
-<span id="cb3-297"><a href="#cb3-297" aria-hidden="true" tabindex="-1"></a>    genes <span class="ot">&lt;-</span> utils<span class="sc">::</span><span class="fu">head</span>(rank_lists[[r]], n)</span>
-<span id="cb3-298"><a href="#cb3-298" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(genes) <span class="sc">&lt;</span> n) {</span>
-<span id="cb3-299"><a href="#cb3-299" aria-hidden="true" tabindex="-1"></a>      <span class="fu">return</span>(<span class="cn">NULL</span>) <span class="co"># the gate passes fewer genes than requested</span></span>
-<span id="cb3-300"><a href="#cb3-300" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb3-301"><a href="#cb3-301" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cbind</span>(<span class="at">rank =</span> r, <span class="at">n_genes_global =</span> n, <span class="fu">fit_panel</span>(genes))</span>
-<span id="cb3-302"><a href="#cb3-302" aria-hidden="true" tabindex="-1"></a>  }))</span>
-<span id="cb3-303"><a href="#cb3-303" aria-hidden="true" tabindex="-1"></a>}))</span>
-<span id="cb3-304"><a href="#cb3-304" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-305"><a href="#cb3-305" aria-hidden="true" tabindex="-1"></a><span class="co"># Bulk consistency filter on the real standard-Wnt bulks of the slot</span></span>
-<span id="cb3-306"><a href="#cb3-306" aria-hidden="true" tabindex="-1"></a><span class="co"># (bulk: genes x 3 replicates, same identifiers). sd and n_cells come</span></span>
-<span id="cb3-307"><a href="#cb3-307" aria-hidden="true" tabindex="-1"></a><span class="co"># from the reference half; flagged genes are removed before the sweep</span></span>
-<span id="cb3-308"><a href="#cb3-308" aria-hidden="true" tabindex="-1"></a><span class="co"># is repeated.</span></span>
-<span id="cb3-309"><a href="#cb3-309" aria-hidden="true" tabindex="-1"></a><span class="co"># flags &lt;- bulk_consistency_filter(bulk, mu = mu_all, sd = sd_all,</span></span>
-<span id="cb3-310"><a href="#cb3-310" aria-hidden="true" tabindex="-1"></a><span class="co">#                                  n_cells = table(cell_type[ref]))</span></span>
-<span id="cb3-311"><a href="#cb3-311" aria-hidden="true" tabindex="-1"></a><span class="co"># rank_lists_clean &lt;- lapply(rank_lists, intersect, flags$gene[flags$keep])</span></span>
-<span id="cb3-312"><a href="#cb3-312" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-313"><a href="#cb3-313" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-314"><a href="#cb3-314" aria-hidden="true" tabindex="-1"></a>Three outcomes would bear on the hypothesis. A rise and a plateau in</span>
-<span id="cb3-315"><a href="#cb3-315" aria-hidden="true" tabindex="-1"></a>both methods, with no decline up to 2000 genes, says that the panel of</span>
-<span id="cb3-316"><a href="#cb3-316" aria-hidden="true" tabindex="-1"></a>500 is not too large for the pseudo-bulks. A decline that disappears</span>
-<span id="cb3-317"><a href="#cb3-317" aria-hidden="true" tabindex="-1"></a>after the bulk consistency filter points to platform-inconsistent</span>
-<span id="cb3-318"><a href="#cb3-318" aria-hidden="true" tabindex="-1"></a>genes, which only the real bulks can show. A decline in DeCovarT alone,</span>
-<span id="cb3-319"><a href="#cb3-319" aria-hidden="true" tabindex="-1"></a>present already on pseudo-bulks, points to the covariance estimate</span>
-<span id="cb3-320"><a href="#cb3-320" aria-hidden="true" tabindex="-1"></a>rather than to the genes.</span>
-<span id="cb3-321"><a href="#cb3-321" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-324"><a href="#cb3-324" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb3-325"><a href="#cb3-325" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: glossary-setup</span></span>
-<span id="cb3-326"><a href="#cb3-326" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: false</span></span>
-<span id="cb3-327"><a href="#cb3-327" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">requireNamespace</span>(<span class="st">"glossary"</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) {</span>
-<span id="cb3-328"><a href="#cb3-328" aria-hidden="true" tabindex="-1"></a>  owd <span class="ot">&lt;-</span> <span class="fu">setwd</span>(<span class="st">".."</span>)</span>
-<span id="cb3-329"><a href="#cb3-329" aria-hidden="true" tabindex="-1"></a>  <span class="fu">on.exit</span>(<span class="fu">setwd</span>(owd), <span class="at">add =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb3-330"><a href="#cb3-330" aria-hidden="true" tabindex="-1"></a>  <span class="fu">source</span>(<span class="st">"renv/activate.R"</span>)</span>
-<span id="cb3-331"><a href="#cb3-331" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setwd</span>(owd)</span>
-<span id="cb3-332"><a href="#cb3-332" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb3-333"><a href="#cb3-333" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glossary)</span>
-<span id="cb3-334"><a href="#cb3-334" aria-hidden="true" tabindex="-1"></a><span class="fu">glossary_path</span>(<span class="fu">file.path</span>(<span class="st">".."</span>, <span class="st">"glossary"</span>, <span class="st">"glossary.yml"</span>))</span>
-<span id="cb3-335"><a href="#cb3-335" aria-hidden="true" tabindex="-1"></a><span class="fu">glossary_popup</span>(<span class="st">"hover"</span>)</span>
-<span id="cb3-336"><a href="#cb3-336" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb3-337"><a href="#cb3-337" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-340"><a href="#cb3-340" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb3-341"><a href="#cb3-341" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: glossary-style</span></span>
-<span id="cb3-342"><a href="#cb3-342" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb3-343"><a href="#cb3-343" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: asis</span></span>
-<span id="cb3-344"><a href="#cb3-344" aria-hidden="true" tabindex="-1"></a>glossary<span class="sc">::</span><span class="fu">glossary_style</span>(</span>
-<span id="cb3-345"><a href="#cb3-345" aria-hidden="true" tabindex="-1"></a>  <span class="at">color =</span> <span class="st">"#0e4d3a"</span>,</span>
-<span id="cb3-346"><a href="#cb3-346" aria-hidden="true" tabindex="-1"></a>  <span class="at">text_decoration =</span> <span class="st">"underline"</span>,</span>
-<span id="cb3-347"><a href="#cb3-347" aria-hidden="true" tabindex="-1"></a>  <span class="at">def_bg =</span> <span class="st">"#f7f4ef"</span>,</span>
-<span id="cb3-348"><a href="#cb3-348" aria-hidden="true" tabindex="-1"></a>  <span class="at">def_color =</span> <span class="st">"#1c2b24"</span></span>
-<span id="cb3-349"><a href="#cb3-349" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-350"><a href="#cb3-350" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-120"><a href="#cb3-120" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Source of genes.** The 500-gene export</span>
+<span id="cb3-121"><a href="#cb3-121" aria-hidden="true" tabindex="-1"></a>  <span class="in">`data/intermediate/equal_type_top500_by_time.rds`</span> cannot supply</span>
+<span id="cb3-122"><a href="#cb3-122" aria-hidden="true" tabindex="-1"></a>  panels larger than 500. The sweep reads the allow-list object</span>
+<span id="cb3-123"><a href="#cb3-123" aria-hidden="true" tabindex="-1"></a>  <span class="in">`data/intermediate/suppinger_sct_allowlist_seurat.rds`</span> and the full</span>
+<span id="cb3-124"><a href="#cb3-124" aria-hidden="true" tabindex="-1"></a>  rank table, then subsets genes per panel size.</span>
+<span id="cb3-125"><a href="#cb3-125" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Truth.** Within each type, cells are split at random into a</span>
+<span id="cb3-126"><a href="#cb3-126" aria-hidden="true" tabindex="-1"></a>  reference half and a pseudo-bulk half. The rank, the mean and the</span>
+<span id="cb3-127"><a href="#cb3-127" aria-hidden="true" tabindex="-1"></a>  covariance use the reference half only; pseudo-bulks are sums of</span>
+<span id="cb3-128"><a href="#cb3-128" aria-hidden="true" tabindex="-1"></a>  cells of the other half at known numbers per type. Bulk and reference</span>
+<span id="cb3-129"><a href="#cb3-129" aria-hidden="true" tabindex="-1"></a>  cells are then disjoint, the condition under which a within-type</span>
+<span id="cb3-130"><a href="#cb3-130" aria-hidden="true" tabindex="-1"></a>  variance can matter</span>
+<span id="cb3-131"><a href="#cb3-131" aria-hidden="true" tabindex="-1"></a>  (<span class="co">[</span><span class="ot">S5, ReDeconv</span><span class="co">](https://bastienchassagnol.github.io/DeCovarT/articles/S5-misspecification.html#sec-s5-review-redeconv)</span>).</span>
+<span id="cb3-132"><a href="#cb3-132" aria-hidden="true" tabindex="-1"></a>  Both halves come from one specimen series, so the pseudo-bulks carry</span>
+<span id="cb3-133"><a href="#cb3-133" aria-hidden="true" tabindex="-1"></a>  no platform bias and no between-specimen variation</span>
+<span id="cb3-134"><a href="#cb3-134" aria-hidden="true" tabindex="-1"></a>  (@nte-pseudoreplication).</span>
+<span id="cb3-135"><a href="#cb3-135" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Platform-inconsistent genes.** The pseudo-bulks cannot reveal them.</span>
+<span id="cb3-136"><a href="#cb3-136" aria-hidden="true" tabindex="-1"></a>  The real standard-Wnt bulks of GSE229386 enter through the bulk</span>
+<span id="cb3-137"><a href="#cb3-137" aria-hidden="true" tabindex="-1"></a>  consistency filter: the sweep is repeated on the panels with the</span>
+<span id="cb3-138"><a href="#cb3-138" aria-hidden="true" tabindex="-1"></a>  flagged genes removed, and on the real bulks the change of</span>
+<span id="cb3-139"><a href="#cb3-139" aria-hidden="true" tabindex="-1"></a>  $\hat{\boldsymbol{p}}$ with panel size is reported, since no truth</span>
+<span id="cb3-140"><a href="#cb3-140" aria-hidden="true" tabindex="-1"></a>  exists there.</span>
+<span id="cb3-141"><a href="#cb3-141" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Scale.** Means, covariances and pseudo-bulks use raw UMI counts,</span>
+<span id="cb3-142"><a href="#cb3-142" aria-hidden="true" tabindex="-1"></a>  so a pseudo-bulk is an exact sum of the cell profiles. The</span>
+<span id="cb3-143"><a href="#cb3-143" aria-hidden="true" tabindex="-1"></a>  size-factor scale of @sec-cov-inputs is a second arm.</span>
+<span id="cb3-144"><a href="#cb3-144" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Metrics.** <span class="in">`DeCovarT::compute_benchmark_metrics()`</span> with the true</span>
+<span id="cb3-145"><a href="#cb3-145" aria-hidden="true" tabindex="-1"></a>  cell fractions: total variation and RMSE per bulk</span>
+<span id="cb3-146"><a href="#cb3-146" aria-hidden="true" tabindex="-1"></a>  (<span class="in">`regression$global`</span>), and per-type correlation and error</span>
+<span id="cb3-147"><a href="#cb3-147" aria-hidden="true" tabindex="-1"></a>  (<span class="in">`regression$cell_type`</span>). For the real bulks, the total variation</span>
+<span id="cb3-148"><a href="#cb3-148" aria-hidden="true" tabindex="-1"></a>  between $\hat{\boldsymbol{p}}$ at each size and at 500 genes.</span>
+<span id="cb3-149"><a href="#cb3-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-150"><a href="#cb3-150" aria-hidden="true" tabindex="-1"></a>The covariance has $G(G+1)/2$ entries per type. Above the number of</span>
+<span id="cb3-151"><a href="#cb3-151" aria-hidden="true" tabindex="-1"></a>reference cells of a type the sample covariance is singular, and only</span>
+<span id="cb3-152"><a href="#cb3-152" aria-hidden="true" tabindex="-1"></a>a regularised estimate of @sec-shrinkage is defined. The closed-form</span>
+<span id="cb3-153"><a href="#cb3-153" aria-hidden="true" tabindex="-1"></a>intensity of this sketch is archived; the sweep should use the level</span>
+<span id="cb3-154"><a href="#cb3-154" aria-hidden="true" tabindex="-1"></a>chosen on held-out cells or by the bulk likelihood</span>
+<span id="cb3-155"><a href="#cb3-155" aria-hidden="true" tabindex="-1"></a>(@sec-deconv-selection).</span>
+<span id="cb3-156"><a href="#cb3-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-157"><a href="#cb3-157" aria-hidden="true" tabindex="-1"></a>[TODO, partly superseded by @sec-deconv-selection, which sweeps the</span>
+<span id="cb3-158"><a href="#cb3-158" aria-hidden="true" tabindex="-1"></a>shrinkage level, the two-parameter arm and factor ranks on the real</span>
+<span id="cb3-159"><a href="#cb3-159" aria-hidden="true" tabindex="-1"></a>bulks: add the level of covariance regularisation as a factor of the</span>
+<span id="cb3-160"><a href="#cb3-160" aria-hidden="true" tabindex="-1"></a>sweep. The shrinkage estimate is dense by construction: it multiplies</span>
+<span id="cb3-161"><a href="#cb3-161" aria-hidden="true" tabindex="-1"></a>every sample correlation by $1 - \lambda$ and sets none to zero, so it</span>
+<span id="cb3-162"><a href="#cb3-162" aria-hidden="true" tabindex="-1"></a>says nothing about isolated groups of genes. At the closed-form</span>
+<span id="cb3-163"><a href="#cb3-163" aria-hidden="true" tabindex="-1"></a>intensity the abundant types are barely shrunk ($\lambda$ of 0.006 to</span>
+<span id="cb3-164"><a href="#cb3-164" aria-hidden="true" tabindex="-1"></a>0.03 on the Welch-gated panels, <span class="in">`output/grn/plugin/plugin_summary.csv`</span>).</span>
+<span id="cb3-165"><a href="#cb3-165" aria-hidden="true" tabindex="-1"></a>Levels to compare: (i) $\lambda$ on a grid, closed form; 0.25; 0.5;</span>
+<span id="cb3-166"><a href="#cb3-166" aria-hidden="true" tabindex="-1"></a>0.75; 1 (diagonal, no gene-gene term); (ii) a sparse arm, the graphical</span>
+<span id="cb3-167"><a href="#cb3-167" aria-hidden="true" tabindex="-1"></a>lasso precision of @eq-grn-export along its penalty path; (iii) raw</span>
+<span id="cb3-168"><a href="#cb3-168" aria-hidden="true" tabindex="-1"></a>counts against size-factor-scaled counts, since a shared cell-size</span>
+<span id="cb3-169"><a href="#cb3-169" aria-hidden="true" tabindex="-1"></a>factor correlates every pair of genes. Report, per type and level, the</span>
+<span id="cb3-170"><a href="#cb3-170" aria-hidden="true" tabindex="-1"></a>share of non-zero off-diagonal partial correlations, the number of</span>
+<span id="cb3-171"><a href="#cb3-171" aria-hidden="true" tabindex="-1"></a>connected components and the condition number, next to the accuracy</span>
+<span id="cb3-172"><a href="#cb3-172" aria-hidden="true" tabindex="-1"></a>metrics and the agreement between the two optimisers. Done so far</span>
+<span id="cb3-173"><a href="#cb3-173" aria-hidden="true" tabindex="-1"></a>(@sec-deconv-selection): level (i) for DeCovarT on the raw covariance,</span>
+<span id="cb3-174"><a href="#cb3-174" aria-hidden="true" tabindex="-1"></a>L-BFGS-B, bulk as is, with $\lambda$ chosen by the summed bulk</span>
+<span id="cb3-175"><a href="#cb3-175" aria-hidden="true" tabindex="-1"></a>likelihood, never by the observed composition, and the Newton optimiser</span>
+<span id="cb3-176"><a href="#cb3-176" aria-hidden="true" tabindex="-1"></a>on the same grid (@sec-deconv-variants). Levels (ii) and (iii)</span>
+<span id="cb3-177"><a href="#cb3-177" aria-hidden="true" tabindex="-1"></a>remain.]{.highlight}</span>
+<span id="cb3-178"><a href="#cb3-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-181"><a href="#cb3-181" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb3-182"><a href="#cb3-182" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: sens-panel-size-sweep</span></span>
+<span id="cb3-183"><a href="#cb3-183" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb3-184"><a href="#cb3-184" aria-hidden="true" tabindex="-1"></a><span class="co"># Not run. Function names and arguments follow R/02_02_stats_cross_cell.R,</span></span>
+<span id="cb3-185"><a href="#cb3-185" aria-hidden="true" tabindex="-1"></a><span class="co"># R/03_01_stats_covariance_estimation.R and the DeCovarT reference.</span></span>
+<span id="cb3-186"><a href="#cb3-186" aria-hidden="true" tabindex="-1"></a><span class="co"># Culture-stress labels are removed first, as in</span></span>
+<span id="cb3-187"><a href="#cb3-187" aria-hidden="true" tabindex="-1"></a><span class="co"># scripts/01_03_export_equal_type_seurat.R.</span></span>
+<span id="cb3-188"><a href="#cb3-188" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/02_00_utils.R"</span>)</span>
+<span id="cb3-189"><a href="#cb3-189" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/02_01_stats_quality_control.R"</span>)</span>
+<span id="cb3-190"><a href="#cb3-190" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/02_02_stats_cross_cell.R"</span>)</span>
+<span id="cb3-191"><a href="#cb3-191" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"R/03_01_stats_covariance_estimation.R"</span>)</span>
+<span id="cb3-192"><a href="#cb3-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-193"><a href="#cb3-193" aria-hidden="true" tabindex="-1"></a>seu <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"data/intermediate/suppinger_sct_allowlist_seurat.rds"</span>)</span>
+<span id="cb3-194"><a href="#cb3-194" aria-hidden="true" tabindex="-1"></a>ranks <span class="ot">&lt;-</span> utils<span class="sc">::</span><span class="fu">read.csv</span>(</span>
+<span id="cb3-195"><a href="#cb3-195" aria-hidden="true" tabindex="-1"></a>  <span class="st">"output/naive_marker_selection/tables/ranks_global_equal_type.csv"</span></span>
+<span id="cb3-196"><a href="#cb3-196" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-197"><a href="#cb3-197" aria-hidden="true" tabindex="-1"></a>panel_sizes <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">50</span>L, <span class="dv">100</span>L, <span class="dv">200</span>L, <span class="dv">500</span>L, <span class="dv">1000</span>L, <span class="dv">2000</span>L)</span>
+<span id="cb3-198"><a href="#cb3-198" aria-hidden="true" tabindex="-1"></a>bh_levels <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.001</span>, <span class="fl">0.01</span>, <span class="fl">0.05</span>, <span class="fl">0.2</span>)</span>
+<span id="cb3-199"><a href="#cb3-199" aria-hidden="true" tabindex="-1"></a>time_level <span class="ot">&lt;-</span> <span class="st">"48h"</span></span>
+<span id="cb3-200"><a href="#cb3-200" aria-hidden="true" tabindex="-1"></a>n_bulk <span class="ot">&lt;-</span> <span class="dv">100</span>L</span>
+<span id="cb3-201"><a href="#cb3-201" aria-hidden="true" tabindex="-1"></a>n_cells_bulk <span class="ot">&lt;-</span> <span class="dv">500</span>L</span>
+<span id="cb3-202"><a href="#cb3-202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-203"><a href="#cb3-203" aria-hidden="true" tabindex="-1"></a>counts <span class="ot">&lt;-</span> <span class="fu">assay_matrix</span>(seu, <span class="st">"RNA"</span>, <span class="st">"counts"</span>)</span>
+<span id="cb3-204"><a href="#cb3-204" aria-hidden="true" tabindex="-1"></a>in_slot <span class="ot">&lt;-</span> seu<span class="sc">$</span>time_point <span class="sc">==</span> time_level <span class="co"># &amp; !culture-stress label</span></span>
+<span id="cb3-205"><a href="#cb3-205" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(counts[, in_slot])</span>
+<span id="cb3-206"><a href="#cb3-206" aria-hidden="true" tabindex="-1"></a>cell_type <span class="ot">&lt;-</span> <span class="fu">droplevels</span>(<span class="fu">factor</span>(seu<span class="sc">$</span>celltypeannotation[in_slot]))</span>
+<span id="cb3-207"><a href="#cb3-207" aria-hidden="true" tabindex="-1"></a>lib <span class="ot">&lt;-</span> <span class="dv">10</span><span class="sc">^</span>seu<span class="sc">$</span>log_umi[in_slot]</span>
+<span id="cb3-208"><a href="#cb3-208" aria-hidden="true" tabindex="-1"></a>types <span class="ot">&lt;-</span> <span class="fu">levels</span>(cell_type)</span>
+<span id="cb3-209"><a href="#cb3-209" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-210"><a href="#cb3-210" aria-hidden="true" tabindex="-1"></a><span class="co"># Disjoint halves within each type: 1 = reference, 2 = pseudo-bulk.</span></span>
+<span id="cb3-211"><a href="#cb3-211" aria-hidden="true" tabindex="-1"></a>half <span class="ot">&lt;-</span> withr<span class="sc">::</span><span class="fu">with_seed</span>(<span class="dv">20261101</span>, {</span>
+<span id="cb3-212"><a href="#cb3-212" aria-hidden="true" tabindex="-1"></a>  stats<span class="sc">::</span><span class="fu">ave</span>(</span>
+<span id="cb3-213"><a href="#cb3-213" aria-hidden="true" tabindex="-1"></a>    <span class="fu">seq_along</span>(cell_type),</span>
+<span id="cb3-214"><a href="#cb3-214" aria-hidden="true" tabindex="-1"></a>    cell_type,</span>
+<span id="cb3-215"><a href="#cb3-215" aria-hidden="true" tabindex="-1"></a>    <span class="at">FUN =</span> <span class="cf">function</span>(i) <span class="fu">sample</span>(<span class="fu">rep_len</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="fu">length</span>(i)))</span>
+<span id="cb3-216"><a href="#cb3-216" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb3-217"><a href="#cb3-217" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb3-218"><a href="#cb3-218" aria-hidden="true" tabindex="-1"></a>ref <span class="ot">&lt;-</span> half <span class="sc">==</span> <span class="dv">1</span>L</span>
+<span id="cb3-219"><a href="#cb3-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-220"><a href="#cb3-220" aria-hidden="true" tabindex="-1"></a><span class="co"># Rank A: legacy type-equal ratio of the current panel (computed on all</span></span>
+<span id="cb3-221"><a href="#cb3-221" aria-hidden="true" tabindex="-1"></a><span class="co"># cells of the slot; rank B below is the leakage-free one).</span></span>
+<span id="cb3-222"><a href="#cb3-222" aria-hidden="true" tabindex="-1"></a>rank_a <span class="ot">&lt;-</span> ranks[ranks<span class="sc">$</span>time_point <span class="sc">==</span> time_level <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(ranks<span class="sc">$</span>rank), ]</span>
+<span id="cb3-223"><a href="#cb3-223" aria-hidden="true" tabindex="-1"></a>rank_a <span class="ot">&lt;-</span> rank_a<span class="sc">$</span>gene[<span class="fu">order</span>(rank_a<span class="sc">$</span>rank)]</span>
+<span id="cb3-224"><a href="#cb3-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-225"><a href="#cb3-225" aria-hidden="true" tabindex="-1"></a><span class="co"># Rank B: omnibus rank on the reference half; fdr = 1 keeps every gene</span></span>
+<span id="cb3-226"><a href="#cb3-226" aria-hidden="true" tabindex="-1"></a><span class="co"># so that each BH level is a filter of one fit.</span></span>
+<span id="cb3-227"><a href="#cb3-227" aria-hidden="true" tabindex="-1"></a>omni <span class="ot">&lt;-</span> <span class="fu">rank_genes_omnibus</span>(</span>
+<span id="cb3-228"><a href="#cb3-228" aria-hidden="true" tabindex="-1"></a>  x[, ref],</span>
+<span id="cb3-229"><a href="#cb3-229" aria-hidden="true" tabindex="-1"></a>  cell_type[ref],</span>
+<span id="cb3-230"><a href="#cb3-230" aria-hidden="true" tabindex="-1"></a>  <span class="at">size_factors =</span> lib[ref] <span class="sc">/</span> stats<span class="sc">::</span><span class="fu">median</span>(lib[ref]),</span>
+<span id="cb3-231"><a href="#cb3-231" aria-hidden="true" tabindex="-1"></a>  <span class="at">fdr =</span> <span class="dv">1</span>,</span>
+<span id="cb3-232"><a href="#cb3-232" aria-hidden="true" tabindex="-1"></a>  <span class="at">n_select =</span> <span class="fu">max</span>(panel_sizes)</span>
+<span id="cb3-233"><a href="#cb3-233" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-234"><a href="#cb3-234" aria-hidden="true" tabindex="-1"></a>omni <span class="ot">&lt;-</span> omni[<span class="sc">!</span><span class="fu">is.na</span>(omni<span class="sc">$</span>rank), ]</span>
+<span id="cb3-235"><a href="#cb3-235" aria-hidden="true" tabindex="-1"></a>rank_b <span class="ot">&lt;-</span> <span class="fu">lapply</span>(bh_levels, <span class="cf">function</span>(level) {</span>
+<span id="cb3-236"><a href="#cb3-236" aria-hidden="true" tabindex="-1"></a>  gated <span class="ot">&lt;-</span> omni[omni<span class="sc">$</span>adj_pval <span class="sc">&lt;=</span> level, ]</span>
+<span id="cb3-237"><a href="#cb3-237" aria-hidden="true" tabindex="-1"></a>  gated<span class="sc">$</span>gene[<span class="fu">order</span>(gated<span class="sc">$</span>rank)]</span>
+<span id="cb3-238"><a href="#cb3-238" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb3-239"><a href="#cb3-239" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(rank_b) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"omnibus_fdr_"</span>, bh_levels)</span>
+<span id="cb3-240"><a href="#cb3-240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-241"><a href="#cb3-241" aria-hidden="true" tabindex="-1"></a><span class="co"># Pseudo-bulks at known cell numbers, from the pseudo-bulk half.</span></span>
+<span id="cb3-242"><a href="#cb3-242" aria-hidden="true" tabindex="-1"></a>pseudo <span class="ot">&lt;-</span> withr<span class="sc">::</span><span class="fu">with_seed</span>(<span class="dv">20261102</span>, {</span>
+<span id="cb3-243"><a href="#cb3-243" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lapply</span>(<span class="fu">seq_len</span>(n_bulk), <span class="cf">function</span>(b) {</span>
+<span id="cb3-244"><a href="#cb3-244" aria-hidden="true" tabindex="-1"></a>    w <span class="ot">&lt;-</span> stats<span class="sc">::</span><span class="fu">rgamma</span>(<span class="fu">length</span>(types), <span class="at">shape =</span> <span class="dv">2</span>)</span>
+<span id="cb3-245"><a href="#cb3-245" aria-hidden="true" tabindex="-1"></a>    m <span class="ot">&lt;-</span> stats<span class="sc">::</span><span class="fu">rmultinom</span>(<span class="dv">1</span>L, n_cells_bulk, <span class="at">prob =</span> w <span class="sc">/</span> <span class="fu">sum</span>(w))[, <span class="dv">1</span>L]</span>
+<span id="cb3-246"><a href="#cb3-246" aria-hidden="true" tabindex="-1"></a>    cells <span class="ot">&lt;-</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(<span class="fu">seq_along</span>(types), <span class="cf">function</span>(j) {</span>
+<span id="cb3-247"><a href="#cb3-247" aria-hidden="true" tabindex="-1"></a>      pool <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="sc">!</span>ref <span class="sc">&amp;</span> cell_type <span class="sc">==</span> types[j])</span>
+<span id="cb3-248"><a href="#cb3-248" aria-hidden="true" tabindex="-1"></a>      pool[<span class="fu">sample.int</span>(<span class="fu">length</span>(pool), m[j], <span class="at">replace =</span> <span class="cn">TRUE</span>)]</span>
+<span id="cb3-249"><a href="#cb3-249" aria-hidden="true" tabindex="-1"></a>    }))</span>
+<span id="cb3-250"><a href="#cb3-250" aria-hidden="true" tabindex="-1"></a>    <span class="fu">list</span>(<span class="at">y =</span> <span class="fu">rowSums</span>(x[, cells, <span class="at">drop =</span> <span class="cn">FALSE</span>]), <span class="at">p =</span> m <span class="sc">/</span> <span class="fu">sum</span>(m))</span>
+<span id="cb3-251"><a href="#cb3-251" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb3-252"><a href="#cb3-252" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb3-253"><a href="#cb3-253" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-254"><a href="#cb3-254" aria-hidden="true" tabindex="-1"></a>fit_panel <span class="ot">&lt;-</span> <span class="cf">function</span>(genes) {</span>
+<span id="cb3-255"><a href="#cb3-255" aria-hidden="true" tabindex="-1"></a>  mu <span class="ot">&lt;-</span> <span class="fu">vapply</span>(</span>
+<span id="cb3-256"><a href="#cb3-256" aria-hidden="true" tabindex="-1"></a>    types,</span>
+<span id="cb3-257"><a href="#cb3-257" aria-hidden="true" tabindex="-1"></a>    <span class="cf">function</span>(j) <span class="fu">rowMeans</span>(x[genes, ref <span class="sc">&amp;</span> cell_type <span class="sc">==</span> j, <span class="at">drop =</span> <span class="cn">FALSE</span>]),</span>
+<span id="cb3-258"><a href="#cb3-258" aria-hidden="true" tabindex="-1"></a>    <span class="fu">numeric</span>(<span class="fu">length</span>(genes))</span>
+<span id="cb3-259"><a href="#cb3-259" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb3-260"><a href="#cb3-260" aria-hidden="true" tabindex="-1"></a>  sigma <span class="ot">&lt;-</span> <span class="fu">vapply</span>(</span>
+<span id="cb3-261"><a href="#cb3-261" aria-hidden="true" tabindex="-1"></a>    types,</span>
+<span id="cb3-262"><a href="#cb3-262" aria-hidden="true" tabindex="-1"></a>    <span class="cf">function</span>(j) {</span>
+<span id="cb3-263"><a href="#cb3-263" aria-hidden="true" tabindex="-1"></a>      xj <span class="ot">&lt;-</span> <span class="fu">t</span>(x[genes, ref <span class="sc">&amp;</span> cell_type <span class="sc">==</span> j, <span class="at">drop =</span> <span class="cn">FALSE</span>])</span>
+<span id="cb3-264"><a href="#cb3-264" aria-hidden="true" tabindex="-1"></a>      <span class="fu">fit_cov_shrinkage</span>(xj, <span class="at">lambda =</span> <span class="fu">shrinkage_lambda_closed_form</span>(xj))<span class="sc">$</span>sigma</span>
+<span id="cb3-265"><a href="#cb3-265" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb3-266"><a href="#cb3-266" aria-hidden="true" tabindex="-1"></a>    <span class="fu">matrix</span>(<span class="dv">0</span>, <span class="fu">length</span>(genes), <span class="fu">length</span>(genes))</span>
+<span id="cb3-267"><a href="#cb3-267" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb3-268"><a href="#cb3-268" aria-hidden="true" tabindex="-1"></a>  scores <span class="ot">&lt;-</span> <span class="fu">lapply</span>(pseudo, <span class="cf">function</span>(pb) {</span>
+<span id="cb3-269"><a href="#cb3-269" aria-hidden="true" tabindex="-1"></a>    y <span class="ot">&lt;-</span> pb<span class="sc">$</span>y[genes]</span>
+<span id="cb3-270"><a href="#cb3-270" aria-hidden="true" tabindex="-1"></a>    p_nnls <span class="ot">&lt;-</span> DeCovarT<span class="sc">::</span><span class="fu">deconvolute_ratios_nnls</span>(y, mu)</span>
+<span id="cb3-271"><a href="#cb3-271" aria-hidden="true" tabindex="-1"></a>    p_dcv <span class="ot">&lt;-</span> DeCovarT<span class="sc">::</span><span class="fu">deconvolute_single_cell</span>(y, mu, sigma)<span class="sc">$</span>p</span>
+<span id="cb3-272"><a href="#cb3-272" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rbind</span>(</span>
+<span id="cb3-273"><a href="#cb3-273" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cbind</span>(</span>
+<span id="cb3-274"><a href="#cb3-274" aria-hidden="true" tabindex="-1"></a>        <span class="at">method =</span> <span class="st">"nnls"</span>,</span>
+<span id="cb3-275"><a href="#cb3-275" aria-hidden="true" tabindex="-1"></a>        DeCovarT<span class="sc">::</span><span class="fu">compute_benchmark_metrics</span>(</span>
+<span id="cb3-276"><a href="#cb3-276" aria-hidden="true" tabindex="-1"></a>          y, mu,</span>
+<span id="cb3-277"><a href="#cb3-277" aria-hidden="true" tabindex="-1"></a>          <span class="at">estimated_p =</span> p_nnls, <span class="at">true_ratios =</span> pb<span class="sc">$</span>p</span>
+<span id="cb3-278"><a href="#cb3-278" aria-hidden="true" tabindex="-1"></a>        )<span class="sc">$</span>regression<span class="sc">$</span>global</span>
+<span id="cb3-279"><a href="#cb3-279" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb3-280"><a href="#cb3-280" aria-hidden="true" tabindex="-1"></a>      <span class="fu">cbind</span>(</span>
+<span id="cb3-281"><a href="#cb3-281" aria-hidden="true" tabindex="-1"></a>        <span class="at">method =</span> <span class="st">"decovart_newton"</span>,</span>
+<span id="cb3-282"><a href="#cb3-282" aria-hidden="true" tabindex="-1"></a>        DeCovarT<span class="sc">::</span><span class="fu">compute_benchmark_metrics</span>(</span>
+<span id="cb3-283"><a href="#cb3-283" aria-hidden="true" tabindex="-1"></a>          y, mu,</span>
+<span id="cb3-284"><a href="#cb3-284" aria-hidden="true" tabindex="-1"></a>          <span class="at">estimated_p =</span> p_dcv, <span class="at">true_ratios =</span> pb<span class="sc">$</span>p</span>
+<span id="cb3-285"><a href="#cb3-285" aria-hidden="true" tabindex="-1"></a>        )<span class="sc">$</span>regression<span class="sc">$</span>global</span>
+<span id="cb3-286"><a href="#cb3-286" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb3-287"><a href="#cb3-287" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb3-288"><a href="#cb3-288" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb3-289"><a href="#cb3-289" aria-hidden="true" tabindex="-1"></a>  <span class="fu">do.call</span>(rbind, scores)</span>
+<span id="cb3-290"><a href="#cb3-290" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-291"><a href="#cb3-291" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-292"><a href="#cb3-292" aria-hidden="true" tabindex="-1"></a>rank_lists <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">list</span>(<span class="at">type_equal_ratio =</span> rank_a), rank_b)</span>
+<span id="cb3-293"><a href="#cb3-293" aria-hidden="true" tabindex="-1"></a>sweep <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, <span class="fu">lapply</span>(<span class="fu">names</span>(rank_lists), <span class="cf">function</span>(r) {</span>
+<span id="cb3-294"><a href="#cb3-294" aria-hidden="true" tabindex="-1"></a>  <span class="fu">do.call</span>(rbind, <span class="fu">lapply</span>(panel_sizes, <span class="cf">function</span>(n) {</span>
+<span id="cb3-295"><a href="#cb3-295" aria-hidden="true" tabindex="-1"></a>    genes <span class="ot">&lt;-</span> utils<span class="sc">::</span><span class="fu">head</span>(rank_lists[[r]], n)</span>
+<span id="cb3-296"><a href="#cb3-296" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">length</span>(genes) <span class="sc">&lt;</span> n) {</span>
+<span id="cb3-297"><a href="#cb3-297" aria-hidden="true" tabindex="-1"></a>      <span class="fu">return</span>(<span class="cn">NULL</span>) <span class="co"># the gate passes fewer genes than requested</span></span>
+<span id="cb3-298"><a href="#cb3-298" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-299"><a href="#cb3-299" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cbind</span>(<span class="at">rank =</span> r, <span class="at">n_genes_global =</span> n, <span class="fu">fit_panel</span>(genes))</span>
+<span id="cb3-300"><a href="#cb3-300" aria-hidden="true" tabindex="-1"></a>  }))</span>
+<span id="cb3-301"><a href="#cb3-301" aria-hidden="true" tabindex="-1"></a>}))</span>
+<span id="cb3-302"><a href="#cb3-302" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-303"><a href="#cb3-303" aria-hidden="true" tabindex="-1"></a><span class="co"># Bulk consistency filter on the real standard-Wnt bulks of the slot</span></span>
+<span id="cb3-304"><a href="#cb3-304" aria-hidden="true" tabindex="-1"></a><span class="co"># (bulk: genes x 3 replicates, same identifiers). sd and n_cells come</span></span>
+<span id="cb3-305"><a href="#cb3-305" aria-hidden="true" tabindex="-1"></a><span class="co"># from the reference half; flagged genes are removed before the sweep</span></span>
+<span id="cb3-306"><a href="#cb3-306" aria-hidden="true" tabindex="-1"></a><span class="co"># is repeated.</span></span>
+<span id="cb3-307"><a href="#cb3-307" aria-hidden="true" tabindex="-1"></a><span class="co"># flags &lt;- bulk_consistency_filter(bulk, mu = mu_all, sd = sd_all,</span></span>
+<span id="cb3-308"><a href="#cb3-308" aria-hidden="true" tabindex="-1"></a><span class="co">#                                  n_cells = table(cell_type[ref]))</span></span>
+<span id="cb3-309"><a href="#cb3-309" aria-hidden="true" tabindex="-1"></a><span class="co"># rank_lists_clean &lt;- lapply(rank_lists, intersect, flags$gene[flags$keep])</span></span>
+<span id="cb3-310"><a href="#cb3-310" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-311"><a href="#cb3-311" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-312"><a href="#cb3-312" aria-hidden="true" tabindex="-1"></a>Three outcomes would bear on the hypothesis. A rise and a plateau in</span>
+<span id="cb3-313"><a href="#cb3-313" aria-hidden="true" tabindex="-1"></a>both methods, with no decline up to 2000 genes, says that the panel of</span>
+<span id="cb3-314"><a href="#cb3-314" aria-hidden="true" tabindex="-1"></a>500 is not too large for the pseudo-bulks. A decline that disappears</span>
+<span id="cb3-315"><a href="#cb3-315" aria-hidden="true" tabindex="-1"></a>after the bulk consistency filter points to platform-inconsistent</span>
+<span id="cb3-316"><a href="#cb3-316" aria-hidden="true" tabindex="-1"></a>genes, which only the real bulks can show. A decline in DeCovarT alone,</span>
+<span id="cb3-317"><a href="#cb3-317" aria-hidden="true" tabindex="-1"></a>present already on pseudo-bulks, points to the covariance estimate</span>
+<span id="cb3-318"><a href="#cb3-318" aria-hidden="true" tabindex="-1"></a>rather than to the genes.</span>
+<span id="cb3-319"><a href="#cb3-319" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-322"><a href="#cb3-322" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb3-323"><a href="#cb3-323" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: glossary-setup</span></span>
+<span id="cb3-324"><a href="#cb3-324" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: false</span></span>
+<span id="cb3-325"><a href="#cb3-325" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">requireNamespace</span>(<span class="st">"glossary"</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) {</span>
+<span id="cb3-326"><a href="#cb3-326" aria-hidden="true" tabindex="-1"></a>  owd <span class="ot">&lt;-</span> <span class="fu">setwd</span>(<span class="st">".."</span>)</span>
+<span id="cb3-327"><a href="#cb3-327" aria-hidden="true" tabindex="-1"></a>  <span class="fu">on.exit</span>(<span class="fu">setwd</span>(owd), <span class="at">add =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-328"><a href="#cb3-328" aria-hidden="true" tabindex="-1"></a>  <span class="fu">source</span>(<span class="st">"renv/activate.R"</span>)</span>
+<span id="cb3-329"><a href="#cb3-329" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setwd</span>(owd)</span>
+<span id="cb3-330"><a href="#cb3-330" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-331"><a href="#cb3-331" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glossary)</span>
+<span id="cb3-332"><a href="#cb3-332" aria-hidden="true" tabindex="-1"></a><span class="fu">glossary_path</span>(<span class="fu">file.path</span>(<span class="st">".."</span>, <span class="st">"glossary"</span>, <span class="st">"glossary.yml"</span>))</span>
+<span id="cb3-333"><a href="#cb3-333" aria-hidden="true" tabindex="-1"></a><span class="fu">glossary_popup</span>(<span class="st">"hover"</span>)</span>
+<span id="cb3-334"><a href="#cb3-334" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-335"><a href="#cb3-335" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-338"><a href="#cb3-338" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb3-339"><a href="#cb3-339" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: glossary-style</span></span>
+<span id="cb3-340"><a href="#cb3-340" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb3-341"><a href="#cb3-341" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: asis</span></span>
+<span id="cb3-342"><a href="#cb3-342" aria-hidden="true" tabindex="-1"></a>glossary<span class="sc">::</span><span class="fu">glossary_style</span>(</span>
+<span id="cb3-343"><a href="#cb3-343" aria-hidden="true" tabindex="-1"></a>  <span class="at">color =</span> <span class="st">"#0e4d3a"</span>,</span>
+<span id="cb3-344"><a href="#cb3-344" aria-hidden="true" tabindex="-1"></a>  <span class="at">text_decoration =</span> <span class="st">"underline"</span>,</span>
+<span id="cb3-345"><a href="#cb3-345" aria-hidden="true" tabindex="-1"></a>  <span class="at">def_bg =</span> <span class="st">"#f7f4ef"</span>,</span>
+<span id="cb3-346"><a href="#cb3-346" aria-hidden="true" tabindex="-1"></a>  <span class="at">def_color =</span> <span class="st">"#1c2b24"</span></span>
+<span id="cb3-347"><a href="#cb3-347" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-348"><a href="#cb3-348" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-349"><a href="#cb3-349" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-350"><a href="#cb3-350" aria-hidden="true" tabindex="-1"></a><span class="fu">## A paired bulk and single-cell split {#sec-aliquots}</span></span>
 <span id="cb3-351"><a href="#cb3-351" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-352"><a href="#cb3-352" aria-hidden="true" tabindex="-1"></a><span class="fu">## A paired bulk and single-cell split {#sec-aliquots}</span></span>
-<span id="cb3-353"><a href="#cb3-353" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-354"><a href="#cb3-354" aria-hidden="true" tabindex="-1"></a>The Suppinger score compares a deconvolution with the composition of a</span>
-<span id="cb3-355"><a href="#cb3-355" aria-hidden="true" tabindex="-1"></a>single-cell reference from the same time. That reference is not a split</span>
-<span id="cb3-356"><a href="#cb3-356" aria-hidden="true" tabindex="-1"></a>of the bulk. An <span class="in">`r glossary("aliquot")`</span> is a physical split of one</span>
-<span id="cb3-357"><a href="#cb3-357" aria-hidden="true" tabindex="-1"></a>specimen, so the bulk library and the single-cell library measure the</span>
-<span id="cb3-358"><a href="#cb3-358" aria-hidden="true" tabindex="-1"></a>same material. Four constraints decide whether a published set can</span>
-<span id="cb3-359"><a href="#cb3-359" aria-hidden="true" tabindex="-1"></a>carry that comparison.</span>
-<span id="cb3-360"><a href="#cb3-360" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-361"><a href="#cb3-361" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Real bulk and real single-cell counts come from the same specimen, or</span>
-<span id="cb3-362"><a href="#cb3-362" aria-hidden="true" tabindex="-1"></a>  from a physical split of one suspension.</span>
-<span id="cb3-363"><a href="#cb3-363" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Sample identifiers can be traced from the bulk to the single-cell</span>
-<span id="cb3-364"><a href="#cb3-364" aria-hidden="true" tabindex="-1"></a>  library.</span>
-<span id="cb3-365"><a href="#cb3-365" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>A deconvolution of that pair has been published.</span>
-<span id="cb3-366"><a href="#cb3-366" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Where the only available truth would be the single-cell recovery</span>
-<span id="cb3-367"><a href="#cb3-367" aria-hidden="true" tabindex="-1"></a>  itself, an independent count (FACS, imaging or histology) is</span>
-<span id="cb3-368"><a href="#cb3-368" aria-hidden="true" tabindex="-1"></a>  required.</span>
-<span id="cb3-369"><a href="#cb3-369" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-370"><a href="#cb3-370" aria-hidden="true" tabindex="-1"></a>Three sets meet the first three constraints. Citekeys for these papers</span>
-<span id="cb3-371"><a href="#cb3-371" aria-hidden="true" tabindex="-1"></a>are not in the bibliography, so each is named with its DOI.</span>
-<span id="cb3-372"><a href="#cb3-372" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-373"><a href="#cb3-373" aria-hidden="true" tabindex="-1"></a>Dong and colleagues (<span class="co">[</span><span class="ot">10.1093/bib/bbz166</span><span class="co">](https://doi.org/10.1093/bib/bbz166)</span>)</span>
-<span id="cb3-374"><a href="#cb3-374" aria-hidden="true" tabindex="-1"></a>split a mouse mammary suspension (GEO GSE136148). SCDC, which is</span>
-<span id="cb3-375"><a href="#cb3-375" aria-hidden="true" tabindex="-1"></a>already a comparator in this benchmark, was published on that split.</span>
-<span id="cb3-376"><a href="#cb3-376" aria-hidden="true" tabindex="-1"></a>Two animals, and the reported truth is the single-cell recovery.</span>
-<span id="cb3-377"><a href="#cb3-377" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-378"><a href="#cb3-378" aria-hidden="true" tabindex="-1"></a>Guo and colleagues</span>
-<span id="cb3-379"><a href="#cb3-379" aria-hidden="true" tabindex="-1"></a>(<span class="co">[</span><span class="ot">10.1101/gr.278822.123</span><span class="co">](https://doi.org/10.1101/gr.278822.123)</span>)</span>
-<span id="cb3-380"><a href="#cb3-380" aria-hidden="true" tabindex="-1"></a>profiled healthy retina from 24 specimens, taking bulk and single-cell</span>
-<span id="cb3-381"><a href="#cb3-381" aria-hidden="true" tabindex="-1"></a>nuclei from the same suspension. DeMixSC, already a comparator here,</span>
-<span id="cb3-382"><a href="#cb3-382" aria-hidden="true" tabindex="-1"></a>was published on that series. The bulk accessions are GSE175937.</span>
-<span id="cb3-383"><a href="#cb3-383" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-384"><a href="#cb3-384" aria-hidden="true" tabindex="-1"></a>Dai and colleagues</span>
-<span id="cb3-385"><a href="#cb3-385" aria-hidden="true" tabindex="-1"></a>(<span class="co">[</span><span class="ot">10.1126/sciadv.adh2588</span><span class="co">](https://doi.org/10.1126/sciadv.adh2588)</span>)</span>
-<span id="cb3-386"><a href="#cb3-386" aria-hidden="true" tabindex="-1"></a>deconvolved the forebrain organoids of Jourdon and colleagues</span>
-<span id="cb3-387"><a href="#cb3-387" aria-hidden="true" tabindex="-1"></a>(<span class="co">[</span><span class="ot">10.1038/s41593-023-01399-0</span><span class="co">](https://doi.org/10.1038/s41593-023-01399-0)</span>).</span>
-<span id="cb3-388"><a href="#cb3-388" aria-hidden="true" tabindex="-1"></a>About 60 samples are reported at TD0, TD30 and TD60. A preparation may</span>
-<span id="cb3-389"><a href="#cb3-389" aria-hidden="true" tabindex="-1"></a>pool organoids, so a sample is not always one organoid. Access is NIMH</span>
-<span id="cb3-390"><a href="#cb3-390" aria-hidden="true" tabindex="-1"></a>Data Archive study 1482.</span>
-<span id="cb3-391"><a href="#cb3-391" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-392"><a href="#cb3-392" aria-hidden="true" tabindex="-1"></a>He and colleagues</span>
-<span id="cb3-393"><a href="#cb3-393" aria-hidden="true" tabindex="-1"></a>(<span class="co">[</span><span class="ot">10.1038/s41586-020-2536-x</span><span class="co">](https://doi.org/10.1038/s41586-020-2536-x)</span>)</span>
-<span id="cb3-394"><a href="#cb3-394" aria-hidden="true" tabindex="-1"></a>and the BEDwARS analysis of Ghaffari and colleagues</span>
-<span id="cb3-395"><a href="#cb3-395" aria-hidden="true" tabindex="-1"></a>(<span class="co">[</span><span class="ot">10.1186/s13059-023-03007-7</span><span class="co">](https://doi.org/10.1186/s13059-023-03007-7)</span>)</span>
-<span id="cb3-396"><a href="#cb3-396" aria-hidden="true" tabindex="-1"></a>are not split aliquots: the bulk and the single-cell profiles are not a</span>
-<span id="cb3-397"><a href="#cb3-397" aria-hidden="true" tabindex="-1"></a>physical division of one specimen.</span>
+<span id="cb3-352"><a href="#cb3-352" aria-hidden="true" tabindex="-1"></a>The Suppinger score compares a deconvolution with the composition of a</span>
+<span id="cb3-353"><a href="#cb3-353" aria-hidden="true" tabindex="-1"></a>single-cell reference from the same time. That reference is not a split</span>
+<span id="cb3-354"><a href="#cb3-354" aria-hidden="true" tabindex="-1"></a>of the bulk. An <span class="in">`r glossary("aliquot")`</span> is a physical split of one</span>
+<span id="cb3-355"><a href="#cb3-355" aria-hidden="true" tabindex="-1"></a>specimen, so the bulk library and the single-cell library measure the</span>
+<span id="cb3-356"><a href="#cb3-356" aria-hidden="true" tabindex="-1"></a>same material. Four constraints decide whether a published set can</span>
+<span id="cb3-357"><a href="#cb3-357" aria-hidden="true" tabindex="-1"></a>carry that comparison.</span>
+<span id="cb3-358"><a href="#cb3-358" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-359"><a href="#cb3-359" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Real bulk and real single-cell counts come from the same specimen, or</span>
+<span id="cb3-360"><a href="#cb3-360" aria-hidden="true" tabindex="-1"></a>  from a physical split of one suspension.</span>
+<span id="cb3-361"><a href="#cb3-361" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Sample identifiers can be traced from the bulk to the single-cell</span>
+<span id="cb3-362"><a href="#cb3-362" aria-hidden="true" tabindex="-1"></a>  library.</span>
+<span id="cb3-363"><a href="#cb3-363" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>A deconvolution of that pair has been published.</span>
+<span id="cb3-364"><a href="#cb3-364" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Where the only available truth would be the single-cell recovery</span>
+<span id="cb3-365"><a href="#cb3-365" aria-hidden="true" tabindex="-1"></a>  itself, an independent count (FACS, imaging or histology) is</span>
+<span id="cb3-366"><a href="#cb3-366" aria-hidden="true" tabindex="-1"></a>  required.</span>
+<span id="cb3-367"><a href="#cb3-367" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-368"><a href="#cb3-368" aria-hidden="true" tabindex="-1"></a>Three sets meet the first three constraints. Citekeys for these papers</span>
+<span id="cb3-369"><a href="#cb3-369" aria-hidden="true" tabindex="-1"></a>are not in the bibliography, so each is named with its DOI.</span>
+<span id="cb3-370"><a href="#cb3-370" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-371"><a href="#cb3-371" aria-hidden="true" tabindex="-1"></a>Dong and colleagues (<span class="co">[</span><span class="ot">10.1093/bib/bbz166</span><span class="co">](https://doi.org/10.1093/bib/bbz166)</span>)</span>
+<span id="cb3-372"><a href="#cb3-372" aria-hidden="true" tabindex="-1"></a>split a mouse mammary suspension (GEO GSE136148). SCDC, which is</span>
+<span id="cb3-373"><a href="#cb3-373" aria-hidden="true" tabindex="-1"></a>already a comparator in this benchmark, was published on that split.</span>
+<span id="cb3-374"><a href="#cb3-374" aria-hidden="true" tabindex="-1"></a>Two animals, and the reported truth is the single-cell recovery.</span>
+<span id="cb3-375"><a href="#cb3-375" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-376"><a href="#cb3-376" aria-hidden="true" tabindex="-1"></a>Guo and colleagues</span>
+<span id="cb3-377"><a href="#cb3-377" aria-hidden="true" tabindex="-1"></a>(<span class="co">[</span><span class="ot">10.1101/gr.278822.123</span><span class="co">](https://doi.org/10.1101/gr.278822.123)</span>)</span>
+<span id="cb3-378"><a href="#cb3-378" aria-hidden="true" tabindex="-1"></a>profiled healthy retina from 24 specimens, taking bulk and single-cell</span>
+<span id="cb3-379"><a href="#cb3-379" aria-hidden="true" tabindex="-1"></a>nuclei from the same suspension. DeMixSC, already a comparator here,</span>
+<span id="cb3-380"><a href="#cb3-380" aria-hidden="true" tabindex="-1"></a>was published on that series. The bulk accessions are GSE175937.</span>
+<span id="cb3-381"><a href="#cb3-381" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-382"><a href="#cb3-382" aria-hidden="true" tabindex="-1"></a>Dai and colleagues</span>
+<span id="cb3-383"><a href="#cb3-383" aria-hidden="true" tabindex="-1"></a>(<span class="co">[</span><span class="ot">10.1126/sciadv.adh2588</span><span class="co">](https://doi.org/10.1126/sciadv.adh2588)</span>)</span>
+<span id="cb3-384"><a href="#cb3-384" aria-hidden="true" tabindex="-1"></a>deconvolved the forebrain organoids of Jourdon and colleagues</span>
+<span id="cb3-385"><a href="#cb3-385" aria-hidden="true" tabindex="-1"></a>(<span class="co">[</span><span class="ot">10.1038/s41593-023-01399-0</span><span class="co">](https://doi.org/10.1038/s41593-023-01399-0)</span>).</span>
+<span id="cb3-386"><a href="#cb3-386" aria-hidden="true" tabindex="-1"></a>About 60 samples are reported at TD0, TD30 and TD60. A preparation may</span>
+<span id="cb3-387"><a href="#cb3-387" aria-hidden="true" tabindex="-1"></a>pool organoids, so a sample is not always one organoid. Access is NIMH</span>
+<span id="cb3-388"><a href="#cb3-388" aria-hidden="true" tabindex="-1"></a>Data Archive study 1482.</span>
+<span id="cb3-389"><a href="#cb3-389" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-390"><a href="#cb3-390" aria-hidden="true" tabindex="-1"></a>He and colleagues</span>
+<span id="cb3-391"><a href="#cb3-391" aria-hidden="true" tabindex="-1"></a>(<span class="co">[</span><span class="ot">10.1038/s41586-020-2536-x</span><span class="co">](https://doi.org/10.1038/s41586-020-2536-x)</span>)</span>
+<span id="cb3-392"><a href="#cb3-392" aria-hidden="true" tabindex="-1"></a>and the BEDwARS analysis of Ghaffari and colleagues</span>
+<span id="cb3-393"><a href="#cb3-393" aria-hidden="true" tabindex="-1"></a>(<span class="co">[</span><span class="ot">10.1186/s13059-023-03007-7</span><span class="co">](https://doi.org/10.1186/s13059-023-03007-7)</span>)</span>
+<span id="cb3-394"><a href="#cb3-394" aria-hidden="true" tabindex="-1"></a>are not split aliquots: the bulk and the single-cell profiles are not a</span>
+<span id="cb3-395"><a href="#cb3-395" aria-hidden="true" tabindex="-1"></a>physical division of one specimen.</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
