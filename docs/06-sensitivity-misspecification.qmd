@@ -17,10 +17,6 @@ misspecification factors described in DeCovarT
 4. Spillover between types
 5. Outlier genes
 
-Zero-inflated or hurdle observation models belong **here**, as a
-contamination of the sampling layer, not as the default GRN
-(@nte-drop-zico).
-
 ## `scDesign3` settings for GSE229513 {#sec-sens-scdesign3}
 
 The fitted count simulator of
@@ -34,7 +30,7 @@ specimen series are not biological replicates
 |---|---|
 | Fit unit | One model per time slot, 48 h, 72 h and 96 h; the two lines pooled at 48 h, cell line not a covariate (@sec-geo-design) |
 | Cells and genes | Cells after QC, culture-stress labels removed (@sec-fs-qc); the selected panel, raw UMI counts (@sec-cov-inputs) |
-| Margins | Negative binomial, mean and dispersion by cell type, log size factor as mean offset; no zero inflation (@nte-drop-zico) |
+| Margins | Negative binomial, mean and dispersion by cell type, log size factor as mean offset; no zero inflation |
 | Copula | Gaussian, one per type, correlation of the plug-in $\widehat{\boldsymbol{\Sigma}}_{j}$ of that type and time (@sec-shrinkage); not refitted |
 | Composition and depth | Type proportions $C_j/\sum_\ell C_\ell$ of the slot, frozen; each synthetic cell takes the size factor of a real cell of its type |
 | Truth for scoring | Count-scale mean and covariance of a large draw (for example $10^{5}$ cells per type), not $\boldsymbol{R}_j$ |
@@ -273,13 +269,15 @@ fit_panel <- function(genes) {
       cbind(
         method = "nnls",
         DeCovarT::compute_benchmark_metrics(
-          y, mu, estimated_p = p_nnls, true_ratios = pb$p
+          y, mu,
+          estimated_p = p_nnls, true_ratios = pb$p
         )$regression$global
       ),
       cbind(
         method = "decovart_newton",
         DeCovarT::compute_benchmark_metrics(
-          y, mu, estimated_p = p_dcv, true_ratios = pb$p
+          y, mu,
+          estimated_p = p_dcv, true_ratios = pb$p
         )$regression$global
       )
     )

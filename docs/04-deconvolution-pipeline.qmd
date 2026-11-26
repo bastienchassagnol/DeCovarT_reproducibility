@@ -34,7 +34,7 @@ glossary::glossary_style(
 #| label: deconv-values
 #| include: false
 # Numbers quoted in the prose, read from the output files of the full run
-# (scripts/04_01_stats_deconvolution.R, 18 November 2026).
+# (scripts/04_01_stats_deconvolution.R, 25 November 2026).
 deconv_dir <- here::here("..", "output", "deconvolution")
 read_deconv <- function(...) {
   utils::read.csv(
@@ -143,8 +143,6 @@ sum_comp <- sort(vapply(
   and platform-ratio variants of the shrinkage (@sec-deconv-variants).
 
 ## What is being compared {#sec-deconv-models}
-
-[Numbers to rerun: they were computed on the panel of the earlier tier (i), which dropped the 2,178 mostly fractional genes and used the 5 % presence gate. Tier (i) now keeps every gene and applies the gate of @eq-fs-presence (@sec-fs-qc-applied).]{.highlight}
 
 DeCovarT deconvolves bulk profiles with both a mean signature and a
 per-type covariance. Every method below uses the same gene panel and
@@ -1465,7 +1463,7 @@ fac_neg <- neg_scale[sweep$family == "factor"]
 
 ```{r}
 #| label: tbl-deconv-early
-#| tbl-cap: "Level chosen by the summed bulk likelihood on the standard-Wnt and on the early-Wnt replicates, per strategy and time, Welch panel (the two subsets: @tbl-deconv-early-small) (`output/deconvolution/lambda_selection.csv`). Cell: standard / early; one value when both agree; two-parameter: $(\\alpha,\\lambda)$; factor: rank. Bold: the two protocols disagree. Last two columns: strategy with the highest summed log-likelihood on each protocol, shared $c$ with its Jacobian added; ≈ joins strategies within one log-likelihood unit. A dash: every level failed."
+#| tbl-cap: "Level chosen by the summed bulk likelihood on the standard-Wnt and on the early-Wnt replicates, per strategy and time, Welch panel (the two subsets: @tbl-deconv-early-small) (`output/deconvolution/lambda_selection.csv`). Cell: standard / early; one value when both agree; two-parameter: $(\\alpha,\\lambda)$; factor: rank. Bold: the two protocols disagree. Last two columns: strategy with the highest summed log-likelihood on each protocol, shared $c$ with its Jacobian added; ≈ joins strategies within one log-likelihood unit. A dash: every level failed; not run: the strategy was not fitted on that panel."
 #| echo: false
 level_txt <- function(d) {
   if (is.na(d$family)) return("—")
@@ -1475,6 +1473,9 @@ cells_e <- vapply(names(strategy_short), function(f) {
   vapply(seq_len(nrow(slots_all)), function(k) {
     gs <- slots_all$gene_set[[k]]
     tm <- slots_all$time[[k]]
+    if (!any(lsel_all$family == f & lsel_all$gene_set == gs & lsel_all$time == tm)) {
+      return("not run")
+    }
     a <- level_txt(pick_all(f, gs, tm, "standard"))
     b <- level_txt(pick_all(f, gs, tm, "early"))
     if (a == b) a else paste(a, "/", b)
@@ -1547,12 +1548,17 @@ observed composition.
    simplest scale model, and a level that transfers to the early
    protocol. Shared-$c$ and linked scales return the same estimates and
    add nothing with shrinkage.
-2. **Size-normalised shrinkage, free scales.** Highest bulk likelihood
-   in every Welch slot of both protocols, and within
-   `r f3(mean_rmse("size-normalised shrinkage, free scales", "welch") - mean_rmse("shrinkage", "welch"))`
-   of the first on the Welch panel. Worth adopting if a second bulk
-   data set with known composition confirms it. Size normalisation was
-   worse on pseudo-bulks (@tbl-deconv-scale-screen). Hypothesis,
+2. **Size-normalised shrinkage, free scales.** Not fitted on the real
+   bulks of the Welch panel: on the pseudo-bulks of the screen its mean
+   RMSE is
+   `r f3(scr_sum$rmse[scr_sum$strategy == "size-normalised | shrinkage | free"])`,
+   against
+   `r f3(scr_sum$rmse[scr_sum$strategy == "raw | shrinkage | free"])`
+   for raw shrinkage (@tbl-deconv-scale-screen), so the screen did not
+   carry it. On the panel of the earlier run (18 November 2026) it had
+   the highest bulk likelihood in every Welch slot of both protocols.
+   Worth refitting if a second bulk data set with known composition
+   becomes available. Hypothesis,
    not tested: the pseudo-bulks are sums of held-out cells of the same
    specimen, so their cell-size variation is exactly that of the
    reference and the raw covariance, which carries it, is the correct
@@ -1687,7 +1693,7 @@ and the stability of the chosen level (item 6 below).
 
 4. **Add a measurement layer between the single-cell reference and the
    bulk.**
-   - Observed: correlation 0.48 to 0.83 between a bulk and its own
+   - Observed: correlation `r span(agree_m$pearson_log, f2)` between a bulk and its own
      reference mixture; $\hat n<1$; Huber weights help the diagonal QP
      (0.105 → 0.039 at 96 h); the DeMixSC residual weights are among
      the best comparators; dividing the bulk by $b_g$ helps on the
@@ -1706,7 +1712,7 @@ and the stability of the chosen level (item 6 below).
    jackknife; do not refit the reference from the bulk.**
    - Observed: MEAD weights genes by the variance of the type means
      across (pseudo-)individuals and is the best comparator at 96 h on
-     the Welch panel (0.048); refining the means from one bulk is the
+     the Welch panel (`r f3(rmse_of("MEAD (pseudo-individuals)", "96h"))`); refining the means from one bulk is the
      worst stage (0.50).
    - To do: a delete-a-group jackknife of the cells of each type for
      the variance of $\hat{\boldsymbol{\mu}}_{\cdot j}$ and of
@@ -1961,6 +1967,24 @@ sp_sieve_qp <- second$family == "sieve" & second$optimiser %in% c("qp", "qp_with
 sp_denoised <- second$algorithm == "DeCovarT" & grepl("denoised", second$covariance)
 sp_total <- grepl("total covariance", second$algorithm)
 sp_shrink <- second$method == "DeCovarT shrinkage lambda_0.50 | lbfgsb | b_g none | welch"
+# Log-likelihood of each Newton fit minus that of the L-BFGS-B fit of the
+# same sample and level.
+sweep <- read_deconv("sweep_diagnostics.csv")
+sweep <- sweep[sweep$gene_set == "welch" &
+  grepl("^(shrinkage|newton|newton_warm)_[0-9.]+$", sweep$id), ]
+sweep$variant <- sub("_[0-9.]+$", "", sweep$id)
+sweep$level <- sub("^.*_", "", sweep$id)
+ll_gap <- function(variant) {
+  m <- merge(
+    sweep[sweep$variant == variant, ],
+    sweep[sweep$variant == "shrinkage", ],
+    by = c("time", "sample_id", "level")
+  )
+  m$loglik.x - m$loglik.y
+}
+gap_multi <- ll_gap("newton")
+gap_warm <- ll_gap("newton_warm")
+multi_range <- as.numeric(sub(".*loglik range ", "", sweep$message[sweep$variant == "newton"]))
 ```
 
 **Rerun: Newton optimiser and platform ratio.** Same law, covariance
@@ -1971,7 +1995,15 @@ its starting point: started once from the barycentre, it often stopped
 after two or three iterations at a lower likelihood than L-BFGS-B. The
 `newton` family therefore starts from the DeMixSC wNNLS estimate of the
 sample and from five Dirichlet(1) draws and keeps the fit of highest
-likelihood; `newton_warm` starts from the L-BFGS-B fit at the same level. `ratio` divides each bulk gene by gene by the
+likelihood; `newton_warm` starts from the L-BFGS-B fit at the same level.
+Each variant has `r length(gap_multi)` fits (three times, six samples,
+eight levels); `r sum(gap_multi < -0.01) + sum(gap_warm < -0.01)` of
+these `r length(gap_multi) + length(gap_warm)` fits end more than 0.01
+below the L-BFGS-B log-likelihood of the same sample and level. The six
+starts end more than 1 apart in `r sum(multi_range > 1)` fits, by up to `r big(max(multi_range))`, and the best of them is above
+L-BFGS-B in `r sum(gap_multi > 0.01)` fits, by up to
+`r f2(max(gap_multi))`; the selected level and the RMSE do not change
+(@tbl-deconv-variants). `ratio` divides each bulk gene by the
 cross-fitted `r glossary("platform ratio")` $b_g$ of tier (iii), estimated
 on the bulks of the two other times (`read_platform_ratio()`, method
 `"gene"`).

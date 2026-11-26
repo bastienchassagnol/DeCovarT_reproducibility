@@ -23,9 +23,6 @@ The scRNA-seq experiment is **one** 10x Chromium 3′ v3 resource from
 one specimen series, not a panel of independent biological replicates.
 DeCovarT treats it as the one-replicate regime
 ([2.1, one single-cell replicate](https://bastienchassagnol.github.io/DeCovarT/articles/02-1-single-cell-generative-optimisation.html#sec-one-replicate)).
-Zeros are taken as molecule-sampling counts (@nte-drop-zico).
-GSE250136 is a later stem-embryo dataset and is not part of this
-resource.
 
 ## Hierarchical design {#sec-geo-design}
 
